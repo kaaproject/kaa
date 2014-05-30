@@ -1,0 +1,31 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.common.bootstrap.gen",
+ "type": "record",
+ "name": "Resolve",
+ "fields": [
+     {"name": "Application_Token", "type": "string"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.bootstrap.gen",
+ "type": "record",
+ "name": "OperationsServerList",
+ "fields": [
+     {"name": "operationsServerArray",
+         "type":{
+             "type": "array",
+                "items": {
+                    "type": "record",
+                    "name": "OperationsServer",
+                    "fields": [
+                        {"name": "DNSName", "type": "string"},
+                        {"name": "Priority", "type": "int"},
+                        {"name": "PublicKey", "type": "bytes"}
+                    ]
+             }
+         }
+     }
+ ]
+}
+]

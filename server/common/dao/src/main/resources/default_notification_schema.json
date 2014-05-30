@@ -1,0 +1,28 @@
+{
+    "type": "record",
+    "name": "NotificationSchema",
+    "namespace": "org.kaa.config",
+    "fields": [
+        {
+            "name": "Properties",
+            "type": {
+                "type": "array",
+                "items": {
+                    "name": "NotificationProperty",
+                    "namespace": "config.system",
+                    "type": "record",
+                    "fields": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        },
+                        {
+                            "name": "value",
+                            "type": "string"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

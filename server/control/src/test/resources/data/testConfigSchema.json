@@ -1,0 +1,28 @@
+{
+  "name": "testT",
+  "type": "record",
+  "addressable": true,
+  "fields": [
+    {
+      "by_default": "test",
+      "name": "testField1",
+      "type": "string"
+    },
+    {
+      "optional": true,
+      "name": "testField2",
+      "type": {
+        "type": "record",
+        "name": "testRecordT",
+        "namespace": "org.kaa.config",
+        "fields": [
+          {
+            "name": "testField3",
+            "type": "int"
+          }
+        ]
+      }
+    }
+  ],
+  "namespace": "org.kaa.config"
+}

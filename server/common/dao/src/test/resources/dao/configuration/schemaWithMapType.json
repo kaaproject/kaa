@@ -1,0 +1,15 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "editable": true,
+    "fields": [
+        {
+            "name": "map_field",
+            "type": {
+                "type": "map",
+                "values": "int"
+            }
+        }
+    ]
+}

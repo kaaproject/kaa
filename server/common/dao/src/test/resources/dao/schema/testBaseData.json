@@ -1,0 +1,11 @@
+{
+    "testField1":"abc",
+    "testField2":{
+        "org.kaa.config.testRecordT":{
+            "testField3":456,
+            "uuid":null
+        }
+    },
+    "testField4":"bcc",
+    "uuid":null
+}

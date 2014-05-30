@@ -1,0 +1,221 @@
+<!--
+  Copyright 2014 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+   	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+			http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd">
+
+	<context:component-scan base-package="org.kaaproject.kaa.server.admin" />
+	
+	<tx:annotation-driven />
+	<cache:annotation-driven />
+	
+	<util:properties id="properties" location="classpath:/admin-server.properties" />
+	
+    <bean id="dataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName">
+            <value>org.hsqldb.jdbcDriver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:hsqldb:#{systemProperties['server_home_dir']}/db/kaasec</value>
+        </property>
+        <property name="username">
+            <value>sa</value>
+        </property>
+        <property name="password">
+            <value></value>
+        </property>
+    </bean>
+ 
+    <bean id="entityManagerFactory"
+        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="persistenceUnitName" value="kaaSec" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+    </bean>
+ 
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+	
+	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="ehcache.xml" />
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache" />
+	
+    <bean id="controlThriftClientProvider" class="org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider" />
+	
+	<bean id="kaaAdminAuthListener" class="org.kaaproject.kaa.server.admin.services.auth.KaaAdminAuthListener"/>
+	
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="basenames">
+            <list>
+                <value>/WEB-INF/KaaMessageSource</value>
+            </list>
+        </property>
+    </bean>
+	
+	
+	<bean id="kaaMessagingMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="#{properties[smtp_host]}"/>
+        <property name="port" value="#{properties[smtp_port]}"/>
+        <property name="username" value="#{properties[smtp_username]}"/>
+        <property name="password" value="#{properties[smtp_password]}"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">#{properties[smtp_protocol]}</prop>
+                <prop key="mail.smtp.auth">#{properties[smtp_auth]}</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+    </bean>
+	
+    <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingService" init-method="init" destroy-method="destroy">
+            <property name="sendPoolSize" value="10"/>
+            <property name="sendTimeout" value="20"/>
+            <property name="appBaseUrl" value="#{properties[app_base_url]}"/>
+            <property name="appName" value="#{properties[app_name]}"/>
+            <property name="mailFrom" value="#{properties[mail_from]}"></property>
+    </bean>
+		
+	
+	<bean id="kaaAuthService" class="org.kaaproject.kaa.server.admin.services.KaaAuthServiceImpl">
+            <property name="passwordEncoder" ref="encoder"/>
+    </bean>
+    
+	<bean id="kaaAdminService" class="org.kaaproject.kaa.server.admin.services.KaaAdminServiceImpl">
+            <property name="passwordEncoder" ref="encoder"/>
+    </bean>
+    
+	<bean id="cacheService" class="org.kaaproject.kaa.server.admin.services.CacheServiceImpl" />
+	
+	
+	<!--security:http auto-config="true"-->
+	<security:http entry-point-ref="authenticationEntryPoint" use-expressions="true">     	
+	    <security:access-denied-handler ref="accessDeniedHandler"/>	
+	    <!--security:form-login login-processing-url="/j_spring_security_check"/-->
+	    <security:logout logout-url="/j_spring_security_logout"
+			    success-handler-ref="logoutSuccessHandler"/>
+        <security:anonymous/>
+	    <security:intercept-url pattern="/KaaAdmin.html" access="permitAll"/>
+        <security:intercept-url pattern="/login/springGwtServices/kaaAuthService" access="permitAll"/>
+	    <security:intercept-url pattern="/login/springGwtServices/**" access="denyAll"/>
+        <security:intercept-url pattern="/login/**" access="permitAll"/>
+        <security:intercept-url pattern="/kaaAdmin/springGwtServices/kaaAuthService" access="permitAll"/>
+        <security:intercept-url pattern="/kaaAdmin/springGwtServices/**" access="hasAnyRole('KAA_ADMIN','TENANT_ADMIN','TENANT_DEVELOPER','TENANT_USER')"/>
+        <security:intercept-url pattern="/kaaAdmin/servlet/**" access="hasAnyRole('KAA_ADMIN','TENANT_ADMIN','TENANT_DEVELOPER','TENANT_USER')"/>
+        <security:intercept-url pattern="/kaaAdmin/**" access="permitAll"/>
+	    <security:custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter"/>
+	</security:http>
+	
+	<bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+	    <property name="authenticationManager" ref="authenticationManager"/>
+	    <property name="filterProcessesUrl" value="/j_spring_security_check"/>
+	    <property name="authenticationFailureHandler" ref="loginFailureHandler"/>
+	    <property name="authenticationSuccessHandler" ref="loginSuccessHandler"/>
+	</bean>
+	
+	<bean id="securityContextLogoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+	
+	<bean id="loginSuccessHandler" class="org.kaaproject.kaa.server.admin.services.auth.KaaAdminAuthSuccessHandler" >
+	    <property name="defaultTargetUrl" value="/kaaAdmin/KaaAdmin.html"/>
+	</bean>
+	
+	<bean id="loginFailureHandler" class="org.kaaproject.kaa.server.admin.services.auth.KaaAdminAuthFailureHandler" >
+	    <property name="defaultFailureUrl" value="/KaaAdmin.html?loginError=true" />
+	</bean>
+	
+	<bean id="logoutSuccessHandler" class="org.kaaproject.kaa.server.admin.services.auth.KaaAdminLogoutSuccessHandler" >
+	    <property name="defaultTargetUrl" value="/KaaAdmin.html"/>
+	</bean>
+	
+	<bean id="authenticationEntryPoint"
+	    class="org.kaaproject.kaa.server.admin.services.auth.KaaAdminAuthEntryPoint">
+	</bean>
+	
+	<bean id="accessDeniedHandler"
+	    class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
+	    <!--  property name="errorPage" value="/accessDenied.htm"/-->
+	    <property name="errorPage" value="/accessDenied.htm"/>
+	</bean>
+	
+	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+          <property name="userDetailsService" ref="userDetailsService"/>
+          <property name="passwordEncoder" ref="encoder"/>
+          <property name="postAuthenticationChecks" ref="postAuthenticationChecks"/>
+    </bean>
+    
+	<bean id="postAuthenticationChecks" class="org.kaaproject.kaa.server.admin.services.auth.KaaPostAuthenticationChecks"/>
+	
+	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <property name="providers">
+                <list>
+                    <ref local="daoAuthenticationProvider" />
+                </list>
+        </property>
+    </bean>
+    
+	<bean id="encoder" 
+            class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+    </bean>
+	
+	<security:authentication-manager>
+      <security:authentication-provider user-service-ref="userDetailsService">
+        <security:password-encoder ref="encoder"/>
+      </security:authentication-provider>
+    </security:authentication-manager>
+	
+	
+	<!-- security:authentication-manager alias="authenticationManager">
+	    <security:authentication-provider>
+	    <security:password-encoder hash="sha"/>
+	    <security:user-service -->
+		<!-- kaa/kaa -->
+	        <!-- security:user name="kaa" password="a00bbe560e6b0f5263e3e6cba4ff3fb9a6fe9ef0"
+	                            authorities="ROLE_USER" / -->	    
+		<!-- igor/igor1 -->
+	        <!-- security:user name="igor" password="2e44a258066cb61c133e347beb79f7ce349d9f5b"
+	                            authorities="ROLE_USER" />
+	    </security:user-service>
+	    </security:authentication-provider>
+	</security:authentication-manager-->
+
+</beans>

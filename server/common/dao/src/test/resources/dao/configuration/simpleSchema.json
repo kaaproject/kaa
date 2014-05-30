@@ -1,0 +1,23 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "fields": [
+        {
+            "name": "intField",
+            "type": "int"
+        },
+        {
+            "name": "__uuid",
+            "type": [
+                {
+                    "name": "uuidT",
+                    "type": "fixed",
+                    "size": 16,
+                    "namespace": "org.kaaproject.configuration"
+                },
+                "null"
+            ]
+        }
+    ]
+}

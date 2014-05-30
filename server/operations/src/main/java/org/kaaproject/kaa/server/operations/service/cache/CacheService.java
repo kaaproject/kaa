@@ -1,0 +1,284 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kaaproject.kaa.server.operations.service.cache;
+
+import java.security.PublicKey;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
+import org.kaaproject.kaa.common.dto.HistoryDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.ConfigurationService;
+import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.HistoryService;
+import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+
+
+/**
+ * The Interface CacheService is used to model cache service.
+ * Service to efficiently cache some core items that are used during delta
+ * calculation. Although many DBs provide efficient caching logic, we decided to
+ * use or own layer because of following reasons: 
+ * 1) Minimize network load between Endpoint and DB nodes 
+ * 2) Minimize dependency on DB 
+ * 3) Avoid unnecessary data serde 
+ * This service also works like a proxy and fetch data
+ * from DB in case it is not found in cache.
+ *  
+ * @author ashvayka
+ */
+public interface CacheService {
+
+    /**
+     * Gets the app seq number.
+     *
+     * @param applicationToken the application token
+     * @return the app seq number
+     */
+    int getAppSeqNumber(String applicationToken);
+
+    /**
+     * Gets the conf id by key.
+     *
+     * @param key the key
+     * @return the conf id by key
+     */
+    String getConfIdByKey(ConfigurationIdKey key);
+
+    /**
+     * Gets the history.
+     *
+     * @param historyKey the history key
+     * @return the history
+     */
+    List<HistoryDto> getHistory(HistoryKey historyKey);
+
+    /**
+     * Gets the filters.
+     *
+     * @param key the key
+     * @return the filters
+     */
+    List<ProfileFilterDto> getFilters(AppVersionKey key);
+
+    /**
+     * Gets the filter.
+     *
+     * @param profileFilterId the profile filter id
+     * @return the filter
+     */
+    ProfileFilterDto getFilter(String profileFilterId);
+
+
+    /**
+     * Gets the conf by hash.
+     *
+     * @param hash the hash
+     * @return the conf by hash
+     */
+    EndpointConfigurationDto getConfByHash(EndpointObjectHash hash);
+
+    /**
+     * Gets the conf schema by app.
+     *
+     * @param key the key
+     * @return the conf schema by app
+     */
+    ConfigurationSchemaDto getConfSchemaByAppAndVersion(AppVersionKey key);
+    
+    /**
+     * Gets the profile schema by app.
+     *
+     * @param key the key
+     * @return the conf schema by app
+     */
+    ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key);
+
+
+    /**
+     * Gets the merged configuration.
+     *
+     * @param egsList the egs list
+     * @param worker the worker
+     * @return the merged configuration
+     */
+    byte[] getMergedConfiguration(List<EndpointGroupStateDto> egsList, Computable<List<EndpointGroupStateDto>, byte[]> worker);
+
+    /**
+     * Sets the merged configuration.
+     *
+     * @param egsList the egs list
+     * @param mergedConfiguration the merged configuration
+     * @return the string
+     */
+    byte[] setMergedConfiguration(List<EndpointGroupStateDto> egsList, byte[] mergedConfiguration);
+
+    /**
+     * Gets the delta.
+     *
+     * @param deltaKey the delta key
+     * @param worker the worker
+     * @return the delta
+     * @throws GetDeltaException the get delta exception
+     */
+    DeltaCacheEntry getDelta(DeltaCacheKey deltaKey, Computable<DeltaCacheKey, DeltaCacheEntry> worker) throws GetDeltaException;
+
+    /**
+     * Sets the delta.
+     *
+     * @param deltaKey the delta key
+     * @param delta the delta
+     * @return the delta cache entry
+     */
+    DeltaCacheEntry setDelta(DeltaCacheKey deltaKey, DeltaCacheEntry delta);
+
+    /**
+     * Gets the endpoint key.
+     *
+     * @param hash the hash
+     * @return the endpoint key
+     */
+    PublicKey getEndpointKey(EndpointObjectHash hash);
+
+    /**
+     * Sets the endpoint key.
+     *
+     * @param hash the hash
+     * @param endpointKey the endpoint key
+     */
+    void setEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
+
+    /**
+     * Setter for test purpose only.
+     *
+     * @param applicationService the new application service
+     */
+    void setApplicationService(ApplicationService applicationService);
+
+    /**
+     * Setter for test purpose only.
+     *
+     * @param configurationService the new configuration service
+     */
+    void setConfigurationService(ConfigurationService configurationService);
+    
+    /**
+     * Setter for test purpose only.
+     *
+     * @param historyService the new history service
+     */
+    void setHistoryService(HistoryService historyService);
+    
+    /**
+     * Setter for test purpose only.
+     *
+     * @param profileService the new profile service
+     */
+    void setProfileService(ProfileService profileService);
+
+    /**
+     * Setter for test purpose only.
+     *
+     * @param endpointService the new endpoint service
+     */
+    void setEndpointService(EndpointService endpointService);
+
+    /**
+     * Cache invalidate method.
+     *
+     * @param key the key
+     */
+    void resetFilters(AppVersionKey key);
+
+    /**
+     * Cache invalidate method.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the int
+     */
+    int putAppSeqNumber(String key, Integer value);
+
+    /**
+     * Put profile schema.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the profile schema dto
+     */
+    ProfileSchemaDto putProfileSchema(AppVersionKey key, ProfileSchemaDto value);
+
+    /**
+     * Put configuration schema.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the configuration schema dto
+     */
+    ConfigurationSchemaDto putConfigurationSchema(AppVersionKey key, ConfigurationSchemaDto value);
+
+    /**
+     * Put configuration.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the endpoint configuration dto
+     */
+    EndpointConfigurationDto putConfiguration(EndpointObjectHash key, EndpointConfigurationDto value);
+
+    /**
+     * Put filter.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the profile filter dto
+     */
+    ProfileFilterDto putFilter(String key, ProfileFilterDto value);
+
+    /**
+     * Put filter list.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the list
+     */
+    List<ProfileFilterDto> putFilterList(AppVersionKey key, List<ProfileFilterDto> value);
+
+    /**
+     * Put history.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the list
+     */
+    List<HistoryDto> putHistory(HistoryKey key, List<HistoryDto> value);
+
+    /**
+     * Put conf id.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the string
+     */
+    String putConfId(ConfigurationIdKey key, String value);
+}

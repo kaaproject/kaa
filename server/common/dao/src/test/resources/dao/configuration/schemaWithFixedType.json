@@ -1,0 +1,17 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "editable": true,
+    "fields": [
+        {
+            "name": "fixed_field",
+            "type": {
+                "name": "fixedT",
+                "type": "fixed",
+                "size": 3,
+                "namespace": "config.system"
+            }
+        }
+    ]
+}

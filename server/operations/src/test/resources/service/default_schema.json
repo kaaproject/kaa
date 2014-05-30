@@ -1,0 +1,22 @@
+{
+        "type": "record",
+        "name": "DefaultSchema",
+        "namespace": "org.kaa.config",
+        "fields": [
+        {
+         "name": "Properties",
+         "type": {
+            "type": "array",
+            "items": {
+              "name": "Property",
+              "namespace": "org.kaaproject.configuration",
+              "type": "record",
+              "fields": [
+              {"name": "name", "type": "string"},
+              {"name": "value", "type": "string"}
+                   ]
+                }
+            }
+        }
+    ]
+}

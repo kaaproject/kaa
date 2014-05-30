@@ -1,0 +1,19 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "addressable": true,
+    "fields": [
+        {
+            "name": "field1",
+            "type": [
+                "int",
+                {
+                    "type": "array",
+                    "items": "int",
+                    "overrideStrategy": "append"
+                }
+            ]
+        }
+    ],
+}

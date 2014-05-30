@@ -1,0 +1,288 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kaaproject.kaa.server.common.dao.service;
+
+import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.ChangeDto;
+import org.kaaproject.kaa.common.dto.ChangeType;
+import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.HistoryDto;
+import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.server.common.dao.ConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.EndpointConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.HistoryService;
+import org.kaaproject.kaa.server.common.dao.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
+import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.mongo.model.Configuration;
+import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.mongo.model.ProfileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+
+@Service
+public class EndpointServiceImpl implements EndpointService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointServiceImpl.class);
+    private static final int DEFAULT_GROUP_WEIGHT = 0;
+
+    @Autowired
+    private EndpointGroupDao<EndpointGroup> endpointGroupDao;
+    @Autowired
+    private ConfigurationDao<Configuration> configurationDao;
+    @Autowired
+    private ProfileFilterDao<ProfileFilter> profileFilterDao;
+    @Autowired
+    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
+    @Autowired
+    private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
+    @Autowired
+    private HistoryService historyService;
+
+    @Override
+    public List<EndpointGroupDto> findEndpointGroupsByAppId(String applicationId) {
+        validateId(applicationId, "Can't find endpoint groups by application id. Incorrect application id "
+                + applicationId);
+        return convertDtoList(endpointGroupDao.findByApplicationId(applicationId));
+    }
+
+    @Override
+    public EndpointGroupDto findEndpointGroupById(String id) {
+        validateId(id, "Can't find endpoint group by id. Incorrect id " + id);
+        return getDto(endpointGroupDao.findById(id));
+    }
+
+    @Override
+    public void removeEndpointGroupByAppId(String applicationId) {
+        validateId(applicationId, "Can't remove endpoint groups by application id. Incorrect application id "
+                + applicationId);
+        List<EndpointGroup> groups = endpointGroupDao.findByApplicationId(applicationId);
+        if (groups != null && !groups.isEmpty()) {
+            for (EndpointGroup group : groups) {
+                removeEndpointGroup(group.getId(), true);
+            }
+        }
+    }
+
+    @Override
+    public void removeEndpointGroupById(String id) {
+        validateId(id, "Can't remove endpoint group by id. Incorrect id " + id);
+        removeEndpointGroup(id, false);
+    }
+
+    @Override
+    public EndpointGroupDto saveEndpointGroup(EndpointGroupDto endpointGroupDto) {
+        validateObject(endpointGroupDto, "Can't save endpoint group object. Incorrect endpoint group object." + endpointGroupDto);
+        EndpointGroupDto savedGroup = null;
+        String appId = endpointGroupDto.getApplicationId();
+        if (isValidId(appId)) {
+            String id = endpointGroupDto.getId();
+            EndpointGroup group = endpointGroupDao.findByAppIdAndWeight(appId, endpointGroupDto.getWeight());
+            if (StringUtils.isBlank(id)) {
+                if (group == null) {
+                    endpointGroupDto.setCreatedTime(System.currentTimeMillis());
+                    savedGroup = getDto(endpointGroupDao.save(new EndpointGroup(endpointGroupDto)));
+                } else {
+                    throw new IncorrectParameterException("Can't save endpoint group with same weight and application id");
+                }
+            } else {
+                EndpointGroup previousGroup = endpointGroupDao.findById(id);
+                if (previousGroup != null) {
+                    if (group != null && !group.getId().equals(previousGroup.getId())) {
+                        throw new IncorrectParameterException("Can't save endpoint group with same weight and application id");
+                    } else if (previousGroup.getWeight() == DEFAULT_GROUP_WEIGHT) {
+                        throw new IncorrectParameterException("Can't update weight for default endpoint group");
+                    } else {
+                        savedGroup = getDto(endpointGroupDao.save(new EndpointGroup(endpointGroupDto)));
+                    }
+                    if (previousGroup.getWeight() != savedGroup.getWeight()) {
+                        addHistory(savedGroup, ChangeType.UPDATE_WEIGHT);
+                    }
+                } else {
+                    LOG.debug("Can't update endpoint group, id: [{}]", id);
+                }
+            }
+        } else {
+            LOG.debug("Can't save endpoint group. Invalid application id [{}]", appId);
+        }
+        return savedGroup;
+    }
+
+    @Override
+    public UpdateNotificationDto<EndpointGroupDto> removeTopicFromEndpointGroup(String id, String topicId) {
+        validateId(id, "Can't remove endpoint group topics " + topicId + ". Incorrect endpoint group id." + id);
+        UpdateNotificationDto<EndpointGroupDto> dto = null;
+        EndpointGroup endpointGroup = endpointGroupDao.removeTopicFromEndpointGroup(id, topicId);
+        if (endpointGroup != null) {
+            dto = new UpdateNotificationDto<EndpointGroupDto>();
+            HistoryDto history = addHistory(endpointGroup.toDto(), ChangeType.REMOVE_TOPIC, topicId);
+            if (history != null) {
+                dto.setAppId(history.getApplicationId());
+                dto.setAppSeqNumber(history.getSequenceNumber());
+            }
+            dto.setChangeType(ChangeType.REMOVE_TOPIC);
+            dto.setTopicId(topicId);
+            dto.setGroupId(endpointGroup.getId());
+            dto.setPayload(endpointGroup.toDto());
+        } else {
+            LOG.debug("Can't remove topic [{}] from endpoint group [{}]", topicId, id);
+        }
+        return dto;
+    }
+
+    @Override
+    public UpdateNotificationDto<EndpointGroupDto> addTopicToEndpointGroup(String id, String topicId) {
+        validateId(id, "Can't add topics " + topicId + " to endpoint group . Incorrect endpoint group id." + id);
+        UpdateNotificationDto<EndpointGroupDto> dto = null;
+        EndpointGroup endpointGroup = endpointGroupDao.addTopicToEndpointGroup(id, topicId);
+        if (endpointGroup != null) {
+            dto = new UpdateNotificationDto<EndpointGroupDto>();
+            HistoryDto history = addHistory(endpointGroup.toDto(), ChangeType.ADD_TOPIC, topicId);
+            if (history != null) {
+                dto.setAppId(history.getApplicationId());
+                dto.setAppSeqNumber(history.getSequenceNumber());
+            }
+            dto.setChangeType(ChangeType.ADD_TOPIC);
+            dto.setTopicId(topicId);
+            dto.setGroupId(endpointGroup.getId());
+            dto.setPayload(endpointGroup.toDto());
+        } else {
+            LOG.debug("Can't add topic [{}] to endpoint group [{}]", topicId, id);
+        }
+        return dto;
+    }
+
+    @Override
+    public EndpointConfigurationDto findEndpointConfigurationByHash(byte[] hash) {
+        validateHash(hash, "Can't find endpoint configuration by hash. Invalid configuration hash " + hash);
+        return getDto(endpointConfigurationDao.findByHash(hash));
+
+    }
+
+    @Override
+    public EndpointConfigurationDto saveEndpointConfiguration(EndpointConfigurationDto endpointConfigurationDto) {
+        validateObject(endpointConfigurationDto, "Can't save endpoint configuration object. Incorrect endpoint configuration object."
+                + endpointConfigurationDto);
+        return getDto(endpointConfigurationDao.save(new EndpointConfiguration(endpointConfigurationDto)));
+    }
+
+    @Override
+    public EndpointProfileDto findEndpointProfileByKeyHash(byte[] endpointProfileKeyHash) {
+        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
+                + endpointProfileKeyHash);
+        return getDto(endpointProfileDao.findByKeyHash(endpointProfileKeyHash));
+    }
+
+    @Override
+    public void removeEndpointProfileByKeyHash(byte[] endpointProfileKeyHash) {
+        validateHash(endpointProfileKeyHash, "Can't remove endpoint profile by key hash. Invalid key hash "
+                + endpointProfileKeyHash);
+        endpointProfileDao.removeByKeyHash(endpointProfileKeyHash);
+    }
+
+    @Override
+    public void removeEndpointProfileByAppId(String appId) {
+        validateId(appId, "Can't remove endpoint profile by application id. Invalid application id " + appId);
+        endpointProfileDao.removeById(appId);
+    }
+
+    @Override
+    public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) {
+        validateObject(endpointProfileDto, "Can't find endpoint profile object. Invalid endpoint profile object"
+                + endpointProfileDto);
+        byte[] keyHash = endpointProfileDto.getEndpointKeyHash();
+        EndpointProfileDto dto;
+        validateHash(keyHash, "Incorrect key hash for endpoint profile.");
+        if (isBlank(endpointProfileDto.getId())) {
+            if (endpointProfileDao.getCountByKeyHash(keyHash) == 0) {
+                LOG.debug("Register new endpoint profile.");
+                dto = getDto(endpointProfileDao.save(new EndpointProfile(endpointProfileDto)));
+            } else {
+                EndpointProfile storedProfile = endpointProfileDao.findByKeyHash(keyHash);
+                if(Arrays.equals(storedProfile.getEndpointKey(), endpointProfileDto.getEndpointKey())){
+                    LOG.debug("Got register profile for already existing profile {}. Will overwrite existing profile!", keyHash);
+                    endpointProfileDto.setId(storedProfile.getId());
+                    dto = getDto(endpointProfileDao.save(new EndpointProfile(endpointProfileDto)));
+                }else{
+                    LOG.warn("Endpoint profile with key hash {} already exists.", keyHash);
+                    throw new DatabaseProcessingException("Can't save endpoint profile with existing key hash.");
+                }
+            }
+        } else {
+            LOG.debug("Update endpoint profile with id [{}]", endpointProfileDto.getId());
+            dto = getDto(endpointProfileDao.save(new EndpointProfile(endpointProfileDto)));
+        }
+        return dto;
+    }
+
+    private HistoryDto addHistory(EndpointGroupDto dto, ChangeType type) {
+        return addHistory(dto, type, null);
+    }
+
+    private HistoryDto addHistory(EndpointGroupDto dto, ChangeType type, String topicId) {
+        LOG.debug("Add history information about endpoint group update");
+        HistoryDto history = new HistoryDto();
+        history.setApplicationId(dto.getApplicationId());
+        ChangeDto change = new ChangeDto();
+        change.setEndpointGroupId(dto.getId());
+        change.setType(type);
+        change.setTopicId(topicId);
+        history.setChange(change);
+        return historyService.saveHistory(history);
+    }
+
+    /**
+     * This method remove endpoint group by id and check if endpoint group is not default.
+     * It's forbidden to remove default endpoint group by id
+     * @param id endpoint group id
+     * @param forceRemove boolean flag define if its removing groups by application.
+     */
+    private void removeEndpointGroup(String id, boolean forceRemove) {
+        EndpointGroup endpointGroup = endpointGroupDao.findById(id);
+        if (endpointGroup != null) {
+            if (endpointGroup.getWeight() != 0 || forceRemove) {
+                LOG.debug("Cascade delete endpoint group with profile filter and configurations.");
+                profileFilterDao.removeByEndpointGroupId(id);
+                configurationDao.removeByEndpointGroupId(id);
+                endpointGroupDao.removeById(id);
+                addHistory(endpointGroup.toDto(), ChangeType.REMOVE_GROUP);
+            } else {
+                LOG.warn("Can't remove default endpoint group by id [{}]", id);
+            }
+        }
+    }
+}

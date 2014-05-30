@@ -1,0 +1,94 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kaaproject.kaa.server.admin.client.mvp.view.application;
+
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Label;
+
+public class ApplicationViewImpl extends BaseDetailsViewImpl implements ApplicationView {
+
+    private SizedTextBox applicationName;
+
+    private Button generateSdkButton;
+
+    public ApplicationViewImpl(boolean create, boolean editable) {
+        super(create, editable);
+    }
+
+    @Override
+    protected String getCreateTitle() {
+        return Utils.constants.addNewApplication();
+    }
+
+    @Override
+    protected String getViewTitle() {
+        return Utils.constants.application();
+    }
+
+    @Override
+    protected String getSubTitle() {
+        return Utils.constants.applicationDetails();
+    }
+
+    @Override
+    protected void initDetailsTable() {
+        applicationName = new SizedTextBox(DEFAULT_TEXTBOX_SIZE, editable);
+        applicationName.setWidth("100%");
+        Label titleLabel = new Label(Utils.constants.title());
+        if (editable) {
+            titleLabel.addStyleName("required");
+        }
+        detailsTable.setWidget(0, 0, titleLabel);
+        detailsTable.setWidget(0, 1, applicationName);
+        applicationName.addInputHandler(this);
+        applicationName.setFocus(true);
+
+        if (KaaAdmin.isDevMode()) {
+            generateSdkButton = new Button(Utils.constants.generate_sdk());
+            detailsTable.setWidget(1, 0, generateSdkButton);
+        }
+    }
+
+    @Override
+    protected void resetImpl() {
+        applicationName.setValue("");
+    }
+
+    @Override
+    protected boolean validate() {
+        return applicationName.getValue().length()>0;
+    }
+
+    @Override
+    public HasValue<String> getApplicationName() {
+        return applicationName;
+    }
+
+    @Override
+    public HasClickHandlers getGenerateSdkButton() {
+        return generateSdkButton;
+    }
+
+}

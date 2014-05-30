@@ -1,0 +1,54 @@
+{
+    "simpleField": "SIMPLE_FIELD",
+    "recordField": {
+        "otherSimpleField": 123,
+        "stringField": "STRING_VALUE1",
+        "otherMapSimpleField": {
+            "KEY1": 1,
+            "KEY2": 2
+        }
+    },
+    "arraySimpleField": ["VALUE1", "VALUE2"],
+    "arrayRecordField": [
+        {
+            "otherSimpleField": 456,
+            "stringField": "STRING_VALUE2",
+            "otherMapSimpleField": {
+                "KEY3": 3,
+                "KEY4": 4
+            }
+        },
+        {
+            "otherSimpleField": 789,
+            "stringField": "STRING_VALUE3",
+            "otherMapSimpleField": {
+                "KEY5": 5,
+                "KEY6": 6
+            }
+        }
+    ],
+    "mapSimpleField": {
+        "KEY7": 7,
+        "KEY8": 8,
+        "KEY9": 9
+    },
+    "mapRecordField": {
+        "SOME_KEY1": {
+            "otherSimpleField": 987,
+            "stringField": "STRING_VALUE4",
+            "otherMapSimpleField": {
+                "KEY10": 10,
+                "KEY11": 11
+            }
+        },
+        "SOME_KEY2": {
+            "otherSimpleField": 654,
+            "stringField": "STRING_VALUE5",
+            "otherMapSimpleField": {
+                "KEY12": 12,
+                "KEY13": 13
+            }
+        }
+    },
+    "nullableRecordField": null
+}

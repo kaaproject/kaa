@@ -1,0 +1,84 @@
+{
+  "items": {
+    "name": "deltaT",
+    "type": "record",
+    "fields": [
+      {
+        "name": "delta",
+        "type": [
+          {
+            "type": "record",
+            "name": "DefaultSchema",
+            "namespace": "org.kaa.config",
+            "fields": [
+              {
+                "name": "Properties",
+                "type": [
+                  {
+                    "type": "array",
+                    "items": [
+                      {
+                        "name": "Property",
+                        "namespace": "org.kaaproject.configuration",
+                        "type": "record",
+                        "fields": [
+                          {
+                            "name": "name",
+                            "type": [
+                              "string",
+                              {
+                                "symbols": [
+                                  "unchanged"
+                                ],
+                                "name": "unchangedT",
+                                "type": "enum",
+                                "namespace": "org.kaaproject.configuration"
+                              }
+                            ]
+                          },
+                          {
+                            "name": "value",
+                            "type": [
+                              "string",
+                              "org.kaaproject.configuration.unchangedT"
+                            ]
+                          },
+                          {
+                            "name": "__uuid",
+                            "type": [{
+                              "name": "uuidT",
+                              "type": "fixed",
+                              "size": 16,
+                              "namespace": "org.kaaproject.configuration"
+                            }, "null"]
+                          }
+                        ]
+                      },
+                      "org.kaaproject.configuration.uuidT"
+                    ]
+                  },
+                  {
+                    "symbols": [
+                      "reset"
+                    ],
+                    "name": "resetT",
+                    "type": "enum",
+                    "namespace": "org.kaaproject.configuration"
+                  },
+                  "org.kaaproject.configuration.unchangedT"
+                ]
+              },
+              {
+                "name": "__uuid",
+                "type": ["org.kaaproject.configuration.uuidT", "null"]
+              }
+            ]
+          },
+          "org.kaaproject.configuration.Property"
+        ]
+      }
+    ],
+    "namespace": "org.kaaproject.configuration"
+  },
+  "type": "array"
+}

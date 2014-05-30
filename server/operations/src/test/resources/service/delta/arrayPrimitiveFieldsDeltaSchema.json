@@ -1,0 +1,1 @@
+{"name":"testT","type":"record","addressable":true,"fields":[{"optional":true,"name":"testField1","type":[{"type":"array","items":"int"},"null"]},{"name":"__uuid","type":[{"name":"uuidT","type":"fixed","size":16,"namespace":"org.kaaproject.configuration"},"null"]}],"namespace":"org.kaa.config"}

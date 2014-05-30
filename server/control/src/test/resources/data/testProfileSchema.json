@@ -1,0 +1,1 @@
+{"type":"record","name":"BasicEndpointProfile","namespace":"org.kaaproject.kaa.common.endpoint.gen","fields":[{"name":"profileBody","type":{"type":"string","avro.java.string":"String"}}]}

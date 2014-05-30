@@ -1,0 +1,40 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kaaproject.kaa.client.notification;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import org.apache.avro.specific.SpecificRecordBase;
+import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import ${notification_class_package}.${notification_class};
+
+public abstract class AbstractNotificationListener implements NotificationListener {
+    private final AvroByteArrayConverter<${notification_class}> converter;
+
+    public AbstractNotificationListener() {
+        converter = new AvroByteArrayConverter<${notification_class}>(${notification_class}.class);
+    }
+
+    @Override
+    public final void onNotificationRaw(String topicName, ByteBuffer notification) throws IOException {
+        onNotification(topicName, converter.fromByteArray(notification.array()));
+    }
+
+    public abstract void onNotification(String topicName, ${notification_class} notification);
+
+}

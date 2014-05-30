@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/data/mongo
+            http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+
+    <context:annotation-config/>
+
+    <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
+    <context:property-placeholder location="classpath:mongo_test.properties" />
+
+    <mongo:mongo id="mongoClient" replica-set="${servers}" write-concern="${write.concern}">
+        <mongo:options
+                connections-per-host="${connections.per.host}"
+                threads-allowed-to-block-for-connection-multiplier="5"
+                connect-timeout="${connection.timeout}"
+                max-wait-time="${max.wait.time}"
+                auto-connect-retry="${auto.connect.retry}"
+                socket-keep-alive="${socket.keepalive}"
+                socket-timeout="${socket.timeout}"
+                slave-ok="${slaveOk}"
+                write-number="1"
+                write-timeout="0"
+                write-fsync="true"/>
+    </mongo:mongo>
+
+    <mongo:db-factory dbname="${db.name}" mongo-ref="mongoClient"/>
+
+    <bean id="mongoTypeMapper" class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
+        <constructor-arg name="typeKey">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mongoMappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext"/>
+
+    <bean id="mongoConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+        <constructor-arg name="mappingContext" ref="mongoMappingContext"/>
+        <property name="typeMapper" ref="mongoTypeMapper"></property>
+    </bean>
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+        <constructor-arg name="mongoConverter" ref="mongoConverter"/>
+        <property name="writeResultChecking" value="EXCEPTION"/>
+    </bean>
+
+    <bean id="protocolSchemaStrategy" class="org.kaaproject.kaa.server.common.dao.schema.ProtocolSchemaStrategy" />
+
+    <bean id="protocolSchemaCreator" class="org.kaaproject.kaa.server.common.dao.schema.SchemaCreatorImpl">
+        <constructor-arg index="0" ref="protocolSchemaStrategy" />
+    </bean>
+
+    <bean id="baseSchemaStrategy" class="org.kaaproject.kaa.server.common.dao.schema.BaseDataSchemaStrategy" />
+
+    <bean id="baseSchemaCreator" class="org.kaaproject.kaa.server.common.dao.schema.SchemaCreatorImpl">
+        <constructor-arg index="0" ref="baseSchemaStrategy" />
+    </bean>
+
+    <bean id="overrideSchemaStrategy" class="org.kaaproject.kaa.server.common.dao.schema.OverrideDataSchemaStrategy" />
+
+    <bean id="overrideSchemaCreator" class="org.kaaproject.kaa.server.common.dao.schema.SchemaCreatorImpl">
+        <constructor-arg index="0" ref="overrideSchemaStrategy" />
+    </bean>
+
+</beans>

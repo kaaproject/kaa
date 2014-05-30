@@ -1,0 +1,3 @@
+*.txt		text
+*.sh		eol=lf
+*.json		text

@@ -1,0 +1,45 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "ConnectionInfo",
+ "fields": [
+     {"name": "thriftHost", "type": "string"},
+     {"name": "thriftPort", "type": "int"},
+     {"name": "httpHost", "type": "string"},
+     {"name": "httpPort", "type": "int"},
+     {"name": "publicKey", "type": ["bytes", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "ControlNodeInfo",
+ "fields": [
+     {"name": "connectionInfo", "type": "org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo"},
+     {"name": "operationsServerCount",  "type": "int"},
+     {"name": "bootstrapServerCount",  "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "OperationsNodeInfo",
+ "fields": [
+     {"name": "connectionInfo", "type": "org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo"},
+     {"name": "processedRequestCount",  "type": "int"},
+     {"name": "registeredUsersCount",  "type": "int"},
+     {"name": "deltaCalculationCount",  "type": "int"},
+     {"name": "timeStarted",  "type": "long"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "BootstrapNodeInfo",
+ "fields": [
+     {"name": "connectionInfo", "type": "org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo"},
+     {"name": "processedRequestCount",  "type": "int"}
+ ]
+}
+]

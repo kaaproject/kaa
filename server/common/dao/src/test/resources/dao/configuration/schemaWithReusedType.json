@@ -1,0 +1,30 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "fields": [
+        {
+            "name": "testField2",
+            "type": {
+                "type": "record",
+                "name": "testRecordT",
+                "namespace": "org.kaa.config",
+                "fields": [
+                    {
+                        "name": "testField3",
+                        "type": "int",
+                        "by_default": 1
+                    }
+                ]
+            }
+        },
+        {
+            "name": "testField5",
+            "type": "org.kaa.config.testRecordT"
+        },
+        {
+            "name": "testField6",
+            "type": ["org.kaa.config.testRecordT", "int"]
+        }
+    ]
+}

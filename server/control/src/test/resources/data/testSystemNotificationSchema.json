@@ -1,0 +1,1 @@
+{"type":"record","name":"BasicSystemNotification","namespace":"org.kaaproject.kaa.common.endpoint.gen","fields":[{"name":"notificationBody","type":{"type":"string","avro.java.string":"String"}},{"name":"systemNotificationParam1","type":"int"},{"name":"systemNotificationParam2","type":"int"}]}

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appenders -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{1}:%L - %m%n" />
+		</layout>
+	</appender>
+	<appender name="fileLogAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="${server_log_dir}/kaa-admin-server.log" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<param name="Append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{HH:mm:ss:SSS} - %p - %C{1} - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- Application Loggers -->
+	<category name="org.spring4gwt.server">
+		<level value="DEBUG" />
+	</category>
+
+	<!-- 3rdparty Loggers -->
+	<category name="org.springframework.core">
+		<level value="DEBUG" />
+	</category>
+
+	<category name="org.springframework.beans">
+		<level value="DEBUG" />
+	</category>
+
+	<category name="org.springframework.context">
+		<level value="DEBUG" />
+	</category>
+
+	<category name="org.springframework.web">
+		<level value="DEBUG" />
+	</category>
+
+	<category name="org.kaaproject.kaa.server.admin">
+		<level value="DEBUG" />
+	</category>
+
+	<!-- Root Logger -->
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="console" />
+		<appender-ref ref="fileLogAppender" />
+	</root>
+
+</log4j:configuration>

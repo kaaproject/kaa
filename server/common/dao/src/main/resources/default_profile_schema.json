@@ -1,0 +1,28 @@
+{
+    "type": "record",
+    "name": "ProfileSchema",
+    "namespace": "org.kaa.config",
+    "fields": [
+        {
+            "name": "Properties",
+            "type": {
+                "type": "array",
+                "items": {
+                    "name": "ProfileProperty",
+                    "namespace": "config.system",
+                    "type": "record",
+                    "fields": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        },
+                        {
+                            "name": "value",
+                            "type": "string"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+sh/bin/*	eol=lf
+sh/init.d/deb/*	eol=lf
+sh/init.d/rpm/*	eol=lf
+deb/control/*	eol=lf
+rpm/control/*	eol=lf
