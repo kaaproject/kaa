@@ -1,0 +1,72 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ${event_family_namespace};
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.kaaproject.kaa.client.event.EventFamily;
+import org.kaaproject.kaa.client.event.EventManager;
+import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+
+public class ${event_family_class_name} implements EventFamily {
+
+    private static final Logger LOG = LoggerFactory.getLogger(${event_family_class_name}.class);
+
+    private final EventManager eventManager;
+
+    private final Set<DefaultEventFamilyListener> listeners = new HashSet<>();
+
+    public ${event_family_class_name}(EventManager eventManager) {
+        super();
+        this.eventManager = eventManager;
+    }
+
+    @Override
+    public Set<String> getSupportedEventFQNs() {
+        Set<String> result = new HashSet<>();
+
+        ${add_supported_event_class_fqns}
+
+        return result;
+    }
+
+    @Override
+    public void onGenericEvent(String fqn, byte[] data, String source) {
+    
+        ${event_family_listeners_on_generic_event}
+
+    }
+
+    public boolean addListener(DefaultEventFamilyListener listener) {
+        return listeners.add(listener);
+    }
+
+    public boolean removeListener(DefaultEventFamilyListener listener) {
+        return listeners.remove(listener);
+    }
+
+    ${event_family_send_event_methods}
+
+    public interface DefaultEventFamilyListener {
+
+        ${event_family_listener_methods}
+        
+    }
+}

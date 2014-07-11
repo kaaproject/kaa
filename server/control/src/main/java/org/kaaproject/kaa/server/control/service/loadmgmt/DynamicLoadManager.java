@@ -17,13 +17,22 @@
 package org.kaaproject.kaa.server.control.service.loadmgmt;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
+import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
-import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService.Client;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftChannelType;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftIpParameters;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChannel;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftActivity;
@@ -34,6 +43,12 @@ import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.OperationsServerLoadHistory;
 import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.Rebalancer;
@@ -51,10 +66,10 @@ public class DynamicLoadManager implements OperationsNodeListener,
 
     class OperationsServerMeta {
         /** The Operations Server */
-        public OperationsServer opsServer;
+        public ThriftOperationsServer opsServer;
 
         /** The history. */
-        public OperationsServerLoadHistory history;
+        public Map<ZkChannelType,OperationsServerLoadHistory> history;
 
         /** The node info. */
         public OperationsNodeInfo nodeInfo;
@@ -65,11 +80,10 @@ public class DynamicLoadManager implements OperationsNodeListener,
          * @param opsServer the Operations Server
          * @param nodeInfo the node info
          */
-        public OperationsServerMeta(OperationsServer opsServer, OperationsNodeInfo nodeInfo) {
+        public OperationsServerMeta(ThriftOperationsServer opsServer, OperationsNodeInfo nodeInfo) {
             this.opsServer = opsServer;
             this.nodeInfo = nodeInfo;
-            history = new OperationsServerLoadHistory();
-            history.setMaxHistoryTimeLive(getOpsServerHistoryTTL());
+            history = new HashMap<>();
         }
     }
 
@@ -108,7 +122,8 @@ public class DynamicLoadManager implements OperationsNodeListener,
         setLoadDistributionService(loadDistributionService);
         opsServersMap = new Hashtable<String,OperationsServerMeta>();
         bootstrapsMap = new Hashtable<String,BootstrapNodeInfo>();
-        opsLoadHistoryTTL = loadDistributionService.getOpsServerHistoryTTL()*1000; //Translate seconds to ms
+        //Translate seconds to ms
+        opsLoadHistoryTTL = loadDistributionService.getOpsServerHistoryTTL()*1000;
         try {
             Class<?> dynamicMgmtClass = Class.forName(getLoadDistributionService().getDynamicMgmtClass());
             Object obj = dynamicMgmtClass.newInstance();
@@ -135,7 +150,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
             }
         }
         if (dynamicMgmt != null) {
-            Map<String,OperationsServerLoadHistory> opsServerHistory = new Hashtable<String,OperationsServerLoadHistory>();
+            Map<String,Map<ZkChannelType,OperationsServerLoadHistory>> opsServerHistory = new Hashtable<String,Map<ZkChannelType,OperationsServerLoadHistory>>();
             for(String dnsName : opsServersMap.keySet()) {
                 opsServerHistory.put(dnsName, opsServersMap.get(dnsName).history);
             }
@@ -176,7 +191,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
      */
     @Override
     public void onNodeAdded(BootstrapNodeInfo nodeInfo) {
-        final String dnsName = getDNSNameFromConnectionInfo(nodeInfo.getConnectionInfo());
+        final String dnsName = getBootstrapNameFromNodeInfo(nodeInfo);
         LOG.info("Bootstrap server {} added", dnsName);
         bootstrapsMap.put(dnsName, nodeInfo);
 
@@ -188,7 +203,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
      */
     @Override
     public void onNodeUpdated(BootstrapNodeInfo nodeInfo) {
-        String dnsName = getDNSNameFromConnectionInfo(nodeInfo.getConnectionInfo());
+        String dnsName = getBootstrapNameFromNodeInfo(nodeInfo);
         LOG.info("Bootstrap server {} updated", dnsName);
         bootstrapsMap.put(dnsName, nodeInfo);
     }
@@ -198,7 +213,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
      */
     @Override
     public void onNodeRemoved(BootstrapNodeInfo nodeInfo) {
-        String dnsName = getDNSNameFromConnectionInfo(nodeInfo.getConnectionInfo());
+        String dnsName = getBootstrapNameFromNodeInfo(nodeInfo);
         LOG.info("Bootstrap server {} removed", dnsName);
         bootstrapsMap.remove(dnsName);
     }
@@ -208,9 +223,9 @@ public class DynamicLoadManager implements OperationsNodeListener,
      */
     @Override
     public void onNodeAdded(OperationsNodeInfo nodeInfo) {
-        String dnsName = getDNSNameFromConnectionInfo(nodeInfo.getConnectionInfo());
-        OperationsServer operations = new OperationsServer(DEFAULT_PRIORITY, nodeInfo.getConnectionInfo().getPublicKey());
-        opsServersMap.put(dnsName, new OperationsServerMeta(operations, nodeInfo));
+        String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
+        
+        addNewOperationsServer(dnsName, nodeInfo);
 
         LOG.info("Operations server {} added. Updating {} Bootstrap servers", dnsName, bootstrapsMap.size());
         for(BootstrapNodeInfo bootstrapNodeInfo : bootstrapsMap.values()) {
@@ -218,24 +233,98 @@ public class DynamicLoadManager implements OperationsNodeListener,
         }
     }
 
+    /**
+     * Transform Zk List of supported channels into bootstrap thrift list of supported channels
+     * @param supportedChannelsArray 
+     * @return List<ThriftSupportedChannel>
+     */
+    private List<ThriftSupportedChannel> getThriftSupportedChannelsFromZkSupportedChannels(List<SupportedChannel> supportedChannelsArray, OperationsServerMeta meta) {
+        List<ThriftSupportedChannel> thriftSuppChannels  = new ArrayList<>();
+        for(SupportedChannel channel : supportedChannelsArray) {
+            ThriftChannelType thriftType = null;
+            ThriftCommunicationParameters communicationParams = new ThriftCommunicationParameters();
+            switch (channel.getZkChannel().getChannelType()) {
+            case HTTP:
+                thriftType = ThriftChannelType.HTTP;
+                ZkHttpComunicationParameters zkCommParams = (ZkHttpComunicationParameters) channel.getZkChannel().getCommunicationParameters();
+                communicationParams.setHttpParams(new ThriftIpParameters(
+                        zkCommParams.getZkComunicationParameters().getHostName().toString(), 
+                        zkCommParams.getZkComunicationParameters().getPort().intValue()));
+                break;
+            case HTTP_LP:
+                thriftType = ThriftChannelType.HTTP_LP;
+                ZkHttpLpComunicationParameters zkLpCommParams = (ZkHttpLpComunicationParameters) channel.getZkChannel().getCommunicationParameters();
+                communicationParams.setHttpLpParams(new ThriftIpParameters(
+                        zkLpCommParams.getZkComunicationParameters().getHostName().toString(), 
+                        zkLpCommParams.getZkComunicationParameters().getPort().intValue()));
+                break;
+            default:
+                break;
+            }
+            if (thriftType != null) {
+                meta.history.put(channel.getZkChannel().getChannelType(), new OperationsServerLoadHistory(opsLoadHistoryTTL));
+                ThriftSupportedChannel thriftChannel = new ThriftSupportedChannel(thriftType, communicationParams);
+                thriftSuppChannels.add(thriftChannel);
+            }
+        }
+        return thriftSuppChannels;
+    }
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener#onNodeUpdated(org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo)
      */
     @Override
     public void onNodeUpdated(OperationsNodeInfo nodeInfo) {
-        String dnsName = getDNSNameFromConnectionInfo(nodeInfo.getConnectionInfo());
+        String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
         LOG.info("Operations server {} update", dnsName);
         if (opsServersMap.containsKey(dnsName)) {
             opsServersMap.get(dnsName).opsServer.setPublicKey(nodeInfo.getConnectionInfo().getPublicKey());
 
-            opsServersMap.get(dnsName).history.addOpsServerLoad(nodeInfo.getRegisteredUsersCount(),
-                    nodeInfo.getProcessedRequestCount(),
-                    nodeInfo.getDeltaCalculationCount());
+            for(SupportedChannel channel : nodeInfo.getSupportedChannelsArray()) {
+                if(opsServersMap.containsKey(dnsName) 
+                        && opsServersMap.get(dnsName).history.containsKey(channel.getZkChannel().getChannelType())) {
 
+                    int registeredUsersCount = 0;
+                    int processedRequestCount = 0;
+                    int deltaCalculationCount = 0;
+                    switch (channel.getZkChannel().getChannelType()) {
+                    case HTTP:
+                        ZkHttpStatistics httpStats = (ZkHttpStatistics) channel.getZkChannel().getChannelStatistics();
+                        registeredUsersCount = httpStats.getZkStatistics().getRegisteredUsersCount();
+                        processedRequestCount = httpStats.getZkStatistics().getProcessedRequestCount();
+                        deltaCalculationCount = httpStats.getZkStatistics().getDeltaCalculationCount();
+                        break;
+                    case HTTP_LP:
+                        ZkHttpLpStatistics httpLpStats = (ZkHttpLpStatistics) channel.getZkChannel().getChannelStatistics();
+                        registeredUsersCount = httpLpStats.getZkStatistics().getRegisteredUsersCount();
+                        processedRequestCount = httpLpStats.getZkStatistics().getProcessedRequestCount();
+                        deltaCalculationCount = httpLpStats.getZkStatistics().getDeltaCalculationCount();
+                        break;                        
+
+                    default:
+                        break;
+                    }
+                    opsServersMap.get(dnsName).history.get(channel.getZkChannel().getChannelType()).addOpsServerLoad(
+                            registeredUsersCount, 
+                            processedRequestCount, 
+                            deltaCalculationCount);
+                }
+            }
         } else {
-            OperationsServer opsServer = new OperationsServer(DEFAULT_PRIORITY,nodeInfo.getConnectionInfo().getPublicKey());
-            opsServersMap.put(dnsName, new OperationsServerMeta(opsServer, nodeInfo));
+            addNewOperationsServer(dnsName, nodeInfo);
         }
+    }
+
+    /**
+     * @param dnsName
+     * @param nodeInfo
+     */
+    private void addNewOperationsServer(String dnsName, OperationsNodeInfo nodeInfo) {
+        OperationsServerMeta meta = new OperationsServerMeta(null , nodeInfo);
+        List<ThriftSupportedChannel> thriftSuppChannels = getThriftSupportedChannelsFromZkSupportedChannels(nodeInfo.getSupportedChannelsArray(), meta);
+        ThriftOperationsServer operations = new ThriftOperationsServer(dnsName, DEFAULT_PRIORITY, nodeInfo.getConnectionInfo().getPublicKey(), thriftSuppChannels  );
+        meta.opsServer = operations;
+        opsServersMap.put(dnsName, meta);
     }
 
     /* (non-Javadoc)
@@ -243,7 +332,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
      */
     @Override
     public void onNodeRemoved(OperationsNodeInfo nodeInfo) {
-        String dnsName = getDNSNameFromConnectionInfo(nodeInfo.getConnectionInfo());
+        String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
         opsServersMap.remove(dnsName);
 
         LOG.info("Operations server {} removed. Updating {} Bootstrap servers", dnsName, bootstrapsMap.size());
@@ -272,27 +361,41 @@ public class DynamicLoadManager implements OperationsNodeListener,
     }
 
     /**
-     * Gets the dns name from connection info.
+     * Gets the operations name from connection info.
      *
      * @param connectionInfo the connection info
-     * @return the DNS name from connection info
+     * @return the thrift host name and thrift port from connection info
      */
-    private String getDNSNameFromConnectionInfo(ConnectionInfo connectionInfo) {
+    private String getNameFromConnectionInfo(ConnectionInfo connectionInfo) {
         StringBuffer name = new StringBuffer();
-        name.append(connectionInfo.getHttpHost());
+        name.append(connectionInfo.getThriftHost());
         name.append(HOST_PORT_DELIMITER);
-        name.append(connectionInfo.getHttpPort());
+        name.append(connectionInfo.getThriftPort());
         return name.toString();
     }
 
+    /**
+     * Gets the bootstrap name from connection info.
+     *
+     * @param BootstrapNodeInfo 
+     * @return the bootstrap host name and bootstrap port from connection info
+     */
+    private String getBootstrapNameFromNodeInfo(BootstrapNodeInfo nodeInfo) {
+        StringBuffer name = new StringBuffer();
+        name.append(nodeInfo.getBootstrapHostName());
+        name.append(HOST_PORT_DELIMITER);
+        name.append(nodeInfo.getBootstrapPort());
+        return name.toString();
+    }
+    
     /**
      * Update bootstrap.
      *
      * @param nodeInfo the node info
      */
     private void updateBootstrap(BootstrapNodeInfo nodeInfo) {
-        final String dnsName = getDNSNameFromConnectionInfo(nodeInfo.getConnectionInfo());
-        LOG.debug("Update bootstrap server: "+dnsName+" Thrift: "+nodeInfo.getConnectionInfo().getThriftHost().toString()+":"+nodeInfo.getConnectionInfo().getThriftPort());
+        final String dnsName = getBootstrapNameFromNodeInfo(nodeInfo);
+        LOG.debug("Update bootstrap server: {}", dnsName);
         try {
             ThriftClient<BootstrapThriftService.Client> client = new ThriftClient<BootstrapThriftService.Client>(
                             nodeInfo.getConnectionInfo().getThriftHost().toString(),
@@ -309,11 +412,13 @@ public class DynamicLoadManager implements OperationsNodeListener,
                 @Override
                 public void doInTemplate(Client t) {
                     try {
-                        Map<String,OperationsServer> update = new Hashtable<String, OperationsServer>();
+                        List<ThriftOperationsServer> operationsServersList = new ArrayList<>();
                         for(String dnsName : opsServersMap.keySet()) {
-                            update.put(dnsName, opsServersMap.get(dnsName).opsServer);
+                            operationsServersList.add(opsServersMap.get(dnsName).opsServer);
+                            LOG.trace("Bootstrap {} server: {}", dnsName,opsServersMap.get(dnsName).opsServer.toString());
                         }
-                        t.onOperationsServerListUpdate(update);
+                        LOG.trace("Bootstrap {} Operations servers list size {} ready to updates", dnsName,operationsServersList.size());
+                        t.onOperationsServerListUpdate(operationsServersList );
                         LOG.info("Bootstrap "+dnsName+" Operations servers list updated.");
                     } catch (TException e) {
                         lastBootstrapServersUpdateFailed = true;

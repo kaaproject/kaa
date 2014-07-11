@@ -30,6 +30,8 @@ public class EndpointProfileDto implements HasId, Serializable {
     private String applicationId;
     private byte[] endpointKey;
     private byte[] endpointKeyHash;
+    private String endpointUserId;
+    private String accessToken;
     private String profileSchemaId;
     private List<EndpointGroupStateDto> endpointGroupState;
     private List<String> subscriptions;
@@ -44,11 +46,16 @@ public class EndpointProfileDto implements HasId, Serializable {
     private int notificationVersion;
     private int systemNfVersion;
     private int userNfVersion;
+    private int logSchemaVersion;
+    private List<EventClassFamilyVersionStateDto> ecfVersionStates;
+    private String serverHash;
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -75,6 +82,22 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setEndpointKeyHash(byte[] endpointKeyHash) {
         this.endpointKeyHash = getArrayCopy(endpointKeyHash);
+    }
+
+    public String getEndpointUserId() {
+        return endpointUserId;
+    }
+
+    public void setEndpointUserId(String endpointUserId) {
+        this.endpointUserId = endpointUserId;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public String getProfileSchemaId() {
@@ -197,6 +220,30 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.userNfVersion = userNfVersion;
     }
 
+    public int getLogSchemaVersion() {
+        return logSchemaVersion;
+    }
+
+    public void setLogSchemaVersion(int logSchemaVersion) {
+        this.logSchemaVersion = logSchemaVersion;
+    }
+
+    public List<EventClassFamilyVersionStateDto> getEcfVersionStates() {
+        return ecfVersionStates;
+    }
+
+    public void setEcfVersionStates(List<EventClassFamilyVersionStateDto> ecfVersionStates) {
+        this.ecfVersionStates = ecfVersionStates;
+    }
+
+    public String getServerHash() {
+        return serverHash;
+    }
+
+    public void setServerHash(String serverHash) {
+        this.serverHash = serverHash;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -287,25 +334,54 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     @Override
     public String toString() {
-        return "EndpointProfileDto{" +
-                "id='" + id + '\'' +
-                ", applicationId='" + applicationId + '\'' +
-                ", endpointKey=" + Arrays.toString(endpointKey) +
-                ", endpointKeyHash=" + Arrays.toString(endpointKeyHash) +
-                ", profileSchemaId='" + profileSchemaId + '\'' +
-                ", endpointGroupState=" + endpointGroupState +
-                ", subscriptions=" + subscriptions +
-                ", ntHash=" + Arrays.toString(ntHash) +
-                ", sequenceNumber=" + sequenceNumber +
-                ", changedFlag=" + changedFlag +
-                ", profile='" + profile + '\'' +
-                ", profileHash=" + Arrays.toString(profileHash) +
-                ", profileVersion=" + profileVersion +
-                ", configurationHash=" + Arrays.toString(configurationHash) +
-                ", configurationVersion=" + configurationVersion +
-                ", notificationVersion=" + notificationVersion +
-                ", systemNfVersion=" + systemNfVersion +
-                ", userNfVersion=" + userNfVersion +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder.append("EndpointProfileDto [id=");
+        builder.append(id);
+        builder.append(", applicationId=");
+        builder.append(applicationId);
+        builder.append(", endpointKey=");
+        builder.append(Arrays.toString(endpointKey));
+        builder.append(", endpointKeyHash=");
+        builder.append(Arrays.toString(endpointKeyHash));
+        builder.append(", endpointUserId=");
+        builder.append(endpointUserId);
+        builder.append(", accessToken=");
+        builder.append(accessToken);
+        builder.append(", profileSchemaId=");
+        builder.append(profileSchemaId);
+        builder.append(", endpointGroupState=");
+        builder.append(endpointGroupState);
+        builder.append(", subscriptions=");
+        builder.append(subscriptions);
+        builder.append(", ntHash=");
+        builder.append(Arrays.toString(ntHash));
+        builder.append(", sequenceNumber=");
+        builder.append(sequenceNumber);
+        builder.append(", changedFlag=");
+        builder.append(changedFlag);
+        builder.append(", profile=");
+        builder.append(profile);
+        builder.append(", profileHash=");
+        builder.append(Arrays.toString(profileHash));
+        builder.append(", profileVersion=");
+        builder.append(profileVersion);
+        builder.append(", configurationHash=");
+        builder.append(Arrays.toString(configurationHash));
+        builder.append(", configurationVersion=");
+        builder.append(configurationVersion);
+        builder.append(", notificationVersion=");
+        builder.append(notificationVersion);
+        builder.append(", systemNfVersion=");
+        builder.append(systemNfVersion);
+        builder.append(", userNfVersion=");
+        builder.append(userNfVersion);
+        builder.append(", ecfVersionStates=");
+        builder.append(ecfVersionStates);
+        builder.append(", serverHash=");
+        builder.append(serverHash);
+        builder.append("]");
+        return builder.toString();
     }
+
+
 }

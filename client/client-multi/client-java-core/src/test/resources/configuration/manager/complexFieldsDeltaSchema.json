@@ -1,0 +1,67 @@
+{
+  "items": {
+    "name": "deltaT",
+    "type": "record",
+    "fields": [
+      {
+        "name": "delta",
+        "type": [
+          {
+            "name": "testT",
+            "type": "record",
+            "addressable": true,
+            "fields": [
+              {
+                "name": "testField1",
+                "type": [
+                  "string",
+                  {
+                    "symbols": [
+                      "unchanged"
+                    ],
+                    "name": "unchangedT",
+                    "type": "enum",
+                    "namespace": "org.kaaproject.configuration"
+                  }
+                ]
+              },
+              {
+                "name": "testField2",
+                "type": [
+                  {
+                    "type": "record",
+                    "name": "testRecordT",
+                    "namespace": "org.kaa.config",
+                    "fields": [
+                      {
+                        "name": "testField3",
+                        "type": [
+                          "int",
+                          "org.kaaproject.configuration.unchangedT"
+                        ]
+                      }
+                    ]
+                  },
+                  "org.kaaproject.configuration.unchangedT",
+                  "null"
+                ]
+              },
+              {
+                "name": "__uuid",
+                "type": {
+                  "name": "uuidT",
+                  "type": "fixed",
+                  "size": 16,
+                  "namespace": "org.kaaproject.configuration"
+                }
+              }
+            ],
+            "namespace": "org.kaa.config"
+          }
+        ]
+      }
+    ],
+    "namespace": "org.kaaproject.configuration"
+  },
+  "type": "array"
+}

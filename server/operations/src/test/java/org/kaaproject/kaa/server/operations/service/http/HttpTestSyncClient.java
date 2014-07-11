@@ -21,9 +21,12 @@ import java.security.PublicKey;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.TopicState;
 import org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand;
@@ -37,34 +40,34 @@ public class HttpTestSyncClient extends HttpTestClient<SyncRequest, SyncResponse
 
     /** Defined application token */
     public static final String APPLICATION_TOKEN = "123test";
-    
+
     /** Hash size, in test we use fake hashes gust generating them as random bytes */
     public static final int HASH_SIZE = 32;
-    
+
     /** Max subscription command size, actual value get random size */
     public static final int MAX_SUBSCRIPTION_COMMANDS_SIZE  = 100;
-    
+
     /** Defined topic id length */
     public static final int TOPIC_ID_LENGTH  = 10;
-    
+
     /** profile hash byte array */
     private byte[] profileHash;
-    
+
     /** configuration hash byte array */
     private byte[] configurationHash;
-    
+
     /** subscription commands list */
     private List<SubscriptionCommand> subscriptionCommands;
-    
+
     /** topic state list */
     private List<TopicState> topicStates;
-    
+
     /** application seq number, in test it used to pass testId */
     private int appStateSeqNumber;
-    
-    
-    
-    
+
+
+
+
     /**
      * Constructor.
      * @param serverPublicKey - server public key
@@ -79,33 +82,32 @@ public class HttpTestSyncClient extends HttpTestClient<SyncRequest, SyncResponse
     }
 
     /**
-     * Create SyncRequest. 
+     * Create SyncRequest.
      */
     private void syncInit() {
-        
+
         profileHash = getRandomBytes(HASH_SIZE);
         configurationHash = getRandomBytes(HASH_SIZE);
         appStateSeqNumber = getId();
-        
-        setRequest(new SyncRequest());
-        getRequest().setApplicationToken(APPLICATION_TOKEN);
-        
-        
-        getRequest().setEndpointPublicKeyHash(ByteBuffer.wrap(getClientPublicKeyHash().getData()));
-        
-        getRequest().setConfigurationHash(ByteBuffer.wrap(configurationHash));
-        getRequest().setProfileHash(ByteBuffer.wrap(profileHash));
-        
-        generateSubscriptionCommandList();
-        getRequest().setSubscriptionCommands(subscriptionCommands);
-        getRequest().setTopicStates(topicStates);
-        
-        getRequest().setTopicListHash(ByteBuffer.wrap(profileHash));
-        
-        getRequest().setAppStateSeqNumber(appStateSeqNumber);
 
+        setRequest(new SyncRequest());
+        getRequest().setSyncRequestMetaData(new SyncRequestMetaData());
+        getRequest().getSyncRequestMetaData().setApplicationToken(APPLICATION_TOKEN);
+        getRequest().getSyncRequestMetaData().setEndpointPublicKeyHash(ByteBuffer.wrap(getClientPublicKeyHash().getData()));
+        getRequest().getSyncRequestMetaData().setProfileHash(ByteBuffer.wrap(profileHash));
+
+        getRequest().setConfigurationSyncRequest(new ConfigurationSyncRequest());
+        getRequest().getConfigurationSyncRequest().setConfigurationHash(ByteBuffer.wrap(configurationHash));
+        getRequest().getConfigurationSyncRequest().setAppStateSeqNumber(appStateSeqNumber);
+
+        generateSubscriptionCommandList();
+        getRequest().setNotificationSyncRequest(new NotificationSyncRequest());
+        getRequest().getNotificationSyncRequest().setSubscriptionCommands(subscriptionCommands);
+        getRequest().getNotificationSyncRequest().setTopicStates(topicStates);
+        getRequest().getNotificationSyncRequest().setTopicListHash(ByteBuffer.wrap(profileHash));
+        getRequest().getNotificationSyncRequest().setAppStateSeqNumber(appStateSeqNumber);
     }
-    
+
     /**
      * generate subscription command list
      */
@@ -159,7 +161,7 @@ public class HttpTestSyncClient extends HttpTestClient<SyncRequest, SyncResponse
     public int getAppStateSeqNumber() {
         return appStateSeqNumber;
     }
-    
+
 
     @Override
     protected Class<SyncRequest> getRequestConverterClass() {
@@ -168,6 +170,6 @@ public class HttpTestSyncClient extends HttpTestClient<SyncRequest, SyncResponse
 
     @Override
     protected Class<SyncResponse> getResponseConverterClass() {
-        return SyncResponse.class; 
+        return SyncResponse.class;
     }
 }

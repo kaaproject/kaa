@@ -36,15 +36,15 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DefaultFilterService implements FilterService {
-    
+
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
             .getLogger(DefaultFilterService.class);
-    
+
     /** The cache service. */
     @Autowired
     private CacheService cacheService;
-    
+
     /**
      * Instantiates a new default filter service.
      */

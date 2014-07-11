@@ -73,6 +73,10 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
     public static HttpServletRequest getRequest() {
         return perThreadRequest.get();
     }
+    
+    public static void setRequest(HttpServletRequest request) {
+        perThreadRequest.set(request);
+    }
 
 	/**
 	 * Determine Spring bean to handle request based on request URL, e.g. a

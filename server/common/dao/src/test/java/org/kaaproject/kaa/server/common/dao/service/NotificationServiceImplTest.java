@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -40,20 +40,16 @@ import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
-import org.kaaproject.kaa.server.common.dao.NotificationService;
-import org.kaaproject.kaa.server.common.dao.TopicService;
+import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
@@ -61,12 +57,6 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class NotificationServiceImplTest extends AbstractTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationServiceImplTest.class);
-
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private TopicService topicService;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -80,19 +70,18 @@ public class NotificationServiceImplTest extends AbstractTest {
 
     @After
     public void afterTest() {
-        MongoDBTestRunner.getDB().dropDatabase();
+        clearDBData();
     }
 
     @Ignore
     @Test
-    @SuppressWarnings("unchecked")
     public void findNotificationsByIdWithExpiredTimeTest() {
-        String appId = apps.get(0);
+        String appId = generateApplication().getId();
 
         NotificationSchemaDto schema = new NotificationSchemaDto();
         schema.setApplicationId(appId);
         String schemaBody = "{\"type\":\"record\",\"name\":\"BasicSystemNotification\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"notificationBody\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"systemNotificationParam1\",\"type\":\"int\"},{\"name\":\"systemNotificationParam2\",\"type\":\"int\"}]}";
-        schema.setSchema(schemaBody);
+        schema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schemaBody).getRawSchema());
         schema.setType(NotificationTypeDto.USER);
         NotificationSchemaDto savedSchema = notificationService.saveNotificationSchema(schema);
 
@@ -110,7 +99,7 @@ public class NotificationServiceImplTest extends AbstractTest {
         dto.setExpiredAt(new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10L)));
 
         UpdateNotificationDto<NotificationDto> up = notificationService.saveNotification(dto);
-        String nid = ((NotificationDto) up.getPayload()).getId();
+        String nid = up.getPayload().getId();
         Assert.assertNotNull(nid);
         try {
             TimeUnit.SECONDS.sleep(70L);
@@ -201,9 +190,9 @@ public class NotificationServiceImplTest extends AbstractTest {
 
     @Test
     public void testFindNotificationsByTopicIdAndVersionAndStartSecNum() {
-        NotificationDto dto = generateNotifications(null, null, 3, null).get(0);
+        NotificationDto dto = generateNotifications(null, null, 3, NotificationTypeDto.USER).get(0);
         String topicId = dto.getTopicId();
-        List<NotificationDto> notifications = notificationService.findNotificationsByTopicIdAndVersionAndStartSecNum(topicId, 0, 1, 2);
+        List<NotificationDto> notifications = notificationService.findNotificationsByTopicIdAndVersionAndStartSecNum(topicId, 0, 1, dto.getVersion());
         Assert.assertFalse(notifications.isEmpty());
         Assert.assertEquals(3, notifications.size());
     }

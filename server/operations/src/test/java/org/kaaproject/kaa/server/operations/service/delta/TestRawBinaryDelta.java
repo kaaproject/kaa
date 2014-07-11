@@ -19,12 +19,12 @@ package org.kaaproject.kaa.server.operations.service.delta;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.kaaproject.kaa.server.operations.service.delta.RawBinaryDelta;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
 
 public class TestRawBinaryDelta implements RawBinaryDelta {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6942802579307423075L;
 

@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.thrift.TException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -82,7 +83,7 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
         Assert.assertFalse(storedTopic.isEmpty());
         Assert.assertEquals(topic, storedTopic.get(0));
     }
-    
+
     /**
      * Test get topic by endpoint group id.
      *
@@ -100,7 +101,7 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
         Assert.assertFalse(storedTopic.isEmpty());
         Assert.assertEquals(topic, storedTopic.get(0));
     }
-    
+
     /**
      * Test get vacant topic by endpoint group id.
      *
@@ -110,6 +111,8 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
     @Test
     public void testGetVacantTopicByEndpointGroupId() throws TException, IOException {
         EndpointGroupDto group = createEndpointGroup();
+        TopicDto addedTopic = createTopic(group.getApplicationId(), TopicTypeDto.MANDATORY);
+        group = toDto(client.addTopicsToEndpointGroup(group.getId(), addedTopic.getId()));
         TopicDto topic = createTopic(group.getApplicationId(), TopicTypeDto.MANDATORY);
         LOGGER.debug("Created topic with id {}", topic.getId());
         List<TopicDto> storedTopic = toDtoList(client.getVacantTopicByEndpointGroupId(group.getId()));

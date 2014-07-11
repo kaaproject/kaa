@@ -26,14 +26,18 @@ public abstract class Base64Util {
     public static String encode(byte[] data){
         return Base64.encodeBase64String(data);
     }
-    
+
     public static String encode(EndpointProfileDto profile){
         if(profile != null && profile.getEndpointKeyHash() != null){
             return encode(profile.getEndpointKeyHash());
         }else{
             return UNKNOWN;
         }
-    }    
-    
-    
+    }
+
+    public static byte[] decode(String base64String) {
+        return Base64.decodeBase64(base64String);
+    }
+
+
 }

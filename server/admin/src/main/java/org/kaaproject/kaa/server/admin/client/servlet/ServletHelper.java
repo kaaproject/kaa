@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.client.servlet;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.kaaproject.kaa.server.admin.shared.dto.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkKey;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;

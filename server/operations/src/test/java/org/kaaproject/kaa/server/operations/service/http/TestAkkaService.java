@@ -22,9 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointRegistrationRequest;
-import org.kaaproject.kaa.common.endpoint.gen.LongSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileUpdateRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.server.common.http.server.BadRequestException;
@@ -51,25 +48,25 @@ public class TestAkkaService extends Thread implements AkkaService {
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory
             .getLogger(TestAkkaService.class);
-    
+
     /** Endpoint Service */
-    private OperationsService endpointService;
-    
+    private final OperationsService endpointService;
+
     /** Boolean operate */
     private boolean operate = true;
-    
+
     /** List of commands queue */
-    private List<NettyEncodedRequestMessage> commands;
-    
+    private final List<NettyEncodedRequestMessage> commands;
+
     /**
      * Constructor
-     * @param endpointService 
+     * @param endpointService
      */
     public TestAkkaService(OperationsService endpointService) {
         commands = new LinkedList<>();
         this.endpointService = endpointService;
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#getActorSystem()
      */
@@ -114,7 +111,7 @@ public class TestAkkaService extends Thread implements AkkaService {
                     }
                 }
             } catch (InterruptedException ie) {
-                
+
             }
             if (command != null) {
                 process(command);
@@ -122,7 +119,7 @@ public class TestAkkaService extends Thread implements AkkaService {
         }
         logger.info("Test Akka Service stoped: ");
     }
-    
+
     /**
      * Shutdown method, block until thread complete.
      */
@@ -138,7 +135,7 @@ public class TestAkkaService extends Thread implements AkkaService {
         }
         logger.info("Test Akka Service shutdowning..... Complete.");
     }
-    
+
     /**
      * Add command to queue
      * @param command NettyEncodedRequestMessage
@@ -149,78 +146,66 @@ public class TestAkkaService extends Thread implements AkkaService {
             commands.notify();
         }
     }
-    
+
     /**
-     * Process command 
+     * Process command
      * @param command NettyEncodedRequestMessage
      */
     private void process(NettyEncodedRequestMessage command) {
-    
+
         try {
             SpecificRecordBase request = command.getCommand().decode();
-            
+
             command.getCommand().process();
-            
+
 
             command.getCommand().encode(getResponse(request, command.getCommand()));
-        
+
             command.getChannelContext().writeAndFlush(command.getCommand());
-            
+
         } catch (BadRequestException | GeneralSecurityException | IOException | GetDeltaException e) {
             command.getChannelContext().fireExceptionCaught(e);
         }
-        
+
     }
-    
+
     /**
      * Generate response
      * @param request SpecificRecordBase
      * @param command AbstractEndpointCommand
-     * @return SpecificRecordBase 
+     * @return SpecificRecordBase
      * @throws BadRequestException
      * @throws GeneralSecurityException
      * @throws IOException
      * @throws GetDeltaException
      */
-    private SpecificRecordBase getResponse(SpecificRecordBase request, AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command) 
+    private SpecificRecordBase getResponse(SpecificRecordBase request, AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command)
             throws BadRequestException, GeneralSecurityException, IOException, GetDeltaException {
-        
+
         if (request == null || command == null) {
             throw new BadRequestException("Error processing");
         }
-        
+
         SpecificRecordBase response = null;
-        
-        if (request instanceof LongSyncRequest) {
-            OperationsHttpServerIT.LongSyncTestSetRequestReceived(((LongSyncRequest)request).getSyncRequest().getAppStateSeqNumber(), 
-                        (LongSyncRequest)request);
-            response = endpointService.sync(((LongSyncRequest) request).getSyncRequest()).getResponse();
-            
-            OperationsHttpServerIT.LongSyncTestSetResponseSent(((LongSyncRequest)request).getSyncRequest().getAppStateSeqNumber().intValue(), 
-                        (SyncResponse) response);
-            
-        } else if (request instanceof SyncRequest) {
-            OperationsHttpServerIT.SyncTestSetRequestReceived(((SyncRequest) request).getAppStateSeqNumber().intValue(), 
+
+        if (request instanceof SyncRequest) {
+            OperationsHttpServerIT.SyncTestSetRequestReceived(((SyncRequest) request).getConfigurationSyncRequest().getAppStateSeqNumber().intValue(),
                         (SyncRequest) request);
-            
+
             response = endpointService.sync((SyncRequest) request).getResponse();
-            
-            OperationsHttpServerIT.SyncTestSetResponseSent(((SyncRequest) request).getAppStateSeqNumber().intValue(), 
+
+            OperationsHttpServerIT.SyncTestSetResponseSent(((SyncRequest) request).getConfigurationSyncRequest().getAppStateSeqNumber().intValue(),
                         (SyncResponse) response);
-        } else if (request instanceof EndpointRegistrationRequest) {
-            response = endpointService.registerEndpoint((EndpointRegistrationRequest) request).getResponse();
-        } else if (request instanceof ProfileUpdateRequest) {
-            response = endpointService.updateProfile((ProfileUpdateRequest) request).getResponse();
         } else {
             throw new BadRequestException("invalid instance of request");
         }
-        
+
         return response;
     }
 
     @Override
     public void process(NettyCommandAwareMessage message) {
         // TODO Auto-generated method stub
-        
+
     }
 }

@@ -27,26 +27,28 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  * with
  * {@link org.kaaproject.kaa.server.operations.service.profile.ProfileService
  * ProfileService}
- * 
+ *
  * @author ashvayka
  */
 public class UpdateProfileRequest {
 
     /** The endpoint key hash. */
-    private EndpointObjectHash endpointKeyHash;
+    private final EndpointObjectHash endpointKeyHash;
 
     /** The profile. */
-    private byte[] profile;
+    private final byte[] profile;
 
     /** The app token. */
-    private String appToken;
+    private final String appToken;
 
     /** The version info. */
-    private EndpointVersionInfo versionInfo;
+    private final EndpointVersionInfo versionInfo;
+
+    private final String accessToken;
 
     /**
      * Instantiates a new update profile request.
-     * 
+     *
      * @param appToken
      *            the app token
      * @param endpointKeyHash
@@ -56,17 +58,18 @@ public class UpdateProfileRequest {
      * @param versionInfo
      *            the version info
      */
-    public UpdateProfileRequest(String appToken, EndpointObjectHash endpointKeyHash, byte[] profile, EndpointVersionInfo versionInfo) {
+    public UpdateProfileRequest(String appToken, EndpointObjectHash endpointKeyHash, String accessToken, byte[] profile, EndpointVersionInfo versionInfo) {
         super();
         this.appToken = appToken;
         this.endpointKeyHash = endpointKeyHash;
+        this.accessToken = accessToken;
         this.profile = Arrays.copyOf(profile, profile.length);
         this.versionInfo = versionInfo;
     }
 
     /**
      * Gets the endpoint key hash.
-     * 
+     *
      * @return the endpoint key hash
      */
     public EndpointObjectHash getEndpointKeyHash() {
@@ -75,7 +78,7 @@ public class UpdateProfileRequest {
 
     /**
      * Gets the profile.
-     * 
+     *
      * @return the profile
      */
     public byte[] getProfile() {
@@ -84,7 +87,7 @@ public class UpdateProfileRequest {
 
     /**
      * Gets the application token.
-     * 
+     *
      * @return the application token
      */
     public String getApplicationToken() {
@@ -92,8 +95,17 @@ public class UpdateProfileRequest {
     }
 
     /**
+     * Gets the access token.
+     *
+     * @return the access token
+     */
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    /**
      * Gets the version info.
-     * 
+     *
      * @return the version info
      */
     public EndpointVersionInfo getVersionInfo() {

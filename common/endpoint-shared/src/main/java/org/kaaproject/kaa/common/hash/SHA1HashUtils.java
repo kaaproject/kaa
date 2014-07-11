@@ -20,12 +20,17 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * The Class SHA1HashUtils.
  */
 public abstract class SHA1HashUtils {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
+
+    protected static final Logger LOG = LoggerFactory.getLogger(SHA1HashUtils.class);
 
     /** The Constant digest. */
     private static final ThreadLocal<MessageDigest> DIGEST = new ThreadLocal<MessageDigest>() {

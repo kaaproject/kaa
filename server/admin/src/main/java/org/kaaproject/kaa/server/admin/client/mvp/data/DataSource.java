@@ -30,11 +30,19 @@ import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
-import org.kaaproject.kaa.server.admin.shared.dto.SchemaVersions;
-import org.kaaproject.kaa.server.admin.shared.dto.SdkPlatform;
-import org.kaaproject.kaa.server.admin.shared.dto.TenantUserDto;
-import org.kaaproject.kaa.server.admin.shared.dto.UserDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -50,6 +58,8 @@ public class DataSource {
     private List<ApplicationDto> applications;
 
     private List<UserDto> users;
+
+    private List<EventClassFamilyDto> ecfs;
 
     public DataSource(KaaAdminServiceAsync rpcService, EventBus eventBus) {
         this.rpcService = rpcService;
@@ -208,12 +218,16 @@ public class DataSource {
             Integer profileSchemaVersion,
             Integer notificationSchemaVersion,
             SdkPlatform targetPlatform,
+            List<String> aefMapIds,
+            Integer logSchemaVersion,
             final AsyncCallback<String> callback) {
         rpcService.getSdk(applicationId,
                 configurationSchemaVersion,
                 profileSchemaVersion,
                 notificationSchemaVersion,
                 targetPlatform,
+                aefMapIds,
+                logSchemaVersion,
                 new DataCallback<String>(callback) {
                     @Override
                     protected void onResult(String result) {
@@ -269,6 +283,76 @@ public class DataSource {
         rpcService.getUser(userId, new DataCallback<UserDto>(callback) {
             @Override
             protected void onResult(UserDto result) {
+            }
+        });
+    }
+
+    public void loadEcfs(
+            final AsyncCallback<List<EventClassFamilyDto>> callback) {
+        loadEcfs(callback, false);
+    }
+
+    public void loadEcfs(
+            final AsyncCallback<List<EventClassFamilyDto>> callback, boolean refresh) {
+        if (ecfs == null || refresh) {
+            ecfs = new ArrayList<EventClassFamilyDto>();
+            rpcService.getEventClassFamilies(new DataCallback<List<EventClassFamilyDto>>(
+                    callback) {
+                @Override
+                protected void onResult(List<EventClassFamilyDto> result) {
+                    ecfs.addAll(result);
+                    eventBus.fireEvent(new DataEvent(EventClassFamilyDto.class, true));
+                }
+            });
+        } else {
+            if (callback != null) {
+                callback.onSuccess(ecfs);
+            }
+        }
+    }
+
+    private void refreshEcfs() {
+        loadEcfs(null, true);
+    }
+
+    public void editEcf(EventClassFamilyDto ecf,
+            final AsyncCallback<EventClassFamilyDto> callback) {
+        rpcService.editEventClassFamily(ecf,
+                new DataCallback<EventClassFamilyDto>(callback) {
+                    @Override
+                    protected void onResult(EventClassFamilyDto result) {
+                        refreshEcfs();
+                    }
+                });
+    }
+
+    public void getEcf(String ecfId,
+            final AsyncCallback<EventClassFamilyDto> callback) {
+        rpcService.getEventClassFamily(ecfId,
+                new DataCallback<EventClassFamilyDto>(callback) {
+                    @Override
+                    protected void onResult(EventClassFamilyDto result) {
+                    }
+                });
+    }
+
+    public void addEcfSchema(String ecfId, String fileItemName,
+            final AsyncCallback<Void> callback) {
+        rpcService.addEventClassFamilySchema(ecfId, fileItemName,
+                new DataCallback<Void>(callback) {
+                    @Override
+                    protected void onResult(Void result) {
+                        eventBus.fireEvent(new DataEvent(EventSchemaVersionDto.class));
+                    }
+                });
+    }
+
+    public void getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type,
+            final AsyncCallback<List<EventClassDto>> callback) {
+        rpcService.getEventClassesByFamilyIdVersionAndType(ecfId, version, type,
+                new DataCallback<List<EventClassDto>>(callback) {
+            @Override
+            protected void onResult(List<EventClassDto> result) {
             }
         });
     }
@@ -371,6 +455,90 @@ public class DataSource {
                     protected void onResult(NotificationSchemaDto result) {
                     }
                 });
+    }
+    
+    public void loadLogSchemas(String applicationId,
+            final AsyncCallback<List<LogSchemaDto>> callback) {
+        rpcService.getLogSchemasByApplicationId(applicationId,
+                new DataCallback<List<LogSchemaDto>>(callback) {
+                    @Override
+                    protected void onResult(List<LogSchemaDto> result) {
+                    }
+                });
+
+    }
+
+    public void editLogSchema(LogSchemaDto logSchema, String fileItemName,
+            final AsyncCallback<LogSchemaDto> callback) {
+        rpcService.editLogSchema(logSchema, fileItemName,
+                new DataCallback<LogSchemaDto>(callback) {
+                    @Override
+                    protected void onResult(LogSchemaDto result) {
+                        eventBus.fireEvent(new DataEvent(LogSchemaDto.class));
+                    }
+                });
+    }
+
+    public void getLogSchema(String logSchemaId,
+            final AsyncCallback<LogSchemaDto> callback) {
+        rpcService.getLogSchema(logSchemaId,
+                new DataCallback<LogSchemaDto>(callback) {
+                    @Override
+                    protected void onResult(LogSchemaDto result) {
+                    }
+                });
+    }
+
+    public void loadApplicationEventFamilyMaps(String applicationId,
+            final AsyncCallback<List<ApplicationEventFamilyMapDto>> callback) {
+        rpcService.getApplicationEventFamilyMapsByApplicationId(applicationId,
+                new DataCallback<List<ApplicationEventFamilyMapDto>>(callback) {
+                    @Override
+                    protected void onResult(List<ApplicationEventFamilyMapDto> result) {
+                    }
+                });
+
+    }
+
+    public void editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap,
+            final AsyncCallback<ApplicationEventFamilyMapDto> callback) {
+        rpcService.editApplicationEventFamilyMap(applicationEventFamilyMap,
+                new DataCallback<ApplicationEventFamilyMapDto>(callback) {
+                    @Override
+                    protected void onResult(ApplicationEventFamilyMapDto result) {
+                        eventBus.fireEvent(new DataEvent(ApplicationEventFamilyMapDto.class));
+                    }
+                });
+    }
+
+    public void getApplicationEventFamilyMap(String applicationEventFamilyMapId,
+            final AsyncCallback<ApplicationEventFamilyMapDto> callback) {
+        rpcService.getApplicationEventFamilyMap(applicationEventFamilyMapId,
+                new DataCallback<ApplicationEventFamilyMapDto>(callback) {
+                    @Override
+                    protected void onResult(ApplicationEventFamilyMapDto result) {
+                    }
+                });
+    }
+
+    public void getVacantEventClassFamilies(String applicationId,
+            final AsyncCallback<List<EcfInfoDto>> callback) {
+        rpcService.getVacantEventClassFamiliesByApplicationId(applicationId,
+                new DataCallback<List<EcfInfoDto>>(callback) {
+            @Override
+            protected void onResult(List<EcfInfoDto> result) {
+            }
+        });
+    }
+
+    public void getAefMaps(String applicationId,
+            final AsyncCallback<List<AefMapInfoDto>> callback) {
+        rpcService.getEventClassFamiliesByApplicationId(applicationId,
+                new DataCallback<List<AefMapInfoDto>>(callback) {
+            @Override
+            protected void onResult(List<AefMapInfoDto> result) {
+            }
+        });
     }
 
     public void loadEndpointGroups(String applicationId,

@@ -47,7 +47,7 @@ public class ControlThriftServiceAspect {
      */
     @Around("execution(* org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface.*(..))")
     public Object doControlSeviceMethod(ProceedingJoinPoint pjp)
-            throws Throwable {
+            throws Throwable { //NOSONAR
         Object retVal = null;
         try {
             retVal = pjp.proceed();

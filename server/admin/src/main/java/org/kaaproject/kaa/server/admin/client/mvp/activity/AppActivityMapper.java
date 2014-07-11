@@ -17,13 +17,20 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EcfPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
@@ -80,6 +87,16 @@ public class AppActivityMapper implements ActivityMapper {
                 return new UserActivity((UserPlace) place, clientFactory);
             }
 
+            else if (clazz == EcfsPlace.class) {
+                return new EcfsActivity((EcfsPlace) place, clientFactory);
+            }
+            else if (clazz ==  EcfPlace.class) {
+                return new EcfActivity((EcfPlace) place, clientFactory);
+            }
+            else if (clazz ==  EcfSchemaPlace.class) {
+                return new EcfSchemaActivity((EcfSchemaPlace) place, clientFactory);
+            }
+            
             else if (clazz == ProfileSchemasPlace.class) {
                 return new ProfileSchemasActivity((ProfileSchemasPlace) place, clientFactory);
             }
@@ -100,6 +117,14 @@ public class AppActivityMapper implements ActivityMapper {
             else if (clazz == NotificationSchemaPlace.class) {
                 return new NotificationSchemaActivity((NotificationSchemaPlace) place, clientFactory);
             }
+            
+            else if (clazz == LogSchemasPlace.class) {
+                return new LogSchemasActivity((LogSchemasPlace) place, clientFactory);
+            }
+            else if (clazz == LogSchemaPlace.class) {
+                return new LogSchemaActivity((LogSchemaPlace) place, clientFactory);
+            }
+
 
             else if (clazz == EndpointGroupsPlace.class) {
                 return new EndpointGroupsActivity((EndpointGroupsPlace) place, clientFactory);
@@ -120,6 +145,13 @@ public class AppActivityMapper implements ActivityMapper {
             }
             else if (clazz == TopicPlace.class) {
                 return new TopicActivity((TopicPlace) place, clientFactory);
+            }
+            
+            else if (clazz == AefMapsPlace.class) {
+                return new AefMapsActivity((AefMapsPlace) place, clientFactory);
+            }
+            else if (clazz ==  AefMapPlace.class) {
+                return new AefMapActivity((AefMapPlace) place, clientFactory);
             }
 
         }

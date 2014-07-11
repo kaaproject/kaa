@@ -101,6 +101,7 @@ public class SchemasPlace extends TreePlace {
             result.add(new ProfileSchemasPlace(applicationId));
             result.add(new ConfigurationSchemasPlace(applicationId));
             result.add(new NotificationSchemasPlace(applicationId));
+            result.add(new LogSchemasPlace(applicationId));
             callback.onSuccess(result, display);
         }
 

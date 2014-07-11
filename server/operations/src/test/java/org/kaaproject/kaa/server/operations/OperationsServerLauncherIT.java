@@ -27,7 +27,7 @@ import org.apache.thrift.transport.TTransport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.operations.OperationsServerApplication;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class OperationsServerLauncherIT {
 
     /**
      * Inits the.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -60,7 +60,7 @@ public class OperationsServerLauncherIT {
 
     /**
      * After.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -69,7 +69,7 @@ public class OperationsServerLauncherIT {
         MongoDBTestRunner.getDB().dropDatabase();
         MongoDBTestRunner.tearDown();
     }
-    
+
     /**
      * Test start operations server application.
      *
@@ -81,7 +81,7 @@ public class OperationsServerLauncherIT {
         Thread operationsServerLauncherThread = null;
         OperationsThriftService.Client client = null;
         try {
-            
+
             operationsServerLauncherThread = new Thread(new Runnable() {
                 @SuppressWarnings("static-access")
                 @Override
@@ -91,11 +91,11 @@ public class OperationsServerLauncherIT {
                     logger.info("Operations Server Stopped");
                 }
             });
-            
+
             operationsServerLauncherThread.start();
-            
+
             Thread.sleep(STARTUP_TIMEOUT);
-            
+
             transport = new TSocket(HOST, PORT);
             TProtocol protocol = new TBinaryProtocol(transport);
             client = new OperationsThriftService.Client(protocol);
@@ -118,8 +118,8 @@ public class OperationsServerLauncherIT {
                 }
             }
         }
-    }   
-    
+    }
+
     /**
      * Test start operations server application.
      *
@@ -134,7 +134,7 @@ public class OperationsServerLauncherIT {
         try {
             zkCluster = new TestingCluster(new InstanceSpec(null, 2185, -1, -1, true, -1, -1, -1));
             zkCluster.start();
-            
+
             operationsServerLauncherThread = new Thread(new Runnable() {
                 @SuppressWarnings("static-access")
                 @Override
@@ -144,11 +144,11 @@ public class OperationsServerLauncherIT {
                     logger.info("Operations Server Stopped");
                 }
             });
-            
+
             operationsServerLauncherThread.start();
-            
+
             Thread.sleep(STARTUP_TIMEOUT);
-            
+
             transport = new TSocket(HOST, PORT);
             TProtocol protocol = new TBinaryProtocol(transport);
             client = new OperationsThriftService.Client(protocol);
@@ -177,6 +177,6 @@ public class OperationsServerLauncherIT {
             }
             logger.info("ZKCluster Stop ended");
         }
-    }        
+    }
 
 }

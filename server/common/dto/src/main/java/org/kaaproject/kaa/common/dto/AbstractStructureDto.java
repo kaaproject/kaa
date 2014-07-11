@@ -21,7 +21,7 @@ import java.io.Serializable;
 public abstract class AbstractStructureDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -983834466038615147L;
-    
+
     protected String id;
     protected String applicationId;
     protected String schemaId;
@@ -42,10 +42,12 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
     protected UpdateStatus status;
     protected long endpointCount;
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -170,12 +172,12 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         this.deactivatedUsername = deactivatedUsername;
     }
 
-    public String getBody() {
-        return body;
-    }
-
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public UpdateStatus getStatus() {
@@ -185,7 +187,7 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
     public void setStatus(UpdateStatus status) {
         this.status = status;
     }
-    
+
     public long getEndpointCount() {
         return endpointCount;
     }

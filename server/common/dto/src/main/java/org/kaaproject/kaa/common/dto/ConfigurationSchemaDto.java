@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.common.dto;
 
-
 public class ConfigurationSchemaDto extends AbstractSchemaDto {
 
     private static final long serialVersionUID = 7053272285029134851L;
@@ -34,14 +33,6 @@ public class ConfigurationSchemaDto extends AbstractSchemaDto {
         this.protocolSchema = protocolSchema;
     }
 
-    public UpdateStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(UpdateStatus status) {
-        this.status = status;
-    }
-
     public String getBaseSchema() {
         return baseSchema;
     }
@@ -57,6 +48,57 @@ public class ConfigurationSchemaDto extends AbstractSchemaDto {
     public void setOverrideSchema(String overrideSchema) {
         this.overrideSchema = overrideSchema;
     }
+
+    public UpdateStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UpdateStatus status) {
+        this.status = status;
+    }
+
+//    private ProtocolSchema protocolSchema;
+//    private BaseSchema baseSchema;
+//    private OverrideSchema overrideSchema;
+
+
+//    public ProtocolSchema getProtocolSchema() {
+//        return protocolSchema;
+//    }
+//
+//    public void setProtocolSchema(String protocolSchema) {
+//        this.protocolSchema = new KaaSchemaFactoryImpl().createProtocolSchema(protocolSchema);
+//    }
+//
+//    public void setProtocolSchema(ProtocolSchema protocolSchema) {
+//        this.protocolSchema = protocolSchema;
+//    }
+
+
+
+//    public BaseSchema getBaseSchema() {
+//        return baseSchema;
+//    }
+//
+//    public void setBaseSchema(String baseSchema) {
+//        this.baseSchema = new KaaSchemaFactoryImpl().createBaseSchema(baseSchema);
+//    }
+//
+//    public void setBaseSchema(BaseSchema baseSchema) {
+//        this.baseSchema = baseSchema;
+//    }
+//
+//    public OverrideSchema getOverrideSchema() {
+//        return overrideSchema;
+//    }
+//
+//    public void setOverrideSchema(String overrideSchema) {
+//        this.overrideSchema = new KaaSchemaFactoryImpl().createOverrideSchema(overrideSchema);
+//    }
+//
+//    public void setOverrideSchema(OverrideSchema overrideSchema) {
+//        this.overrideSchema = overrideSchema;
+//    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,0 +1,80 @@
+{
+    "test_array_of_record": {
+        "array": [
+            {
+                "testField4": {
+                    "int": 2
+                },
+                "__uuid": {
+                    "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0010"
+                }
+            }
+        ]
+    },
+    "test_array": {
+        "array": [10, 11]
+    },
+    "test_array2": {
+        "org.kaaproject.configuration.unchangedT": "unchanged"
+    },
+    "nullableField1": {
+        "org.kaaproject.configuration.unchangedT": "unchanged"
+    },
+    "__uuid": {
+        "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0011"
+    },
+    "testField1": {
+        "org.kaaproject.configuration.unchangedT": "unchanged"
+    },
+    "testField2": {
+        "org.kaa.config.testRecordT": {
+            "testField3": {
+                "array": [
+                    {
+                        "testField4": {
+                            "int": 4
+                        },
+                        "__uuid": {
+                            "org.kaaproject.configuration.uuidT": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001"
+                        }
+                    }
+                ]
+            },
+            "__uuid": {
+                "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0011"
+            }
+        }
+    },
+    "testField5": {
+        "int": 124
+    },
+    "testField6": {
+        "org.kaa.config.testRecordT": {
+            "testField3": {
+                "array": [
+                    {
+                        "testField4": {
+                            "int": 5
+                        },
+                        "__uuid": {
+                            "org.kaaproject.configuration.uuidT": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001"
+                        }
+                    }
+                ]
+            },
+            "__uuid": {
+                "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0011"
+            }
+        }
+    },
+    "test_array_union": {
+        "array": [
+            {
+                "string": "a"
+            },
+            {
+                "string": "b"
+            }
+        ]
+    }
+}

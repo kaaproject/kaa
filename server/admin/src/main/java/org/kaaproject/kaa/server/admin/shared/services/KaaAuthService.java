@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.shared.services;
 
-import org.kaaproject.kaa.server.admin.shared.dto.AuthResultDto;
-import org.kaaproject.kaa.server.admin.shared.dto.ResultCode;
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
+import org.kaaproject.kaa.common.dto.admin.ResultCode;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

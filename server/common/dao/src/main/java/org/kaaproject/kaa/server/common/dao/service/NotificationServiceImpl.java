@@ -18,12 +18,12 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.idToString;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 
 import java.io.IOException;
@@ -41,29 +41,28 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
-import org.kaaproject.kaa.server.common.dao.EndpointNotificationDao;
-import org.kaaproject.kaa.server.common.dao.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.NotificationDao;
-import org.kaaproject.kaa.server.common.dao.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
-import org.kaaproject.kaa.server.common.dao.TopicDao;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointNotification;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Notification;
-import org.kaaproject.kaa.server.common.dao.mongo.model.NotificationSchema;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Topic;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointNotification;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.mongo.Notification;
+import org.kaaproject.kaa.server.common.dao.model.mongo.NotificationSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.mongodb.MongoException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class NotificationServiceImpl implements NotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationServiceImpl.class);
@@ -86,7 +85,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
 
-    private static final int TTL = 7 * 24 * 3600 * 1000; // 7 days
+    // 7 days
+    private static final int TTL = 7 * 24 * 3600 * 1000;
 
     @Override
     public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchemaDto) {
@@ -131,7 +131,7 @@ public class NotificationServiceImpl implements NotificationService {
             NotificationSchema schema = notificationSchemaDao.findById(schemaId);
             if (schema != null) {
                 dto.setVersion(schema.getMajorVersion());
-                dto.setApplicationId(idToString(schema.getApplicationId()));
+                dto.setApplicationId(schema.getApplicationId());
                 dto.setType(schema.getType());
             } else {
                 throw new DatabaseProcessingException("Can't find notification schema by id " + schemaId);
@@ -146,7 +146,7 @@ public class NotificationServiceImpl implements NotificationService {
             Date expiredAt = dto.getExpiredAt();
             dto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + TTL));
             dto.setLastTimeModify(new Date(currentTime));
-            NotificationDto notificationDto = saveNotification(dto, topicId);
+            NotificationDto notificationDto = saveNotificationAndIncTopicSecNum(dto);
             if (notificationDto != null) {
                 updateNotificationDto = new UpdateNotificationDto<NotificationDto>();
                 updateNotificationDto.setAppId(notificationDto.getApplicationId());
@@ -159,13 +159,15 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    public NotificationDto saveNotification(NotificationDto dto, String topicId) {
-        NotificationDto notificationDto;
-        try {
-            notificationDto = saveNotificationAndIncSeqNum(dto, topicId);
-        } catch (MongoException.DuplicateKey ex) {
-            LOG.debug("Catch duplicate key exception with id: [{}]", dto.getId());
-            notificationDto = saveNotification(dto, topicId);
+    public NotificationDto saveNotificationAndIncTopicSecNum(NotificationDto dto) {
+        NotificationDto notificationDto = null;
+        Topic topic = topicDao.getNextSeqNumber(dto.getTopicId());
+        if (topic != null) {
+            dto.setSecNum(topic.getSequenceNumber());
+            Notification savedDto = notificationDao.save(new Notification(dto));
+            notificationDto = savedDto != null ? savedDto.toDto() : null;
+        } else {
+            LOG.warn("Can't find topic by id.");
         }
         return notificationDto;
     }
@@ -240,7 +242,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<NotificationDto> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNum, int sysNfVersion, int userNfVersion) {
-        validateId(topicId, "Can't find notifications. Invalid topic id: " + topicId);
+        validateSqlId(topicId, "Can't find notifications. Invalid topic id: " + topicId);
         return convertDtoList(notificationDao.findNotificationsByTopicIdAndVersionAndStartSecNum(topicId, seqNum, sysNfVersion, userNfVersion));
     }
 
@@ -294,7 +296,7 @@ public class NotificationServiceImpl implements NotificationService {
             NotificationSchema schema = notificationSchemaDao.findById(schemaId);
             if (schema != null) {
                 notificationDto.setVersion(schema.getMajorVersion());
-                notificationDto.setApplicationId(idToString(schema.getApplicationId()));
+                notificationDto.setApplicationId(schema.getApplicationId());
                 notificationDto.setType(schema.getType());
                 try {
                     notificationDto.setBody(serializeNotificationBody(notificationDto, schema));
@@ -338,36 +340,6 @@ public class NotificationServiceImpl implements NotificationService {
     public void removeUnicastNotificationById(String id) {
         validateId(id, "Can't remove unicast notification. Invalid id " + id);
         unicastNotificationDao.removeById(id);
-    }
-
-    private NotificationDto saveNotificationAndIncSeqNum(NotificationDto dto, String topicId) {
-        int seqNum = getNextSequenceNumber(topicId);
-        dto.setId(topicId + "_" + seqNum);
-        dto.setSecNum(seqNum);
-        Notification savedDto = notificationDao.save(new Notification(dto));
-        if (savedDto != null) {
-            topicDao.updateSeqNumber(topicId);
-        } else {
-            LOG.debug("Can't save notification with id [{}] .", dto.getId());
-        }
-        return getDto(savedDto);
-    }
-
-    private int getNextSequenceNumber(String topicId) {
-        long maxLatency = waitSeconds * 1000;
-        Topic topic = null;
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime;
-        while (topic == null) {
-            if ((endTime - startTime) < maxLatency) {
-                topic = topicDao.getNextSeqNumber(topicId);
-            } else {
-                topic = topicDao.forceNextSeqNumber(topicId);
-                break;
-            }
-            endTime = System.currentTimeMillis();
-        }
-        return topic != null ? topic.getUpdate().getSequenceNumber() : 0;
     }
 
     private void validateNotificationSchemaObject(NotificationSchemaDto dto) {

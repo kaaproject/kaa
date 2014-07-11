@@ -51,13 +51,14 @@ import org.kaaproject.kaa.server.common.http.server.NettyHttpServer;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.http.OperationsServerConfig;
+import org.kaaproject.kaa.server.operations.service.config.NettyHttpServiceChannelConfig;
+import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 
 
 /**
  * The Class AbstractOperationsCommand.
- * 
+ *
  * @param <T>
  *            the generic type
  * @param <R>
@@ -107,27 +108,34 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
 
     /** The request. */
     protected T request;
-    
+
     /** The response. */
     protected R response;
 
     /**
      * Gets the request converter class.
-     * 
+     *
      * @return the request converter class
      */
     protected abstract Class<T> getRequestConverterClass();
 
     /**
      * Gets the response converter class.
-     * 
+     *
      * @return the response converter class
      */
     protected abstract Class<R> getResponseConverterClass();
 
     /**
+     * Gets the type of channel that issued this command.
+     *
+     * @return the response converter class
+     */
+    public abstract ChannelType getChannelType();
+
+    /**
      * Gets the public key.
-     * 
+     *
      * @param request
      *            the request
      * @return the public key
@@ -139,7 +147,7 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
 
     /**
      * Process parsed request.
-     * 
+     *
      * @param epRequest
      *            the ep request
      * @return the r
@@ -162,7 +170,7 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.http.server.CommandProcessor#setServer
      * (org.kaaproject.kaa.server.common.http.server.NettyHttpServer)
@@ -170,7 +178,7 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
     @Override
     public void setServer(NettyHttpServer server) {
         super.setServer(server);
-        conf = (OperationsServerConfig) getServer().getConf();
+        conf = ((NettyHttpServiceChannelConfig) getServer().getConf()).getOperationServerConfig();
         operationsService = conf.getOperationsBootstrapService()
                 .getOperationsService();
         cacheService = conf.getOperationsBootstrapService().getCacheService();
@@ -186,7 +194,7 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.http.server.CommandProcessor#parse()
      */
@@ -210,7 +218,7 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
                         Attribute attribute = (Attribute) data;
                         if (data.getName().equals(
                                 CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME)) {
-                            signature = crcrlfFix(attribute.get());
+                            signature = attribute.get();
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Multipart name " + data.getName()
                                         + " type "
@@ -223,7 +231,7 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
 
                         } else if (data.getName().equals(
                                 CommonEPConstans.REQUEST_KEY_ATTR_NAME)) {
-                            requestkey = crcrlfFix(attribute.get());
+                            requestkey = attribute.get();
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Multipart name " + data.getName()
                                         + " type "
@@ -235,7 +243,7 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
                             }
                         } else if (data.getName().equals(
                                 CommonEPConstans.REQUEST_DATA_ATTR_NAME)) {
-                            requestData = crcrlfFix(attribute.get());
+                            requestData = attribute.get();
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Multipart name " + data.getName()
                                         + " type "
@@ -263,10 +271,10 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
             return data;
         }
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.http.server.CommandProcessor#Process ()
      */
@@ -309,8 +317,8 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
         request = requestConverter.fromByteArray(data);
         PublicKey endpointKey = getPublicKey(request);
         if(endpointKey == null){
-            LOG.trace("Endpoint Key is null!");            
-            throw new BadRequestException("Endpoint key is null!");         
+            LOG.trace("Endpoint Key is null!");
+            throw new BadRequestException("Endpoint key is null!");
         }
         crypt.setRemotePublicKey(endpointKey);
         LOG.trace("CommandName: " + COMMAND_NAME
@@ -348,7 +356,7 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#
      * getHttpResponse()
      */
@@ -367,6 +375,8 @@ public abstract class AbstractOperationsCommand<T extends SpecificRecordBase, R 
                 signatureResponse);
         httpResponse.headers().set(CONTENT_LENGTH,
                 httpResponse.content().readableBytes());
+        httpResponse.headers().set(CommonEPConstans.RESPONSE_TYPE,
+                CommonEPConstans.RESPONSE_TYPE_OPERATION);
         if (isNeedConnectionClose()) {
             httpResponse.headers().set(CONNECTION, HttpHeaders.Values.CLOSE);
         } else {

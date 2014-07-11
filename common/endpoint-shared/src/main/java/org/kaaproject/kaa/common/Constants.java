@@ -19,20 +19,20 @@ package org.kaaproject.kaa.common;
 /**
  * Common Kaa project Constants.
  */
-public interface Constants {
+public interface Constants { //NOSONAR
     /**
      * Used URI delimiter.
      */
-    public static final String URI_DELIM = "/";
+    public static final String URI_DELIM = "/"; //NOSONAR
 
     /**
      * HTTP response content-type.
      */
-    public static final String RESPONSE_CONTENT_TYPE = "\"application/x-kaa\"";
+    public static final String RESPONSE_CONTENT_TYPE = "\"application/x-kaa\""; //NOSONAR
 
     /**
      * HTTP response custom header for set RSA Signature encoded in base64
      */
-    public static final String SIGNATURE_HEADER_NAME = "X-SIGNATURE";
+    public static final String SIGNATURE_HEADER_NAME = "X-SIGNATURE"; //NOSONAR
 
 }

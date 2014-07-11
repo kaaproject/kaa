@@ -25,6 +25,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.curator.RetryPolicy;
@@ -34,9 +36,16 @@ import org.apache.curator.test.Timing;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.control.ControlNodeListener;
+import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
+import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 
 public class ControlNodeIT {
@@ -142,16 +151,21 @@ public class ControlNodeIT {
     private OperationsNodeInfo buildOperationsNodeInfo() {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
-        nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000, ENDPOINT_NODE_HOST, 1001, testKeyData));
-        nodeInfo.setDeltaCalculationCount(1);
-        nodeInfo.setProcessedRequestCount(2);
-        nodeInfo.setRegisteredUsersCount(3);
+        nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000, testKeyData));
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
+        List<SupportedChannel> supportedChannels = new ArrayList<>();
+        ZkHttpComunicationParameters httpCommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(ENDPOINT_NODE_HOST, 1000));
+        BaseStatistics statistics = new BaseStatistics(2, 3, 1, System.currentTimeMillis());
+        ZkHttpStatistics httpChannelStatistics = new ZkHttpStatistics(statistics );
+        SupportedChannel channelHttp = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.HTTP, true, httpCommunicationParameters, httpChannelStatistics));
+        supportedChannels.add(channelHttp);
+        nodeInfo.setSupportedChannelsArray(supportedChannels );
         return nodeInfo;
     }
 
     private ControlNodeInfo buildSecondaryNodeInfo() {
         ControlNodeInfo secondaryNodeInfo = new ControlNodeInfo();
-        secondaryNodeInfo.setConnectionInfo(new ConnectionInfo(SECONDARY_NODE_HOST, 1000, SECONDARY_NODE_HOST, 1001, null));
+        secondaryNodeInfo.setConnectionInfo(new ConnectionInfo(SECONDARY_NODE_HOST, 1000, null));
         secondaryNodeInfo.setBootstrapServerCount(1);
         secondaryNodeInfo.setOperationsServerCount(2);
         return secondaryNodeInfo;
@@ -159,7 +173,7 @@ public class ControlNodeIT {
 
     private ControlNodeInfo buildControlNodeInfo() {
         ControlNodeInfo controlNodeInfo = new ControlNodeInfo();
-        controlNodeInfo.setConnectionInfo(new ConnectionInfo(CONTROL_NODE_HOST, 1000, CONTROL_NODE_HOST, 1001, null));
+        controlNodeInfo.setConnectionInfo(new ConnectionInfo(CONTROL_NODE_HOST, 1000, null));
         controlNodeInfo.setBootstrapServerCount(3);
         controlNodeInfo.setOperationsServerCount(4);
         return controlNodeInfo;

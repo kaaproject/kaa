@@ -1,0 +1,75 @@
+{
+  "items": {
+    "name": "deltaT",
+    "type": "record",
+    "fields": [
+      {
+        "name": "delta",
+        "type": [
+          {
+            "name": "testT",
+            "type": "record",
+            "addressable": true,
+            "fields": [
+              {
+                "name": "__uuid",
+                "type": {
+                  "name": "uuidT",
+                  "type": "fixed",
+                  "size": 16,
+                  "namespace": "org.kaaproject.configuration"
+                }
+              },
+              {
+                "name": "testField1",
+                "type": [
+                  {
+                    "type": "array",
+                    "items": [{
+                      "type": "record",
+                      "name": "testRecordItemT",
+                      "namespace": "org.kaa.config",
+                      "fields": [
+                        {
+                          "name": "testField2",
+                          "type": [
+                            "int",
+                            {
+                              "symbols": [
+                                "unchanged"
+                              ],
+                              "name": "unchangedT",
+                              "type": "enum",
+                              "namespace": "org.kaaproject.configuration"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "__uuid",
+                          "type": "org.kaaproject.configuration.uuidT"
+                        }
+                      ]
+                    }, "org.kaaproject.configuration.uuidT"]
+                  },
+                  "org.kaaproject.configuration.unchangedT",
+                  {
+                    "symbols": [
+                      "reset"
+                    ],
+                    "name": "resetT",
+                    "type": "enum",
+                    "namespace": "org.kaaproject.configuration"
+                  }
+                ]
+              }
+            ],
+            "namespace": "org.kaa.config"
+          },
+          "org.kaa.config.testRecordItemT"
+        ]
+      }
+    ],
+    "namespace": "org.kaaproject.configuration"
+  },
+  "type": "array"
+}

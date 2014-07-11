@@ -51,7 +51,7 @@ public class CommandFactory {
             IllegalArgumentException, InvocationTargetException {
         if (!commands.containsKey(className)) {
             Class<?> c = null;
-            Class<?> noparams[] = {};
+            Class<?>[] noparams = {};
             Object[] args = {};
 
             c = Class.forName(className);
@@ -72,13 +72,13 @@ public class CommandFactory {
      * @throws Exception - throws if URI is incorrect or request command not found
      */
     public static CommandProcessor getCommandProcessor(String uri)
-            throws Exception {
+            throws Exception { //NOSONAR
         if (uri == null || uri.length() <= 0) {
-            throw new Exception("URI parameter incorrect");
+            throw new Exception("URI parameter incorrect"); //NOSONAR
         }
         String[] params = uri.split("/");
         if (params.length < 3) {
-            throw new Exception("URI parameter " + uri + " incorrect");
+            throw new Exception("URI parameter " + uri + " incorrect"); //NOSONAR
         }
         // String domain = params[1];
         String command = params[2];
@@ -90,7 +90,7 @@ public class CommandFactory {
             return cp;
         }
         LOG.warn("Requested command not found: {}", command);
-        throw new Exception("Requested command not found");
+        throw new Exception("Requested command not found"); //NOSONAR
     }
 
     /**

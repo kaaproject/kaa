@@ -13,13 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.4.0-RC1</version>
+		<version>0.5.0</version>
 		<artifactId>server</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.server</groupId>
@@ -30,6 +29,11 @@
 	<url>http://kaaproject.org</url>
 
 	<repositories>
+	    <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/repo</url>
+        </repository>
 		<repository>
 			<id>twttr.com</id>
 			<url>http://maven.twttr.com</url>
@@ -96,6 +100,10 @@
 	        <artifactId>spring-context-support</artifactId>
 	    </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>	    
+        <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
@@ -131,6 +139,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.12</version>
+        </dependency>
+		<dependency>
 			<groupId>com.twitter.common</groupId>
 			<artifactId>thrift</artifactId>
 			<version>0.0.64</version>
@@ -156,6 +169,18 @@
 			<artifactId>dto</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.common</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.version}</version>
+        </dependency>		
+        <dependency>
+            <groupId>org.versly</groupId>
+            <artifactId>versly-wsdoc</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -175,6 +200,52 @@
 	      </resource>
 	    </resources>
 		<plugins>
+	        <!-- REST documentation parse -->
+	        <plugin>
+	            <groupId>org.bsc.maven</groupId>
+	            <artifactId>maven-processor-plugin</artifactId>
+                <!-- <version>1.3.6</version> -->
+                <version>2.2.1</version>
+	
+	            <configuration>
+	                <outputDiagnostics>true</outputDiagnostics>
+	                <processors>
+	                    <processor>org.versly.rest.wsdoc.AnnotationProcessor</processor>            
+	                </processors>
+	                <sourceDirectory>src/main/java</sourceDirectory>
+	            </configuration>
+	
+	            <executions>
+	                <execution>
+	                    <phase>compile</phase>
+	                    <goals>
+	                        <goal>process</goal>
+	                    </goals>
+	                </execution>
+	            </executions>	
+	        </plugin>		    
+	        <!-- REST HTML documentation generation. -->
+	        <plugin>
+	            <groupId>org.codehaus.mojo</groupId>
+	            <artifactId>exec-maven-plugin</artifactId>
+	            <version>1.2</version>
+	            <executions>
+	                <execution>
+	                    <phase>prepare-package</phase>
+	                    <goals>
+	                        <goal>java</goal>
+	                    </goals>
+	                    <configuration>
+                            <mainClass>org.versly.rest.wsdoc.RestDocAssembler</mainClass>
+                                <arguments>
+                                    <argument>${project.build.directory}/classes</argument>
+                                    <argument>--out</argument>
+                                    <argument>${project.build.directory}/admin-rest-api.html</argument>
+                                </arguments>
+                        </configuration>	                    
+	                </execution>
+	            </executions>
+	        </plugin>	        
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>2.5</version>
@@ -323,6 +394,39 @@
                 </executions>
             </plugin>			
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.bsc.maven</groupId>
+										<artifactId>
+											maven-processor-plugin
+										</artifactId>
+										<versionRange>
+											[1.3.6,)
+										</versionRange>
+										<goals>
+											<goal>process</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<profiles>
 		<profile>

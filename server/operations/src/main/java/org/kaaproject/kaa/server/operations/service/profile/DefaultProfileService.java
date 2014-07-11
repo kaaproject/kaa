@@ -23,13 +23,17 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
+import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
-import org.kaaproject.kaa.server.operations.service.filter.FilterService;
+import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * The Class DefaultProfileService is a default implementation of
  * {@link ProfileService ProfileService}.
- * 
+ *
  * @author ashvayka
  */
 public class DefaultProfileService implements ProfileService {
@@ -58,9 +62,14 @@ public class DefaultProfileService implements ProfileService {
     @Autowired
     private org.kaaproject.kaa.server.common.dao.ProfileService profileService;
 
+    /** The endpoint service. */
+    @Autowired
+    private CacheService cacheService;
+
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.profile.ProfileService#getProfile
      * (org.kaaproject.kaa.common.hash.EndpointObjectHash)
@@ -78,7 +87,7 @@ public class DefaultProfileService implements ProfileService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
      * registerProfile
      * (org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest)
@@ -99,10 +108,13 @@ public class DefaultProfileService implements ProfileService {
         dto.setEndpointKeyHash(EndpointObjectHash.fromSHA1(request.getEndpointKey()).getData());
         dto.setProfile(profileJson);
         dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
-        dto.setProfileVersion(request.getVersionInfo().getProfileVersion());
-        dto.setConfigurationVersion(request.getVersionInfo().getConfigVersion());
-        dto.setSystemNfVersion(request.getVersionInfo().getSystemNfVersion());
-        dto.setUserNfVersion(request.getVersionInfo().getUserNfVersion());
+
+        populateVersionStates(applicationDto.getTenantId(), dto, request.getVersionInfo());
+
+        if(request.getAccessToken() != null){
+            dto.setAccessToken(request.getAccessToken());
+        }
+
         dto.setSequenceNumber(0);
         dto.setChangedFlag(Boolean.FALSE);
 
@@ -111,7 +123,7 @@ public class DefaultProfileService implements ProfileService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
      * updateProfile
      * (org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest)
@@ -124,13 +136,15 @@ public class DefaultProfileService implements ProfileService {
 
         String profileJson = decodeProfile(request.getProfile(), dto.getApplicationId(), request.getVersionInfo().getProfileVersion());
 
+        if(request.getAccessToken() != null){
+            dto.setAccessToken(request.getAccessToken());
+        }
         dto.setProfile(profileJson);
         dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
-        dto.setProfileVersion(request.getVersionInfo().getProfileVersion());
-        dto.setConfigurationVersion(request.getVersionInfo().getConfigVersion());
-        dto.setSystemNfVersion(request.getVersionInfo().getSystemNfVersion());
-        dto.setUserNfVersion(request.getVersionInfo().getUserNfVersion());
 
+        ApplicationDto applicationDto = applicationService.findAppById(dto.getApplicationId());
+
+        populateVersionStates(applicationDto.getTenantId(), dto, request.getVersionInfo());
 
         List<EndpointGroupStateDto> egsList = new ArrayList<>();
         dto.setEndpointGroups(egsList);
@@ -138,9 +152,32 @@ public class DefaultProfileService implements ProfileService {
         return endpointService.saveEndpointProfile(dto);
     }
 
+    protected void populateVersionStates(String tenantId, EndpointProfileDto dto, EndpointVersionInfo evInfo) {
+        dto.setProfileVersion(evInfo.getProfileVersion());
+        dto.setConfigurationVersion(evInfo.getConfigVersion());
+        dto.setSystemNfVersion(evInfo.getSystemNfVersion());
+        dto.setUserNfVersion(evInfo.getUserNfVersion());
+        dto.setLogSchemaVersion(evInfo.getLogSchemaVersion());
+        if(evInfo.getEventFamilyVersions() != null){
+            List<EventClassFamilyVersionStateDto> ecfVersionStates = new ArrayList<>(evInfo.getEventFamilyVersions().size());
+            for(EventClassFamilyVersionInfo ecfVersionInfo : evInfo.getEventFamilyVersions()){
+                EventClassFamilyVersionStateDto ecfVersionDto = new EventClassFamilyVersionStateDto();
+                String ecfId = cacheService.getEventClassFamilyIdByName(new EventClassFamilyIdKey(tenantId, ecfVersionInfo.getName()));
+                if(ecfId != null){
+                    ecfVersionDto.setEcfId(ecfId);
+                    ecfVersionDto.setVersion(ecfVersionInfo.getVersion());
+                    ecfVersionStates.add(ecfVersionDto);
+                }else{
+                    LOG.warn("Failed to add ecf version state for ecf name {} and version {}", ecfVersionInfo.getName(), ecfVersionInfo.getVersion());
+                }
+            }
+            dto.setEcfVersionStates(ecfVersionStates);
+        }
+    }
+
     /**
      * Decode profile.
-     * 
+     *
      * @param profileRaw
      *            the profile raw
      * @param appId

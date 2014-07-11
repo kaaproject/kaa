@@ -64,6 +64,16 @@ public class PlaceParams {
         return isEmptyVal(val) ? false : Boolean.valueOf(val);
     }
 
+    public static int getIntParam(String key) {
+        String val = paramsMap.get(key);
+        try {
+            return isEmptyVal(val) ? 0 : Integer.valueOf(val);
+        }
+        catch (NumberFormatException nfe) {
+            return 0;
+        }
+    }
+    
     public static double getDoubleParam(String key) {
         String val = paramsMap.get(key);
         try {
@@ -88,6 +98,10 @@ public class PlaceParams {
 
     public static void putDoubleParam(String key, double val) {
         paramsMap.put(key, Double.toString(val));
+    }
+
+    public static void putIntParam(String key, int val) {
+        paramsMap.put(key, Integer.toString(val));
     }
 
 }

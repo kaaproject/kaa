@@ -25,20 +25,12 @@ public class AvroDataComparator implements Comparator<Object> {
     private Schema schema;
 
     public AvroDataComparator() {
-
-    }
-
-    public AvroDataComparator(Schema schema) {
-        this.schema = schema;
+        super();
     }
 
     @Override
     public int compare(Object o1, Object o2) {
         return GenericData.get().compare(o1, o2, schema);
-    }
-
-    public Schema getSchema() {
-        return schema;
     }
 
     public void setSchema(Schema schema) {

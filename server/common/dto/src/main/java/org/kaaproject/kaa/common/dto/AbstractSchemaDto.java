@@ -17,12 +17,14 @@
 package org.kaaproject.kaa.common.dto;
 
 
+
 public abstract class AbstractSchemaDto extends SchemaDto {
 
     private static final long serialVersionUID = 6821310997907855007L;
-    
+
     protected String applicationId;
     protected String schema;
+//    protected DataSchema schema;
     protected String name;
     protected String description;
     protected String createdUsername;
@@ -36,6 +38,14 @@ public abstract class AbstractSchemaDto extends SchemaDto {
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
+
+//    public DataSchema getSchema() {
+//        return schema;
+//    }
+//
+//    public void setSchema(DataSchema schema) {
+//        this.schema = schema;
+//    }
 
     public String getSchema() {
         return schema;
@@ -84,7 +94,7 @@ public abstract class AbstractSchemaDto extends SchemaDto {
     public void setEndpointCount(long endpointCount) {
         this.endpointCount = endpointCount;
     }
-    
+
     public void editFields(AbstractSchemaDto other) {
         this.name = other.name;
         this.description = other.description;

@@ -26,16 +26,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.thrift.TException;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
 import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
-import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftChannelType;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftIpParameters;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChannel;
 
 /**
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
@@ -82,16 +85,40 @@ public class BootstrapThriftServiceImplTest {
         BootstrapThriftServiceImpl b = new BootstrapThriftServiceImpl();
         assertNotNull(b);
         b.setConfig(confMock);
-        Map<String, OperationsServer> endpointMap = new HashMap<String, OperationsServer>();
-        OperationsServer s1 = new OperationsServer(10, ByteBuffer.wrap(new byte[] {1,2,3}));
-        endpointMap.put("host1:123", s1);
-        OperationsServer s2 = new OperationsServer(10, ByteBuffer.wrap(new byte[] {1,2,3}));
-        endpointMap.put("host2:123", s2);
-        OperationsServer s3 = new OperationsServer(10, ByteBuffer.wrap(new byte[] {1,2,3}));
-        endpointMap.put("host3:123", s3);
+        
+        ByteBuffer pk = ByteBuffer.wrap(new byte[] {1,2,3});
+        
+        List<ThriftSupportedChannel> scl1 = new ArrayList<>();
+        ThriftIpParameters ip1 = new ThriftIpParameters("host1",123);
+        ThriftCommunicationParameters com11 = new ThriftCommunicationParameters();
+        com11.setHttpParams(ip1);
+        ThriftSupportedChannel sc11 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com11);
+        scl1.add(sc11);
+        ThriftOperationsServer s1 = new ThriftOperationsServer("host1", 10, pk, scl1 );
+        
+        List<ThriftSupportedChannel> scl2 = new ArrayList<>();
+        ThriftIpParameters ip2 = new ThriftIpParameters("host2",123);
+        ThriftCommunicationParameters com12 = new ThriftCommunicationParameters();
+        com12.setHttpParams(ip2);
+        ThriftSupportedChannel sc12 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com12);
+        scl2.add(sc12);
+        ThriftOperationsServer s2 = new ThriftOperationsServer("host2", 10, pk, scl2 );
+        
+        List<ThriftSupportedChannel> scl3 = new ArrayList<>();
+        ThriftIpParameters ip3 = new ThriftIpParameters("host3",123);
+        ThriftCommunicationParameters com13 = new ThriftCommunicationParameters();
+        com13.setHttpParams(ip3);
+        ThriftSupportedChannel sc13 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com13);
+        scl3.add(sc13);
+        ThriftOperationsServer s3 = new ThriftOperationsServer("host3", 10, pk, scl3 );
+        
+        List<ThriftOperationsServer> operationsServersList = new ArrayList<>();
+        operationsServersList.add(s1);
+        operationsServersList.add(s2);
+        operationsServersList.add(s3);
         try {
-            b.onOperationsServerListUpdate(endpointMap);
-            verify(endpointListMock, times(1)).updateList(endpointMap);
+            b.onOperationsServerListUpdate(operationsServersList);
+            verify(endpointListMock, times(1)).updateList(operationsServersList);
         } catch (TException e) {
             fail(e.toString());
         }

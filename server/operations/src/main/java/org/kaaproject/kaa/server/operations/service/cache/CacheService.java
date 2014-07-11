@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.cache;
 
 import java.security.PublicKey;
 import java.util.List;
+import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
@@ -26,25 +27,30 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
+import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
+import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
 
 
 /**
  * The Interface CacheService is used to model cache service.
  * Service to efficiently cache some core items that are used during delta
  * calculation. Although many DBs provide efficient caching logic, we decided to
- * use or own layer because of following reasons: 
- * 1) Minimize network load between Endpoint and DB nodes 
- * 2) Minimize dependency on DB 
- * 3) Avoid unnecessary data serde 
+ * use or own layer because of following reasons:
+ * 1) Minimize network load between Endpoint and DB nodes
+ * 2) Minimize dependency on DB
+ * 3) Avoid unnecessary data serde
  * This service also works like a proxy and fetch data
  * from DB in case it is not found in cache.
- *  
+ *
  * @author ashvayka
  */
 public interface CacheService {
@@ -55,7 +61,7 @@ public interface CacheService {
      * @param applicationToken the application token
      * @return the app seq number
      */
-    int getAppSeqNumber(String applicationToken);
+    AppSeqNumber getAppSeqNumber(String applicationToken);
 
     /**
      * Gets the conf id by key.
@@ -105,7 +111,7 @@ public interface CacheService {
      * @return the conf schema by app
      */
     ConfigurationSchemaDto getConfSchemaByAppAndVersion(AppVersionKey key);
-    
+
     /**
      * Gets the profile schema by app.
      *
@@ -122,7 +128,7 @@ public interface CacheService {
      * @param worker the worker
      * @return the merged configuration
      */
-    byte[] getMergedConfiguration(List<EndpointGroupStateDto> egsList, Computable<List<EndpointGroupStateDto>, byte[]> worker);
+    BaseData getMergedConfiguration(List<EndpointGroupStateDto> egsList, Computable<List<EndpointGroupStateDto>, BaseData> worker);
 
     /**
      * Sets the merged configuration.
@@ -131,7 +137,7 @@ public interface CacheService {
      * @param mergedConfiguration the merged configuration
      * @return the string
      */
-    byte[] setMergedConfiguration(List<EndpointGroupStateDto> egsList, byte[] mergedConfiguration);
+    BaseData setMergedConfiguration(List<EndpointGroupStateDto> egsList, BaseData mergedConfiguration);
 
     /**
      * Gets the delta.
@@ -161,6 +167,39 @@ public interface CacheService {
     PublicKey getEndpointKey(EndpointObjectHash hash);
 
     /**
+     * Gets the EndpointClassFamily Id using tenant Id and name;
+     *
+     * @param key the event class family id key
+     * @return the EndpointClassFamily Id
+     */
+    String getEventClassFamilyIdByName(EventClassFamilyIdKey key);
+
+    /**
+     * Gets the Tenant Id by application token;
+     *
+     * @param appToken token of Application that belongs to Tenant
+     * @return the Tenant Id
+     */
+    String getTenantIdByAppToken(String appToken);
+
+    /**
+     * Gets the Event Class Family Id by Event Class FQN
+     *
+     * @param fqn of one of the events that belong to target Event Class Family
+     * @return the Event Class Family Id
+     */
+	String getEventClassFamilyIdByEventClassFqn(EventClassFqnKey fqn);
+
+    /**
+     * Gets all possible Event Class Family - Application keys that are interested in receiving
+     * events for this particular Event Class
+     *
+     * @param eventClassVersion Event Class Id and Version pair
+     * @return set of Event Class Family - Application keys
+     */
+	Set<RouteTableKey> getRouteKeys(EventClassFqnVersion eventClassVersion);
+
+    /**
      * Sets the endpoint key.
      *
      * @param hash the hash
@@ -181,14 +220,14 @@ public interface CacheService {
      * @param configurationService the new configuration service
      */
     void setConfigurationService(ConfigurationService configurationService);
-    
+
     /**
      * Setter for test purpose only.
      *
      * @param historyService the new history service
      */
     void setHistoryService(HistoryService historyService);
-    
+
     /**
      * Setter for test purpose only.
      *
@@ -217,7 +256,7 @@ public interface CacheService {
      * @param value the value
      * @return the int
      */
-    int putAppSeqNumber(String key, Integer value);
+    AppSeqNumber putAppSeqNumber(String key, AppSeqNumber value);
 
     /**
      * Put profile schema.
@@ -281,4 +320,8 @@ public interface CacheService {
      * @return the string
      */
     String putConfId(ConfigurationIdKey key, String value);
+
+    void setEventClassService(EventClassService eventClassService);
+
+    void setApplicationEventMapService(ApplicationEventMapService applicationEventMapService);
 }

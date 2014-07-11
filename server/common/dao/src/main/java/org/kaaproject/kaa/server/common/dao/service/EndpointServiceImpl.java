@@ -16,43 +16,54 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
-import org.kaaproject.kaa.server.common.dao.ConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
+import org.kaaproject.kaa.server.common.dao.EndpointUserVerifierResolver;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
-import org.kaaproject.kaa.server.common.dao.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Configuration;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointGroup;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.mongo.model.ProfileFilter;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointUser;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EndpointServiceImpl implements EndpointService {
@@ -71,42 +82,51 @@ public class EndpointServiceImpl implements EndpointService {
     @Autowired
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
     @Autowired
+    private EndpointUserDao<EndpointUser> endpointUserDao;
+    @Autowired
     private HistoryService historyService;
+    @Autowired
+    private EndpointUserVerifierResolver endpointUserVerifierResolver;
 
     @Override
+    @Transactional
     public List<EndpointGroupDto> findEndpointGroupsByAppId(String applicationId) {
-        validateId(applicationId, "Can't find endpoint groups by application id. Incorrect application id "
+        validateSqlId(applicationId, "Can't find endpoint groups by application id. Incorrect application id "
                 + applicationId);
         return convertDtoList(endpointGroupDao.findByApplicationId(applicationId));
     }
 
     @Override
+    @Transactional
     public EndpointGroupDto findEndpointGroupById(String id) {
-        validateId(id, "Can't find endpoint group by id. Incorrect id " + id);
+        validateSqlId(id, "Can't find endpoint group by id. Incorrect id " + id);
         return getDto(endpointGroupDao.findById(id));
     }
 
     @Override
+    @Transactional
     public void removeEndpointGroupByAppId(String applicationId) {
-        validateId(applicationId, "Can't remove endpoint groups by application id. Incorrect application id "
+        validateSqlId(applicationId, "Can't remove endpoint groups by application id. Incorrect application id "
                 + applicationId);
         List<EndpointGroup> groups = endpointGroupDao.findByApplicationId(applicationId);
         if (groups != null && !groups.isEmpty()) {
             for (EndpointGroup group : groups) {
-                removeEndpointGroup(group.getId(), true);
+                removeEndpointGroup(group.getId().toString(), true);
             }
         }
     }
 
     @Override
+    @Transactional
     public void removeEndpointGroupById(String id) {
-        validateId(id, "Can't remove endpoint group by id. Incorrect id " + id);
+        validateSqlId(id, "Can't remove endpoint group by id. Incorrect id " + id);
         removeEndpointGroup(id, false);
     }
 
     @Override
+    @Transactional
     public EndpointGroupDto saveEndpointGroup(EndpointGroupDto endpointGroupDto) {
-        validateObject(endpointGroupDto, "Can't save endpoint group object. Incorrect endpoint group object." + endpointGroupDto);
+        validateSqlObject(endpointGroupDto, "Can't save endpoint group object. Incorrect endpoint group object." + endpointGroupDto);
         EndpointGroupDto savedGroup = null;
         String appId = endpointGroupDto.getApplicationId();
         if (isValidId(appId)) {
@@ -143,8 +163,9 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public UpdateNotificationDto<EndpointGroupDto> removeTopicFromEndpointGroup(String id, String topicId) {
-        validateId(id, "Can't remove endpoint group topics " + topicId + ". Incorrect endpoint group id." + id);
+        validateSqlId(id, "Can't remove endpoint group topics " + topicId + ". Incorrect endpoint group id." + id);
         UpdateNotificationDto<EndpointGroupDto> dto = null;
         EndpointGroup endpointGroup = endpointGroupDao.removeTopicFromEndpointGroup(id, topicId);
         if (endpointGroup != null) {
@@ -156,7 +177,7 @@ public class EndpointServiceImpl implements EndpointService {
             }
             dto.setChangeType(ChangeType.REMOVE_TOPIC);
             dto.setTopicId(topicId);
-            dto.setGroupId(endpointGroup.getId());
+            dto.setGroupId(endpointGroup.getId().toString());
             dto.setPayload(endpointGroup.toDto());
         } else {
             LOG.debug("Can't remove topic [{}] from endpoint group [{}]", topicId, id);
@@ -165,8 +186,9 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public UpdateNotificationDto<EndpointGroupDto> addTopicToEndpointGroup(String id, String topicId) {
-        validateId(id, "Can't add topics " + topicId + " to endpoint group . Incorrect endpoint group id." + id);
+        validateSqlId(id, "Can't add topics " + topicId + " to endpoint group . Incorrect endpoint group id." + id);
         UpdateNotificationDto<EndpointGroupDto> dto = null;
         EndpointGroup endpointGroup = endpointGroupDao.addTopicToEndpointGroup(id, topicId);
         if (endpointGroup != null) {
@@ -178,7 +200,7 @@ public class EndpointServiceImpl implements EndpointService {
             }
             dto.setChangeType(ChangeType.ADD_TOPIC);
             dto.setTopicId(topicId);
-            dto.setGroupId(endpointGroup.getId());
+            dto.setGroupId(endpointGroup.getId().toString());
             dto.setPayload(endpointGroup.toDto());
         } else {
             LOG.debug("Can't add topic [{}] to endpoint group [{}]", topicId, id);
@@ -216,8 +238,8 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public void removeEndpointProfileByAppId(String appId) {
-        validateId(appId, "Can't remove endpoint profile by application id. Invalid application id " + appId);
-        endpointProfileDao.removeById(appId);
+        validateSqlId(appId, "Can't remove endpoint profile by application id. Invalid application id " + appId);
+        endpointProfileDao.removeByAppId(appId);
     }
 
     @Override
@@ -249,6 +271,136 @@ public class EndpointServiceImpl implements EndpointService {
         return dto;
     }
 
+    @Override
+    public boolean checkAccessToken(ApplicationDto appDto, String userExternalId, String userAccessToken) {
+        validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
+        validateString(userExternalId, "Incorrect userAccessToken " + userAccessToken);
+        String kaaEndpointUserVerifierName = appDto.getUserVerifierName();
+        EndpointUserVerifier verifier = endpointUserVerifierResolver.resolve(kaaEndpointUserVerifierName);
+        if(verifier == null){
+            LOG.error("Can't find endpoint user verifier: {}!", kaaEndpointUserVerifierName);
+            return false;
+        }else{
+            LOG.debug("executing checkAccessToken using verifier: {}", kaaEndpointUserVerifierName);
+            return verifier.checkAccessToken(appDto.getTenantId(), userExternalId, userAccessToken);
+        }
+    }
+
+    @Override
+    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile) {
+        validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
+        EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(userExternalId, tenantId);
+        if(endpointUser == null){
+            LOG.info("Creating new endpoint user with external id: [{}] in context of [{}] tenant", userExternalId, tenantId);
+            EndpointUserDto endpointUserDto = new EndpointUserDto();
+            endpointUserDto.setTenantId(tenantId);
+            endpointUserDto.setExternalId(userExternalId);
+            endpointUserDto.setUsername(userExternalId);
+            endpointUser = endpointUserDao.save(new EndpointUser(endpointUserDto));
+        }
+
+        List<String> endpointIds = endpointUser.getEndpointIds();
+        if(endpointIds == null){
+            endpointIds = new ArrayList<>();
+            endpointUser.setEndpointIds(endpointIds);
+        }
+        endpointIds.add(profile.getId());
+        endpointUserDao.save(endpointUser);
+        profile.setEndpointUserId(endpointUser.getId());
+        return saveEndpointProfile(profile);
+    }
+
+    @Override
+    public EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) {
+        validateString(endpointUserId, "Incorrect endpointUserId " + endpointUserId);
+        EndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
+        if(endpointUser != null){
+            EndpointProfile endpoint = endpointProfileDao.findByAccessToken(endpointAccessToken);
+            if(endpoint != null){
+                if(endpoint.getEndpointUserId() == null || endpointUserId.equals(endpoint.getEndpointUserId())){
+                    List<String> endpointIds = endpointUser.getEndpointIds();
+                    if(endpointIds == null){
+                        endpointIds = new ArrayList<>();
+                        endpointUser.setEndpointIds(endpointIds);
+                    }
+                    endpointIds.add(endpoint.getId());
+                    endpointUserDao.save(endpointUser);
+                    endpoint.setEndpointUserId(endpointUser.getId());
+                    endpoint = endpointProfileDao.save(endpoint);
+                    return getDto(endpoint);
+                }else{
+                    LOG.warn("Endpoint is already assigned to different user {}. Unassign it first!.", endpoint.getEndpointUserId());
+                    throw new DatabaseProcessingException("Endpoint is already assigned to different user.");
+                }
+            }else{
+                LOG.warn("Endpoint with accessToken {} is not present in db.", endpointAccessToken);
+                throw new DatabaseProcessingException("No endpoint found for specified accessToken.");
+            }
+        }else{
+            LOG.warn("Endpoint user with id {} is not present in db.", endpointUserId);
+            throw new DatabaseProcessingException("Endpoint user is not present in db.");
+        }
+    }
+
+    @Override
+    public void detachEndpointFromUser(EndpointProfileDto detachEndpoint){
+        String endpointUserId = detachEndpoint.getEndpointUserId();
+        validateString(endpointUserId, "Incorrect endpointUserId " + endpointUserId);
+        EndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
+        if(endpointUser != null){
+            List<String> endpointIds = endpointUser.getEndpointIds();
+            if(endpointIds != null){
+                endpointIds.remove(detachEndpoint.getId());
+            }
+            endpointUserDao.save(endpointUser);
+            detachEndpoint.setEndpointUserId(null);
+            saveEndpointProfile(detachEndpoint);
+        }else{
+            LOG.warn("Endpoint user with id {} is not present in db.", endpointUserId);
+            throw new DatabaseProcessingException("Endpoint user is not present in db.");
+        }
+    }
+
+    @Override
+    public List<EndpointUserDto> findAllEndpointUsers() {
+        return convertDtoList(endpointUserDao.find());
+    }
+
+    @Override
+    public EndpointUserDto findEndpointUserById(String id) {
+        EndpointUserDto endpointUserDto = null;
+        if (isValidId(id)) {
+            endpointUserDto = getDto(endpointUserDao.findById(id));
+        }
+        return endpointUserDto;
+    }
+
+    @Override
+    public EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto) {
+        EndpointUserDto endpointUser = null;
+        if (isValidObject(endpointUserDto)) {
+            EndpointUser user = endpointUserDao.findByExternalIdAndTenantId(endpointUserDto.getExternalId(), endpointUserDto.getTenantId());
+            if (user == null || user.getId().equals(endpointUserDto.getId())) {
+                endpointUser = getDto(endpointUserDao.save(new EndpointUser(endpointUserDto)));
+            } else {
+                throw new IncorrectParameterException("Can't save endpoint user with same external id");
+            }
+        }
+        return endpointUser;
+    }
+
+    @Override
+    public void removeEndpointUserById(String id) {
+        if (isValidId(id)) {
+            endpointUserDao.removeById(id);
+        }
+    }
+
+    @Override
+    public String generateEndpointUserAccessToken(String externalUid, String tenantId) {
+        return endpointUserDao.generateAccessToken(externalUid, tenantId);
+    }
+
     private HistoryDto addHistory(EndpointGroupDto dto, ChangeType type) {
         return addHistory(dto, type, null);
     }
@@ -276,13 +428,19 @@ public class EndpointServiceImpl implements EndpointService {
         if (endpointGroup != null) {
             if (endpointGroup.getWeight() != 0 || forceRemove) {
                 LOG.debug("Cascade delete endpoint group with profile filter and configurations.");
-                profileFilterDao.removeByEndpointGroupId(id);
-                configurationDao.removeByEndpointGroupId(id);
+//                profileFilterDao.removeByEndpointGroupId(id);
+//                configurationDao.removeByEndpointGroupId(id);
+//                TODO: need to add to history about deleted configurations and profile filters
                 endpointGroupDao.removeById(id);
                 addHistory(endpointGroup.toDto(), ChangeType.REMOVE_GROUP);
             } else {
                 LOG.warn("Can't remove default endpoint group by id [{}]", id);
             }
         }
+    }
+
+    @Override
+    public List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId) {
+        return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUserId));
     }
 }

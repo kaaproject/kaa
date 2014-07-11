@@ -128,7 +128,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
      * @throws Exception
      *             the exception
      */
-    public void start() throws Exception {
+    public void start() throws Exception { //NOSONAR
         LOG.info("Starting node tracker");
         client.start();
         client.getUnhandledErrorListenable().addListener(errorsListener);
@@ -299,6 +299,6 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
     }
     
     public static interface ZKClientAction{
-        void doWithZkClient(CuratorFramework client) throws Exception;
+        void doWithZkClient(CuratorFramework client) throws Exception; //NOSONAR
     }
 }

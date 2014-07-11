@@ -41,65 +41,65 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
- * NettyHttpServerIT Class to test Netty HTTP Server, 
+ * NettyHttpServerIT Class to test Netty HTTP Server,
  * using serious of http requests to check validity of transmission.
- * 
+ *
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  *
  */
 public class NettyHttpServerIT implements SessionTrackable, Track {
-    
+
     /** Port which used to bind to for Netty HTTP */
     public static final int bindPort = 9193;
-    
+
     /** Max HTTP request size which used in Netty framework */
     public static final int MAX_HTTP_REQUEST_SIZE = 65536;
-    
+
     /** Max header fields in test messages */
     public static final int MAX_HEADER_FIELD_SIZE = 2048;
-    
+
     /** Max response body size */
     public static final int MAX_RESPONSE_BODY = 40960;
-    
+
     /** Number of tests */
     public static final int NUMBER_OF_TESTS = 10;
-    
+
     /** Max test complete timeout */
     public static final int MAX_TIMEOUT_TEST_WAIT = NUMBER_OF_TESTS*25;
-    
+
     /** HTTP request header field, used to set Test ID */
     public static final String REQUEST_ID = "RequestID";
-    
+
     /** HTTP header field to transmit random String in headers */
     public static final String REQUEST_RANDOM = "RequestRandom";
-    
+
     /** HTTP POST filed to transmit request body */
     public static final String REQUEST_DATA = "RequestData";
-    
+
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory
             .getLogger(NettyHttpServerIT.class);
-    
+
     private static ExecutorService executor = null;
-    
+
     private NettyHttpServer netty;
-    
+
     private static Config config;
-        
+
     private static Map<String, HttpTest> testMessages;
-    
+
     private static Random rnd;
-    
+
     private static Object sync = new Object();
-    
+
     private static int testProcessed = 0;
-    
+
     private static int sessionsCreated = 0;
     private static int sessionsClosed = 0;
     private static long averageTime = 0;
-    
+
     private static Map<Integer, Long> requests = new ConcurrentHashMap<Integer, Long>();
-    
+
     /**
      * Used to test request/response
      * id - random field Integer
@@ -111,7 +111,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
      * responseReceivedBody - set on client side to future check, must be equal to responseBody
      */
     public class HttpTest {
-        
+
         public String id;
         public String requestIdRandom;
         public String responseIdRandom;
@@ -154,14 +154,14 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         private NettyHttpServerIT getOuterType() {
             return NettyHttpServerIT.this;
         }
-        
+
     }
-    
-    
-    
+
+
+
     /**
      * Inits the.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -180,10 +180,10 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         testMessages = new ConcurrentHashMap<String, NettyHttpServerIT.HttpTest>();
         rnd = new Random();
     }
-    
+
     /**
      * After.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -191,10 +191,10 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
     public static void after() throws Exception {
         executor.shutdown();
     }
-    
+
     /**
      * Before test.
-     * 
+     *
      * @throws Exception
      */
     @Before
@@ -209,7 +209,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         netty.start();
         assertNotNull(netty);
     }
-    
+
     /**
      * After test.
      *
@@ -224,7 +224,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
             fail(e.toString());
         }
     }
-    
+
     /**
      * Test, generate NUMBER_OF_TESTS http request with random fields and
      * check if it transmitted correctly.
@@ -259,7 +259,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         assertEquals(0, requests.size());
         //assertEquals(sessionsCreated, sessionsClosed); //Commented, in some cases not all session closing
     }
-    
+
     /**
      * Test on incorrect URL
      */
@@ -271,7 +271,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         String commandName = "test";
         try {
             final HttpTestClient client = new HttpTestClient(params, new HttpActivity() {
-                
+
                 @Override
                 public void httpRequestComplete(IOException ioe,
                         Map<String, List<String>> header, String body) {
@@ -286,7 +286,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
             fail(e.toString());
         }
     }
-    
+
     /**
      * Test on incorrect HTTP method
      */
@@ -311,7 +311,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
             }
         }
     }
-    
+
     /**
      * Generate and process HTTP test.
      * @return String test id
@@ -329,7 +329,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         testMessages.put(test.id, test);
         try {
             final HttpTestClient client = new HttpTestClient(params, new HttpActivity() {
-                
+
                 @Override
                 public void httpRequestComplete(IOException ioe, Map<String, List<String>> header, String body) {
                     assertNull(ioe);
@@ -354,19 +354,19 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
                             sync.notify();
                         }
                     }
-                    
+
                 }
             }, CommandTestProcessor.getCommandName());
-            
+
             executor.execute(client);
         } catch (IOException e) {
             fail(e.toString());
         }
         return test.id;
     }
-    
+
     /**
-     * Generate new test container, fill out id, requestBody, requestIdRandom, 
+     * Generate new test container, fill out id, requestBody, requestIdRandom,
      * @return HttpTest new test container
      */
     private HttpTest newtest() {
@@ -378,10 +378,10 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         test.requestIdRandom = getRandomString(bs);
         return test;
     }
-    
+
     /**
      * Generate String with random ascii symbols from 48 till 122 with length size.
-     * 
+     *
      * @param size of String
      * @return String with random ascii symbols
      */
@@ -393,7 +393,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         }
         return sb.toString();
     }
-    
+
     /**
      * Set HttpTest message fileds received on Netty side.
      * @param id test id
@@ -406,10 +406,10 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
             test.requestReceivedBody = receivedRequestBody;
             test.responseBody = responseBody;
 
-           
+
         }
     }
-    
+
     /**
      * Check if HttpTest pass, compare:
      *  requestIdRandom with responseIdRandom
@@ -430,7 +430,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
                         test.responseIdRandom+"]");
                 return ok;
             }
-            
+
             if(!checkDiff(test.requestBody, test.requestReceivedBody)) {
                 logger.error("Request Body Random filed not equals to each other: ("+
                         test.requestBody.length()+"): ["+
@@ -440,7 +440,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
                         test.requestReceivedBody+"]");
                 return ok;
             }
-            
+
             if(!checkDiff(test.responseBody, test.responseReceivedBody)) {
                 logger.error("Response Body Random filed not equals to each other: ("+
                         test.responseBody.length()+"): ["+
@@ -479,7 +479,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
         }
         return true;
     }
-    
+
     @Override
     public int newRequest(String requestName) {
         int id = rnd.nextInt();

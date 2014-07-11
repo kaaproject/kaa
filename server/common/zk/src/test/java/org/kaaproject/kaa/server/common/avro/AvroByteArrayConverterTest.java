@@ -31,7 +31,7 @@ public class AvroByteArrayConverterTest {
     public void convertTest() {
         ControlNodeInfo nodeInfo = new ControlNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[]{10,11,12,45,34,23,67,89,66,12});
-        nodeInfo.setConnectionInfo(new ConnectionInfo("kaahost1", 1001, "kaahost1", 1002, testKeyData));
+        nodeInfo.setConnectionInfo(new ConnectionInfo("kaahost1", 1001, testKeyData));
         nodeInfo.setBootstrapServerCount(101);
         nodeInfo.setOperationsServerCount(102);
 
@@ -48,10 +48,6 @@ public class AvroByteArrayConverterTest {
                     copy.getOperationsServerCount());
             Assert.assertEquals(nodeInfo.getConnectionInfo().getThriftHost()
                     .toString(), copy.getConnectionInfo().getThriftHost().toString());
-            Assert.assertEquals(nodeInfo.getConnectionInfo().getHttpHost()
-                    .toString(), copy.getConnectionInfo().getHttpHost().toString());
-            Assert.assertEquals(nodeInfo.getConnectionInfo().getHttpPort(), copy
-                    .getConnectionInfo().getHttpPort());
             Assert.assertEquals(nodeInfo.getConnectionInfo().getThriftPort(), copy
                     .getConnectionInfo().getThriftPort());
         } catch (IOException e) {

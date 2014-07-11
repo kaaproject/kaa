@@ -23,29 +23,21 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointRegistrationRequest;
-import org.kaaproject.kaa.common.endpoint.gen.LongSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileUpdateRequest;
 import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.server.common.http.server.BadRequestException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.RuleTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEncodedRequestMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEndpointLongSyncMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEndpointRegistrationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEndpointSyncMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEndpointUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.NettyDecodedResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import scala.concurrent.duration.Duration;
 import akka.actor.ActorRef;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
@@ -55,21 +47,20 @@ import akka.japi.Creator;
 public class EncDecActor extends UntypedActor {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(EncDecActor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EncDecActor.class);
 
     /** The eps actor. */
-    private ActorRef epsActor;
+    private final ActorRef epsActor;
 
     /** Current redirection rules */
-    private HashMap<Long, RedirectionRule> redirectionRules;
+    private final HashMap<Long, RedirectionRule> redirectionRules;
 
     /** random */
-    private Random random;
+    private final Random random;
 
     /**
      * Instantiates a new enc dec actor.
-     * 
+     *
      * @param epsActor
      *            the eps actor
      */
@@ -82,7 +73,7 @@ public class EncDecActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#preStart()
      */
     @Override
@@ -92,7 +83,7 @@ public class EncDecActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#postStop()
      */
     @Override
@@ -109,11 +100,11 @@ public class EncDecActor extends UntypedActor {
         private static final long serialVersionUID = 1L;
 
         /** The eps actor. */
-        private ActorRef epsActor;
+        private final ActorRef epsActor;
 
         /**
          * Instantiates a new actor creator.
-         * 
+         *
          * @param epsActor
          *            the eps actor
          */
@@ -124,7 +115,7 @@ public class EncDecActor extends UntypedActor {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see akka.japi.Creator#create()
          */
         @Override
@@ -135,20 +126,18 @@ public class EncDecActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
      */
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message);
         if (message instanceof NettyEncodedRequestMessage) {
-            RedirectionRule redirection = checkRedirection(redirectionRules,
-                    random.nextDouble());
+            RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
             if (redirection == null) {
                 decodeAndForward((NettyEncodedRequestMessage) message);
             } else {
-                encodeAndReply(redirection,
-                        (NettyEncodedRequestMessage) message);
+                encodeAndReply(redirection, (NettyEncodedRequestMessage) message);
             }
         } else if (message instanceof NettyDecodedResponseMessage) {
             encodeAndReply((NettyDecodedResponseMessage) message);
@@ -163,10 +152,8 @@ public class EncDecActor extends UntypedActor {
         context()
                 .system()
                 .scheduler()
-                .scheduleOnce(
-                        Duration.create(body.ruleTTL, TimeUnit.MILLISECONDS),
-                        self(), new RuleTimeoutMessage(body.getRuleId()),
-                        context().dispatcher(), self());
+                .scheduleOnce(Duration.create(body.ruleTTL, TimeUnit.MILLISECONDS), self(), new RuleTimeoutMessage(body.getRuleId()), context().dispatcher(),
+                        self());
         redirectionRules.put(body.getRuleId(), body);
     }
 
@@ -178,39 +165,19 @@ public class EncDecActor extends UntypedActor {
 
     /**
      * Decode and forward.
-     * 
+     *
      * @param msg
      *            the msg
      */
     private void decodeAndForward(NettyEncodedRequestMessage msg) {
         try {
             SpecificRecordBase record = msg.getCommand().decode();
-            NettyCommandAwareMessage message;
-            if (record instanceof EndpointRegistrationRequest) {
-                message = new NettyEndpointRegistrationMessage(
-                        (EndpointRegistrationRequest) record, msg);
-            } else if (record instanceof ProfileUpdateRequest) {
-                message = new NettyEndpointUpdateMessage(
-                        (ProfileUpdateRequest) record, msg);
-            } else if (record instanceof SyncRequest) {
-                message = new NettyEndpointSyncMessage((SyncRequest) record,
-                        msg);
-            } else if (record instanceof LongSyncRequest) {
-                message = new NettyEndpointLongSyncMessage(
-                        (LongSyncRequest) record, msg);
+            if (record instanceof SyncRequest) {
+                NettyEndpointSyncMessage nettySyncMessage = new NettyEndpointSyncMessage((SyncRequest) record, msg);
+                this.epsActor.tell(nettySyncMessage.toEndpointMessage(self()), self());
             } else {
-                message = null;
                 LOG.warn("unknown request param: {}", record);
-                msg.getChannelContext()
-                        .fireExceptionCaught(
-                                new RuntimeException("unknown request param: "
-                                        + record));
-            }
-            if (message != null) {
-                ActorRef requestHandler = context().actorOf(
-                        Props.create(new EndpointRequestActor.ActorCreator(
-                                epsActor)), msg.getHandlerUuid());
-                requestHandler.tell(message, getSelf());
+                msg.getChannelContext().fireExceptionCaught(new RuntimeException("unknown request param: " + record));
             }
         } catch (BadRequestException | GeneralSecurityException | IOException e) {
             LOG.trace("Command decode failed " + msg);
@@ -220,7 +187,7 @@ public class EncDecActor extends UntypedActor {
 
     /**
      * Encode and reply.
-     * 
+     *
      * @param msg
      *            the msg
      */
@@ -235,19 +202,16 @@ public class EncDecActor extends UntypedActor {
         }
     }
 
-    private void encodeAndReply(RedirectionRule redirection,
-            NettyEncodedRequestMessage message) {
-        RedirectSyncResponse redirectSyncResponse = new RedirectSyncResponse(
-                redirection.getDnsName());
-        SyncResponse response = new SyncResponse(0,
-                SyncResponseStatus.REDIRECT, null, null, redirectSyncResponse);
-        encodeAndReply(new NettyDecodedResponseMessage(
-                message.getHandlerUuid(), message.getChannelContext(),
-                message.getCommand(), response));
+    private void encodeAndReply(RedirectionRule redirection, NettyEncodedRequestMessage message) {
+        RedirectSyncResponse redirectSyncResponse = new RedirectSyncResponse(redirection.getDnsName());
+        SyncResponse response = new SyncResponse();
+        response.setStatus(SyncResponseResultType.REDIRECT);
+        response.setRedirectSyncResponse(redirectSyncResponse);
+        encodeAndReply(new NettyDecodedResponseMessage(message.getHandlerUuid(), message.getChannelContext(), message.getCommand(), message.getCommand()
+                .getChannelType(), response));
     }
 
-    public static RedirectionRule checkRedirection(
-            HashMap<Long, RedirectionRule> redirectionRules, double random) {
+    public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) {
         RedirectionRule result = null;
         for (RedirectionRule rule : redirectionRules.values()) {
             if (random <= rule.redirectionProbability) {

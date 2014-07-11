@@ -24,8 +24,8 @@ public final class ConnectionInfoKey{
 	private final int port;
 	
 	public ConnectionInfoKey(ConnectionInfo connectionInfo) {
-		this.host = connectionInfo.getHttpHost().toString();
-		this.port = connectionInfo.getHttpPort();
+		this.host = connectionInfo.getThriftHost().toString();
+		this.port = connectionInfo.getThriftPort().intValue();
 	}
 
 	@Override

@@ -107,11 +107,17 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Notification schema version")
     String notificationSchemaVersion();
 
+    @DefaultStringValue("Log schema version")
+    String logSchemaVersion();
+
     @DefaultStringValue("Target platform")
     String targetPlatform();
 
     @DefaultStringValue("Java")
     String java();
+
+    @DefaultStringValue("Android")
+    String android();
 
     @DefaultStringValue("C++")
     String cpp();
@@ -209,11 +215,17 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Users")
     String users();
 
+    @DefaultStringValue("Event class families")
+    String ecfs();
+
     @DefaultStringValue("Delete")
     String delete();
 
     @DefaultStringValue("Actions")
     String actions();
+
+    @DefaultStringValue("Action")
+    String action();
 
     @DefaultStringValue("Sign out")
     String signOut();
@@ -310,6 +322,21 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
 
     @DefaultStringValue("Profile schema details")
     String profileSchemaDetails();
+    
+    @DefaultStringValue("Log schemas")
+    String logSchemas();
+    
+    @DefaultStringValue("Log schema")
+    String logSchema();
+    
+    @DefaultStringValue("Add log schema")
+    String addLogSchema();
+
+    @DefaultStringValue("Log schema details")
+    String logSchemaDetails();
+
+    @DefaultStringValue("Log")
+    String log();
 
     @DefaultStringValue("Version")
     String version();
@@ -420,6 +447,88 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Last name")
     String lastName();
 
+    @DefaultStringValue("Add new ECF")
+    String addNewEcf();
+
+    @DefaultStringValue("Event class family")
+    String ecf();
+
+    @DefaultStringValue("Event class family details")
+    String ecfDetails();
+
+    @DefaultStringValue("Add schema")
+    String addSchema();
+
+    @DefaultStringValue("Add event class family schema")
+    String addEcfSchema();
+
+    @DefaultStringValue("FQN")
+    String fqn();
+
+    @DefaultStringValue("Namespace")
+    String namespace();
+
+    @DefaultStringValue("Class name")
+    String className();
+
+    @DefaultStringValue("Class type")
+    String classType();
+
+    @DefaultStringValue("Event")
+    String event();
+
+    @DefaultStringValue("Object")
+    String object();
+
+    @DefaultStringValue("Event class schema")
+    String eventClassSchema();
+
+    @DefaultStringValue("Event class family schema")
+    String ecfSchema();
+
+    @DefaultStringValue("Event class family schema details")
+    String ecfSchemaDetails();
+
+    @DefaultStringValue("Event classes")
+    String eventClasses();
+
+    @DefaultStringValue("Event class family name")
+    String ecfName();
+
+    @DefaultStringValue("Event class family version")
+    String ecfVersion();
+
+    @DefaultStringValue("Source")
+    String source();
+
+    @DefaultStringValue("Sink")
+    String sink();
+
+    @DefaultStringValue("Both")
+    String both();
+
+    @DefaultStringValue("Event family mappings")
+    String aefMaps();
+
+    @DefaultStringValue("Event family mapping")
+    String aefMap();
+
+    @DefaultStringValue("Event family mapping details")
+    String aefMapDetails();
+
+    @DefaultStringValue("Add new event family mapping")
+    String addNewAefMap();
+
+    @DefaultStringValue("Event map")
+    String eventMap();
+
+    @DefaultStringValue("Available")
+    String available();
+
+    @DefaultStringValue("Selected")
+    String selected();
+
 }
+
 
 

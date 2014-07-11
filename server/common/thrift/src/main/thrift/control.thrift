@@ -27,7 +27,8 @@ typedef shared.Integer int
 
 enum SdkPlatform {
   JAVA = 1,
-  CPP = 2
+  ANDROID = 2,
+  CPP = 3
 }
 
 struct Sdk {
@@ -98,6 +99,14 @@ service ControlThriftService extends cli.CliThriftService{
   list<data> getProfileSchemasByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
   data getProfileSchema(1: id profileSchemaId) throws(1: ControlThriftException ControlException)
   data editProfileSchema(1: data profileSchema) throws(1: ControlThriftException ControlException)
+
+/**  
+*   LogSchemas
+*/
+  list<data> getLogSchemaVersionsByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
+  list<data> getLogSchemasByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
+  data getLogSchema(1: id logSchemaId) throws(1: ControlThriftException ControlException)
+  data editLogSchema(1: data logSchema) throws(1: ControlThriftException ControlException)
   
 /**
 *   EndpointGroups
@@ -182,6 +191,37 @@ service ControlThriftService extends cli.CliThriftService{
 *   Client SDK
 */ 
   
-  Sdk generateSdk(1: SdkPlatform sdkPlatform, 2: id applicationId, 3: shared.Integer profileSchemaVersion, 4: shared.Integer configurationSchemaVersion, 5: shared.Integer notificationSchemaVersion) throws(1: ControlThriftException ControlException)
+  Sdk generateSdk(1: SdkPlatform sdkPlatform, 2: id applicationId, 3: shared.Integer profileSchemaVersion, 4: shared.Integer configurationSchemaVersion, 5: shared.Integer notificationSchemaVersion, 6: list<id> aefMapIds, 7: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
+
+/**
+*   Events
+*/ 
+
+  data editEventClassFamily(1: data eventClassFamily) throws(1: ControlThriftException ControlException)
+  list<data> getEventClassFamiliesByTenantId(1: id tenantId) throws(1: ControlThriftException ControlException)
+  data getEventClassFamily(1: id eventClassFamilyId) throws(1: ControlThriftException ControlException)
+  void addEventClassFamilySchema(1: id eventClassFamilyId, 2: string eventClassFamilySchema, 3: string createdUsername) throws(1: ControlThriftException ControlException)
+
+  list<data> getEventClassesByFamilyIdVersionAndType(1: id ecfId, 2: int version, 3: data type) throws(1: ControlThriftException ControlException)
+  
+  data editApplicationEventFamilyMap(1: data applicationEventFamilyMap) throws(1: ControlThriftException ControlException)
+  data getApplicationEventFamilyMap(1: id applicationEventFamilyMapId) throws(1: ControlThriftException ControlException)
+  list<data> getApplicationEventFamilyMapsByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
+  list<data> getVacantEventClassFamiliesByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
+  list<data> getEventClassFamiliesByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
+
+/**  
+*   Endpoint User
+*/
+  list<data> getEndpointUsers() throws(1: ControlThriftException ControlException)
+  data getEndpointUser(1: id endpointUserId) throws(1: ControlThriftException ControlException)
+  data editEndpointUser(1: data endpointUser) throws(1: ControlThriftException ControlException)
+  void deleteEndpointUser(1: id endpointUserId) throws(1: ControlThriftException ControlException)
+  string generateEndpointUserAccessToken(1: string externalUid, 2: string tenantId) throws(1: ControlThriftException ControlException)
+
+/**
+*   MongoDBCollectionsCreation               
+*/
+  void createSecureCollection(1: id applicationId, 2: string password) throws(1: ControlThriftException ControlException)  
 
 }

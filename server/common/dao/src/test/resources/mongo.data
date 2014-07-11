@@ -68,3 +68,21 @@
 
 # endpoint_profile
 { "_id" : { "$oid" : "530db773687f16fec3529243"} , "application_id" : { "$oid" : "52fe2de7e4b0082727dd214b"} , "profile_schema_id" : { "$oid" : "530db773687f16fec3527221"} , "endpoint_key" : { "$binary" : "ZThNRW56Wm9GeU1tRDdXU0hkTnJGSnlFazhNPQ==" , "$type" : 0 } , "endpoint_key_hash" : { "$binary" : "ZThNRW56Wm9GeU1tRDdXU0hkTnJGSnlFazhNPQ==" , "$type" : 0 } , "endpoint_group_state" : [{"endpoint_group_id" : { "$oid" : "530db663687f16fec35271f2"} , "profile_filter_id" : { "$oid" : "530db773687f16fec3528221"} , "configuration_id" : { "$oid" : "530cc8fa08c05463a7797b9d"}}] , "seq_num" : 4 , "changed_flag" : true , "profile_hash" : { "$binary" : "ZThNRW56Wm9GeU1tRDdXU0hkTnJGSnlFazhNPQ==" , "$type" : 0 } , "profile_version" : 1, "configuration_hash" : { "$binary" : "ZThNRW56Wm9GeU1tRDdXU0hkTnJGSnlFazhNPQ==" , "$type" : 0 } , "configuration_version" : 1 , "notification_version" : 1 , "subscriptions" : ["530db773687f16fec3527354","530db773687f16fec3564381","530db773687f16f463428221"] , "notification_holder" : [{"_id":"530cc8fa08c05463a77972f3", "body" : { "$binary" : "ZThNRW56Wm9GeU1tRDdXU0hkTnJGSnlFazhNPQ==" , "$type" : 0 }},{"_id":"530cc8fa08c05463a7797e65", "body" : { "$binary" : "ZThNRW56Wm9GeU1tRDdXU0hkTnJGSnlFazhNPQ==" , "$type" : 0 }},{"_id":"530cc8fa08c05463a7797ab5", "body" : { "$binary" : "ZThNRW56Wm9GeU1tRDdXU0hkTnJGSnlFazhNPQ==" , "$type" : 0 }}]}
+
+# endpoint_user
+{ "_id" : { "$oid" : "123cb57de4b08e6930468c9a"} , "external_id" : "user@company.com", "username": "Test User", "tenant_id" : { "$oid" : "530cb57de4b08e6930468c99"} }
+{ "_id" : { "$oid" : "124cb57de4b08e6930468c9a"} , "external_id" : "user2@company.com", "username": "Test User 2", "tenant_id" : { "$oid" : "530cb57de4b08e6930468c99"}, "endpointIds":["530db773687f16fec3529243"]}
+
+# event_class_family
+{ "_id" : { "$oid" : "530db773687f16fec3529245"} , "tenant_id" : { "$oid" : "530cb57de4b08e6930468c99"} , "name" : "ecf1" , "fqn" : "ecf.ecf1" , "schemas" : [{"schema" : "ecf1_schema", "version" : 1}]}
+{ "_id" : { "$oid" : "530db773687f16fec3529246"} , "tenant_id" : { "$oid" : "530cb57de4b08e6930468c99"} , "name" : "ecf2" , "fqn" : "ecf.ecf2" , "schemas" : [{"schema" : "ecf2_schema", "version" : 1}]}
+
+# event_class
+{ "_id" : { "$oid" : "530db773687f16fec3529247"} , "tenant_id" : { "$oid" : "530cb57de4b08e6930468c99"} , "ecf_id" : { "$oid" : "530db773687f16fec3529245"}, "fqn" : "ecf1e1" , "type" : "EVENT" , "schema" : "ecf1e1_schema", "version" : 1}
+{ "_id" : { "$oid" : "530db773687f16fec3529248"} , "tenant_id" : { "$oid" : "530cb57de4b08e6930468c99"} , "ecf_id" : { "$oid" : "530db773687f16fec3529246"}, "fqn" : "ecf2e1" , "type" : "OBJECT" , "schema" : "ecf2e1_schema", "version" : 1}
+
+# application_event_family_map
+{ "_id" : { "$oid" : "530db773687f16fec3529249"} , "application_id" : { "$oid" : "52fe2de7e4b0082727dd214b"} , "ecf_id" : { "$oid" : "530db773687f16fec3529245"}, "ecf_name" : "ecf1", "version" : 1, "eventMaps" : [{ "ec_id" : { "$oid" : "530db773687f16fec3529247"}, "fqn" : "ecf1e1", "action" : "SOURCE" }]}
+{ "_id" : { "$oid" : "530db773687f16fec3529250"} , "application_id" : { "$oid" : "52fe2de7e4b0082727dd214b"} , "ecf_id" : { "$oid" : "530db773687f16fec3529246"}, "ecf_name" : "ecf2", "version" : 1, "eventMaps" : [{ "ec_id" : { "$oid" : "530db773687f16fec3529248"}, "fqn" : "ecf2e1", "action" : "SINK" }]}
+
+

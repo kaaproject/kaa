@@ -19,6 +19,9 @@ package org.kaaproject.kaa.server.operations.service.bootstrap;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.retry.RetryUntilElapsed;
 import org.apache.thrift.server.TServer;
@@ -28,21 +31,26 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
+import org.kaaproject.kaa.server.common.zk.ZkChannelException;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.http.OperationsServerConfig;
-import org.kaaproject.kaa.server.operations.service.http.ProtocolService;
+import org.kaaproject.kaa.server.operations.service.config.NettyHttpServiceChannelConfig;
+import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
+import org.kaaproject.kaa.server.operations.service.config.ServiceChannelConfig;
+import org.kaaproject.kaa.server.operations.service.event.EventService;
+import org.kaaproject.kaa.server.operations.service.http.HttpService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
+import org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory;
 import org.kaaproject.kaa.server.operations.service.statistics.StatisticsService;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -59,61 +67,14 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     private static final Logger LOG = LoggerFactory
             .getLogger(DefaultOperationsBootstrapService.class);
 
-    /** The thrift host. */
-    @Value("#{properties[thrift_host]}")
-    private String thriftHost;
-
-    /** The thrift port. */
-    @Value("#{properties[thrift_port]}")
-    private int thriftPort;
-
-    /** The thrift port. */
-    @Value("#{properties[netty_host]}")
-    private String nettyHost;
-    
-    /** The thrift port. */
-    @Value("#{properties[netty_port]}")
-    private int nettyPort;
-    
-    /** The zk enabled. */
-    @Value("#{properties[zk_enabled]}")
-    private boolean zkEnabled;
-
-    /** The zk host port list. */
-    @Value("#{properties[zk_host_port_list]}")
-    private String zkHostPortList;
-
-    /** The zk max retry time. */
-    @Value("#{properties[zk_max_retry_time]}")
-    private int zkMaxRetryTime;
-
-    /** The zk sleep time. */
-    @Value("#{properties[zk_sleep_time]}")
-    private int zkSleepTime;
-
-    /** The zk ignore errors. */
-    @Value("#{properties[zk_ignore_errors]}")
-    private boolean zkIgnoreErrors;
-    
-    /** Statistics collect window in seconds */
-    @Value("#{properties[statistics_calculation_window]}")
-    private long statisticsCalculationWindow;
-    
-    /** Number of statistics update during collect window */
-    @Value("#{properties[statistics_update_times]}")
-    private int statisticsUpdateTimes;
-    
-    /** Real bind IP address of Netty HTTP Server */
-    private String realBindInterface;
-
     /** The server. */
     private TServer server;
 
     /** The operations node. */
     private OperationsNode operationsNode;
 
-    /** The http service. */
-    private ProtocolService httpService;
+    /** The Service Channels List */
+    private List<ServiceChannel> serviceChannels;
 
     /** The operations thrift service. */
     @Autowired
@@ -126,21 +87,22 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     /** The operations service. */
     @Autowired
     private OperationsService operationsService;
-    
+
     /** The Akka service. */
     @Autowired
-    private AkkaService akkaService;    
-    
+    private AkkaService akkaService;
+
     /** The cache service. */
     @Autowired
     private CacheService cacheService;
-    
+
     /** The operations server config. */
     @Autowired
-    OperationsServerConfig operationsServerConfig;
-    
-    /** Statisics Service */
-    private StatisticsService statistics;
+    private OperationsServerConfig operationsServerConfig;
+
+    /** The event service */
+    @Autowired
+    private EventService eventService;
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService#getEndpointService()
@@ -157,7 +119,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     public KeyStoreService getKeyStoreService() {
         return keyStoreService;
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService#getCacheService()
      */
@@ -177,58 +139,65 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.
      * OperationsBootstrapService#start()
      */
     @Override
     public void start() {
-        getConfig().setPort(nettyPort);
-        getConfig().setBindInterface(nettyHost);
-        getConfig().setStatisticsCalculationWindow(statisticsCalculationWindow);
-        getConfig().setStatisticsUpdateTimes(statisticsUpdateTimes);
-        httpService = new ProtocolService(getConfig());
-        if (httpService.getNetty() != null) {
-            
-            statistics = StatisticsService.getService();
-            
-            getConfig().setSessionTrack(statistics);
-            
-            httpService.start();
-            realBindInterface = httpService.getNetty().getBindAddress();
-            LOG.info("Operations HTTP server started on" + realBindInterface + " interface, and port "+nettyPort); 
-    
-            if (zkEnabled) {
+
+        operationsService.setPublicKey(keyStoreService.getPublicKey());
+        eventService.setConfig(getConfig());
+        operationsThriftService.setEventService(eventService);
+        
+        for(ServiceChannelConfig channelConf : getConfig().getChannelList()) {
+            LOG.info("Channel {} initializing....", channelConf.getChannelType().toString());
+            switch (channelConf.getChannelType()) {
+            case HTTP:
+            case HTTP_LP:
+                StatisticsService statistics = StatisticsFactory.getService(channelConf.getChannelType());
+                ((NettyHttpServiceChannelConfig)channelConf).setSessionTrack(statistics);
+                ((NettyHttpServiceChannelConfig)channelConf).setOperationServerConfig(getConfig());
+                ServiceChannel channel = new HttpService((NettyHttpServiceChannelConfig)channelConf);
+                channel.start();
+                //TODO need to added blocking while channels starts to check if all is OK
+                serviceChannels.add(channel);
+                break;
+            default:
+                LOG.error("Channel {} unrecognized....",channelConf.getChannelType().toString());
+                break;
+            }
+        }
+        if (serviceChannels.size() > 0) {
+
+            if (getConfig().isZkEnabled()) {
                 startZK();
             }
-            
+
             // Blocking method call
             startThrift();
         } else {
-            LOG.error("Operations start failed, Netty didn't started...");
+            LOG.error("Operations start failed, No one Service Channels started...");
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.
      * OperationsBootstrapService#stop()
      */
     @Override
     public void stop() {
-        if (httpService != null) {
-            httpService.stop();
-            httpService = null;
+        for(ServiceChannel channel : serviceChannels) {
+            channel.stop();
         }
-        if (statistics != null) {
-            statistics.shutdown();
-            statistics = null;
-        }
+        serviceChannels.clear();
+        StatisticsFactory.shutdown();
         if( akkaService != null){
             akkaService.getActorSystem().shutdown();
         }
-        if (zkEnabled) {
+        if (getConfig().isZkEnabled()) {
             stopZK();
         }
         // Thrift stop
@@ -252,14 +221,18 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     private void startThrift() {
 
         LOG.info("Initializing Thrift Service for Operations Server....");
-        LOG.info("thrift host: " + thriftHost);
-        LOG.info("thrift port: " + thriftPort);
+        LOG.info("thrift host: {}", getConfig().getThriftHost());
+        LOG.info("thrift port: {}", getConfig().getThriftPort());
 
         try {
             OperationsThriftService.Processor<OperationsThriftService.Iface> processor = new OperationsThriftService.Processor<OperationsThriftService.Iface>(
                     operationsThriftService);
-            TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(thriftHost, thriftPort));
-            server = new TThreadPoolServer(new Args(serverTransport).processor(processor));
+            TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(getConfig().getThriftHost(), getConfig().getThriftPort()));
+            
+            TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
+            args.stopTimeoutVal = 3;
+            args.stopTimeoutUnit = TimeUnit.SECONDS;
+            server = new TThreadPoolServer(args);
 
             LOG.info("Operations Server Started.");
 
@@ -280,20 +253,37 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     private void startZK() {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer keyData = ByteBuffer.wrap(keyStoreService.getPublicKey().getEncoded());
-        ConnectionInfo connectionInfo = new ConnectionInfo(thriftHost, thriftPort, realBindInterface, nettyPort, keyData);
+        ConnectionInfo connectionInfo = new ConnectionInfo(getConfig().getThriftHost(), getConfig().getThriftPort(), keyData);
         nodeInfo.setConnectionInfo(connectionInfo);
-        operationsNode = new OperationsNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(zkMaxRetryTime, zkSleepTime));
+        List<SupportedChannel> suppChannels = new ArrayList<>();
+        for(ServiceChannel sc : serviceChannels) {
+            try {
+                suppChannels.add(sc.getZkSupportedChannel());
+            } catch (ZkChannelException e) {
+                LOG.error("Error advertize Channel ",e);
+            }
+        }
+        nodeInfo.setSupportedChannelsArray(suppChannels );
+        operationsNode = new OperationsNode(nodeInfo, getConfig().getZkHostPortList(), new RetryUntilElapsed(getConfig().getZkMaxRetryTime(), getConfig().getZkSleepTime()));
         try {
             operationsNode.start();
             getConfig().setZkNode(operationsNode);
+            eventService.setZkNode(operationsNode);
         } catch (Exception e) {
-            if (zkIgnoreErrors) {
+            if (getConfig().isZkIgnoreErrors()) {
                 LOG.info("Failed to register operations in ZooKeeper", e);
             } else {
                 LOG.error("Failed to register operations in ZooKeeper", e);
-                throw new RuntimeException(e);
+                throw new RuntimeException(e); //NOSONAR
             }
         }
+    }
+
+    /**
+     * 
+     */
+    public DefaultOperationsBootstrapService() {
+        serviceChannels = new ArrayList<>();
     }
 
 }

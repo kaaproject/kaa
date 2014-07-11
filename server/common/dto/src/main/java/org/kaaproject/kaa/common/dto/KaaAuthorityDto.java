@@ -16,11 +16,39 @@
 
 package org.kaaproject.kaa.common.dto;
 
-public enum KaaAuthorityDto {
+import java.util.ArrayList;
+import java.util.List;
 
+public enum KaaAuthorityDto {
     KAA_ADMIN,
     TENANT_ADMIN,
     TENANT_DEVELOPER,
     TENANT_USER;
     
+    public static KaaAuthorityDto parse(String value) {
+        KaaAuthorityDto authority = null;
+        if (value != null && value.length() != 0) {
+            for (KaaAuthorityDto current : KaaAuthorityDto.values()) {
+                if (current.name().equalsIgnoreCase(value)) {
+                    authority = current;
+                    break;
+                }
+            }
+        }
+        return authority;
+    }
+
+    public static List<KaaAuthorityDto> parseList(String... values) {
+        List<KaaAuthorityDto> authorities = null;
+        if (values != null && values.length != 0) {
+            authorities = new ArrayList<>(values.length);
+            for (String value : values) {
+                KaaAuthorityDto authority = parse(value);
+                if (authority != null) {
+                    authorities.add(authority);
+                }
+            }
+        }
+        return authorities;
+    }
 }

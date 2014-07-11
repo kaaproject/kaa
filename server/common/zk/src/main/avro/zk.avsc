@@ -1,13 +1,86 @@
 [
 {
  "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "enum",
+ "name": "ZkChannelType",
+ "symbols" : ["HTTP", "HTTP_LP"]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "IpComunicationParameters",
+ "fields": [
+     {"name": "HostName", "type": "string"},
+     {"name": "Port", "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "BaseStatistics",
+ "fields": [
+     {"name": "processedRequestCount",  "type": "int"},
+     {"name": "registeredUsersCount",  "type": "int"},
+     {"name": "deltaCalculationCount",  "type": "int"},
+     {"name": "timeStarted",  "type": "long"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "ZkHttpLpComunicationParameters",
+ "fields" : [
+    {"name": "ZkComunicationParameters", "type": "org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "ZkHttpComunicationParameters",
+ "fields" : [
+    {"name": "ZkComunicationParameters", "type": "org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "ZkHttpLpStatistics",
+ "fields" : [
+    {"name" : "ZkStatistics", "type" : "org.kaaproject.kaa.server.common.zk.gen.BaseStatistics"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "ZkHttpStatistics",
+ "fields" : [
+    {"name" : "ZkStatistics", "type" : "org.kaaproject.kaa.server.common.zk.gen.BaseStatistics"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
+ "name": "ZkSupportedChannel",
+ "fields": [
+     {"name": "ChannelType", "type": "org.kaaproject.kaa.server.common.zk.gen.ZkChannelType"},
+     {"name": "RedirectionSupported", "type": "boolean"},
+     {"name": "CommunicationParameters", "type": [
+        "org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters",
+        "org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters" 
+     ]},
+     {"name": "ChannelStatistics", "type": [
+        "org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics",
+        "org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics"
+     ]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
  "type": "record",
  "name": "ConnectionInfo",
  "fields": [
      {"name": "thriftHost", "type": "string"},
      {"name": "thriftPort", "type": "int"},
-     {"name": "httpHost", "type": "string"},
-     {"name": "httpPort", "type": "int"},
      {"name": "publicKey", "type": ["bytes", "null"]}
  ]
 },
@@ -27,10 +100,19 @@
  "name": "OperationsNodeInfo",
  "fields": [
      {"name": "connectionInfo", "type": "org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo"},
-     {"name": "processedRequestCount",  "type": "int"},
-     {"name": "registeredUsersCount",  "type": "int"},
-     {"name": "deltaCalculationCount",  "type": "int"},
-     {"name": "timeStarted",  "type": "long"}
+     {"name": "timeStarted",  "type": "long"},
+     {"name": "SupportedChannelsArray",
+        "type":{
+            "type": "array",
+            "items": {
+                "type": "record",
+                "name": "SupportedChannel",
+                "fields": [
+                    { "name": "ZkChannel", "type": "org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel"}
+                ]
+            }
+        }
+     }
  ]
 },
 {
@@ -39,6 +121,8 @@
  "name": "BootstrapNodeInfo",
  "fields": [
      {"name": "connectionInfo", "type": "org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo"},
+     {"name": "BootstrapHostName", "type": "string"},
+     {"name": "BootstrapPort", "type": "int"}, 
      {"name": "processedRequestCount",  "type": "int"}
  ]
 }

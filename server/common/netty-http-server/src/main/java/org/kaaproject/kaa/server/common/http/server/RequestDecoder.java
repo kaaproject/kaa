@@ -57,7 +57,7 @@ public class RequestDecoder extends SimpleChannelInboundHandler<HttpObject> {
      * @param ctx ChannelHandlerContext
      * @throws Exception exception on error
      */
-    public void channelReadCompete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadCompete(ChannelHandlerContext ctx) throws Exception { //NOSONAR
         ctx.flush();
     }
 

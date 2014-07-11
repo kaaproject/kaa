@@ -45,10 +45,10 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory
             .getLogger(ControlServerConfigurationIT.class);
-    
+
     /**
      * Test create configuration.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -58,12 +58,12 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
         ConfigurationDto configuration = createConfiguration();
         Assert.assertFalse(strIsEmpty(configuration.getId()));
         Assert.assertFalse(strIsEmpty(configuration.getApplicationId()));
-        Assert.assertFalse(strIsEmpty(configuration.getProtocolSchema()));
+        Assert.assertFalse(configuration.getProtocolSchema().isEmpty());
     }
-    
+
     /**
      * Test get configuration.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -71,16 +71,16 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     @Test
     public void testGetConfiguration() throws TException, IOException {
         ConfigurationDto configuration = createConfiguration();
-        
+
         ConfigurationDto storedConfiguration = toDto(client.getConfiguration(configuration.getId()));
-        
+
         Assert.assertNotNull(storedConfiguration);
         assertConfigurationsEquals(configuration, storedConfiguration);
     }
-    
+
     /**
      * Test get configuration record.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -88,42 +88,42 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     @Test
     public void testGetConfigurationRecord() throws TException, IOException {
         ConfigurationDto configuration = createConfiguration();
-        
+
         StructureRecordDto<ConfigurationDto> configurationRecord = toGenericDto(client.getConfigurationRecord(configuration.getSchemaId(), configuration.getEndpointGroupId()));
-        
+
         Assert.assertNotNull(configurationRecord);
         Assert.assertNotNull(configurationRecord.getInactiveStructureDto());
         assertConfigurationsEquals(configuration, configurationRecord.getInactiveStructureDto());
     }
-    
+
     /**
      * Test get configuration records by endpoint group id.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Test
     public void testGetConfigurationRecordsByEndpointGroupId() throws TException, IOException {
-        
+
         ApplicationDto application = createApplication();
-        
+
         EndpointGroupDto endpointGroup = createEndpointGroup(application.getId());
-        
+
         ConfigurationDto configuration1 = createConfiguration(null, endpointGroup.getId(), application.getId());
         ConfigurationDto configuration2 = createConfiguration(null, endpointGroup.getId(), application.getId());
-        
+
         List<StructureRecordDto<ConfigurationDto>> configurationRecords = toGenericDtoList(client.getConfigurationRecordsByEndpointGroupId(endpointGroup.getId(), false));
-        
+
         Assert.assertNotNull(configurationRecords);
         Assert.assertEquals(2, configurationRecords.size());
         assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveStructureDto());
         assertConfigurationsEquals(configuration2, configurationRecords.get(1).getInactiveStructureDto());
     }
-    
+
     /**
      * Test delete configuration record
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -131,47 +131,47 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     @Test
     public void testDeleteConfigurationRecord() throws TException, IOException {
         EndpointGroupDto endpointGroup = createEndpointGroup();
-        
+
         ConfigurationDto configuration1 = createConfiguration(null, endpointGroup.getId());
         ConfigurationDto configuration2 = createConfiguration(null, endpointGroup.getId());
-        
+
         client.activateConfiguration(configuration2.getId(), null);
-        
+
         client.deleteConfigurationRecord(configuration2.getSchemaId(), endpointGroup.getId(), null);
-        
+
         List<StructureRecordDto<ConfigurationDto>> configurationRecords = toGenericDtoList(client.getConfigurationRecordsByEndpointGroupId(endpointGroup.getId(), false));
-        
+
         Assert.assertNotNull(configurationRecords);
         Assert.assertEquals(1, configurationRecords.size());
         assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveStructureDto());
-        
+
         client.deleteConfigurationRecord(configuration1.getSchemaId(), endpointGroup.getId(), null);
         configurationRecords = toGenericDtoList(client.getConfigurationRecordsByEndpointGroupId(endpointGroup.getId(), false));
         Assert.assertNotNull(configurationRecords);
         Assert.assertEquals(0, configurationRecords.size());
 
     }
-    
+
     /**
      * Test get vacant schemas by endpoint group id.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Test
     public void testGetVacantSchemasByEndpointGroupId() throws TException, IOException {
-        
+
         EndpointGroupDto endpointGroup = createEndpointGroup();
         ConfigurationSchemaDto configurationSchema1 = createConfigurationSchema(endpointGroup.getApplicationId());
         ConfigurationSchemaDto configurationSchema2 = createConfigurationSchema(endpointGroup.getApplicationId());
         ConfigurationSchemaDto configurationSchema3 = createConfigurationSchema(endpointGroup.getApplicationId());
-        
+
         createConfiguration(configurationSchema1.getId(), endpointGroup.getId());
         createConfiguration(configurationSchema2.getId(), endpointGroup.getId());
-        
+
         List<SchemaDto> schemas = toDtoList(client.getVacantConfigurationSchemasByEndpointGroupId(endpointGroup.getId()));
-        
+
         Assert.assertNotNull(schemas);
         Assert.assertEquals(2, schemas.size());
         Collections.sort(schemas, new Comparator<SchemaDto>() {
@@ -181,7 +181,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
                 if (result == 0) {
                     result = o1.getMinorVersion() - o2.getMinorVersion();
                 }
-                return result; 
+                return result;
             }
         });
         SchemaDto schema = schemas.get(1);
@@ -190,10 +190,10 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
         Assert.assertEquals(configurationSchema3.getMajorVersion(), schema.getMajorVersion());
         Assert.assertEquals(configurationSchema3.getMinorVersion(), schema.getMinorVersion());
     }
-    
+
     /**
      * Test update configuration.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -201,20 +201,20 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     @Test
     public void testUpdateConfiguration() throws TException, IOException {
         ConfigurationDto configuration = createConfiguration();
-        
+
         String configUpdated = getResourceAsString(TEST_CONFIGURATION_UPDATED);
-        
-        configuration.setBinaryBody(configUpdated.getBytes());
-        
+
+        configuration.setBody(configUpdated);
+
         ConfigurationDto updatedConfiguration = toDto(client
                 .editConfiguration(toDataStruct(configuration)));
-        
+
         Assert.assertNotEquals(updatedConfiguration, configuration);
     }
-    
+
     /**
      * Test activate configuration.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -223,19 +223,19 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     public void testActivateConfiguration() throws TException, IOException {
         ConfigurationDto configuration = createConfiguration();
         ConfigurationDto activatedConfiguration = toDto(client.activateConfiguration(configuration.getId(), null));
-        
+
         Assert.assertEquals(configuration.getId(), activatedConfiguration.getId());
         Assert.assertEquals(configuration.getSchemaId(), activatedConfiguration.getSchemaId());
         Assert.assertEquals(configuration.getEndpointGroupId(), activatedConfiguration.getEndpointGroupId());
-        Assert.assertArrayEquals(configuration.getBinaryBody(), activatedConfiguration.getBinaryBody());
+        Assert.assertEquals(configuration.getBody(), activatedConfiguration.getBody());
         Assert.assertEquals(configuration.getProtocolSchema(), activatedConfiguration.getProtocolSchema());
         Assert.assertEquals(configuration.getApplicationId(), activatedConfiguration.getApplicationId());
         Assert.assertEquals(activatedConfiguration.getStatus(), UpdateStatus.ACTIVE);
     }
-    
+
     /**
      * Test deactivate configuration.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -245,16 +245,16 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
         ConfigurationDto configuration = createConfiguration();
         client.activateConfiguration(configuration.getId(), null);
         ConfigurationDto deactivatedConfiguration = toDto(client.deactivateConfiguration(configuration.getId(), null));
-        
+
         Assert.assertEquals(configuration.getId(), deactivatedConfiguration.getId());
         Assert.assertEquals(configuration.getSchemaId(), deactivatedConfiguration.getSchemaId());
         Assert.assertEquals(configuration.getEndpointGroupId(), deactivatedConfiguration.getEndpointGroupId());
-        Assert.assertArrayEquals(configuration.getBinaryBody(), deactivatedConfiguration.getBinaryBody());
+        Assert.assertEquals(configuration.getBody(), deactivatedConfiguration.getBody());
         Assert.assertEquals(configuration.getProtocolSchema(), deactivatedConfiguration.getProtocolSchema());
         Assert.assertEquals(configuration.getApplicationId(), deactivatedConfiguration.getApplicationId());
         Assert.assertEquals(UpdateStatus.DEPRECATED, deactivatedConfiguration.getStatus());
     }
-    
+
     /**
      * Assert configurations equals.
      *
@@ -265,7 +265,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
         Assert.assertEquals(configuration.getId(), storedConfiguration.getId());
         Assert.assertEquals(configuration.getSchemaId(), storedConfiguration.getSchemaId());
         Assert.assertEquals(configuration.getEndpointGroupId(), storedConfiguration.getEndpointGroupId());
-        Assert.assertArrayEquals(configuration.getBinaryBody(), storedConfiguration.getBinaryBody());
+        Assert.assertEquals(configuration.getBody(), storedConfiguration.getBody());
         Assert.assertEquals(configuration.getProtocolSchema(), storedConfiguration.getProtocolSchema());
         Assert.assertEquals(configuration.getApplicationId(), storedConfiguration.getApplicationId());
         Assert.assertEquals(configuration.getStatus(), storedConfiguration.getStatus());

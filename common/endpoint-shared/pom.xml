@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.4.0-RC1</version>
+        <version>0.5.0</version>
         <artifactId>common</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.common</groupId>
@@ -43,11 +43,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
@@ -115,17 +110,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-					<detectOfflineLinks>false</detectOfflineLinks>
-                </configuration>                
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>       
             <plugin>
               <artifactId>maven-assembly-plugin</artifactId>
@@ -143,6 +127,17 @@
                       </goals>
                   </execution>
               </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.rat</groupId>
+              <artifactId>apache-rat-plugin</artifactId>
+              <version>${rat.version}</version>
+              <configuration>
+                  <excludes>
+                      <exclude>**/gen/*.java</exclude>
+                      <exclude>**/*.avsc</exclude>
+                  </excludes>
+              </configuration>
           </plugin>
         </plugins>
     </build>

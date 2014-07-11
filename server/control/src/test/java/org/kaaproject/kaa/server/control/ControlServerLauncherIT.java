@@ -27,7 +27,7 @@ import org.apache.thrift.transport.TTransport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.control.ControlServerApplication;
 import org.slf4j.Logger;
@@ -99,12 +99,13 @@ public class ControlServerLauncherIT {
             controlServerLauncherThread.start();
             
             Thread.sleep(5000);
-            
+
             transport = new TSocket(HOST, PORT);
             TProtocol protocol = new TBinaryProtocol(transport);
             client = new ControlThriftService.Client(protocol);
             transport.open();
             client.shutdown();
+            
         }
         finally {
             if (transport != null && transport.isOpen()) {

@@ -15,28 +15,25 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.operations.service.http.commands;
 
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
-import org.kaaproject.kaa.common.endpoint.gen.LongSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 
 
 /**
  * The Class UpdateEndpointCommand.
  */
-public class LongSyncCommand extends AbstractOperationsCommand<LongSyncRequest, SyncResponse> implements CommonEPConstans {
+public class LongSyncCommand extends SyncCommand {
 
     static {
         COMMAND_NAME = LONG_SYNC_COMMAND;
         LOG.info("CommandName: " + COMMAND_NAME);
+    }
+
+    @Override
+    public ChannelType getChannelType() {
+        return ChannelType.HTTP_LP;
     }
 
     /**
@@ -47,48 +44,6 @@ public class LongSyncCommand extends AbstractOperationsCommand<LongSyncRequest, 
         LOG.trace("CommandName: " + COMMAND_NAME + ": Created..");
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand#getRequestConverterClass()
-     */
-    @Override
-    protected Class<LongSyncRequest> getRequestConverterClass() {
-        return LongSyncRequest.class;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand#getResponseConverterClass()
-     */
-    @Override
-    protected Class<SyncResponse> getResponseConverterClass() {
-        return SyncResponse.class;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand#getPublicKey(org.apache.avro.specific.SpecificRecordBase)
-     */
-    @Override
-    protected PublicKey getPublicKey(LongSyncRequest request) throws GeneralSecurityException {
-        EndpointObjectHash hash = EndpointObjectHash.fromBytes(request.getSyncRequest().getEndpointPublicKeyHash().array());
-        PublicKey endpointKey = cacheService.getEndpointKey(hash);
-        return endpointKey;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand#processParsedRequest(org.apache.avro.specific.SpecificRecordBase)
-     */
-    @Override
-    protected SyncResponse processParsedRequest(LongSyncRequest epRequest) throws GetDeltaException {
-        return operationsService.sync(epRequest.getSyncRequest()).getResponse();
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#isNeedConnectionClose()
-     */
-    @Override
-    public boolean isNeedConnectionClose() {
-        return true;
-    }
-    
     public static String getCommandName() {
         return LONG_SYNC_COMMAND;
     }

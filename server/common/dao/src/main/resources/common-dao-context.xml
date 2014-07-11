@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2014 CyberVision, Inc.
- 
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
+
        http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,18 +17,27 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd
             http://www.springframework.org/schema/data/mongo
-            http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+            http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <context:annotation-config/>
 
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
-    <context:property-placeholder location="classpath:mongo.properties"/>
+    <context:property-placeholder location="classpath:dao.properties"/>
 
     <mongo:mongo id="mongoClient" replica-set="${servers}" write-concern="${write.concern}">
         <mongo:options
@@ -69,22 +78,71 @@
         <property name="writeResultChecking" value="EXCEPTION"/>
     </bean>
 
-    <bean id="protocolSchemaStrategy" class="org.kaaproject.kaa.server.common.dao.schema.ProtocolSchemaStrategy" />
-
-    <bean id="protocolSchemaCreator" class="org.kaaproject.kaa.server.common.dao.schema.SchemaCreatorImpl" >
-        <constructor-arg name="strategy" ref="protocolSchemaStrategy" />
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+            </props>
+        </property>
     </bean>
 
-    <bean id="baseSchemaStrategy" class="org.kaaproject.kaa.server.common.dao.schema.BaseDataSchemaStrategy" />
-
-    <bean id="baseSchemaCreator" class="org.kaaproject.kaa.server.common.dao.schema.SchemaCreatorImpl" >
-        <constructor-arg name="strategy" ref="baseSchemaStrategy" />
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driver.className}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
     </bean>
 
-    <bean id="overrideSchemaStrategy" class="org.kaaproject.kaa.server.common.dao.schema.OverrideDataSchemaStrategy" />
-
-    <bean id="overrideSchemaCreator" class="org.kaaproject.kaa.server.common.dao.schema.SchemaCreatorImpl" >
-        <constructor-arg name="strategy" ref="overrideSchemaStrategy" />
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
     </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="persistenceExceptionTranslationPostProcessor"
+        class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+    <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
+
+    <bean id="overrideAlgorithmFactory"
+        class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory" />
+
+    <bean id="eventSchemaProcessor"
+        class="org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessorImpl" />
+
+    <bean id="endpointUserDao"
+        class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointUserMongoDao" />
+    <alias name="endpointUserDao" alias="kaaEndpointUserVerifier" />
+
+    <bean id="dummyEndpointUserVerifier"
+        class="org.kaaproject.kaa.server.common.dao.DummyEndpointUserVerifier" />
+
+    <bean id="endpointUserVerifierResolver"
+        class="org.kaaproject.kaa.server.common.dao.DefaultEndpointUserVerifierResolver">
+        <constructor-arg name="verifierMap" ref="verifierMap"></constructor-arg>
+    </bean>
+
+    <bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender">
+        <constructor-arg name="name" value="appender"></constructor-arg>
+    </bean>
+
+    <util:map id="verifierMap">
+        <entry key="dummyEndpointUserVerifier" value-ref="dummyEndpointUserVerifier" />
+        <entry key="kaaEndpointUserVerifier" value-ref="kaaEndpointUserVerifier" />
+    </util:map>
+
+
+    <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderResolver">
+        <constructor-arg name="appenderMap" ref="appenderMap"></constructor-arg>
+    </bean>
+
+    <util:map id="appenderMap">
+        <entry key="mongoDBLogAppender" value-ref="mongoDBLogAppender" />
+    </util:map>
 
 </beans>

@@ -18,16 +18,24 @@ package org.kaaproject.kaa.server.control;
 
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.sql.DataSource;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -46,6 +54,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -60,17 +69,31 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.core.schema.DataSchema;
+import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.mongodb.DB;
 
 /**
  * The Class AbstractTestControlServer.
@@ -83,28 +106,37 @@ public abstract class AbstractTestControlServer {
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory
             .getLogger(AbstractTestControlServer.class);
-    
+
     /** The Constant HOST. */
     private static final String HOST = "localhost";
 
     /** The Constant PORT. */
     private static final int PORT = 10090;
-    
+
     /** The Constant TENANT. */
     protected static final String TENANT = "Tenant";
 
     /** The Constant USER. */
     protected static final String USER = "User";
-    
+
     /** The Constant APPLICATION. */
     protected static final String APPLICATION = "Application";
-    
+
     /** The Constant ENDPOINT_GROUP. */
     protected static final String ENDPOINT_GROUP = "EndpointGroup";
-    
+
+    /** The Constant EVENT_CLASS_FAMILY. */
+    protected static final String EVENT_CLASS_FAMILY = "EventClassFamily";
+
+    /** The Constant EVENT_CLASS_FAMILY_NAMESPACE. */
+    protected static final String EVENT_CLASS_FAMILY_NAMESPACE = "org.kaaproject.event";
+
+    /** The Constant EVENT_CLASS_FAMILY_CLASS_NAME. */
+    protected static final String EVENT_CLASS_FAMILY_CLASS_NAME = "DefaultEventClassFamily";
+
     /** The Constant TEST_CONFIG_SCHEMA. */
     protected static final String TEST_CONFIG_SCHEMA = "data/testConfigSchema.json";
-    
+
     /** The Constant TEST_INVALID_CONFIG_SCHEMA. */
     protected static final String TEST_INVALID_CONFIG_SCHEMA = "data/testInvalidConfigSchema.json";
 
@@ -119,7 +151,7 @@ public abstract class AbstractTestControlServer {
 
     /** The Constant TEST_USER_NOTIFICATION_SCHEMA. */
     protected static final String TEST_USER_NOTIFICATION_SCHEMA = "data/testUserNotificationSchema.json";
-    
+
     /** The Constant TEST_PROFILE_FILTER. */
     protected static final String TEST_PROFILE_FILTER = "data/testProfileFilter.json";
 
@@ -135,6 +167,18 @@ public abstract class AbstractTestControlServer {
     /** The Constant TOPIC. */
     protected static final String TOPIC = "Topic";
 
+    /** The Constant TEST_EVENT_CLASS_FAMILY_SCHEMA. */
+    protected static final String TEST_EVENT_CLASS_FAMILY_SCHEMA = "data/testEventClassFamilySchema.json";
+
+    /** External id of the test Endpoint User */
+    protected static final String ENDPOINT_USER_EXTERNAL_ID = "Generated Test Endpoint User External Id";
+
+    /** Name of the test Endpoint User */
+    protected static final String ENDPOINT_USER_NAME = "Generated Test Endpoint User Name";
+
+    /** The Constant TEST_LOG_SCHEMA. */
+    protected static final String TEST_LOG_SCHEMA = "data/testLogSchema.json";
+
     /** The control service. */
     @Autowired
     private ControlService controlService;
@@ -145,11 +189,17 @@ public abstract class AbstractTestControlServer {
     /** The transport. */
     private TTransport transport;
 
-    private Random random = new Random();
-    
+    private final Random random = new Random();
+
+    @Value("${jdbc.url}")
+    private String url;
+
+    @Autowired
+    private DataSource dataSource;
+
     /**
      * Inits the.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -157,10 +207,10 @@ public abstract class AbstractTestControlServer {
     public static void init() throws Exception {
         MongoDBTestRunner.setUp();
     }
-    
+
     /**
      * After.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -170,7 +220,7 @@ public abstract class AbstractTestControlServer {
         MongoDBTestRunner.getDB().dropDatabase();
         MongoDBTestRunner.tearDown();
     }
-    
+
     /**
      * Before test.
      *
@@ -182,7 +232,37 @@ public abstract class AbstractTestControlServer {
         boolean connected = connect(3, 1000);
         Assert.assertTrue(connected);
     }
-    
+
+    /**
+     * After test.
+     *
+     * @throws Exception the exception
+     */
+    @After
+    public void afterTest() throws Exception {
+        transport.close();
+        clearDBData();
+    }
+
+    protected void clearDBData() {
+        logger.info("Deleting data from MongoDB database");
+        DB db = MongoDBTestRunner.getDB();
+        if (db != null) {
+            db.dropDatabase();
+        }
+        try {
+            if (url.contains("h2")) {
+                logger.info("Deleting data from H2 database");
+                new H2DBTestRunner().truncateTables(dataSource);
+            } else if (url.contains("h2")) {
+                logger.info("Deleting data from PostgreSQL database");
+                new PostgreDBTestRunner().truncateTables(dataSource);
+            }
+        } catch (SQLException ex) {
+            logger.error("Can't delete data from databases.", ex);
+        }
+    }
+
     private boolean connect(int retryAmount, long retryDelay) {
         boolean connected = false;
         logger.info("Connecting to ControlService on {}:{} ...", HOST, PORT);
@@ -210,20 +290,11 @@ public abstract class AbstractTestControlServer {
         }
         return connected;
     }
-    
-    /**
-     * After test.
-     *
-     * @throws Exception the exception
-     */
-    @After
-    public void afterTest() throws Exception {
-        transport.close();
-    }
-    
+
+
     /**
      * Generate string.
-     * 
+     *
      * @param string
      *            the string
      * @return the string
@@ -231,10 +302,10 @@ public abstract class AbstractTestControlServer {
     protected static String generateString(String string) {
         return string + "_" + UUID.randomUUID().toString();
     }
-    
+
     /**
      * Str is empty.
-     * 
+     *
      * @param str
      *            the str
      * @return true, if successful
@@ -242,7 +313,7 @@ public abstract class AbstractTestControlServer {
     protected static boolean strIsEmpty(String str) {
         return str == null || str.trim().equals("");
     }
-    
+
     /**
      * Gets the resource as string.
      *
@@ -270,12 +341,12 @@ public abstract class AbstractTestControlServer {
         }
         return result;
     }
-    
+
     /**
      * The Class IdComparator.
      */
     protected class IdComparator implements Comparator<HasId> {
-        
+
         /* (non-Javadoc)
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
@@ -284,7 +355,7 @@ public abstract class AbstractTestControlServer {
             return o1.getId().compareTo(o2.getId());
         }
     }
-    
+
     /**
      * Creates the tenant.
      *
@@ -298,7 +369,7 @@ public abstract class AbstractTestControlServer {
                 .editTenant(toDataStruct(tenant)));
         return savedTenant;
     }
-    
+
     /**
      * Creates the tenant admin.
      *
@@ -316,7 +387,7 @@ public abstract class AbstractTestControlServer {
                 .editTenantAdmin(toDataStruct(tenantAdmin)));
         return savedTenantAdmin;
     }
-    
+
     /**
      * Creates the user.
      *
@@ -327,7 +398,7 @@ public abstract class AbstractTestControlServer {
     protected UserDto createUser(KaaAuthorityDto authority) throws TException {
         return createUser(null, authority);
     }
-    
+
     /**
      * Creates the user.
      *
@@ -352,7 +423,7 @@ public abstract class AbstractTestControlServer {
                 .editUser(toDataStruct(user)));
         return savedUser;
     }
-    
+
     /**
      * Creates the application.
      *
@@ -362,7 +433,7 @@ public abstract class AbstractTestControlServer {
     protected ApplicationDto createApplication() throws TException {
         return createApplication(null);
     }
-    
+
     /**
      * Creates the application for tenant.
      *
@@ -384,7 +455,7 @@ public abstract class AbstractTestControlServer {
                 .editApplication(toDataStruct(application)));
         return savedApplication;
     }
-    
+
     /**
      * Creates the configuration schema.
      *
@@ -395,7 +466,7 @@ public abstract class AbstractTestControlServer {
     protected ConfigurationSchemaDto createConfigurationSchema() throws TException, IOException {
         return createConfigurationSchema(null);
     }
-    
+
     /**
      * Creates the configuration schema for application.
      *
@@ -407,8 +478,8 @@ public abstract class AbstractTestControlServer {
     protected ConfigurationSchemaDto createConfigurationSchema(String applicationId) throws TException, IOException {
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
         configurationSchema.setStatus(UpdateStatus.ACTIVE);
-        String schema = getResourceAsString(TEST_CONFIG_SCHEMA);
-        configurationSchema.setSchema(schema);
+        DataSchema schema = new KaaSchemaFactoryImpl().createDataSchema(getResourceAsString(TEST_CONFIG_SCHEMA));
+        configurationSchema.setSchema(schema.getRawSchema());
         configurationSchema.setName(generateString("Test Schema"));
         configurationSchema.setDescription(generateString("Test Desc"));
         if (strIsEmpty(applicationId)) {
@@ -422,8 +493,8 @@ public abstract class AbstractTestControlServer {
                 .editConfigurationSchema(toDataStruct(configurationSchema)));
         return savedConfigurationSchema;
     }
-    
-    
+
+
     /**
      * Creates the profile schema.
      *
@@ -434,7 +505,7 @@ public abstract class AbstractTestControlServer {
     protected ProfileSchemaDto createProfileSchema() throws TException, IOException {
         return createProfileSchema(null);
     }
-    
+
     /**
      * Creates the profile schema for application.
      *
@@ -445,8 +516,8 @@ public abstract class AbstractTestControlServer {
      */
     protected ProfileSchemaDto createProfileSchema(String applicationId) throws TException, IOException {
         ProfileSchemaDto profileSchema = new ProfileSchemaDto();
-        String schema = getResourceAsString(TEST_PROFILE_SCHEMA);
-        profileSchema.setSchema(schema);
+        DataSchema schema = new KaaSchemaFactoryImpl().createDataSchema(getResourceAsString(TEST_PROFILE_SCHEMA));
+        profileSchema.setSchema(schema.getRawSchema());
         profileSchema.setName(generateString("Test Schema"));
         profileSchema.setDescription(generateString("Test Desc"));
         if (strIsEmpty(applicationId)) {
@@ -460,7 +531,7 @@ public abstract class AbstractTestControlServer {
                 .editProfileSchema(toDataStruct(profileSchema)));
         return savedProfileSchema;
     }
-    
+
     /**
      * Creates the endpoint group.
      *
@@ -471,7 +542,7 @@ public abstract class AbstractTestControlServer {
     protected EndpointGroupDto createEndpointGroup() throws TException, IOException {
         return createEndpointGroup(null);
     }
-    
+
     /**
      * Creates the endpoint group for application.
      *
@@ -495,7 +566,7 @@ public abstract class AbstractTestControlServer {
                 .editEndpointGroup(toDataStruct(endpointGroup)));
         return savedEndpointGroup;
     }
-    
+
     /**
      * Creates the profile filter.
      *
@@ -506,7 +577,7 @@ public abstract class AbstractTestControlServer {
     protected ProfileFilterDto createProfileFilter() throws TException, IOException {
         return createProfileFilter(null, null);
     }
-    
+
     /**
      * Creates the profile filter for profile schema.
      *
@@ -520,7 +591,7 @@ public abstract class AbstractTestControlServer {
         ApplicationDto application = createApplication();
         return createProfileFilter(profileSchemaId, endpointGroupId, application.getId());
     }
-    
+
     /**
      * Creates the profile filter for profile schema.
      *
@@ -562,7 +633,7 @@ public abstract class AbstractTestControlServer {
                 .editProfileFilter(toDataStruct(profileFilter)));
         return savedProfileFilter;
     }
-    
+
     /**
      * Creates the configuration.
      *
@@ -627,7 +698,7 @@ public abstract class AbstractTestControlServer {
             configuration.setEndpointGroupId(endpointGroupId);
         }
         GenericAvroConverter converter = new GenericAvroConverter(configSchema.getOverrideSchema());
-        configuration.setBinaryBody(converter.encodeToJsonBytes(converter.decodeJson(config)));
+        configuration.setBody(converter.endcodeToJson(converter.decodeJson(config)));
         ConfigurationDto savedConfiguration = toDto(client
                 .editConfiguration(toDataStruct(configuration)));
         return savedConfiguration;
@@ -666,7 +737,7 @@ public abstract class AbstractTestControlServer {
      */
     protected NotificationSchemaDto createNotificationSchema(String appId, NotificationTypeDto type) throws TException {
         NotificationSchemaDto notificationSchema = new NotificationSchemaDto();
-        notificationSchema.setSchema(BasicSystemNotification.SCHEMA$.toString());
+        notificationSchema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(BasicSystemNotification.SCHEMA$.toString()).getRawSchema());
         notificationSchema.setType(type);
         notificationSchema.setName(generateString("Test Schema"));
         notificationSchema.setDescription(generateString("Test Desc"));
@@ -680,7 +751,7 @@ public abstract class AbstractTestControlServer {
                 .editNotificationSchema(toDataStruct(notificationSchema)));
         return savedSchema;
     }
-    
+
     /**
      * Creates the user notification schema.
      *
@@ -691,8 +762,8 @@ public abstract class AbstractTestControlServer {
      */
     protected NotificationSchemaDto createUserNotificationSchema(String appId) throws TException, IOException {
         NotificationSchemaDto notificationSchema = new NotificationSchemaDto();
-        String schema = getResourceAsString(TEST_USER_NOTIFICATION_SCHEMA);
-        notificationSchema.setSchema(schema);
+        DataSchema schema = new KaaSchemaFactoryImpl().createDataSchema(getResourceAsString(TEST_USER_NOTIFICATION_SCHEMA));
+        notificationSchema.setSchema(schema.getRawSchema());
         notificationSchema.setType(NotificationTypeDto.USER);
         if (strIsEmpty(appId)) {
             ApplicationDto applicationDto = createApplication();
@@ -704,6 +775,44 @@ public abstract class AbstractTestControlServer {
                 .editNotificationSchema(toDataStruct(notificationSchema)));
         return savedSchema;
     }
+
+    /**
+     * Creates the log schema.
+     *
+     * @return the log schema dto
+     * @throws TException the t exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    protected LogSchemaDto createLogSchema() throws TException, IOException {
+        return createLogSchema(null);
+    }
+
+    /**
+     * Creates the log schema for application.
+     *
+     * @param applicationId the application id
+     * @return the log schema dto
+     * @throws TException the t exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    protected LogSchemaDto createLogSchema(String applicationId) throws TException, IOException {
+        LogSchemaDto logSchema = new LogSchemaDto();
+        DataSchema schema = new KaaSchemaFactoryImpl().createDataSchema(getResourceAsString(TEST_LOG_SCHEMA));
+        logSchema.setSchema(schema.getRawSchema());
+        logSchema.setName(generateString("Test Schema"));
+        logSchema.setDescription(generateString("Test Desc"));
+        if (strIsEmpty(applicationId)) {
+            ApplicationDto application = createApplication();
+            logSchema.setApplicationId(application.getId());
+        }
+        else {
+            logSchema.setApplicationId(applicationId);
+        }
+        LogSchemaDto savedLogSchema = toDto(client
+                .editLogSchema(toDataStruct(logSchema)));
+        return savedLogSchema;
+    }
+
 
     /**
      * Creates the notification.
@@ -770,7 +879,123 @@ public abstract class AbstractTestControlServer {
                 .editUnicastNotification(toDataStruct(personaNotification)));
         return savedUnicast;
     }
-    
+
+    /**
+     * Creates the event class family.
+     *
+     * @return the event class family dto
+     * @throws TException the t exception
+     */
+    protected EventClassFamilyDto createEventClassFamily() throws TException {
+        return createEventClassFamily(null, null);
+    }
+
+    /**
+     * Creates the event class family.
+     *
+     * @param tenantId the tenant id
+     * @return the event class family dto
+     * @throws TException the t exception
+     */
+    protected EventClassFamilyDto createEventClassFamily(String tenantId) throws TException {
+        return createEventClassFamily(tenantId, null);
+    }
+
+    /**
+     * Creates the event class family for tenant.
+     *
+     * @param tenantId the tenant id
+     * @param classNameSuffix the class name suffix
+     * @return the event class family dto
+     * @throws TException the t exception
+     */
+    protected EventClassFamilyDto createEventClassFamily(String tenantId, String classNameSuffix) throws TException {
+        EventClassFamilyDto eventClassFamily = new EventClassFamilyDto();
+        eventClassFamily.setName(generateString(EVENT_CLASS_FAMILY));
+        eventClassFamily.setNamespace(EVENT_CLASS_FAMILY_NAMESPACE);
+        String className = EVENT_CLASS_FAMILY_CLASS_NAME;
+        if (StringUtils.isNotBlank(classNameSuffix)) {
+            className+=classNameSuffix;
+        }
+        eventClassFamily.setClassName(className);
+        if (strIsEmpty(tenantId)) {
+            TenantDto tenant = createTenant();
+            eventClassFamily.setTenantId(tenant.getId());
+        }
+        else {
+            eventClassFamily.setTenantId(tenantId);
+        }
+        EventClassFamilyDto savedEventClassFamily = toDto(client
+                .editEventClassFamily(toDataStruct(eventClassFamily)));
+        return savedEventClassFamily;
+    }
+
+    /**
+     * Creates the application event family map.
+     *
+     * @return the application event family map dto
+     * @throws TException the t exception
+     * @throws IOException
+     */
+    protected ApplicationEventFamilyMapDto createApplicationEventFamilyMap() throws TException, IOException {
+        return createApplicationEventFamilyMap(null, null, 1);
+    }
+
+    /**
+     * Creates the application event family map.
+     *
+     * @param applicationId the application id
+     * @param ecfId the event class family id
+     * @return the application event family map dto
+     * @throws TException the t exception
+     * @throws IOException
+     */
+    protected ApplicationEventFamilyMapDto createApplicationEventFamilyMap(String applicationId, String ecfId, int version) throws TException, IOException {
+        ApplicationEventFamilyMapDto applicationEventFamilyMap = new ApplicationEventFamilyMapDto();
+        String tenantId = null;
+        if (strIsEmpty(applicationId)) {
+            ApplicationDto application = createApplication();
+            tenantId = application.getTenantId();
+            applicationEventFamilyMap.setApplicationId(application.getId());
+        }
+        else {
+            applicationEventFamilyMap.setApplicationId(applicationId);
+            ApplicationDto application = toDto(client.getApplication(applicationId));
+            tenantId = application.getTenantId();
+        }
+        EventClassFamilyDto eventClassFamily = null;
+        if (strIsEmpty(ecfId)) {
+            eventClassFamily = createEventClassFamily(tenantId);
+        }
+        else {
+            eventClassFamily = toDto(client.getEventClassFamily(ecfId));
+        }
+        applicationEventFamilyMap.setEcfId(eventClassFamily.getId());
+        applicationEventFamilyMap.setEcfName(eventClassFamily.getName());
+        if (eventClassFamily.getSchemas() == null || eventClassFamily.getSchemas().size()<version) {
+            int start = eventClassFamily.getSchemas() == null ? 0 : eventClassFamily.getSchemas().size();
+            for (int i=start;i<version;i++) {
+                String schema = getResourceAsString(TEST_EVENT_CLASS_FAMILY_SCHEMA);
+                client.addEventClassFamilySchema(eventClassFamily.getId(), schema, null);
+            }
+        }
+        applicationEventFamilyMap.setVersion(version);
+        List<EventClassDto> eventClasses = toDtoList(client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), version, toGenericDataStruct(EventClassType.EVENT)));
+        List<ApplicationEventMapDto> eventMaps = new ArrayList<>(eventClasses.size());
+        for (EventClassDto eventClass : eventClasses) {
+            ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
+            eventMap.setEventClassId(eventClass.getId());
+            eventMap.setFqn(eventClass.getFqn());
+            eventMap.setAction(ApplicationEventAction.BOTH);
+            eventMaps.add(eventMap);
+        }
+        applicationEventFamilyMap.setEventMaps(eventMaps);
+
+        ApplicationEventFamilyMapDto savedApplicationEventFamilyMap = toDto(client
+                .editApplicationEventFamilyMap(toDataStruct(applicationEventFamilyMap)));
+        return savedApplicationEventFamilyMap;
+    }
+
     /**
      * Assert schemas equals.
      *
@@ -783,4 +1008,20 @@ public abstract class AbstractTestControlServer {
         Assert.assertEquals(schema.getMinorVersion(), storedSchema.getMinorVersion());
     }
 
+    /**
+     * Creates the endpoint user.
+     *
+     * @param tenantId tenant id
+     * @return the endpoint user dto
+     * @throws TException the t exception
+     */
+    protected EndpointUserDto createEndpointUser(String externalUID, String tenantId) throws TException {
+        EndpointUserDto endpointUser = new EndpointUserDto();
+        endpointUser.setExternalId(ENDPOINT_USER_EXTERNAL_ID + externalUID);
+        endpointUser.setUsername(ENDPOINT_USER_NAME);
+        endpointUser.setTenantId(tenantId);
+        EndpointUserDto savedEndpointUser = toDto(client
+                .editEndpointUser(toDataStruct(endpointUser)));
+        return savedEndpointUser;
+    }
 }

@@ -23,10 +23,10 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.avro.Schema;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
@@ -37,6 +37,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -48,15 +49,31 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculationAlgorithm;
+import org.kaaproject.kaa.server.common.core.configuration.BaseData;
+import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
+import org.kaaproject.kaa.server.common.core.schema.DataSchema;
+import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.EventClassService;
+import org.kaaproject.kaa.server.common.dao.LogEventService;
+import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
+import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
@@ -68,8 +85,8 @@ import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
+import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
-import org.kaaproject.kaa.server.operations.service.delta.DefaultDeltaCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +108,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     /** The control service. */
     @Autowired
     private ControlService controlService;
-    
+
     /** The user service. */
     @Autowired
     private UserService userService;
@@ -120,17 +137,31 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     @Autowired
     private TopicService topicService;
 
+    /** The event class service. */
+    @Autowired
+    private EventClassService eventClassService;
+
+    /** The application event map service. */
+    @Autowired
+    private ApplicationEventMapService applicationEventMapService;
+
     /** The control zookeeper service. */
     @Autowired
     private ControlZkService controlZKService;
+
+    @Autowired
+    private LogSchemaService logSchemaService;
     
+    @Autowired
+    private LogEventService logEventService;
+
     /** The thrift host. */
     @Value("#{properties[build_version]}")
     private String buildVersion;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTenants()
@@ -143,7 +174,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTenant(java.lang.String)
@@ -156,7 +187,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -172,7 +203,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteTenant(java.lang.String)
@@ -185,7 +216,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getUsers()
@@ -195,7 +226,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     public List<DataStruct> getUsers() throws TException {
         return toDataStructList(userService.findAllUsers());
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getTenantUsers(java.lang.String)
      */
@@ -208,7 +239,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getUser(java.lang.String)
@@ -222,10 +253,10 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
-     * .Iface#getUserByExternalUid(java.lang.String)
+     * .Iface#getUserByExternalUid(java.lang.String, java.lang.String)
      */
     /* GUI method */
     @Override
@@ -235,7 +266,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#editUser(org.kaaproject.kaa.server.common.thrift.gen.shared.
@@ -251,7 +282,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteUser(java.lang.String)
@@ -262,7 +293,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     public void deleteUser(String userId) throws TException {
         userService.removeUserById(userId);
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getTenantAdmins()
      */
@@ -301,11 +332,11 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     public void deleteTenantAdmin(String tenantId)
             throws TException {
         userService.removeTenantAdminById(tenantId);
-    }    
+    }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getApplication(java.lang.String)
@@ -320,7 +351,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getApplicationsByTenantId(java.lang.String)
@@ -335,7 +366,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -353,7 +384,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteApplication(java.lang.String)
@@ -367,7 +398,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getConfigurationSchemasByApplicationId(java.lang.String)
@@ -383,7 +414,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getConfigurationSchema(java.lang.String)
@@ -399,7 +430,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -423,7 +454,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getProfileSchemasByApplicationId(java.lang.String)
@@ -439,7 +470,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getProfileSchema(java.lang.String)
@@ -455,7 +486,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -473,7 +504,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEndpointGroupsByApplicationId(java.lang.String)
@@ -489,7 +520,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEndpointGroup(java.lang.String)
@@ -505,7 +536,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -524,7 +555,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteEndpointGroup(java.lang.String)
@@ -568,7 +599,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getProfileFilter(java.lang.String)
@@ -580,7 +611,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         return toDataStruct(profileService
                 .findProfileFilterById(profileFilterId));
     }
-    
+
     /* GUI method */
     @Override
     public List<DataStruct> getProfileFilterRecordsByEndpointGroupId(
@@ -594,7 +625,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             String endpointGroupId) throws TException {
         return toGenericDataStruct(profileService.findProfileFilterRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId));
     }
-    
+
     /* GUI method */
     @Override
     public List<DataStruct> getVacantProfileSchemasByEndpointGroupId(
@@ -602,10 +633,10 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         return toDataStructList(profileService.findVacantSchemasByEndpointGroupId(endpointGroupId));
     }
 
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -641,10 +672,10 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             String endpointGroupId) throws TException {
         return toDataStructList(configurationService.findVacantSchemasByEndpointGroupId(endpointGroupId));
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getConfiguration(java.lang.String)
@@ -659,7 +690,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -678,7 +709,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#activateConfiguration(java.lang.String, java.lang.String)
@@ -697,10 +728,10 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         }
         return toDataStruct(cfgNotification.getConfigurationDto());
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deactivateConfiguration(java.lang.String, java.lang.String)
@@ -721,7 +752,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteConfigurationRecord(java.lang.String, java.lang.String, java.lang.String)
@@ -757,7 +788,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         }
         return toDataStruct(cpfNotification.getProfileFilterDto());
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#deactivateProfileFilter(java.lang.String, java.lang.String)
      */
@@ -793,14 +824,14 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     }
 
     /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#generateSdk(org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform, java.lang.String, int, int, int)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#generateSdk(org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform, java.lang.String, int, int, int, java.util.List)
      */
     /* GUI method */
     /* CLI method */
     @Override
     public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId,
             int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion) throws TException {
+            int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion) throws TException {
 
         try {
             ApplicationDto application = applicationService.findAppById(applicationId);
@@ -810,7 +841,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             ProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(applicationId, profileSchemaVersion);
             if (profileSchema == null) {
                 throw new TException("Profile schema not found!");
-            }            
+            }
             ConfigurationSchemaDto configurationShema = configurationService.findConfSchemaByAppIdAndVersion(applicationId, configurationSchemaVersion);
             if (configurationShema == null) {
                 throw new TException("Configuration schema not found!");
@@ -823,33 +854,64 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             if (notificationSchema == null) {
                 throw new TException("Notification schema not found!");
             }
+
+            LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
+            if (logSchema == null) {
+                throw new TException("Log schema not found!");
+            }
+
+            DataSchema profileDataSchema = new DataSchema(profileSchema.getSchema());
+            DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
+            ProtocolSchema protocolSchema = new ProtocolSchema(configurationShema.getProtocolSchema());
+            BaseSchema baseSchema = new BaseSchema(configurationShema.getBaseSchema());
+            DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
+
             String appToken = application.getApplicationToken();
-            String profileSchemaBody = profileSchema.getSchema();
-            String notificationSchemaBody = notificationSchema.getSchema();
-            String configurationProtocolSchemaBody = configurationShema.getProtocolSchema();
-            
-            Schema deltaSchema = new Schema.Parser().parse(configurationProtocolSchemaBody);
-            Schema baseSchema = new Schema.Parser().parse(configurationShema.getBaseSchema());
-            DefaultDeltaCalculator calculator = new DefaultDeltaCalculator(deltaSchema, baseSchema);
-            
-            byte[] defaultConfigurationData = calculator.calculate(defaultConfiguration.getBody()).getData();
-            
+            String profileSchemaBody = profileDataSchema.getRawSchema();
+            DeltaCalculationAlgorithm calculator = new DefaultDeltaCalculatorFactory().createDeltaCalculator(protocolSchema, baseSchema);
+            byte[] defaultConfigurationData = calculator.calculate(new BaseData(baseSchema, defaultConfiguration.getBody())).getData();
+
+            List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
+            if (aefMapIds != null) {
+                List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService.findApplicationEventFamilyMapsByIds(aefMapIds);
+                for(ApplicationEventFamilyMapDto aefMap : aefMaps) {
+                    EventFamilyMetadata efm = new EventFamilyMetadata();
+                    efm.setVersion(aefMap.getVersion());
+                    efm.setEventMaps(aefMap.getEventMaps());
+                    EventClassFamilyDto ecf = eventClassService.findEventClassFamilyById(aefMap.getEcfId());
+                    efm.setEcfName(ecf.getName());
+                    efm.setEcfNamespace(ecf.getNamespace());
+                    efm.setEcfClassName(ecf.getClassName());
+                    List<EventSchemaVersionDto> ecfSchemas = ecf.getSchemas();
+                    for (EventSchemaVersionDto ecfSchema : ecfSchemas) {
+                        if (ecfSchema.getVersion() == efm.getVersion()) {
+                            efm.setEcfSchema(ecfSchema.getSchema());
+                            break;
+                        }
+                    }
+                    eventFamilies.add(efm);
+                }
+            }
+
             SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPlatform);
-            return generator.generateSdk(buildVersion, 
+            return generator.generateSdk(buildVersion,
                     controlZKService.getCurrentBootstrapNodes(),
-                    appToken, 
-                    profileSchemaVersion, 
-                    configurationSchemaVersion, 
-                    notificationSchemaVersion, 
+                    appToken,
+                    profileSchemaVersion,
+                    configurationSchemaVersion,
+                    notificationSchemaVersion,
+                    logSchemaVersion,
                     profileSchemaBody,
-                    notificationSchemaBody,
-                    configurationProtocolSchemaBody,
-                    defaultConfigurationData);
+                    notificationDataSchema.getRawSchema(),
+                    protocolSchema.getRawSchema(),
+                    defaultConfigurationData,
+                    eventFamilies,
+                    logDataSchema.getRawSchema());
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new TException(e);
         }
-        
+
     }
 
     /* (non-Javadoc)
@@ -881,7 +943,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     public List<DataStruct> getNotificationSchemasByAppId(String applicationId) throws TException {
         return toDataStructList(notificationService.findNotificationSchemasByAppId(applicationId));
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getUserNotificationSchemasByAppId(java.lang.String)
      */
@@ -901,10 +963,39 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         return toDataStructList(notificationService.findNotificationSchemasByAppIdAndType(applicationId,
                 notificationType));
     }
+    
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#editLogSchema(java.lang.String)
+     */
+    /* GUI method */
+    @Override
+    public DataStruct editLogSchema(DataStruct logSchemaDto)
+            throws ControlThriftException, TException {
+        return toDataStruct(logSchemaService.saveLogSchema(ThriftDtoConverter.<LogSchemaDto>toDto(logSchemaDto)));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getLogSchemasByApplicationId(java.lang.String)
+     */
+    /* GUI method */
+    @Override
+    public List<DataStruct> getLogSchemasByApplicationId(String applicationId)
+            throws ControlThriftException, TException {
+        return toDataStructList(logSchemaService.findLogSchemasByAppId(applicationId));
+    }
+    
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getLogSchema(java.lang.String)
+     */
+    /* GUI method */
+    @Override
+    public DataStruct getLogSchema(String logSchemaId) throws TException {
+        return toDataStruct(logSchemaService.findLogSchemaById(logSchemaId));
+    }
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#editNotification(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)
-     */    
+     */
     /* GUI method */
     /* CLI method */
     @Override
@@ -970,7 +1061,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             throws TException {
         return toDataStructList(topicService.findTopicsByEndpointGroupId(endpointGroupId));
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getVacantTopicByEndpointGroupId(java.lang.String)
      */
@@ -1052,9 +1143,113 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         return toDataStructList(notificationService.findNotificationSchemaVersionsByAppId(applicationId));
     }
 
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getLogSchemaVersionsByApplicationId(java.lang.String)
+     */
+    /* GUI method */
+    @Override
+    public List<DataStruct> getLogSchemaVersionsByApplicationId(
+            String applicationId) throws TException {
+        return toDataStructList(logSchemaService.findLogSchemaVersionsByApplicationId(applicationId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#editEventClassFamily(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)
+     */
+    @Override
+    public DataStruct editEventClassFamily(DataStruct eventClassFamily)
+            throws ControlThriftException, TException {
+        return toDataStruct(eventClassService.saveEventClassFamily(ThriftDtoConverter.<EventClassFamilyDto>toDto(eventClassFamily)));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getEventClassFamiliesByTenantId(java.lang.String)
+     */
+    @Override
+    public List<DataStruct> getEventClassFamiliesByTenantId(String tenantId)
+            throws ControlThriftException, TException {
+        return toDataStructList(eventClassService.findEventClassFamiliesByTenantId(tenantId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getEventClassFamily(java.lang.String)
+     */
+    @Override
+    public DataStruct getEventClassFamily(String eventClassFamilyId)
+            throws ControlThriftException, TException {
+        return toDataStruct(eventClassService.findEventClassFamilyById(eventClassFamilyId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#addEventClassFamilySchema(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void addEventClassFamilySchema(String eventClassFamilyId,
+            String eventClassFamilySchema, String createdUsername) throws ControlThriftException,
+            TException {
+        eventClassService.addEventClassFamilySchema(eventClassFamilyId, eventClassFamilySchema, createdUsername);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getEventClassesByFamilyIdAndVersion(java.lang.String, int, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)
+     */
+    @Override
+    public List<DataStruct> getEventClassesByFamilyIdVersionAndType(String ecfId,
+            int version, DataStruct type) throws ControlThriftException, TException {
+        EventClassType eventClassType = toGenericDto(type);
+        return toDataStructList(eventClassService.findEventClassesByFamilyIdVersionAndType(ecfId, version, eventClassType));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#editApplicationEventFamilyMap(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)
+     */
+    @Override
+    public DataStruct editApplicationEventFamilyMap(
+            DataStruct applicationEventFamilyMap)
+            throws ControlThriftException, TException {
+        return toDataStruct(applicationEventMapService.saveApplicationEventFamilyMap(ThriftDtoConverter.<ApplicationEventFamilyMapDto>toDto(applicationEventFamilyMap)));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getApplicationEventFamilyMap(java.lang.String)
+     */
+    @Override
+    public DataStruct getApplicationEventFamilyMap(
+            String applicationEventFamilyMapId) throws ControlThriftException,
+            TException {
+        return toDataStruct(applicationEventMapService.findApplicationEventFamilyMapById(applicationEventFamilyMapId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getApplicationEventFamilyMapsByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<DataStruct> getApplicationEventFamilyMapsByApplicationId(
+            String applicationId) throws ControlThriftException, TException {
+        return toDataStructList(applicationEventMapService.findApplicationEventFamilyMapsByApplicationId(applicationId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getVacantEventClassFamiliesByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<DataStruct> getVacantEventClassFamiliesByApplicationId(
+            String applicationId) throws ControlThriftException, TException {
+        return toGenericDataStructList(applicationEventMapService.findVacantEventClassFamiliesByApplicationId(applicationId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getEventClassFamiliesByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<DataStruct> getEventClassFamiliesByApplicationId(
+            String applicationId) throws ControlThriftException, TException {
+        return toGenericDataStructList(applicationEventMapService.findEventClassFamiliesByApplicationId(applicationId));
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
      * #getServerShortName()
@@ -1066,20 +1261,20 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
      * #initServiceCommands()
      */
     @Override
     protected void initServiceCommands() {
-        
+
     }
 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService
      * .Iface#shutdown()
@@ -1087,7 +1282,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     @Override
     public void shutdown() throws TException {
         LOG.info("Received shutdown command.");
-        
+
         Runnable shutdownCommmand = new Runnable() {
             @Override
             public void run() {
@@ -1096,7 +1291,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
                 ThriftExecutor.shutdown();
             }
         };
-        
+
         Thread shutdownThread = new Thread(shutdownCommmand);
         shutdownThread.setName("Control Server Shutdown Thread");
         shutdownThread.start();
@@ -1198,4 +1393,81 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         return operation;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointUsers()
+     */
+    /* CLI method */
+    @Override
+    public List<DataStruct> getEndpointUsers() throws ControlThriftException, TException {
+        return toDataStructList(endpointService.findAllEndpointUsers());
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointUser(java.lang.String)
+     */
+    /* CLI method */
+    @Override
+    public DataStruct getEndpointUser(String endpointUserId) throws ControlThriftException, TException {
+        return toDataStruct(endpointService.findEndpointUserById(endpointUserId));
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .
+     * Iface#editEndpointUser(org.kaaproject.kaa.server.common.thrift.gen.shared
+     * .DataStruct)
+     */
+    /* CLI method */
+    @Override
+    public DataStruct editEndpointUser(DataStruct endpointUser) throws ControlThriftException, TException {
+        return toDataStruct(endpointService.saveEndpointUser(ThriftDtoConverter
+                .<EndpointUserDto>toDto(endpointUser)));
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#deleteEndpointUser(java.lang.String)
+     */
+    /* CLI method */
+    @Override
+    public void deleteEndpointUser(String endpointUserId) throws ControlThriftException, TException {
+        endpointService.removeEndpointUserById(endpointUserId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#generateEndpointUserAccessToken(java.lang.String)
+     */
+    /* CLI method */
+    @Override
+    public String generateEndpointUserAccessToken(String externalUid, String tenantId) throws ControlThriftException, TException {
+        return endpointService.generateEndpointUserAccessToken(externalUid, tenantId);
+    }
+
+    @Override
+    public void createSecureCollection(String applicationId, String password) throws ControlThriftException, TException {
+        String collectionName = applicationService.findAppById(applicationId).getApplicationToken() + "_logs";
+        String roleName = applicationService.findAppById(applicationId).getApplicationToken() + "_role";
+        String userName = applicationService.findAppById(applicationId).getApplicationToken() + "_user";
+        logEventService.createCollection(collectionName);
+        logEventService.createRole(roleName, collectionName);
+        logEventService.createUser(userName, password, roleName);
+    }
 }

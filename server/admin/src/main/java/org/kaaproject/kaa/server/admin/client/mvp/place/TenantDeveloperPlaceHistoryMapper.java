@@ -28,12 +28,16 @@ import com.google.gwt.place.shared.WithTokenizers;
     ConfigurationSchemaPlace.Tokenizer.class,
     NotificationSchemasPlace.Tokenizer.class,
     NotificationSchemaPlace.Tokenizer.class,
+    LogSchemasPlace.Tokenizer.class,
+    LogSchemaPlace.Tokenizer.class,
     EndpointGroupsPlace.Tokenizer.class,
     EndpointGroupPlace.Tokenizer.class,
     ProfileFilterPlace.Tokenizer.class,
     ConfigurationPlace.Tokenizer.class,
     TopicsPlace.Tokenizer.class,
-    TopicPlace.Tokenizer.class})
+    TopicPlace.Tokenizer.class,
+    AefMapsPlace.Tokenizer.class,
+    AefMapPlace.Tokenizer.class})
 public interface TenantDeveloperPlaceHistoryMapper extends PlaceHistoryMapper
 {
 }

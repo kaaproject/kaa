@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.services.cache;
 
-import org.kaaproject.kaa.server.admin.shared.dto.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkKey;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 

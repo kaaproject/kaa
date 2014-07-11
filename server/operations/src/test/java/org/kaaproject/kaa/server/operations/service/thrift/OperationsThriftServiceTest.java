@@ -28,6 +28,7 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
+import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
@@ -42,39 +43,39 @@ public class OperationsThriftServiceTest {
     private AkkaService akkaService;
     private CacheService cacheService;
     private ApplicationService applicationService;
-    
+
     private static final String TEST_APP_ID = "testAppId";
     private static final String TEST_APP_TOKEN = "testApp";
     private static final String TEST_PF_ID = "pfID";
     private static final int TEST_APP_SEQ_NUMBER = 42;
-    
-    
+
+
     @Before
     public void before(){
         operationsThriftService = new OperationsThriftServiceImpl();
         cacheService = mock(CacheService.class);
         akkaService = mock(AkkaService.class);
         applicationService = mock(ApplicationService.class);
-        
+
         ReflectionTestUtils.setField(operationsThriftService, "cacheService", cacheService);
         ReflectionTestUtils.setField(operationsThriftService, "akkaService", akkaService);
         ReflectionTestUtils.setField(operationsThriftService, "applicationService", applicationService);
     }
-    
+
     @Test
-    public void testSimpleFlowWithZeroAppSeqNumber() throws TException{       
+    public void testSimpleFlowWithZeroAppSeqNumber() throws TException{
         Notification notification = new Notification();
         notification.setAppId(TEST_APP_ID);
         notification.setProfileFilterId(TEST_PF_ID);
         notification.setAppSeqNumber(0);
-        
+
         ApplicationDto appDto = new ApplicationDto();
         appDto.setId(TEST_APP_ID);
         appDto.setApplicationToken(TEST_APP_TOKEN);
-        
+
         ProfileFilterDto pfDto = new ProfileFilterDto();
         pfDto.setMajorVersion(PF_VERSION);
-        
+
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
         Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
         operationsThriftService.onNotification(notification);
@@ -82,55 +83,56 @@ public class OperationsThriftServiceTest {
         Mockito.verify(cacheService).getFilter(TEST_PF_ID);
         Mockito.verify(cacheService).resetFilters(new AppVersionKey(TEST_APP_TOKEN, PF_VERSION));
         //Due to notification.setAppSeqNumber(0);
-        Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.anyInt());
+        Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.any(AppSeqNumber.class));
 
         Mockito.verify(akkaService).onNotification(notification);
     }
-    
+
     @Test
-    public void testSimpleFlowWithNotZeroAppSeqNumber() throws TException{       
+    public void testSimpleFlowWithNotZeroAppSeqNumber() throws TException{
         Notification notification = new Notification();
         notification.setAppId(TEST_APP_ID);
         notification.setProfileFilterId(TEST_PF_ID);
         notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
-        
+
         ApplicationDto appDto = new ApplicationDto();
         appDto.setId(TEST_APP_ID);
         appDto.setApplicationToken(TEST_APP_TOKEN);
-        
+
         ProfileFilterDto pfDto = new ProfileFilterDto();
         pfDto.setMajorVersion(PF_VERSION);
-        
+
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
+        Mockito.when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, 0));
         Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
         operationsThriftService.onNotification(notification);
         Mockito.verify(applicationService).findAppById(TEST_APP_ID);
         Mockito.verify(cacheService).getFilter(TEST_PF_ID);
         Mockito.verify(cacheService).resetFilters(new AppVersionKey(TEST_APP_TOKEN, PF_VERSION));
         //Due to notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
-        Mockito.verify(cacheService, Mockito.times(1)).putAppSeqNumber(TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER);        
+        Mockito.verify(cacheService, Mockito.times(1)).putAppSeqNumber(TEST_APP_TOKEN, new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER));
         Mockito.verify(akkaService).onNotification(notification);
     }
-    
+
     @Test
-    public void testAppNotFound() throws TException{       
+    public void testAppNotFound() throws TException{
         Notification notification = new Notification();
         notification.setAppId(TEST_APP_ID);
         notification.setProfileFilterId(TEST_PF_ID);
         notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
-                
+
         ProfileFilterDto pfDto = new ProfileFilterDto();
         pfDto.setMajorVersion(PF_VERSION);
-        
+
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(null);
         operationsThriftService.onNotification(notification);
         Mockito.verify(applicationService).findAppById(TEST_APP_ID);
         Mockito.verify(cacheService, Mockito.times(0)).getFilter(Mockito.anyString());
         Mockito.verify(cacheService, Mockito.times(0)).resetFilters(Mockito.any(AppVersionKey.class));
-        Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.anyInt());
+        Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.any(AppSeqNumber.class));
         Mockito.verify(akkaService).onNotification(notification);
-    }    
-    
+    }
+
     @Test
     public void testServerName() throws TException{
         Assert.assertEquals("operations", operationsThriftService.serverName());

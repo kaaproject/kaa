@@ -51,6 +51,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -62,6 +63,8 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
@@ -76,6 +79,61 @@ public class ControlApiCommandProcessor {
 
     /** The Constant UTF8. */
     private static final Charset UTF8 = Charset.forName("UTF-8");
+
+    private static final String CREATE = "create";
+    private static final String TENANT_ID = "tenantId";
+    private static final String TENANT_ID_OPTION = "Tenant Id option";
+    private static final String OUTPUT = "output";
+    private static final String OUTPUT_FILE_TO_STORE_OBJECT_ID = "Output file to store Object Id";
+    private static final String NOT_FOUND = " not found!";
+    private static final String UNABLE_TO = "Unable to ";
+    private static final String UPDATE = "update";
+    private static final String APPLICATION_ID = "applicationId";
+    private static final String APPLICATION_ID_OPTION = "Application Id option";
+    private static final String PROFILE_SCHEMA = " Profile Schema";
+    private static final String PROFILE_SCHEMA_ID = "profileSchemaId";
+    private static final String PROFILE_SCHEMA_ID_OPTION = "Profile Schema Id option";
+    private static final String VERSION_OUTPUT = "versionOutput";
+    private static final String OUTPUT_FILE_TO_STORE_VERSION = "Output file to store version";
+    private static final String CONFIGURATION_SCHEMA = " Configuration Schema";
+    private static final String CONFIGURATION_SCHEMA_ID = "configurationSchemaId";
+    private static final String CONFIGURATION_SCHEMA_ID_OPTION = "Configuration Schema Id option";
+    private static final String LOG_SCHEMA = " Log Schema";
+    private static final String LOG_SCHEMA_ID = "logSchemaId";
+    private static final String LOG_SCHEMA_ID_OPTION = "Log Schema Id option";
+    private static final String ENDPOINT_GROUP = " Endpoint Group";
+    private static final String ENDPOINT_GROUP_ID = "endpointGroupId";
+    private static final String ENDPOINT_GROUP_ID_OPTION = "Endpoint Group Id option";
+    private static final String TOPIC_ID = "topicId";
+    private static final String TOPIC_ID_OPTION = "Topic Id option";
+    private static final String INCORRECT_ENDPOINT_GROUP_ID = "Incorrect endpoint group id.";
+    private static final String INCORRECT_TOPIC_ID = "Incorrect topic id.";
+    private static final String PROFILE_FILTER = " Profile Filter";
+    private static final String PROFILE_FILTER_ID = "profileFilterId";
+    private static final String PROFILE_FILTER_ID_OPTION = "Profile Filter Id option";
+    private static final String UNABLE_TO_ACTIVATE_CONFIGURATION = "Unable to activate Configuration";
+    private static final String CONFIGURATION = " Configuration";
+    private static final String CONFIGURATION_ID = "configurationId";
+    private static final String CONFIGURATION_ID_OPTION = "Configuration Id option";
+    private static final String TOPIC = " Topic";
+    private static final String NOTIFICATION = " Notification";
+    private static final String SCHEMA_ID = "schema-id";
+    private static final String NOTIFICATION_SCHEMA_ID_OPTION = "Notification schema id option";
+    private static final String NOTIFICATION_TOPIC_ID_OPTION = "Notification topic id option.";
+    private static final String TOPIC__ID = "topic-id"; //NOSONAR
+    private static final String NOTIFICATION_BODY_FILE_OPTION = "Notification body file option.";
+    private static final String BODY_FILE = "body-file";
+    private static final String NOTIFICATION_BODY_OPTION = "Notification body option.";
+    private static final String INVALID_SCHEMA_ID_FOR_NOTIFICATION = "Invalid schema id for notification.";
+    private static final String INVALID_TOPIC_ID_FOR_NOTIFICATION = "Invalid topic id for notification.";
+    private static final String INCORRECT_FORMAT_OF_TTL = "Incorrect format of ttl: ";
+    private static final String CANT_READ_FILE = "Can't read file. Please check file name.";
+    private static final String NEED_TO_SET_BODY = "Need to set body or file with body for notification";
+    private static final String ID_OPTION = " Id option";
+    private static final String OUTPUT_FILE_TO_STORE_IDS = "Output file to store Object Ids";
+    private static final String TOTAL = "Total: ";
+    private static final String ERROR = "'! Error: ";
+    private static final String SPECIFIED_FILE = "Specified file '";
 
     /**
      * The Enum EntityType. Main types of processed entities.
@@ -96,6 +154,9 @@ public class ControlApiCommandProcessor {
 
         /** The configuration schema. */
         CONFIGURATION_SCHEMA("ConfigurationSchema"),
+        
+        /** The log schema. */
+        LOG_SCHEMA("LogSchema"),
 
         /** The endpoint group. */
         ENDPOINT_GROUP("EndpointGroup"),
@@ -116,7 +177,10 @@ public class ControlApiCommandProcessor {
         NOTIFICATION_SCHEMA("NotificationSchema"),
 
         /** The unicast notification. */
-        PERSONAL_NOTIFICATION("UnicastNotification");
+        PERSONAL_NOTIFICATION("UnicastNotification"),
+
+        /** The endpoint user. */
+        ENDPOINT_USER("EndpointUser");
 
         /** The name. */
         String name;
@@ -166,6 +230,8 @@ public class ControlApiCommandProcessor {
         addCommand(createProfileSchemaCommand(true));
         addCommand(createConfigurationSchemaCommand(false));
         addCommand(createConfigurationSchemaCommand(true));
+        addCommand(createLogSchemaCommand(false));
+        addCommand(createLogSchemaCommand(true));
         addCommand(createEndpointGroupCommand(false));
         addCommand(createEndpointGroupCommand(true));
         addCommand(createProfileFilterCommand(false));
@@ -187,9 +253,13 @@ public class ControlApiCommandProcessor {
 
         addCommand(createUnicastNotificationCommand());
 
+        addCommand(createEndpointUserCommand(false));
+        addCommand(createEndpointUserCommand(true));
+
         addCommand(listCommand(EntityType.USER));
         addCommand(listCommand(EntityType.TENANT));
         addCommand(listCommand(EntityType.TOPIC));
+        addCommand(listCommand(EntityType.ENDPOINT_USER));
 
         addCommand(listApplicationsCommand());
         addCommand(listProfileSchemasCommand());
@@ -207,6 +277,7 @@ public class ControlApiCommandProcessor {
         }
 
         addCommand(generateSdkCommand());
+
     }
 
     /**
@@ -431,7 +502,7 @@ public class ControlApiCommandProcessor {
      */
     private ControlApiCommand createTenantCommand(final boolean edit) {
         ControlApiCommand command = new ControlApiCommand(edit ? "editTenant"
-                : "createTenant", (edit ? "edit" : "create") + " Tenant") {
+                : "createTenant", (edit ? "edit" : CREATE) + " Tenant") {
             @Override
             public void runCommand(CommandLine line,
                     ControlThriftService.Iface client, PrintWriter writer,
@@ -440,13 +511,13 @@ public class ControlApiCommandProcessor {
             }
         };
         if (edit) {
-            Option opt = new Option("i", "tenantId", true,
-                    "Tenant Id option");
+            Option opt = new Option("i", TENANT_ID, true,
+                    TENANT_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
         }
@@ -480,7 +551,7 @@ public class ControlApiCommandProcessor {
                 tenant = toDto(client.getTenant(tenantId));
                 if (tenant == null) {
                     writer.println("Tenant with id " + tenantId
-                            + " not found!");
+                            + NOT_FOUND);
                     return;
                 }
             } else {
@@ -503,7 +574,7 @@ public class ControlApiCommandProcessor {
                 }
             }
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
                     + " tenant", e, errorWriter);
         }
     }
@@ -517,7 +588,7 @@ public class ControlApiCommandProcessor {
      */
     private ControlApiCommand createUserCommand(final boolean edit) {
         ControlApiCommand command = new ControlApiCommand(edit ? "editUser"
-                : "createUser", (edit ? "edit" : "create") + " User") {
+                : "createUser", (edit ? "edit" : CREATE) + " User") {
             @Override
             public void runCommand(CommandLine line,
                     ControlThriftService.Iface client, PrintWriter writer,
@@ -530,8 +601,8 @@ public class ControlApiCommandProcessor {
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
         }
@@ -539,7 +610,7 @@ public class ControlApiCommandProcessor {
         Option opt = new Option("uid", "externalUid", true, "External user id option");
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("t", "tenantId", true, "Tenant Id option");
+        opt = new Option("t", TENANT_ID, true, TENANT_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
         return command;
@@ -569,7 +640,7 @@ public class ControlApiCommandProcessor {
                 String userId = line.getOptionValue("i");
                 user = toDto(client.getUser(userId));
                 if (user == null) {
-                    writer.println("User with id " + userId + " not found!");
+                    writer.println("User with id " + userId + NOT_FOUND);
                     return;
                 }
             } else {
@@ -596,7 +667,7 @@ public class ControlApiCommandProcessor {
 
             }
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
                     + " user", e, errorWriter);
         }
     }
@@ -612,7 +683,7 @@ public class ControlApiCommandProcessor {
 
         ControlApiCommand command = new ControlApiCommand(
                 edit ? "editApplication" : "createApplication", (edit ? "edit"
-                        : "create") + " Application") {
+                        : CREATE) + " Application") {
             @Override
             public void runCommand(CommandLine line,
                     ControlThriftService.Iface client, PrintWriter writer,
@@ -621,13 +692,13 @@ public class ControlApiCommandProcessor {
             }
         };
         if (edit) {
-            Option opt = new Option("i", "applicationId", true,
-                    "Application Id option");
+            Option opt = new Option("i", APPLICATION_ID, true,
+                    APPLICATION_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
         }
@@ -635,7 +706,7 @@ public class ControlApiCommandProcessor {
         Option opt = new Option("n", "name", true, "Application Name option");
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("t", "tenantId", true, "Tenant Id option");
+        opt = new Option("t", TENANT_ID, true, TENANT_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
         return command;
@@ -666,7 +737,7 @@ public class ControlApiCommandProcessor {
                 application = toDto(client.getApplication(applicationId));
                 if (application == null) {
                     writer.println("Application with id " + applicationId
-                            + " not found!");
+                            + NOT_FOUND);
                     return;
                 }
             } else {
@@ -697,7 +768,7 @@ public class ControlApiCommandProcessor {
             }
 
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
                     + " application", e, errorWriter);
         }
     }
@@ -712,7 +783,7 @@ public class ControlApiCommandProcessor {
     private ControlApiCommand createProfileSchemaCommand(final boolean edit) {
         ControlApiCommand command = new ControlApiCommand(
                 edit ? "editProfileSchema" : "createProfileSchema",
-                (edit ? "edit" : "create") + " Profile Schema") {
+                (edit ? "edit" : CREATE) + PROFILE_SCHEMA) {
             @Override
             public void runCommand(CommandLine line,
                     ControlThriftService.Iface client, PrintWriter writer,
@@ -721,17 +792,17 @@ public class ControlApiCommandProcessor {
             }
         };
         if (edit) {
-            Option opt = new Option("i", "profileSchemaId", true,
-                    "Profile Schema Id option");
+            Option opt = new Option("i", PROFILE_SCHEMA_ID, true,
+                    PROFILE_SCHEMA_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
-            opt = new Option("vo", "versionOutput", true,
-                    "Output file to store version");
+            opt = new Option("vo", VERSION_OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_VERSION);
             opt.setRequired(false);
             command.addOption(opt);
         }
@@ -739,7 +810,7 @@ public class ControlApiCommandProcessor {
         Option opt = new Option("f", "file", true, "Profile Schema JSON File");
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("a", "applicationId", true, "Application Id option");
+        opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
         return command;
@@ -771,7 +842,7 @@ public class ControlApiCommandProcessor {
                 profileSchema = toDto(client.getProfileSchema(profileSchemaId));
                 if (profileSchema == null) {
                     writer.println("Profile Schema with id " + profileSchemaId
-                            + " not found!");
+                            + NOT_FOUND);
                     return;
                 }
             } else {
@@ -782,7 +853,7 @@ public class ControlApiCommandProcessor {
                 String schemaFile = line.getOptionValue("f");
                 String schema = readFile(schemaFile, errorWriter);
                 if (schema != null) {
-                    profileSchema.setSchema(schema);
+                    profileSchema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
                 } else {
                     return;
                 }
@@ -814,8 +885,8 @@ public class ControlApiCommandProcessor {
             }
 
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
-                    + " Profile Schema", e, errorWriter);
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
+                    + PROFILE_SCHEMA, e, errorWriter);
         }
     }
 
@@ -830,7 +901,7 @@ public class ControlApiCommandProcessor {
             final boolean edit) {
         ControlApiCommand command = new ControlApiCommand(
                 edit ? "editConfigurationSchema" : "createConfigurationSchema",
-                (edit ? "edit" : "create") + " Configuration Schema") {
+                (edit ? "edit" : CREATE) + CONFIGURATION_SCHEMA) {
             @Override
             public void runCommand(CommandLine line,
                     ControlThriftService.Iface client, PrintWriter writer,
@@ -840,17 +911,17 @@ public class ControlApiCommandProcessor {
             }
         };
         if (edit) {
-            Option opt = new Option("i", "configurationSchemaId", true,
-                    "Configuration Schema Id option");
+            Option opt = new Option("i", CONFIGURATION_SCHEMA_ID, true,
+                    CONFIGURATION_SCHEMA_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
-            opt = new Option("vo", "versionOutput", true,
-                    "Output file to store version");
+            opt = new Option("vo", VERSION_OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_VERSION);
             opt.setRequired(false);
             command.addOption(opt);
         }
@@ -859,7 +930,7 @@ public class ControlApiCommandProcessor {
                 "Configuration Schema JSON File");
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("a", "applicationId", true, "Application Id option");
+        opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
         return command;
@@ -891,7 +962,7 @@ public class ControlApiCommandProcessor {
                         .getConfigurationSchema(configurationSchemaId));
                 if (configurationSchema == null) {
                     writer.println("Configuration Schema with id "
-                            + configurationSchemaId + " not found!");
+                            + configurationSchemaId + NOT_FOUND);
                     return;
                 }
             } else {
@@ -902,7 +973,7 @@ public class ControlApiCommandProcessor {
                 String schemaFile = line.getOptionValue("f");
                 String schema = readFile(schemaFile, errorWriter);
                 if (schema != null) {
-                    configurationSchema.setSchema(schema);
+                    configurationSchema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
                 } else {
                     return;
                 }
@@ -933,10 +1004,127 @@ public class ControlApiCommandProcessor {
             }
 
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
-                    + " Configuration Schema", e, errorWriter);
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
+                    + CONFIGURATION_SCHEMA, e, errorWriter);
         }
     }
+    
+    /**
+     * Creates the API command to work with log schema entities.
+     *
+     * @param edit
+     *            edit else create log schema
+     * @return the control api command
+     */
+    private ControlApiCommand createLogSchemaCommand(final boolean edit) {
+        ControlApiCommand command = new ControlApiCommand(
+                edit ? "editLogSchema" : "createLogSchema",
+                (edit ? "edit" : CREATE) + LOG_SCHEMA) {
+            @Override
+            public void runCommand(CommandLine line,
+                    ControlThriftService.Iface client, PrintWriter writer,
+                    PrintWriter errorWriter) {
+                createLogSchema(line, client, writer, errorWriter, edit);
+            }
+        };
+        if (edit) {
+            Option opt = new Option("i", LOG_SCHEMA_ID, true,
+                    LOG_SCHEMA_ID_OPTION);
+            opt.setRequired(true);
+            command.addOption(opt);
+        } else {
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
+            opt.setRequired(false);
+            command.addOption(opt);
+            opt = new Option("vo", VERSION_OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_VERSION);
+            opt.setRequired(false);
+            command.addOption(opt);
+        }
+
+        Option opt = new Option("f", "file", true, "Log Schema JSON File");
+        opt.setRequired(!edit);
+        command.addOption(opt);
+        opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
+        opt.setRequired(!edit);
+        command.addOption(opt);
+        return command;
+    }
+
+    /**
+     * Creates or edits the log schema.
+     *
+     * @param line
+     *            the command line
+     * @param client
+     *            the control thrift client
+     * @param writer
+     *            the writer to output command results
+     * @param errorWriter
+     *            the error writer to output command errors
+     * @param edit
+     *            edit else create log schema
+     */
+    private void createLogSchema(CommandLine line,
+            ControlThriftService.Iface client, PrintWriter writer,
+            PrintWriter errorWriter, boolean edit) {
+
+        try {
+
+            LogSchemaDto logSchema = null;
+            if (edit) {
+                String logSchemaId = line.getOptionValue("i");
+                logSchema = toDto(client.getLogSchema(logSchemaId));
+                if (logSchema == null) {
+                    writer.println("Log Schema with id " + logSchemaId
+                            + NOT_FOUND);
+                    return;
+                }
+            } else {
+                logSchema = new LogSchemaDto();
+            }
+
+            if (line.hasOption("f")) {
+                String schemaFile = line.getOptionValue("f");
+                String schema = readFile(schemaFile, errorWriter);
+                if (schema != null) {
+                    logSchema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
+                } else {
+                    return;
+                }
+            }
+
+            if (line.hasOption("a")) {
+                logSchema.setApplicationId(line.getOptionValue("a"));
+            }
+
+            LogSchemaDto savedLogSchema = toDto(client
+                    .editLogSchema(toDataStruct(logSchema)));
+
+            if (edit) {
+                writer.println("Log Schema updated.");
+            } else {
+                writer.println("Created new Log Schema with id: "
+                        + savedLogSchema.getId());
+                if (line.hasOption("o")) {
+                    String outFileName = line.getOptionValue("o");
+                    storeInfo(outFileName, savedLogSchema.getId(),
+                            errorWriter);
+                }
+                if (line.hasOption("vo")) {
+                    String outFileName = line.getOptionValue("vo");
+                    storeInfo(outFileName, ""+savedLogSchema.getMajorVersion(),
+                            errorWriter);
+                }
+
+            }
+
+        } catch (TException e) {
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
+                    + LOG_SCHEMA, e, errorWriter);
+        }
+    }    
 
     /**
      * Creates the API command to work with endpoint group entities.
@@ -949,7 +1137,7 @@ public class ControlApiCommandProcessor {
 
         ControlApiCommand command = new ControlApiCommand(
                 edit ? "editEndpointGroup" : "createEndpointGroup",
-                (edit ? "edit" : "create") + " Endpoint Group") {
+                (edit ? "edit" : CREATE) + ENDPOINT_GROUP) {
             @Override
             public void runCommand(CommandLine line,
                     ControlThriftService.Iface client, PrintWriter writer,
@@ -958,13 +1146,13 @@ public class ControlApiCommandProcessor {
             }
         };
         if (edit) {
-            Option opt = new Option("i", "endpointGroupId", true,
-                    "Endpoint Group Id option");
+            Option opt = new Option("i", ENDPOINT_GROUP_ID, true,
+                    ENDPOINT_GROUP_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
         }
@@ -972,7 +1160,7 @@ public class ControlApiCommandProcessor {
         Option opt = new Option("n", "name", true, "Endpoint Group Name option");
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("a", "applicationId", true, "Application Id option");
+        opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
         opt = new Option("w", "weight", true, "Endpoint Group Weight option");
@@ -1006,7 +1194,7 @@ public class ControlApiCommandProcessor {
                 endpointGroup = toDto(client.getEndpointGroup(endpointGroupId));
                 if (endpointGroup == null) {
                     writer.println("Endpoint Group with id " + endpointGroupId
-                            + " not found!");
+                            + NOT_FOUND);
                     return;
                 }
             } else {
@@ -1047,8 +1235,8 @@ public class ControlApiCommandProcessor {
             }
 
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
-                    + " Endpoint Group", e, errorWriter);
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
+                    + ENDPOINT_GROUP, e, errorWriter);
         }
     }
 
@@ -1069,12 +1257,12 @@ public class ControlApiCommandProcessor {
             }
         };
 
-        Option opt = new Option("i", "endpointGroupId", true,
-                "Endpoint Group Id option");
+        Option opt = new Option("i", ENDPOINT_GROUP_ID, true,
+                ENDPOINT_GROUP_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
-        opt = new Option("t", "topicId", true,
-                "Topic Id option");
+        opt = new Option("t", TOPIC_ID, true,
+                TOPIC_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
         return command;
@@ -1100,15 +1288,15 @@ public class ControlApiCommandProcessor {
             String topicId = null;
             if (line.hasOption("i")) {
                 endpointGroupId = line.getOptionValue("i");
-                if(!ObjectId.isValid(endpointGroupId)) {
-                    errorWriter.println("Incorrect endpoint group id.");
+                if(!StringUtils.isNotBlank(endpointGroupId)) {
+                    errorWriter.println(INCORRECT_ENDPOINT_GROUP_ID);
                     return;
                 }
             }
             if(line.hasOption("t")) {
                 topicId = line.getOptionValue("t");
-                if(!ObjectId.isValid(topicId)) {
-                    errorWriter.println("Incorrect topic id.");
+                if(!StringUtils.isNotBlank(topicId)) {
+                    errorWriter.println(INCORRECT_TOPIC_ID);
                     return;
                 }
             }
@@ -1137,12 +1325,12 @@ public class ControlApiCommandProcessor {
             }
         };
 
-        Option opt = new Option("i", "endpointGroupId", true,
-                "Endpoint Group Id option");
+        Option opt = new Option("i", ENDPOINT_GROUP_ID, true,
+                ENDPOINT_GROUP_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
-        opt = new Option("t", "topicId", true,
-                "Topic Id option");
+        opt = new Option("t", TOPIC_ID, true,
+                TOPIC_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
         return command;
@@ -1168,15 +1356,15 @@ public class ControlApiCommandProcessor {
             String topicId = null;
             if (line.hasOption("i")) {
                 endpointGroupId = line.getOptionValue("i");
-                if(!ObjectId.isValid(endpointGroupId)) {
-                    errorWriter.println("Incorrect endpoint group id.");
+                if(!StringUtils.isNotBlank(endpointGroupId)) {
+                    errorWriter.println(INCORRECT_ENDPOINT_GROUP_ID);
                     return;
                 }
             }
             if(line.hasOption("t")) {
                 topicId = line.getOptionValue("t");
-                if(!ObjectId.isValid(topicId)) {
-                    errorWriter.println("Incorrect topic id.");
+                if(!StringUtils.isNotBlank(topicId)) {
+                    errorWriter.println(INCORRECT_TOPIC_ID);
                     return;
                 }
             }
@@ -1199,7 +1387,7 @@ public class ControlApiCommandProcessor {
 
         ControlApiCommand command = new ControlApiCommand(
                 edit ? "editProfileFilter" : "createProfileFilter",
-                (edit ? "edit" : "create") + " Profile Filter") {
+                (edit ? "edit" : CREATE) + PROFILE_FILTER) {
             @Override
             public void runCommand(CommandLine line,
                     ControlThriftService.Iface client, PrintWriter writer,
@@ -1209,23 +1397,23 @@ public class ControlApiCommandProcessor {
         };
 
         if (edit) {
-            Option opt = new Option("i", "profileFilterId", true,
-                    "Profile Filter Id option");
+            Option opt = new Option("i", PROFILE_FILTER_ID, true,
+                    PROFILE_FILTER_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
         }
 
-        Option opt = new Option("s", "profileSchemaId", true,
-                "Profile Schema Id option");
+        Option opt = new Option("s", PROFILE_SCHEMA_ID, true,
+                PROFILE_SCHEMA_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("e", "endpointGroupId", true,
-                "Endpoint Group Id option");
+        opt = new Option("e", ENDPOINT_GROUP_ID, true,
+                ENDPOINT_GROUP_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
         opt = new Option("f", "file", true, "Profile Filter JSON file");
@@ -1260,7 +1448,7 @@ public class ControlApiCommandProcessor {
                 profileFilter = toDto(client.getProfileFilter(profileFilterId));
                 if (profileFilter == null) {
                     writer.println("Profile Filter with id " + profileFilterId
-                            + " not found!");
+                            + NOT_FOUND);
                     return;
                 }
             } else {
@@ -1300,8 +1488,8 @@ public class ControlApiCommandProcessor {
             }
 
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
-                    + " Profile Filter", e, errorWriter);
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
+                    + PROFILE_FILTER, e, errorWriter);
         }
     }
 
@@ -1322,8 +1510,8 @@ public class ControlApiCommandProcessor {
             }
         };
 
-        Option opt = new Option("i", "profileFilterId", true,
-                "Profile Filter Id option");
+        Option opt = new Option("i", PROFILE_FILTER_ID, true,
+                PROFILE_FILTER_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
         return command;
@@ -1352,7 +1540,7 @@ public class ControlApiCommandProcessor {
                 writer.println("Profile Filter Activated.");
             }
         } catch (TException e) {
-            handleException("Unable to activate Configuration", e, errorWriter);
+            handleException(UNABLE_TO_ACTIVATE_CONFIGURATION, e, errorWriter);
         }
     }
 
@@ -1367,7 +1555,7 @@ public class ControlApiCommandProcessor {
 
         ControlApiCommand command = new ControlApiCommand(
                 edit ? "editConfiguration" : "createConfiguration",
-                (edit ? "edit" : "create") + " Configuration") {
+                (edit ? "edit" : CREATE) + CONFIGURATION) {
             @Override
             public void runCommand(CommandLine line,
                     ControlThriftService.Iface client, PrintWriter writer,
@@ -1377,23 +1565,23 @@ public class ControlApiCommandProcessor {
         };
 
         if (edit) {
-            Option opt = new Option("i", "configurationId", true,
-                    "Configuration Id option");
+            Option opt = new Option("i", CONFIGURATION_ID, true,
+                    CONFIGURATION_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
         }
 
-        Option opt = new Option("s", "configurationSchemaId", true,
-                "Configuration Schema Id option");
+        Option opt = new Option("s", CONFIGURATION_SCHEMA_ID, true,
+                CONFIGURATION_SCHEMA_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("e", "endpointGroupId", true,
-                "Endpoint Group Id option");
+        opt = new Option("e", ENDPOINT_GROUP_ID, true,
+                ENDPOINT_GROUP_ID_OPTION);
         opt.setRequired(false);
         command.addOption(opt);
         opt = new Option("f", "file", true, "Configuration JSON file");
@@ -1427,7 +1615,7 @@ public class ControlApiCommandProcessor {
                 configuration = toDto(client.getConfiguration(configurationId));
                 if (configuration == null) {
                     writer.println("Configuration with id " + configurationId
-                            + " not found!");
+                            + NOT_FOUND);
                     return;
                 }
             } else {
@@ -1439,7 +1627,7 @@ public class ControlApiCommandProcessor {
                 String configFile = line.getOptionValue("f");
                 String config = readFile(configFile, errorWriter);
                 if (config != null) {
-                    configuration.setBinaryBody(config.getBytes(UTF8));
+                    configuration.setBody(config);
                 } else {
                     return;
                 }
@@ -1469,8 +1657,8 @@ public class ControlApiCommandProcessor {
             }
 
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
-                    + " Configuration", e, errorWriter);
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
+                    + CONFIGURATION, e, errorWriter);
         }
     }
 
@@ -1491,8 +1679,8 @@ public class ControlApiCommandProcessor {
             }
         };
 
-        Option opt = new Option("i", "configurationId", true,
-                "Configuration Id option");
+        Option opt = new Option("i", CONFIGURATION_ID, true,
+                CONFIGURATION_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
         return command;
@@ -1522,7 +1710,7 @@ public class ControlApiCommandProcessor {
                 writer.println("Configuration Activated.");
             }
         } catch (TException e) {
-            handleException("Unable to activate Configuration", e, errorWriter);
+            handleException(UNABLE_TO_ACTIVATE_CONFIGURATION, e, errorWriter);
         }
     }
 
@@ -1548,8 +1736,8 @@ public class ControlApiCommandProcessor {
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("a", "applicationId", true,
-                "Application Id option");
+        opt = new Option("a", APPLICATION_ID, true,
+                APPLICATION_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
@@ -1565,6 +1753,11 @@ public class ControlApiCommandProcessor {
 
         opt = new Option("nsv", "notificationSchemaVersion", true,
                 "Notification schema version option");
+        opt.setRequired(true);
+        command.addOption(opt);
+
+        opt = new Option("lsv", "logSchemaVersion", true,
+                "Log schema version option");
         opt.setRequired(true);
         command.addOption(opt);
 
@@ -1597,12 +1790,15 @@ public class ControlApiCommandProcessor {
             int profileSchemaVersion = Integer.parseInt(line.getOptionValue("psv"));
             int configurationSchemaVersion = Integer.parseInt(line.getOptionValue("csv"));
             int notificationSchemaVersion = Integer.parseInt(line.getOptionValue("nsv"));
+            int logSchemaVersion = Integer.parseInt(line.getOptionValue("lsv"));
 
             Sdk sdk = client.generateSdk(sdkPlatform,
                     applicationId,
                     profileSchemaVersion,
                     configurationSchemaVersion,
-                    notificationSchemaVersion);
+                    notificationSchemaVersion,
+                    null,
+                    logSchemaVersion);
 
             writer.println("Generated SDK: " + sdk.getFileName());
 
@@ -1646,7 +1842,7 @@ public class ControlApiCommandProcessor {
 
         ControlApiCommand command = new ControlApiCommand(
                 edit ? "editTopic" : "createTopic",
-                (edit ? "edit" : "create") + " Topic") {
+                (edit ? "edit" : CREATE) + TOPIC) {
             @Override
             public void runCommand(CommandLine line,
                                    ControlThriftService.Iface client, PrintWriter writer,
@@ -1655,13 +1851,13 @@ public class ControlApiCommandProcessor {
             }
         };
         if (edit) {
-            Option opt = new Option("i", "topicId", true,
-                    "Topic Id option");
+            Option opt = new Option("i", TOPIC_ID, true,
+                    TOPIC_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
         }
@@ -1669,7 +1865,7 @@ public class ControlApiCommandProcessor {
         Option opt = new Option("n", "name", true, "Topic Name option");
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("a", "applicationId", true, "Application Id option");
+        opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
         opt = new Option("t", "type", true, "Topic type option. Values: MANDATORY, VOLUNTARY");
@@ -1698,7 +1894,7 @@ public class ControlApiCommandProcessor {
                 topicDto = toDto(client.getTopic(topicId));
                 if (topicDto == null) {
                     writer.println("Topic with id " + topicId
-                            + " not found!");
+                            + NOT_FOUND);
                     return;
                 }
             } else {
@@ -1707,7 +1903,7 @@ public class ControlApiCommandProcessor {
 
             if (line.hasOption("a")) {
                 String applicationId = line.getOptionValue("a");
-                if (ObjectId.isValid(applicationId)) {
+                if (StringUtils.isNotBlank(applicationId)) {
                     topicDto.setApplicationId(applicationId);
                 } else {
                     errorWriter.println("Invalid application id for topic.");
@@ -1735,8 +1931,8 @@ public class ControlApiCommandProcessor {
                 }
             }
         } catch (TException e) {
-            handleException("Unable to " + (edit ? "update" : "create")
-                    + " Topic", e, errorWriter);
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
+                    + TOPIC, e, errorWriter);
         }
     }
 
@@ -1749,7 +1945,7 @@ public class ControlApiCommandProcessor {
 
         ControlApiCommand command = new ControlApiCommand(
                 "createNotification",
-                "create" + " Notification") {
+                CREATE + NOTIFICATION) {
             @Override
             public void runCommand(CommandLine line,
                                    ControlThriftService.Iface client, PrintWriter writer,
@@ -1758,16 +1954,16 @@ public class ControlApiCommandProcessor {
             }
         };
 
-        Option opt = new Option("o", "output", true,
-                "Output file to store Object Id");
+        Option opt = new Option("o", OUTPUT, true,
+                OUTPUT_FILE_TO_STORE_OBJECT_ID);
         opt.setRequired(false);
         command.addOption(opt);
 
-        opt = new Option("s", "schema-id", true, "Notification schema id option");
+        opt = new Option("s", SCHEMA_ID, true, NOTIFICATION_SCHEMA_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("t", "topic-id", true, "Notification topic id option.");
+        opt = new Option("t", TOPIC__ID, true, NOTIFICATION_TOPIC_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
@@ -1775,11 +1971,11 @@ public class ControlApiCommandProcessor {
         opt.setRequired(false);
         command.addOption(opt);
 
-        opt = new Option("f", "body-file", true, "Notification body file option.");
+        opt = new Option("f", BODY_FILE, true, NOTIFICATION_BODY_FILE_OPTION);
         opt.setRequired(false);
         command.addOption(opt);
 
-        opt = new Option("b", "body", true, "Notification body option.");
+        opt = new Option("b", "body", true, NOTIFICATION_BODY_OPTION);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -1801,19 +1997,19 @@ public class ControlApiCommandProcessor {
             NotificationDto notificationDto = new NotificationDto();
             if (line.hasOption("s")) {
                 String schemaId = line.getOptionValue("s");
-                if (ObjectId.isValid(schemaId)) {
+                if (StringUtils.isNotBlank(schemaId)) {
                     notificationDto.setSchemaId(schemaId);
                 } else {
-                    errorWriter.println("Invalid schema id for notification.");
+                    errorWriter.println(INVALID_SCHEMA_ID_FOR_NOTIFICATION);
                     return;
                 }
             }
             if (line.hasOption("t")) {
                 String topicId = line.getOptionValue("t");
-                if (ObjectId.isValid(topicId)) {
+                if (StringUtils.isNotBlank(topicId)) {
                     notificationDto.setTopicId(topicId);
                 } else {
-                    errorWriter.println("Invalid topic id for notification.");
+                    errorWriter.println(INVALID_TOPIC_ID_FOR_NOTIFICATION);
                     return;
                 }
             }
@@ -1823,7 +2019,7 @@ public class ControlApiCommandProcessor {
                     long time = System.currentTimeMillis() + (Integer.valueOf(ttl) * 1000L);
                     notificationDto.setExpiredAt(new Date(time));
                 } catch (NumberFormatException ex) {
-                    errorWriter.println("Incorrect format of ttl: " + ex.getMessage());
+                    errorWriter.println(INCORRECT_FORMAT_OF_TTL + ex.getMessage());
                     return;
                 }
             }
@@ -1833,14 +2029,14 @@ public class ControlApiCommandProcessor {
                 if (schema != null) {
                     notificationDto.setBody(schema.getBytes(UTF8));
                 } else {
-                    errorWriter.println("Can't read file. Please check file name.");
+                    errorWriter.println(CANT_READ_FILE);
                     return;
                 }
             } else if (line.hasOption("b")) {
                 String body = line.getOptionValue("b");
                 notificationDto.setBody(body.getBytes(UTF8));
             } else {
-                errorWriter.println("Need to set body or file with body for notification");
+                errorWriter.println(NEED_TO_SET_BODY);
                 return;
             }
             NotificationDto savedNotification = toDto(client
@@ -1853,7 +2049,7 @@ public class ControlApiCommandProcessor {
                         errorWriter);
             }
         } catch (TException e) {
-            handleException("Unable to " + "create" + " Notification", e, errorWriter);
+            handleException(UNABLE_TO + CREATE + NOTIFICATION, e, errorWriter);
         }
     }
 
@@ -1864,7 +2060,7 @@ public class ControlApiCommandProcessor {
      */
     private ControlApiCommand createUnicastNotificationCommand() {
 
-        ControlApiCommand command = new ControlApiCommand("createUnicastNotification", "create" + " Notification") {
+        ControlApiCommand command = new ControlApiCommand("createUnicastNotification", CREATE + NOTIFICATION) {
             @Override
             public void runCommand(CommandLine line,
                                    ControlThriftService.Iface client, PrintWriter writer,
@@ -1872,8 +2068,8 @@ public class ControlApiCommandProcessor {
                 createUnicastNotification(line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("o", "output", true,
-                "Output file to store Object Id");
+        Option opt = new Option("o", OUTPUT, true,
+                OUTPUT_FILE_TO_STORE_OBJECT_ID);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -1881,11 +2077,11 @@ public class ControlApiCommandProcessor {
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("s", "schema-id", true, "Notification schema id option");
+        opt = new Option("s", SCHEMA_ID, true, NOTIFICATION_SCHEMA_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("t", "topic-id", true, "Notification topic id option.");
+        opt = new Option("t", TOPIC__ID, true, NOTIFICATION_TOPIC_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
@@ -1893,11 +2089,11 @@ public class ControlApiCommandProcessor {
         opt.setRequired(false);
         command.addOption(opt);
 
-        opt = new Option("f", "body-file", true, "Notification body file option.");
+        opt = new Option("f", BODY_FILE, true, NOTIFICATION_BODY_FILE_OPTION);
         opt.setRequired(false);
         command.addOption(opt);
 
-        opt = new Option("b", "body", true, "Notification body option.");
+        opt = new Option("b", "body", true, NOTIFICATION_BODY_OPTION);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -1921,19 +2117,19 @@ public class ControlApiCommandProcessor {
             endpointNotification.setNotificationDto(notification);
             if (line.hasOption("t")) {
                 String topicId = line.getOptionValue("t");
-                if (ObjectId.isValid(topicId)) {
+                if (StringUtils.isNotBlank(topicId)) {
                     notification.setTopicId(topicId);
                 } else {
-                    errorWriter.println("Invalid topic id for notification.");
+                    errorWriter.println(INVALID_TOPIC_ID_FOR_NOTIFICATION);
                     return;
                 }
             }
             if (line.hasOption("s")) {
                 String schemaId = line.getOptionValue("s");
-                if (ObjectId.isValid(schemaId)) {
+                if (StringUtils.isNotBlank(schemaId)) {
                     notification.setSchemaId(schemaId);
                 } else {
-                    errorWriter.println("Invalid schema id for notification.");
+                    errorWriter.println(INVALID_SCHEMA_ID_FOR_NOTIFICATION);
                     return;
                 }
             }
@@ -1952,7 +2148,7 @@ public class ControlApiCommandProcessor {
                     long time = System.currentTimeMillis() + (Integer.valueOf(ttl) * 1000L);
                     notification.setExpiredAt(new Date(time));
                 } catch (NumberFormatException ex) {
-                    errorWriter.println("Incorrect format of ttl: " + ex.getMessage());
+                    errorWriter.println(INCORRECT_FORMAT_OF_TTL + ex.getMessage());
                     return;
                 }
             }
@@ -1962,14 +2158,14 @@ public class ControlApiCommandProcessor {
                 if (schema != null) {
                     notification.setBody(schema.getBytes(UTF8));
                 } else {
-                    errorWriter.println("Can't read file. Please check file name.");
+                    errorWriter.println(CANT_READ_FILE);
                     return;
                 }
             } else if (line.hasOption("b")) {
                 String body = line.getOptionValue("b");
                 notification.setBody(body.getBytes(UTF8));
             } else {
-                errorWriter.println("Need to set body or file with body for notification");
+                errorWriter.println(NEED_TO_SET_BODY);
                 return;
             }
             EndpointNotificationDto savedNotification = toDto(client
@@ -1982,7 +2178,7 @@ public class ControlApiCommandProcessor {
                         errorWriter);
             }
         } catch (TException e) {
-            handleException("Unable to " + "create" + " Unicast Notification", e, errorWriter);
+            handleException(UNABLE_TO + CREATE + " Unicast Notification", e, errorWriter);
         }
     }
 
@@ -1996,7 +2192,7 @@ public class ControlApiCommandProcessor {
 
         ControlApiCommand command = new ControlApiCommand(
                 edit ? "editNotificationSchema" : "createNotificationSchema",
-                (edit ? "edit" : "create") + " Notification") {
+                (edit ? "edit" : CREATE) + NOTIFICATION) {
             @Override
             public void runCommand(CommandLine line,
                                    ControlThriftService.Iface client, PrintWriter writer,
@@ -2006,16 +2202,16 @@ public class ControlApiCommandProcessor {
         };
         if (edit) {
             Option opt = new Option("i", "notificationSchemaId", true,
-                    "Notification Schema Id option");
+                    NOTIFICATION_SCHEMA_ID_OPTION);
             opt.setRequired(true);
             command.addOption(opt);
         } else {
-            Option opt = new Option("o", "output", true,
-                    "Output file to store Object Id");
+            Option opt = new Option("o", OUTPUT, true,
+                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
             opt.setRequired(false);
             command.addOption(opt);
         }
-        Option opt = new Option("a", "applicationId", true, "Application Id option");
+        Option opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
 
@@ -2023,7 +2219,7 @@ public class ControlApiCommandProcessor {
         opt.setRequired(!edit);
         command.addOption(opt);
 
-        opt = new Option("f", "body-file", true, "Notification Schema body file option.");
+        opt = new Option("f", BODY_FILE, true, "Notification Schema body file option.");
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2052,7 +2248,7 @@ public class ControlApiCommandProcessor {
                 String notificationSchemaId = line.getOptionValue("i");
                 notificationSchemaDto = toDto(client.getNotificationSchema(notificationSchemaId));
                 if (notificationSchemaDto == null) {
-                    writer.println("Notification Schema with id " + notificationSchemaId + " not found!");
+                    writer.println("Notification Schema with id " + notificationSchemaId + NOT_FOUND);
                     return;
                 }
             } else {
@@ -2060,7 +2256,7 @@ public class ControlApiCommandProcessor {
             }
             if (line.hasOption("a")) {
                 String applicationId = line.getOptionValue("a");
-                if (ObjectId.isValid(applicationId)) {
+                if (StringUtils.isNotBlank(applicationId)) {
                     notificationSchemaDto.setApplicationId(applicationId);
                 } else {
                     errorWriter.println("Invalid application id for notification.");
@@ -2087,14 +2283,14 @@ public class ControlApiCommandProcessor {
                 String schemaFile = line.getOptionValue("f");
                 String schema = readFile(schemaFile, errorWriter);
                 if (StringUtils.isNotBlank(schema)) {
-                    notificationSchemaDto.setSchema(schema);
+                    notificationSchemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
                 } else {
-                    errorWriter.println("Can't read file. Please check file name.");
+                    errorWriter.println(CANT_READ_FILE);
                     return;
                 }
             } else if (line.hasOption("b")) {
                 String body = line.getOptionValue("b");
-                notificationSchemaDto.setSchema(body);
+                notificationSchemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(body).getRawSchema());
             } else {
                 errorWriter.println("Need to set body or file with body for notification schema");
                 return;
@@ -2114,8 +2310,111 @@ public class ControlApiCommandProcessor {
                 }
             }
         } catch (TException e) {
+            handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
+                    + NOTIFICATION, e, errorWriter);
+        }
+    }
+
+    /**
+     * Creates the API command to work with endpoint user entities.
+     *
+     * @param edit edit else create endpoint user
+     * @return the control api command
+     */
+    private ControlApiCommand createEndpointUserCommand(final boolean edit) {
+        ControlApiCommand command = new ControlApiCommand(edit ? "editEndpointUser"
+                : "createEndpointUser", (edit ? "edit" : "create") + " EndpointUser") {
+                    @Override
+                    public void runCommand(CommandLine line,
+                            ControlThriftService.Iface client, PrintWriter writer,
+                            PrintWriter errorWriter) {
+                        createEndpointUser(line, client, writer, errorWriter, edit);
+                    }
+                };
+        if (edit) {
+            Option opt = new Option("i", "endpointUserId", true,
+                    "Endpoint User Id option");
+            opt.setRequired(true);
+            command.addOption(opt);
+        } else {
+            Option opt = new Option("o", "output", true,
+                    "Output file to store Object Id");
+            opt.setRequired(false);
+            command.addOption(opt);
+        }
+
+        Option opt = new Option("n", "name", true, "Endpoint User Name option");
+        opt.setRequired(!edit);
+        command.addOption(opt);
+
+        opt = new Option("t", "tenantId", true, "Tenant Id option");
+        opt.setRequired(!edit);
+        command.addOption(opt);
+
+        opt = new Option("e", "externalId", true, "Endpoint User External Id option");
+        opt.setRequired(false);
+        command.addOption(opt);
+
+        opt = new Option("a", "accessToken", true, "Endpoint User Access Token option");
+        opt.setRequired(false);
+        command.addOption(opt);
+
+        return command;
+    }
+
+    /**
+     * Creates or edits the endpoint user.
+     *
+     * @param line the command line
+     * @param client the control thrift client
+     * @param writer the writer to output command results
+     * @param errorWriter the error writer to output command errors
+     * @param edit edit else create endpoint user
+     */
+    private void createEndpointUser(CommandLine line,
+            ControlThriftService.Iface client, PrintWriter writer,
+            PrintWriter errorWriter, boolean edit) {
+        try {
+            EndpointUserDto endpointUser;
+            if (edit) {
+                String endpointUserId = line.getOptionValue("i");
+                endpointUser = toDto(client.getEndpointUser(endpointUserId));
+                if (endpointUser == null) {
+                    writer.println("Endpoint user with id " + endpointUserId
+                            + " not found!");
+                    return;
+                }
+            } else {
+                endpointUser = new EndpointUserDto();
+            }
+            if (line.hasOption("n")) {
+                endpointUser.setUsername(line.getOptionValue("n"));
+            }
+            if (line.hasOption("t")) {
+                endpointUser.setTenantId(line.getOptionValue("t"));
+            }
+            if (line.hasOption("e")) {
+                endpointUser.setExternalId(line.getOptionValue("e"));
+            }
+            if (line.hasOption("a")) {
+                endpointUser.setAccessToken(line.getOptionValue("a"));
+            }
+            EndpointUserDto savedEndpointUser = toDto(client
+                    .editEndpointUser(toDataStruct(endpointUser)));
+            if (edit) {
+                writer.println("Endpoint user updated.");
+            } else {
+                writer.println("Created new endpoint user with id: "
+                        + savedEndpointUser.getId());
+                if (line.hasOption("o")) {
+                    String outFileName = line.getOptionValue("o");
+                    storeInfo(outFileName, savedEndpointUser.getId(),
+                            errorWriter);
+                }
+            }
+        } catch (TException e) {
             handleException("Unable to " + (edit ? "update" : "create")
-                    + " Notification", e, errorWriter);
+                    + " endpoint user", e, errorWriter);
         }
     }
 
@@ -2138,7 +2437,7 @@ public class ControlApiCommandProcessor {
                 show(type, line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("i", "id", true, type.getName() + " Id option");
+        Option opt = new Option("i", "id", true, type.getName() + ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
         return command;
@@ -2187,6 +2486,11 @@ public class ControlApiCommandProcessor {
                                 .<ConfigurationSchemaDto> toDto(client
                                         .getConfigurationSchema(id));
                         break;
+                    case LOG_SCHEMA:
+                        dto = ThriftDtoConverter
+                                .<LogSchemaDto> toDto(client
+                                        .getLogSchema(id));
+                        break;
                     case ENDPOINT_GROUP:
                         dto = ThriftDtoConverter.<EndpointGroupDto> toDto(client
                                 .getEndpointGroup(id));
@@ -2215,6 +2519,10 @@ public class ControlApiCommandProcessor {
                         dto = ThriftDtoConverter.<ConfigurationDto> toDto(client
                                 .getTopic(id));
                         break;
+                    case ENDPOINT_USER:
+                        dto = ThriftDtoConverter.<ConfigurationDto> toDto(client
+                                .getEndpointUser(id));
+                        break;
                     default:
                         break;
                 }
@@ -2223,7 +2531,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 } else {
                     writer.println(type.getName() + " with id " + id
-                            + " not found!");
+                            + NOT_FOUND);
                 }
 
             } catch (TException e) {
@@ -2254,8 +2562,8 @@ public class ControlApiCommandProcessor {
             }
         };
 
-        Option opt = new Option("o", "output", true,
-                "Output file to store Object Ids");
+        Option opt = new Option("o", OUTPUT, true,
+                OUTPUT_FILE_TO_STORE_IDS);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2291,6 +2599,10 @@ public class ControlApiCommandProcessor {
                 dtos = ThriftDtoConverter
                         .<UserDto> toDtoList(client.getUsers());
                 break;
+            case ENDPOINT_USER:
+                dtos = ThriftDtoConverter
+                        .<UserDto> toDtoList(client.getEndpointUsers());
+                break;
             default:
                 break;
             }
@@ -2303,7 +2615,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 }
                 writer.println();
-                writer.println("Total: " + dtos.size());
+                writer.println(TOTAL + dtos.size());
                 if (line.hasOption("o")) {
                     String outFileName = line.getOptionValue("o");
                     storeObjectIds(outFileName, dtos, errorWriter);
@@ -2331,11 +2643,11 @@ public class ControlApiCommandProcessor {
                 listApplications(line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("t", "tenantId", true, "Tenant Id option");
+        Option opt = new Option("t", TENANT_ID, true, TENANT_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("o", "output", true, "Output file to store Object Ids");
+        opt = new Option("o", OUTPUT, true, OUTPUT_FILE_TO_STORE_IDS);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2370,7 +2682,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 }
                 writer.println();
-                writer.println("Total: " + dtos.size());
+                writer.println(TOTAL + dtos.size());
 
                 if (line.hasOption("o")) {
                     String outFileName = line.getOptionValue("o");
@@ -2398,12 +2710,12 @@ public class ControlApiCommandProcessor {
                 listProfileSchemas(line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("a", "applicationId", true,
-                "Application Id option");
+        Option opt = new Option("a", APPLICATION_ID, true,
+                APPLICATION_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("o", "output", true, "Output file to store Object Ids");
+        opt = new Option("o", OUTPUT, true, OUTPUT_FILE_TO_STORE_IDS);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2438,7 +2750,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 }
                 writer.println();
-                writer.println("Total: " + dtos.size());
+                writer.println(TOTAL + dtos.size());
 
                 if (line.hasOption("o")) {
                     String outFileName = line.getOptionValue("o");
@@ -2467,12 +2779,12 @@ public class ControlApiCommandProcessor {
                 listConfigurationSchemas(line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("a", "applicationId", true,
-                "Application Id option");
+        Option opt = new Option("a", APPLICATION_ID, true,
+                APPLICATION_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("o", "output", true, "Output file to store Object Ids");
+        opt = new Option("o", OUTPUT, true, OUTPUT_FILE_TO_STORE_IDS);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2507,7 +2819,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 }
                 writer.println();
-                writer.println("Total: " + dtos.size());
+                writer.println(TOTAL + dtos.size());
 
                 if (line.hasOption("o")) {
                     String outFileName = line.getOptionValue("o");
@@ -2535,12 +2847,12 @@ public class ControlApiCommandProcessor {
                 listEndpointGroups(line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("a", "applicationId", true,
-                "Application Id option");
+        Option opt = new Option("a", APPLICATION_ID, true,
+                APPLICATION_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("o", "output", true, "Output file to store Object Ids");
+        opt = new Option("o", OUTPUT, true, OUTPUT_FILE_TO_STORE_IDS);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2575,7 +2887,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 }
                 writer.println();
-                writer.println("Total: " + dtos.size());
+                writer.println(TOTAL + dtos.size());
 
                 if (line.hasOption("o")) {
                     String outFileName = line.getOptionValue("o");
@@ -2603,11 +2915,11 @@ public class ControlApiCommandProcessor {
                 listTopics(line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("a", "applicationId", true, "Application Id option");
+        Option opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("o", "output", true, "Output file to store Object Ids");
+        opt = new Option("o", OUTPUT, true, OUTPUT_FILE_TO_STORE_IDS);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2642,7 +2954,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 }
                 writer.println();
-                writer.println("Total: " + dtos.size());
+                writer.println(TOTAL + dtos.size());
 
                 if (line.hasOption("o")) {
                     String outFileName = line.getOptionValue("o");
@@ -2670,11 +2982,11 @@ public class ControlApiCommandProcessor {
                 listNotifications(line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("t", "topicId", true, "Topic Id option");
+        Option opt = new Option("t", TOPIC_ID, true, TOPIC_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("o", "output", true, "Output file to store Object Ids");
+        opt = new Option("o", OUTPUT, true, OUTPUT_FILE_TO_STORE_IDS);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2709,7 +3021,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 }
                 writer.println();
-                writer.println("Total: " + dtos.size());
+                writer.println(TOTAL + dtos.size());
 
                 if (line.hasOption("o")) {
                     String outFileName = line.getOptionValue("o");
@@ -2737,11 +3049,11 @@ public class ControlApiCommandProcessor {
                 listNotificationSchemas(line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("a", "applicationId", true, "Application Id option");
+        Option opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
 
-        opt = new Option("o", "output", true, "Output file to store Object Ids");
+        opt = new Option("o", OUTPUT, true, OUTPUT_FILE_TO_STORE_IDS);
         opt.setRequired(false);
         command.addOption(opt);
 
@@ -2776,7 +3088,7 @@ public class ControlApiCommandProcessor {
                     writer.println(dto);
                 }
                 writer.println();
-                writer.println("Total: " + dtos.size());
+                writer.println(TOTAL + dtos.size());
 
                 if (line.hasOption("o")) {
                     String outFileName = line.getOptionValue("o");
@@ -2806,7 +3118,7 @@ public class ControlApiCommandProcessor {
                 delete(type, line, client, writer, errorWriter);
             }
         };
-        Option opt = new Option("i", "id", true, type.getName() + " Id option");
+        Option opt = new Option("i", "id", true, type.getName() + ID_OPTION);
         opt.setRequired(true);
         command.addOption(opt);
         return command;
@@ -2847,6 +3159,9 @@ public class ControlApiCommandProcessor {
                     break;
                 case TOPIC:
                     client.deleteTopicById(id);
+                    break;
+                case ENDPOINT_USER:
+                    client.deleteEndpointUser(id);
                     break;
                 default:
                     errorWriter.println("Command not supported!");
@@ -2892,14 +3207,14 @@ public class ControlApiCommandProcessor {
                         + "'!");
             } catch (IOException e) {
                 errorWriter.println("Unable to read from specified file '"
-                        + file + "'! Error: " + e.getMessage());
+                        + file + ERROR + e.getMessage());
                 e.printStackTrace(errorWriter); //NOSONAR
             }
         } else if (!f.exists()) {
-            errorWriter.println("Specified file '" + file
+            errorWriter.println(SPECIFIED_FILE + file
                     + "' does not exists!");
         } else if (!f.isFile()) {
-            errorWriter.println("Specified file '" + file + "' is not a file!");
+            errorWriter.println(SPECIFIED_FILE + file + "' is not a file!");
         }
         return result;
     }
@@ -2925,7 +3240,7 @@ public class ControlApiCommandProcessor {
             writer.close();
         } catch (Exception e) {
             errorWriter.println("Unable to write Object Id to specified file '"
-                    + file + "'! Error: " + e.getMessage());
+                    + file + ERROR + e.getMessage());
         }
     }
 
@@ -2956,7 +3271,7 @@ public class ControlApiCommandProcessor {
         } catch (Exception e) {
             errorWriter
                     .println("Unable to write Object Ids to specified file '"
-                            + file + "'! Error: " + e.getMessage());
+                            + file + ERROR + e.getMessage());
         }
     }
 

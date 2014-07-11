@@ -21,9 +21,14 @@ import java.io.IOException;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
-import org.kaaproject.kaa.server.common.zk.ControlNodeTracker;
+import org.kaaproject.kaa.server.common.zk.WorkerNodeTracker;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
+import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Class OperationsNode.
  */
-public class OperationsNode extends ControlNodeTracker {
+public class OperationsNode extends WorkerNodeTracker {
 
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
@@ -81,14 +86,32 @@ public class OperationsNode extends ControlNodeTracker {
      * @param RegisteredUsersCount
      * @throws IOException
      */
-    public void updateNodeStatsValues(int deltaCalculationCount,
+    public void updateNodeStatsValues(ZkChannelType channelType,
+                                      int deltaCalculationCount,
                                       int processedRequestCount,
                                       int registeredUsersCount)
             throws IOException {
-
-        nodeInfo.setDeltaCalculationCount(deltaCalculationCount);
-        nodeInfo.setProcessedRequestCount(processedRequestCount);
-        nodeInfo.setRegisteredUsersCount(registeredUsersCount);
+        for(SupportedChannel channel : nodeInfo.getSupportedChannelsArray()) {
+            if(channel.getZkChannel().getChannelType().equals(channelType)) {
+                BaseStatistics stats = null;
+                switch (channelType) {
+                case HTTP:
+                    ZkHttpStatistics zkHttpStats = (ZkHttpStatistics)channel.getZkChannel().getChannelStatistics();
+                    stats = zkHttpStats.getZkStatistics();
+                    break;
+                case HTTP_LP:
+                    ZkHttpLpStatistics zkHttpLpStats = (ZkHttpLpStatistics)channel.getZkChannel().getChannelStatistics();
+                    stats = zkHttpLpStats.getZkStatistics();
+                    break;
+                }
+                if (stats != null) {
+                    stats.setDeltaCalculationCount(deltaCalculationCount);
+                    stats.setProcessedRequestCount(processedRequestCount);
+                    stats.setRegisteredUsersCount(registeredUsersCount);
+                }
+                break;
+            }
+        }
         try {
             client.setData().forPath(nodePath,
                     operationsNodeAvroConverter.get().toByteArray(nodeInfo));
@@ -115,5 +138,13 @@ public class OperationsNode extends ControlNodeTracker {
                 LOG.info("Created node with path: " + nodePath);
             }
         });
+    }
+
+    /**
+     * Self NodeInfo getter.
+     * @return OperationsNodeInfo
+     */
+    public OperationsNodeInfo getSelfNodeInfo() {
+        return nodeInfo;
     }
 }

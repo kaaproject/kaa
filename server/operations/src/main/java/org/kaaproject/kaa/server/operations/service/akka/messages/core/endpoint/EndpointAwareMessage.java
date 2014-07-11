@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
+import java.util.UUID;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 import akka.actor.ActorRef;
@@ -25,6 +27,8 @@ import akka.actor.ActorRef;
  * The Class EndpointAwareMessage.
  */
 public class EndpointAwareMessage {
+
+    private final UUID uuid;
 
     /** The app token. */
     private final String appToken;
@@ -37,7 +41,7 @@ public class EndpointAwareMessage {
 
     /**
      * Instantiates a new endpoint aware message.
-     * 
+     *
      * @param appToken
      *            the app token
      * @param key
@@ -46,15 +50,38 @@ public class EndpointAwareMessage {
      *            the originator
      */
     public EndpointAwareMessage(String appToken, EndpointObjectHash key, ActorRef originator) {
+        this(UUID.randomUUID(), appToken, key, originator);
+    }
+
+    /**
+     * Instantiates a new endpoint aware message.
+     *
+     * @param uuid
+     *            the uuid
+     * @param appToken
+     *            the app token
+     * @param key
+     *            the key
+     * @param originator
+     *            the originator
+     */
+    EndpointAwareMessage(UUID uuid, String appToken, EndpointObjectHash key, ActorRef originator) {
         super();
+        this.uuid = uuid;
         this.appToken = appToken;
         this.key = key;
         this.originator = originator;
     }
 
+
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
     /**
      * Gets the app token.
-     * 
+     *
      * @return the app token
      */
     public String getAppToken() {
@@ -63,7 +90,7 @@ public class EndpointAwareMessage {
 
     /**
      * Gets the key.
-     * 
+     *
      * @return the key
      */
     public EndpointObjectHash getKey() {
@@ -72,10 +99,41 @@ public class EndpointAwareMessage {
 
     /**
      * Gets the originator.
-     * 
+     *
      * @return the originator
      */
     public ActorRef getOriginator() {
         return originator;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        EndpointAwareMessage other = (EndpointAwareMessage) obj;
+        if (uuid == null) {
+            if (other.uuid != null) {
+                return false;
+            }
+        } else if (!uuid.equals(other.uuid)) {
+            return false;
+        }
+        return true;
+    }
+
 }

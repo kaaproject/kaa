@@ -62,10 +62,12 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
                 public void onSubmitComplete(SubmitCompleteEvent event) {
                     editEntity(entity,
                         new AsyncCallback<T>() {
+                            @Override
                             public void onSuccess(T result) {
                                 goTo(place.getPreviousPlace());
                             }
 
+                            @Override
                             public void onFailure(Throwable caught) {
                                 detailsView.setErrorMessage(Utils.getErrorMessage(caught));
                             }
@@ -106,10 +108,12 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
         else {
             editEntity(entity,
                     new AsyncCallback<T>() {
+                        @Override
                         public void onSuccess(T result) {
                             goTo(place.getPreviousPlace());
                         }
 
+                        @Override
                         public void onFailure(Throwable caught) {
                             detailsView.setErrorMessage(Utils.getErrorMessage(caught));
                         }

@@ -26,6 +26,7 @@ import org.kaaproject.kaa.server.common.http.server.CommandProcessor;
 import org.kaaproject.kaa.server.common.http.server.DefaultHandler;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEncodedRequestMessage;
 import org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand;
+import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +42,11 @@ public class TestHandler extends DefaultHandler {
             .getLogger(TestHandler.class);
 
     /** The akka service. */
-    private TestAkkaService akkaService;
-    
+    private final TestAkkaService akkaService;
+
     /** The uuid. */
-    private UUID uuid;
-    
+    private final UUID uuid;
+
     public TestHandler(UUID uuid, TestAkkaService akkaService, EventExecutorGroup executorGroup) {
         super(executorGroup);
         this.akkaService = akkaService;
@@ -60,12 +61,11 @@ public class TestHandler extends DefaultHandler {
     protected void channelRead0(final ChannelHandlerContext ctx,
             final CommandProcessor msg) throws Exception {
         AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command = (AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase>) msg;
-        NettyEncodedRequestMessage message = new NettyEncodedRequestMessage(
-                uuidToStr(uuid), ctx, command);
+        NettyEncodedRequestMessage message = new NettyEncodedRequestMessage(uuidToStr(uuid), ctx, command, ChannelType.HTTP);
         LOG.trace("Forwarding {} to akka", message);
         akkaService.addCommand(message);
     }
-    
+
     /**
      * Uuid to str.
      *

@@ -18,10 +18,11 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-public class ChangeDto implements Serializable {
+public class ChangeDto implements Serializable, HasId {
 
     private static final long serialVersionUID = 8830413612147261296L;
 
+    private String id;
     private ChangeType type;
     private String endpointGroupId;
     private String profileFilterId;
@@ -29,6 +30,15 @@ public class ChangeDto implements Serializable {
     private String configurationId;
     private int cfMajorVersion;
     private String topicId;
+
+    
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public ChangeType getType() {
         return type;
@@ -137,6 +147,7 @@ public class ChangeDto implements Serializable {
     @Override
     public String toString() {
         return "ChangeDto{" +
+                "id=" + id +
                 "type=" + type +
                 ", endpointGroupId='" + endpointGroupId + '\'' +
                 ", profileFilterId='" + profileFilterId + '\'' +

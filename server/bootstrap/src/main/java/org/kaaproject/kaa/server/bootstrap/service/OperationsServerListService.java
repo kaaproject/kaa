@@ -17,13 +17,20 @@
 package org.kaaproject.kaa.server.bootstrap.service;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
+import org.kaaproject.kaa.common.bootstrap.gen.SupportedChannel;
+import org.kaaproject.kaa.common.channels.HttpChannel;
+import org.kaaproject.kaa.common.channels.HttpLongPollChannel;
+import org.kaaproject.kaa.common.channels.communication.HttpLongPollParameters;
+import org.kaaproject.kaa.common.channels.communication.HttpParameters;
 import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,18 +86,40 @@ public class OperationsServerListService {
 
     /**
      * Update Operations Server list from Map received from Thrift service.
-     * @param endpointMap Map<String, endpointServer>, key - DNS name of Operations Server
+     * @param operationsServersList Map<String, endpointServer>, key - DNS name of Operations Server
      */
-    public void updateList(Map<String, org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer> endpointMap) {
+    public void updateList(List<ThriftOperationsServer> operationsServersList) {
+        
         LinkedList<OperationsServer> newList = new LinkedList<OperationsServer>();
-        for(String server : endpointMap.keySet()) {
-            if (endpointMap.get(server) != null) {
+        
+        for(ThriftOperationsServer server : operationsServersList) {
+            
                 OperationsServer eps = new OperationsServer();
-                eps.setDNSName(server);
-                eps.setPriority(endpointMap.get(server).getPriority());
-                eps.setPublicKey(ByteBuffer.wrap(endpointMap.get(server).getPublicKey()));
-                newList.add(eps);
-            }
+                List<SupportedChannel> supportedChannels = new ArrayList<>();
+                
+                for(ThriftSupportedChannel thriftSupChannel : server.getSupportedChannels()) {
+                    ThriftCommunicationParameters thriftParams = thriftSupChannel.getCommunicationParams();
+                    switch (thriftSupChannel.getType()) {
+                    case HTTP:
+                        HttpParameters httpParams = new HttpParameters();
+                        httpParams.setHostName(thriftParams.getHttpParams().getHostName());
+                        httpParams.setPort(thriftParams.getHttpParams().getPort());
+                        supportedChannels.add(HttpChannel.getSupportedChannelFromHttpParameters(httpParams));
+                        break;
+                    case HTTP_LP:
+                        HttpLongPollParameters httpLpParams = new HttpLongPollParameters();
+                        httpLpParams.setHostName(thriftParams.getHttpLpParams().getHostName());
+                        httpLpParams.setPort(thriftParams.getHttpLpParams().getPort());
+                        supportedChannels.add(HttpLongPollChannel.getSupportedChannelFromHttpLongPollParameters(httpLpParams));
+                        break;
+                    }
+                    eps.setName(server.getName());
+                    eps.setSupportedChannelsArray(supportedChannels);
+                    eps.setPriority(server.getPriority());
+                    eps.setPublicKey(ByteBuffer.wrap(server.getPublicKey()));
+                    newList.add(eps);
+                }
+            
         }
         if (!newList.isEmpty()) {
             serverList = newList;

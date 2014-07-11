@@ -19,18 +19,19 @@ package org.kaaproject.kaa.server.operations.service.delta;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.idToObjectId;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericRecord;
-import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -47,36 +48,35 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorException;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.ConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.ConfigurationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
-import org.kaaproject.kaa.server.common.dao.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.ProfileFilterDao;
-import org.kaaproject.kaa.server.common.dao.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
-import org.kaaproject.kaa.server.common.dao.TenantDao;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Configuration;
-import org.kaaproject.kaa.server.common.dao.mongo.model.ConfigurationSchema;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointGroup;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointGroupState;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.mongo.model.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.mongo.model.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Tenant;
-import org.kaaproject.kaa.server.common.dao.schema.SchemaCreationException;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointGroupState;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.sql.Application;
+import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
+import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
+import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
 import org.kaaproject.kaa.server.operations.service.OperationsServiceIT;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.delta.DeltaCalculatorException;
-import org.kaaproject.kaa.server.operations.service.delta.DeltaService;
-import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +91,10 @@ import com.mongodb.util.JSON;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@Transactional
 public class DeltaServiceIT {
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
+
     protected static final Logger LOG = LoggerFactory.getLogger(DeltaServiceIT.class);
 
     private static final int PROFILE_VERSION = 1;
@@ -105,12 +108,12 @@ public class DeltaServiceIT {
     private static final String CUSTOMER_ID = "CustomerId";
     private static final String APPLICATION_ID = "ApplicationId";
     private static final String APPLICATION_NAME = "ApplicationName";
-    private static final GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
+    private static final GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<>(BasicEndpointProfile.SCHEMA$);
     private static final BasicEndpointProfile ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 1");
     private static byte[] PROFILE_BYTES;
     private static String PROFILE_JSON;
 
-    private static final byte[] ENDPOINT_KEY = "EndpointKey".getBytes();
+    private static final byte[] ENDPOINT_KEY = "EndpointKey".getBytes(UTF_8);
 
     @Autowired
     protected DeltaService deltaService;
@@ -154,9 +157,12 @@ public class DeltaServiceIT {
     @Autowired
     protected ConfigurationService confService;
 
-    private Tenant customerDto;
-    private ApplicationDto app;
-    private ProfileSchemaDto profileSchema;
+    @Autowired
+    protected ApplicationDao<Application> applicationDao;
+
+    private Tenant tenant;
+    private Application application;
+    private ProfileSchema profileSchema;
     private ProfileFilterDto profileFilter;
     private EndpointProfile endpointProfile;
     private EndpointConfiguration endpointConfiguration;
@@ -180,52 +186,56 @@ public class DeltaServiceIT {
     }
 
     @Before
-    public void beforeTest() throws IOException, SchemaCreationException, DeltaCalculatorException {
+    public void beforeTest() throws IOException, DeltaCalculatorException {
         String dataSchema = OperationsServiceIT.getResourceAsString(OperationsServiceIT.DATA_SCHEMA_LOCATION);
         PROFILE_BYTES = avroConverter.encode(ENDPOINT_PROFILE);
         PROFILE_JSON = avroConverter.endcodeToJson(ENDPOINT_PROFILE);
 
-        customerDto = new Tenant();
-        customerDto.setName(CUSTOMER_ID);
-        customerDto = customerDao.save(customerDto);
-        assertNotNull(customerDto);
-        assertNotNull(customerDto.getId());
+        tenant = new Tenant();
+        tenant.setName(CUSTOMER_ID);
+        tenant = customerDao.save(tenant);
+        assertNotNull(tenant);
+        assertNotNull(tenant.getId());
 
-        app = new ApplicationDto();
-        app.setTenantId(customerDto.getId());
-        app.setApplicationToken(APPLICATION_ID);
-        app.setName(APPLICATION_NAME);
-        app.setSequenceNumber(NEW_APPLICATION_SEQ_NUMBER);
-        app = applicationService.saveApp(app);
-        assertNotNull(app);
-        assertNotNull(app.getId());
+        ApplicationDto applicationDto = new ApplicationDto();
+        applicationDto.setTenantId(tenant.getStringId());
+        applicationDto.setApplicationToken(APPLICATION_ID);
+        applicationDto.setName(APPLICATION_NAME);
+        applicationDto.setSequenceNumber(NEW_APPLICATION_SEQ_NUMBER);
+        applicationDto = applicationService.saveApp(applicationDto);
+        assertNotNull(applicationDto);
+        assertNotNull(applicationDto.getId());
 
-        EndpointGroup groupAll = endpointGroupDao.findByAppIdAndWeight(app.getId(), 0);
+        application = applicationDao.findById(applicationDto.getId());
+
+        EndpointGroup groupAll = endpointGroupDao.findByAppIdAndWeight(application.getStringId(), 0);
 
         ProfileSchema profileSchemaObj = new ProfileSchema();
         profileSchemaObj.setMajorVersion(PROFILE_SCHEMA_VERSION);
         profileSchemaObj.setMinorVersion(0);
         profileSchemaObj.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        profileSchemaObj.setApplicationId(idToObjectId(app.getId()));
-        profileSchema = profileService.saveProfileSchema(profileSchemaObj.toDto());
+        profileSchemaObj.setApplication(application);
+        ProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj.toDto());
+
+        profileSchema = profileSchemaDao.findById(profileSchemaDto.getId());
 
         EndpointGroup endpointGroup = new EndpointGroup();
-        endpointGroup.setApplicationId(new ObjectId(app.getId()));
+        endpointGroup.setApplication(application);
         endpointGroup.setName("Test group");
         endpointGroup.setWeight(277);
         endpointGroup.setDescription("Test Description");
         endpointGroup = endpointGroupDao.save(endpointGroup);
 
         ProfileFilter profileFilterObj = new ProfileFilter();
-        profileFilterObj.setApplicationId(idToObjectId(app.getId()));
-        profileFilterObj.setEndpointGroupId(idToObjectId(endpointGroup.getId()));
+        profileFilterObj.setApplication(application);
+        profileFilterObj.setEndpointGroup(endpointGroup);
         profileFilterObj.setBody("profileBody.contains(\"dummy\")");
-        profileFilterObj.setSchemaId(idToObjectId(profileSchema.getId()));
+        profileFilterObj.setProfileSchema(profileSchema);
         profileFilter = profileService.saveProfileFilter(profileFilterObj.toDto());
         profileService.activateProfileFilter(profileFilter.getId(), null);
 
         confSchema = new ConfigurationSchema();
-        confSchema.setApplicationId(idToObjectId(app.getId()));
+        confSchema.setApplication(application);
         confSchema.setMajorVersion(CONF_SCHEMA_VERSION);
         confSchema.setSchema(dataSchema);
         try {
@@ -236,22 +246,22 @@ public class DeltaServiceIT {
         Assert.assertNotNull(confSchema);
         Assert.assertNotNull(confSchema.getId());
 
-        egAllId = groupAll.getId();
+        egAllId = groupAll.getStringId();
         pfAllId = profileFilter.getId();
         ConfigurationDto confDto = configurationService.findConfigurationByEndpointGroupIdAndVersion(egAllId, CONF_SCHEMA_VERSION);
         cfAllId = confDto.getId();
 
         endpointConfiguration = new EndpointConfiguration();
-        endpointConfiguration.setConfiguration(confDto.getBinaryBody());
+        endpointConfiguration.setConfiguration(confDto.getBody().getBytes(UTF_8));
         endpointConfiguration.setConfigurationHash(EndpointObjectHash.fromSHA1(confDto.getBody()).getData());
         endpointConfiguration = endpointConfigurationDao.save(endpointConfiguration);
         assertNotNull(endpointConfiguration);
         assertNotNull(endpointConfiguration.getId());
 
         EndpointGroupState egs = new EndpointGroupState();
-        egs.setConfigurationId(idToObjectId(cfAllId));
-        egs.setEndpointGroupId(idToObjectId(egAllId));
-        egs.setProfileFilterId(idToObjectId(pfAllId));
+        egs.setConfigurationId(cfAllId);
+        egs.setEndpointGroupId(egAllId);
+        egs.setProfileFilterId(pfAllId);
 
         endpointProfile = new EndpointProfile();
         endpointProfile.setProfile((DBObject) JSON.parse(PROFILE_JSON));
@@ -272,8 +282,7 @@ public class DeltaServiceIT {
 
     @Test
     public void testDeltaServiceSameSeqNumbers() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(app.getApplicationToken(), EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
-                EndpointObjectHash.fromSHA1(PROFILE_BYTES), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
         GetDeltaResponse response = deltaService.getDelta(request, new HistoryDelta(), OLD_ENDPOINT_SEQ_NUMBER);
         assertNotNull(response);
         assertEquals(GetDeltaResponse.GetDeltaResponseType.NO_DELTA, response.getResponseType());
@@ -284,8 +293,7 @@ public class DeltaServiceIT {
 
     @Test
     public void testDeltaServiceNoHistoryDelta() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(app.getApplicationToken(), EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
-                EndpointObjectHash.fromSHA1(PROFILE_BYTES), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
         request.setEndpointProfile(endpointProfile.toDto());
         HistoryDelta historyDelta = new HistoryDelta(new ArrayList<EndpointGroupStateDto>(), false, false);
         GetDeltaResponse response = deltaService.getDelta(request, historyDelta, NEW_APPLICATION_SEQ_NUMBER);
@@ -299,8 +307,7 @@ public class DeltaServiceIT {
     @Test
     @Ignore("Kaa #7786")
     public void testDeltaServiceNoHistoryDeltaFetchSchema() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(app.getApplicationToken(), EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
-                EndpointObjectHash.fromSHA1(PROFILE_BYTES), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
         request.setEndpointProfile(endpointProfile.toDto());
         request.setFetchSchema(true);
         HistoryDelta historyDelta = new HistoryDelta(new ArrayList<EndpointGroupStateDto>(), false, false);
@@ -314,13 +321,13 @@ public class DeltaServiceIT {
 
     @Test
     public void testDeltaServiceFirstRequest() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(app.getApplicationToken(), EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
-                EndpointObjectHash.fromSHA1(PROFILE_BYTES), null, OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), OLD_ENDPOINT_SEQ_NUMBER);
         request.setEndpointProfile(endpointProfile.toDto());
         List<EndpointGroupStateDto> changes = new ArrayList<>();
         changes.add(new EndpointGroupStateDto(egAllId, pfAllId, cfAllId));
         HistoryDelta historyDelta = new HistoryDelta(changes, true, false);
         GetDeltaResponse response = deltaService.getDelta(request, historyDelta, NEW_APPLICATION_SEQ_NUMBER);
+        endpointConfiguration.setConfigurationHash(EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()).getData());
 
         assertNotNull(response);
         assertEquals(GetDeltaResponse.GetDeltaResponseType.CONF_RESYNC, response.getResponseType());
@@ -335,8 +342,7 @@ public class DeltaServiceIT {
         byte[] wrongConf = Arrays.copyOf(endpointConfiguration.getConfiguration(), endpointConfiguration.getConfiguration().length);
         wrongConf[0] = (byte)(wrongConf[0]+1);
         EndpointObjectHash newConfHash = EndpointObjectHash.fromSHA1(wrongConf);
-        GetDeltaRequest request = new GetDeltaRequest(app.getApplicationToken(), EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
-                EndpointObjectHash.fromSHA1(PROFILE_BYTES), newConfHash, OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), newConfHash, OLD_ENDPOINT_SEQ_NUMBER);
 
         request.setEndpointProfile(endpointProfile.toDto());
         List<EndpointGroupStateDto> changes = new ArrayList<>();
@@ -358,14 +364,12 @@ public class DeltaServiceIT {
 
         ConfigurationDto newConfDto = new ConfigurationDto();
         newConfDto.setEndpointGroupId(egAllId);
-        newConfDto.setSchemaId(confSchema.getId());
-        newConfDto.setBinaryBody(newConfData);
+        newConfDto.setSchemaId(confSchema.getStringId());
+        newConfDto.setBody(new String(newConfData, UTF_8));
 
         newConfDto = configurationService.saveConfiguration(newConfDto);
-        configurationService.activateConfiguration(newConfDto.getId(), confSchema.getCreatedUsername());
 
-        GetDeltaRequest request = new GetDeltaRequest(app.getApplicationToken(), EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
-                EndpointObjectHash.fromSHA1(PROFILE_BYTES), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
 
         request.setEndpointProfile(endpointProfile.toDto());
         List<EndpointGroupStateDto> changes = new ArrayList<>();
@@ -381,8 +385,7 @@ public class DeltaServiceIT {
 
     @Test
     public void testDeltaServiceSecondRequestNoChanges() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(app.getApplicationToken(), EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
-                EndpointObjectHash.fromSHA1(PROFILE_BYTES), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
         endpointProfile.setConfigurationHash(EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()).getData());
         request.setEndpointProfile(endpointProfile.toDto());
         List<EndpointGroupStateDto> changes = new ArrayList<>();

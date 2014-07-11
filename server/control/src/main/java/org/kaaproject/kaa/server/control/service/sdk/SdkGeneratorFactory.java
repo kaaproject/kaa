@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.control.service.sdk;
 
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 
-// TODO: Auto-generated Javadoc
 /**
  * A factory for creating SdkGenerator objects.
  */
@@ -33,7 +32,9 @@ public class SdkGeneratorFactory {
     public static SdkGenerator createSdkGenerator(SdkPlatform sdkPlatform) {
         switch (sdkPlatform) {
         case JAVA:
-            return new JavaSdkGenerator();
+            return new JavaSdkGenerator(sdkPlatform);
+        case ANDROID:
+            return new JavaSdkGenerator(sdkPlatform);
         default:
             return null;
         }

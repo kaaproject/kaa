@@ -38,9 +38,10 @@
     <category name="org.springframework">
         <level value="INFO"/>
     </category>
+    
 
     <root>
-        <level value="DEBUG"/>
+        <level value="INFO"/>
         <appender-ref ref="console"/>
         <appender-ref ref="fileLogAppender"/>
     </root>

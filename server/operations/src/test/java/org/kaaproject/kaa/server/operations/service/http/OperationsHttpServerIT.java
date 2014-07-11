@@ -28,6 +28,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -41,17 +42,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointRegistrationRequest;
-import org.kaaproject.kaa.common.endpoint.gen.LongSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileUpdateRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.server.common.http.server.NettyHttpServer;
 import org.kaaproject.kaa.server.common.http.server.SessionTrackable;
 import org.kaaproject.kaa.server.common.http.server.Track;
 import org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService;
-import org.kaaproject.kaa.server.operations.service.http.OperationsServerConfig;
-import org.kaaproject.kaa.server.operations.service.http.commands.RegisterEndpointCommand;
+import org.kaaproject.kaa.server.operations.service.config.HttpChannelConfig;
+import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
+import org.kaaproject.kaa.server.operations.service.config.ServiceChannelConfig;
 import org.kaaproject.kaa.server.operations.service.security.FileKeyStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,12 +125,6 @@ public class OperationsHttpServerIT {
 
     private static ConcurrentHashMap<Integer, SyncTest<SyncRequest, SyncResponse>> syncTests = new ConcurrentHashMap<>(NUMBER_OF_TESTS);
 
-    private static ConcurrentHashMap<Integer, SyncTest<LongSyncRequest, SyncResponse>> longSyncTests = new ConcurrentHashMap<>(NUMBER_OF_TESTS);
-
-    private static ConcurrentHashMap<Integer, SyncTest<EndpointRegistrationRequest, SyncResponse>> regTests  = new ConcurrentHashMap<>(NUMBER_OF_TESTS);
-
-    private static ConcurrentHashMap<Integer, SyncTest<ProfileUpdateRequest, SyncResponse>> updTests  = new ConcurrentHashMap<>(NUMBER_OF_TESTS);
-
     public class RequestTrack implements Track {
 
         private long requestStart;
@@ -160,7 +153,7 @@ public class OperationsHttpServerIT {
 
     public class Statistics implements SessionTrackable {
 
-        private ConcurrentHashMap<UUID, Long> sessions;
+        private final ConcurrentHashMap<UUID, Long> sessions;
 
         public Statistics() {
             sessions = new ConcurrentHashMap<>(NUMBER_OF_TESTS);
@@ -214,17 +207,26 @@ public class OperationsHttpServerIT {
     public static void init() throws Exception {
         executor = Executors.newCachedThreadPool();
         config = new OperationsServerConfig();
-        config.setPort(bindPort);
-        config.setClientMaxBodySize(MAX_HTTP_REQUEST_SIZE);
-        config.setExecutorThreadSize(3);
-        config.setServerInitializerClass("org.kaaproject.kaa.server.operations.service.http.TestEndPointServerInitializer");
-        config.setBindInterface("localhost");
+        HttpChannelConfig httpChannelConfig = new HttpChannelConfig();
+
+        httpChannelConfig.setChannelEnabled(true);
+        httpChannelConfig.setBindInterface("localhost");
+        httpChannelConfig.setPort(bindPort);
+        httpChannelConfig.setClientMaxBodySize(MAX_HTTP_REQUEST_SIZE);
+        httpChannelConfig.setExecutorThreadSize(3);
+        httpChannelConfig.setServerInitializerClass("org.kaaproject.kaa.server.operations.service.http.TestEndPointServerInitializer");
+
         List<String> commands = new Vector<>();
-        commands.add("org.kaaproject.kaa.server.operations.service.http.commands.RegisterEndpointCommand");
-        commands.add("org.kaaproject.kaa.server.operations.service.http.commands.UpdateEndpointCommand");
         commands.add("org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand");
         commands.add("org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommand");
-        config.setCommandList(commands);
+
+        httpChannelConfig.setCommandList(commands);
+
+
+        List<ServiceChannelConfig> channelList = new ArrayList<>();
+        channelList.add(httpChannelConfig);
+        config.setChannelList(channelList);
+
         config.setAkkaService(testAkkaService);
         KeyPairGenerator serverKeyGen;
         try {
@@ -273,8 +275,12 @@ public class OperationsHttpServerIT {
         testFailed = 0;
         requestTime = 0;
         sessionTime = 0;
-        config.setSessionTrack(new Statistics());
-        netty = new NettyHttpServer(config);
+
+        HttpChannelConfig httpChannelConfig = (HttpChannelConfig) config.getChannelList().get(0);
+
+        httpChannelConfig.setSessionTrack(new Statistics());
+        httpChannelConfig.setOperationServerConfig(config);
+        netty = new NettyHttpServer(httpChannelConfig);
         netty.init();
         netty.start();
         assertNotNull(netty);
@@ -326,78 +332,6 @@ public class OperationsHttpServerIT {
         assertEquals(0, testFailed);
     }
 
-    @Test
-    public void TestLongSync() {
-        logger.info("Test LongSync request");
-
-        for(int i=0; i< NUMBER_OF_TESTS; i++) {
-            sendLongSyncTest();
-        }
-
-        try {
-            synchronized (sync) {
-                sync.wait(MAX_TEST_TIMEOUT);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        for(Integer id : longSyncTests.keySet()) {
-            if (!longSyncTests.get(id).test()) {
-                testFailed++;
-                logger.trace("Long SYnc Test "+id+" failed.");
-            }
-        }
-        assertEquals(0, testFailed);
-    }
-
-    @Test
-    public void TestEndpointRegistration() {
-        logger.info("Test Endpoint registration request");
-
-        for(int i=0; i< NUMBER_OF_TESTS; i++) {
-            sendEndpointRegister();
-        }
-
-        try {
-            synchronized (sync) {
-                sync.wait(MAX_TEST_TIMEOUT);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        for(Integer id : regTests.keySet()) {
-            if (!regTests.get(id).test()) {
-                testFailed++;
-                logger.trace("Endpoint Registration Test "+id+" failed.");
-            }
-        }
-        assertEquals(0, testFailed);
-    }
-
-    @Test
-    public void TestUpdateEndpointProfile() {
-        logger.info("Test Update Endpoint profile request");
-
-        for(int i=0; i< NUMBER_OF_TESTS; i++) {
-            sendUpdateProfileRequest();
-        }
-
-        try {
-            synchronized (sync) {
-                sync.wait(MAX_TEST_TIMEOUT);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        for(Integer id : updTests.keySet()) {
-            if (!updTests.get(id).test()) {
-                testFailed++;
-                logger.trace("Update Endpoint Profile Test "+id+" failed.");
-            }
-        }
-        assertEquals(0, testFailed);
-    }
-
     public static void SyncTestSetRequestReceived(int id, SyncRequest requestReceived) {
         if(syncTests.containsKey(Integer.valueOf(id))) {
             syncTests.get(Integer.valueOf(id)).requestReceived = requestReceived;
@@ -444,163 +378,6 @@ public class OperationsHttpServerIT {
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.toString());
-        }
-    }
-
-    public static void EndpointRegisterTestSetRequestReceived(int id, EndpointRegistrationRequest requestReceived) {
-        synchronized (regTests) {
-            if(regTests.containsKey(Integer.valueOf(id))) {
-                regTests.get(Integer.valueOf(id)).requestReceived = requestReceived;
-            }
-        }
-    }
-
-    public static void EndpointRegisterTestSetResponseSent(int id, SyncResponse responseSent) {
-        synchronized (regTests) {
-            if(regTests.containsKey(Integer.valueOf(id))) {
-                regTests.get(Integer.valueOf(id)).responseSent = responseSent;
-            }
-        }
-    }
-
-    private void sendEndpointRegister() {
-        try {
-            final HttpTestRegisterEndpointClient cl = new HttpTestRegisterEndpointClient(serverPublicKey, RegisterEndpointCommand.getCommandName(), new HttpActivity<SyncResponse>() {
-
-                @Override
-                public void httpRequestComplete(Exception e, int id, SyncResponse response) {
-                    assertNull(e);
-                    synchronized (regTests) {
-                        if (regTests.containsKey(id)) {
-                            SyncTest<EndpointRegistrationRequest, SyncResponse> test = regTests.get(id);
-                            test.responseReceived = response;
-                            testProcessed++;
-                        } else {
-                            logger.trace("Test failed: not found in HashMap id: "+id);
-                        }
-                    }
-
-                    if (testProcessed >= NUMBER_OF_TESTS) {
-                        synchronized (sync) {
-                            sync.notify();
-                        }
-                    }
-                }
-            });
-            testCacheService.addPublicKey(cl.getClientPublicKeyHash(), cl.getClientPublicKey());
-            regTests.putIfAbsent(Integer.valueOf(cl.getId()),
-                    new SyncTest<EndpointRegistrationRequest, SyncResponse>(cl.getId(), cl.getRequest()));
-            executor.execute(cl);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
-    }
-
-    public static void UpdateProfileSetRequestReceived(int id, ProfileUpdateRequest requestReceived) {
-        synchronized (updTests) {
-            if(updTests.containsKey(Integer.valueOf(id))) {
-                updTests.get(Integer.valueOf(id)).requestReceived = requestReceived;
-            }
-        }
-    }
-
-    public static void UpdateProfileSetResponseSent(int id, SyncResponse responseSent) {
-        synchronized (updTests) {
-            if(updTests.containsKey(Integer.valueOf(id))) {
-                updTests.get(Integer.valueOf(id)).responseSent = responseSent;
-            }
-        }
-    }
-
-    private void sendUpdateProfileRequest() {
-        try {
-            final HttpTestUpdateEndpointClient cl1 = new HttpTestUpdateEndpointClient(serverPublicKey, new HttpActivity<SyncResponse>() {
-
-                @Override
-                public void httpRequestComplete(Exception ioe,
-                        int id,
-                        SyncResponse response) {
-
-                    assertNull(ioe);
-                    synchronized (updTests) {
-                        if (updTests.containsKey(Integer.valueOf(id))) {
-                            SyncTest<ProfileUpdateRequest, SyncResponse> test = updTests.get(Integer.valueOf(id));
-                            test.responseReceived = response;
-                            testProcessed++;
-                        } else {
-                            logger.trace("Test failed: not found in HashMap id: "+id);
-                        }
-                    }
-
-                    if (testProcessed >= NUMBER_OF_TESTS) {
-                        synchronized (sync) {
-                            sync.notify();
-                        }
-                    }
-                }
-            });
-            testCacheService.addPublicKey(cl1.getClientPublicKeyHash(), cl1.getClientPublicKey());
-            updTests.putIfAbsent(Integer.valueOf(cl1.getId()), new SyncTest<ProfileUpdateRequest, SyncResponse>(cl1.getId(), cl1.getRequest()));
-            executor.execute(cl1);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
-    }
-
-    private void sendLongSyncTest() {
-        try {
-            final HttpTestLongSyncClient cl1 = new HttpTestLongSyncClient(serverPublicKey, new HttpActivity<SyncResponse>() {
-
-                @Override
-                public void httpRequestComplete(Exception ioe,
-                        int id,
-                        SyncResponse response) {
-
-                    assertNull(ioe);
-                    synchronized (longSyncTests) {
-                        if (longSyncTests.containsKey(Integer.valueOf(id))) {
-                            SyncTest<LongSyncRequest, SyncResponse> test = longSyncTests.get(Integer.valueOf(id));
-                            test.responseReceived = response;
-                            testProcessed++;
-                        } else {
-                            logger.trace("Test failed: not found in HashMap id: "+id);
-                        }
-                    }
-
-                    if (testProcessed >= NUMBER_OF_TESTS) {
-                        synchronized (sync) {
-                            sync.notify();
-                        }
-                    }
-                }
-            });
-            testCacheService.addPublicKey(cl1.getClientPublicKeyHash(), cl1.getClientPublicKey());
-            longSyncTests.putIfAbsent(Integer.valueOf(cl1.getId()), new SyncTest<LongSyncRequest, SyncResponse>(cl1.getId(), cl1.getRequest()));
-            executor.execute(cl1);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
-    }
-
-    public static void LongSyncTestSetRequestReceived(int id, LongSyncRequest requestReceived) {
-        synchronized (longSyncTests) {
-            if(longSyncTests.containsKey(Integer.valueOf(id))) {
-                longSyncTests.get(Integer.valueOf(id)).requestReceived = requestReceived;
-            }
-        }
-    }
-
-    public static void LongSyncTestSetResponseSent(int id, SyncResponse responseSent) {
-        synchronized (longSyncTests) {
-            if(longSyncTests.containsKey(Integer.valueOf(id))) {
-                longSyncTests.get(Integer.valueOf(id)).responseSent = responseSent;
-            }
         }
     }
 }

@@ -16,9 +16,21 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.session;
 
+import java.util.UUID;
+
 /**
  * The Class RequestTimeoutMessage.
  */
-public class RequestTimeoutMessage {
+public class RequestTimeoutMessage implements TimeoutMessage{
 
+    private final UUID requestId;
+
+    public RequestTimeoutMessage(UUID requestId) {
+        super();
+        this.requestId = requestId;
+    }
+
+    public UUID getRequestId() {
+        return requestId;
+    }
 }

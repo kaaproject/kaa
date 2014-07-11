@@ -19,7 +19,15 @@ package org.kaaproject.kaa.server.operations.pojo;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
+import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 
 
 /**
@@ -29,15 +37,23 @@ public class SyncResponseHolder {
 
     /** The response. */
     private final SyncResponse response;
-    
+
+    private EndpointProfileDto endpointProfile;
+
     /** The subscription states. */
-    private final Map<String, Integer> subscriptionStates;
-    
+    private Map<String, Integer> subscriptionStates;
+
     /** The system nf version. */
-    private final int systemNfVersion;
-    
+    private int systemNfVersion;
+
     /** The user nf version. */
-    private final int userNfVersion;
+    private int userNfVersion;
+
+    public static SyncResponseHolder failure(){
+        SyncResponse response = new SyncResponse();
+        response.setStatus(SyncResponseResultType.FAILURE);
+        return new SyncResponseHolder(response);
+    }
 
     /**
      * Instantiates a new sync response holder.
@@ -45,33 +61,19 @@ public class SyncResponseHolder {
      * @param response the response
      */
     public SyncResponseHolder(SyncResponse response){
-        this(response, new HashMap<String, Integer>(), 0, 0);
-    }
-    
-    /**
-     * Instantiates a new sync response holder.
-     *
-     * @param response the response
-     * @param subscriptionStates the subscription states
-     */
-    public SyncResponseHolder(SyncResponse response, Map<String, Integer> subscriptionStates){
-        this(response, subscriptionStates, 0, 0);
-    }    
-    
-    /**
-     * Instantiates a new sync response holder.
-     *
-     * @param response the response
-     * @param subscriptionStates the subscription states
-     * @param systemNfVersion the system nf version
-     * @param userNfVersion the user nf version
-     */
-    public SyncResponseHolder(SyncResponse response, Map<String, Integer> subscriptionStates, int systemNfVersion, int userNfVersion) {
         super();
         this.response = response;
+        this.subscriptionStates = new HashMap<>();
+    }
+
+    public void setEndpointProfile(EndpointProfileDto profile) {
+        this.endpointProfile = profile;
+        this.systemNfVersion = profile.getSystemNfVersion();
+        this.userNfVersion = profile.getUserNfVersion();
+    }
+
+    public void setSubscriptionStates(Map<String, Integer> subscriptionStates) {
         this.subscriptionStates = subscriptionStates;
-        this.systemNfVersion = systemNfVersion;
-        this.userNfVersion = userNfVersion;
     }
 
     /**
@@ -110,6 +112,38 @@ public class SyncResponseHolder {
         return userNfVersion;
     }
 
+    public EndpointProfileDto getEndpointProfile() {
+        return endpointProfile;
+    }
+
+    public SyncResponseResultType getStatus() {
+        return response.getStatus();
+    }
+
+    public void setStatus(SyncResponseResultType status) {
+        this.response.setStatus(status);
+    }
+
+    public void setUserSyncResponse(UserSyncResponse response) {
+        this.response.setUserSyncResponse(response);
+    }
+
+    public void setEventSyncResponse(EventSyncResponse response) {
+        this.response.setEventSyncResponse(response);
+    }
+
+    public void setConfigurationSyncResponse(ConfigurationSyncResponse response) {
+        this.response.setConfigurationSyncResponse(response);
+    }
+
+    public void setNotificationSyncResponse(NotificationSyncResponse response) {
+        this.response.setNotificationSyncResponse(response);
+    }
+
+    public void setProfileSyncResponse(ProfileSyncResponse response) {
+        this.response.setProfileSyncResponse(response);
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -122,5 +156,49 @@ public class SyncResponseHolder {
         builder.append(subscriptionStates);
         builder.append("]");
         return builder.toString();
+    }
+
+    /**
+     * Require immediate reply.
+     *
+     * @param response
+     *            the response
+     * @return true, if successful
+     */
+    public boolean requireImmediateReply() {
+        SyncResponse response = getResponse();
+        if (response.getProfileSyncResponse() != null && response.getProfileSyncResponse().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+            return true;
+        }
+        if (response.getConfigurationSyncResponse() != null && response.getConfigurationSyncResponse().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+            return true;
+        }
+        if (response.getNotificationSyncResponse() != null && response.getNotificationSyncResponse().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+            return true;
+        }
+        if (response.getEventSyncResponse() != null) {
+            if(response.getEventSyncResponse().getEvents() != null && response.getEventSyncResponse().getEvents().size() > 0){
+                return true;
+            }
+            if(response.getEventSyncResponse().getEventListenersResponses() != null && response.getEventSyncResponse().getEventListenersResponses().size() > 0){
+                return true;
+            }
+        }
+        if (response.getUserSyncResponse() != null) {
+            UserSyncResponse userResponse = response.getUserSyncResponse();
+            if (userResponse.getEndpointAttachResponses() != null && userResponse.getEndpointAttachResponses().size() > 0) {
+                return true;
+            }
+            if (userResponse.getEndpointDetachResponses() != null && userResponse.getEndpointDetachResponses().size() > 0) {
+                return true;
+            }
+            if (userResponse.getUserAttachResponse() != null) {
+                return true;
+            }
+        }
+        if (response.getLogSyncResponse() != null) {
+            return true;
+        }
+        return false;
     }
 }

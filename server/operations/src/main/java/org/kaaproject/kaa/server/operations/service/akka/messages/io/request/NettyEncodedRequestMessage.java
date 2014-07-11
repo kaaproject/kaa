@@ -21,6 +21,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage;
 import org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand;
+import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 
 
 /**
@@ -30,7 +31,7 @@ public class NettyEncodedRequestMessage extends NettyCommandAwareMessage {
 
     /**
      * Instantiates a new netty encoded request message.
-     * 
+     *
      * @param handlerUuid
      *            the handler uuid
      * @param channelContext
@@ -39,13 +40,13 @@ public class NettyEncodedRequestMessage extends NettyCommandAwareMessage {
      *            the command
      */
     public NettyEncodedRequestMessage(String handlerUuid, ChannelHandlerContext channelContext,
-            AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command) {
-        super(handlerUuid, channelContext, command);
+            AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command, ChannelType channelType) {
+        super(handlerUuid, channelContext, command, channelType);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

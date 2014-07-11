@@ -24,45 +24,41 @@ import java.util.UUID;
 
 import org.kaaproject.kaa.server.common.http.server.Track;
 import org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommand;
-import org.kaaproject.kaa.server.operations.service.http.commands.RegisterEndpointCommand;
 import org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand;
-import org.kaaproject.kaa.server.operations.service.http.commands.UpdateEndpointCommand;
 
 /**
  * Class SessionHistory.
  * Gather history of HTTP session to Operations server.
  * Implement Track interface to collect statistics of HTTP requests
- * 
+ *
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  *
  */
 public class SessionHistory implements Track{
-    
+
     /** session UUID. */
-    private UUID uuid;
-    
+    private final UUID uuid;
+
     /** Session create timestamp */
-    private long sessionCreateTimestamp;
-    
+    private final long sessionCreateTimestamp;
+
     /** Boolean representing session state open/close */
     private boolean sessionOpen = false;
-    
+
     /** List of HTTP requests */
-    private List<RequestHistory> requests;
-    
+    private final List<RequestHistory> requests;
+
     /** Request ID random generator */
-    private Random rnd;
-    
+    private final Random rnd;
+
     /** type of HTTP requests */
     public enum RequestType {
         UNKNOWN,
-        REGISTER,
         SYNC,
-        LONGSYNC,
-        UPENDPOINT
+        LONGSYNC
     }
-    
-    /** 
+
+    /**
      * Used to convert String commandName from URI to enup RequestType
      * @param commandName - URI part of HTTP request which represent command name
      * @return - enum RequestType
@@ -73,10 +69,6 @@ public class SessionHistory implements Track{
                 return RequestType.SYNC;
             } else if (commandName.equalsIgnoreCase(LongSyncCommand.getCommandName())) {
                 return RequestType.LONGSYNC;
-            } else if (commandName.equalsIgnoreCase(RegisterEndpointCommand.getCommandName())) {
-                return RequestType.REGISTER;
-            } else if (commandName.equalsIgnoreCase(UpdateEndpointCommand.getCommandName())) {
-                return RequestType.UPENDPOINT;                
             } else {
                 return RequestType.UNKNOWN;
             }
@@ -84,29 +76,29 @@ public class SessionHistory implements Track{
             return RequestType.UNKNOWN;
         }
     }
-    
+
     /**
      * Inner Class RequestHistory - used to handle HTTP request statistics
      * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
      *
      */
     public class RequestHistory {
-        
+
         /** Random HTTP request ID */
         private int id = rnd.nextInt();
-        
+
         /** Request create timestamp  */
-        private long requestCreateTimestamp;
-        
+        private final long requestCreateTimestamp;
+
         /** Type of request */
-        private RequestType type;
-        
+        private final RequestType type;
+
         /** Processing time, gets from filed in CommandProcessor class. */
         private long syncTime = 0;
-        
+
         /** Request close time stamp */
         private long requestCloseTimestamp = 0;
-        
+
         /**
          * Return int request ID
          * @return the id
@@ -124,7 +116,7 @@ public class SessionHistory implements Track{
             this.type = type;
             id = rnd.nextInt();
         }
-        
+
         /**
          * Request type getter.
          * @return RequestType
@@ -132,7 +124,7 @@ public class SessionHistory implements Track{
         public RequestType getType() {
             return type;
         }
-        
+
         /**
          * Request type checker.
          * @param type RequestType
@@ -141,7 +133,7 @@ public class SessionHistory implements Track{
         public boolean isType(RequestType type) {
             return this.type == type;
         }
-        
+
         /**
          * SyncTime setter.
          * @param syncTime long
@@ -149,7 +141,7 @@ public class SessionHistory implements Track{
         public void setSyncTime(long syncTime) {
             this.syncTime = syncTime;
         }
-        
+
         /**
          * SyncTime getter.
          * @return syncTime long
@@ -157,9 +149,9 @@ public class SessionHistory implements Track{
         public long getSyncTime() {
             return syncTime;
         }
-        
+
         /**
-         * Close request and set close Time 
+         * Close request and set close Time
          * @return request close timestamp
          */
         public long closeRequest() {
@@ -177,8 +169,8 @@ public class SessionHistory implements Track{
             return requestCloseTimestamp;
         }
     }
-    
-    
+
+
     /**
      * SessionHistory constructor.
      * @param uuid UUID of session
@@ -198,8 +190,8 @@ public class SessionHistory implements Track{
     public final List<RequestHistory> getRequests() {
         return requests;
     }
-    
-    
+
+
     /**
      * Session create time getter.
      * @return the sessionCreateTimestamp
@@ -215,7 +207,7 @@ public class SessionHistory implements Track{
     public UUID getUuid() {
         return uuid;
     }
-    
+
     /**
      * Creates and return new Request.
      * @param type of request
@@ -226,15 +218,15 @@ public class SessionHistory implements Track{
         requests.add(r);
         return r;
     }
-    
+
     /**
      * Return is Session still opened
-     * @return boolean if session open 
+     * @return boolean if session open
      */
     public boolean isSessionOpen() {
         return sessionOpen;
     }
-     
+
     /**
      * Mark session as closed.
      */
@@ -266,7 +258,7 @@ public class SessionHistory implements Track{
                 break;
             }
         }
-        
+
     }
 
     /*

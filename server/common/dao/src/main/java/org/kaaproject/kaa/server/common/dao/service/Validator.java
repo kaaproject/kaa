@@ -37,10 +37,20 @@ public class Validator {
      */
     public static boolean isValidId(String id) {
         boolean correct = false;
-        if (StringUtils.isNotEmpty(id) && ObjectId.isValid(id)) {
+        if (StringUtils.isNotEmpty(id)) {
             correct = true;
         }
         return correct;
+    }
+
+    /**
+     * This method validate if string id is not empty.
+     *
+     * @param id the string id
+     * @return the boolean
+     */
+    public static boolean isValidSqlId(String id) {
+        return StringUtils.isNotEmpty(id);
     }
 
     /**
@@ -78,6 +88,30 @@ public class Validator {
     }
 
     /**
+     * This method validate object. If object not equals <code>null</code> and id is valid than
+     * return <code>true</code>.
+     *
+     * @param id the <code>HasId</code> object
+     * @return the boolean result
+     */
+    public static boolean isValidSqlObject(HasId id) {
+        boolean correct = false;
+        if (id != null) {
+            String sid = id.getId();
+            if (StringUtils.isNotBlank(sid)) {
+                try {
+                    Long.valueOf(sid);
+                    correct = true;
+                } catch (NumberFormatException e) {
+                }
+            } else {
+                correct = true;
+            }
+        }
+        return correct;
+    }
+
+    /**
      * This method validate <code>String</code> id. If id is invalid than throw
      * <code>IncorrectParameterException</code> exception
      *
@@ -86,6 +120,32 @@ public class Validator {
      */
     public static void validateId(String id, String errorMessage) {
         if (!isValidId(id)) {
+            throw new IncorrectParameterException(errorMessage);
+        }
+    }
+
+    /**
+     *
+     * @param id
+     * @param errorMessage
+     */
+    public static void validateSqlId(String id, String errorMessage) {
+        try {
+            Long.valueOf(id);
+        } catch (NumberFormatException e) {
+            throw new IncorrectParameterException(errorMessage, e);
+        }
+    }
+
+    /**
+     * This method validate <code>String</code> string. If string is invalid than throw
+     * <code>IncorrectParameterException</code> exception
+     *
+     * @param id
+     * @param errorMessage message for exception
+     */
+    public static void validateString(String id, String errorMessage) {
+        if (id == null || id.isEmpty()) {
             throw new IncorrectParameterException(errorMessage);
         }
     }
@@ -112,6 +172,19 @@ public class Validator {
      */
     public static void validateObject(HasId hasId, String errorMessage) {
         if (!isValidObject(hasId)) {
+            throw new IncorrectParameterException(errorMessage);
+        }
+    }
+
+    /**
+     * This method validate <code>HasId</code> object. If object is invalid than throw
+     * <code>IncorrectParameterException</code> exception
+     *
+     * @param hasId
+     * @param errorMessage message for exception
+     */
+    public static void validateSqlObject(HasId hasId, String errorMessage) {
+        if (!isValidSqlObject(hasId)) {
             throw new IncorrectParameterException(errorMessage);
         }
     }

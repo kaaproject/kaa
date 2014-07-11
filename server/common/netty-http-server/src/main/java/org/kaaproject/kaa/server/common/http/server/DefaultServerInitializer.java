@@ -120,7 +120,7 @@ public class DefaultServerInitializer extends ChannelInitializer<SocketChannel> 
      * init() method for necessary initializations.
      * @throws Exception - initialization exceptions
      */
-    public void init() throws Exception {
+    public void init() throws Exception { //NOSONAR
         LOG.info("Default Server Initializer Init() started: ");
         for(String commandClass : getConf().getCommandList()){
             CommandFactory.addCommandClass(commandClass);

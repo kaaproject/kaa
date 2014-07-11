@@ -19,9 +19,9 @@ package org.kaaproject.kaa.server.common.dao.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,10 +29,8 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.server.common.dao.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -41,8 +39,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UserServiceImplTest extends AbstractTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImplTest.class);
 
     @BeforeClass
     public static void init() throws Exception {
@@ -54,21 +50,40 @@ public class UserServiceImplTest extends AbstractTest {
         MongoDBTestRunner.tearDown();
     }
 
-    @After
-    public void afterTest() {
-        MongoDBTestRunner.getDB().dropDatabase();
+    @Before
+    public void beforeTest() throws Exception {
+        clearDBData();
     }
 
     @Test
     public void findAllTenantUsersTest() {
         TenantDto tenant = generateTenant();
-        List<UserDto> expectedUsers = new ArrayList();
+        List<UserDto> expectedUsers = new ArrayList<>();
         List<UserDto> devUsers = generateUsers(tenant.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 2);
         List<UserDto> users = generateUsers(tenant.getId(), KaaAuthorityDto.TENANT_USER, 3);
         expectedUsers.addAll(devUsers);
         expectedUsers.addAll(users);
         List<UserDto> foundUsers = userService.findAllTenantUsers(tenant.getId());
-        Assert.assertEquals(expectedUsers, foundUsers);
+        assertUsersListsEqual(expectedUsers, foundUsers);
+    }
+
+    private void assertUsersListsEqual(List<UserDto> expectedUsers, List<UserDto> actualUsers) {
+        Assert.assertNotNull(expectedUsers);
+        Assert.assertNotNull(actualUsers);
+        Assert.assertEquals(expectedUsers.size(), actualUsers.size());
+        List<UserDto> notMatchedUsers = new ArrayList<>(actualUsers);
+        for (UserDto expectedUser : expectedUsers) {
+            boolean found = false;
+            for (UserDto actualUser : actualUsers) {
+                if (expectedUser.getId().equals(actualUser.getId())) {
+                    Assert.assertEquals(expectedUser, actualUser);
+                    found = true;
+                    notMatchedUsers.remove(actualUser);
+                }
+            }
+            Assert.assertTrue("User not found", found);
+        }
+        Assert.assertTrue(notMatchedUsers.isEmpty());
     }
 
     @Test
@@ -80,12 +95,13 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void removeTenantByIdTest() {
+        //TODO : implmenet me
     }
 
     @Test
     public void findTenantByNameTest() {
         TenantDto tenantDto = generateTenant();
-        TenantDto foundTenant = userService.findTenantByName(TENANT_NAME);
+        TenantDto foundTenant = userService.findTenantByName(tenantDto.getName());
         Assert.assertEquals(tenantDto, foundTenant);
     }
 
@@ -134,7 +150,7 @@ public class UserServiceImplTest extends AbstractTest {
         TenantDto tenantDto = generateTenant();
         List<UserDto> users = generateUsers(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 7);
         List<UserDto> foundUsers = userService.findAllUsers();
-        Assert.assertEquals(users, foundUsers);
+        assertUsersListsEqual(users, foundUsers);
     }
 
 

@@ -21,7 +21,8 @@ public enum ServiceErrorCode {
     GENERAL_ERROR("general_error", true),
     NOT_AUTHORIZED("not_authorized", false),
     PERMISSION_DENIED("permission_denied", false),
-    INVALID_SCHEMA("invalid_schema", true);
+    INVALID_SCHEMA("invalid_schema", true),
+    FILE_NOT_FOUND("file_not_found", true);
 
     String resKey;
     boolean showErrorMessage;

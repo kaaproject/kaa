@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.operations.service.http;
 
@@ -25,10 +25,12 @@ import java.security.PublicKey;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.endpoint.gen.LongSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.TopicState;
 import org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommand;
@@ -38,35 +40,35 @@ import org.kaaproject.kaa.server.operations.service.http.commands.LongSyncComman
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  *
  */
-public class HttpTestLongSyncClient extends HttpTestClient<LongSyncRequest, SyncResponse> {
+public class HttpTestLongSyncClient extends HttpTestClient<SyncRequest, SyncResponse> {
 
     /** Defined application token */
     public static final String APPLICATION_TOKEN = "123test";
-    
+
     /** Hash size, in test we use fake hashes gust generating them as random bytes */
     public static final int HASH_SIZE = 32;
-    
+
     /** Max subscription command size, actual value get random size */
     public static final int MAX_SUBSCRIPTION_COMMANDS_SIZE  = 100;
-    
+
     /** Defined topic id length */
     public static final int TOPIC_ID_LENGTH  = 10;
-    
+
     /** profile hash byte array */
     private byte[] profileHash;
-    
+
     /** configuration hash byte array */
     private byte[] configurationHash;
-    
+
     /** subscription commands list */
     private List<SubscriptionCommand> subscriptionCommands;
-    
+
     /** topic state list */
     private List<TopicState> topicStates;
-    
+
     /** application seq number, in test it used to pass testId */
     private int appStateSeqNumber;
-    
+
     /**
      * Constructor
      * @param serverPublicKey - server public key
@@ -84,44 +86,47 @@ public class HttpTestLongSyncClient extends HttpTestClient<LongSyncRequest, Sync
     }
 
     /**
-     * Create SyncRequest. 
+     * Create SyncRequest.
      */
     private void longSyncInit() {
-        setRequest(new LongSyncRequest());
-        getRequest().setTimeout(Long.valueOf(rnd.nextInt(10000000)));
+        SyncRequest request = new SyncRequest();
+        request.setSyncRequestMetaData(new SyncRequestMetaData());
+        setRequest(request);
+        getRequest().getSyncRequestMetaData().setTimeout(Long.valueOf(rnd.nextInt(10000000)));
         syncInit();
     }
-    
+
     /**
-     * Create SyncRequest. 
+     * Create SyncRequest.
      */
     private void syncInit() {
-        
+
         profileHash = getRandomBytes(HASH_SIZE);
         configurationHash = getRandomBytes(HASH_SIZE);
         appStateSeqNumber = getId();
-        
-        SyncRequest request = new SyncRequest();
-        
-        request.setApplicationToken(APPLICATION_TOKEN);
-        
-        
-        request.setEndpointPublicKeyHash(ByteBuffer.wrap(getClientPublicKeyHash().getData()));
-        
-        request.setConfigurationHash(ByteBuffer.wrap(configurationHash));
-        request.setProfileHash(ByteBuffer.wrap(profileHash));
-        
-        generateSubscriptionCommandList();
-        request.setSubscriptionCommands(subscriptionCommands);
-        request.setTopicStates(topicStates);
-        
-        request.setTopicListHash(ByteBuffer.wrap(profileHash));
-        
-        request.setAppStateSeqNumber(appStateSeqNumber);
 
-        getRequest().setSyncRequest(request);
+        SyncRequest request = new SyncRequest();
+        request.setSyncRequestMetaData(new SyncRequestMetaData());
+        request.getSyncRequestMetaData().setApplicationToken(APPLICATION_TOKEN);
+        request.getSyncRequestMetaData().setEndpointPublicKeyHash(ByteBuffer.wrap(getClientPublicKeyHash().getData()));
+        request.getSyncRequestMetaData().setProfileHash(ByteBuffer.wrap(profileHash));
+
+        ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
+        csRequest.setConfigurationHash(ByteBuffer.wrap(configurationHash));
+        csRequest.setAppStateSeqNumber(appStateSeqNumber);
+        request.setConfigurationSyncRequest(csRequest);
+
+        generateSubscriptionCommandList();
+        NotificationSyncRequest nsRequest = new NotificationSyncRequest();
+        nsRequest.setSubscriptionCommands(subscriptionCommands);
+        nsRequest.setTopicStates(topicStates);
+        nsRequest.setTopicListHash(ByteBuffer.wrap(profileHash));
+        nsRequest.setAppStateSeqNumber(appStateSeqNumber);
+        request.setNotificationSyncRequest(nsRequest);
+
+        setRequest(request);
     }
-    
+
     /**
      * generate subscription command list
      */
@@ -175,10 +180,10 @@ public class HttpTestLongSyncClient extends HttpTestClient<LongSyncRequest, Sync
     public int getAppStateSeqNumber() {
         return appStateSeqNumber;
     }
-    
+
     @Override
-    protected Class<LongSyncRequest> getRequestConverterClass() {
-        return LongSyncRequest.class;
+    protected Class<SyncRequest> getRequestConverterClass() {
+        return SyncRequest.class;
     }
 
     @Override

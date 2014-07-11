@@ -72,18 +72,23 @@ public abstract class AbstractGrid<T, K> extends DockLayoutPanel implements HasR
 
     protected boolean enableActions;
     protected boolean embedded;
+    protected boolean editable;
 
     protected Column<T,T> deleteColumn;
 
     public AbstractGrid(Style.Unit unit) {
-        this(unit, true, false);
+        this(unit, true, false, false);
     }
 
     public AbstractGrid(Style.Unit unit, boolean enableActions) {
-        this(unit, enableActions, false);
+        this(unit, enableActions, false, false);
+    }
+    
+    public AbstractGrid(Style.Unit unit, boolean enableActions, boolean embedded) {
+        this(unit, enableActions, embedded, false);
     }
 
-    public AbstractGrid(Style.Unit unit, boolean enableActions, boolean embedded) {
+    public AbstractGrid(Style.Unit unit, boolean enableActions, boolean embedded, boolean editable) {
         super(unit);
         ProvidesKey<T> keyProvider = new ProvidesKey<T>() {
             @Override
@@ -94,6 +99,7 @@ public abstract class AbstractGrid<T, K> extends DockLayoutPanel implements HasR
 
         this.enableActions = enableActions;
         this.embedded = embedded;
+        this.editable = editable;
 
         Resources localGridResources = embedded ? gridResourcesSmall : gridResources;
         table = new DataGrid<T>(20, localGridResources, keyProvider);
@@ -127,8 +133,12 @@ public abstract class AbstractGrid<T, K> extends DockLayoutPanel implements HasR
             protected String createText() {
                 HasRows display = getDisplay();
                 Range range = display.getVisibleRange();
-                int currentPgae = range.getStart() / (range.getLength() != 0 ? range.getLength() : 1) + 1;
-                return Utils.messages.pagerText(currentPgae, ((int)Math.ceil((float)display.getRowCount()/(float)range.getLength())));
+                int currentPage = range.getStart() / (range.getLength() != 0 ? range.getLength() : 1) + 1;
+                int total = ((int)Math.ceil((float)display.getRowCount()/(float)range.getLength()));
+                if (total == 0) {
+                    total = 1;
+                }
+                return Utils.messages.pagerText(currentPage, total);
             }
         };
         pager.setDisplay(table);

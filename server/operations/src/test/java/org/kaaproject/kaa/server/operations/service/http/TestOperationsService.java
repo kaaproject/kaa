@@ -17,21 +17,21 @@
 package org.kaaproject.kaa.server.operations.service.http;
 
 import java.nio.ByteBuffer;
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.endpoint.gen.ConfSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointRegistrationRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileUpdateRequest;
 import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
@@ -47,13 +47,13 @@ public class TestOperationsService implements OperationsService {
 
     /** MAX topic list size */
     private static final int MAX_TOPIC_LIST_SIZE = 100;
-    
+
     /** MAX notification list size */
     private static final int MAX_NOTIFICATION_LIST_SIZE = 100;
-    
+
     /** Random generator */
-    private Random rnd;
-    
+    private final Random rnd;
+
     /**
      * Constructor
      */
@@ -62,49 +62,15 @@ public class TestOperationsService implements OperationsService {
     }
 
     /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.EndpointService#registerEndpoint(org.kaaproject.kaa.common.endpoint.gen.EndpointRegistrationRequest)
-     */
-    @Override
-    public SyncResponseHolder registerEndpoint(
-            EndpointRegistrationRequest request) throws GetDeltaException {
-        OperationsHttpServerIT.EndpointRegisterTestSetRequestReceived(
-                request.getVersionInfo().getConfigVersion(),
-                request);
-        SyncResponse response = generateSyncResponse();
-        OperationsHttpServerIT.EndpointRegisterTestSetResponseSent(
-                request.getVersionInfo().getConfigVersion(),
-                response);
-        SyncResponseHolder holder = new SyncResponseHolder(response);
-        return holder;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.EndpointService#updateEndpoint(org.kaaproject.kaa.common.endpoint.gen.ProfileUpdateRequest)
-     */
-    @Override
-    public SyncResponseHolder updateProfile(ProfileUpdateRequest request)
-            throws GetDeltaException {
-        OperationsHttpServerIT.UpdateProfileSetRequestReceived(
-                request.getVersionInfo().getConfigVersion(), 
-                request);
-        SyncResponse response = generateSyncResponse();
-        OperationsHttpServerIT.UpdateProfileSetResponseSent(
-                request.getVersionInfo().getConfigVersion(),
-                response);
-        SyncResponseHolder holder = new SyncResponseHolder(response);
-        return holder;
-    }
-
-    /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.EndpointService#sync(org.kaaproject.kaa.common.endpoint.gen.SyncRequest)
      */
     @Override
     public SyncResponseHolder sync(SyncRequest request)
             throws GetDeltaException {
-        
+
         SyncResponse response = generateSyncResponse();
         SyncResponseHolder holder = new SyncResponseHolder(response);
-        
+
         return holder;
     }
 
@@ -123,7 +89,7 @@ public class TestOperationsService implements OperationsService {
      */
     private SyncResponse generateSyncResponse() {
         SyncResponse response = null;
-        
+
         int t = rnd.nextInt(5);
         switch (t) {
         case 0:
@@ -140,84 +106,86 @@ public class TestOperationsService implements OperationsService {
             break;
         case 4:
             response = generateNoDeltaResponse();
-            break;            
+            break;
         default:
             response = generateRedirectionResponse();
             break;
         }
         return response;
     }
-    
+
     /**
      * Generate redirection response with random DNS name with size 30 chars.
      * @return SyncResponse
      */
     private SyncResponse generateRedirectionResponse() {
         SyncResponse response = new SyncResponse();
-        response.setResponseType(SyncResponseStatus.REDIRECT);
+        response.setStatus(SyncResponseResultType.REDIRECT);
         RedirectSyncResponse redirectResponse = new RedirectSyncResponse();
         redirectResponse.setDnsName(MultipartObjects.getRandomString(30));
         response.setRedirectSyncResponse(redirectResponse);
         return response;
     }
-    
+
     /**
      * generate ConfResync type response with random Conf delta body size 4096 and Schema body with size 4096
      * @return SyncResponse
      */
     private SyncResponse generateConfResyncResponse() {
         SyncResponse response = new SyncResponse();
-        response.setResponseType(SyncResponseStatus.CONF_RESYNC);
-        ConfSyncResponse confSyncResponse = new ConfSyncResponse();
+        response.setStatus(SyncResponseResultType.SUCCESS);
+        ConfigurationSyncResponse confSyncResponse = new ConfigurationSyncResponse();
+        confSyncResponse.setResponseStatus(SyncResponseStatus.RESYNC);
         confSyncResponse.setConfDeltaBody(ByteBuffer.wrap(HttpTestSyncClient.getRandomBytes(4096)));
         confSyncResponse.setConfSchemaBody(ByteBuffer.wrap(HttpTestSyncClient.getRandomBytes(4096)));
-        response.setConfSyncResponse(confSyncResponse);
+        response.setConfigurationSyncResponse(confSyncResponse);
         return response;
     }
-    
+
     /**
      * Generate Profile resync
      * @return SyncResponse
      */
     private SyncResponse generateProfResyncResponse() {
         SyncResponse response = new SyncResponse();
-        response.setResponseType(SyncResponseStatus.PROFILE_RESYNC);
+        response.setStatus(SyncResponseResultType.PROFILE_RESYNC);
         return response;
     }
-    
+
     /**
      * generate Delta response with possible Notification
      * @return SyncResponse
      */
     private SyncResponse generateDeltaResponse() {
         SyncResponse response = new SyncResponse();
-        response.setResponseType(SyncResponseStatus.DELTA);
+        response.setStatus(SyncResponseResultType.SUCCESS);
         if (rnd.nextBoolean()) {
-            response = generateNotificationSyncResponse(response);
+            response = generateNotificationSyncResponse(response, SyncResponseStatus.DELTA);
         }
         return response;
     }
-    
+
     /**
      * Generate No Delta response with possible Notification
      * @return SyncResponse
      */
     private SyncResponse generateNoDeltaResponse() {
         SyncResponse response = new SyncResponse();
-        response.setResponseType(SyncResponseStatus.NO_DELTA);
+        response.setStatus(SyncResponseResultType.SUCCESS);
         if (rnd.nextBoolean()) {
-            response = generateNotificationSyncResponse(response);
+            response = generateNotificationSyncResponse(response, SyncResponseStatus.NO_DELTA);
         }
         return response;
     }
-    
+
     /**
      * generate Notification
      * @param response
      * @return SyncResponse
      */
-    private SyncResponse generateNotificationSyncResponse(SyncResponse response) {
+    private SyncResponse generateNotificationSyncResponse(SyncResponse response, SyncResponseStatus status) {
         NotificationSyncResponse notificationSyncResponse = new NotificationSyncResponse();
+        notificationSyncResponse.setResponseStatus(status);
         int topicListSize = rnd.nextInt(MAX_TOPIC_LIST_SIZE);
         List<Topic> topics = new Vector<>(topicListSize);
         for(int i=0; i<topicListSize;i++) {
@@ -232,7 +200,7 @@ public class TestOperationsService implements OperationsService {
             topics.add(topic);
         }
         notificationSyncResponse.setAvailableTopics(topics);
-        
+
         int notifListSize = rnd.nextInt(MAX_NOTIFICATION_LIST_SIZE);
         List<Notification> notifications = new Vector<>(notifListSize);
         for(int i=0; i<notifListSize;i++) {
@@ -251,5 +219,11 @@ public class TestOperationsService implements OperationsService {
         notificationSyncResponse.setNotifications(notifications);
         response.setNotificationSyncResponse(notificationSyncResponse);
         return response;
+    }
+
+    @Override
+    public void setPublicKey(PublicKey publicKey) {
+        // TODO Auto-generated method stub
+
     }
 }

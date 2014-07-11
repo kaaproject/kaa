@@ -26,21 +26,23 @@ import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
  * communicate with
  * {@link org.kaaproject.kaa.server.operations.service.profile.ProfileService
  * ProfileService}
- * 
+ *
  * @author ashvayka
  */
 public class RegisterProfileRequest {
     /** The application token. */
-    private String appToken;
+    private final String appToken;
 
     /** The endpoint key. */
-    private byte[] endpointKey;
+    private final byte[] endpointKey;
 
     /** The profile. */
-    private byte[] profile;
+    private final byte[] profile;
 
     /** The conf schema version. */
-    private EndpointVersionInfo versionInfo;
+    private final EndpointVersionInfo versionInfo;
+
+    private final String accessToken;
 
     /**
      * Instantiates a new register profile request.
@@ -51,16 +53,29 @@ public class RegisterProfileRequest {
      * @param profile            the profile body
      */
     public RegisterProfileRequest(String appToken, byte[] endpointKey, EndpointVersionInfo versionInfo, byte[] profile) {
+        this(appToken, endpointKey, versionInfo, profile, null);
+    }
+
+    /**
+     * Instantiates a new register profile request.
+     *
+     * @param appToken            the app token
+     * @param endpointKey            the endpoint key
+     * @param versionInfo the version info
+     * @param profile            the profile body
+     */
+    public RegisterProfileRequest(String appToken, byte[] endpointKey, EndpointVersionInfo versionInfo, byte[] profile, String accessToken) {
         super();
         this.appToken = appToken;
         this.endpointKey = Arrays.copyOf(endpointKey, endpointKey.length);
         this.versionInfo = versionInfo;
         this.profile = Arrays.copyOf(profile, profile.length);
+        this.accessToken = accessToken;
     }
 
     /**
      * Gets the endpoint key.
-     * 
+     *
      * @return the endpoint key
      */
     public byte[] getEndpointKey() {
@@ -69,7 +84,7 @@ public class RegisterProfileRequest {
 
     /**
      * Gets the profile.
-     * 
+     *
      * @return the profile
      */
     public byte[] getProfile() {
@@ -78,7 +93,7 @@ public class RegisterProfileRequest {
 
     /**
      * Gets the application token.
-     * 
+     *
      * @return the application token
      */
     public String getAppToken() {
@@ -92,5 +107,14 @@ public class RegisterProfileRequest {
      */
     public EndpointVersionInfo getVersionInfo() {
         return versionInfo;
+    }
+
+    /**
+     * Gets the endpoint access token.
+     *
+     * @return the endpoint access token
+     */
+    public String getAccessToken() {
+        return accessToken;
     }
 }

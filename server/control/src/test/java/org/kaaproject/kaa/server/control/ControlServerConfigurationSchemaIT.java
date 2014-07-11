@@ -32,6 +32,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +42,10 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory
             .getLogger(ControlServerConfigurationSchemaIT.class);
-    
+
     /**
      * Test create configuration schema.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -53,12 +54,12 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     public void testCreateConfigurationSchema() throws TException, IOException {
         ConfigurationSchemaDto configurationSchema = createConfigurationSchema();
         Assert.assertFalse(strIsEmpty(configurationSchema.getId()));
-        Assert.assertFalse(strIsEmpty(configurationSchema.getProtocolSchema()));
+        Assert.assertFalse(configurationSchema.getProtocolSchema().isEmpty());
     }
-    
+
     /**
      * Test create invalid configuration schema.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -68,15 +69,15 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
         configurationSchema.setStatus(UpdateStatus.ACTIVE);
         String schema = getResourceAsString(TEST_INVALID_CONFIG_SCHEMA);
-        configurationSchema.setSchema(schema);
+        configurationSchema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
         ApplicationDto application = createApplication();
         configurationSchema.setApplicationId(application.getId());
         client.editConfigurationSchema(toDataStruct(configurationSchema));
     }
-    
+
     /**
      * Test get configuration schema.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -84,40 +85,40 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     @Test
     public void testGetConfigurationSchema() throws TException, IOException {
         ConfigurationSchemaDto configurationSchema = createConfigurationSchema();
-        
+
         ConfigurationSchemaDto storedConfigurationSchema = toDto(client.getConfigurationSchema(configurationSchema.getId()));
-        
+
         Assert.assertNotNull(storedConfigurationSchema);
         assertConfigurationSchemasEquals(configurationSchema, storedConfigurationSchema);
     }
-    
+
     /**
      * Test get configuration schemas by application id.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Test
     public void testGetConfigurationSchemasByApplicationId() throws TException, IOException {
-        
+
         List<ConfigurationSchemaDto> configurationSchemas  = new ArrayList<ConfigurationSchemaDto>(11);
         ApplicationDto application = createApplication();
 
         List<ConfigurationSchemaDto> defaultConfigurationSchemas = toDtoList(client.getConfigurationSchemasByApplicationId(application.getId()));
         configurationSchemas.addAll(defaultConfigurationSchemas);
-        
+
         for (int i=0;i<10;i++) {
             ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId());
             configurationSchemas.add(configurationSchema);
         }
-        
+
         Collections.sort(configurationSchemas, new IdComparator());
-        
+
         List<ConfigurationSchemaDto> storedConfigurationSchemas = toDtoList(client.getConfigurationSchemasByApplicationId(application.getId()));
 
         Collections.sort(storedConfigurationSchemas, new IdComparator());
-        
+
         Assert.assertEquals(configurationSchemas.size(), storedConfigurationSchemas.size());
         for (int i=0;i<configurationSchemas.size();i++) {
             ConfigurationSchemaDto configurationSchema = configurationSchemas.get(i);
@@ -127,34 +128,34 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
             Assert.assertEquals(configurationSchema.getStatus(), storedConfigurationSchema.getStatus());
         }
     }
-    
+
     /**
      * Test get configuration schema versions by application id.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Test
     public void testGetConfigurationSchemaVersionsByApplicationId() throws TException, IOException {
-        
+
         List<ConfigurationSchemaDto> configurationSchemas  = new ArrayList<ConfigurationSchemaDto>(11);
         ApplicationDto application = createApplication();
 
         List<ConfigurationSchemaDto> defaultConfigurationSchemas = toDtoList(client.getConfigurationSchemasByApplicationId(application.getId()));
         configurationSchemas.addAll(defaultConfigurationSchemas);
-        
+
         for (int i=0;i<10;i++) {
             ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId());
             configurationSchemas.add(configurationSchema);
         }
-        
+
         Collections.sort(configurationSchemas, new IdComparator());
-        
+
         List<SchemaDto> storedConfigurationSchemas = toDtoList(client.getConfigurationSchemaVersionsByApplicationId(application.getId()));
 
         Collections.sort(storedConfigurationSchemas, new IdComparator());
-        
+
         Assert.assertEquals(configurationSchemas.size(), storedConfigurationSchemas.size());
         for (int i=0;i<configurationSchemas.size();i++) {
             ConfigurationSchemaDto configurationSchema = configurationSchemas.get(i);
@@ -162,10 +163,10 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
             assertSchemasEquals(configurationSchema, storedConfigurationSchema);
         }
     }
-    
+
     /**
      * Test update configuration schema.
-     * 
+     *
      * @throws TException
      *             the t exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -173,13 +174,13 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     @Test
     public void testUpdateConfigurationSchema() throws TException, IOException {
         ConfigurationSchemaDto configurationSchema = createConfigurationSchema();
-        
+
         configurationSchema.setName(generateString("Test Schema 2"));
         configurationSchema.setDescription(generateString("Test Desc 2"));
-        
+
         ConfigurationSchemaDto updatedConfigurationSchema = toDto(client
                 .editConfigurationSchema(toDataStruct(configurationSchema)));
-        
+
         Assert.assertEquals(updatedConfigurationSchema.getId(), configurationSchema.getId());
         Assert.assertEquals(updatedConfigurationSchema.getApplicationId(), configurationSchema.getApplicationId());
         Assert.assertEquals(updatedConfigurationSchema.getSchema(), configurationSchema.getSchema());
@@ -189,7 +190,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
         Assert.assertEquals(updatedConfigurationSchema.getProtocolSchema(), configurationSchema.getProtocolSchema());
         Assert.assertEquals(updatedConfigurationSchema.getStatus(), configurationSchema.getStatus());
     }
-    
+
     /**
      * Assert configuration schemas equals.
      *

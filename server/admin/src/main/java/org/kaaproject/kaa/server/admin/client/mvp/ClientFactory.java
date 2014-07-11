@@ -24,10 +24,18 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
@@ -35,8 +43,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
-import org.kaaproject.kaa.server.admin.shared.dto.TenantUserDto;
-import org.kaaproject.kaa.server.admin.shared.dto.UserDto;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
@@ -74,6 +80,10 @@ public interface ClientFactory {
     BaseSchemaView getNotificationSchemaView();
     BaseSchemaView getCreateNotificationSchemaView();
 
+    BaseListView<LogSchemaDto> getLogSchemasView();
+    BaseSchemaView getLogSchemaView();
+    BaseSchemaView getCreateLogSchemaView();
+
     BaseListView<EndpointGroupDto> getEndpointGroupsView();
     EndpointGroupView getEndpointGroupView();
     EndpointGroupView getCreateEndpointGroupView();
@@ -87,5 +97,15 @@ public interface ClientFactory {
     BaseListView<TopicDto> getTopicsView();
     TopicView getTopicView();
     TopicView getCreateTopicView();
+
+    BaseListView<EventClassFamilyDto> getEcfsView();
+    EcfView getEcfView();
+    EcfView getCreateEcfView();
+    
+    EcfSchemaView getEcfSchemaView();
+    
+    BaseListView<ApplicationEventFamilyMapDto> getAefMapsView();
+    AefMapView getAefMapView();
+    AefMapView getCreateAefMapView();
 
 }

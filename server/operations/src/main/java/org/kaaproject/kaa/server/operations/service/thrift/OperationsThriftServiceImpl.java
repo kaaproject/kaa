@@ -16,19 +16,24 @@
 
 package org.kaaproject.kaa.server.operations.service.thrift;
 
+import java.util.List;
+
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.EventMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
+import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +48,7 @@ import org.springframework.stereotype.Service;
  * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
  * BaseCliThriftService} The only one specific method to Operations Service is
  * {#link #onNotification(Notification notification) onNotification}
- * 
+ *
  * @author ashvayka
  */
 @Service
@@ -52,7 +57,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OperationsThriftServiceImpl.class);
 
-    
+
     @Autowired
     OperationsBootstrapService operationsBootstrapService;
     /** The cache service. */
@@ -61,14 +66,17 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
     /** The akka service. */
     @Autowired
     AkkaService akkaService;
-    
+
     /** The application service. */
     @Autowired
     ApplicationService applicationService;
 
+    /** The event service */
+    EventService eventService;
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService
      * .
@@ -100,14 +108,14 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
             if(notification.getAppSeqNumber() != 0){
                 LOG.debug("Going to update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(), notification.getAppSeqNumber(), Thread.currentThread().getId());
                 synchronized (cacheService) {
-                    int currentSeqNumber = cacheService.getAppSeqNumber(appDto.getApplicationToken());
+                    int currentSeqNumber = cacheService.getAppSeqNumber(appDto.getApplicationToken()).getSeqNumber();
                     if(currentSeqNumber < notification.getAppSeqNumber()){
-                        cacheService.putAppSeqNumber(appDto.getApplicationToken(), notification.getAppSeqNumber());
+                        cacheService.putAppSeqNumber(appDto.getApplicationToken(), new AppSeqNumber(appDto.getId(), appDto.getApplicationToken(), notification.getAppSeqNumber()));
                         LOG.debug("Update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(), notification.getAppSeqNumber(), Thread.currentThread().getId());
                     }else{
                         LOG.debug("Update ignored. application {} already has seqNumber {}", appDto.getApplicationToken(), notification.getAppSeqNumber());
                     }
-                    
+
                 }
             }
         } else {
@@ -117,7 +125,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
      * #getServerShortName()
@@ -129,7 +137,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
      * #initServiceCommands()
@@ -148,22 +156,37 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
         LOG.debug("Notify akka service..");
         akkaService.onRedirectionRule(redirectionRule);
     }
-    
+
     @Override
     public void shutdown() throws TException {
         LOG.info("Received shutdown command.");
-        
+
         Runnable shutdownCommmand = new Runnable() {
             @Override
             public void run() {
                 LOG.info("Stopping Operations Server Application...");
+                eventService.shutdown();
                 operationsBootstrapService.stop();
                 ThriftExecutor.shutdown();
             }
         };
-        
+
         Thread shutdownThread = new Thread(shutdownCommmand);
         shutdownThread.setName("Operations Server Shutdown Thread");
         shutdownThread.start();
-    }    
+    }
+
+    
+    public void setEventService(EventService eventService) {
+        this.eventService = eventService;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface#sendEventMessage(java.util.List)
+     */
+    @Override
+    public void sendEventMessage(List<EventMessage> messages) throws TException {
+        eventService.sendEventMessage(messages);
+        
+    }
 }

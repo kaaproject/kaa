@@ -1,0 +1,12 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "editable": true,
+    "fields": [
+        {
+            "name": "testField5",
+            "type": "int"
+        }
+    ]
+}

@@ -58,10 +58,10 @@ public class BaseCliThriftClient {
         ss.out.println();
         String cmdTrimmed = cmd.trim();
         int ret = 0;
-        if (cmdTrimmed.equalsIgnoreCase("quit")
-                || cmdTrimmed.equalsIgnoreCase("exit")) {
-            System.exit(0);
-        } else if (cmdTrimmed.equalsIgnoreCase("disconnect")) {
+        if (cmdTrimmed.equalsIgnoreCase("quit") //NOSONAR
+                || cmdTrimmed.equalsIgnoreCase("exit")) { //NOSONAR
+            System.exit(0); //NOSONAR
+        } else if (cmdTrimmed.equalsIgnoreCase("disconnect")) { //NOSONAR
             if (ss.isRemoteMode()) {
                 ss.close();
                 prompt = "kaa-console";
@@ -96,11 +96,12 @@ public class BaseCliThriftClient {
 
             }
 
-        } else { // local mode
+        } else {
+            // local mode
             PrintStream out = ss.out;
             PrintStream err = ss.err;
-            if (cmdTrimmed.equalsIgnoreCase("help")
-                    || cmdTrimmed.equalsIgnoreCase("?")) {
+            if (cmdTrimmed.equalsIgnoreCase("help") //NOSONAR
+                    || cmdTrimmed.equalsIgnoreCase("?")) { //NOSONAR
                 printHelp(out);
             } else if (cmdTrimmed.toLowerCase().startsWith("connect")) {
                 boolean parsed = false;
@@ -210,10 +211,10 @@ public class BaseCliThriftClient {
      * @throws Exception
      *             the exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception { //NOSONAR
         OptionsProcessor oproc = new OptionsProcessor();
         if (!oproc.parse(args)) {
-            System.exit(1);
+            System.exit(1); //NOSONAR
         }
 
         CliSessionState ss = new CliSessionState();
@@ -222,11 +223,11 @@ public class BaseCliThriftClient {
             ss.out = new PrintStream(System.out, true, "UTF-8"); //NOSONAR
             ss.err = new PrintStream(System.err, true, "UTF-8"); //NOSONAR
         } catch (UnsupportedEncodingException e) {
-            System.exit(3);
+            System.exit(3); //NOSONAR
         }
 
         if (!oproc.process(ss)) {
-            System.exit(2);
+            System.exit(2); //NOSONAR
         }
 
         CliSessionState.start(ss);
@@ -244,7 +245,7 @@ public class BaseCliThriftClient {
 
         BaseCliThriftClient cli = new BaseCliThriftClient();
         if (ss.execString != null) {
-            System.exit(cli.processLine(ss.execString));
+            System.exit(cli.processLine(ss.execString)); //NOSONAR
         }
 
         ConsoleReader reader = new ConsoleReader();
@@ -255,7 +256,7 @@ public class BaseCliThriftClient {
         String prefix = "";
         String curPrompt = prompt;
         while ((line = reader.readLine(curPrompt + "> ")) != null) {
-            if (!prefix.equals("")) {
+            if (!prefix.equals("")) { //NOSONAR
                 prefix += '\n';
             }
             // if (line.trim().endsWith(";") && !line.trim().endsWith("\\;")) {
@@ -272,7 +273,7 @@ public class BaseCliThriftClient {
         }
 
         ss.close();
-        System.exit(ret);
+        System.exit(ret); //NOSONAR
     }
 
 }

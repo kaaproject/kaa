@@ -1,0 +1,87 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "addressable": true,
+    "fields": [
+        {
+            "name": "test_array_of_record",
+            "type": {
+                "type": "array",
+                "items": {
+                    "type": "record",
+                    "name": "testRecordItemT",
+                    "namespace": "org.kaa.config",
+                    "fields": [
+                        {
+                            "name": "testField4",
+                            "type": "int"
+                        }
+                    ]
+                },
+                "overrideStrategy": "replace"
+            }
+        },
+        {
+            "name": "test_array",
+            "type": {
+                "type": "array",
+                "items": "int",
+                "overrideStrategy": "append"
+            }
+        },
+        {
+            "name": "test_array2",
+            "type": {
+                "type": "array",
+                "items": "int"
+            }
+        },
+        {
+            "optional": true,
+            "name": "nullableField1",
+            "type": "string"
+        },
+        {
+            "optional": true,
+            "name": "testField1",
+            "type": "string"
+        },
+        {
+            "name": "testField2",
+            "type": {
+                "type": "record",
+                "name": "testRecordT",
+                "namespace": "org.kaa.config",
+                "fields": [
+                    {
+                        "name": "testField3",
+                        "type": {
+                            "type": "array",
+                            "overrideStrategy": "append",
+                            "items": "org.kaa.config.testRecordItemT"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "testField5",
+            "optional": true,
+            "type": "int"
+        },
+        {
+            "name": "testField6",
+            "optional": true,
+            "type": "org.kaa.config.testRecordT"
+        },
+        {
+            "name": "test_array_union",
+            "type": {
+                "type": "array",
+                "items": ["int", "string"],
+                "overrideStrategy": "append"
+            }
+        }
+    ]
+}

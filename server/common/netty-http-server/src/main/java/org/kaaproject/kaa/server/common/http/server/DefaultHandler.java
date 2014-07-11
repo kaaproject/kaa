@@ -73,7 +73,7 @@ public class DefaultHandler extends SimpleChannelInboundHandler<CommandProcessor
     }
 
     @Override
-    public void channelInactive(final ChannelHandlerContext ctx)
+    public void channelInactive(final ChannelHandlerContext ctx) //NOSONAR
             throws Exception {
         super.channelInactive(ctx);
         // TODO cancel submitted tasks,

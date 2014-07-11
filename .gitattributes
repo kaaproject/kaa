@@ -1,3 +1,6 @@
 *.txt		text
 *.sh		eol=lf
+*.py            eol=lf
+*.py.template   eol=lf
+*.sh.template	eol=lf
 *.json		text

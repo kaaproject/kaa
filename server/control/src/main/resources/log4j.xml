@@ -37,6 +37,9 @@
     <category name="org.springframework">
         <level value="INFO"/>
     </category>
+    <category name="org.hibernate">
+        <level value="INFO" />
+    </category>    
 
     <root>
         <level value="INFO"/>

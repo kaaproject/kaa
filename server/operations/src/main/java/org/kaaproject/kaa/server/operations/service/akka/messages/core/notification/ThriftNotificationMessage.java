@@ -26,7 +26,7 @@ public class ThriftNotificationMessage {
 
     /** The notification. */
     private final Notification notification;
-    
+
     /** The app token. */
     private final String appToken;
 
@@ -58,5 +58,16 @@ public class ThriftNotificationMessage {
      */
     public Notification getNotification() {
         return notification;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ThriftNotificationMessage [notification=");
+        builder.append(notification);
+        builder.append(", appToken=");
+        builder.append(appToken);
+        builder.append("]");
+        return builder.toString();
     }
 }

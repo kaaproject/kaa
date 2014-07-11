@@ -24,7 +24,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyComman
 
 import akka.actor.ActorRef;
 
-
 /**
  * The Class NettyEndpointSyncMessage.
  */
@@ -36,15 +35,19 @@ public class NettyEndpointSyncMessage extends NettyDecodedRequestMessage {
     /**
      * Instantiates a new netty endpoint sync message.
      *
-     * @param request the request
-     * @param nettyMessage the netty message
+     * @param request
+     *            the request
+     * @param nettyMessage
+     *            the netty message
      */
     public NettyEndpointSyncMessage(SyncRequest request, NettyCommandAwareMessage nettyMessage) {
-        super(nettyMessage.getHandlerUuid(), nettyMessage.getChannelContext(), nettyMessage.getCommand());
+        super(nettyMessage.getHandlerUuid(), nettyMessage.getChannelContext(), nettyMessage.getCommand(), nettyMessage.getChannelType());
         this.request = request;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -52,12 +55,17 @@ public class NettyEndpointSyncMessage extends NettyDecodedRequestMessage {
         return "NettyEndpointRegistrationMessage [request=" + request + "]";
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyDecodedRequestMessage#toEndpointMessage(akka.actor.ActorRef)
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.operations.service.akka.messages.io.request
+     * .NettyDecodedRequestMessage#toEndpointMessage(akka.actor.ActorRef)
      */
     @Override
     public EndpointAwareMessage toEndpointMessage(ActorRef originator) {
-        EndpointObjectHash endpointKey = EndpointObjectHash.fromBytes(request.getEndpointPublicKeyHash().array());
-        return new SyncRequestMessage(request.getApplicationToken(), endpointKey, request, originator);
+        EndpointObjectHash endpointKey = EndpointObjectHash.fromBytes(request.getSyncRequestMetaData().getEndpointPublicKeyHash().array());
+        return new SyncRequestMessage(getCommand(), getHandlerUuid(), getChannelContext(), getChannelType(), request.getSyncRequestMetaData().getApplicationToken(),
+                endpointKey, request, originator);
     }
 }

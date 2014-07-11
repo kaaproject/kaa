@@ -154,6 +154,10 @@ public class MultiValueListBox<T> extends Composite implements
       ValueChangeEvent.fireIfNotEqual(this, before, value);
     }
   }
+  
+  public List<T> getValues() {
+      return values;
+  }
 
   private void addValue(T value) {
     Object key = keyProvider.getKey(value);

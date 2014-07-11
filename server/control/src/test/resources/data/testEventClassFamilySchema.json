@@ -1,0 +1,62 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.example.audio",
+ "type": "record",
+ "classType": "event",
+ "name": "PlayCommand",
+ "fields": [
+     {"name": "url", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.example.audio",
+ "type": "record",
+ "classType": "event",
+ "name": "PauseCommand",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.example.audio",
+ "type": "record",
+ "classType": "event",
+ "name": "StopCommand",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.example.audio",
+ "type": "record",
+ "classType": "object",
+ "name": "PlaybackStatus",
+ "fields": [
+    {"name": "url", "type": "string"},
+    {"name": "time", "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.example.audio",
+ "type": "enum"  ,
+ "classType": "object",
+ "name": "BatteryChargingStatus",
+ "symbols" : ["NOT_CHARGING", "CHARGING", "CHARGED"]
+},
+{
+ "namespace": "org.kaaproject.kaa.example.audio",
+ "type": "record",
+ "classType": "object",
+ "name": "BatteryStatus",
+ "fields": [
+    {"name": "life", "type": "int"},
+    {"name": "status", "type": "org.kaaproject.kaa.example.audio.BatteryChargingStatus"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.example.audio",
+ "type": "record",
+ "classType": "event",
+ "name": "StatusEvent",
+ "fields": [
+    {"name": "playbackStatus", "type": "org.kaaproject.kaa.example.audio.PlaybackStatus"},
+    {"name": "batteryStatus", "type": "org.kaaproject.kaa.example.audio.BatteryStatus"}
+ ]
+}
+]

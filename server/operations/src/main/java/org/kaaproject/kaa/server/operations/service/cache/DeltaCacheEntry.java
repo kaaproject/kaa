@@ -19,27 +19,27 @@ package org.kaaproject.kaa.server.operations.service.cache;
 import java.io.Serializable;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.service.delta.RawBinaryDelta;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
 
 /**
  * The Class DeltaCacheEntry is used to model cache entry for delta calculation.
- * Contains hash object, result configuration itself and delta. 
- * 
+ * Contains hash object, result configuration itself and delta.
+ *
  * @author ashvayka
  */
 public class DeltaCacheEntry implements Serializable {
-    
+
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    
+
     /** The configuration. */
-    private byte[] configuration;
-    
+    private final byte[] configuration;
+
     /** The delta. */
-    private RawBinaryDelta delta;
-    
+    private final RawBinaryDelta delta;
+
     /** The hash. */
-    private EndpointObjectHash hash;
+    private final EndpointObjectHash hash;
 
     /**
      * Instantiates a new delta cache entry.

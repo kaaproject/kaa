@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.operations.service.statistics;
 
@@ -26,9 +26,7 @@ import java.util.UUID;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommand;
-import org.kaaproject.kaa.server.operations.service.http.commands.RegisterEndpointCommand;
 import org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand;
-import org.kaaproject.kaa.server.operations.service.http.commands.UpdateEndpointCommand;
 import org.kaaproject.kaa.server.operations.service.statistics.SessionHistory;
 import org.kaaproject.kaa.server.operations.service.statistics.SessionHistory.RequestHistory;
 
@@ -52,8 +50,6 @@ public class SessionHistoryTest {
     public void testTypeFromString() {
         assertEquals(SessionHistory.RequestType.LONGSYNC, SessionHistory.typeFromString(LongSyncCommand.getCommandName()));
         assertEquals(SessionHistory.RequestType.SYNC, SessionHistory.typeFromString(SyncCommand.getCommandName()));
-        assertEquals(SessionHistory.RequestType.UPENDPOINT, SessionHistory.typeFromString(UpdateEndpointCommand.getCommandName()));
-        assertEquals(SessionHistory.RequestType.REGISTER, SessionHistory.typeFromString(RegisterEndpointCommand.getCommandName()));
         assertEquals(SessionHistory.RequestType.UNKNOWN, SessionHistory.typeFromString("test"));
         assertEquals(SessionHistory.RequestType.UNKNOWN, SessionHistory.typeFromString(null));
     }
@@ -164,25 +160,18 @@ public class SessionHistoryTest {
         RequestHistory rhSync = history.getRequests().get(0);
         assertNotNull(rhSync);
         assertEquals(SessionHistory.RequestType.SYNC, rhSync.getType());
-        
+
         history.newRequest(LongSyncCommand.getCommandName());
         assertNotNull(history.getRequests());
         assertTrue(history.getRequests().size() == 2);
         RequestHistory rhLongSync = history.getRequests().get(1);
         assertNotNull(rhLongSync);
         assertEquals(SessionHistory.RequestType.LONGSYNC, rhLongSync.getType());
-        
-        history.newRequest(RegisterEndpointCommand.getCommandName());
-        assertNotNull(history.getRequests());
-        assertTrue(history.getRequests().size() == 3);
-        RequestHistory rhReg = history.getRequests().get(2);
-        assertNotNull(rhReg);
-        assertEquals(SessionHistory.RequestType.REGISTER, rhReg.getType());
-        
+
         history.newRequest("test");
         assertNotNull(history.getRequests());
-        assertTrue(history.getRequests().size() == 4);
-        RequestHistory rhTest = history.getRequests().get(3);
+        assertTrue(history.getRequests().size() == 3);
+        RequestHistory rhTest = history.getRequests().get(2);
         assertNotNull(rhTest);
         assertEquals(SessionHistory.RequestType.UNKNOWN, rhTest.getType());
     }

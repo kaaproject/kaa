@@ -31,11 +31,13 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestEncoder;
+
 import java.nio.ByteBuffer;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,9 +48,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.bootstrap.CommonBSConstants;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
+import org.kaaproject.kaa.common.bootstrap.gen.HTTPComunicationParameters;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
 import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
+import org.kaaproject.kaa.common.bootstrap.gen.SupportedChannel;
+import org.kaaproject.kaa.common.channels.communication.HttpParameters;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
 import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
 import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
@@ -86,7 +92,13 @@ public class ResolveCommandTest {
         
         List<OperationsServer> endpointServerArray = new LinkedList<OperationsServer>();
         ByteBuffer pk = ByteBuffer.wrap(new byte[] {10,12,13,14});
-        OperationsServer server = new OperationsServer("endpoint.com:8080", 10, pk);
+        List<SupportedChannel> supportedChannels = new ArrayList<>();
+        HTTPComunicationParameters httpParams = new HTTPComunicationParameters();
+        httpParams.setHostName("endpoint.com");
+        httpParams.setPort(8080);
+        SupportedChannel sc1 = new SupportedChannel(ChannelType.HTTP, httpParams);
+        supportedChannels.add(sc1);
+        OperationsServer server = new OperationsServer("host1",10,pk,supportedChannels );
         endpointServerArray.add(server);
         serverList = new OperationsServerList(endpointServerArray);
         
@@ -164,6 +176,7 @@ public class ResolveCommandTest {
             cmd.parse();
             cmd.process();
         } catch (Exception e) {
+            e.printStackTrace();
             fail(e.toString());
         }
         assertNotNull(cmd.applicationToken);

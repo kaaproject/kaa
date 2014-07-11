@@ -16,9 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.idToObjectId;
-
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.apache.avro.generic.GenericRecord;
@@ -34,19 +33,19 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.common.dao.ApplicationDao;
-import org.kaaproject.kaa.server.common.dao.TenantDao;
-import org.kaaproject.kaa.server.common.dao.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Application;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Tenant;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.mongo.model.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.sql.Application;
+import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaServiceIT;
-import org.kaaproject.kaa.server.operations.service.profile.ProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +53,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
-public class ProfileServiceIT {
+@Transactional
+public class ProfileServiceIT extends AbstractTest {
 
     private static final int CONFIGURATION_SCHEMA_VERSION = 1;
     private static final int PROFILE_SCHEMA_VERSION = 1;
@@ -73,27 +74,27 @@ public class ProfileServiceIT {
 
     protected static final Logger logger = LoggerFactory.getLogger(DeltaServiceIT.class);
 
-    private GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
-    
+    private final GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
+
     @Autowired
     protected ProfileService profileService;
 
     @Autowired
     protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
-    
+
     @Autowired
     protected TenantDao<Tenant> customerDao;
-    
+
     @Autowired
     protected ApplicationDao<Application> applicationDao;
-    
+
     @Autowired
     protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
 
-    private Tenant customerDto;
-    private Application appDto;
-    private ProfileSchema profileSchemaDto;
-    
+    private Tenant tenant;
+    private Application application;
+    private ProfileSchema profileSchema;
+
     @BeforeClass
     public static void init() throws Exception {
         MongoDBTestRunner.setUp();
@@ -101,49 +102,42 @@ public class ProfileServiceIT {
 
     @AfterClass
     public static void after() throws Exception {
-        MongoDBTestRunner.getDB().dropDatabase();
         MongoDBTestRunner.tearDown();
-    }    
-    
-    @Before
-    public void beforeTest() throws IOException {
-        endpointProfileDao.removeAll();
-        profileSchemaDao.removeAll();
-        applicationDao.removeAll();
-        customerDao.removeAll();
-        
-        customerDto = new Tenant();
-        customerDto.setName(CUSTOMER_NAME);
-        customerDto = customerDao.save(customerDto);
-        
-        appDto = new Application();
-        appDto.setName(APP_NAME);
-        appDto.setApplicationToken(APP_TOKEN);
-        appDto.setTenantId(idToObjectId(customerDto.getId()));
-        appDto = applicationDao.save(appDto);
-        
-        profileSchemaDto = new ProfileSchema();
-        profileSchemaDto.setMajorVersion(PROFILE_SCHEMA_VERSION);
-        profileSchemaDto.setMinorVersion(0);
-        profileSchemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        profileSchemaDto.setApplicationId(idToObjectId(appDto.getId()));
-        profileSchemaDto = profileSchemaDao.save(profileSchemaDto);
     }
-    
+
+    @Before
+    public void beforeTest() throws IOException, SQLException {
+        clearDBData();
+
+        tenant = new Tenant();
+        tenant.setName(CUSTOMER_NAME);
+        tenant = customerDao.save(tenant);
+
+        application = new Application();
+        application.setName(APP_NAME);
+        application.setApplicationToken(APP_TOKEN);
+        application.setTenant(tenant);
+        application = applicationDao.save(application);
+
+        profileSchema = new ProfileSchema();
+        profileSchema.setMajorVersion(PROFILE_SCHEMA_VERSION);
+        profileSchema.setMinorVersion(0);
+        profileSchema.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        profileSchema.setApplication(application);
+        profileSchema = profileSchemaDao.save(profileSchema);
+    }
+
     @After
     public void afterTest() throws IOException {
         endpointProfileDao.removeAll();
-        profileSchemaDao.removeAll();
-        applicationDao.removeAll();
-        customerDao.removeAll();
     }
 
     @Test
     public void registerProfileServiceTest() throws IOException {
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
-        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN, 
+        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
                 ENDPOINT_KEY.getBytes(),
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1),
+                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
                 profile);
         EndpointProfileDto dto = profileService.registerProfile(request);
         Assert.assertNotNull(dto);
@@ -158,9 +152,9 @@ public class ProfileServiceIT {
     @Test
     public void updateProfileServiceTest() throws IOException {
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
-        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN, 
+        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
                 ENDPOINT_KEY.getBytes(),
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1),
+                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
                 profile);
 
         EndpointProfileDto oldDto = profileService.registerProfile(request);
@@ -168,8 +162,9 @@ public class ProfileServiceIT {
         byte[] newProfile = avroConverter.encode(NEW_ENDPOINT_PROFILE);
         UpdateProfileRequest updateRequest = new UpdateProfileRequest(APP_TOKEN,
                 EndpointObjectHash.fromSHA1(ENDPOINT_KEY.getBytes()),
+                null,
                 newProfile,
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1));
+                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1));
         EndpointProfileDto newDto = profileService.updateProfile(updateRequest);
 
         Assert.assertNotNull(newDto);

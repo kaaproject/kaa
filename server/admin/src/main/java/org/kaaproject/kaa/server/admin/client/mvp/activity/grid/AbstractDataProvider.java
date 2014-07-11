@@ -100,7 +100,7 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T>{
 
         public void onSuccess(List<T> result, final HasData<T> display) {
             data = result;
-            updateRowCount(data.size(), false);
+            updateRowCount(data.size(), true);
             updateData(display);
             loaded = true;
             asyncCallback.onSuccess(result);

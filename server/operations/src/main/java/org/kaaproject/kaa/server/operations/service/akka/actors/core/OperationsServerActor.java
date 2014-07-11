@@ -19,9 +19,14 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.TenantAwareMessage;
+import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.event.EventService;
+import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +35,6 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
-
 
 /**
  * The Class OperationsServerActor.
@@ -41,27 +45,52 @@ public class OperationsServerActor extends UntypedActor {
     private static final Logger LOG = LoggerFactory.getLogger(OperationsServerActor.class);
 
     /** The operations service. */
-    private OperationsService operationsService;
+    private final CacheService cacheService;
+
+    /** The operations service. */
+    private final OperationsService operationsService;
 
     /** The notification delta service. */
-    private NotificationDeltaService notificationDeltaService;
+    private final NotificationDeltaService notificationDeltaService;
 
-    /** The applications. */
-    private Map<String, ActorRef> applications;
+    /** The event service. */
+    private final EventService eventService;
+
+    /** The tenants id-actor map. */
+    private final Map<String, ActorRef> tenants;
+    
+    /** The application service. */
+    private final ApplicationService applicationService;
+    
+    /** The log appender service. */
+    private final LogAppenderService logAppenderService;
 
     /**
      * Instantiates a new endpoint server actor.
-     * 
-     * @param endpointService
-     *            the endpoint service
+     *
+     * @param cacheService
+     *            the cache service
+     * @param operationsService
+     *            the operations service
      * @param notificationDeltaService
      *            the notification delta service
+     * @param eventService
+     *            the event service
+     * @param applicationService
+     *            the application service
+     * @param logAppenderService
+     *            the log appender service
      */
-    public OperationsServerActor(OperationsService endpointService, NotificationDeltaService notificationDeltaService) {
+    private OperationsServerActor(CacheService cacheService, OperationsService operationsService, NotificationDeltaService notificationDeltaService,
+            EventService eventService, ApplicationService applicationService, LogAppenderService logAppenderService) {
         super();
-        this.operationsService = endpointService;
+        this.tenants = new HashMap<String, ActorRef>();
+        this.cacheService = cacheService;
+        this.operationsService = operationsService;
         this.notificationDeltaService = notificationDeltaService;
-        this.applications = new HashMap<String, ActorRef>();
+        this.eventService = eventService;
+        this.applicationService = applicationService;
+        this.logAppenderService = logAppenderService;
     }
 
     /**
@@ -73,39 +102,64 @@ public class OperationsServerActor extends UntypedActor {
         private static final long serialVersionUID = 1L;
 
         /** The endpoint service. */
-        private OperationsService endpointService;
+        private final CacheService cacheService;
+
+        /** The operations service. */
+        private final OperationsService operationsService;
 
         /** The notification delta service. */
-        private NotificationDeltaService notificationDeltaService;
+        private final NotificationDeltaService notificationDeltaService;
+
+        /** The event service. */
+        private final EventService eventService;
+        
+        /** The application service. */
+        private final ApplicationService applicationService;
+        
+        /** The log appender service. */
+        private final LogAppenderService logAppenderService;
 
         /**
          * Instantiates a new actor creator.
-         * 
-         * @param endpointService
-         *            the endpoint service
+         *
+         * @param cacheService
+         *            the cache service
+         * @param operations
+         *            the operations service
          * @param notificationDeltaService
          *            the notification delta service
+         * @param eventService
+         *            the event service
+         * @param applicationService
+         *            the application service
+         * @param logAppenderService
+         *            the log appender service
          */
-        public ActorCreator(OperationsService endpointService, NotificationDeltaService notificationDeltaService) {
+        public ActorCreator(CacheService cacheService, OperationsService endpointService, NotificationDeltaService notificationDeltaService,
+                EventService eventService, ApplicationService applicationService, LogAppenderService logAppenderService) {
             super();
-            this.endpointService = endpointService;
+            this.cacheService = cacheService;
+            this.operationsService = endpointService;
             this.notificationDeltaService = notificationDeltaService;
+            this.eventService = eventService;
+            this.applicationService = applicationService;
+            this.logAppenderService = logAppenderService;
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see akka.japi.Creator#create()
          */
         @Override
         public OperationsServerActor create() throws Exception {
-            return new OperationsServerActor(endpointService, notificationDeltaService);
+            return new OperationsServerActor(cacheService, operationsService, notificationDeltaService, eventService, applicationService, logAppenderService);
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
      */
     @Override
@@ -113,66 +167,79 @@ public class OperationsServerActor extends UntypedActor {
         LOG.debug("Received: {}", message);
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
+        } else if (message instanceof TenantAwareMessage) {
+            processTenantAwareMessage((TenantAwareMessage) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processNotificationMessage((ThriftNotificationMessage) message);
         }
     }
 
+    private void processTenantAwareMessage(TenantAwareMessage message) {
+        ActorRef tenantActor = getOrCreateTenantActorByTokenId(message.getTenantId());
+        tenantActor.tell(message, self());
+    }
+
     /**
      * Process notification message.
-     * 
+     *
      * @param message
      *            the message
      */
     private void processNotificationMessage(ThriftNotificationMessage message) {
-        ActorRef applicationActor = getOrCreateApplicationActor(message.getAppToken());
-        applicationActor.tell(message, self());
+        ActorRef tenantActor = getOrCreateTenantActorByAppToken(message.getAppToken());
+        tenantActor.tell(message, self());
     }
 
     /**
      * Process endpoint aware message.
-     * 
+     *
      * @param message
      *            the message
      */
     private void processEndpointAwareMessage(EndpointAwareMessage message) {
-        ActorRef applicationActor = getOrCreateApplicationActor(message.getAppToken());
-        applicationActor.tell(message, self());
+        ActorRef tenantActor = getOrCreateTenantActorByAppToken(message.getAppToken());
+        tenantActor.tell(message, self());
     }
 
     /**
      * Gets the or create application actor.
-     * 
+     *
      * @param appToken
      *            the app token
      * @return the or create application actor
      */
-    private ActorRef getOrCreateApplicationActor(String appToken) {
-        ActorRef applicationActor = applications.get(appToken);
-        if (applicationActor == null) {
-            applicationActor = context().actorOf(Props.create(new ApplicationActor.ActorCreator(operationsService, notificationDeltaService)), appToken);
-            applications.put(appToken, applicationActor);
+    private ActorRef getOrCreateTenantActorByAppToken(String appToken) {
+        String tenantId = cacheService.getTenantIdByAppToken(appToken);
+        return getOrCreateTenantActorByTokenId(tenantId);
+    }
+
+    private ActorRef getOrCreateTenantActorByTokenId(String tenantId) {
+        ActorRef tenantActor = tenants.get(tenantId);
+        if (tenantActor == null) {
+            tenantActor = context().actorOf(Props.create(new TenantActor.ActorCreator(cacheService, operationsService, notificationDeltaService, eventService,
+                    applicationService, logAppenderService, tenantId)), tenantId);
+            tenants.put(tenantId, tenantActor);
         }
-        return applicationActor;
+        return tenantActor;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#preStart()
      */
     @Override
     public void preStart() {
-        LOG.info("Starting " + this);
+        LOG.info("Starting {}", this);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#postStop()
      */
     @Override
     public void postStop() {
-        LOG.info("Stoped " + this);
+        LOG.info("Stoped {}", this);
     }
 }

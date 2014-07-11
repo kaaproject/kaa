@@ -26,6 +26,12 @@ typedef shared.ObjectId id
 typedef double probability
 typedef string uri
 
+typedef binary endpoint_id
+typedef string user_id
+typedef string tenant_id
+typedef string endpoint_class_family_id
+typedef string application_token
+
 /**
 * This is enum of changes type. The same as org.kaaproject.kaa.common.dto.ChangeType
 **/
@@ -44,6 +50,24 @@ enum Operation {
       REMOVE_CONF_VERSION = 12,
       REMOVE_PROF_VERSION = 13,
       REMOVE_NOTIFICATION_VERSION = 14
+}
+
+/**
+* Enum defines route update operation type
+*/
+enum EventRouteUpdateType {
+      ADD = 1;
+      DELETE = 2;
+      UPDATE = 3
+}
+
+/** 
+* Defines types of messages, all pass through one interface and demultiplex by this enum
+*/
+enum EventMessageType {
+      ROUTE_UPDATE = 1;
+      USER_ROUTE_INFO = 2;
+      EVENT = 3
 }
 
 struct Notification {
@@ -69,6 +93,61 @@ struct RedirectionRule {
   4: shared.Long ruleTTL
 }
 
+struct EventClassFamilyVersion {
+  1: endpoint_class_family_id endpointClassFamilyId
+  2: shared.Integer  endpointClassFamilyVersion
+} 
+
+struct RouteInfo {
+  1: EventRouteUpdateType updateType
+  2: list<EventClassFamilyVersion> eventClassFamilyVersion
+  3: application_token applicationToken
+  4: endpoint_id endpointId
+}
+
+struct EventRoute {
+  1: user_id userId
+  2: tenant_id tenantId
+  3: list<RouteInfo> routeInfo
+  4: string operationsServerId
+}
+
+struct EndpointEvent {
+  1: string uuid
+  2: endpoint_id sender
+  3: binary eventData
+  4: shared.Long createTime
+  5: shared.Integer version
+}
+
+struct RouteAddress {
+  1: endpoint_id endpointKey
+  2: application_token applicationToken
+  3: string operationsServerId
+}
+
+struct Event {
+  1: user_id userId
+  2: tenant_id tenantId
+  3: EndpointEvent endpointEvent
+  4: RouteAddress routeAddress
+}
+
+struct UserRouteInfo {
+  1: user_id userId
+  2: tenant_id tenantId
+  3: string operationsServerId
+  4: EventRouteUpdateType updateType
+}
+
+struct EventMessage {
+  1: EventMessageType type
+  2: shared.Long eventId
+  3: Event event
+  4: EventRoute route
+  5: UserRouteInfo userRoute
+}
+
 service OperationsThriftService extends cli.CliThriftService{
 
 /**
@@ -81,5 +160,11 @@ service OperationsThriftService extends cli.CliThriftService{
 *  Set redirection rule for Operations server
 */
   void setRedirectionRule(1: RedirectionRule redirectionRule);
+  
+  
+/**
+*  Interface to send unified event messages
+*/  
+  void sendEventMessage(1: list<EventMessage> messages);
   
 }

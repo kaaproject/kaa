@@ -27,11 +27,17 @@ public class ApplicationDto implements HasId, Serializable {
     private String name;
     private int sequenceNumber;
     private String tenantId;
+    private String userVerifierName;
+    
+    /** log appenders names splitted by comma */
+    private String logAppendersNames;
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -66,6 +72,22 @@ public class ApplicationDto implements HasId, Serializable {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public String getUserVerifierName() {
+        return userVerifierName;
+    }
+
+    public void setUserVerifierName(String userVerifierName) {
+        this.userVerifierName = userVerifierName;
+    }
+    
+    public String getLogAppendersNames() {
+        return logAppendersNames;
+    }
+
+    public void setLogAppendersNames(String logAppendersNames) {
+        this.logAppendersNames = logAppendersNames;
     }
 
     @Override

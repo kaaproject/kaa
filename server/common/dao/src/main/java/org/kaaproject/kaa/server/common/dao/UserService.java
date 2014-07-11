@@ -78,6 +78,7 @@ public interface UserService {
      * Find user by external Uid.
      *
      * @param externalUid the external user id
+     * @param tenantId the tenant id
      * @return the user dto
      */
     UserDto findUserByExternalUid(String externalUid);
@@ -137,6 +138,7 @@ public interface UserService {
     /**
      * Find all tenant users.
      *
+     * @param tenantId the id of tenant the users belong to
      * @return the list of tenant users
      */
     List<UserDto> findAllTenantUsers(String tenantId);

@@ -46,7 +46,7 @@ public class MessageEncoderDecoder {
     private static final String SESSION_KEY_ALGORITHM = "AES";
     private static final int SESSION_KEY_SIZE = 128;
     private static final String SHA1WITH_RSA = "SHA1withRSA";
-    private static final String RSA = "RSA";
+    private static final String RSA = "RSA/ECB/PKCS1Padding";
 
     private final PrivateKey privateKey;
     private final PublicKey publicKey;

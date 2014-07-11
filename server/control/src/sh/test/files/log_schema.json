@@ -1,0 +1,11 @@
+{
+    "namespace": "org.kaaproject.kaa.endpoint.gen",
+    "name": "BasicLogRecord",
+    "type": "record",
+    "fields": [
+        {
+            "type": "string",
+            "name": "logdata"
+        }
+    ]
+}

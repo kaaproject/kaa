@@ -18,16 +18,24 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestProcessedMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.SessionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicRegistrationRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
+import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +47,6 @@ import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
-
 /**
  * The Class ApplicationActor.
  */
@@ -49,29 +56,40 @@ public class ApplicationActor extends UntypedActor {
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationActor.class);
 
     /** The operations service. */
-    private OperationsService operationsService;
+    private final OperationsService operationsService;
 
     /** The notification delta service. */
-    private NotificationDeltaService notificationDeltaService;
+    private final NotificationDeltaService notificationDeltaService;
+
+    /** The application log actor */
+    private final ActorRef applicationLogActor;
 
     /** The endpoint sessions. */
-    private Map<String, ActorMetaData> endpointSessions;
+    private final Map<EndpointObjectHash, ActorMetaData> endpointSessions;
+
+    private final Map<String, EndpointObjectHash> endpointActorMap;
 
     /** The topic sessions. */
-    private Map<String, ActorRef> topicSessions;
+    private final Map<String, ActorRef> topicSessions;
+
+    private final String applicationToken;
 
     /**
      * Instantiates a new application actor.
-     * 
+     *
      * @param operationsService
      *            the operations service
      * @param notificationDeltaService
      *            the notification delta service
      */
-    public ApplicationActor(OperationsService operationsService, NotificationDeltaService notificationDeltaService) {
+    private ApplicationActor(OperationsService operationsService, NotificationDeltaService notificationDeltaService,
+            ApplicationService applicationService, LogAppenderService logAppenderService, String applicationToken) {
         this.operationsService = operationsService;
         this.notificationDeltaService = notificationDeltaService;
+        this.applicationLogActor = context().actorOf(Props.create(new ApplicationLogActor.ActorCreator(logAppenderService, applicationService, applicationToken)));
+        this.applicationToken = applicationToken;
         this.endpointSessions = new HashMap<>();
+        this.endpointActorMap = new HashMap<>();
         this.topicSessions = new HashMap<>();
     }
 
@@ -84,78 +102,105 @@ public class ApplicationActor extends UntypedActor {
         private static final long serialVersionUID = 1L;
 
         /** The operations service. */
-        private OperationsService operationsService;
+        private final OperationsService operationsService;
 
         /** The notification delta service. */
-        private NotificationDeltaService notificationDeltaService;
+        private final NotificationDeltaService notificationDeltaService;
+
+        /** The application service. */
+        private final ApplicationService applicationService;
+
+        /** The log appender service. */
+        private final LogAppenderService logAppenderService;
+
+        private final String applicationToken;
 
         /**
          * Instantiates a new actor creator.
-         * 
+         *
          * @param operationsService
          *            the operations service
          * @param notificationDeltaService
          *            the notification delta service
          */
-        public ActorCreator(OperationsService operationsService, NotificationDeltaService notificationDeltaService) {
+        public ActorCreator(OperationsService operationsService, NotificationDeltaService notificationDeltaService,
+                ApplicationService applicationService, LogAppenderService logAppenderService, String applicationToken) {
             super();
             this.operationsService = operationsService;
             this.notificationDeltaService = notificationDeltaService;
+            this.applicationToken = applicationToken;
+            this.applicationService = applicationService;
+            this.logAppenderService = logAppenderService;
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see akka.japi.Creator#create()
          */
         @Override
         public ApplicationActor create() throws Exception {
-            return new ApplicationActor(operationsService, notificationDeltaService);
+            return new ApplicationActor(operationsService, notificationDeltaService, applicationService, logAppenderService, applicationToken);
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
      */
     @Override
     public void onReceive(Object message) throws Exception {
-        LOG.debug("Received: {}", message);
+        LOG.debug("[{}] Received: {}", applicationToken, message);
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
+        } else if (message instanceof EndpointEventDeliveryMessage) {
+            processEndpointEventDeliveryMessage((EndpointEventDeliveryMessage) message);
         } else if (message instanceof Terminated) {
             processTermination((Terminated) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processThriftNotification((ThriftNotificationMessage) message);
-        } else if (message instanceof RequestProcessedMessage){
-            updateEndpointActor((RequestProcessedMessage)message); 
+        } else if (message instanceof EndpointStopMessage) {
+            updateEndpointActor((EndpointStopMessage) message);
+        } else if (message instanceof LogEventPackMessage) {
+            processLogEventPackMessage((LogEventPackMessage) message);
         }
     }
 
     /**
+     * Process log event pack message.
+     *
+     * @param message
+     *            the message
+     */
+    private void processLogEventPackMessage(LogEventPackMessage message) {
+        LOG.debug("[{}] processing log event pack message", applicationToken);
+        applicationLogActor.tell(message, self());
+    }
+
+    /**
      * Process thrift notification.
-     * 
+     *
      * @param message
      *            the message
      */
     private void processThriftNotification(ThriftNotificationMessage message) {
         Notification notification = message.getNotification();
         if (notification.isSetNotificationId()) {
-            LOG.debug("Forwarding message to specific topic");
+            LOG.debug("[{}] Forwarding message to specific topic", applicationToken);
             sendToSpecificTopic(message);
         } else if (notification.isSetUnicastNotificationId()) {
-            LOG.debug("Forwarding message to specific endpoint");
+            LOG.debug("[{}] Forwarding message to specific endpoint", applicationToken);
             sendToSpecificEndpoint(message);
         } else {
-            LOG.debug("Broadcasting message to all endpoints");
+            LOG.debug("[{}] Broadcasting message to all endpoints", applicationToken);
             broadcastToAllEndpoints(message);
         }
     }
 
     /**
      * Send to specific topic.
-     * 
+     *
      * @param message
      *            the message
      */
@@ -167,7 +212,7 @@ public class ApplicationActor extends UntypedActor {
 
     /**
      * Gets the or create topic.
-     * 
+     *
      * @param topicId
      *            the topic id
      * @return the or create topic
@@ -184,24 +229,23 @@ public class ApplicationActor extends UntypedActor {
 
     /**
      * Send to specific endpoint.
-     * 
+     *
      * @param message
      *            the message
      */
     private void sendToSpecificEndpoint(ThriftNotificationMessage message) {
         EndpointObjectHash keyHash = EndpointObjectHash.fromBytes(message.getNotification().getKeyHash());
-        String endpointKey = buildEndpointKey(keyHash);
-        ActorMetaData endpointActor = endpointSessions.get(endpointKey);
+        ActorMetaData endpointActor = endpointSessions.get(keyHash);
         if (endpointActor != null) {
             endpointActor.actorRef.tell(NotificationMessage.fromUnicastId(message.getNotification().getUnicastNotificationId()), self());
         } else {
-            LOG.debug("Can't find endpoint actor that corresponds to {} ", endpointKey);
+            LOG.debug("[{}] Can't find endpoint actor that corresponds to {} ", applicationToken, keyHash);
         }
     }
 
     /**
      * Broadcast to all endpoints.
-     * 
+     *
      * @param message
      *            the message
      */
@@ -213,77 +257,106 @@ public class ApplicationActor extends UntypedActor {
 
     /**
      * Process endpoint aware message.
-     * 
+     *
      * @param message
      *            the message
      */
     private void processEndpointAwareMessage(EndpointAwareMessage message) {
-        if (message instanceof SessionMessage) {
-            processEndpointRequest((SessionMessage) message);
-        } else if (message instanceof TopicRegistrationRequestMessage) {
-            processEndpointRegistration((TopicRegistrationRequestMessage) message);
+        if (message instanceof TopicRegistrationRequestMessage) {
+            processEndpointTopicRegistration((TopicRegistrationRequestMessage) message);
+        } else if (message instanceof EndpointUserConnectMessage) {
+            processEndpointUserRegistration((EndpointUserConnectMessage) message);
+        } else if (message instanceof EndpointEventSendMessage) {
+            processEndpointEventSendMessage((EndpointEventSendMessage) message);
+        } else if (message instanceof EndpointEventReceiveMessage) {
+            processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
         } else {
             processEndpointRequest(message);
         }
     }
 
+    private void processEndpointEventReceiveMessage(EndpointEventReceiveMessage message) {
+        ActorMetaData endpointActor = endpointSessions.get(message.getKey());
+        if (endpointActor != null) {
+            endpointActor.actorRef.tell(message, self());
+        } else {
+            LOG.debug("[{}] Can't find endpoint actor that corresponds to {}", applicationToken, message.getKey());
+            context().parent().tell(new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE), self());
+        }
+    }
+
+    private void processEndpointEventSendMessage(EndpointEventSendMessage message) {
+        LOG.debug("[{}] Forwarding message to specific user", applicationToken, message.getUserId());
+        context().parent().tell(message, self());
+    }
+
+    private void processEndpointEventDeliveryMessage(EndpointEventDeliveryMessage message) {
+        LOG.debug("[{}] Forwarding message to specific user", applicationToken, message.getUserId());
+        context().parent().tell(message, self());
+    }
+
     /**
      * Process endpoint registration.
-     * 
+     *
      * @param message
      *            the message
      */
-    private void processEndpointRegistration(TopicRegistrationRequestMessage message) {
+    private void processEndpointTopicRegistration(TopicRegistrationRequestMessage message) {
         ActorRef topicActor = getOrCreateTopic(message.getTopicId());
         topicActor.tell(message, self());
     }
 
     /**
+     * Process endpoint registration.
+     *
+     * @param message
+     *            the message
+     */
+    private void processEndpointUserRegistration(EndpointUserConnectMessage message) {
+        context().parent().tell(message, self());
+    }
+
+    /**
      * Process session endpoint request.
-     * 
+     *
      * @param message
      *            the message
      */
     private void processEndpointRequest(EndpointAwareMessage message) {
-        String endpointKey = buildEndpointKey(message.getKey());
-        ActorMetaData endpointMetaData = endpointSessions.get(endpointKey);
+        ActorMetaData endpointMetaData = endpointSessions.get(message.getKey());
         if (endpointMetaData == null) {
-            LOG.debug("Creating actor with endpointKey: {}", endpointKey);
-            endpointMetaData = new ActorMetaData(context().actorOf(Props.create(new EndpointActor.ActorCreator(operationsService, endpointKey)), endpointKey));
-            endpointSessions.put(endpointKey, endpointMetaData);
+            UUID uuid = UUID.randomUUID();
+            String endpointActorId = uuid.toString().replaceAll("-", "");
+            LOG.debug("[{}] Creating actor with endpointKey: {}", applicationToken, endpointActorId);
+            endpointMetaData = new ActorMetaData(context().actorOf(Props.create(new EndpointActor.ActorCreator(operationsService, endpointActorId, message.getAppToken(), message.getKey())),
+                    endpointActorId), endpointActorId);
+            endpointSessions.put(message.getKey(), endpointMetaData);
+            endpointActorMap.put(endpointActorId, message.getKey());
             context().watch(endpointMetaData.actorRef);
         }
-        endpointMetaData.registerRequest(ActorMetaData.getHash(message));
         endpointMetaData.actorRef.tell(message, self());
     }
-    
-    private void updateEndpointActor(RequestProcessedMessage message) {
-        String endpointKey = message.getEndpointActorKey();
-        LOG.debug("Update EndpointSession for actor {}", endpointKey);
+
+    private void updateEndpointActor(EndpointStopMessage message) {
+        String actorKey = message.getActorKey();
+        EndpointObjectHash endpointKey = message.getEndpointKey();
+        LOG.debug("[{}] Stoping actor [{}] with [{}]", applicationToken, message.getActorKey(), endpointKey);
         ActorMetaData endpointMetaData = endpointSessions.get(endpointKey);
         if(endpointMetaData != null){
-            boolean requestFound = endpointMetaData.registerResponse(message.getRequestHash());
-            if(requestFound){
-                int pendingRequestSize = endpointMetaData.getPendingRequestsSize();
-                if(pendingRequestSize == 0){
-                    LOG.debug("No more pending requests for endpointKey {}. Going to stop endpoint actor.", endpointKey);
-                    context().stop(endpointMetaData.actorRef);
-                    endpointSessions.remove(endpointKey);
-                }else{
-                    LOG.debug("There is still {} pending requests for endpointKey {}", pendingRequestSize, endpointKey);
-                }
-            }else{
-                LOG.warn("Pending request {} is not found!", message.getRequestHash());
-            }            
-        }else{
-            LOG.warn("EndpointSession for actor {} is not found!", endpointKey);            
+            if(actorKey.equals(endpointMetaData.getEndpointActorId())){
+                endpointSessions.remove(endpointKey);
+                LOG.debug("[{}] Removed actor [{}] from endpoint sessions map", applicationToken, actorKey);
+            }
+        } else {
+            LOG.warn("[{}] EndpointSession for actor {} is not found!", applicationToken, endpointKey);
         }
-        
-    }    
+        endpointActorMap.remove(actorKey);
+        message.getOriginator().tell(message, self());
+    }
 
     /**
      * Process termination.
-     * 
+     *
      * @param message
      *            the message
      */
@@ -292,10 +365,15 @@ public class ApplicationActor extends UntypedActor {
         if (terminated instanceof LocalActorRef) {
             LocalActorRef localActor = (LocalActorRef) terminated;
             String name = localActor.path().name();
-            if (endpointSessions.remove(name) != null) {
-                LOG.debug("removed endpoint: {}", localActor);
+            EndpointObjectHash endpointHash = endpointActorMap.remove(name);
+            if (endpointHash != null) {
+                ActorMetaData actorMetaData = endpointSessions.get(endpointHash);
+                if (actorMetaData != null && actorMetaData.actorRef.equals(localActor)) {
+                    endpointSessions.remove(endpointHash);
+                    LOG.debug("[{}] removed endpoint: {}", applicationToken, localActor);
+                }
             } else if (topicSessions.remove(name) != null) {
-                LOG.debug("removed topic: {}", localActor);
+                LOG.debug("[{}] removed topic: {}", applicationToken, localActor);
             }
         } else {
             LOG.warn("remove commands for remote actors are not supported yet!");
@@ -303,20 +381,8 @@ public class ApplicationActor extends UntypedActor {
     }
 
     /**
-     * Builds the endpoint key.
-     * 
-     * @param key
-     *            the key
-     * @return the string
-     */
-    public static String buildEndpointKey(EndpointObjectHash key) {
-        // TODO: Improve;
-        return Integer.toString(key.hashCode());
-    }
-
-    /**
      * Builds the topic key.
-     * 
+     *
      * @param topicId
      *            the topic id
      * @return the string
@@ -328,21 +394,21 @@ public class ApplicationActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#preStart()
      */
     @Override
     public void preStart() {
-        LOG.info("Starting " + this);
+        LOG.info("[{}] Starting ", applicationToken);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see akka.actor.UntypedActor#postStop()
      */
     @Override
     public void postStop() {
-        LOG.info("Stoped " + this);
+        LOG.info("[{}] Stoped ", applicationToken);
     }
 }

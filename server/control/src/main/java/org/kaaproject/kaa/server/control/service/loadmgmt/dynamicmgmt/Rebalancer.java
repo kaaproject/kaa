@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 import java.util.Map;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
 
 /**
  * Dynamic Operations servers load management rebalance interface.
@@ -34,5 +35,5 @@ public interface Rebalancer {
      * @param opsServerLoadHistory the Operations server load history
      * @return the map<string, redirection rule>
      */
-    public Map<String,RedirectionRule> recalculate(Map<String, OperationsServerLoadHistory> opsServerLoadHistory);
+    public Map<String,RedirectionRule> recalculate(Map<String, Map<ZkChannelType,OperationsServerLoadHistory>> opsServerLoadHistory);
 }

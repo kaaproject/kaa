@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
 import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.OperationsServerLoadHistory.OperationsServerLoad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class DefaultRebalancer implements Rebalancer {
      * @see org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.Rebalancer#recalculate(java.util.Map)
      */
     @Override
-    public Map<String,RedirectionRule> recalculate(Map<String, OperationsServerLoadHistory> opsServerLoadHistory) {
+    public Map<String,RedirectionRule> recalculate(Map<String, Map<ZkChannelType,OperationsServerLoadHistory>> opsServerLoadHistory) {
         LOG.info("DefaultRebalancer recalculate Operations servers balance...");
         Map<String,RedirectionRule> rules = new HashMap<String, RedirectionRule>();
         if (opsServerLoadHistory.size() > 1) {
@@ -58,23 +59,28 @@ public class DefaultRebalancer implements Rebalancer {
             String lowestLoadName = "";
             int lowestLoadValue = Integer.MAX_VALUE;
             int averageLoad = 0;
+            int loadCount = 0;
             for(String opsServer : opsServerLoadHistory.keySet()) {
                 if (opsServerLoadHistory.get(opsServer) != null) {
-                    List<OperationsServerLoad> load = opsServerLoadHistory.get(opsServer).getHistory();
-                    int p = load.get(load.size()).getProcessedRequestCount();
-                    if (p > highestLoadValue) {
-                        highestLoadValue = p;
-                        highestLoadName = opsServer;
+                    int processedRequestCountIntegral = getLastProcessedRequestCountFromAllChannels(opsServerLoadHistory.get(opsServer));
+                    if (processedRequestCountIntegral > 0) {
+                        if (processedRequestCountIntegral > highestLoadValue) {
+                            highestLoadValue = processedRequestCountIntegral;
+                            highestLoadName = opsServer;
+                        }
+                        if (processedRequestCountIntegral < lowestLoadValue) {
+                            lowestLoadName = opsServer;
+                            lowestLoadValue = processedRequestCountIntegral;
+                        }
+                        averageLoad += processedRequestCountIntegral;
+                        loadCount++;
                     }
-                    if (p < lowestLoadValue) {
-                        lowestLoadName = opsServer;
-                        lowestLoadValue = p;
-                    }
-                    averageLoad += p;
                 }
 
             }
-            averageLoad = averageLoad / opsServerLoadHistory.size();
+            if (loadCount > 0) {
+                averageLoad = averageLoad / loadCount;
+            }
             if (averageLoad > minRequestCount) {
                 if (((highestLoadValue * 20)/100) > lowestLoadValue) { //NOSONAR
                     //Start redirection
@@ -88,6 +94,21 @@ public class DefaultRebalancer implements Rebalancer {
         }
 
         return rules;
+    }
+
+    /**
+     * @param map
+     * @return
+     */
+    private int getLastProcessedRequestCountFromAllChannels(Map<ZkChannelType, OperationsServerLoadHistory> map) {
+        int totalLoad = 0;
+        for(OperationsServerLoadHistory history : map.values()) {
+            List<OperationsServerLoad> load = history.getHistory();
+            if (load.size() > 0) {
+                totalLoad += load.get(load.size() - 1).getProcessedRequestCount();
+            }
+        }
+        return totalLoad;
     }
 
 }

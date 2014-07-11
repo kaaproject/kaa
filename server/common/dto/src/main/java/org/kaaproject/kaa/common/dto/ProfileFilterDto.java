@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.common.dto;
 
+
 public class ProfileFilterDto extends AbstractStructureDto {
 
     private static final long serialVersionUID = 3068910692262107362L;
@@ -32,9 +33,12 @@ public class ProfileFilterDto extends AbstractStructureDto {
         return super.equals(o);
     }
 
+//    public ProfileData getProfileData(DataSchema schema) {
+//        return new ProfileData(schema, body);
+//    }
 
     @Override
-    public int hashCode() {
+    public int hashCode() { //NOSONAR
         return super.hashCode();
     }
 

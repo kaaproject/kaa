@@ -18,11 +18,11 @@ package org.kaaproject.kaa.server.admin.client;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto.Result;
 import org.kaaproject.kaa.server.admin.client.login.LoginView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.ChangePasswordDialog;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.dto.AuthResultDto;
-import org.kaaproject.kaa.server.admin.shared.dto.AuthResultDto.Result;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
 
 import com.google.gwt.core.client.EntryPoint;

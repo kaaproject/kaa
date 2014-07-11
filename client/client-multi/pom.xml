@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.4.0-RC1</version>
+        <version>0.5.0</version>
         <artifactId>client</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.client</groupId>
@@ -35,7 +35,9 @@
     </properties>
     
     <modules>
-        <module>client-java</module>
+        <module>client-java-core</module>
+        <module>client-java-desktop</module>
+        <module>client-java-android</module>
     </modules>
     
     <dependencies>

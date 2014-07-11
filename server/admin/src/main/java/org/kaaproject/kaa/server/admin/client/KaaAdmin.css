@@ -501,6 +501,10 @@ button::-moz-focus-inner
 	color: #666666;
 }
 
+.gwt-DisclosurePanel .header td {
+    color: #666666;
+}
+
 .gwt-DialogBox .Caption {
     background: none repeat scroll 0 0 #F1F1F1;
     border-bottom: 1px solid #BBBBBB;

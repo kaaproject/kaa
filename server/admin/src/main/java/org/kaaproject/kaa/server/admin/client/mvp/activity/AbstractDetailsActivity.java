@@ -126,19 +126,23 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
             onEntityRetrieved();
         }
         else {
-            getEntity(entityId, new AsyncCallback<T>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    detailsView.setErrorMessage(Utils.getErrorMessage(caught));
-                }
-
-                @Override
-                public void onSuccess(T result) {
-                    entity = result;
-                    onEntityRetrieved();
-                }
-            });
+            loadEntity();
         }
+    }
+    
+    protected void loadEntity() {
+        getEntity(entityId, new AsyncCallback<T>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+            }
+
+            @Override
+            public void onSuccess(T result) {
+                entity = result;
+                onEntityRetrieved();
+            }
+        });
     }
 
     protected void doSave(final EventBus eventBus) {

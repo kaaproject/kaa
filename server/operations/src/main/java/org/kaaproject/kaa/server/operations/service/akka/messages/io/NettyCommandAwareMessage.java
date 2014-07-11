@@ -20,15 +20,18 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand;
+import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 
 
 /**
  * The Class NettyCommandAwareMessage.
  */
 public abstract class NettyCommandAwareMessage extends NettyAwareMessage {
-    
+
     /** The command. */
     protected final AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command;
+
+    protected final ChannelType channelType;
 
     /**
      * Instantiates a new netty command aware message.
@@ -38,9 +41,10 @@ public abstract class NettyCommandAwareMessage extends NettyAwareMessage {
      * @param command the command
      */
     public NettyCommandAwareMessage(String handlerUuid, ChannelHandlerContext channelContext,
-            AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command) {
+            AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command, ChannelType channelType) {
         super(handlerUuid, channelContext);
         this.command = command;
+        this.channelType = channelType;
     }
 
     /**
@@ -50,5 +54,9 @@ public abstract class NettyCommandAwareMessage extends NettyAwareMessage {
      */
     public AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> getCommand() {
         return command;
+    }
+
+    public ChannelType getChannelType() {
+        return channelType;
     }
 }

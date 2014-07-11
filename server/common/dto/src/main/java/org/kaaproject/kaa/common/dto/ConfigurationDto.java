@@ -16,11 +16,9 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import java.io.UnsupportedEncodingException;
 
 public class ConfigurationDto extends AbstractStructureDto {
 
-    private static final String UTF8 = "UTF-8";
     private static final long serialVersionUID = 1766336602276590007L;
 
     private String protocolSchema;
@@ -29,31 +27,8 @@ public class ConfigurationDto extends AbstractStructureDto {
         return protocolSchema;
     }
 
-    public void setProtocolSchema(String protocolBody) {
-        this.protocolSchema = protocolBody;
-    }
-
-    public byte[] getBinaryBody() {
-        if (body != null) {
-            try {
-                return body.getBytes(UTF8);
-            } catch (UnsupportedEncodingException e) {
-                return null;
-            }
-        }
-        return null;
-    }
-
-    public void setBinaryBody(byte[] binaryBody) {
-        if (binaryBody != null) {
-            try {
-                this.body = new String(binaryBody, UTF8);
-            } catch (UnsupportedEncodingException e) {
-                body = null;
-            }
-        } else {
-            body = null;
-        }
+    public void setProtocolSchema(String protocolSchema) {
+        this.protocolSchema = protocolSchema;
     }
 
     @Override

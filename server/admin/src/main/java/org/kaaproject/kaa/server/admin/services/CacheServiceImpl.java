@@ -17,10 +17,10 @@
 package org.kaaproject.kaa.server.admin.services;
 
 import org.apache.thrift.TException;
+import org.kaaproject.kaa.common.dto.admin.SdkKey;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.dto.SdkKey;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
@@ -43,16 +43,18 @@ public class CacheServiceImpl implements CacheService {
         try {
             return clientProvider.getClient().generateSdk(targetPlatform,
                     key.getApplicationId(), key.getProfileSchemaVersion(),
-                    key.getConfigurationSchemaVersion(), key.getNotificationSchemaVersion());
+                    key.getConfigurationSchemaVersion(), key.getNotificationSchemaVersion(), key.getAefMapIds(), key.getLogSchemaVersion());
         } catch (TException e) {
             throw Utils.handleException(e);
         }
     }
 
-    private SdkPlatform toSdkPlatform(org.kaaproject.kaa.server.admin.shared.dto.SdkPlatform sdkPlatform) {
+    private SdkPlatform toSdkPlatform(org.kaaproject.kaa.common.dto.admin.SdkPlatform sdkPlatform) {
         switch (sdkPlatform) {
         case JAVA:
             return SdkPlatform.JAVA;
+        case ANDROID:
+            return SdkPlatform.ANDROID;
         case CPP:
             return SdkPlatform.CPP;
             default:

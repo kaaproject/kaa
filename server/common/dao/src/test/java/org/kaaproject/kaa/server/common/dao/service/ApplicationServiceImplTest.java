@@ -16,10 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -28,12 +26,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDataLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,8 +42,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ApplicationServiceImplTest extends AbstractTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceImplTest.class);
-
     @BeforeClass
     public static void init() throws Exception {
         MongoDBTestRunner.setUp();
@@ -52,31 +49,83 @@ public class ApplicationServiceImplTest extends AbstractTest {
 
     @AfterClass
     public static void after() throws Exception {
-        MongoDBTestRunner.getDB().dropDatabase();
         MongoDBTestRunner.tearDown();
     }
 
     @Before
-    public void beforeTest() throws IOException {
+    public void beforeTest() throws Exception {
         MongoDataLoader.loadData();
     }
 
     @After
     public void afterTest() {
-        MongoDBTestRunner.getDB().dropDatabase();
+        clearDBData();
     }
 
-    @Test(expected = IncorrectParameterException.class)
+    @Test
     public void testFindAppsByTenantId() {
-        applicationService.findAppsByTenantId("Invalid Teant ID");
+        List<ApplicationDto> applications = applicationService.findAppsByTenantId("423421421");
+        Assert.assertEquals(0, applications.size());
     }
 
     @Test
     public void testRemoveAppsByTenantId() {
-        String tenantId = new ObjectId().toString();
-        generateApplication(tenantId);
-        applicationService.removeAppsByTenantId(tenantId);
-        List<ApplicationDto> apps = applicationService.findAppsByTenantId(tenantId);
-        Assert.assertTrue(apps.isEmpty());
+        TenantDto tenant = generateTenant();
+        ApplicationDto application = generateApplication(tenant.getId());
+        applicationService.removeAppsByTenantId(tenant.getId());
+        List<ApplicationDto> foundApplications = applicationService.findAppsByTenantId(tenant.getId());
+        Assert.assertTrue(foundApplications.isEmpty());
+        Assert.assertEquals(0, foundApplications.size());
+        TenantDto foundTenant = userService.findTenantById(tenant.getId());
+        Assert.assertNotNull(foundTenant);
+        List<ProfileSchemaDto> foundProfileSchemas = profileService.findProfileSchemasByAppId(application.getId());
+        Assert.assertEquals(0, foundProfileSchemas.size());
+        List<ConfigurationSchemaDto> foundConfigSchemas = configurationService.findConfSchemasByAppId(application.getId());
+        Assert.assertEquals(0, foundConfigSchemas.size());
+    }
+
+    @Test
+    public void findAppsByTenantIdTest() {
+        TenantDto tenant = generateTenant();
+        String tenantId = tenant.getId();
+        ApplicationDto application = generateApplication(tenantId);
+        List<ApplicationDto> applications = applicationService.findAppsByTenantId(tenantId);
+        Assert.assertEquals(1, applications.size());
+        Assert.assertEquals(application.getId(), applications.get(0).getId());
+    }
+
+    @Test
+    public void findAppByIdTest(){
+        ApplicationDto application = generateApplication();
+        ApplicationDto foundApp = applicationService.findAppById(application.getId());
+        Assert.assertNotNull(foundApp);
+        Assert.assertEquals(application.getId(), foundApp.getId());
+    }
+
+    @Test
+    public void removeAppByIdTest(){
+        ApplicationDto application = generateApplication();
+        ApplicationDto foundApp = applicationService.findAppById(application.getId());
+        Assert.assertNotNull(foundApp);
+        Assert.assertEquals(application.getId(), foundApp.getId());
+        applicationService.removeAppById(application.getId());
+
+        foundApp = applicationService.findAppById(application.getId());
+        Assert.assertNull(foundApp);
+    }
+
+    @Test
+    public void findAppByApplicationTokenTest(){
+        ApplicationDto application = generateApplication();
+        ApplicationDto foundApp = applicationService.findAppByApplicationToken(application.getApplicationToken());
+        Assert.assertNotNull(foundApp);
+        Assert.assertEquals(application.getId(), foundApp.getId());
+    }
+
+    @Test(expected = IncorrectParameterException.class)
+    public void saveAppTest() {
+        ApplicationDto app = generateApplication();
+        app.setUserVerifierName("UserVerifierName");
+        applicationService.saveApp(app);
     }
 }

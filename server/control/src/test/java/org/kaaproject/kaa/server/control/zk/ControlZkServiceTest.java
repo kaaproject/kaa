@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.control.zk;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftSe
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -126,7 +128,8 @@ public class ControlZkServiceTest {
         ReflectionTestUtils.setField(zkService, "controlZKNode", controlZKNode);
         
         List<OperationsNodeInfo> endpointNodes = Arrays.asList(
-                new OperationsNodeInfo(new ConnectionInfo("host1", 123, "host1", 123, null), 1, 1, 1, System.currentTimeMillis()));
+                new OperationsNodeInfo(new ConnectionInfo("host1", 123, null), System.currentTimeMillis(), new ArrayList<SupportedChannel>()));
+        
         
         Mockito.when(controlZKNode.getCurrentOperationServerNodes()).thenReturn(endpointNodes);
         

@@ -16,13 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -31,36 +26,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.HistoryDto;
-import org.kaaproject.kaa.common.dto.ProcessingStatus;
-import org.kaaproject.kaa.server.common.dao.ApplicationDao;
-import org.kaaproject.kaa.server.common.dao.HistoryDao;
-import org.kaaproject.kaa.server.common.dao.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Application;
-import org.kaaproject.kaa.server.common.dao.mongo.model.History;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Update;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import com.mongodb.MongoException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@SuppressWarnings("unchecked")
 public class HistoryServiceImplTest extends AbstractTest {
 
     private ApplicationDto application;
-
-    private HistoryDao<History> historyDaoMock = mock(HistoryDao.class);
-    private HistoryDao<History> historyDao = null;
-    private ApplicationDao<Application> applicationDaoMock = mock(ApplicationDao.class);;
-    private ApplicationDao<Application> applicationDao = null;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -111,55 +90,6 @@ public class HistoryServiceImplTest extends AbstractTest {
         List<HistoryDto> historyRows = historyService.findHistoriesBySeqNumberRange(application.getId(), 2, 3);
         Assert.assertEquals(1, historyRows.size());
         Assert.assertEquals(ChangeType.ADD_CONF, historyRows.get(0).getChange().getType());
-    }
-
-    @Test
-    public void checkIncrementingSequenceNumberTest() {
-        mockDao();
-        String appId = new ObjectId().toString();
-
-        Update update = new Update();
-        update.setSequenceNumber(56);
-        update.setStatus(ProcessingStatus.PENDING);
-
-        Application application = new Application();
-        application.setId(appId);
-        application.setName("Test Application");
-        application.setSequenceNumber(55);
-        application.setUpdate(update);
-
-        ChangeDto change = new ChangeDto();
-        change.setCfMajorVersion(3);
-        change.setConfigurationId(new ObjectId().toString());
-
-        HistoryDto historyDto = new HistoryDto();
-        historyDto.setApplicationId(appId);
-        historyDto.setChange(change);
-
-        when(historyDaoMock.save(any(History.class))).thenThrow(MongoException.DuplicateKey.class)
-        .thenThrow(MongoException.DuplicateKey.class).thenReturn(null);
-
-        when(applicationDaoMock.forceNextSeqNumber(any(String.class))).thenReturn(application);
-
-        historyService.saveHistory(historyDto);
-
-        unmockDao();
-    }
-
-    private void mockDao() {
-        historyDao = (HistoryDao<History>) ReflectionTestUtils.getField(historyService, "historyDao");
-        ReflectionTestUtils.setField(historyService, "historyDao", historyDaoMock);
-
-        ReflectionTestUtils.setField(historyService, "waitSeconds", 1);
-
-        applicationDao = (ApplicationDao<Application>) ReflectionTestUtils.getField(historyService, "applicationDao");
-        ReflectionTestUtils.setField(historyService, "applicationDao", applicationDaoMock);
-    }
-
-    private void unmockDao() {
-        ReflectionTestUtils.setField(historyService, "historyDao", historyDao);
-        ReflectionTestUtils.setField(historyService, "applicationDao", applicationDao);
-        ReflectionTestUtils.setField(historyService, "waitSeconds", 3);
     }
 
 }

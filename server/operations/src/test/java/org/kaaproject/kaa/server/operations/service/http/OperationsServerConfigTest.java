@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService;
-import org.kaaproject.kaa.server.operations.service.http.OperationsServerConfig;
+import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 
 /**
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>

@@ -23,10 +23,10 @@ import io.netty.channel.ChannelHandlerContext;
  * The Class NettyAwareMessage.
  */
 public class NettyAwareMessage {
-    
+
     /** The handler uuid. */
     protected final String handlerUuid;
-    
+
     /** The channel context. */
     protected final ChannelHandlerContext channelContext;
 

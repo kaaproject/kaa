@@ -66,10 +66,10 @@ public class ControlApiCliThriftClient {
         ss.out.println();
         String cmdTrimmed = cmd.trim();
         int ret = 0;
-        if (cmdTrimmed.equalsIgnoreCase("quit")
-                || cmdTrimmed.equalsIgnoreCase("exit")) {
+        if (cmdTrimmed.equalsIgnoreCase("quit") //NOSONAR
+                || cmdTrimmed.equalsIgnoreCase("exit")) { //NOSONAR
             return -1;
-        } else if (cmdTrimmed.equalsIgnoreCase("disconnect")) {
+        } else if (cmdTrimmed.equalsIgnoreCase("disconnect")) { //NOSONAR
             if (ss.isRemoteMode()) {
                 ss.close();
                 prompt = "kaa-control-api";
@@ -79,11 +79,12 @@ public class ControlApiCliThriftClient {
             }
         } else if (ss.isRemoteMode()) {
             apiCommandProcessor.executeCommand(ss, cmdTrimmed);
-        } else { // local mode
+        } else {
+            // local mode
             PrintStream out = ss.out;
             PrintStream err = ss.err;
-            if (cmdTrimmed.equalsIgnoreCase("help")
-                    || cmdTrimmed.equalsIgnoreCase("?")) {
+            if (cmdTrimmed.equalsIgnoreCase("help") //NOSONAR
+                    || cmdTrimmed.equalsIgnoreCase("?")) { //NOSONAR
                 printHelp(out);
             } else if (cmdTrimmed.toLowerCase().startsWith("connect")) {
                 boolean parsed = false;
@@ -250,7 +251,7 @@ public class ControlApiCliThriftClient {
             String prefix = "";
             String curPrompt = prompt;
             while ((line = reader.readLine(curPrompt + "> ")) != null) {
-                if (!prefix.equals("")) {
+                if (!prefix.equals("")) { //NOSONAR
                     prefix += '\n';
                 }
                 line = prefix + line;
@@ -279,7 +280,7 @@ public class ControlApiCliThriftClient {
      * @throws Exception
      *             the exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception { //NOSONAR
         ControlApiCliThriftClient cli = new ControlApiCliThriftClient();
         int ret = cli.process(args);
         if (ret == -1) {

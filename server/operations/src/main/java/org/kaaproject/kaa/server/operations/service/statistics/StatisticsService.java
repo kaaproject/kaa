@@ -23,13 +23,15 @@ import java.util.ListIterator;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.server.common.http.server.SessionTrackable;
 import org.kaaproject.kaa.server.common.http.server.Track;
-import org.kaaproject.kaa.server.operations.service.http.OperationsServerConfig;
+import org.kaaproject.kaa.server.common.zk.ZkChannelException;
+import org.kaaproject.kaa.server.common.zk.ZkChannelsUtils;
+import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.statistics.SessionHistory.RequestHistory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * StatisticsService Class.
@@ -51,9 +53,9 @@ public class StatisticsService extends Thread implements SessionTrackable {
     private static final Logger LOG = LoggerFactory
             .getLogger(StatisticsService.class);
     
-    /** StatisticsService singleton instance */
-    private static StatisticsService service;
-
+    /** Statistics service type */
+    private ChannelType channelType;
+    
     /** Default thread name */
     private static final String THREAD_NAME = "StatisticsServiceThread";
     
@@ -61,7 +63,8 @@ public class StatisticsService extends Thread implements SessionTrackable {
     private static final int DEFAULT_STATISTIC_UPDATE_TIMES = 60;
     
     /** Default value for statistics collect window in ms */
-    private static final long DEFAULT_STATISTIC_COLLECTION_WINDOW = 300000; //in ms, 5 minutes
+    //in ms, 5 minutes
+    private static final long DEFAULT_STATISTIC_COLLECTION_WINDOW = 300000; 
     
     /** Concurrent HashMap for storing sessions */
     private ConcurrentHashMap<UUID, SessionHistory> sessions;
@@ -92,20 +95,21 @@ public class StatisticsService extends Thread implements SessionTrackable {
     /** Statistics Update Times */
     private int statsUpdateTimes = DEFAULT_STATISTIC_UPDATE_TIMES;
     
-    /** EndpointConfig autowired */
-    @Autowired
+    /** EndpointConfig  */
     OperationsServerConfig config;
     
     /**
-     * Private constructor, StatisticsService is singleton, use getService(). 
+     * @param type
      */
-    private StatisticsService() {
+    public StatisticsService(ChannelType type) {
+        this.channelType = type;
         sessions = new ConcurrentHashMap<UUID, SessionHistory>();
         processedRequestsWindow = new LinkedList<>(); 
         onlineSessionsWindow = new LinkedList<>();
         deltaSyncWindow = new LinkedList<>();
+        initConfig();
     }
-        
+
     private void initConfig() {
         if(config != null && config.getStatisticsUpdateTimes() > 0) {
             statsUpdateTimes = config.getStatisticsUpdateTimes();
@@ -153,7 +157,7 @@ public class StatisticsService extends Thread implements SessionTrackable {
     /** 
      * Stop Statistics Service.
      */    
-    public void shutdown() {
+    protected void shutdown() {
         LOG.info("Statistics Service shutdown....");
         operate = false;
 
@@ -166,7 +170,6 @@ public class StatisticsService extends Thread implements SessionTrackable {
             LOG.trace("Statistics Service shutdown join() Interupted");
         } finally {
             LOG.info("Statistics Service shutdown complete.");
-            service = null;
         }        
     }
     
@@ -199,7 +202,8 @@ public class StatisticsService extends Thread implements SessionTrackable {
                         deltaElementsNumber++;
                     }
                 } else {
-                    break; //no need to iterate all requests, they pushes back to list.
+                    //no need to iterate all requests, they pushes back to list.
+                    break;
                 }
             }
             if (session.isSessionOpen()) {
@@ -257,28 +261,21 @@ public class StatisticsService extends Thread implements SessionTrackable {
     private void updateNodeInfo() {
         if (config != null && config.getZkNode() != null) {
             try {
-                config.getZkNode().updateNodeStatsValues(averageDeltaSync, averageProcessedRequests, averageOnlineSessions);
+                
+                config.getZkNode().updateNodeStatsValues(
+                        ZkChannelsUtils.getZkChannelTypeFromChanneltype(getChannelType()),
+                        averageDeltaSync, 
+                        averageProcessedRequests, 
+                        averageOnlineSessions);
             } catch (IOException e) {
-                LOG.error("Error update statistics values on ZooKepper: "+e.toString());
+                LOG.error("Error update statistics values on ZooKepper: "+e);
+            } catch (ZkChannelException e) {
+                LOG.error("Error statistics UpdateNodeInfo",e);
             }
         }
     }
     
-    /**
-     * Return StatisticsService.
-     * @return - StatisticsService
-     */
-    public static synchronized StatisticsService getService() {
-        if (service != null) {
-            return service;
-        }
-        service = new StatisticsService();
-        service.initConfig();
-        service.start();
-        return service;
-    }
-
-    @Override
+        @Override
     public Track newSession(UUID uuid) {
         SessionHistory track = new SessionHistory(uuid);
         sessions.put(uuid, track);
@@ -303,10 +300,23 @@ public class StatisticsService extends Thread implements SessionTrackable {
     /**
      * @param config the config to set
      */
-    public static void setConfig(OperationsServerConfig config) {
-        StatisticsService service = getService();
-        service.config = config;
-        service.initConfig();
+    public void setConfig(OperationsServerConfig config) {
+        this.config = config;
+        initConfig();
+    }
+
+    /**
+     * @return the channelType
+     */
+    public ChannelType getChannelType() {
+        return channelType;
+    }
+
+    /**
+     * @param channelType the channelType to set
+     */
+    public void setChannelType(ChannelType channelType) {
+        this.channelType = channelType;
     }
 }
 

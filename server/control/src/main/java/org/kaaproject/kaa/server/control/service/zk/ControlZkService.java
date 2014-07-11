@@ -85,7 +85,7 @@ public class ControlZkService {
     public void start() {
         if (zkEnabled) {
             ControlNodeInfo nodeInfo = new ControlNodeInfo();
-            ConnectionInfo connectionInfo = new ConnectionInfo(host, port, host, 0, null);
+            ConnectionInfo connectionInfo = new ConnectionInfo(host, port, null);
             nodeInfo.setConnectionInfo(connectionInfo);
             controlZKNode = new ControlNode(nodeInfo, zkHostPortList, 60 * 1000, 3 * 1000,
                     new RetryUntilElapsed(zkMaxRetryTime, zkSleepTime));
@@ -96,7 +96,7 @@ public class ControlZkService {
                     LOG.info("Failed to register control in ZooKeeper", e);
                 } else {
                     LOG.error("Failed to register control in ZooKeeper", e);
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(e); //NOSONAR
                 }
             }
         }

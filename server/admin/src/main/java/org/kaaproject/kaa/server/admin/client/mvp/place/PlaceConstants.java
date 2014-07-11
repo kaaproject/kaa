@@ -19,6 +19,8 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 public interface PlaceConstants {
 
     public static final String USER_ID = "usrId";
+    public static final String ECF_ID = "ecfId";
+    public static final String VERSION = "ver";
     public static final String TENANT_ID = "tenId";
     public static final String APPLICATION_ID = "appId";
     public static final String SCHEMA_ID = "schemaId";
@@ -26,6 +28,7 @@ public interface PlaceConstants {
     public static final String INCL_DEPR_PF = "inclDepPf";
     public static final String INCL_DEPR_CS = "inclDepCs";
     public static final String TOPIC_ID = "topicId";
+    public static final String AEF_MAP_ID = "aefMapId";
     public static final String CREATE = "create";
     public static final String SHOW_ACTIVE = "active";
     public static final String RANDOM = "random";

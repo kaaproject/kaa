@@ -16,13 +16,24 @@
 
 package org.kaaproject.kaa.server.control.service;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.TThreadPoolServer.Args;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
+import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService;
@@ -53,6 +64,9 @@ public class ControlServiceImpl implements ControlService {
 
     /** The Thrift server. */
     private TServer server;
+    
+    /** The Thrift server executor service. */
+    private ExecutorService executorService;
 
     /** The control service thrift interface. */
     @Autowired
@@ -118,6 +132,16 @@ public class ControlServiceImpl implements ControlService {
             LOG.info("Control Server Started.");
 
             server.serve();
+            
+            if (executorService != null && !executorService.isTerminated()) {
+                for (TSocketWrapper socket : new ArrayList<>(openedSockets)) {
+                    if (socket.getSocket() != null && !socket.getSocket().isClosed()) {
+                        socket.close();
+                    }
+                }
+                LOG.info("Terminating executor service.");
+                executorService.shutdownNow();
+            }
 
             LOG.info("Control Server Stopped.");
 
@@ -133,7 +157,38 @@ public class ControlServiceImpl implements ControlService {
      * @throws TTransportException the t transport exception
      */
     public TServerTransport createServerSocket() throws TTransportException {
-        return new TServerSocket(new InetSocketAddress(host, port));
+        return new TServerSocket(new InetSocketAddress(host, port)) {
+          @Override
+          protected TSocket acceptImpl() throws TTransportException {
+              ServerSocket serverSocket_ = getServerSocket();
+              if (serverSocket_ == null) {
+                  throw new TTransportException(TTransportException.NOT_OPEN, "No underlying server socket.");
+                }
+                try {
+                  Socket result = serverSocket_.accept();
+                  TSocketWrapper result2 = new TSocketWrapper(result);
+                  result2.setTimeout(0);
+                  openedSockets.add(result2);
+                  return result2;
+                } catch (IOException iox) {
+                  throw new TTransportException(iox);
+                }
+          }
+        };
+    }
+    
+    private Set<TSocketWrapper> openedSockets = new HashSet<TSocketWrapper>();
+    
+    class TSocketWrapper extends TSocket {
+        public TSocketWrapper(Socket socket) throws TTransportException {
+            super(socket);
+        }
+        
+        @Override
+        public void close() {
+            super.close();
+            openedSockets.remove(this);
+        }
     }
     
     /**
@@ -145,8 +200,19 @@ public class ControlServiceImpl implements ControlService {
      */
     public TServer createServer(TServerTransport serverTransport,
                                 ControlThriftService.Processor<ControlThriftService.Iface> processor) {
-        return new TThreadPoolServer(
-                new Args(serverTransport).processor(processor));
+        TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
+        args.stopTimeoutVal = 3;
+        args.stopTimeoutUnit = TimeUnit.SECONDS;
+        
+        SynchronousQueue<Runnable> executorQueue =
+                new SynchronousQueue<Runnable>();
+        executorService = new ThreadPoolExecutor(args.minWorkerThreads,
+                                            args.maxWorkerThreads,
+                                            60,
+                                            TimeUnit.SECONDS,
+                                            executorQueue);
+        args.executorService = executorService;
+        return new TThreadPoolServer(args);
     }
 
     /* (non-Javadoc)

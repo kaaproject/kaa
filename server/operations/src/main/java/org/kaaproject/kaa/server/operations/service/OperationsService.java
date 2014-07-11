@@ -19,39 +19,20 @@ package org.kaaproject.kaa.server.operations.service;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointRegistrationRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileUpdateRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.security.PublicKeyAware;
 
 
 /**
  * The interface OperationsService is used to define key operations with Endpoint Node.
  * One can register, update and sync endpoint state.
- * 
+ *
  * @author ashvayka
  */
-public interface OperationsService {
-
-    /**
-     * Register endpoint.
-     *
-     * @param request the request
-     * @return the sync response
-     * @throws GetDeltaException the get delta exception
-     */
-    SyncResponseHolder registerEndpoint(EndpointRegistrationRequest request) throws GetDeltaException;
-
-    /**
-     * Update endpoint.
-     *
-     * @param request the request
-     * @return the sync response
-     * @throws GetDeltaException the get delta exception
-     */
-    SyncResponseHolder updateProfile(ProfileUpdateRequest request) throws GetDeltaException;
+public interface OperationsService extends PublicKeyAware{
 
     /**
      * Sync endpoint state.

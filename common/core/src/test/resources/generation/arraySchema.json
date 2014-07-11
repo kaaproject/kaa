@@ -1,0 +1,45 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "fields": [
+        {
+            "name": "complexArrayField",
+            "type":
+            {
+                "type": "array",
+                "items": 
+                {
+                    "type": "record",
+                    "name": "recordT",
+                    "namespace": "org.kaaproject",
+                    "fields": [
+                        {
+                            "name": "intField",
+                            "type": "int"
+                        },
+                        {
+                            "name": "__uuid",
+                            "type":  [
+                                {
+                                    "name": "uuidT",
+                                    "type": "fixed",
+                                    "size": 16,
+                                    "namespace": "org.kaaproject.configuration"
+                                },
+                                "null"
+                            ]
+                        }
+                    ]
+                }    
+            }
+        },
+        {
+            "name": "__uuid",
+            "type": [
+                "org.kaaproject.configuration.uuidT",
+                "null"
+            ]
+        }
+    ]
+}

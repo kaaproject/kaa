@@ -26,6 +26,8 @@ import java.util.UUID;
 import org.kaaproject.kaa.server.common.http.server.CommandFactory;
 import org.kaaproject.kaa.server.common.http.server.CommandProcessor;
 import org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer;
+import org.kaaproject.kaa.server.operations.service.config.NettyHttpServiceChannelConfig;
+import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.http.handler.AkkaHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,24 +50,6 @@ public class OperationsServerInitializer extends DefaultServerInitializer {
         LOG.info("Operations Server Initializer ...");
     }
 
-    /**
-     * Instantiates a new end point server initializer.
-     * 
-     * @param conf
-     *            the conf
-     * @param executor
-     *            the executor
-     */
-    public OperationsServerInitializer(OperationsServerConfig conf, EventExecutorGroup executor) {
-        super(conf, executor);
-        LOG.info("Operations Server Initializer started: ");
-        try {
-            init();
-        } catch (Exception e) {
-            LOG.error("Error Initialize", e);
-        }
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -77,7 +61,7 @@ public class OperationsServerInitializer extends DefaultServerInitializer {
     public void init() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException {
         LOG.info("Operations Server Initializer Init() started: ");
-        for (String commandClass : ((OperationsServerConfig) getConf()).getCommandList()) {
+        for (String commandClass : ((NettyHttpServiceChannelConfig) getConf()).getCommandList()) {
             CommandFactory.addCommandClass(commandClass);
         }
     }
@@ -88,7 +72,7 @@ public class OperationsServerInitializer extends DefaultServerInitializer {
      */
     @Override
     protected SimpleChannelInboundHandler<CommandProcessor> getMainHandler(UUID uuid){
-    	return new AkkaHandler(uuid, ((OperationsServerConfig) getConf()).getAkkaService(), new DefaultEventExecutorGroup(1));
+    	return new AkkaHandler(uuid, ((NettyHttpServiceChannelConfig) getConf()).getOperationServerConfig().getAkkaService(), new DefaultEventExecutorGroup(1));
     }
 
 }

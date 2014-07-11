@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.bootstrap.service.initialization;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.retry.RetryUntilElapsed;
 import org.apache.thrift.server.TServer;
@@ -136,7 +137,7 @@ public class DefaultBootstrapInitializationService implements
             if (operationsServerListService == null) {
                 operationsServerListService = new OperationsServerListService(getConfig());
                 if (operationsServerListService == null) {
-                    throw new Exception("Error initializing OperationsServerListService()");
+                    throw new Exception("Error initializing OperationsServerListService()"); //NOSONAR
                 }
                 getConfig().setOperationsServerListService(operationsServerListService);
                 if (zkEnabled) {
@@ -196,7 +197,11 @@ public class DefaultBootstrapInitializationService implements
             BootstrapThriftService.Processor<BootstrapThriftService.Iface> processor = new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(bootstrapThriftService);
 
             TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(thriftHost, thriftPort));
-            server = new TThreadPoolServer(new Args(serverTransport).processor(processor));
+            
+            TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
+            args.stopTimeoutVal = 3;
+            args.stopTimeoutUnit = TimeUnit.SECONDS;
+            server = new TThreadPoolServer(args);
 
             LOG.info("Bootstrap Server Started");
 
@@ -216,14 +221,16 @@ public class DefaultBootstrapInitializationService implements
      * Start zk.
      * @throws Exception
      */
-    private void startZK() throws Exception {
+    private void startZK() throws Exception { //NOSONAR
         if (zkEnabled) {
             LOG.info("Bootstrap Server starting ZooKepper connection to {}", zkHostPortList);
             BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
             ByteBuffer keyData = ByteBuffer.wrap(keyStoreService.getPublicKey().getEncoded());
             LOG.trace("Bootstrap server: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}"
                     , thriftHost, thriftPort, nettyHost, nettyPort);
-            ConnectionInfo connectionInfo = new ConnectionInfo(thriftHost, thriftPort, nettyHost, nettyPort, keyData);
+            ConnectionInfo connectionInfo = new ConnectionInfo(thriftHost, thriftPort, keyData);
+            nodeInfo.setBootstrapHostName(nettyHost);
+            nodeInfo.setBootstrapPort(nettyPort);
             nodeInfo.setConnectionInfo(connectionInfo);
             bootstrapNode = new BootstrapNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(zkMaxRetryTime, zkSleepTime));
             if (bootstrapNode != null) {

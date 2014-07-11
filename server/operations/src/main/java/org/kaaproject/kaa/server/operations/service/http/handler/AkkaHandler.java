@@ -39,14 +39,14 @@ public class AkkaHandler extends DefaultHandler {
     private static final Logger LOG = LoggerFactory.getLogger(AkkaHandler.class);
 
     /** The akka service. */
-    private AkkaService akkaService;
+    private final AkkaService akkaService;
 
     /** The uuid. */
-    private UUID uuid;
+    private final UUID uuid;
 
     /**
      * Instantiates a new akka handler.
-     * 
+     *
      * @param UUID
      *            - session uuid
      * @param akkaService
@@ -62,7 +62,7 @@ public class AkkaHandler extends DefaultHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.http.server.DefaultHandler#channelRead0
      * (io.netty.channel.ChannelHandlerContext,
@@ -71,14 +71,14 @@ public class AkkaHandler extends DefaultHandler {
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final CommandProcessor msg) throws Exception {
         AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command = (AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase>) msg;
-        NettyEncodedRequestMessage message = new NettyEncodedRequestMessage(uuidToStr(uuid), ctx, command);
+        NettyEncodedRequestMessage message = new NettyEncodedRequestMessage(uuidToStr(uuid), ctx, command, command.getChannelType());
         LOG.trace("Forwarding {} to akka", message);
         akkaService.process(message);
     }
 
     /**
      * Uuid to str.
-     * 
+     *
      * @param uuid
      *            the uuid
      * @return the string

@@ -21,6 +21,16 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.multipart.Attribute;
+import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
+import io.netty.handler.codec.http.multipart.HttpDataFactory;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
+import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -36,18 +46,6 @@ import org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.common.http.server.BadRequestException;
 import org.kaaproject.kaa.server.common.http.server.CommandProcessor;
 import org.kaaproject.kaa.server.common.http.server.NettyHttpServer;
-
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.multipart.Attribute;
-import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
-import io.netty.handler.codec.http.multipart.HttpDataFactory;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
-import io.netty.handler.codec.http.multipart.InterfaceHttpData;
-import io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 
 /**
  * ResolveCommand Class.
@@ -166,6 +164,7 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
 
         httpResponse.headers().set(CONTENT_TYPE, CommonBSConstants.RESPONSE_CONTENT_TYPE);
         httpResponse.headers().set(CommonBSConstants.SIGNATURE_HEADER_NAME, signatureResponse);
+        httpResponse.headers().set(CommonBSConstants.RESPONSE_TYPE, CommonBSConstants.RESPONSE_TYPE_BOOTSTRAP);
         httpResponse.headers().set(CONTENT_LENGTH, httpResponse.content().readableBytes());
         if (isNeedConnectionClose()) {
             httpResponse.headers().set(CONNECTION, HttpHeaders.Values.CLOSE);

@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
+import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * The Class SdkGenerator.
  */
 public abstract class SdkGenerator {
-    
+
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
             .getLogger(SdkGenerator.class);
@@ -47,16 +48,19 @@ public abstract class SdkGenerator {
      * @param profileSchemaVersion the profile schema version
      * @param configurationSchemaVersion the configuration schema version
      * @param notificationSchemaVersion the notification schema version
+     * @param logSchemaVersion the log schema version
      * @param profileSchemaBody the profile schema body
      * @param notificationSchemaBody the notification schema body
      * @param configurationProtocolSchemaBody the configuration protocol schema body
-     * @param defaultConfigurationData the default configuration data 
+     * @param defaultConfigurationData the default configuration data
+     * @param eventFamilies the event families meta information
+     *
      * @return the sdk
      * @throws Exception the exception
      */
     public abstract Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String appToken, int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion, String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody, byte[] defaultConfigurationData) throws Exception;
-    
+            int notificationSchemaVersion, int logSchemaVersion, String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies, String logSchemaBody) throws Exception; //NOSONAR
+
     /**
      * Read file.
      *
@@ -85,7 +89,7 @@ public abstract class SdkGenerator {
         }
         return result;
     }
-    
+
     /**
      * Read resource.
      *
@@ -93,7 +97,7 @@ public abstract class SdkGenerator {
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    protected String readResource(String resource) throws IOException{
+    public static String readResource(String resource) throws IOException{
         String result = null;
         try {
             StringBuffer fileData = new StringBuffer();

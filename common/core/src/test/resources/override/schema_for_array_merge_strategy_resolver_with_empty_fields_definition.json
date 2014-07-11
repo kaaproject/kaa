@@ -1,0 +1,6 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "fields": []
+}

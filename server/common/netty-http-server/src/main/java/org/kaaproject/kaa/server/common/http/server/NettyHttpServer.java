@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.http.server;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -137,7 +138,7 @@ public class NettyHttpServer extends Thread {
         LOG.info("NettyHttpServer stopping...");
         if (bossGroup != null) {
             try {
-                Future<? extends Object> f = bossGroup.shutdownGracefully();
+                Future<? extends Object> f = bossGroup.shutdownGracefully(250, 1000, TimeUnit.MILLISECONDS);
                 f.await();
             } catch (InterruptedException e) {
                 LOG.trace("NettyHttpServer stopping: bossGroup error", e);
@@ -148,7 +149,7 @@ public class NettyHttpServer extends Thread {
         }
         if (workerGroup != null) {
             try {
-                Future<? extends Object> f = workerGroup.shutdownGracefully();
+                Future<? extends Object> f = workerGroup.shutdownGracefully(250, 1000, TimeUnit.MILLISECONDS);
                 f.await();
             } catch (InterruptedException e) {
                 LOG.trace("NettyHttpServer stopping: workerGroup error", e);
@@ -159,7 +160,7 @@ public class NettyHttpServer extends Thread {
         }
         if (executor != null) {
             try {
-                Future<? extends Object> f = executor.shutdownGracefully();
+                Future<? extends Object> f = executor.shutdownGracefully(250, 1000, TimeUnit.MILLISECONDS);
                 f.await();
             } catch (InterruptedException e) {
                 LOG.trace("NettyHttpServer stopping: task executor error", e);

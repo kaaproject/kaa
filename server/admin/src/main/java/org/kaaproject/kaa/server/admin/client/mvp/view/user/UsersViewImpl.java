@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.user;
 
+import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.dto.UserDto;
 
 public class UsersViewImpl extends BaseListViewImpl<UserDto> {
 

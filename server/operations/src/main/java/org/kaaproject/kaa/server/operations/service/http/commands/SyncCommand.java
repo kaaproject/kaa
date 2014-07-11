@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.operations.service.http.commands;
 
@@ -25,6 +25,7 @@ import java.security.PublicKey;
 import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 
@@ -37,6 +38,11 @@ public class SyncCommand extends AbstractOperationsCommand<SyncRequest, SyncResp
     static {
         COMMAND_NAME = SYNC_COMMAND;
         LOG.info("CommandName: " + COMMAND_NAME);
+    }
+
+    @Override
+    public ChannelType getChannelType() {
+        return ChannelType.HTTP;
     }
 
     /**
@@ -68,8 +74,15 @@ public class SyncCommand extends AbstractOperationsCommand<SyncRequest, SyncResp
      */
     @Override
     protected PublicKey getPublicKey(SyncRequest request) throws GeneralSecurityException {
-        EndpointObjectHash hash = EndpointObjectHash.fromBytes(request.getEndpointPublicKeyHash().array());
-        PublicKey endpointKey = cacheService.getEndpointKey(hash);
+        PublicKey endpointKey = null;
+        if(request.getProfileSyncRequest() != null && request.getProfileSyncRequest().getEndpointPublicKey() != null){
+            byte[] publicKeySrc = request.getProfileSyncRequest().getEndpointPublicKey().array();
+            endpointKey = KeyUtil.getPublic(publicKeySrc);
+        }
+        if(endpointKey == null){
+            EndpointObjectHash hash = EndpointObjectHash.fromBytes(request.getSyncRequestMetaData().getEndpointPublicKeyHash().array());
+            endpointKey = cacheService.getEndpointKey(hash);
+        }
         return endpointKey;
     }
 
@@ -88,7 +101,7 @@ public class SyncCommand extends AbstractOperationsCommand<SyncRequest, SyncResp
     public boolean isNeedConnectionClose() {
         return true;
     }
-    
+
     public static String getCommandName() {
         return SYNC_COMMAND;
     }

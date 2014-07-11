@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.List;
 
 import org.apache.avro.generic.GenericContainer;
@@ -38,19 +37,18 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.server.common.dao.configuration.ConfigurationProcessingException;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
+import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaCreationException;
+import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithm;
+import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactory;
+import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl;
+import org.kaaproject.kaa.server.common.core.schema.DataSchema;
+import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Configuration;
-import org.kaaproject.kaa.server.common.dao.schema.BaseDataSchemaStrategy;
-import org.kaaproject.kaa.server.common.dao.schema.OverrideDataSchemaStrategy;
-import org.kaaproject.kaa.server.common.dao.schema.ProtocolSchemaStrategy;
-import org.kaaproject.kaa.server.common.dao.schema.SchemaCreationException;
-import org.kaaproject.kaa.server.common.dao.schema.SchemaCreator;
-import org.kaaproject.kaa.server.common.dao.schema.SchemaCreatorImpl;
-import org.kaaproject.kaa.server.common.dao.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDataLoader;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
@@ -64,7 +62,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationServiceImplTest.class);
 
-    private static final String INCORRECT_ID = "7";
+    private static final String INCORRECT_SQL_ID = "incorrect id";
 
     @BeforeClass
     public static void init() throws Exception {
@@ -73,7 +71,6 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @AfterClass
     public static void after() throws Exception {
-        MongoDBTestRunner.getDB().dropDatabase();
         MongoDBTestRunner.tearDown();
     }
 
@@ -84,24 +81,25 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @After
     public void afterTest() {
-        MongoDBTestRunner.getDB().dropDatabase();
+        clearDBData();
     }
 
     @Test(expected = IncorrectParameterException.class)
     public void saveConfigurationWithIncorrectIdTestFail() throws SchemaCreationException {
         ConfigurationDto configurationDto = new ConfigurationDto();
-        configurationDto.setId(INCORRECT_ID);
+        configurationDto.setId(INCORRECT_SQL_ID);
         configurationService.saveConfiguration(configurationDto);
     }
 
     @Test(expected = UpdateStatusConflictException.class)
     public void saveConfigurationWithIncorrectStatusTestFail() throws SchemaCreationException {
-        ConfigurationDto configurationDto = configurationService.findConfigurationById(configurations.get(6));
+        List<ConfigurationDto> configurations = generateConfiguration(null, null, 1, true, false);
+        ConfigurationDto configurationDto = configurationService.findConfigurationById(configurations.get(0).getId());
         configurationService.saveConfiguration(configurationDto);
     }
 
     @Test
-    public void saveConfigurationObjectWithIdTest() throws SchemaCreationException, IOException, ConfigurationProcessingException {
+    public void saveConfigurationObjectWithIdTest() throws SchemaCreationException, IOException, ConfigurationGenerationException {
         List<ConfigurationDto> configs = generateConfiguration(null, null, 1, false, false);
         ConfigurationDto saved = configurationService.findConfigurationById(configs.get(0).getId());
         ConfigurationDto updated = configurationService.saveConfiguration(saved);
@@ -136,7 +134,8 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test(expected = IncorrectParameterException.class)
     public void saveConfigurationObjectWithIncorrectSchemaIdTest() throws SchemaCreationException {
-        ConfigurationDto configurationDto = configurationService.findConfigurationById(configurations.get(0));
+        List<ConfigurationDto> configurations = generateConfiguration(null, null, 1, false, false);
+        ConfigurationDto configurationDto = configurationService.findConfigurationById(configurations.get(0).getId());
         configurationDto.setId(null);
         configurationDto.setSchemaId(configurationDto.getApplicationId());
         configurationService.saveConfiguration(configurationDto);
@@ -144,93 +143,103 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void findConfSchemaByIdTest() {
-        String id = schemas.get(0);
-        ConfigurationSchemaDto dto = configurationService.findConfSchemaById(id);
-        Assert.assertNotNull(dto);
+        List<ConfigurationSchemaDto> schemas = generateConfSchema(null, 1);
+        ConfigurationSchemaDto schema = schemas.get(0);
+        ConfigurationSchemaDto foundSchema = configurationService.findConfSchemaById(schema.getId());
+        Assert.assertNotNull(foundSchema);
+        Assert.assertEquals(schema, foundSchema);
     }
 
     @Test(expected = IncorrectParameterException.class)
     public void findConfSchemaByIdTestFail() {
-        configurationService.findConfSchemaById(INCORRECT_ID);
+        configurationService.findConfSchemaById(INCORRECT_SQL_ID);
     }
 
     @Test
     public void findLatestConfigurationByAppIdTest() {
-        String applicationId = apps.get(0);
-        ConfigurationDto configurationDto = configurationService.findConfigurationByAppIdAndVersion(applicationId, 1);
-        Assert.assertNotNull(configurationDto);
+        List<ConfigurationDto> configurations = generateConfiguration(null, null, 1, false, false);
+        ConfigurationDto expected = configurations.get(0);
+        ConfigurationDto found = configurationService.findConfigurationByAppIdAndVersion(expected.getApplicationId(), 1);
+        Assert.assertNotNull(found);
     }
 
     @Test(expected = IncorrectParameterException.class)
     public void findLatestConfigurationByAppIdTestFail() {
-        configurationService.findConfigurationByAppIdAndVersion(INCORRECT_ID, 1);
+        configurationService.findConfigurationByAppIdAndVersion(INCORRECT_SQL_ID, 1);
     }
 
     @Test
     public void findConfigurationByIdTest() {
-        String id = configurations.get(0);
-        ConfigurationDto configurationDto = configurationService.findConfigurationById(id);
-        Assert.assertNotNull(configurationDto);
+        List<ConfigurationDto> configurations = generateConfiguration(null, null, 1, false, false);
+        ConfigurationDto configuration = configurations.get(0);
+        ConfigurationDto foundConfiguration = configurationService.findConfigurationById(configuration.getId());
+        Assert.assertNotNull(foundConfiguration);
+        Assert.assertEquals(configuration, foundConfiguration);
     }
 
     @Test(expected = IncorrectParameterException.class)
     public void findConfigurationByIdTestFail() {
-        configurationService.findConfigurationById(INCORRECT_ID);
+        configurationService.findConfigurationById(INCORRECT_SQL_ID);
     }
 
     @Test
     public void activateConfiguration() {
-        String id = configurations.get(7);
-        ConfigurationDto found = configurationService.findConfigurationById(id);
-        ChangeConfigurationNotification notification = configurationService.activateConfiguration(id, null);
+        List<ConfigurationDto> configurations = generateConfiguration(null, null, 1, false, false);
+        String configId = configurations.get(0).getId();
+        ConfigurationDto found = configurationService.findConfigurationById(configId);
+        ChangeConfigurationNotification notification = configurationService.activateConfiguration(configId, null);
         Assert.assertNotNull(notification);
         ConfigurationDto dto = notification.getConfigurationDto();
         Assert.assertNotNull(dto);
         Assert.assertEquals(dto.getStatus(), UpdateStatus.ACTIVE);
-        Assert.assertEquals(dto.getId(), id);
+        Assert.assertEquals(dto.getId(), configId);
         Assert.assertNotEquals(dto.getSequenceNumber(), found.getSequenceNumber());
     }
 
     @Test(expected = UpdateStatusConflictException.class)
     public void activateConfigurationTestFail() {
-        configurationService.activateConfiguration(configurations.get(6), null);
+        List<ConfigurationDto> configurations = generateConfiguration(null, null, 1, true, false);
+        ConfigurationDto configuration = configurations.get(0);
+        configurationService.activateConfiguration(configuration.getId(), null);
     }
 
     @Test(expected = IncorrectParameterException.class)
     public void activateConfigurationWithIncorrectIdTestFail() {
-        configurationService.activateConfiguration(INCORRECT_ID, null);
+        configurationService.activateConfiguration(INCORRECT_SQL_ID, null);
     }
 
     @Test
     public void findConfigurationsByEndpointGroupIdTest() {
-        List<ConfigurationDto> dtoList = configurationService.findConfigurationsByEndpointGroupId(endGroups.get(0));
+        EndpointGroupDto group = generateEndpointGroup(null);
+        List<ConfigurationDto> configurations = generateConfiguration(null, group.getId(), 1, true, false);
+        List<ConfigurationDto> dtoList = configurationService.findConfigurationsByEndpointGroupId(group.getId());
         Assert.assertNotNull(dtoList);
-        Assert.assertFalse(dtoList.isEmpty());
+        Assert.assertEquals(configurations, dtoList);
     }
 
     @Test
     public void findConfSchemaByAppIdAndVersionTest() {
-        String appId = apps.get(0);
+        String appId = generateApplication().getId();
         ConfigurationSchemaDto dto = configurationService.findConfSchemaByAppIdAndVersion(appId, 1);
         Assert.assertNotNull(dto);
     }
 
     @Test
     public void saveConfSchemaTest() throws SchemaCreationException, IOException {
-        String id = schemas.get(0);
-        ConfigurationSchemaDto dto = configurationService.findConfSchemaById(id);
-        Assert.assertNotNull(dto);
-        dto.setId(null);
-        dto.setSchema(readSchemaFileAsString("dao/configuration/default_schema.json"));
-        ConfigurationSchemaDto saved = configurationService.saveConfSchema(dto);
+        String id = generateConfSchema(null, 1).get(0).getId();
+        ConfigurationSchemaDto schema = configurationService.findConfSchemaById(id);
+        Assert.assertNotNull(schema);
+        schema.setId(null);
+        schema.setSchema(new DataSchema(readSchemaFileAsString("dao/configuration/default_schema.json")).getRawSchema());
+        ConfigurationSchemaDto saved = configurationService.saveConfSchema(schema);
         Assert.assertNotNull(saved);
-        Assert.assertNotEquals(dto.getId(), saved.getId());
-        Assert.assertEquals(UpdateStatus.ACTIVE, dto.getStatus());
+        Assert.assertNotEquals(schema.getId(), saved.getId());
     }
 
     @Test
     public void removeConfSchemasByAppIdTest() {
-        String appId = apps.get(0);
+        ApplicationDto application = generateApplication();
+        String appId = application.getId();
         List<ConfigurationSchemaDto> dtoList = configurationService.findConfSchemasByAppId(appId);
         Assert.assertNotNull(dtoList);
         Assert.assertFalse(dtoList.isEmpty());
@@ -238,14 +247,6 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         dtoList = configurationService.findConfSchemasByAppId(appId);
         Assert.assertNotNull(dtoList);
         Assert.assertTrue(dtoList.isEmpty());
-    }
-
-    @Test
-    public void saveMoreConfigurations() throws SchemaCreationException, IOException, ConfigurationProcessingException {
-        ConfigurationSchemaDto schema = generateConfSchema(null, 1).get(0);
-        generateConfiguration(schema.getId(), null, 9, true, false);
-        ConfigurationDto config = configurationService.findConfigurationByAppIdAndVersion(schema.getApplicationId(), schema.getMajorVersion());
-        Assert.assertEquals(UpdateStatus.ACTIVE, config.getStatus());
     }
 
     @Test
@@ -261,16 +262,15 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void createSchemaTest() throws Exception {
-        String schema = readSchemaFileAsString("dao/schema/dataSchema.json");
-        SchemaCreator protocolSchemaCreator = new SchemaCreatorImpl(new ProtocolSchemaStrategy());
-        SchemaCreator overrideSchemaCreator = new SchemaCreatorImpl(new OverrideDataSchemaStrategy());
-        SchemaCreator baseSchemaCreator = new SchemaCreatorImpl(new BaseDataSchemaStrategy());
-        String protocolSchema = protocolSchemaCreator.createSchema(new StringReader(schema));
-        String baseSchema = baseSchemaCreator.createSchema(new StringReader(schema));
-        String overrideSchema = overrideSchemaCreator.createSchema(new StringReader(schema));
-        LOGGER.debug("Created Override schema JSON {} ", overrideSchema);
-        LOGGER.debug("Created Base schema JSON {} ", baseSchema);
-        LOGGER.debug("Created Protocol schema JSON {} ", protocolSchema);
+        DataSchema schema = new DataSchema(readSchemaFileAsString("dao/schema/dataSchema.json"));
+        SchemaGenerationAlgorithmFactory factory = new SchemaGenerationAlgorithmFactoryImpl();
+        SchemaGenerationAlgorithm generator = factory.createSchemaGenerator(schema);
+        KaaSchema protocolSchema = generator.getProtocolSchema();
+        KaaSchema baseSchema = generator.getBaseSchema();
+        KaaSchema overrideSchema = generator.getOverrideSchema();
+        LOGGER.debug("Created Override schema JSON {} ", overrideSchema.getRawSchema());
+        LOGGER.debug("Created Base schema JSON {} ", baseSchema.getRawSchema());
+        LOGGER.debug("Created Protocol schema JSON {} ", protocolSchema.getRawSchema());
     }
 
     @Test
@@ -308,7 +308,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test(expected = IncorrectParameterException.class)
     public void deactivateIncorrectConfigurationTest() {
-        configurationService.deactivateConfiguration(new ObjectId().toString(), null);
+        configurationService.deactivateConfiguration(INCORRECT_SQL_ID, null);
     }
 
     @Test
@@ -329,8 +329,9 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         Assert.assertNotNull(notification);
         ConfigurationDto configurationDto = notification.getConfigurationDto();
         Assert.assertEquals(UpdateStatus.DEPRECATED, configurationDto.getStatus());
-        Configuration inactive = configurationDao.findInactiveBySchemaIdAndGroupId(schemaDto.getId(), group.getId());
-        Assert.assertNull(inactive);
+        StructureRecordDto<ConfigurationDto> records = configurationService.findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaDto.getId(), group.getId());
+        Assert.assertNull(records.getInactiveStructureDto());
+        Assert.assertEquals(UpdateStatus.DEPRECATED, records.getActiveStructureDto().getStatus());
     }
 
     @Test

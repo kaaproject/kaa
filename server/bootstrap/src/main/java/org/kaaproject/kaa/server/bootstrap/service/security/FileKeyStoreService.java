@@ -65,7 +65,7 @@ public class FileKeyStoreService implements KeyStoreService {
                 privateKey = KeyUtil.getPrivate(f);
             } catch (Exception e) {
                 LOG.debug("Error loading private key", e);
-                throw new RuntimeException(e);
+                throw new RuntimeException(e); //NOSONAR
             }
         }
         f = new File(publicKeyLocation);
@@ -74,7 +74,7 @@ public class FileKeyStoreService implements KeyStoreService {
                 publicKey = KeyUtil.getPublic(f);
             } catch (Exception e) {
                 LOG.debug("Error loading public key", e);
-                throw new RuntimeException(e);
+                throw new RuntimeException(e); //NOSONAR
             }
         }
         if (privateKey == null || publicKey == null) {

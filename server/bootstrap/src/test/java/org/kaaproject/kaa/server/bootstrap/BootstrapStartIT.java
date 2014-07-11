@@ -21,10 +21,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.PublicKey;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,7 +40,12 @@ import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
 import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
 import org.kaaproject.kaa.server.bootstrap.service.initialization.DefaultBootstrapInitializationService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftChannelType;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftIpParameters;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService.Client;
+import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChannel;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftActivity;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftClient;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
@@ -55,6 +59,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -294,9 +299,9 @@ public class BootstrapStartIT {
 
         BootstrapNodeInfo info = nodes.get(0);
 
-        assertEquals(nettyHost, info.getConnectionInfo().getHttpHost().toString());
+        assertEquals(nettyHost, info.getBootstrapHostName().toString());
 
-        assertEquals((long)nettyPort, (long)info.getConnectionInfo().getHttpPort());
+        assertEquals((long)nettyPort, (long)info.getBootstrapPort());
 
         assertEquals(thriftHost, info.getConnectionInfo().getThriftHost().toString());
 
@@ -314,7 +319,7 @@ public class BootstrapStartIT {
 
         logger.info("Going to test Thrift OperationsServerList update.....");
 
-        final Map<String, org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer> update = generateDnsUpdate();
+        final List<ThriftOperationsServer> update = generateDnsUpdate();
 
         logger.info("Generated "+update.size()+" endpoint servers");
 
@@ -326,9 +331,11 @@ public class BootstrapStartIT {
         assertEquals(update.size(), list.size());
 
         for(OperationsServer server : list) {
-            String host = server.getDNSName();
-            if (update.containsKey(host)) {
-                org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer sendServ = update.get(host);
+            String host = server.getName();
+            logger.info("Server Name {} 1",host);
+            ThriftOperationsServer sendServ = getThriftOperationsServerByName(host, update);
+            if (sendServ != null) {
+                
                 assertEquals(sendServ.priority, server.getPriority().intValue());
 
                 assertEquals(sendServ.publicKey, server.getPublicKey());
@@ -363,9 +370,11 @@ public class BootstrapStartIT {
                         assertEquals(update.size(), respList.size());
 
                         for(OperationsServer server : respList) {
-                            String host = server.getDNSName();
-                            if (update.containsKey(host)) {
-                                org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer sendServ = update.get(host);
+                            String host = server.getName();
+                            logger.info("Server Name {} 2",host);
+                            ThriftOperationsServer sendServ = getThriftOperationsServerByName(host,update);
+                            if (sendServ != null) {
+                                
                                 assertEquals(sendServ.priority, server.getPriority().intValue());
 
                                 assertEquals(sendServ.publicKey, server.getPublicKey());
@@ -405,7 +414,7 @@ public class BootstrapStartIT {
      *
      * @param nodeInfo the node info
      */
-    private void updateBootstrap(BootstrapNodeInfo nodeInfo, final Map<String,org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer> update) {
+    private void updateBootstrap(BootstrapNodeInfo nodeInfo, final List<ThriftOperationsServer> update) {
         final Object sync = new Object();
         thriftComplete = false;
         logger.debug("Update bootstrap server: Thrift: "+nodeInfo.getConnectionInfo().getThriftHost().toString()+":"+nodeInfo.getConnectionInfo().getThriftPort());
@@ -462,21 +471,42 @@ public class BootstrapStartIT {
     }
 
     /**
-     * Generate endpointServer map.
-     * @return Map<String,endpointServer>
+     * Generate ThriftOperationsServer list.
+     * @return List<ThriftOperationsServer>
      */
-    private Map<String,org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer> generateDnsUpdate() {
-        HashMap<String,org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer> update = new HashMap<>();
+    private List<ThriftOperationsServer> generateDnsUpdate() {
         int updateSize = rnd.nextInt(10);
+        List<ThriftOperationsServer> operationsServersList = new ArrayList<>();
         for(int i=0;i<updateSize;i++) {
-            org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer es = new org.kaaproject.kaa.server.common.thrift.gen.bootstrap.OperationsServer();
-            es.setPriority(rnd.nextInt(100));
-            byte[] key = new byte[256];
-            rnd.nextBytes(key);
-            es.setPublicKey(key);
+            List<ThriftSupportedChannel> scList = new ArrayList<>();
             String host = rnd.nextInt(255)+"."+rnd.nextInt(255)+"."+rnd.nextInt(255)+"."+rnd.nextInt(255);
-            update.put(host, es);
+            int port = 1000+rnd.nextInt(32768);
+            ThriftIpParameters ipParams = new ThriftIpParameters(host,port);
+            ThriftCommunicationParameters comParam = new ThriftCommunicationParameters();
+            comParam.setHttpParams(ipParams);
+            ThriftSupportedChannel sc = new ThriftSupportedChannel(ThriftChannelType.HTTP, comParam);
+            scList.add(sc);
+            ThriftOperationsServer s = new ThriftOperationsServer(host, rnd.nextInt(100), getRandomByteBuffer(256), scList );
+            operationsServersList.add(s);
         }
-        return update;
+        return operationsServersList;
+    }
+    
+    private ThriftOperationsServer getThriftOperationsServerByName(String name, List<ThriftOperationsServer> list) {
+        ThriftOperationsServer server = null;
+        for(ThriftOperationsServer s : list) {
+            logger.info("getThriftOperationsServerByName name: {}; s.getName {}",name,s.getName()); 
+            if (s.getName() != null && s.getName().equals(name)) {
+                server = s;
+                break;
+            }
+        }
+        return server;
+    }
+    
+    private ByteBuffer getRandomByteBuffer(int size) {
+        byte[] buffer = new byte[size];
+        rnd.nextBytes(buffer);
+        return ByteBuffer.wrap(buffer);
     }
 }

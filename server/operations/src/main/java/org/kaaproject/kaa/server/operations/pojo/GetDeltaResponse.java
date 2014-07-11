@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.operations.pojo;
 
-import org.kaaproject.kaa.server.operations.service.delta.RawBinaryDelta;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
 
 
 /**
  * The Class for modeling of delta response. It is used to communicate with
  * {@link org.kaaproject.kaa.server.operations.service.delta.DeltaService
  * DeltaService}
- * 
+ *
  * @author ashvayka
  */
 
@@ -42,20 +42,20 @@ public class GetDeltaResponse{
     }
 
     /** The response type. */
-    private GetDeltaResponseType responseType;
+    private final GetDeltaResponseType responseType;
 
     /** The delta. */
-    private RawBinaryDelta delta;
+    private final RawBinaryDelta delta;
 
     /** The conf schema. */
     private String confSchema;
 
     /** The sequence number. */
-    private int sequenceNumber;
+    private final int sequenceNumber;
 
     /**
      * Instantiates a new delta response.
-     * 
+     *
      * @param responseType
      *            the response type
      */
@@ -65,7 +65,7 @@ public class GetDeltaResponse{
 
     /**
      * Instantiates a new delta response.
-     * 
+     *
      * @param responseType
      *            the response type
      * @param sequenceNumber
@@ -77,7 +77,7 @@ public class GetDeltaResponse{
 
     /**
      * Instantiates a new delta response.
-     * 
+     *
      * @param responseType
      *            the response type
      * @param sequenceNumber
@@ -94,7 +94,7 @@ public class GetDeltaResponse{
 
     /**
      * Gets the response type.
-     * 
+     *
      * @return the response type
      */
     public GetDeltaResponseType getResponseType() {
@@ -103,7 +103,7 @@ public class GetDeltaResponse{
 
     /**
      * Gets the delta.
-     * 
+     *
      * @return the delta
      */
     public RawBinaryDelta getDelta() {
@@ -112,7 +112,7 @@ public class GetDeltaResponse{
 
     /**
      * Gets the sequence number.
-     * 
+     *
      * @return the sequence number
      */
     public int getSequenceNumber() {
@@ -121,7 +121,7 @@ public class GetDeltaResponse{
 
     /**
      * Sets the conf schema.
-     * 
+     *
      * @param confSchema
      *            the new conf schema
      */
@@ -131,7 +131,7 @@ public class GetDeltaResponse{
 
     /**
      * Gets the conf schema.
-     * 
+     *
      * @return the conf schema
      */
     public String getConfSchema() {

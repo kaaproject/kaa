@@ -1,0 +1,28 @@
+{
+    "test_array_of_record": {
+        "org.kaaproject.configuration.unchangedT": "unchanged"
+    },
+    "test_array": {
+        "array": [12, 13]
+    },
+    "test_array2": {
+        "array": [12, 13]
+    },
+    "nullableField1": {
+        "string": "str"
+    },
+    "__uuid": null,
+    "testField1": null,
+    "testField2": {
+        "org.kaaproject.configuration.unchangedT": "unchanged"
+    },
+    "testField5": {
+        "org.kaaproject.configuration.unchangedT": "unchanged"
+    },
+    "testField6": {
+        "org.kaaproject.configuration.unchangedT": "unchanged"
+    },
+    "test_array_union": {
+        "org.kaaproject.configuration.unchangedT": "unchanged"
+    }
+}

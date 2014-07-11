@@ -18,17 +18,21 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.server.common.dao.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -37,6 +41,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class TopicServiceImplTest extends AbstractTest {
+
+    @Autowired
+    private DataSource dataSource;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -50,7 +57,7 @@ public class TopicServiceImplTest extends AbstractTest {
 
     @After
     public void afterTest() {
-        MongoDBTestRunner.getDB().dropDatabase();
+        clearDBData();
     }
 
     @Test
@@ -101,5 +108,24 @@ public class TopicServiceImplTest extends AbstractTest {
         List<TopicDto> found = topicService.findTopicsByAppId(topic.getApplicationId());
         Assert.assertNotNull(found);
         Assert.assertTrue(found.isEmpty());
+    }
+
+    @Test
+    public void testFindVacantTopicsByEndpointGroupId() {
+        ApplicationDto app = generateApplication();
+        EndpointGroupDto group = generateEndpointGroup(app.getId());
+        TopicDto topic = generateTopic(app.getId(), null);
+        List<TopicDto> found = topicService.findVacantTopicsByEndpointGroupId(group.getId());
+        Assert.assertEquals(topic, found.get(0));
+    }
+
+    @Test
+    public void testFindTopicsByEndpointGroupId() {
+        ApplicationDto app = generateApplication();
+        EndpointGroupDto group = generateEndpointGroup(app.getId());
+        TopicDto topic = generateTopic(app.getId(), null);
+        endpointService.addTopicToEndpointGroup(group.getId(), topic.getId());
+        List<TopicDto> found = topicService.findTopicsByEndpointGroupId(group.getId());
+        Assert.assertEquals(topic, found.get(0));
     }
 }

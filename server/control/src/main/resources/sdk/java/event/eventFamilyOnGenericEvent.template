@@ -1,0 +1,12 @@
+        if ("${event_class_fqn}".equals(fqn)) {
+            try {
+                AvroByteArrayConverter<${event_class_fqn}> converter = new AvroByteArrayConverter<>(${event_class_fqn}.class);
+                ${event_class_fqn} event = converter.fromByteArray(data);
+                for (DefaultEventFamilyListener listener : listeners) {
+                    listener.onEvent(event, source);
+                }
+            }
+            catch (IOException e) {
+                LOG.error("Exception caught while processing event with fqn [{}]: {}", fqn, e.toString());
+            }
+        }

@@ -17,16 +17,24 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.dto.SchemaVersions;
-import org.kaaproject.kaa.server.admin.shared.dto.SdkPlatform;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,8 +43,10 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -49,7 +59,17 @@ public class GenerateSdkDialog extends KaaDialog {
     private SchemaListBox configurationSchemaVersion;
     private SchemaListBox profileSchemaVersion;
     private SchemaListBox notificationSchemaVersion;
+    private SchemaListBox logSchemaVersion;
     private ValueListBox<SdkPlatform> targetPlatform;
+
+    private List<AefMapInfoDto> aefMaps;
+    private AefMapInfoDtoComparator aefMapComparator;
+
+    private MultiAefMapListBox availableAefMaps;
+    private MultiAefMapListBox selectedAefMaps;
+
+    private Button addAefMapButton;
+    private Button removeAefMapButton;
 
     private String applicationId;
 
@@ -63,19 +83,30 @@ public class GenerateSdkDialog extends KaaDialog {
             }
 
             @Override
-            public void onSuccess(SchemaVersions result) {
-                GenerateSdkDialog dialog = new GenerateSdkDialog(applicationId, result);
-                dialog.center();
-                callback.onSuccess(dialog);
-                dialog.show();
+            public void onSuccess(final SchemaVersions schemaVersions) {
+                KaaAdmin.getDataSource().getAefMaps(applicationId, new AsyncCallback<List<AefMapInfoDto>> () {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(List<AefMapInfoDto> ecfs) {
+                        GenerateSdkDialog dialog = new GenerateSdkDialog(applicationId, schemaVersions, ecfs);
+                        dialog.center();
+                        callback.onSuccess(dialog);
+                        dialog.show();
+                    }
+                });
             }
         });
     }
 
-    public GenerateSdkDialog(String applicationId, SchemaVersions schemaVersions) {
+    public GenerateSdkDialog(String applicationId, SchemaVersions schemaVersions, List<AefMapInfoDto> aefMaps) {
         super(false, true);
 
         this.applicationId = applicationId;
+        this.aefMaps = aefMaps;
 
         setWidth("500px");
 
@@ -138,6 +169,18 @@ public class GenerateSdkDialog extends KaaDialog {
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
         row++;
 
+        label = new Label(Utils.constants.logSchemaVersion());
+        label.addStyleName("required");
+        logSchemaVersion = new SchemaListBox();
+        logSchemaVersion.setWidth("80px");
+        logSchemaVersion.setAcceptableValues(schemaVersions.getLogSchemaVersions());
+        logSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
+
+        table.setWidget(row, 0, label);
+        table.setWidget(row, 1, logSchemaVersion);
+        table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+        row++;
+
         label = new Label(Utils.constants.targetPlatform());
         label.addStyleName("required");
 
@@ -172,8 +215,88 @@ public class GenerateSdkDialog extends KaaDialog {
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, targetPlatform);
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+        row++;
+
+        FlexTable ecfsTable  = new FlexTable();
+        ecfsTable.setCellSpacing(6);
+
+        availableAefMaps = new MultiAefMapListBox();
+        selectedAefMaps = new MultiAefMapListBox();
+
+        addAefMapButton = new Button(Utils.constants.add());
+        removeAefMapButton = new Button(Utils.constants.remove());
+
+        VerticalPanel availableEcfsPanel = new VerticalPanel();
+        availableEcfsPanel.setSpacing(6);
+        Label availableLabel = new Label(Utils.constants.available());
+        availableEcfsPanel.add(availableLabel);
+        availableEcfsPanel.add(availableAefMaps);
+
+        VerticalPanel ecfButtonsPanel = new VerticalPanel();
+        ecfButtonsPanel.setSpacing(6);
+        ecfButtonsPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        ecfButtonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        ecfButtonsPanel.add(addAefMapButton);
+        ecfButtonsPanel.add(removeAefMapButton);
+
+        VerticalPanel selectedEcfsPanel = new VerticalPanel();
+        selectedEcfsPanel.setSpacing(6);
+        Label selectedLabel = new Label(Utils.constants.selected());
+        selectedEcfsPanel.add(selectedLabel);
+        selectedEcfsPanel.add(selectedAefMaps);
+
+        ecfsTable.setWidget(0, 0, availableEcfsPanel);
+        ecfsTable.setWidget(0, 1, ecfButtonsPanel);
+        ecfsTable.setWidget(0, 2, selectedEcfsPanel);
+
+        DisclosurePanel ecfsDisclosure = new DisclosurePanel(Utils.constants.ecfs());
+        ecfsDisclosure.setAnimationEnabled(true);
+        ecfsDisclosure.setContent(ecfsTable);
+
+        aefMapComparator = new AefMapInfoDtoComparator();
+        Collections.sort(aefMaps, aefMapComparator);
+
+        availableAefMaps.setAcceptableValues(aefMaps);
+
+        addAefMapButton.addStyleName("b-app-button-small");
+        removeAefMapButton.addStyleName("b-app-button-small");
+
+        addAefMapButton.setEnabled(false);
+        removeAefMapButton.setEnabled(false);
+
+        addAefMapButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                addAefMap();
+            }
+        });
+
+        removeAefMapButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                removeAefMap();
+            }
+        });
+
+        availableAefMaps.setSize("150px", "100px");
+        selectedAefMaps.setSize("150px", "100px");
+
+        availableAefMaps.addValueChangeHandler(new ValueChangeHandler<List<AefMapInfoDto>>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<List<AefMapInfoDto>> event) {
+                updateAefMapButtons();
+            }
+        });
+
+        selectedAefMaps.addValueChangeHandler(new ValueChangeHandler<List<AefMapInfoDto>>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<List<AefMapInfoDto>> event) {
+                updateAefMapButtons();
+            }
+        });
 
         dialogContents.add(table);
+        dialogContents.add(ecfsDisclosure);
 
         generateSdkButton = new Button(Utils.constants.generate_sdk(), new ClickHandler() {
             @Override
@@ -194,6 +317,71 @@ public class GenerateSdkDialog extends KaaDialog {
         generateSdkButton.setEnabled(false);
     }
 
+    private void addAefMap() {
+        List<AefMapInfoDto> selected = availableAefMaps.getValue();
+        availableAefMaps.setValue(null, true);
+        Map<String,AefMapInfoDto> idMap = new HashMap<String, AefMapInfoDto>();
+        for (AefMapInfoDto aefMap : selected) {
+            AefMapInfoDto previous = idMap.get(aefMap.getEcfId());
+            if (previous == null || aefMap.getVersion()>previous.getVersion()) {
+                idMap.put(aefMap.getEcfId(), aefMap);
+            }
+        }
+
+        List<AefMapInfoDto> totalSelected = new ArrayList<>();
+        totalSelected.addAll(idMap.values());
+        totalSelected.addAll(selectedAefMaps.getValues());
+        updateAefMapLists(totalSelected);
+    }
+
+    private void removeAefMap() {
+        List<AefMapInfoDto> selected = selectedAefMaps.getValue();
+        selectedAefMaps.setValue(null, true);
+        List<AefMapInfoDto> totalSelected = new ArrayList<>();
+        for (AefMapInfoDto aefMap : selectedAefMaps.getValues()) {
+            if (!selected.contains(aefMap)) {
+                totalSelected.add(aefMap);
+            }
+        }
+        updateAefMapLists(totalSelected);
+    }
+
+    private void updateAefMapLists(List<AefMapInfoDto> totalSelected) {
+        List<AefMapInfoDto> available = new ArrayList<>();
+        Map<String,AefMapInfoDto> idMap = new HashMap<String, AefMapInfoDto>();
+        for (AefMapInfoDto aefMap : totalSelected) {
+            idMap.put(aefMap.getEcfId(), aefMap);
+        }
+        for (AefMapInfoDto aefMap : aefMaps) {
+            if (!idMap.containsKey(aefMap.getEcfId())) {
+                available.add(aefMap);
+            }
+        }
+        Collections.sort(available, aefMapComparator);
+        Collections.sort(totalSelected, aefMapComparator);
+        availableAefMaps.setAcceptableValues(available);
+        selectedAefMaps.setAcceptableValues(totalSelected);
+    }
+
+    class AefMapInfoDtoComparator implements Comparator<AefMapInfoDto> {
+        @Override
+        public int compare(AefMapInfoDto o1, AefMapInfoDto o2) {
+            int result = o1.getEcfName().compareTo(o2.getEcfName());
+            if (result == 0) {
+                result = o1.getVersion() - o2.getVersion();
+            }
+            return result;
+        }
+    }
+
+
+    private void updateAefMapButtons() {
+        boolean availableSelected = availableAefMaps.getValue() != null && !availableAefMaps.getValue().isEmpty();
+        boolean selectedSelected = selectedAefMaps.getValue() != null && !selectedAefMaps.getValue().isEmpty();
+        addAefMapButton.setEnabled(availableSelected);
+        removeAefMapButton.setEnabled(selectedSelected);
+    }
+
     private void fireChanged() {
         boolean valid = validate();
         generateSdkButton.setEnabled(valid);
@@ -203,9 +391,20 @@ public class GenerateSdkDialog extends KaaDialog {
         SchemaDto configurationSchema = configurationSchemaVersion.getValue();
         SchemaDto profileSchema = profileSchemaVersion.getValue();
         SchemaDto notificationSchema = notificationSchemaVersion.getValue();
+        SchemaDto logSchema = logSchemaVersion.getValue();
         SdkPlatform targetPlatformVal = targetPlatform.getValue();
+
+        List<String> aefMapIds = new ArrayList<>();
+        List<AefMapInfoDto> aefMaps = selectedAefMaps.getValues();
+        if (aefMaps != null) {
+            for (AefMapInfoDto aefMap : aefMaps) {
+                aefMapIds.add(aefMap.getAefMapId());
+            }
+        }
+
         KaaAdmin.getDataSource().getSdk(applicationId, configurationSchema.getMajorVersion(),
                 profileSchema.getMajorVersion(), notificationSchema.getMajorVersion(), targetPlatformVal,
+                aefMapIds, logSchema.getMajorVersion(),
                 new AsyncCallback<String>() {
 
                     @Override
@@ -224,6 +423,7 @@ public class GenerateSdkDialog extends KaaDialog {
         boolean result = configurationSchemaVersion.getValue() != null;
         result &= profileSchemaVersion.getValue() != null;
         result &= notificationSchemaVersion.getValue() != null;
+        result &= logSchemaVersion.getValue() != null;
         result &= targetPlatform.getValue() != null;
         return result;
     }

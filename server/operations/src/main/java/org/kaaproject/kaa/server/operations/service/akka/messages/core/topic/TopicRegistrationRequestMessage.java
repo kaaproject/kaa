@@ -26,19 +26,19 @@ import akka.actor.ActorRef;
  * The Class TopicRegistrationRequestMessage.
  */
 public class TopicRegistrationRequestMessage extends EndpointAwareMessage{
-    
+
     /** The topic id. */
     private final String topicId;
-    
+
     /** The seq number. */
     private final int seqNumber;
-    
+
     /** The system nf schema version. */
     private final int systemNfSchemaVersion;
-    
+
     /** The user nf schema version. */
     private final int userNfSchemaVersion;
-    
+
     /**
      * Instantiates a new topic registration request message.
      *
@@ -66,7 +66,7 @@ public class TopicRegistrationRequestMessage extends EndpointAwareMessage{
     public String getTopicId() {
         return topicId;
     }
-    
+
     /**
      * Gets the seq number.
      *
@@ -74,7 +74,7 @@ public class TopicRegistrationRequestMessage extends EndpointAwareMessage{
      */
     public int getSeqNumber() {
         return seqNumber;
-    }     
+    }
 
     /**
      * Gets the system nf schema version.
@@ -92,5 +92,20 @@ public class TopicRegistrationRequestMessage extends EndpointAwareMessage{
      */
     public int getUserNfSchemaVersion() {
         return userNfSchemaVersion;
-    }   
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("TopicRegistrationRequestMessage [topicId=");
+        builder.append(topicId);
+        builder.append(", seqNumber=");
+        builder.append(seqNumber);
+        builder.append(", systemNfSchemaVersion=");
+        builder.append(systemNfSchemaVersion);
+        builder.append(", userNfSchemaVersion=");
+        builder.append(userNfSchemaVersion);
+        builder.append("]");
+        return builder.toString();
+    }
 }

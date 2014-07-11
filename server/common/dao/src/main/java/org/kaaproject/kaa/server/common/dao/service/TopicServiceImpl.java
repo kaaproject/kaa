@@ -16,33 +16,33 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.idToString;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.ProcessingStatus;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.server.common.dao.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.NotificationDao;
-import org.kaaproject.kaa.server.common.dao.TopicDao;
 import org.kaaproject.kaa.server.common.dao.TopicService;
-import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointGroup;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Notification;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Topic;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Update;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
+import org.kaaproject.kaa.server.common.dao.model.mongo.Notification;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TopicServiceImpl implements TopicService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TopicServiceImpl.class);
@@ -61,17 +61,12 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public TopicDto saveTopic(TopicDto topicDto) {
-        validateObject(topicDto, "Can't save topic. Invalid topic object");
+        validateSqlObject(topicDto, "Can't save topic. Invalid topic object");
         if (StringUtils.isBlank(topicDto.getId())) {
             LOG.debug("Save new topic.");
             topicDto.setCreatedTime(System.currentTimeMillis());
         }
-        Topic topic = new Topic(topicDto);
-        Update update = new Update();
-        update.setSequenceNumber(topic.getSecNum());
-        update.setStatus(ProcessingStatus.IDLE);
-        topic.setUpdate(update);
-        return getDto(topicDao.save(topic));
+        return getDto(topicDao.save(new Topic(topicDto)));
     }
 
     @Override
@@ -96,17 +91,14 @@ public class TopicServiceImpl implements TopicService {
     public List<TopicDto> findTopicsByEndpointGroupId(String endpointGroupId) {
         validateId(endpointGroupId, "Can't find topics. Invalid endpoint group id " + endpointGroupId);
         EndpointGroup endpointGroup = endpointGroupDao.findById(endpointGroupId);
-        List<String> topicIds = endpointGroup.getTopics();
-        return convertDtoList(topicDao.findTopicsByIds(topicIds));
+        Set<Topic> topics = endpointGroup.getTopics();
+        return convertDtoList(topics);
     }
 
     @Override
     public List<TopicDto> findVacantTopicsByEndpointGroupId(String endpointGroupId) {
         validateId(endpointGroupId, "Can't find vacant topics. Invalid endpoint group id " + endpointGroupId);
-        EndpointGroup endpointGroup = endpointGroupDao.findById(endpointGroupId);
-        String applicationId = idToString(endpointGroup.getApplicationId());
-        List<String> topicIds = endpointGroup.getTopics();
-        return convertDtoList(topicDao.findVacantTopicsByAppId(applicationId, topicIds));
+        return convertDtoList(topicDao.findVacantTopicsByGroupId(endpointGroupId));
     }
 
     @Override
@@ -117,11 +109,11 @@ public class TopicServiceImpl implements TopicService {
             List<EndpointGroup> groups = endpointGroupDao.findEndpointGroupsByTopicIdAndAppId(topic.getApplicationId(), id);
             if (groups != null && !groups.isEmpty()) {
                 for (EndpointGroup eg : groups) {
-                    endpointService.removeTopicFromEndpointGroup(eg.getId(), id);
+                    endpointService.removeTopicFromEndpointGroup(eg.getId().toString(), id);
                 }
             }
-            notificationDao.removeNotificationsByTopicId(id);
             topicDao.removeById(id);
+            notificationDao.removeNotificationsByTopicId(id);
         }
     }
 

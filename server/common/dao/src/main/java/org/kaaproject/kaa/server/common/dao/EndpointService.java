@@ -19,9 +19,11 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 
 /**
@@ -79,9 +81,9 @@ public interface EndpointService {
     UpdateNotificationDto<EndpointGroupDto> removeTopicFromEndpointGroup(String id, String topicId);
 
     /**
-     * Add topic id to endpoint group.
+     * Subscribe existing topic to existing group.
      *
-     * @param id the id
+     * @param id the endpoint group id
      * @param topicId the topic id
      * @return the update notification dto
      */
@@ -131,4 +133,88 @@ public interface EndpointService {
      * @return the endpoint profile dto
      */
     EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto);
+
+    /**
+     * Check access token.
+     *
+     * @param appDto the app dto
+     * @param tenantId the tenant id
+     * @param userAccessToken the user access token
+     * @return true, if successful
+     */
+    boolean checkAccessToken(ApplicationDto appDto, String tenantId, String userAccessToken);
+
+    /**
+     * Attach endpoint profile to user.
+     *
+     * @param userExternalId the user external id
+     * @param tenantId the tenant id
+     * @param profile the profile
+     * @return the endpoint profile dto
+     */
+    EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile);
+
+    /**
+     * Attach endpoint profile to user.
+     *
+     * @param endpointUserId the endpoint user id
+     * @param endpointAccessToken the endpoint access token
+     * @return the endpoint profile dto
+     */
+    EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken);
+
+    /**
+     * Detach endpoint profile from user.
+     *
+     * @param detachEndpoint the detach endpoint
+     */
+    void detachEndpointFromUser(EndpointProfileDto detachEndpoint);
+
+    /**
+     * Find all endpoint users.
+     *
+     * @return the list of endpoint user dto's.
+     */
+    List<EndpointUserDto> findAllEndpointUsers();
+
+    /**
+     * Find endpoint user by id.
+     *
+     * @param id the id
+     * @return the endpoint user dto
+     */
+    EndpointUserDto findEndpointUserById(String id);
+
+    /**
+     * Save endpoint user.
+     *
+     * @param endpointUserDto the endpoint user dto
+     * @return the endpoint user dto
+     */
+    EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto);
+
+    /**
+     * Remove endpoint user by id.
+     *
+     * @param id the endpoint user id
+     */
+    void removeEndpointUserById(String id);
+
+    /**
+     * Generate endpoint user access token from external user id.
+     *
+     * @param externalUid the external user id
+     * @param tenantId the tenant id
+     * @return generated access token
+     */
+    String generateEndpointUserAccessToken(String externalUid, String tenantId);
+
+
+    /**
+     * Find endpoint profiles by user id.
+     *
+     * @param endpointUserId the endpoint user id
+     * @return the list
+     */
+    List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId);
 }

@@ -16,29 +16,29 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import com.mongodb.MongoException;
-import org.apache.commons.lang.StringUtils;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
+
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.HistoryDto;
-import org.kaaproject.kaa.server.common.dao.ApplicationDao;
-import org.kaaproject.kaa.server.common.dao.HistoryDao;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Application;
-import org.kaaproject.kaa.server.common.dao.mongo.model.History;
-import org.kaaproject.kaa.server.common.dao.mongo.model.Update;
+import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
+import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
+import org.kaaproject.kaa.server.common.dao.model.sql.Application;
+import org.kaaproject.kaa.server.common.dao.model.sql.History;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class HistoryServiceImpl implements HistoryService {
 
     private static final Logger LOG = LoggerFactory.getLogger(HistoryServiceImpl.class);
@@ -86,11 +86,20 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public HistoryDto saveHistory(HistoryDto historyDto) {
         HistoryDto savedDto = null;
-        if (isValidObject(historyDto)) {
+        if (isValidSqlObject(historyDto)) {
             LOG.debug("History dto object is valid. Saving history...");
             String applicationId = historyDto.getApplicationId();
-            if (StringUtils.isNotEmpty(applicationId)) {
-                savedDto = saveHistory(historyDto, applicationId);
+            if (isValidSqlId(applicationId)) {
+                Application application = applicationDao.getNextSeqNumber(applicationId);
+                if (application != null) {
+                    int sequenceNumber = application.getSequenceNumber();
+                    historyDto.setSequenceNumber(sequenceNumber);
+                    historyDto.setLastModifyTime(System.currentTimeMillis());
+                    History savedHistory = historyDao.persist(new History(historyDto));
+                    savedDto = savedHistory != null ? savedHistory.toDto() : null;
+                } else {
+                    LOG.debug("Can't get sequence number for application id [{}] .", applicationId);
+                }
             } else {
                 LOG.debug("Incorrect application id, can't save history.");
             }
@@ -98,63 +107,6 @@ public class HistoryServiceImpl implements HistoryService {
             LOG.info("Invalid HistoryDto object. Can't save object.");
         }
         return savedDto;
-    }
-
-
-    private HistoryDto saveHistory(HistoryDto historyDto, String appId) {
-        HistoryDto savedDto = null;
-        try {
-            History savedHistory = saveHistoryAndIncrementSeqNum(historyDto, appId);
-            if (savedHistory != null) {
-                savedDto = savedHistory.toDto();
-            }
-        } catch (MongoException.DuplicateKey ex) {
-            LOG.debug("Catch duplicate key exception with id: [{}]", historyDto.getId());
-            savedDto = saveHistory(historyDto, appId);
-        }
-        return savedDto;
-    }
-
-    private History saveHistoryAndIncrementSeqNum(HistoryDto historyDto, String applicationId) {
-        History saved = null;
-        Application application = getNextSequenceNumber(applicationId);
-        if (application != null && application.getUpdate() != null) {
-            Update update = application.getUpdate();
-            int sequenceNumber = update.getSequenceNumber();
-            historyDto.setId(getId(applicationId, sequenceNumber));
-            historyDto.setSequenceNumber(sequenceNumber);
-            historyDto.setLastModifyTime(System.currentTimeMillis());
-            saved = historyDao.save(new History(historyDto));
-            if (saved != null) {
-                applicationDao.updateSeqNumber(applicationId);
-            } else {
-                LOG.debug("Can't save history with id [{}] .", historyDto.getId());
-            }
-        } else {
-            LOG.debug("Can't get sequence number for application id [{}] .", applicationId);
-        }
-        return saved;
-    }
-
-    private Application getNextSequenceNumber(String appId) {
-        long maxLatency = waitSeconds * 1000;
-        Application application = null;
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime;
-        while (application == null) {
-            if ((endTime - startTime) < maxLatency) {
-                application = applicationDao.getNextSeqNumber(appId);
-            } else {
-                application = applicationDao.forceNextSeqNumber(appId);
-                break;
-            }
-            endTime = System.currentTimeMillis();
-        }
-        return application;
-    }
-
-    private String getId(String appId, int sequenceNumber) {
-        return new StringBuilder().append(appId).append("_").append(sequenceNumber).toString();
     }
 
 }

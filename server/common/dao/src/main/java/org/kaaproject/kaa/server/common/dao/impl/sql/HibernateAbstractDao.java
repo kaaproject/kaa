@@ -1,0 +1,265 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.kaaproject.kaa.server.common.dao.impl.sql;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.sql.JoinType;
+import org.kaaproject.kaa.server.common.dao.impl.Dao;
+import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements Dao<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractDao.class);
+
+    public static final int FIRST = 1;
+
+    @Autowired
+    private SessionFactory sessionFactory;
+
+    protected abstract Class<T> getEntityClass();
+
+    protected Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
+    protected Criteria getCriteria() {
+        return getSession().createCriteria(getEntityClass());
+    }
+
+    protected Query getQuery(String hql) {
+        return getSession().createQuery(hql);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<T> findListByCriterion(Criterion criterion) {
+        String className = getSimpleClassName();
+        LOG.debug("Find {} entities by criterion [{}] ", className, criterion);
+        Criteria criteria = getCriteria();
+        criteria.add(criterion);
+        List<T> resultList = criteria.list();
+        if (LOG.isDebugEnabled()) {
+            if (resultList != null) {
+                LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
+            }
+        }
+        return resultList;
+    }
+
+    protected List<Long> toLongIds(List<String> ids) {
+        List<Long> lids = Collections.emptyList();
+        if (ids != null && !ids.isEmpty()) {
+            lids = new ArrayList<>();
+            for (String id : ids) {
+                try {
+                    Long lid = Long.parseLong(id);
+                    lids.add(lid);
+                } catch (NumberFormatException e) {
+                    LOG.warn("Can't conver string id {} to Long id", id);
+                }
+            }
+        }
+        return lids;
+    }
+
+    protected List<T> findListByCriterionWithAlias(String path, String alias, Criterion criterion) {
+        return findListByCriterionWithAlias(path, alias, null, criterion);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<T> findListByCriterionWithAlias(String path, String alias, JoinType type, Criterion criterion) {
+        String className = getSimpleClassName();
+        LOG.debug("Find {} entities by criterion [{}] ", className, criterion);
+        Criteria criteria = getCriteria();
+        if(type == null) {
+            criteria.createAlias(path, alias);
+        } else {
+            criteria.createAlias(path, alias, type);
+        }
+        criteria.add(criterion);
+        List<T> resultList = criteria.list();
+        if (LOG.isDebugEnabled()) {
+            if (resultList != null) {
+                LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
+            }
+        }
+        return resultList;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<T> findListByCriteria(Criteria criteria) {
+        String className = getSimpleClassName();
+        LOG.debug("Find {} entities by criteria [{}] ", className, criteria);
+        List<T> resultList = criteria.list();
+        if (LOG.isDebugEnabled()) {
+            if (resultList != null) {
+                LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
+            }
+        }
+        return resultList;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected T findOneByCriterion(Criterion criterion) {
+        String className = getSimpleClassName();
+        LOG.debug("Find {} entity by criterion [{}] ", className, criterion);
+        Criteria criteria = getCriteria();
+        criteria.add(criterion);
+        T result = (T) criteria.uniqueResult();
+        LOG.debug("Found {} entity: [{}] ", className, result);
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected T findOneByCriterionWithAlias(String path, String alias, Criterion criterion) {
+        String className = getSimpleClassName();
+        LOG.debug("Find {} entity by criterion [{}] ", className, criterion);
+        Criteria criteria = getCriteria();
+        criteria.createAlias(path, alias);
+        criteria.add(criterion);
+        T result = (T) criteria.uniqueResult();
+        LOG.debug("Found {} entity: [{}] ", className, result);
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected T findOneByCriteria(Criteria criteria) {
+        String className = getSimpleClassName();
+        LOG.debug("Find {} entity by criteria [{}] ", className, criteria);
+        T result = (T) criteria.uniqueResult();
+        LOG.debug("Found {} entity: [{}] ", className, result);
+        return result;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected T takeFirst(List result) {
+        T object = null;
+        if (result != null && !result.isEmpty()) {
+            object = (T) result.get(FIRST);
+        }
+        return object;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T save(T o) {
+        Session session = getSession();
+        o = (T) session.merge(o);
+        LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);
+        return o;
+    }
+
+    @Override
+    public T persist(T o) {
+        Session session = getSession();
+        session.persist(o);
+        LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);
+        return o;
+    }
+
+    @Override
+    public <V> V save(V o, Class<V> clazz) {
+        Session session = getSession();
+        session.saveOrUpdate(o);
+        LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);
+        return o;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<T> find() {
+        List<T> resultList = getCriteria().list();
+        if (LOG.isDebugEnabled()) {
+            if (resultList != null) {
+                LOG.debug("Found {} entities: [{}] ", getSimpleClassName(), Arrays.toString(resultList.toArray()));
+            }
+        }
+        return resultList;
+    }
+
+    @Override
+    public T findById(String id) {
+        return findById(id, false);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T findById(String id, boolean lazy) {
+        T result = null;
+        String className = getSimpleClassName();
+        LOG.debug("Find {} entity by id [{}] ", className, id);
+        if (isNotBlank(id)) {
+            Session session = getSession();
+            if (lazy) {
+                result = (T) session.load(getEntityClass(), Long.parseLong(id));
+            } else {
+                result = (T) session.get(getEntityClass(), Long.parseLong(id));
+            }
+        }
+        LOG.debug("Found {} entity: [{}] by id [{}]", className, result, id);
+        return result;
+    }
+
+    @Override
+    public void removeAll() {
+        Session session = getSession();
+        LOG.debug("Remove all {} entities ", getSimpleClassName());
+        session.delete(getEntityClass());
+    }
+
+    @Override
+    public void removeById(String id) {
+        if (isNotBlank(id)) {
+            Session session = getSession();
+            session.delete(findById(id, true));
+            LOG.debug("Remove {} entity by id [{}]", getSimpleClassName(), id);
+        }
+    }
+
+    protected void remove(T o) {
+        if (o != null) {
+            getSession().delete(o);
+            LOG.debug("Removed entity {} ", o);
+        }
+    }
+
+    protected void removeList(List<T> list) {
+        if (list != null && !list.isEmpty()) {
+            Session session = getSession();
+            for (T o : list) {
+                session.delete(o);
+            }
+            LOG.debug("Removed list of {} entities ", list);
+        }
+    }
+
+    private String getSimpleClassName() {
+        return getEntityClass().getSimpleName();
+    }
+}

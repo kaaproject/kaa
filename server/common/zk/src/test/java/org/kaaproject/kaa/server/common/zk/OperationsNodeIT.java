@@ -17,11 +17,14 @@
 package org.kaaproject.kaa.server.common.zk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.curator.RetryPolicy;
@@ -32,9 +35,16 @@ import org.apache.curator.test.Timing;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
+import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
+import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 
@@ -59,18 +69,44 @@ public class OperationsNodeIT {
             bootstrapNode.start();
 
             OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+            
             endpointNode.start();
 
             timing.sleepABit();
             verify(mockListener).onNodeAdded(endpointNodeInfo);
 
             int random = new Random().nextInt();
-            endpointNodeInfo.setProcessedRequestCount(random);
+            
+            
+            assertNotNull(endpointNodeInfo.getSupportedChannelsArray());
+            assertEquals(1,endpointNodeInfo.getSupportedChannelsArray().size());
+            assertNotNull(endpointNodeInfo.getSupportedChannelsArray().get(0));
+            assertNotNull(endpointNodeInfo.getSupportedChannelsArray().get(0).getZkChannel());
+            assertNotNull(endpointNodeInfo.getSupportedChannelsArray().get(0).getZkChannel().getChannelStatistics());
+            ZkHttpStatistics stats = (ZkHttpStatistics) endpointNodeInfo.getSupportedChannelsArray().get(0).getZkChannel().getChannelStatistics();
+            assertNotNull(stats);
+            assertNotNull(stats.getZkStatistics());
+            stats.getZkStatistics().setProcessedRequestCount(random);
+            
             endpointNode.updateNodeData(endpointNodeInfo);
 
             timing.sleepABit();
             verify(mockListener).onNodeUpdated(endpointNodeInfo);
-            assertEquals(new Integer(random), bootstrapNode.getCurrentOperationServerNodes().get(0).getProcessedRequestCount());
+            
+            assertNotNull(bootstrapNode.getCurrentOperationServerNodes());
+            assertEquals(1,bootstrapNode.getCurrentOperationServerNodes().size());
+            assertNotNull(bootstrapNode.getCurrentOperationServerNodes().get(0));
+            assertNotNull(bootstrapNode.getCurrentOperationServerNodes().get(0).getSupportedChannelsArray());
+            assertEquals(1,bootstrapNode.getCurrentOperationServerNodes().get(0).getSupportedChannelsArray().size());
+            assertNotNull(bootstrapNode.getCurrentOperationServerNodes().get(0).getSupportedChannelsArray().get(0));
+            assertNotNull(bootstrapNode.getCurrentOperationServerNodes().get(0).getSupportedChannelsArray().get(0).getZkChannel());
+            assertNotNull(bootstrapNode.getCurrentOperationServerNodes().get(0).getSupportedChannelsArray().get(0).getZkChannel().getChannelStatistics());
+            
+            ZkHttpStatistics statsR = (ZkHttpStatistics) bootstrapNode.getCurrentOperationServerNodes().get(0).getSupportedChannelsArray().get(0).getZkChannel().getChannelStatistics();
+            assertNotNull(statsR);
+            assertNotNull(statsR.getZkStatistics());
+
+            assertEquals(new Integer(random), statsR.getZkStatistics().getProcessedRequestCount());
 
             endpointNode.close();
             timing.sleepABit();
@@ -138,7 +174,9 @@ public class OperationsNodeIT {
     private BootstrapNodeInfo buildBootstrapNodeInfo() {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
-        nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, BOOTSTRAP_NODE_HOST, 1001, testKeyData));
+        nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
+        nodeInfo.setBootstrapHostName(BOOTSTRAP_NODE_HOST);
+        nodeInfo.setBootstrapPort(1001);
         nodeInfo.setProcessedRequestCount(1);
         return nodeInfo;
     }
@@ -146,10 +184,15 @@ public class OperationsNodeIT {
     private OperationsNodeInfo buildOperationsNodeInfo() {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
-        nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000, ENDPOINT_NODE_HOST, 1001, testKeyData));
-        nodeInfo.setDeltaCalculationCount(1);
-        nodeInfo.setProcessedRequestCount(2);
-        nodeInfo.setRegisteredUsersCount(3);
+        nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000, testKeyData));
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
+        List<SupportedChannel> supportedChannels = new ArrayList<>();
+        ZkHttpComunicationParameters httpCommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(ENDPOINT_NODE_HOST, 1000));
+        BaseStatistics statistics = new BaseStatistics(2, 3, 1, System.currentTimeMillis());
+        ZkHttpStatistics httpChannelStatistics = new ZkHttpStatistics(statistics );
+        SupportedChannel channelHttp = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.HTTP, true, httpCommunicationParameters, httpChannelStatistics));
+        supportedChannels.add(channelHttp);
+        nodeInfo.setSupportedChannelsArray(supportedChannels);
         return nodeInfo;
     }
 }

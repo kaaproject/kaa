@@ -19,7 +19,6 @@ package org.kaaproject.kaa.common.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,22 +27,22 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
 
     private static final long serialVersionUID = -1326052725635723124L;
 
-    private T activeStructureDto; 
+    private T activeStructureDto;
     private T inactiveStructureDto;
-    
+
     public StructureRecordDto() {
-        
+
     }
 
     public StructureRecordDto(T activeStructureDto, T inactiveStructureDto) {
         this.activeStructureDto = activeStructureDto;
         this.inactiveStructureDto = inactiveStructureDto;
     }
-    
+
     public boolean isEmpty() {
         return activeStructureDto == null && inactiveStructureDto == null;
     }
-    
+
     public T getActiveStructureDto() {
         return activeStructureDto;
     }
@@ -56,7 +55,7 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
     public void setInactiveStructureDto(T inactiveStructureDto) {
         this.inactiveStructureDto = inactiveStructureDto;
     }
-    
+
     public int getMajorVersion() {
         return activeStructureDto != null ? activeStructureDto.getMajorVersion() : inactiveStructureDto.getMajorVersion();
     }
@@ -64,11 +63,11 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
     public int getMinorVersion() {
         return activeStructureDto != null ? activeStructureDto.getMinorVersion() : inactiveStructureDto.getMinorVersion();
     }
-    
+
     public String getDescription() {
         return activeStructureDto != null ? activeStructureDto.getDescription() : inactiveStructureDto.getDescription();
     }
-    
+
     public long getEndpointCount() {
         return activeStructureDto != null ? activeStructureDto.getEndpointCount() : 0;
     }
@@ -76,15 +75,15 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
     public boolean hasActive() {
         return activeStructureDto != null;
     }
-    
+
     public boolean hasDeprecated() {
         return activeStructureDto != null && activeStructureDto.getStatus()==UpdateStatus.DEPRECATED;
     }
-    
+
     public boolean hasDraft() {
         return inactiveStructureDto != null;
     }
-    
+
     public String getSchemaId() {
         return activeStructureDto != null ? activeStructureDto.getSchemaId() : inactiveStructureDto.getSchemaId();
     }
@@ -117,6 +116,6 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
         if (result == 0) {
             result = this.getMinorVersion() - o.getMinorVersion();
         }
-        return result; 
+        return result;
     }
 }

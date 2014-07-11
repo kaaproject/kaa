@@ -21,7 +21,6 @@ import static org.mockito.Mockito.mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
@@ -29,12 +28,10 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculationAlgorithm;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorFactory;
+import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.delta.DefaultDeltaService;
-import org.kaaproject.kaa.server.operations.service.delta.DeltaCalculator;
-import org.kaaproject.kaa.server.operations.service.delta.DeltaCalculatorFactory;
-import org.kaaproject.kaa.server.operations.service.delta.DeltaService;
-import org.kaaproject.kaa.server.operations.service.delta.RawBinaryDelta;
 import org.kaaproject.kaa.server.operations.service.filter.FilterService;
 import org.kaaproject.kaa.server.operations.service.profile.ProfileService;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -61,7 +58,7 @@ public class DefaultDeltaServiceTest {
     private ProfileService profileService;
     private FilterService filterService;
     private DeltaCalculatorFactory deltaCalculatorFactory;
-    private DeltaCalculator deltaCalculator;
+    private DeltaCalculationAlgorithm deltaCalculator;
 
     @Before
     public void before() {
@@ -70,7 +67,7 @@ public class DefaultDeltaServiceTest {
         profileService = mock(ProfileService.class);
         filterService = mock(FilterService.class);
         deltaCalculatorFactory = mock(DeltaCalculatorFactory.class);
-        deltaCalculator = mock(DeltaCalculator.class);
+        deltaCalculator = mock(DeltaCalculationAlgorithm.class);
 
         ReflectionTestUtils.setField(deltaService, CACHE_SERVICE, cacheService);
         ReflectionTestUtils.setField(deltaService, PROFILE_SERVICE, profileService);
@@ -183,7 +180,7 @@ public class DefaultDeltaServiceTest {
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class)))
 //        .thenReturn(new DeltaCacheEntry(NEW_CONF, DELTA, EndpointObjectHash.fromSHA1("hash")));
-//        
+//
 //
 //        GetDeltaRequest request = new GetDeltaRequest(TEST_APP, ENDPOINT_KEY_HASH, PROFILE_HASH, CONFIGURATION_HASH, 41);
 //        GetDeltaResponse response = deltaService.getDelta(request);

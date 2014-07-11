@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
+
 import java.io.Serializable;
 import java.util.Arrays;
-
-import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
 
 public class EndpointConfigurationDto implements HasId, Serializable {
 
@@ -29,10 +29,12 @@ public class EndpointConfigurationDto implements HasId, Serializable {
     private byte[] configurationHash;
     private byte[] configuration;
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -48,6 +50,14 @@ public class EndpointConfigurationDto implements HasId, Serializable {
     public byte[] getConfiguration() {
         return configuration;
     }
+
+    public String getConfigurationAsString() {
+        return new String(configuration);
+    }
+
+//    public BaseData getBaseConfiguration(BaseSchema schema) {
+//        return new BaseData(schema, new String(configuration));
+//    }
 
     public void setConfiguration(byte[] configuration) {
         this.configuration = configuration;

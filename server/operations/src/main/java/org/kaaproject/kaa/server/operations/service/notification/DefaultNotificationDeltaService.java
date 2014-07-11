@@ -17,14 +17,17 @@
 package org.kaaproject.kaa.server.operations.service.notification;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
@@ -76,7 +79,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
     @Override
     public GetNotificationResponse getNotificationDelta(GetNotificationRequest request, HistoryDelta historyDelta) {
         String endpointId = Base64Util.encode(request.getProfile());
-        
+
         GetNotificationResponse response = new GetNotificationResponse();
         EndpointProfileDto profile = request.getProfile();
         Set<String> subscriptionSet = buildSubscriptionSet(profile);
@@ -102,7 +105,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
             if(subscriptionSet.retainAll(allPossibleTopics)){
                 subscriptionSetChanged = true;
             }
-            
+
             response.setTopicList(topicList);
         }
 
@@ -124,6 +127,9 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
 
         Map<String, Integer> subscriptionStates = buildTopicStateMap(request, subscriptionSet);
 
+
+        long now = new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTimeInMillis();
+
         List<NotificationDto> notifications = new ArrayList<>();
         for (String topicId : subscriptionSet) {
             int seqNumber = subscriptionStates.get(topicId);
@@ -136,7 +142,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
                 for (NotificationDto notification : topicNotifications) {
                     seqNumber = Math.max(seqNumber, notification.getSecNum());
                     Date date = notification.getExpiredAt();
-                    if ( date != null && date.after(new Date())) {
+                    if ( date != null && date.getTime() > now) {
                         notifications.add(notification);
                         count++;
                     }
@@ -160,7 +166,8 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
             NotificationDto notificationDto = unicastNotification.getNotificationDto();
             if (notificationDto != null) {
                 Date date = notificationDto.getExpiredAt();
-                if (date != null && date.after(new Date())) {
+                if (date != null && date.getTime() > now) {
+                    LOG.trace("[{}] notification expiration time is {}({}) which is later then {}", date.getTime(), date, now);
                     notificationDto.setId(unicastNotification.getId());
                     notifications.add(notificationDto);
                 }

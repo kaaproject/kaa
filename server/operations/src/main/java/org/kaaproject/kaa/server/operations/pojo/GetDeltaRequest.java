@@ -19,59 +19,59 @@ package org.kaaproject.kaa.server.operations.pojo;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
-
 /**
  * The Class for modeling of delta request. It is used to communicate with
  * {@link org.kaaproject.kaa.server.operations.service.delta.DeltaService
  * DeltaService}
- * 
+ *
  * @author ashvayka
  */
 public class GetDeltaRequest {
 
     /** The application token. */
-    private String applicationToken;
-
-    /** The endpoint key hash. */
-    private EndpointObjectHash endpointKeyHash;
-
-    /** The profile hash. */
-    private EndpointObjectHash profileHash;
+    private final String applicationToken;
 
     /** The configuration hash. */
-    private EndpointObjectHash configurationHash;
+    private final EndpointObjectHash configurationHash;
     // in case we already have profile this will help to save extra calls to DB
     /** The endpoint profile. */
     private EndpointProfileDto endpointProfile;
 
     /** The sequence number. */
-    private int sequenceNumber;
+    private final int sequenceNumber;
 
     /** The fetch schema. */
     private boolean fetchSchema;
 
     /**
      * Instantiates a new delta request.
-     * 
+     *
      * @param applicationToken
      *            the application token
-     * @param endpointKeyHash
-     *            the endpoint key hash
-     * @param profileHash
-     *            the profile hash
+     * @param sequenceNumber
+     *            the sequence number
+     */
+    public GetDeltaRequest(String applicationToken, int sequenceNumber) {
+        this(applicationToken, null, sequenceNumber);
+    }
+
+    /**
+     * Instantiates a new delta request.
+     *
+     * @param applicationToken
+     *            the application token
      * @param configurationHash
      *            the configuration hash
      * @param sequenceNumber
      *            the sequence number
      */
-    public GetDeltaRequest(String applicationToken, EndpointObjectHash endpointKeyHash, EndpointObjectHash profileHash,
-            EndpointObjectHash configurationHash, int sequenceNumber) {
-        this(applicationToken, endpointKeyHash, profileHash, configurationHash, sequenceNumber, false);
+    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, int sequenceNumber) {
+        this(applicationToken, configurationHash, sequenceNumber, false);
     }
 
     /**
      * Instantiates a new delta request.
-     * 
+     *
      * @param applicationToken
      *            the application token
      * @param endpointKeyHash
@@ -85,12 +85,10 @@ public class GetDeltaRequest {
      * @param fetchSchema
      *            the fetch schema
      */
-    public GetDeltaRequest(String applicationToken, EndpointObjectHash endpointKeyHash, EndpointObjectHash profileHash,
-            EndpointObjectHash configurationHash, int sequenceNumber, boolean fetchSchema) {
+    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash,
+            int sequenceNumber, boolean fetchSchema) {
         super();
         this.applicationToken = applicationToken;
-        this.endpointKeyHash = endpointKeyHash;
-        this.profileHash = profileHash;
         this.configurationHash = configurationHash;
         this.sequenceNumber = sequenceNumber;
         this.fetchSchema = fetchSchema;
@@ -98,7 +96,7 @@ public class GetDeltaRequest {
 
     /**
      * Gets the application token.
-     * 
+     *
      * @return the application token
      */
     public String getApplicationToken() {
@@ -106,26 +104,8 @@ public class GetDeltaRequest {
     }
 
     /**
-     * Gets the endpoint key.
-     * 
-     * @return the endpoint key
-     */
-    public EndpointObjectHash getEndpointKeyHash() {
-        return endpointKeyHash;
-    }
-
-    /**
-     * Gets the profile hash.
-     * 
-     * @return the profile hash
-     */
-    public EndpointObjectHash getProfileHash() {
-        return profileHash;
-    }
-
-    /**
      * Gets the configuration hash.
-     * 
+     *
      * @return the configuration hash
      */
     public EndpointObjectHash getConfigurationHash() {
@@ -134,7 +114,7 @@ public class GetDeltaRequest {
 
     /**
      * Gets the sequence number.
-     * 
+     *
      * @return the sequence number
      */
     public int getSequenceNumber() {
@@ -143,7 +123,7 @@ public class GetDeltaRequest {
 
     /**
      * Gets the endpoint profile.
-     * 
+     *
      * @return the endpoint profile
      */
     public EndpointProfileDto getEndpointProfile() {
@@ -152,7 +132,7 @@ public class GetDeltaRequest {
 
     /**
      * Checks if is fetch schema.
-     * 
+     *
      * @return true, if is fetch schema
      */
     public boolean isFetchSchema() {
@@ -161,7 +141,7 @@ public class GetDeltaRequest {
 
     /**
      * Sets the fetch schema.
-     * 
+     *
      * @param fetchSchema
      *            the new fetch schema
      */
@@ -172,7 +152,7 @@ public class GetDeltaRequest {
 
     /**
      * Sets the endpoint profile.
-     * 
+     *
      * @param endpointProfile
      *            the new endpoint profile
      */

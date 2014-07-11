@@ -21,25 +21,19 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto.Result;
+import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.Authority;
 import org.kaaproject.kaa.server.admin.services.entity.User;
-import org.kaaproject.kaa.server.admin.shared.dto.AuthResultDto;
-import org.kaaproject.kaa.server.admin.shared.dto.AuthResultDto.Result;
-import org.kaaproject.kaa.server.admin.shared.dto.ResultCode;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
-import org.spring4gwt.server.SpringGwtRemoteServiceServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,13 +57,13 @@ public class KaaAuthServiceImpl implements KaaAuthService {
 
         AuthResultDto result = new AuthResultDto();
 
-        HttpServletRequest request = SpringGwtRemoteServiceServlet.getRequest();
-        HttpSession session = request.getSession();
+        //HttpServletRequest request = SpringGwtRemoteServiceServlet.getRequest();
+        //HttpSession session = request.getSession();
 
-        Object authException = session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-        if (authException != null && authException instanceof AuthenticationException) {
-            throw new Exception(((AuthenticationException)authException).getMessage());
-        }
+//        Object authException = session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+//        if (authException != null && authException instanceof AuthenticationException) {
+//            throw new Exception(((AuthenticationException)authException).getMessage());
+//        }
 
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();

@@ -21,36 +21,36 @@ package org.kaaproject.kaa.server.common.http.server;
  * Netty Server configuration constants.
  *
  */
-public interface ConfigConst {
+public interface ConfigConst { //NOSONAR
 
     /**
      * Default value of ServerInitializer Class.
      */
-    String DEFAULT_SERVER_INITIALIZER_CLASS = "org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer";
+    String DEFAULT_SERVER_INITIALIZER_CLASS = "org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer"; //NOSONAR
 
     /**
      * Default HTTP server bind port.
      */
-    int DEFAULT_PORT = 9998;
+    int DEFAULT_PORT = 9998; //NOSONAR
 
     /**
      * Default HTTP server bind interface, if set "any" bind on all interfaces.
      */
-    String DEFAULT_BIND_INTERFACE = "any";
+    String DEFAULT_BIND_INTERFACE = "any"; //NOSONAR
 
     /**
      * Default Executor thread size.
      */
-    int DEFAULT_EXECUTOR_THREAD_SIZE = 3;
+    int DEFAULT_EXECUTOR_THREAD_SIZE = 3; //NOSONAR
 
     /**
      * Default value of Maximum size of HTTP request body.
      */
-    int DEFAULT_MAX_SIZE_VALUE = 10240;
+    int DEFAULT_MAX_SIZE_VALUE = 10240; //NOSONAR
 
     /**
      * UUID String constant, used as key in Channel context
      */
-    String UUID_KEY = "UUID";
-    String TRACK_KEY = "TRACK";
+    String UUID_KEY = "UUID"; //NOSONAR
+    String TRACK_KEY = "TRACK"; //NOSONAR
 }

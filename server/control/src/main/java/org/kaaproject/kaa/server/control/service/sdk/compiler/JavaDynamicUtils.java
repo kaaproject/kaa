@@ -39,7 +39,7 @@ public enum JavaDynamicUtils {
         try {
             return new URI(str);
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e); //NOSONAR
         }
     }
 

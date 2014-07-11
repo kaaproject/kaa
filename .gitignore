@@ -15,7 +15,6 @@ target/
 tmp_deb_control/
 tmp_rpm_control/
 tmp_sh/
-logs/
 .gwt/
 .settings/
 /bin

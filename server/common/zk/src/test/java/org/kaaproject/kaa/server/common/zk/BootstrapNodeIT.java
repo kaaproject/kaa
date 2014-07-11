@@ -91,14 +91,16 @@ public class BootstrapNodeIT {
     private BootstrapNodeInfo buildBootstrapNodeInfo() {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
-        nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, BOOTSTRAP_NODE_HOST, 1001, testKeyData));
+        nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
+        nodeInfo.setBootstrapHostName(BOOTSTRAP_NODE_HOST);
+        nodeInfo.setBootstrapPort(1001);
         nodeInfo.setProcessedRequestCount(1);
         return nodeInfo;
     }
 
     private ControlNodeInfo buildControlNodeInfo() {
         ControlNodeInfo controlNodeInfo = new ControlNodeInfo();
-        controlNodeInfo.setConnectionInfo(new ConnectionInfo(CONTROL_NODE_HOST, 1000, CONTROL_NODE_HOST, 1001, null));
+        controlNodeInfo.setConnectionInfo(new ConnectionInfo(CONTROL_NODE_HOST, 1000,  null));
         controlNodeInfo.setBootstrapServerCount(3);
         controlNodeInfo.setOperationsServerCount(4);
         return controlNodeInfo;

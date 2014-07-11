@@ -25,11 +25,19 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
@@ -44,7 +52,14 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchem
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.header.HeaderViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.log.LogSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.log.LogSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.navigation.NavigationViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.notification.NotificationSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.notification.NotificationSchemasViewImpl;
@@ -58,8 +73,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersViewImpl;
-import org.kaaproject.kaa.server.admin.shared.dto.TenantUserDto;
-import org.kaaproject.kaa.server.admin.shared.dto.UserDto;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
@@ -99,6 +112,10 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseSchemaView notificationSchemaView = new NotificationSchemaViewImpl(false);
     private final BaseSchemaView createNotificationSchemaView = new NotificationSchemaViewImpl(true);
 
+    private final BaseListView<LogSchemaDto> logSchemasView = new LogSchemasViewImpl();
+    private final BaseSchemaView logSchemaView = new LogSchemaViewImpl(false);
+    private final BaseSchemaView createLogSchemaView = new LogSchemaViewImpl(true);
+
     private final BaseListView<EndpointGroupDto> endpointGroupsView = new EndpointGroupsViewImpl();
     private final EndpointGroupView endpointGroupView = new EndpointGroupViewImpl(false);
     private final EndpointGroupView createEndpointGroupView = new EndpointGroupViewImpl(true);
@@ -112,6 +129,16 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<TopicDto> topicsView = new TopicsViewImpl();
     private final TopicView topicView = new TopicViewImpl(false);
     private final TopicView createTopicView = new TopicViewImpl(true);
+
+    private final BaseListView<EventClassFamilyDto> ecfsView = new EcfsViewImpl();
+    private final EcfView ecfView = new EcfViewImpl(false);
+    private final EcfView createEcfView = new EcfViewImpl(true);
+    
+    private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl();
+
+    private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
+    private final AefMapView aefMapView = new AefMapViewImpl(false);
+    private final AefMapView createAefMapView = new AefMapViewImpl(true);
 
     @Override
     public EventBus getEventBus() {
@@ -229,6 +256,21 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
+    public BaseListView<LogSchemaDto> getLogSchemasView() {
+        return logSchemasView;
+    }
+
+    @Override
+    public BaseSchemaView getLogSchemaView() {
+        return logSchemaView;
+    }
+
+    @Override
+    public BaseSchemaView getCreateLogSchemaView() {
+        return createLogSchemaView;
+    }
+
+    @Override
     public BaseListView<EndpointGroupDto> getEndpointGroupsView() {
         return endpointGroupsView;
     }
@@ -278,5 +320,39 @@ public class ClientFactoryImpl implements ClientFactory {
         return createTopicView;
     }
 
+    @Override
+    public BaseListView<EventClassFamilyDto> getEcfsView() {
+        return ecfsView;
+    }
+
+    @Override
+    public EcfView getEcfView() {
+        return ecfView;
+    }
+
+    @Override
+    public EcfView getCreateEcfView() {
+        return createEcfView;
+    }
+
+    @Override
+    public EcfSchemaView getEcfSchemaView() {
+        return ecfSchemaView;
+    }
+
+    @Override
+    public BaseListView<ApplicationEventFamilyMapDto> getAefMapsView() {
+        return aefMapsView;
+    }
+
+    @Override
+    public AefMapView getAefMapView() {
+        return aefMapView;
+    }
+
+    @Override
+    public AefMapView getCreateAefMapView() {
+        return createAefMapView;
+    }
 
 }

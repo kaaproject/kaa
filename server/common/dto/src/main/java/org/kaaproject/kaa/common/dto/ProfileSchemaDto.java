@@ -34,7 +34,7 @@ public class ProfileSchemaDto extends AbstractSchemaDto {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() { //NOSONAR
         return super.hashCode();
     }
 

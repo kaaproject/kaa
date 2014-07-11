@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.operations.service.statistics;
 
@@ -28,12 +28,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.server.common.http.server.Track;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
-import org.kaaproject.kaa.server.operations.service.http.OperationsServerConfig;
+import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand;
 import org.kaaproject.kaa.server.operations.service.statistics.StatisticsService;
 
@@ -59,10 +62,15 @@ public class StatisticsServiceTest {
         configMock = mock(OperationsServerConfig.class);
         when(configMock.getStatisticsCalculationWindow()).thenReturn((long) 5);
         when(configMock.getStatisticsUpdateTimes()).thenReturn(5);
-        
+
         zkNodeMock = mock(OperationsNode.class);
         when(configMock.getZkNode()).thenReturn(zkNodeMock);
-        
+
+    }
+
+    @After
+    public void afterTest(){
+        StatisticsFactory.shutdown();
     }
 
     /**
@@ -70,9 +78,9 @@ public class StatisticsServiceTest {
      */
     @Test
     public void testStart() {
-        StatisticsService service = StatisticsService.getService();
+        StatisticsService service = StatisticsFactory.getService(ChannelType.HTTP);
         assertNotNull(service);
-        StatisticsService.setConfig(configMock);
+        service.setConfig(configMock);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -80,7 +88,7 @@ public class StatisticsServiceTest {
         }
         assertTrue(service.isAlive());
         try {
-            verify(zkNodeMock, atLeastOnce()).updateNodeStatsValues(0, 0, 0);
+            verify(zkNodeMock, atLeastOnce()).updateNodeStatsValues(ZkChannelType.HTTP, 0, 0, 0);
         } catch (IOException e) {
             e.printStackTrace();
             fail(e.toString());
@@ -93,9 +101,9 @@ public class StatisticsServiceTest {
      */
     @Test
     public void testShutdown() {
-        StatisticsService service = StatisticsService.getService();
+        StatisticsService service = StatisticsFactory.getService(ChannelType.HTTP);
         assertNotNull(service);
-        StatisticsService.setConfig(configMock);
+        service.setConfig(configMock);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -111,7 +119,7 @@ public class StatisticsServiceTest {
      */
     @Test
     public void testGetService() {
-        StatisticsService service = StatisticsService.getService();
+        StatisticsService service = StatisticsFactory.getService(ChannelType.HTTP);
         assertNotNull(service);
     }
 
@@ -121,9 +129,9 @@ public class StatisticsServiceTest {
     @Test
     @Ignore("unstable")
     public void testNewSession() {
-        StatisticsService service = StatisticsService.getService();
+        StatisticsService service = StatisticsFactory.getService(ChannelType.HTTP);
         assertNotNull(service);
-        StatisticsService.setConfig(configMock);
+        service.setConfig(configMock);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -142,7 +150,7 @@ public class StatisticsServiceTest {
                     sessions.get(uuid).get(track).add(new Integer(id));
                 }
             }
-            
+
             for(UUID uuid : sessions.keySet()) {
                 for(Track track : sessions.get(uuid).keySet()) {
                     for(Integer id : sessions.get(uuid).get(track)) {
@@ -150,30 +158,30 @@ public class StatisticsServiceTest {
                         track.closeRequest(id.intValue());
                     }
                 }
-                
+
             }
-            
+
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 fail(e.toString());
             }
             assertTrue(service.isAlive());
-            
+
             for(UUID uuid : sessions.keySet()) {
                 service.closeSession(uuid);
             }
-            
+
             sessions.clear();
         }
-        
+
         try {
-            verify(zkNodeMock, atLeastOnce()).updateNodeStatsValues(0, 0, 0);
-            verify(zkNodeMock, times(1)).updateNodeStatsValues(10, 5000, 50);
-            verify(zkNodeMock, times(1)).updateNodeStatsValues(13, 6666, 66);
-            verify(zkNodeMock, times(1)).updateNodeStatsValues(15, 7500, 75);
-            verify(zkNodeMock, times(1)).updateNodeStatsValues(16, 8000, 80);
-            verify(zkNodeMock, atLeastOnce()).updateNodeStatsValues(20, 10000, 100);
+            verify(zkNodeMock, atLeastOnce()).updateNodeStatsValues(ZkChannelType.HTTP, 0, 0, 0);
+            verify(zkNodeMock, times(1)).updateNodeStatsValues(ZkChannelType.HTTP, 10, 5000, 50);
+            verify(zkNodeMock, times(1)).updateNodeStatsValues(ZkChannelType.HTTP, 13, 6666, 66);
+            verify(zkNodeMock, times(1)).updateNodeStatsValues(ZkChannelType.HTTP, 15, 7500, 75);
+            verify(zkNodeMock, times(1)).updateNodeStatsValues(ZkChannelType.HTTP, 16, 8000, 80);
+            verify(zkNodeMock, atLeastOnce()).updateNodeStatsValues(ZkChannelType.HTTP, 20, 10000, 100);
         } catch (IOException e) {
             e.printStackTrace();
             fail(e.toString());

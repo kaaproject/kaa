@@ -1,12 +1,12 @@
 <!--
   Copyright 2014 CyberVision, Inc.
- 
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
+
        http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,437 +19,457 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.4.0-RC1</version>
+		<version>0.5.0</version>
 		<artifactId>server</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.server</groupId>
 	<artifactId>bootstrap</artifactId>
 	<packaging>jar</packaging>
 
-	<name>Kaa Bootstrap Server</name>
-	<url>http://kaaproject.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<main.dir>${basedir}/../..</main.dir>
-		<server.mainclass>org.kaaproject.kaa.server.bootstrap.BootstrapServerApplication</server.mainclass>
-		<server.confname>bootstrap-server.properties</server.confname>
-		<script.server.name>kaa-bootstrap</script.server.name>
-		<script.server.desc>Kaa Bootstrap Server</script.server.desc>
-		<script.server.additional.commands></script.server.additional.commands>
-	</properties>
+    <name>Kaa Bootstrap Server</name>
+    <url>http://kaaproject.org</url>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.kaaproject.kaa.common</groupId>
-			<artifactId>endpoint-shared</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kaaproject.kaa.server.common</groupId>
-			<artifactId>zk</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kaaproject.kaa.server.common</groupId>
-			<artifactId>netty-http-server</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kaaproject.kaa.server.common</groupId>
-			<artifactId>thrift</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kaaproject.kaa.server.common</groupId>
-			<artifactId>thrift-cli-server</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kaaproject.kaa.server.common</groupId>
-			<artifactId>thrift-cli-client</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.dir>${basedir}/../..</main.dir>
+        <server.mainclass>org.kaaproject.kaa.server.bootstrap.BootstrapServerApplication</server.mainclass>
+        <server.confname>bootstrap-server.properties</server.confname>
+        <script.server.name>kaa-bootstrap</script.server.name>
+        <script.server.desc>Kaa Bootstrap Server</script.server.desc>
+        <script.server.additional.commands></script.server.additional.commands>
+    </properties>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-jaxrs</artifactId>
-			<version>1.9.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.avro</groupId>
-			<artifactId>avro</artifactId>
-			<version>${avro.version}</version>
-		</dependency>
-		<dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.kaaproject.kaa.common</groupId>
+            <artifactId>endpoint-shared</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>zk</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>netty-http-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>thrift</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>thrift-cli-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>thrift-cli-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
             <version>${curator.version}</version>
             <scope>test</scope>
         </dependency>
-	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-		</dependencies>
-	</dependencyManagement>
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+        </dependencies>
+    </dependencyManagement>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<detectOfflineLinks>false</detectOfflineLinks>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>false</overWriteSnapshots>
-							<overWriteIfNewer>true</overWriteIfNewer>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<server_log_dir>./logs</server_log_dir>
-						<server_home_dir>.</server_home_dir>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>org.kaaproject.kaa.server.bootstrap.BootstrapServerApplication</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>prepare-scripts</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<delete dir="tmp_deb_control" />
-								<delete dir="tmp_rpm_control" />
-								<delete dir="tmp_sh" />
-								<mkdir dir="tmp_deb_control" />
-								<mkdir dir="tmp_rpm_control" />
-								<mkdir dir="tmp_sh" />
-								<copy todir="tmp_deb_control" overwrite="true" flatten="true">
-									<fileset dir="../common/src/deb/control" />
-								</copy>
-								<copy todir="tmp_rpm_control" overwrite="true" flatten="true">
-									<fileset dir="../common/src/rpm/control" />
-								</copy>
-								<copy todir="tmp_sh" overwrite="true">
-									<fileset dir="../common/src/sh" />
-								</copy>
-								<replace file="tmp_deb_control/control" token="#serverdesc#"
-									value="${script.server.desc}" />
-								<replace file="tmp_deb_control/postinst" token="#servername#"
-									value="${script.server.name}" />
-								<replace file="tmp_deb_control/postrm" token="#servername#"
-									value="${script.server.name}" />
-								<replace file="tmp_deb_control/preinst" token="#servername#"
-									value="${script.server.name}" />
-								<replace file="tmp_deb_control/prerm" token="#servername#"
-									value="${script.server.name}" />
-								<replace file="tmp_rpm_control/preinst" token="#servername#"
-									value="${script.server.name}" />
-								<move file="tmp_sh/bin/kaa-server" tofile="tmp_sh/bin/${script.server.name}"
-									overwrite="true" />
-								<move file="tmp_sh/bin/kaa-server.default" tofile="tmp_sh/bin/${script.server.name}.default"
-									overwrite="true" />
-								<move file="tmp_sh/init.d/deb/kaa-server.init.d" tofile="tmp_sh/init.d/deb/${script.server.name}.init.d"
-									overwrite="true" />
-								<move file="tmp_sh/init.d/rpm/kaa-server.init.d" tofile="tmp_sh/init.d/rpm/${script.server.name}.init.d"
-									overwrite="true" />
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <detectOfflineLinks>false</detectOfflineLinks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <server_log_dir>./logs</server_log_dir>
+                        <server_home_dir>.</server_home_dir>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>org.kaaproject.kaa.server.bootstrap.BootstrapServerApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-scripts</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <delete dir="tmp_deb_control" />
+                                <delete dir="tmp_rpm_control" />
+                                <delete dir="tmp_sh" />
+                                <mkdir dir="tmp_deb_control" />
+                                <mkdir dir="tmp_rpm_control" />
+                                <mkdir dir="tmp_sh" />
+                                <copy todir="tmp_deb_control"
+                                    overwrite="true" flatten="true">
+                                    <fileset dir="../common/src/deb/control" />
+                                </copy>
+                                <copy todir="tmp_rpm_control"
+                                    overwrite="true" flatten="true">
+                                    <fileset dir="../common/src/rpm/control" />
+                                </copy>
+                                <copy todir="tmp_sh" overwrite="true">
+                                    <fileset dir="../common/src/sh" />
+                                </copy>
+                                <replace file="tmp_deb_control/control"
+                                    token="#serverdesc#" value="${script.server.desc}" />
+                                <replace file="tmp_deb_control/postinst"
+                                    token="#servername#" value="${script.server.name}" />
+                                <replace file="tmp_deb_control/postrm"
+                                    token="#servername#" value="${script.server.name}" />
+                                <replace file="tmp_deb_control/preinst"
+                                    token="#servername#" value="${script.server.name}" />
+                                <replace file="tmp_deb_control/prerm"
+                                    token="#servername#" value="${script.server.name}" />
+                                <replace file="tmp_rpm_control/preinst"
+                                    token="#servername#" value="${script.server.name}" />
+                                <move file="tmp_sh/bin/kaa-server"
+                                    tofile="tmp_sh/bin/${script.server.name}"
+                                    overwrite="true" />
+                                <move file="tmp_sh/bin/kaa-server.default"
+                                    tofile="tmp_sh/bin/${script.server.name}.default"
+                                    overwrite="true" />
+                                <move
+                                    file="tmp_sh/init.d/deb/kaa-server.init.d"
+                                    tofile="tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                    overwrite="true" />
+                                <move
+                                    file="tmp_sh/init.d/rpm/kaa-server.init.d"
+                                    tofile="tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                    overwrite="true" />
 
-								<replace file="tmp_sh/bin/${script.server.name}" token="#servername#"
-									value="${script.server.name}" />
-								<replace file="tmp_sh/bin/${script.server.name}" token="#serverdesc#"
-									value="${script.server.desc}" />
-								<replace file="tmp_sh/bin/${script.server.name}" token="#servermainclass#"
-									value="${server.mainclass}" />
-								<replace file="tmp_sh/bin/${script.server.name}" token="#serverconfname#"
-									value="${server.confname}" />
-								<replace file="tmp_sh/bin/${script.server.name}" token="#additionalcommands#"
-									value="${script.server.additional.commands}" />
-								<replace file="tmp_sh/bin/${script.server.name}" token="#jmxport#"
-									value="7092" />
+                                <replace
+                                    file="tmp_sh/bin/${script.server.name}"
+                                    token="#servername#" value="${script.server.name}" />
+                                <replace
+                                    file="tmp_sh/bin/${script.server.name}"
+                                    token="#serverdesc#" value="${script.server.desc}" />
+                                <replace
+                                    file="tmp_sh/bin/${script.server.name}"
+                                    token="#servermainclass#" value="${server.mainclass}" />
+                                <replace
+                                    file="tmp_sh/bin/${script.server.name}"
+                                    token="#serverconfname#" value="${server.confname}" />
+                                <replace
+                                    file="tmp_sh/bin/${script.server.name}"
+                                    token="#additionalcommands#"
+                                    value="${script.server.additional.commands}" />
+                                <replace
+                                    file="tmp_sh/bin/${script.server.name}"
+                                    token="#jmxport#" value="7092" />
 
 
-								<replace file="tmp_sh/init.d/deb/${script.server.name}.init.d"
-									token="#servername#" value="${script.server.name}" />
-								<replace file="tmp_sh/init.d/deb/${script.server.name}.init.d"
-									token="#serverdesc#" value="${script.server.desc}" />
-								<replace file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
-									token="#servername#" value="${script.server.name}" />
-								<replace file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
-									token="#serverdesc#" value="${script.server.desc}" />
+                                <replace
+                                    file="tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                    token="#servername#" value="${script.server.name}" />
+                                <replace
+                                    file="tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                    token="#serverdesc#" value="${script.server.desc}" />
+                                <replace
+                                    file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                    token="#servername#" value="${script.server.name}" />
+                                <replace
+                                    file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                    token="#serverdesc#" value="${script.server.desc}" />
 
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>jdeb</artifactId>
-				<groupId>org.vafer</groupId>
-				<version>1.1.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>jdeb</goal>
-						</goals>
-						<configuration>
-							<deb>${project.build.directory}/kaa-${project.artifactId}-${build.number}-${scm.version}.deb</deb>
-							<classifier>${build.number}-${scm.version}</classifier>
-							<controlDir>${project.basedir}/tmp_deb_control/</controlDir>
-							<dataSet>
-								<data>
-									<src>${project.build.directory}/${project.build.finalName}.jar</src>
-									<type>file</type>
-									<mapper>
-										<type>perm</type>
-										<filemode>755</filemode>
-										<prefix>/usr/lib/${script.server.name}/lib</prefix>
-									</mapper>
-								</data>
-								<data>
-									<src>${project.build.directory}/lib</src>
-									<type>directory</type>
-									<mapper>
-										<type>perm</type>
-										<filemode>755</filemode>
-										<prefix>/usr/lib/${script.server.name}/lib</prefix>
-									</mapper>
-								</data>
-								<data>
-									<src>${project.basedir}/src/main/resources</src>
-									<type>directory</type>
-									<mapper>
-										<type>perm</type>
-										<filemode>755</filemode>
-										<prefix>/usr/lib/${script.server.name}/conf</prefix>
-									</mapper>
-								</data>
-								<data>
-									<src>../common/dao/src/main/resources/mongo.properties</src>
-									<type>file</type>
-									<mapper>
-										<type>perm</type>
-										<filemode>755</filemode>
-										<prefix>/usr/lib/${script.server.name}/conf</prefix>
-									</mapper>
-								</data>
-								<data>
-									<src>${project.basedir}/tmp_sh/bin</src>
-									<type>directory</type>
-									<mapper>
-										<type>perm</type>
-										<filemode>755</filemode>
-										<prefix>/usr/lib/${script.server.name}/bin</prefix>
-									</mapper>
-								</data>
-								<data>
-									<src>${project.basedir}/tmp_sh/init.d/deb</src>
-									<type>directory</type>
-									<mapper>
-										<type>perm</type>
-										<filemode>755</filemode>
-										<prefix>/usr/lib/${script.server.name}/bin</prefix>
-									</mapper>
-								</data>
-							</dataSet>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>jdeb</artifactId>
+                <groupId>org.vafer</groupId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jdeb</goal>
+                        </goals>
+                        <configuration>
+                            <deb>${project.build.directory}/kaa-${project.artifactId}-${build.number}-${scm.version}.deb</deb>
+                            <classifier>${build.number}-${scm.version}</classifier>
+                            <controlDir>${project.basedir}/tmp_deb_control/</controlDir>
+                            <dataSet>
+                                <data>
+                                    <src>${project.build.directory}/${project.build.finalName}.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/lib</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.build.directory}/lib</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/lib</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/src/main/resources</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../common/dao/src/main/resources/dao.properties</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/tmp_sh/bin</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/bin</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/tmp_sh/init.d/deb</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/bin</prefix>
+                                    </mapper>
+                                </data>
+                            </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<profiles>
-		<profile>
-			<id>build-rpm</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>rpm-maven-plugin</artifactId>
-						<version>2.1-alpha-1</version>
-						<extensions>true</extensions>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>attached-rpm</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<name>kaa-${artifactId}</name>
-							<classifier>${build.number}-${scm.version}</classifier>
-							<copyright>Kaaproject</copyright>
-							<distribution>development</distribution>
-							<group>Applications/Kaa</group>
-							<packager>${user.name}</packager>
-							<changelogFile>CHANGELOG</changelogFile>
-							<defaultDirmode>500</defaultDirmode>
-							<defaultFilemode>400</defaultFilemode>
-							<defaultUsername>kaa</defaultUsername>
-							<defaultGroupname>kaa</defaultGroupname>
-							<mappings>
-								<mapping>
-									<directory>/usr/lib/${script.server.name}/lib</directory>
-									<filemode>755</filemode>
-									<username>kaa</username>
-									<groupname>kaa</groupname>
-									<sources>
-										<source>
-											<location>target/lib</location>
-										</source>
-										<source>
-											<location>target/${project.build.finalName}.jar</location>
-										</source>
-									</sources>
-								</mapping>
-								<mapping>
-									<directory>/usr/lib/${script.server.name}/conf</directory>
-									<filemode>755</filemode>
-									<username>kaa</username>
-									<groupname>kaa</groupname>
-									<sources>
-										<source>
-											<location>src/main/resources</location>
-										</source>
-									</sources>
-								</mapping>
-								<mapping>
-									<directory>/usr/lib/${script.server.name}/bin</directory>
-									<filemode>755</filemode>
-									<username>kaa</username>
-									<groupname>kaa</groupname>
-									<sources>
-										<source>
-											<location>tmp_sh/bin</location>
-										</source>
-										<source>
-											<location>tmp_sh/init.d/rpm</location>
-										</source>
-									</sources>
-								</mapping>
-							</mappings>
-							<preinstallScriptlet>
-								<scriptFile>tmp_rpm_control/preinst</scriptFile>
-								<fileEncoding>utf-8</fileEncoding>
-							</preinstallScriptlet>
-							<postinstallScriptlet>
-								<scriptFile>tmp_deb_control/postinst</scriptFile>
-								<fileEncoding>utf-8</fileEncoding>
-							</postinstallScriptlet>
-							<preremoveScriptlet>
-								<scriptFile>tmp_deb_control/prerm</scriptFile>
-								<fileEncoding>utf-8</fileEncoding>
-							</preremoveScriptlet>
-							<postremoveScriptlet>
-								<scriptFile>tmp_deb_control/postrm</scriptFile>
-								<fileEncoding>utf-8</fileEncoding>
-							</postremoveScriptlet>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+    <profiles>
+        <profile>
+            <id>build-rpm</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>rpm-maven-plugin</artifactId>
+                        <version>2.1-alpha-1</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attached-rpm</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <name>kaa-${artifactId}</name>
+                            <classifier>${build.number}-${scm.version}</classifier>
+                            <copyright>Kaaproject</copyright>
+                            <distribution>development</distribution>
+                            <group>Applications/Kaa</group>
+                            <packager>${user.name}</packager>
+                            <changelogFile>CHANGELOG</changelogFile>
+                            <defaultDirmode>500</defaultDirmode>
+                            <defaultFilemode>400</defaultFilemode>
+                            <defaultUsername>kaa</defaultUsername>
+                            <defaultGroupname>kaa</defaultGroupname>
+                            <mappings>
+                                <mapping>
+                                    <directory>/usr/lib/${script.server.name}/lib</directory>
+                                    <filemode>755</filemode>
+                                    <username>kaa</username>
+                                    <groupname>kaa</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>target/lib</location>
+                                        </source>
+                                        <source>
+                                            <location>target/${project.build.finalName}.jar</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/lib/${script.server.name}/conf</directory>
+                                    <filemode>755</filemode>
+                                    <username>kaa</username>
+                                    <groupname>kaa</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/resources</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/lib/${script.server.name}/bin</directory>
+                                    <filemode>755</filemode>
+                                    <username>kaa</username>
+                                    <groupname>kaa</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>tmp_sh/bin</location>
+                                        </source>
+                                        <source>
+                                            <location>tmp_sh/init.d/rpm</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                            </mappings>
+                            <preinstallScriptlet>
+                                <scriptFile>tmp_rpm_control/preinst</scriptFile>
+                                <fileEncoding>utf-8</fileEncoding>
+                            </preinstallScriptlet>
+                            <postinstallScriptlet>
+                                <scriptFile>tmp_deb_control/postinst</scriptFile>
+                                <fileEncoding>utf-8</fileEncoding>
+                            </postinstallScriptlet>
+                            <preremoveScriptlet>
+                                <scriptFile>tmp_deb_control/prerm</scriptFile>
+                                <fileEncoding>utf-8</fileEncoding>
+                            </preremoveScriptlet>
+                            <postremoveScriptlet>
+                                <scriptFile>tmp_deb_control/postrm</scriptFile>
+                                <fileEncoding>utf-8</fileEncoding>
+                            </postremoveScriptlet>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -17,6 +17,8 @@
 package org.kaaproject.kaa.server.admin.client;
 
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto.Result;
 import org.kaaproject.kaa.server.admin.client.layout.AppLayout;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.AppActivityMapper;
@@ -30,8 +32,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.TenantDeveloperPlaceHist
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantUserPlaceHistoryMapper;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.dto.AuthResultDto;
-import org.kaaproject.kaa.server.admin.shared.dto.AuthResultDto.Result;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;

@@ -41,6 +41,10 @@ public interface KaaAdminResources extends ClientBundle {
     ImageResource send();
 
     @ImageOptions(width = 14, height = 14)
+    @Source("images/details.png")
+    ImageResource details();
+
+    @ImageOptions(width = 14, height = 14)
     @Source("images/plus.png")
     ImageResource plus();
 

@@ -16,37 +16,19 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
-
 import akka.actor.ActorRef;
 
 public class ActorMetaData{
-    ActorRef actorRef;
-    private Set<Integer> pendingRequests;
-    
-    ActorMetaData(ActorRef actorRef) {
+    final ActorRef actorRef;
+    private final String endpointActorId;
+
+    ActorMetaData(ActorRef actorRef, String endpointActorId) {
         super();
         this.actorRef = actorRef;
-        this.pendingRequests = new HashSet<>();
+        this.endpointActorId = endpointActorId;
     }
-    
-    boolean registerRequest(Integer requestHash){
-        return pendingRequests.add(requestHash);
-    }
-    
-    boolean registerResponse(Integer requestHash){
-        return pendingRequests.remove(requestHash);
-    }
-    
-    int getPendingRequestsSize(){
-        return pendingRequests.size();
-    }
-    
-    public static int getHash(EndpointAwareMessage message){
-        //TODO: improve;
-        return message.hashCode();
+
+    public String getEndpointActorId() {
+        return endpointActorId;
     }
 }

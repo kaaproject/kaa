@@ -223,7 +223,7 @@ public class ControlServerTenantIT extends AbstractTestControlServer {
         TenantAdminDto storedTenantAdmin = toDto(client.getTenantAdmin(tenantAdmin.getId()));
         Assert.assertNull(storedTenantAdmin);
    }
-    
+
     /**
      * Assert tenants equals.
      *

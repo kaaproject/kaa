@@ -20,21 +20,26 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.util.UUID;
 
+import org.apache.avro.specific.SpecificRecordBase;
 import org.junit.Test;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage;
+import org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand;
+import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 import org.kaaproject.kaa.server.operations.service.http.handler.AkkaHandler;
 import org.mockito.Mockito;
 
 public class AkkaHandlerTest {
-    
+
     @Test
     public void testFlow() throws Exception{
         UUID uuid = UUID.randomUUID();
         AkkaService akkaService = Mockito.mock(AkkaService.class);
         EventExecutorGroup executor = Mockito.mock(EventExecutorGroup.class);
+        AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> commandMock = Mockito.mock(AbstractOperationsCommand.class);
+        Mockito.when(commandMock.getChannelType()).thenReturn(ChannelType.HTTP);
         AkkaHandler handler = new AkkaHandler(uuid, akkaService, executor);
-        handler.channelRead0(null, null);
+        handler.channelRead0(null, commandMock);
         Mockito.verify(akkaService).process(Mockito.any(NettyCommandAwareMessage.class));
     }
 }

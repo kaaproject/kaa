@@ -105,7 +105,8 @@ public class OperationsServerLoadHistory {
         }
     }
 
-    public OperationsServerLoadHistory() {
+    public OperationsServerLoadHistory(long maxHistoryTimeLiv) {
+        setMaxHistoryTimeLive(maxHistoryTimeLiv);
         history = new LinkedList<OperationsServerLoad>();
     }
 

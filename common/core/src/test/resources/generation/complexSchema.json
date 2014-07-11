@@ -1,0 +1,109 @@
+{
+    "name": "testT",
+    "namespace": "org.kaa.config",
+    "type": "record",
+    "addressable": true,
+    "fields": [
+        {
+            "name": "test_array",
+            "type": { 
+                "type": "array",
+                "items": "int",
+                "mergeStrategy" : "append"
+            }
+        },
+        {
+            "name": "test_array2",
+            "type": { 
+                "type": "array",
+               "items": "int"
+            }
+        },
+        {
+            "optional": true,
+            "name": "nullableField1",
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        {
+            "name": "__uuid",
+            "type": {
+                "name": "uuidT",
+                "type": "fixed",
+                "size": 16,
+                "namespace": "org.kaaproject.configuration"
+            }
+        },
+        {
+            "optional": true,
+            "name": "testField1",
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        {
+            "name": "testField2",
+            "type":
+                {
+                    "type": "record",
+                    "name": "testRecordT",
+                    "namespace": "org.kaa.config",
+                    "fields": [
+                        {
+                            "name": "testField3",
+                            "type":
+                                {
+                                    "type": "array",
+                                    "mergeStrategy" : "append",
+                                    "items":
+                                        {
+                                            "type": "record",
+                                            "name": "testRecordItemT",
+                                            "namespace": "org.kaa.config",
+                                            "fields": [
+                                                {
+                                                    "name": "testField4",
+                                                    "by_default": 4,
+                                                    "type": "int"
+                                                },
+                                                {
+                                                    "name": "__uuid",
+                                                    "type": "org.kaaproject.configuration.uuidT"
+                                                }
+                                            ]
+                                        }
+                                }
+                            
+                        }
+                    ]
+                }
+        },
+        {
+            "name": "testField5",
+            "by_default": 1,
+            "type": "int"
+        },
+        {
+            "name": "testField6",
+            "by_default": 1,
+            "type": ["int", "string"]
+        },
+        {
+            "name": "bytesField",
+            "type": "bytes",
+            "by_default": [1, 2, 3, 4, 5]
+        },
+        {
+            "name": "enumField",
+            "type": {
+                "type":"enum",
+                "name":"enumT",
+                "namespace": "org.kaa.config",
+                "symbols":["item_a", "item_b"]
+            }
+        }
+    ]
+}

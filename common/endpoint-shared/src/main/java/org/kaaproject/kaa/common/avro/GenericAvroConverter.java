@@ -56,7 +56,6 @@ public class GenericAvroConverter<T extends GenericContainer> {
     private JsonDecoder jsonDecoder;
     private JsonEncoder jsonEncoder;
 
-
     /**
      * Instantiates a new generic Avro converter.
      *
@@ -197,7 +196,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
             profileJson = converter.endcodeToJson(record);
         } catch (IOException e) {
             LOG.warn("Can't parse profile raw data", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException(e); //NOSONAR
         }
         return profileJson;
     }

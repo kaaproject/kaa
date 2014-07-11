@@ -22,6 +22,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage;
 import org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand;
+import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 
 import akka.actor.ActorRef;
 
@@ -33,7 +34,7 @@ public abstract class NettyDecodedRequestMessage extends NettyCommandAwareMessag
 
     /**
      * Instantiates a new netty decoded request message.
-     * 
+     *
      * @param handlerUuid
      *            the handler uuid
      * @param channelContext
@@ -42,13 +43,13 @@ public abstract class NettyDecodedRequestMessage extends NettyCommandAwareMessag
      *            the command
      */
     public NettyDecodedRequestMessage(String handlerUuid, ChannelHandlerContext channelContext,
-            AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command) {
-        super(handlerUuid, channelContext, command);
+            AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command, ChannelType channelType) {
+        super(handlerUuid, channelContext, command, channelType);
     }
 
     /**
      * To endpoint message.
-     * 
+     *
      * @param originator
      *            the originator
      * @return the endpoint aware message

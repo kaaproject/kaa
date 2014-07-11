@@ -19,26 +19,44 @@ package org.kaaproject.kaa.server.operations.service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.endpoint.gen.ConfSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointRegistrationRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest;
+import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
+import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileUpdateRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
@@ -47,19 +65,19 @@ import org.kaaproject.kaa.server.operations.pojo.GetNotificationResponse;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
-import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse.GetDeltaResponseType;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaService;
 import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
 import org.kaaproject.kaa.server.operations.service.history.HistoryDeltaService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.operations.service.profile.ProfileService;
+import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 /**
  * The Class DefaultOperationsService.
@@ -90,224 +108,285 @@ public class DefaultOperationsService implements OperationsService {
     @Autowired
     NotificationDeltaService notificationDeltaService;
 
+    @Autowired
+    EndpointUserService endpointUserService;
+
+    private String operationServerHash;
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
-     * org.kaaproject.kaa.server.operations.service.OperationsService#registerEndpoint
-     * (org.kaaproject.kaa.common.endpoint.gen.EndpointRegistrationRequest)
-     */
-    @Override
-    public SyncResponseHolder registerEndpoint(EndpointRegistrationRequest request) throws GetDeltaException {
-        LOG.debug("register endpoint. request: {}", request);
-        String applicationToken = request.getApplicationToken().toString();
-        byte[] endpointKey = toByteArray(request.getEndpointPublicKey());
-        byte[] profileBody = toByteArray(request.getProfileBody());
-
-        RegisterProfileRequest registerProfileRequest = new RegisterProfileRequest(applicationToken, endpointKey, request.getVersionInfo(),
-                profileBody);
-        EndpointProfileDto endpointProfile = profileService.registerProfile(registerProfileRequest);
-        LOG.debug("profile registered. id: {}, endpointKeyHash: {}", endpointProfile.getId(), endpointProfile.getEndpointKeyHash());
-        SyncResponseHolder response = processSync(toSyncRequest(request.getApplicationToken(), endpointProfile), endpointProfile, true);
-        LOG.debug("register endpoint. response: {}", response);
-        return response;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.operations.service.OperationsService#updateEndpoint
-     * (org.kaaproject.kaa.common.endpoint.gen.ProfileUpdateRequest)
-     */
-    @Override
-    public SyncResponseHolder updateProfile(ProfileUpdateRequest request) throws GetDeltaException {
-        LOG.debug("update endpoint. request: {}", request);
-        String applicationToken = request.getApplicationToken().toString();
-        EndpointObjectHash endpointKeyHash = EndpointObjectHash.fromBytes(toByteArray(request.getEndpointPublicKeyHash()));
-        UpdateProfileRequest updateRequest = new UpdateProfileRequest(applicationToken, endpointKeyHash, request.getProfileBody().array(),
-                request.getVersionInfo());
-        EndpointProfileDto endpointProfile = profileService.updateProfile(updateRequest);
-
-        LOG.debug("profile updated. id: {}, endpointKeyHash: {}", endpointProfile.getId(), endpointProfile.getEndpointKeyHash());
-        SyncRequest syncRequest = toSyncRequest(request.getApplicationToken(), endpointProfile);
-        syncRequest.setAcceptedUnicastNotifications(request.getAcceptedUnicastNotifications());
-        syncRequest.setTopicStates(request.getTopicStates());
-        SyncResponseHolder response = processSync(syncRequest, endpointProfile);
-        LOG.debug("update endpoint. response: {}", response);
-        return response;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.operations.service.OperationsService#sync(org.
+     * org.kaaproject.kaa.server.operations.service.OperationsService#sync(org.
      * kaaproject.kaa.common.endpoint.gen.SyncRequest)
      */
     @Override
     public SyncResponseHolder sync(SyncRequest request) throws GetDeltaException {
-        return processSync(request, null, false);
+        return processSync(request);
     }
 
     /**
      * Process sync.
      *
-     * @param request the request
-     * @param profile the profile
+     * @param request
+     *            the request
+     * @param profile
+     *            the profile
+     * @param fetchSchema
+     *            the fetch schema
      * @return the sync response holder
-     * @throws GetDeltaException the get delta exception
+     * @throws GetDeltaException
+     *             the get delta exception
      */
-    private SyncResponseHolder processSync(SyncRequest request, EndpointProfileDto profile) throws GetDeltaException {
-        return processSync(request, profile, false);
-    }
+    private SyncResponseHolder processSync(SyncRequest request) throws GetDeltaException {
+        SyncRequestMetaData metaData = request.getSyncRequestMetaData();
+        String endpointId = Base64Util.encode(metaData.getEndpointPublicKeyHash().array());
+        int requestHash = request.hashCode();
+        LOG.trace("[{}][{}] processing sync. request: ", endpointId, requestHash, request);
 
-    /**
-     * Process sync.
-     *
-     * @param request the request
-     * @param profile the profile
-     * @param fetchSchema the fetch schema
-     * @return the sync response holder
-     * @throws GetDeltaException the get delta exception
-     */
-    private SyncResponseHolder processSync(SyncRequest request, EndpointProfileDto profile, boolean fetchSchema) throws GetDeltaException {
-        String endpointId = Base64Util.encode(request.getEndpointPublicKeyHash().array());
-        
-        LOG.debug("[{}] processing sync request: {}", endpointId, request);
+        if (!validate(endpointId, request)) {
+            return SyncResponseHolder.failure();
+        }
 
-        int curAppSeqNumber = cacheService.getAppSeqNumber(request.getApplicationToken());
-        LOG.debug("[{}] fetched app seq number {} for {}", endpointId, curAppSeqNumber, request.hashCode());
+        SyncResponseHolder response = new SyncResponseHolder(new SyncResponse());
+        response.setStatus(SyncResponseResultType.SUCCESS);
 
-        LOG.debug("[{}] fetching profile for {}", endpointId, request.hashCode());
-        profile = fetchProfile(request, profile);
+        EndpointProfileDto profile = null;
 
-        if (!Arrays.equals(profile.getProfileHash(), toByteArray(request.getProfileHash()))) {
+        ProfileSyncRequest profileSyncRequest = request.getProfileSyncRequest();
+        if (profileSyncRequest != null) {
+            ProfileSyncResponse profileSyncResponse;
+            if (profileSyncRequest.getEndpointPublicKey() != null) {
+                LOG.debug("[{}][{}] registration of endpoint started.", endpointId, requestHash);
+                profile = registerEndpoint(endpointId, requestHash, metaData, profileSyncRequest);
+            } else {
+                LOG.debug("[{}][{}] update of endpoint profile started.", endpointId, requestHash);
+                profile = updateEndpoint(endpointId, requestHash, metaData, profileSyncRequest);
+            }
+            profileSyncResponse = new ProfileSyncResponse(SyncResponseStatus.DELTA);
+            metaData.setProfileHash(ByteBuffer.wrap(profile.getProfileHash()));
+            response.setProfileSyncResponse(profileSyncResponse);
+        }
+
+        AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(metaData.getApplicationToken());
+        int curAppSeqNumber = appSeqNumber.getSeqNumber();
+        LOG.debug("[{}][{}] fetched app seq number {}", endpointId, requestHash, curAppSeqNumber);
+
+        if (profile == null) {
+            LOG.debug("[{}][{}] fetching profile.", endpointId, requestHash);
+            EndpointObjectHash endpointHash = EndpointObjectHash.fromBytes(metaData.getEndpointPublicKeyHash().array());
+            profile = profileService.getProfile(endpointHash);
+            LOG.trace("[{}][{}] fetched profile {}.", endpointId, requestHash, profile);
+        }
+
+        response.setEndpointProfile(profile);
+
+        if (!Arrays.equals(profile.getProfileHash(), toByteArray(metaData.getProfileHash()))) {
             LOG.debug("[{}] Profile hash mismatch. Profile resync needed");
             return buildProfileResyncResponse(request);
         }
 
-        LOG.debug("[{}] fetching history for {}", endpointId, request.hashCode());
-        HistoryDelta historyDelta = fetchHistory(endpointId, request, profile, curAppSeqNumber);
+        if (request.getUserSyncRequest() != null) {
+            LOG.trace("[{}][{}] procesing user sync request {}.", endpointId, requestHash, request.getUserSyncRequest());
+            UserSyncResponse userSyncResponse = processUserSyncRequest(endpointId, requestHash, metaData, request.getUserSyncRequest(), profile);
+            response.setUserSyncResponse(userSyncResponse);
+        }
 
-        LOG.debug("[{}] calculating configuration delta for {}", endpointId, request.hashCode());
-        GetDeltaResponse confResponse = calculateConfigurationDelta(request, profile, historyDelta, curAppSeqNumber, fetchSchema);
+        if (request.getEventSyncRequest() != null) {
+            LOG.trace("[{}][{}] procesing event sync request {}.", endpointId, requestHash, request.getUserSyncRequest());
+            EventSyncResponse eventSyncResponse = processEventSyncResponse(endpointId, requestHash, appSeqNumber, request.getEventSyncRequest(), profile);
+            response.setEventSyncResponse(eventSyncResponse);
+        }
 
-        LOG.debug("[{}] calculating notification delta for {}", endpointId, request.hashCode());
-        GetNotificationResponse notificationResponse = calculateNotificationDelta(request, profile, historyDelta);
+        boolean updateProfileRequired = false;
 
-        LOG.debug("[{}] building response for {}", endpointId, request.hashCode());
-        SyncResponseHolder syncResponseHolder = buildResponse(curAppSeqNumber, confResponse, notificationResponse, profile.getSystemNfVersion(), profile.getUserNfVersion());
-        LOG.debug("[{}] response for {} is {}", endpointId, request.hashCode(), syncResponseHolder);
-        
-        if (historyDelta.isSmthChanged() || notificationResponse.isSubscriptionListChanged()) {
-            if (historyDelta.isSmthChanged()){
+        if (request.getConfigurationSyncRequest() != null) {
+            ConfigurationSyncRequest confSyncRequest = request.getConfigurationSyncRequest();
+            LOG.trace("[{}][{}] procesing configuration sync request {}.", endpointId, requestHash, confSyncRequest);
+            LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", endpointId, requestHash, confSyncRequest.getAppStateSeqNumber(), curAppSeqNumber);
+            LOG.debug("[{}][{}] calculating configuration delta", endpointId, requestHash);
+            HistoryDelta historyDelta = fetchHistory(endpointId, requestHash, metaData.getApplicationToken(), profile, confSyncRequest.getAppStateSeqNumber(),
+                    curAppSeqNumber);
+            GetDeltaResponse confResponse = calculateConfigurationDelta(metaData, confSyncRequest, profile, historyDelta, curAppSeqNumber);
+            ConfigurationSyncResponse confSyncResponse = buildConfSyncResponse(confResponse, curAppSeqNumber);
+            response.setConfigurationSyncResponse(confSyncResponse);
+
+            if (historyDelta.isSmthChanged()) {
                 List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
-                LOG.debug("[{}] Updating profile {} with endpoint groups.size {}, groups: {}", endpointId, profile, endpointGroups.size(), endpointGroups);
+                LOG.debug("[{}][{}] Updating profile with endpoint groups.size {}, groups: {}", endpointId, requestHash, endpointGroups.size(), endpointGroups);
                 profile.setEndpointGroups(endpointGroups);
+                updateProfileRequired = true;
             }
+        }
+
+        if (request.getNotificationSyncRequest() != null) {
+            NotificationSyncRequest nfSyncRequest = request.getNotificationSyncRequest();
+            LOG.trace("[{}][{}] procesing notification sync request {}.", endpointId, requestHash, nfSyncRequest);
+            LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", endpointId, requestHash, nfSyncRequest.getAppStateSeqNumber(), curAppSeqNumber);
+            HistoryDelta historyDelta = fetchHistory(endpointId, requestHash, metaData.getApplicationToken(), profile, nfSyncRequest.getAppStateSeqNumber(),
+                    curAppSeqNumber);
+            LOG.debug("[{}][{}] calculating notification delta", endpointId, requestHash);
+            GetNotificationResponse notificationResponse = calculateNotificationDelta(nfSyncRequest, profile, historyDelta);
+            response.setSubscriptionStates(notificationResponse.getSubscriptionStates());
+            NotificationSyncResponse nfSyncResponse = buildNotificationSyncResponse(notificationResponse, curAppSeqNumber);
+            response.setNotificationSyncResponse(nfSyncResponse);
+
+            updateProfileRequired = updateProfileRequired || notificationResponse.isSubscriptionListChanged();
+            if (historyDelta.isSmthChanged()) {
+                List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
+                LOG.debug("[{}][{}] Updating profile with endpoint groups.size {}, groups: {}", endpointId, requestHash, endpointGroups.size(), endpointGroups);
+                profile.setEndpointGroups(endpointGroups);
+                updateProfileRequired = true;
+            }
+        }
+
+        LOG.debug("[{}][{}] response is {}", endpointId, request.hashCode(), response);
+
+        if (!operationServerHash.equals(profile.getServerHash())) {
+            LOG.debug("[{}] Operations server hash changed from {} to {}", endpointId, profile.getServerHash(), operationServerHash);
+            profile.setServerHash(operationServerHash);
+            updateProfileRequired = true;
+        }
+
+        if (updateProfileRequired) {
             profileService.updateProfile(profile);
         }
-        
-        LOG.debug("[{}] processed sync request: {}", endpointId, request);
-        return syncResponseHolder;
+
+        LOG.debug("[{}][{}] processed sync request", endpointId, requestHash);
+        return response;
     }
 
-    /**
-     * Fetch profile.
-     *
-     * @param request the request
-     * @param profile the profile
-     * @return the endpoint profile dto
-     */
-    private EndpointProfileDto fetchProfile(SyncRequest request, EndpointProfileDto profile) {
-        if (profile == null) {
-            EndpointObjectHash endpointHash = EndpointObjectHash.fromBytes(request.getEndpointPublicKeyHash().array());
-            LOG.debug("Fetching endpoint profile for {}", endpointHash);
-            profile = profileService.getProfile(endpointHash);
-        }
-        return profile;
+    private EndpointProfileDto registerEndpoint(String endpointId, int requestHash, SyncRequestMetaData metaData, ProfileSyncRequest request) {
+        LOG.debug("[{}][{}] register endpoint. request: {}", endpointId, requestHash, request);
+        byte[] endpointKey = toByteArray(request.getEndpointPublicKey());
+        byte[] profileBody = toByteArray(request.getProfileBody());
+
+        RegisterProfileRequest registerProfileRequest = new RegisterProfileRequest(metaData.getApplicationToken(), endpointKey, request.getVersionInfo(),
+                profileBody, request.getEndpointAccessToken());
+        EndpointProfileDto endpointProfile = profileService.registerProfile(registerProfileRequest);
+        LOG.debug("profile registered. id: {}, endpointKeyHash: {}", endpointProfile.getId(), endpointProfile.getEndpointKeyHash());
+        return endpointProfile;
     }
 
-    /**
-     * To sync request.
-     *
-     * @param applicationToken the application token
-     * @param endpointProfile the endpoint profile
-     * @return the sync request
-     */
-    public static SyncRequest toSyncRequest(String applicationToken, EndpointProfileDto endpointProfile) {
-        SyncRequest syncRequest = toSyncRequest(endpointProfile);
-        syncRequest.setApplicationToken(applicationToken);
-        return syncRequest;
+    private EndpointProfileDto updateEndpoint(String endpointId, int requestHash, SyncRequestMetaData metaData, ProfileSyncRequest request) {
+        LOG.debug("[{}][{}] update endpoint. request: {}", endpointId, requestHash, request);
+        EndpointObjectHash endpointKeyHash = EndpointObjectHash.fromBytes(toByteArray(metaData.getEndpointPublicKeyHash()));
+        UpdateProfileRequest updateRequest = new UpdateProfileRequest(metaData.getApplicationToken(), endpointKeyHash, request.getEndpointAccessToken(),
+                request.getProfileBody().array(), request.getVersionInfo());
+        EndpointProfileDto endpointProfile = profileService.updateProfile(updateRequest);
+        LOG.debug("profile updated. id: {}, endpointKeyHash: {}", endpointProfile.getId(), endpointProfile.getEndpointKeyHash());
+        return endpointProfile;
     }
 
-    /**
-     * Builds the response.
-     *
-     * @param curAppSeqNumber the cur app seq number
-     * @param confResponse the conf response
-     * @param notificationResponse the notification response
-     * @return the sync response holder
-     * @throws GetDeltaException the get delta exception
-     */
-    public static SyncResponseHolder buildResponse(int curAppSeqNumber, GetDeltaResponse confResponse, GetNotificationResponse notificationResponse) throws GetDeltaException {
-        return buildResponse(curAppSeqNumber, confResponse, notificationResponse, 0, 0);
-    }
-    
-    /**
-     * Builds the response.
-     *
-     * @param curAppSeqNumber the cur app seq number
-     * @param confResponse the conf response
-     * @param notificationResponse the notification response
-     * @param systemNfVersion the system nf version
-     * @param userNfVersion the user nf version
-     * @return the sync response holder
-     * @throws GetDeltaException the get delta exception
-     */
-    public static SyncResponseHolder buildResponse(int curAppSeqNumber, GetDeltaResponse confResponse, GetNotificationResponse notificationResponse,
-            int systemNfVersion, int userNfVersion) throws GetDeltaException {
-        SyncResponse response = new SyncResponse();
-        response.setAppStateSeqNumber(curAppSeqNumber);
-        response.setResponseType(getResponseStatus(confResponse, notificationResponse));
-        response.setConfSyncResponse(buildConfSyncResponse(confResponse));
-        response.setNotificationSyncResponse(buildNotificationSyncResponse(notificationResponse));
-        return new SyncResponseHolder(response, notificationResponse.getSubscriptionStates(), systemNfVersion, userNfVersion);
-    }
-
-    /**
-     * To sync request.
-     *
-     * @param endpointProfile the endpoint profile
-     * @return the sync request
-     */
-    private static SyncRequest toSyncRequest(EndpointProfileDto endpointProfile) {
-        SyncRequest syncRequest = new SyncRequest();
-        syncRequest.setAppStateSeqNumber(endpointProfile.getSequenceNumber());
-        syncRequest.setEndpointPublicKeyHash(ByteBuffer.wrap(endpointProfile.getEndpointKeyHash()));
-        syncRequest.setProfileHash(ByteBuffer.wrap(endpointProfile.getProfileHash()));
-        if (endpointProfile.getConfigurationHash() != null) {
-            syncRequest.setConfigurationHash(ByteBuffer.wrap(endpointProfile.getConfigurationHash()));
+    private EventSyncResponse processEventSyncResponse(String endpointId, int requestHash, AppSeqNumber appSeqNumber, EventSyncRequest request,
+            EndpointProfileDto profile) {
+        EventSyncResponse response = new EventSyncResponse();
+        List<EventListenersRequest> requests = request.getEventListenersRequests();
+        if (requests != null && !requests.isEmpty()) {
+            LOG.debug("[{}] processing {} endpoint detach requests", endpointId, requests.size());
+            List<EventListenersResponse> responses = new ArrayList<>(requests.size());
+            for (EventListenersRequest elRequest : requests) {
+                LOG.debug("[{}] processing event listener request {}", endpointId, request);
+                EventListenersResponse elResponse = endpointUserService.findListeners(profile, appSeqNumber, elRequest);
+                LOG.debug("[{}] event listener response {}", endpointId, response);
+                responses.add(elResponse);
+            }
+            response.setEventListenersResponses(responses);
         } else {
-            syncRequest.setConfigurationHash(ByteBuffer.wrap(new byte[0]));
+            List<EventListenersResponse> emptyList = Collections.emptyList();
+            response.setEventListenersResponses(emptyList);
         }
-        return syncRequest;
+        return response;
+    }
+
+    private UserSyncResponse processUserSyncRequest(String endpointId, int requestHash, SyncRequestMetaData metaData, UserSyncRequest request,
+            EndpointProfileDto profile) {
+        UserSyncResponse response = new UserSyncResponse();
+        if (request.getUserAttachRequest() != null) {
+            LOG.debug("[{}] processing user attach request {}", endpointId, request.getUserAttachRequest());
+            UserAttachResponse userAttachResponse = endpointUserService.attachUser(profile, request.getUserAttachRequest());
+            LOG.debug("[{}] user attach response {}", endpointId, userAttachResponse);
+            response.setUserAttachResponse(userAttachResponse);
+        }
+        if (request.getEndpointAttachRequests() != null) {
+            response.setEndpointAttachResponses(processEndpointAttachRequests(endpointId, requestHash, request, profile));
+        }
+        if (request.getEndpointDetachRequests() != null) {
+            response.setEndpointDetachResponses(processEndpointDetachRequests(endpointId, requestHash, request, profile));
+        }
+        return response;
+    }
+
+    private boolean validate(String endpointId, SyncRequest request) {
+        SyncRequestMetaData md = request.getSyncRequestMetaData();
+        // TODO: validate if public key hash matches hash of public key during
+        // profile registration command.
+        if (md.getProfileHash() == null) {
+            ProfileSyncRequest profileRequest = request.getProfileSyncRequest();
+            if (profileRequest != null && profileRequest.getEndpointPublicKey() != null) {
+                return true;
+            } else {
+                LOG.warn("[{}] Request is not valid. It does not contain profile information!", endpointId);
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private List<EndpointAttachResponse> processEndpointAttachRequests(String endpointId, int requestHash, UserSyncRequest syncRequest,
+            EndpointProfileDto profile) {
+        List<EndpointAttachRequest> requests = syncRequest.getEndpointAttachRequests();
+        if (requests != null && !requests.isEmpty()) {
+            LOG.debug("[{}][{}] processing {} endpoint attach requests", endpointId, requestHash, requests.size());
+            List<EndpointAttachResponse> responses = new ArrayList<>(requests.size());
+            for (EndpointAttachRequest request : syncRequest.getEndpointAttachRequests()) {
+                LOG.debug("[{}][{}] processing endpoint attach request {}", endpointId, requestHash, request);
+                EndpointAttachResponse response = endpointUserService.attachEndpoint(profile, request);
+                LOG.debug("[{}][{}] endpoint attach response {}", endpointId, requestHash, response);
+                responses.add(response);
+            }
+            return responses;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    private List<EndpointDetachResponse> processEndpointDetachRequests(String endpointId, int requestHash, UserSyncRequest syncRequest,
+            EndpointProfileDto profile) {
+        List<EndpointDetachRequest> requests = syncRequest.getEndpointDetachRequests();
+        if (requests != null && !requests.isEmpty()) {
+            LOG.debug("[{}] processing {} endpoint detach requests", endpointId, requests.size());
+            List<EndpointDetachResponse> responses = new ArrayList<>(requests.size());
+            for (EndpointDetachRequest request : requests) {
+                LOG.debug("[{}] processing endpoint detach request {}", endpointId, request);
+                EndpointDetachResponse response = endpointUserService.detachEndpoint(profile, request);
+                LOG.debug("[{}] endpoint detach response {}", endpointId, response);
+                responses.add(response);
+            }
+            return responses;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     /**
      * Builds the notification sync response.
      *
-     * @param notificationResponse the notification response
+     * @param notificationResponse
+     *            the notification response
      * @return the notification sync response
      */
-    private static NotificationSyncResponse buildNotificationSyncResponse(GetNotificationResponse notificationResponse) {
-        NotificationSyncResponse notificationSyncResponse = new NotificationSyncResponse();
+    private static NotificationSyncResponse buildNotificationSyncResponse(GetNotificationResponse notificationResponse, int curAppSeqNumber) {
+        NotificationSyncResponse response = new NotificationSyncResponse();
+        response.setResponseStatus(SyncResponseStatus.NO_DELTA);
+
         if (notificationResponse.getNotifications() != null) {
             List<Notification> notifications = new ArrayList<Notification>();
             for (NotificationDto notificationDto : notificationResponse.getNotifications()) {
                 notifications.add(convertNotification(notificationDto));
             }
-            notificationSyncResponse.setNotifications(notifications);
+            response.setNotifications(notifications);
         }
 
         if (notificationResponse.getTopicList() != null) {
@@ -328,16 +407,20 @@ public class DefaultOperationsService implements OperationsService {
                 }
                 topicList.add(topic);
             }
-            notificationSyncResponse.setAvailableTopics(topicList);
+            if (notificationResponse.hasDelta()) {
+                response.setResponseStatus(SyncResponseStatus.DELTA);
+            }
+            response.setAvailableTopics(topicList);
         }
-
-        return notificationSyncResponse;
+        response.setAppStateSeqNumber(curAppSeqNumber);
+        return response;
     }
 
     /**
      * Convert notification.
      *
-     * @param notificationDto the notification dto
+     * @param notificationDto
+     *            the notification dto
      * @return the notification
      */
     private static Notification convertNotification(NotificationDto notificationDto) {
@@ -354,10 +437,10 @@ public class DefaultOperationsService implements OperationsService {
         default:
             break;
         }
-        if(notificationDto.getSecNum() >= 0){
+        if (notificationDto.getSecNum() >= 0) {
             notification.setSeqNumber(notificationDto.getSecNum());
-        }else{
-            //unicast notification
+        } else {
+            // unicast notification
             notification.setUid(notificationDto.getId());
         }
         return notification;
@@ -366,67 +449,57 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Builds the conf sync response.
      *
-     * @param confResponse the conf response
+     * @param deltaResponse
+     *            the conf response
      * @return the conf sync response
-     * @throws GetDeltaException the get delta exception
+     * @throws GetDeltaException
+     *             the get delta exception
      */
-    private static ConfSyncResponse buildConfSyncResponse(GetDeltaResponse confResponse) throws GetDeltaException {
-        ConfSyncResponse confSyncResponse = new ConfSyncResponse();
-        if (confResponse.getDelta() != null) {
+    private static ConfigurationSyncResponse buildConfSyncResponse(GetDeltaResponse deltaResponse, int curAppSeqNumber) throws GetDeltaException {
+        ConfigurationSyncResponse response = new ConfigurationSyncResponse();
+        if (deltaResponse.getDelta() != null) {
             try {
-                confSyncResponse.setConfDeltaBody(ByteBuffer.wrap(confResponse.getDelta().getData()));
+                response.setConfDeltaBody(ByteBuffer.wrap(deltaResponse.getDelta().getData()));
             } catch (IOException e) {
                 LOG.error("conf delta invalid: {}", e);
                 throw new GetDeltaException(e);
             }
         }
-        if (confResponse.getConfSchema() != null) {
+        if (deltaResponse.getConfSchema() != null) {
             try {
-                confSyncResponse.setConfSchemaBody(ByteBuffer.wrap(confResponse.getConfSchema().getBytes("UTF-8")));
+                response.setConfSchemaBody(ByteBuffer.wrap(deltaResponse.getConfSchema().getBytes("UTF-8")));
             } catch (UnsupportedEncodingException e) {
                 LOG.error("conf schema invalid: {}", e);
                 throw new GetDeltaException(e);
             }
         }
-        return confSyncResponse;
-    }
-
-    /**
-     * Gets the response status.
-     *
-     * @param confResponse the conf response
-     * @param notificationResponse the notification response
-     * @return the response status
-     */
-    private static SyncResponseStatus getResponseStatus(GetDeltaResponse confResponse, GetNotificationResponse notificationResponse) {
-        SyncResponseStatus responseStatus = SyncResponseStatus.NO_DELTA;
-        if (notificationResponse.hasDelta()) {
-            responseStatus = SyncResponseStatus.DELTA;
+        switch (deltaResponse.getResponseType()) {
+        case CONF_RESYNC:
+            response.setResponseStatus(SyncResponseStatus.RESYNC);
+            break;
+        case DELTA:
+            response.setResponseStatus(SyncResponseStatus.DELTA);
+            break;
+        default:
+            response.setResponseStatus(SyncResponseStatus.NO_DELTA);
+            break;
         }
-        if (confResponse.getResponseType() != GetDeltaResponseType.NO_DELTA) {
-            switch (confResponse.getResponseType()) {
-            case CONF_RESYNC:
-                responseStatus = SyncResponseStatus.CONF_RESYNC;
-                break;
-            case DELTA:
-                responseStatus = SyncResponseStatus.DELTA;
-                break;
-            default:
-                break;
-            }
-        }
-        return responseStatus;
+        response.setAppStateSeqNumber(curAppSeqNumber);
+        return response;
     }
 
     /**
      * Calculate notification delta.
      *
-     * @param syncRequest the sync request
-     * @param profile the profile
-     * @param historyDelta the history delta
+     * @param syncRequest
+     *            the sync request
+     * @param profile
+     *            the profile
+     * @param historyDelta
+     *            the history delta
      * @return the gets the notification response
      */
-    private GetNotificationResponse calculateNotificationDelta(SyncRequest syncRequest, EndpointProfileDto profile, HistoryDelta historyDelta) {
+    private GetNotificationResponse calculateNotificationDelta(NotificationSyncRequest syncRequest, EndpointProfileDto profile, HistoryDelta historyDelta) {
         GetNotificationRequest request = new GetNotificationRequest(profile, syncRequest.getSubscriptionCommands(),
                 syncRequest.getAcceptedUnicastNotifications(), syncRequest.getTopicStates());
         return notificationDeltaService.getNotificationDelta(request, historyDelta);
@@ -435,21 +508,29 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Calculate configuration delta.
      *
-     * @param request the request
-     * @param profile the profile
-     * @param historyDelta the history delta
-     * @param curAppSeqNumber the cur app seq number
-     * @param fetchSchema the fetch schema
+     * @param request
+     *            the request
+     * @param profile
+     *            the profile
+     * @param historyDelta
+     *            the history delta
+     * @param curAppSeqNumber
+     *            the cur app seq number
+     * @param fetchSchema
+     *            the fetch schema
      * @return the gets the delta response
-     * @throws GetDeltaException the get delta exception
+     * @throws GetDeltaException
+     *             the get delta exception
      */
-    private GetDeltaResponse calculateConfigurationDelta(SyncRequest request, EndpointProfileDto profile, HistoryDelta historyDelta,
-            int curAppSeqNumber, boolean fetchSchema) throws GetDeltaException {
-        EndpointObjectHash confHash = EndpointObjectHash.fromBytes(request.getConfigurationHash().array());
-        // TODO: remove nulls
-        GetDeltaRequest deltaRequest = new GetDeltaRequest(request.getApplicationToken(), null, null, confHash, request.getAppStateSeqNumber());
+    private GetDeltaResponse calculateConfigurationDelta(SyncRequestMetaData metaData, ConfigurationSyncRequest request, EndpointProfileDto profile, HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException {
+        GetDeltaRequest deltaRequest;
+        int curEndpointSeqNumber = Math.min(request.getAppStateSeqNumber(), profile.getSequenceNumber());
+        if(request.getConfigurationHash() != null){
+            deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), EndpointObjectHash.fromBytes(request.getConfigurationHash().array()), curEndpointSeqNumber);
+        }else{
+            deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), curEndpointSeqNumber);
+        }
         deltaRequest.setEndpointProfile(profile);
-        deltaRequest.setFetchSchema(fetchSchema);
         GetDeltaResponse confResponse = deltaService.getDelta(deltaRequest, historyDelta, curAppSeqNumber);
         return confResponse;
     }
@@ -457,50 +538,53 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Fetch history.
      *
-     * @param request the request
-     * @param profile the profile
-     * @param curAppSeqNumber the cur app seq number
+     * @param request
+     *            the request
+     * @param profile
+     *            the profile
+     * @param curAppSeqNumber
+     *            the cur app seq number
      * @return the history delta
      */
-    private HistoryDelta fetchHistory(String endpointId, SyncRequest request, EndpointProfileDto profile, int curAppSeqNumber) {
-        String applicationToken = request.getApplicationToken();
-        int oldAppSeqNumber = request.getAppStateSeqNumber();
-
-        if (isFirstRequest(request)) {
+    private HistoryDelta fetchHistory(String endpointId, int requesHash, String applicationToken, EndpointProfileDto profile, int startSeqNumber,
+            int endSeqNumber) {
+        int curEndpointSeqNumber = Math.min(startSeqNumber, profile.getSequenceNumber());
+        if (isFirstRequest(profile)) {
             LOG.debug("[{}] Profile has no endpoint groups yet. calculating full list", endpointId);
-            return historyDeltaService.getDelta(profile, applicationToken, curAppSeqNumber);
+            return historyDeltaService.getDelta(profile, applicationToken, endSeqNumber);
         } else {
             LOG.debug("[{}] Profile has endpoint groups. Calculating changes", endpointId);
-            return historyDeltaService.getDelta(profile, applicationToken, oldAppSeqNumber, curAppSeqNumber);
+            return historyDeltaService.getDelta(profile, applicationToken, curEndpointSeqNumber, endSeqNumber);
         }
     }
 
     /**
      * Checks if is first request.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return true, if is first request
      */
-    public static boolean isFirstRequest(SyncRequest request) {
-        return request.getConfigurationHash() == null || toByteArray(request.getConfigurationHash()).length == 0;
+    public static boolean isFirstRequest(EndpointProfileDto profile) {
+        return profile.getConfigurationHash() == null || profile.getConfigurationHash().length == 0;
     }
 
     /**
      * Builds the profile resync response.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the sync response holder
      */
     public static SyncResponseHolder buildProfileResyncResponse(SyncRequest request) {
         SyncResponse response = new SyncResponse();
-        response.setAppStateSeqNumber(request.getAppStateSeqNumber());
-        response.setResponseType(SyncResponseStatus.PROFILE_RESYNC);
+        response.setStatus(SyncResponseResultType.PROFILE_RESYNC);
         return new SyncResponseHolder(response);
     }
 
     /**
      * To byte array.
-     * 
+     *
      * @param buffer
      *            the buffer
      * @return the byte[]
@@ -509,8 +593,12 @@ public class DefaultOperationsService implements OperationsService {
         return Arrays.copyOf(buffer.array(), buffer.array().length);
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.OperationsService#updateSyncResponse(org.kaaproject.kaa.common.endpoint.gen.SyncResponse, java.util.List, java.lang.String)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.operations.service.OperationsService#
+     * updateSyncResponse(org.kaaproject.kaa.common.endpoint.gen.SyncResponse,
+     * java.util.List, java.lang.String)
      */
     @Override
     public SyncResponse updateSyncResponse(SyncResponse response, List<NotificationDto> notificationDtos, String unicastNotificationId) {
@@ -534,7 +622,12 @@ public class DefaultOperationsService implements OperationsService {
 
         notificationResponse.setNotifications(notifications);
 
-        response.setResponseType(SyncResponseStatus.DELTA);
+        notificationResponse.setResponseStatus(SyncResponseStatus.DELTA);
         return response;
+    }
+
+    @Override
+    public void setPublicKey(PublicKey publicKey) {
+        operationServerHash = Base64Util.encode(SHA1HashUtils.hashToBytes(publicKey.getEncoded()));
     }
 }
