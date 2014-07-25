@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultLogTransport;
 import org.kaaproject.kaa.client.logging.LogProcessor;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;

@@ -22,12 +22,12 @@ import org.kaaproject.kaa.server.common.http.server.Config;
  * @author Andrey Panasenko
  *
  */
-abstract public class NettyHttpServiceChannelConfig extends Config implements ServiceChannelConfig {
+public abstract class NettyHttpServiceChannelConfig extends Config implements ServiceChannelConfig {
 
     private boolean channelEnabled;
     private OperationsServerConfig operationServerConfig;
     
-    abstract public ChannelType getChannelType();
+    public abstract ChannelType getChannelType();
 
     /**
      * @return the channelEnabled

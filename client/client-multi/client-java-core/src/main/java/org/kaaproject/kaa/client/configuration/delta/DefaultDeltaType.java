@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.configuration.delta;
 
 /**
- * Field with this delta type should use the default value ({@link DeltaType} implementation)
+ * Field with this delta type uses the default value ({@link DeltaType} implementation)
  *
  * @author Yaroslav Zeygerman
  *

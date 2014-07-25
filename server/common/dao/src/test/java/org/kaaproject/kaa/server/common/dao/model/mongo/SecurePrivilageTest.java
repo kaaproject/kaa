@@ -15,14 +15,40 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.mongo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.logs.security.MongoPrivilegeDto;
 import org.kaaproject.kaa.server.common.dao.model.mongo.SecurePrivilege;
 
 public class SecurePrivilageTest {
+    
+    private static final SecureResource TEST_RESOURCE = new SecureResource();
+    private static final List<String> TEST_ACTIONS = new ArrayList<>();
 
+    @Test
+    public void basicLogEventTest() {
+        SecurePrivilege privilege = new SecurePrivilege();
+        
+        Assert.assertNull(privilege.getResource());
+        Assert.assertNull(privilege.getActions());
+        
+        privilege.setResource(TEST_RESOURCE);
+        privilege.setActions(TEST_ACTIONS);
+        
+        Assert.assertEquals(TEST_RESOURCE, privilege.getResource());
+        Assert.assertEquals(TEST_ACTIONS, privilege.getActions());
+        
+        MongoPrivilegeDto dto = privilege.toDto();
+        
+        Assert.assertEquals(TEST_ACTIONS, dto.getActions());
+    }
+    
     @Test
     public void hashCodeEqualsTest(){
         EqualsVerifier.forClass(SecurePrivilege.class).suppress(Warning.NONFINAL_FIELDS).verify();

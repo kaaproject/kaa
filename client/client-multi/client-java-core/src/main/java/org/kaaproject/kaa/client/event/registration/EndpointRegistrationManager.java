@@ -24,12 +24,66 @@ import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 
 /**
- * Manager which is responsible for Endpoints attach/detach.
+ * Module that manages endpoint-initiated attaching and detaching endpoints
+ * to (from) user.<br>
+ * <br>
+ * To assign endpoints to user current endpoint has to be already attached,
+ * otherwise attach/detach operations will fail.<br>
+ * Current endpoint can be attached to user in two ways:
+ * <il>
+ * <li>By calling {@link #attachUser(String, String, UserAuthResultListener)}</li>
+ * <li>Attached from another endpoint</li>
+ * </il>
+ * <br>
+ * Attaching current endpoint to user:
+ * <pre>
+ * {@code
+ * EndpointRegistrationManager registrationManager = kaaClient.getEndpointRegistrationManager();
+ * registrationManager.attachUser("userExternalId", "userAccessToken", new UserAuthResultListener() { ... });
+ * }
+ * </pre>
+ * To check if this endpoint is attached to user call {@link #isAttachedToUser()}.
+ * Only attached endpoints can send/receive events.<br>
+ * <br>
+ * Attaching any endpoint to user by its access token:
+ * <pre>
+ * {@code
+ * EndpointRegistrationManager registrationManager = kaaClient.getEndpointRegistrationManager();
+ * registrationManager.attachEndpoint(new EndpointAccessToken("accessToken"), new EndpointOperationResultListener() {...});
+ * }
+ * </pre>
+ * Detaching endpoint from user by its {@link EndpointKeyHash}:
+ * <pre>
+ * {@code
+ * EndpointRegistrationManager registrationManager = kaaClient.getEndpointRegistrationManager();
+ * registrationManager.detachEndpoint((new EndpointKeyHash("keyHash"), new EndpointOperationResultListener() {...});
+ * }
+ * </pre>
+ * EndpointKeyHash for endpoint can be received with AttachEndpoint operation
+ * provided from Operations server. See {@link EndpointOperationResultListener}. <br>
+ * <br>
+ * If current endpoint is assumed to be attached or detached by another endpoint,
+ * specific {@link CurrentEndpointAttachListener} and {@link CurrentEndpointDetachListener}
+ * may be specified to receive notification about such event.<br>
+ * <br>
+ * Manager uses specific {@link UserTransport} to communicate with Operations
+ * server in scope of basic functionality and {@link ProfileTransport} when its
+ * access token is changed.
  *
  * @author Taras Lemkin
  *
+ * @see EndpointAccessToken
+ * @see EndpointKeyHash
+ * @see EndpointOperationResultListener
+ * @see UserAuthResultListener
+ * @see AttachedEndpointListChangedListener
+ * @see CurrentEndpointAttachListener
+ * @see CurrentEndpointDetachListener
+ * @see UserTransport
+ * @see ProfileTransport
  */
 public interface EndpointRegistrationManager {
+
     /**
      * Generate new access token for a current endpoint
      */
@@ -41,7 +95,10 @@ public interface EndpointRegistrationManager {
     String getEndpointAccessToken();
 
     /**
-     * Adds new endpoint attach request
+     * Updates with new endpoint attach request<br>
+     * <br>
+     * {@link resultListener} is populated with {@link EndpointKeyHash} of an
+     * attached endpoint.
      *
      * @param endpointAccessToken Access token of the attaching endpoint
      * @param resultListener Listener to notify about result of the endpoint attaching
@@ -52,7 +109,7 @@ public interface EndpointRegistrationManager {
     void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationResultListener resultListener);
 
     /**
-     * Adds new endpoint detach request
+     * Updates with new endpoint detach request
      *
      * @param endpointKeyHash Key hash of the detaching endpoint
      * @param resultListener Listener to notify about result of the enpoint attaching
@@ -84,7 +141,7 @@ public interface EndpointRegistrationManager {
     Map<EndpointAccessToken, EndpointKeyHash> getAttachedEndpointList();
 
     /**
-     * Adds listener for attached endpoint list updates
+     * Updates with listener for attached endpoint list updates
      *
      * @param listener Attached endpoints list change listener
      * @see AttachedEndpointListChangedListener
@@ -114,4 +171,29 @@ public interface EndpointRegistrationManager {
      * @see ProfileTransport
      */
     void setProfileTransport(ProfileTransport transport);
+
+    /**
+     * Checks if current endpoint is attached to user.
+     *
+     * @return true if current endpoint is attached to any user, false otherwise.
+     */
+    boolean isAttachedToUser();
+
+    /**
+     * Sets callback for notifications when current endpoint is attached to user
+     *
+     * @param listener
+     *
+     * @see CurrentEndpointAttachListener
+     */
+    void setAttachedListener(CurrentEndpointAttachListener listener);
+
+    /**
+     * Sets callback for notifications when current endpoint is detached from user
+     *
+     * @param listener
+     *
+     * @see CurrentEndpointDetachListener
+     */
+    void setDetachedListener(CurrentEndpointDetachListener listener);
 }

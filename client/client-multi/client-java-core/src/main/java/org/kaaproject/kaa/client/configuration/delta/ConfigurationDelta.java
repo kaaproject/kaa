@@ -29,12 +29,13 @@ public interface ConfigurationDelta {
      *
      * @return handler id of this delta, or null if the delta doesn't
      *         have a handler id
+     *
      * @see DeltaHandlerId
      */
     DeltaHandlerId getHandlerId();
 
     /**
-     * Tells if the field was changed
+     * Checks if the field was changed
      *
      * @param field the name of the field
      * @return true if the field was changed, false otherwise
@@ -46,6 +47,7 @@ public interface ConfigurationDelta {
      *
      * @param field the name of the field
      * @return delta type of the field, or null if the field was not changed
+     *
      * @see DeltaType
      */
     DeltaType getDeltaType(String field);

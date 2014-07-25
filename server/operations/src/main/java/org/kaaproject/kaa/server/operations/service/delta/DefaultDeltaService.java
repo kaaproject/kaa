@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.operations.service.delta;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -175,15 +174,6 @@ public class DefaultDeltaService implements DeltaService {
             response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA, curAppSeqNumber);
         }
 
-//        if (request.isFetchSchema()) {
-//            LOG.debug("[{}] Fetching delta schema for application {} and configuration schema version {}", endpointId, appConfigVersionKey.getApplicationToken(),
-//                    appConfigVersionKey.getVersion());
-//            ConfigurationSchemaDto latestConfiguration = cacheService.getConfSchemaByAppAndVersion(appConfigVersionKey);
-//            response.setConfSchema(latestConfiguration.getProtocolSchema());
-//        }
-
-        profile.setSequenceNumber(curAppSeqNumber);
-
         LOG.debug("[{}] Response: {}", endpointId, response);
         return response;
     }
@@ -230,7 +220,7 @@ public class DefaultDeltaService implements DeltaService {
                 }
             }
         });
-        
+
         return deltaCacheEntry;
     }
 
@@ -272,7 +262,7 @@ public class DefaultDeltaService implements DeltaService {
      * @throws GetDeltaException the get delta exception
      */
     private BaseData getMergedConfiguration(final String endpointId, final List<EndpointGroupStateDto> egsList) throws GetDeltaException {
-        BaseData mergedConfiguration = cacheService.getMergedConfiguration(egsList, new Computable<List<EndpointGroupStateDto>, BaseData>() {
+        return cacheService.getMergedConfiguration(egsList, new Computable<List<EndpointGroupStateDto>, BaseData>() {
 
             @Override
             public BaseData compute(List<EndpointGroupStateDto> key) {
@@ -311,7 +301,6 @@ public class DefaultDeltaService implements DeltaService {
                 }
             }
         });
-        return mergedConfiguration;
     }
 
     /**

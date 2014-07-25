@@ -1,0 +1,95 @@
+#
+# Copyright 2014 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#!/bin/bash
+
+function help {
+    echo "Choose one of the following: {build|install|test|clean}"
+    exit 1
+}
+
+RUN_DIR=`pwd`
+TEST_DIR=$RUN_DIR/test
+TEST_RESULT=1
+TEST_BUILD_FAILED=1
+
+# Temporary solution
+if [ ! -x $RUN_DIR/gcovr ]
+then
+    chmod +x $RUN_DIR/gcovr
+fi
+
+function measure_coverage {
+    echo "Collecting coverage metrics..."
+    cd $RUN_DIR && ./gcovr -d -x -f "($RUN_DIR).*" -e ".*(test|kaa/gen).*" -o $RUN_DIR/gcovr-report.xml -v > $RUN_DIR/gcovr.log   
+}
+
+function run_tests {
+    cd build && make -j4 && TEST_BUILD_FAILED=0 && ./kaatest --report_level=detailed --report_format=xml 2>$RUN_DIR/unittest_result.xml && TEST_RESULT=0
+}
+
+function test_cleanup {
+    echo "Cleaning up..."
+    cd $TEST_DIR/build && make clean
+    echo "Cleanup done." 
+}
+
+if [ $# -eq 0 ]
+then
+    help
+fi
+
+mkdir -p build; cd build; cmake ..; cd ..
+
+for cmd in $@
+do
+
+case "$cmd" in
+    build)
+    cd build && make && cd ..
+    ;;
+
+    install)
+    cd build && make install && cd ..
+    ;;
+
+    clean)
+    cd build && make clean && cd .. 
+    test_cleanup
+    ;;
+    
+    test)
+    cd $TEST_DIR
+    mkdir -p build; cd build; cmake ..; cd ..
+    run_tests
+    if [[ $TEST_BUILD_FAILED -eq 0 ]]
+    then
+        measure_coverage  
+    fi
+    test_cleanup
+    if [[ $TEST_RESULT -ne 0 ]]
+    then
+        echo "Kaa C++ Client unittests failed!"
+        exit $TEST_RESULT
+    fi
+    ;;
+    
+    *)
+    help
+    ;;
+esac
+
+done

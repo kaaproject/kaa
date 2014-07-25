@@ -22,7 +22,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 
 /**
- * The interface LogEventPackService service.
+ * The interface LogEventService service.
  */
 public interface LogEventService {
     

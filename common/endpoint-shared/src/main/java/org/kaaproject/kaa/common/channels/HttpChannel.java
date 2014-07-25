@@ -74,8 +74,7 @@ public class HttpChannel extends Channel {
      */
     public static SupportedChannel getSupportedChannelFromHttpParameters(HttpParameters params) {
         HTTPComunicationParameters communicationParameters = new HTTPComunicationParameters(params.getHostName(), params.getPort());
-        SupportedChannel schannel = new SupportedChannel(getType(), (Object)communicationParameters );
-        return schannel;
+        return new SupportedChannel(getType(), (Object)communicationParameters );
     }
     
     /**
@@ -83,7 +82,7 @@ public class HttpChannel extends Channel {
      * @return List<TransportTypes> of supported transports.
      */
     public static List<TransportType> getSupportedTransportTypes() {
-        return ListTransportTypesFromArray(supportedTransports);
+        return listTransportTypesFromArray(supportedTransports);
     }
     
     /**

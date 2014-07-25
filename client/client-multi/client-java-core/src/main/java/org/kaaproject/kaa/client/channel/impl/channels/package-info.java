@@ -15,7 +15,7 @@
  */
 
 /**
- * Provides reference implementation of channels for communicating with
+ * Provides reference implementation of channels for communicating between
  * bootstrap and operation servers
  */
 package org.kaaproject.kaa.client.channel.impl.channels;

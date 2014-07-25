@@ -23,7 +23,7 @@
     </appender>
 
     <appender name="fileLogAppender" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="${server_log_dir}/kaa-endpoint-server.log" />
+        <param name="File" value="kaa-desktop-client.log" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">

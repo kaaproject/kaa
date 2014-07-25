@@ -36,7 +36,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 @Entity
 @Table(name = CONFIGURATION_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implements Serializable {
+public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implements Serializable {
 
     private static final long serialVersionUID = -8854035430683210037L;
 

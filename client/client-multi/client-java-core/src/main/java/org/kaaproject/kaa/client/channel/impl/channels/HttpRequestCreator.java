@@ -30,26 +30,29 @@ public class HttpRequestCreator {
             .getLogger(HttpRequestCreator.class);
 
     static LinkedHashMap<String, byte[]> createOperationHttpRequest(byte [] body, MessageEncoderDecoder messageEncDec) throws GeneralSecurityException {
-        byte[] requestKeyEncoded = messageEncDec.getEncodedSessionKey();
-        byte[] requestBodyEncoded = messageEncDec.encodeData(body);
-        byte[] signature = messageEncDec.sign(requestBodyEncoded);
+        if (body != null && messageEncDec != null) {
+            byte[] requestKeyEncoded = messageEncDec.getEncodedSessionKey();
+            byte[] requestBodyEncoded = messageEncDec.encodeData(body);
+            byte[] signature = messageEncDec.sign(requestBodyEncoded);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Signature size: {}", signature.length);
-            LOG.trace(MessageEncoderDecoder.bytesToHex(signature));
-            LOG.trace("RequestKeyEncoded size: {}", requestKeyEncoded.length);
-            LOG.trace(MessageEncoderDecoder.bytesToHex(requestKeyEncoded));
-            LOG.trace("RequestBodyEncoded size: {}", requestBodyEncoded.length);
-            LOG.trace(MessageEncoderDecoder.bytesToHex(requestBodyEncoded));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Signature size: {}", signature.length);
+                LOG.trace(MessageEncoderDecoder.bytesToHex(signature));
+                LOG.trace("RequestKeyEncoded size: {}", requestKeyEncoded.length);
+                LOG.trace(MessageEncoderDecoder.bytesToHex(requestKeyEncoded));
+                LOG.trace("RequestBodyEncoded size: {}", requestBodyEncoded.length);
+                LOG.trace(MessageEncoderDecoder.bytesToHex(requestBodyEncoded));
+            }
+            LinkedHashMap<String, byte[]> requestEntity = new LinkedHashMap<String, byte[]>(); //NOSONAR
+            requestEntity.put(CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME,
+                    signature);
+            requestEntity.put(CommonEPConstans.REQUEST_KEY_ATTR_NAME,
+                    requestKeyEncoded);
+            requestEntity.put(CommonEPConstans.REQUEST_DATA_ATTR_NAME,
+                    requestBodyEncoded);
+            return requestEntity;
         }
-        LinkedHashMap<String, byte[]> requestEntity = new LinkedHashMap<String, byte[]>();
-        requestEntity.put(CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME,
-                signature);
-        requestEntity.put(CommonEPConstans.REQUEST_KEY_ATTR_NAME,
-                requestKeyEncoded);
-        requestEntity.put(CommonEPConstans.REQUEST_DATA_ATTR_NAME,
-                requestBodyEncoded);
-        return requestEntity;
+        return null;
     }
 
 }

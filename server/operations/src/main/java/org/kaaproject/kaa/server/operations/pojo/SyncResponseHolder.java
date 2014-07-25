@@ -49,8 +49,9 @@ public class SyncResponseHolder {
     /** The user nf version. */
     private int userNfVersion;
 
-    public static SyncResponseHolder failure(){
+    public static SyncResponseHolder failure(Integer requestId){
         SyncResponse response = new SyncResponse();
+        response.setRequestId(requestId);
         response.setStatus(SyncResponseResultType.FAILURE);
         return new SyncResponseHolder(response);
     }
@@ -144,6 +145,10 @@ public class SyncResponseHolder {
         this.response.setProfileSyncResponse(response);
     }
 
+    public void setRequestId(Integer value) {
+        this.response.setRequestId(value);
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -177,19 +182,19 @@ public class SyncResponseHolder {
             return true;
         }
         if (response.getEventSyncResponse() != null) {
-            if(response.getEventSyncResponse().getEvents() != null && response.getEventSyncResponse().getEvents().size() > 0){
+            if(response.getEventSyncResponse().getEvents() != null && !response.getEventSyncResponse().getEvents().isEmpty()){
                 return true;
             }
-            if(response.getEventSyncResponse().getEventListenersResponses() != null && response.getEventSyncResponse().getEventListenersResponses().size() > 0){
+            if(response.getEventSyncResponse().getEventListenersResponses() != null && !response.getEventSyncResponse().getEventListenersResponses().isEmpty()){
                 return true;
             }
         }
         if (response.getUserSyncResponse() != null) {
             UserSyncResponse userResponse = response.getUserSyncResponse();
-            if (userResponse.getEndpointAttachResponses() != null && userResponse.getEndpointAttachResponses().size() > 0) {
+            if (userResponse.getEndpointAttachResponses() != null && !userResponse.getEndpointAttachResponses().isEmpty()) {
                 return true;
             }
-            if (userResponse.getEndpointDetachResponses() != null && userResponse.getEndpointDetachResponses().size() > 0) {
+            if (userResponse.getEndpointDetachResponses() != null && !userResponse.getEndpointDetachResponses().isEmpty()) {
                 return true;
             }
             if (userResponse.getUserAttachResponse() != null) {

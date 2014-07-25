@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.TransportType;
 
 public interface RawDataProcessor {
 
-    LinkedHashMap<String, byte[]> createRequest(Map<TransportType, ChannelDirection> types);
+    LinkedHashMap<String, byte[]> createRequest(Map<TransportType, ChannelDirection> types); //NOSONAR
 
     void onResponse(byte [] response);
 

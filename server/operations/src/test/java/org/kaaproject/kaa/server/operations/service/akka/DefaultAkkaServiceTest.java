@@ -45,6 +45,10 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
@@ -59,11 +63,16 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification;
+import org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification;
+import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEncodedRequestMessage;
@@ -794,6 +803,266 @@ public class DefaultAkkaServiceTest {
         Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class));
         Mockito.verify(commandMock, Mockito.timeout(TIMEOUT).atLeastOnce()).encode(Mockito.any(SyncResponse.class));
 
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void testUserChange() throws Exception{
+        ChannelHandlerContext channelContextMock = Mockito.mock(ChannelHandlerContext.class);
+        AbstractOperationsCommand targetCommandMock = Mockito.mock(AbstractOperationsCommand.class);
+
+        EndpointProfileDto targetProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest targetRequest = new SyncRequest();
+        SyncRequestMetaData md = new SyncRequestMetaData( );
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(ByteBuffer.wrap(ENDPOINT_KEY_HASH_TARGET));
+        md.setTimeout(TIMEOUT*1L);
+        targetRequest.setSyncRequestMetaData(md);
+
+        targetRequest.setEventSyncRequest(new EventSyncRequest());
+
+        SyncResponse targetResponse = new SyncResponse();
+        targetResponse.setStatus(SyncResponseResultType.SUCCESS);
+        SyncResponseHolder targetResponseHolder = new SyncResponseHolder(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        when(targetCommandMock.decode()).thenReturn(targetRequest);
+        when(operationsService.sync(targetRequest)).thenReturn(targetResponseHolder);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(targetProfileMock.getEndpointKeyHash()).thenReturn(ENDPOINT_KEY_HASH_TARGET);
+        when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION))).thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        NettyEncodedRequestMessage targetMessage = new NettyEncodedRequestMessage("testUUID2", channelContextMock, targetCommandMock, ChannelType.HTTP_LP);
+        akkaService.process(targetMessage);
+
+        verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(targetRequest);
+        verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
+
+        UserRouteInfo userRouteInfo = new UserRouteInfo(TENANT_ID, USER_ID, SERVER2, RouteOperation.ADD);
+        akkaService.getListener().onUserRouteInfo(userRouteInfo);
+        TimeUnit.SECONDS.sleep(2);
+
+        RouteTableAddress remoteAddress = new RouteTableAddress(EndpointObjectHash.fromBytes(ENDPOINT_KEY_HASH_SOURCE), APP_TOKEN, SERVER2);
+        RouteInfo routeInfo = new RouteInfo(TENANT_ID, USER_ID, remoteAddress, Arrays.asList(new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION)));
+        TimeUnit.SECONDS.sleep(2);
+        akkaService.getListener().onRouteInfo(routeInfo);
+
+
+        targetRequest = new SyncRequest();
+        md = new SyncRequestMetaData( );
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(ByteBuffer.wrap(ENDPOINT_KEY_HASH_TARGET));
+        md.setTimeout(TIMEOUT*1L);
+        targetRequest.setSyncRequestMetaData(md);
+
+        targetResponse = new SyncResponse();
+        targetResponse.setStatus(SyncResponseResultType.SUCCESS);
+        targetResponseHolder = new SyncResponseHolder(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID+"2");
+        when(targetCommandMock.decode()).thenReturn(targetRequest);
+        when(operationsService.sync(targetRequest)).thenReturn(targetResponseHolder);
+
+        targetMessage = new NettyEncodedRequestMessage("testUUID3", channelContextMock, targetCommandMock, ChannelType.HTTP_LP);
+        akkaService.process(targetMessage);
+        verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID+"2"));
+        RouteTableAddress localAddress = new RouteTableAddress(EndpointObjectHash.fromBytes(ENDPOINT_KEY_HASH_TARGET), APP_TOKEN, null);
+        verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendRouteInfo(RouteInfo.deleteRouteFromAddress(TENANT_ID, USER_ID, localAddress), "SERVER2");
+
+    }
+
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void testEndpointAttach() throws Exception{
+        ChannelHandlerContext channelContextMock = Mockito.mock(ChannelHandlerContext.class);
+        AbstractOperationsCommand targetCommandMock = Mockito.mock(AbstractOperationsCommand.class);
+
+        EndpointProfileDto targetProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest targetRequest = new SyncRequest();
+        SyncRequestMetaData md = new SyncRequestMetaData( );
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(ByteBuffer.wrap(ENDPOINT_KEY_HASH_TARGET));
+        md.setTimeout(TIMEOUT*1L);
+        targetRequest.setSyncRequestMetaData(md);
+
+        targetRequest.setEventSyncRequest(new EventSyncRequest());
+
+        SyncResponse targetResponse = new SyncResponse();
+        targetResponse.setStatus(SyncResponseResultType.SUCCESS);
+        targetResponse.setUserSyncResponse(new UserSyncResponse());
+        targetResponse.setUserSyncResponse(new UserSyncResponse());
+        SyncResponseHolder targetResponseHolder = new SyncResponseHolder(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        when(targetCommandMock.decode()).thenReturn(targetRequest);
+        when(operationsService.sync(targetRequest)).thenReturn(targetResponseHolder);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(targetProfileMock.getEndpointKeyHash()).thenReturn(ENDPOINT_KEY_HASH_TARGET);
+        when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION))).thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        NettyEncodedRequestMessage targetMessage = new NettyEncodedRequestMessage("testUUID2", channelContextMock, targetCommandMock, ChannelType.HTTP_LP);
+        akkaService.process(targetMessage);
+
+        verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(targetRequest);
+        verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
+
+        EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        SyncRequest sourceRequest = new SyncRequest();
+        SyncRequestMetaData sourceMd = new SyncRequestMetaData( );
+        sourceMd.setApplicationToken(APP_TOKEN);
+        sourceMd.setEndpointPublicKeyHash(ByteBuffer.wrap(ENDPOINT_KEY_HASH_SOURCE));
+        sourceMd.setTimeout(TIMEOUT*1L);
+        sourceRequest.setSyncRequestMetaData(sourceMd);
+
+        sourceRequest.setEventSyncRequest(new EventSyncRequest());
+
+        UserSyncRequest userSyncRequest = new UserSyncRequest();
+        EndpointAttachRequest eaRequest = new EndpointAttachRequest("request1", "token");
+        userSyncRequest.setEndpointAttachRequests(Collections.singletonList(eaRequest));
+        sourceRequest.setUserSyncRequest(userSyncRequest);
+
+        SyncResponse sourceResponse = new SyncResponse();
+        sourceResponse.setStatus(SyncResponseResultType.SUCCESS);
+        UserSyncResponse userSyncResponse = new UserSyncResponse();
+        userSyncResponse.setEndpointAttachResponses(Collections.singletonList(new EndpointAttachResponse("request1", Base64Util.encode(ENDPOINT_KEY_HASH_TARGET), SyncResponseResultType.SUCCESS)));
+        sourceResponse.setUserSyncResponse(userSyncResponse);
+        SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
+        sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+
+        AbstractOperationsCommand sourceCommandMock = Mockito.mock(AbstractOperationsCommand.class);
+        when(sourceCommandMock.decode()).thenReturn(sourceRequest);
+        when(operationsService.sync(sourceRequest)).thenReturn(sourceResponseHolder);
+
+        when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(sourceProfileMock.getEndpointKeyHash()).thenReturn(ENDPOINT_KEY_HASH_SOURCE);
+        when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        NettyEncodedRequestMessage sourceMessage = new NettyEncodedRequestMessage("testUUID2", channelContextMock, sourceCommandMock, ChannelType.HTTP_LP);
+        akkaService.process(sourceMessage);
+
+        verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(sourceRequest);
+        SyncResponse targetSyncResponse = new SyncResponse();
+        targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
+        targetSyncResponse.setUserSyncResponse(new UserSyncResponse());
+        targetSyncResponse.getUserSyncResponse().setUserAttachNotification(new UserAttachNotification(USER_ID, Base64Util.encode(ENDPOINT_KEY_HASH_SOURCE)));
+        verify(targetCommandMock, Mockito.timeout(TIMEOUT).atLeastOnce()).encode(targetSyncResponse);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void testEndpointDetach() throws Exception{
+        ChannelHandlerContext channelContextMock = Mockito.mock(ChannelHandlerContext.class);
+        AbstractOperationsCommand targetCommandMock = Mockito.mock(AbstractOperationsCommand.class);
+
+        EndpointProfileDto targetProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest targetRequest = new SyncRequest();
+        SyncRequestMetaData md = new SyncRequestMetaData( );
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(ByteBuffer.wrap(ENDPOINT_KEY_HASH_TARGET));
+        md.setTimeout(TIMEOUT*1L);
+        targetRequest.setSyncRequestMetaData(md);
+
+        targetRequest.setEventSyncRequest(new EventSyncRequest());
+
+        SyncResponse targetResponse = new SyncResponse();
+        targetResponse.setStatus(SyncResponseResultType.SUCCESS);
+        targetResponse.setUserSyncResponse(new UserSyncResponse());
+        targetResponse.setUserSyncResponse(new UserSyncResponse());
+        SyncResponseHolder targetResponseHolder = new SyncResponseHolder(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        when(targetCommandMock.decode()).thenReturn(targetRequest);
+        when(operationsService.sync(targetRequest)).thenReturn(targetResponseHolder);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(targetProfileMock.getEndpointKeyHash()).thenReturn(ENDPOINT_KEY_HASH_TARGET);
+        when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION))).thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        NettyEncodedRequestMessage targetMessage = new NettyEncodedRequestMessage("testUUID2", channelContextMock, targetCommandMock, ChannelType.HTTP_LP);
+        akkaService.process(targetMessage);
+
+        verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(targetRequest);
+        verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
+
+        EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        SyncRequest sourceRequest = new SyncRequest();
+        SyncRequestMetaData sourceMd = new SyncRequestMetaData( );
+        sourceMd.setApplicationToken(APP_TOKEN);
+        sourceMd.setEndpointPublicKeyHash(ByteBuffer.wrap(ENDPOINT_KEY_HASH_SOURCE));
+        sourceMd.setTimeout(TIMEOUT*1L);
+        sourceRequest.setSyncRequestMetaData(sourceMd);
+
+        sourceRequest.setEventSyncRequest(new EventSyncRequest());
+
+        UserSyncRequest userSyncRequest = new UserSyncRequest();
+        EndpointDetachRequest eaRequest = new EndpointDetachRequest("request1", Base64Util.encode(ENDPOINT_KEY_HASH_TARGET));
+        userSyncRequest.setEndpointDetachRequests(Collections.singletonList(eaRequest));
+        sourceRequest.setUserSyncRequest(userSyncRequest);
+
+        SyncResponse sourceResponse = new SyncResponse();
+        sourceResponse.setStatus(SyncResponseResultType.SUCCESS);
+        UserSyncResponse userSyncResponse = new UserSyncResponse();
+        userSyncResponse.setEndpointDetachResponses(Collections.singletonList(new EndpointDetachResponse("request1", SyncResponseResultType.SUCCESS)));
+        sourceResponse.setUserSyncResponse(userSyncResponse);
+        SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
+        sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+
+        AbstractOperationsCommand sourceCommandMock = Mockito.mock(AbstractOperationsCommand.class);
+        when(sourceCommandMock.decode()).thenReturn(sourceRequest);
+        when(operationsService.sync(sourceRequest)).thenReturn(sourceResponseHolder);
+
+        when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(sourceProfileMock.getEndpointKeyHash()).thenReturn(ENDPOINT_KEY_HASH_SOURCE);
+        when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        NettyEncodedRequestMessage sourceMessage = new NettyEncodedRequestMessage("testUUID2", channelContextMock, sourceCommandMock, ChannelType.HTTP_LP);
+        akkaService.process(sourceMessage);
+
+        verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(sourceRequest);
+        SyncResponse targetSyncResponse = new SyncResponse();
+        targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
+        targetSyncResponse.setUserSyncResponse(new UserSyncResponse());
+        targetSyncResponse.getUserSyncResponse().setUserDetachNotification(new UserDetachNotification(Base64Util.encode(ENDPOINT_KEY_HASH_SOURCE)));
+        verify(targetCommandMock, Mockito.timeout(TIMEOUT).atLeastOnce()).encode(targetSyncResponse);
     }
 
 }

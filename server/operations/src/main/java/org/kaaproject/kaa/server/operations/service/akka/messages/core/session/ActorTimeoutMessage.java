@@ -32,4 +32,13 @@ public class ActorTimeoutMessage implements TimeoutMessage{
     public long getLastActivityTime() {
         return lastActivityTime;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ActorTimeoutMessage [lastActivityTime=");
+        builder.append(lastActivityTime);
+        builder.append("]");
+        return builder.toString();
+    }
 }

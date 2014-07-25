@@ -20,6 +20,7 @@ import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
+import org.kaaproject.kaa.server.admin.client.util.ErrorMessageBuilder;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.shared.EventBus;
@@ -40,6 +41,7 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
     }
 
     protected abstract T newSchema();
+//    protected abstract String customizeErrorMessage(Throwable caught);
 
     @Override
     protected String getEntityId(P place) {
@@ -69,7 +71,7 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
 
                             @Override
                             public void onFailure(Throwable caught) {
-                                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                                detailsView.setErrorMessage(ErrorMessageBuilder.buildErrorMessage(caught));
                             }
                     });
                 }

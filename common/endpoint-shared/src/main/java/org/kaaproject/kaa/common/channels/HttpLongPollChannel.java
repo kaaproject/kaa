@@ -71,8 +71,7 @@ public class HttpLongPollChannel extends Channel {
      */
     public static SupportedChannel getSupportedChannelFromHttpLongPollParameters(HttpLongPollParameters params) {
         HTTPLPComunicationParameters communicationParameters = new HTTPLPComunicationParameters(params.getHostName(), params.getPort());
-        SupportedChannel schannel = new SupportedChannel(getType(), (Object)communicationParameters );
-        return schannel;
+        return new SupportedChannel(getType(), (Object)communicationParameters );
     }
     
     /**
@@ -80,7 +79,7 @@ public class HttpLongPollChannel extends Channel {
      * @return List<TransportTypes> of supported transports.
      */
     public static List<TransportType> getSupportedTransportTypes() {
-        return ListTransportTypesFromArray(supportedTransports);
+        return listTransportTypesFromArray(supportedTransports);
     }
     
     /**

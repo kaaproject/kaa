@@ -95,8 +95,7 @@ public class LogEventMongoDBServiceImpl implements LogEventService {
             logEvents.add(new LogEvent(logEventDto));
         }
         LOG.debug("Saving {} log events", logEvents.size());
-        List<LogEventDto> dtos = convertDtoList(logEventPackDao.save(logEvents, collectionName));
-        return dtos;
+        return convertDtoList(logEventPackDao.save(logEvents, collectionName));
     }
 
     @Override

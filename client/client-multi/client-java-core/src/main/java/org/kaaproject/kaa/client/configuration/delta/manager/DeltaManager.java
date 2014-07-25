@@ -31,6 +31,7 @@ public interface DeltaManager {
      *
      * @param receiver the root receiver object
      * @see DeltaReceiver
+     *
      */
     void registerRootReceiver(DeltaReceiver receiver);
 
@@ -38,18 +39,20 @@ public interface DeltaManager {
      * Subscribes receiver for delta updates by the given handler id
      *
      * @param handlerId id of the delta handler
-     * @param receiver the object which is going to receive updates
-     * 
+     * @param receiver the object to receive updates
+     *
      * @see DeltaHandlerId
      * @see DeltaReceiver
+     *
      */
     void subscribeForDeltaUpdates(DeltaHandlerId handlerId, DeltaReceiver receiver);
 
     /**
      * Unsubscribes receiver from delta updates
      *
-     * @param handlerId id of the handler which is going to be unsubscribed
+     * @param handlerId id of the handler to be unsubscribed
      * @see DeltaHandlerId
+     *
      */
     void unsubscribeFromDeltaUpdates(DeltaHandlerId handlerId);
 

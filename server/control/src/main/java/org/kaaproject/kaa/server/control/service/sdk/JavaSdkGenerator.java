@@ -186,8 +186,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         if (sdkPlatform==SdkPlatform.JAVA) {
             sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + JAVA_SDK_DIR + "/" + JAVA_SDK_PREFIX + buildVersion + ".jar";
             LOG.debug("Lookup Java SDK template: {}", sdkTemplateLocation);
-        }
-        else { //ANDROID
+        } else { //ANDROID
             sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + ANDROID_SDK_DIR + "/" + ANDROID_SDK_PREFIX + buildVersion + ".jar";
             LOG.debug("Lookup Android SDK template: {}", sdkTemplateLocation);
         }

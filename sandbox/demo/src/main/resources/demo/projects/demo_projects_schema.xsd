@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2014 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	   xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	   jxb:extensionBindingPrefixes="xjc"
+           jxb:version="2.0"
+ targetNamespace="http://kaaproject.org"
+ xmlns:tns= "http://kaaproject.org"
+ elementFormDefault="qualified">
+
+<xs:annotation>
+   <xs:appinfo>
+      <jxb:globalBindings>
+          <xjc:serializable uid="1"/>
+      </jxb:globalBindings>
+   </xs:appinfo>
+</xs:annotation>
+
+<xs:simpleType name="platform">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="ANDROID"/>
+  </xs:restriction>
+</xs:simpleType>
+ 
+<xs:complexType name="project">
+  <xs:sequence>
+    <xs:element name="name" type="xs:string"/>
+    <xs:element name="description" type="xs:string"/>
+    <xs:element name="platform" type="tns:platform"/>
+    <xs:element name="sourceArchive" type="xs:string"/>
+    <xs:element name="projectFolder" type="xs:string"/>
+    <xs:element name="sdkLibDir" type="xs:string"/>
+    <xs:element name="destBinaryFile" type="xs:string"/>
+    <xs:element name="sdkKeyBase64" type="xs:string"/>
+  </xs:sequence>
+  <xs:attribute name="id" type="xs:string" use="required"/>
+</xs:complexType>
+ 
+<xs:element name="projectsConfig">
+   <xs:complexType>
+     <xs:sequence>
+       <xs:element name="project" type="tns:project" minOccurs="1" maxOccurs="unbounded">
+	 <xs:annotation>
+           <xs:appinfo>
+              <jxb:property name="projects"/>
+           </xs:appinfo>
+         </xs:annotation>
+       </xs:element>
+     </xs:sequence>
+   </xs:complexType>
+</xs:element>
+ 
+</xs:schema>

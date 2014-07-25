@@ -74,13 +74,17 @@ public class ApplicationActivity
     protected void onEntityRetrieved() {
         if (!create) {
             detailsView.setTitle(entity.getName());
+            detailsView.getApplicationToken().setValue(entity.getApplicationToken());
         }
         detailsView.getApplicationName().setValue(entity.getName());
+        detailsView.getApplicationKey().setValue(entity.getPublicKey());
+
     }
 
     @Override
     protected void onSave() {
         entity.setName(detailsView.getApplicationName().getValue());
+        entity.setPublicKey(detailsView.getApplicationKey().getValue());
     }
 
     @Override

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.operations.service.logs.mongo;
 
 import java.io.IOException;
@@ -40,7 +56,7 @@ public class MongoDBLogAppender implements LogAppender {
     }
 
     @Override
-    public void setTenantId(String tenantId) {
+    public void setTenantId(String tenantId) { //NOSONAR
     }
 
     @Override
@@ -99,7 +115,7 @@ public class MongoDBLogAppender implements LogAppender {
             logEventService.save(dtos, collectionName);
             LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
         } else {
-            LOG.info("Can't append logs caused by Appender closed state is [{}] ", closed);
+            LOG.info("Attempted to append to closed appender named [{}].", name);
         }
     }
 

@@ -104,7 +104,7 @@ public class DefaultRebalancer implements Rebalancer {
         int totalLoad = 0;
         for(OperationsServerLoadHistory history : map.values()) {
             List<OperationsServerLoad> load = history.getHistory();
-            if (load.size() > 0) {
+            if (!load.isEmpty()) {
                 totalLoad += load.get(load.size() - 1).getProcessedRequestCount();
             }
         }

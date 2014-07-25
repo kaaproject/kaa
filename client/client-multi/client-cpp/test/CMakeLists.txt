@@ -1,0 +1,138 @@
+#
+# Copyright 2014 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+cmake_minimum_required(VERSION 2.8.8)
+project (Kaa-cpp-test)
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "-Wall -std=c++0x --coverage -O3 -g -pthread")
+endif ()
+
+set ( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Modules/)
+
+add_definitions (-DBOOST_TEST_DYN_LINK -DBOOST_LOG_DYN_LINK -DRESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/resources")
+
+find_package (Avro REQUIRED)
+find_package (Botan REQUIRED)
+find_package (Boost 1.55 REQUIRED
+    COMPONENTS unit_test_framework log system thread signals)
+
+include_directories (
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${Boost_INCLUDE_DIRS}
+        ${Avro_INCLUDE_DIRS} 
+        ${BOTAN_INCLUDE_DIRS}
+)
+
+set ( KAA_TEST_SOURCES 
+        ../impl/ClientStatus.cpp
+        ../impl/Kaa.cpp
+        ../impl/KaaClient.cpp
+        ../impl/KaaDefaults.cpp
+        ../impl/logging/Log.cpp
+        ../impl/logging/LoggerFactory.cpp
+        ../impl/http/HttpUrl.cpp
+        ../impl/http/MultipartPostHttpRequest.cpp
+        ../impl/http/HttpResponse.cpp
+        ../impl/http/HttpClient.cpp
+        ../impl/security/KeyUtils.cpp
+        ../impl/security/RsaEncoderDecoder.cpp
+        ../impl/common/EndpointObjectHash.cpp
+        ../impl/profile/ProfileListener.cpp
+        ../impl/profile/ProfileTransport.cpp
+        ../impl/transport/HttpDataProcessor.cpp
+        ../impl/bootstrap/BootstrapManager.cpp
+        ../impl/bootstrap/BootstrapTransport.cpp
+#        ../impl/update/PollingStrategy.cpp
+#        ../impl/update/LongPollStrategy.cpp
+#        ../impl/update/ExternalUpdateManager.cpp
+#        ../impl/update/RequestFactory.cpp
+        ../impl/common/CommonTypesFactory.cpp
+        ../impl/common/AvroGenericUtils.cpp
+        ../impl/common/types/CommonArray.cpp
+        ../impl/common/types/CommonEnum.cpp
+        ../impl/common/types/CommonFixed.cpp
+        ../impl/common/types/CommonRecord.cpp
+        ../impl/common/types/SetValueHelper.cpp
+        ../impl/configuration/ConfigurationProcessor.cpp
+        ../impl/configuration/ConfigurationTransport.cpp
+        ../impl/configuration/manager/ConfigurationManager.cpp
+        ../impl/configuration/manager/Strategies.cpp
+        ../impl/configuration/storage/ConfigurationPersistanceManager.cpp
+        ../impl/configuration/delta/DeltaHandlerId.cpp
+        ../impl/configuration/delta/DefaultDeltaManager.cpp
+        ../impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
+        ../impl/schema/SchemaProcessor.cpp
+        ../impl/schema/storage/SchemaPersistanceManager.cpp
+        ../impl/event/registration/EndpointRegistrationManager.cpp
+        ../impl/event/registration/UserTransport.cpp
+        ../impl/event/EventManager.cpp
+        ../impl/event/EventTransport.cpp
+        ../impl/log/LoggingTransport.cpp
+        ../impl/channel/impl/DefaultOperationLongPollChannel.cpp
+        ../impl/channel/impl/DefaultOperationHttpChannel.cpp
+        ../impl/channel/impl/DefaultBootstrapChannel.cpp
+        ../impl/channel/OperationsDataProcessor.cpp
+        ../impl/channel/BootstrapDataProcessor.cpp
+        ../impl/channel/RedirectionTransport.cpp
+        ../impl/channel/server/AbstractServerInfo.cpp
+        ../impl/channel/KaaChannelManager.cpp
+        ../impl/notification/NotificationTransport.cpp
+        ../impl/notification/NotificationManager.cpp
+        ../impl/log/LogCollector.cpp
+        ../impl/log/LogRecord.cpp
+        ../impl/log/MemoryLogStorage.cpp
+        TestRunner.cpp
+        impl/common/EndpointObjectHashTest.cpp
+        impl/common/AvroByteArrayConverterTest.cpp
+        impl/common/AvroDatumsComparatorTest.cpp
+        impl/common/CommonTypesFactoryTest.cpp
+##        impl/profile/UpdateProfileTest.cpp
+##        impl/update/EndpointCommandsTest.cpp
+        impl/schema/SchemaProcessorTest.cpp
+        impl/schema/SchemaPersistanceTest.cpp
+        impl/configuration/ConfigurationTests.cpp
+        impl/configuration/ConfigurationPersistanceTest.cpp
+        impl/configuration/ConfigurationProcessorTest.cpp
+        impl/configuration/ProcessConfigurationTest.cpp
+        impl/configuration/delta/DeltaHandlerIdTest.cpp
+        impl/configuration/delta/DeltaTest.cpp
+        impl/http/HttpUrlTest.cpp
+        impl/http/HttpResponseTest.cpp
+        impl/http/HttpRequestTest.cpp
+#        impl/http/HttpExternalTransportManagerTest.cpp
+        impl/ClientStatusTest.cpp
+        impl/event/EndpointRegistrationManagerTest.cpp
+        impl/bootstrap/ServerInfoTest.cpp
+##        impl/bootstrap/BootstrapManagerTest.cpp
+        impl/security/KeyUtilsTest.cpp
+##        impl/event/EventFamilyFactoryTest.cpp
+##        impl/event/EventListenersResolverTest.cpp
+#        impl/event/EventTransportTest.cpp
+        impl/channel/AbstractServerInfoTest.cpp
+        impl/channel/KaaChannelManagerTest.cpp
+        impl/notification/NotificationTransportTest.cpp
+        impl/notification/NotificationManagerTest.cpp
+    )
+
+add_executable ( kaatest  ${KAA_TEST_SOURCES})
+target_link_libraries ( kaatest pthread
+    ${BOTAN_LIBRARY}
+    ${AVRO_LIBRARIES} 
+    ${Boost_LIBRARIES}
+)
+

@@ -127,22 +127,9 @@
         <constructor-arg name="verifierMap" ref="verifierMap"></constructor-arg>
     </bean>
 
-    <bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender">
-        <constructor-arg name="name" value="appender"></constructor-arg>
-    </bean>
-
     <util:map id="verifierMap">
         <entry key="dummyEndpointUserVerifier" value-ref="dummyEndpointUserVerifier" />
         <entry key="kaaEndpointUserVerifier" value-ref="kaaEndpointUserVerifier" />
-    </util:map>
-
-
-    <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderResolver">
-        <constructor-arg name="appenderMap" ref="appenderMap"></constructor-arg>
-    </bean>
-
-    <util:map id="appenderMap">
-        <entry key="mongoDBLogAppender" value-ref="mongoDBLogAppender" />
     </util:map>
 
 </beans>

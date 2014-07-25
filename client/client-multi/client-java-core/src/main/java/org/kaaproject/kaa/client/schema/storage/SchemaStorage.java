@@ -19,9 +19,33 @@ package org.kaaproject.kaa.client.schema.storage;
 import java.nio.ByteBuffer;
 
 /**
- * Interface for object which is going to save and load schema
+ * Interface for object to save and to load schema<br>
+ * <br>
+ * Provide implementation instance of this interface to save and load configuration
+ * schema.<br>
+ * <br>
+ * Schema storage can be added using {@link SchemaPersistenceManager}
+ * accessed through {@link org.kaaproject.kaa.client.KaaClient} interface.<br>
+ * <pre>
+ * {@code
+ * class FileConfigurationSchemaStorage implements SchemaStorage {
+ *     public void saveSchema(ByteBuffer buffer) {
+ *         ...
+ *     }
+ *     public ByteBuffer loadSchema() {
+ *         ...
+ *     }
+ * }
+ * ...
+ * // Assuming Kaa instance is created
+ * KaaClient kaaClient = kaa.getClient();
  *
+ * SchemaStorage schemaStorage = new FileConfigurationSchemaStorage();
+ * kaaClient.getSchemaPersistenceManager().setSchemaStorage(schemaStorage);
+ * }
+ * </pre>
  * @author Yaroslav Zeygerman
+ * @see SchemaPersistenceManager
  *
  */
 public interface SchemaStorage {

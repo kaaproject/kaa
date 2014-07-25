@@ -20,10 +20,10 @@ import java.util.List;
 
 /**
  * Listener interface for retrieving endpoints list
- * which support requested event class FQNs
+ * which supports requested event class FQNs
  *
- * @see EventListenersResolver
  * @author Taras Lemkin
+ * @see EventListenersResolver
  *
  */
 public interface FetchEventListeners {

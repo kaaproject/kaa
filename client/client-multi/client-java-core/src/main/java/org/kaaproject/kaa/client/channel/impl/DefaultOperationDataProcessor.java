@@ -17,6 +17,8 @@
 package org.kaaproject.kaa.client.channel.impl;
 
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.ConfigurationTransport;
@@ -44,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDataDemultiplexer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationDataProcessor.class);
-
+    private AtomicInteger   requestsCounter = new AtomicInteger(0);
     private final AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
     private final AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
 
@@ -97,8 +99,11 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
             if (syncResponse.getConfigurationSyncResponse() != null && configurationTransport != null) {
                 configurationTransport.onConfigurationResponse(syncResponse.getConfigurationSyncResponse());
             }
-            if (syncResponse.getEventSyncResponse() != null && eventTransport != null) {
-                eventTransport.onEventResponse(syncResponse.getEventSyncResponse());
+            if (eventTransport != null) {
+                eventTransport.onSyncResposeIdReceived(syncResponse.getRequestId());
+                if (syncResponse.getEventSyncResponse() != null) {
+                    eventTransport.onEventResponse(syncResponse.getEventSyncResponse());
+                }
             }
             if (syncResponse.getNotificationSyncResponse() != null && notificationTransport != null) {
                 notificationTransport.onNotificationResponse(syncResponse.getNotificationSyncResponse());
@@ -122,6 +127,8 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws Exception {
         if (types != null) {
             SyncRequest request = new SyncRequest();
+            request.setRequestId(requestsCounter.incrementAndGet());
+
             if (metaDataTransport != null) {
                 request.setSyncRequestMetaData(metaDataTransport.createMetaDataRequest());
             }
@@ -139,7 +146,7 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
                         if (isDownDirection) {
                             request.setEventSyncRequest(new EventSyncRequest());
                         } else if (eventTransport != null) {
-                            request.setEventSyncRequest(eventTransport.createEventRequest());
+                            request.setEventSyncRequest(eventTransport.createEventRequest(request.getRequestId()));
                         }
                         break;
                     case NOTIFICATION:
@@ -151,7 +158,7 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
                         break;
                     case PROFILE:
                         if (!isDownDirection && profileTransport != null) {
-                            request.setProfileSyncRequest(profileTransport.createProfileRequest());;
+                            request.setProfileSyncRequest(profileTransport.createProfileRequest());
                         }
                         break;
                     case USER:
@@ -170,13 +177,13 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
                         break;
                     default:
                         LOG.error("Invalid transport type {}", type.getKey());
-                        return null;
+                        return null; //NOSONAR
                 }
             }
             LOG.info("Created Sync request: {}", request);
             return requestConverter.toByteArray(request);
         }
-        return null;
+        return null; //NOSONAR
     }
 
 }

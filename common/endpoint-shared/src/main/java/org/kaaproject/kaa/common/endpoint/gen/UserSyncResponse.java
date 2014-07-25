@@ -7,9 +7,11 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UserSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"userAttachResponse\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachResponse\",\"fields\":[{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}]},\"null\"]},{\"name\":\"endpointAttachResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointAttachResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointKeyHash\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}]}},\"null\"]},{\"name\":\"endpointDetachResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointDetachResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}]}},\"null\"]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UserSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"userAttachResponse\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachResponse\",\"fields\":[{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}]},\"null\"]},{\"name\":\"userAttachNotification\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachNotification\",\"fields\":[{\"name\":\"userExternalId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]},\"null\"]},{\"name\":\"userDetachNotification\",\"type\":[{\"type\":\"record\",\"name\":\"UserDetachNotification\",\"fields\":[{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]},\"null\"]},{\"name\":\"endpointAttachResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointAttachResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointKeyHash\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}]}},\"null\"]},{\"name\":\"endpointDetachResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointDetachResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}]}},\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse userAttachResponse;
+   private org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification userAttachNotification;
+   private org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification userDetachNotification;
    private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse> endpointAttachResponses;
    private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse> endpointDetachResponses;
 
@@ -23,8 +25,10 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
   /**
    * All-args constructor.
    */
-  public UserSyncResponse(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse userAttachResponse, java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse> endpointAttachResponses, java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse> endpointDetachResponses) {
+  public UserSyncResponse(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse userAttachResponse, org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification userAttachNotification, org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification userDetachNotification, java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse> endpointAttachResponses, java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse> endpointDetachResponses) {
     this.userAttachResponse = userAttachResponse;
+    this.userAttachNotification = userAttachNotification;
+    this.userDetachNotification = userDetachNotification;
     this.endpointAttachResponses = endpointAttachResponses;
     this.endpointDetachResponses = endpointDetachResponses;
   }
@@ -34,8 +38,10 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return userAttachResponse;
-    case 1: return endpointAttachResponses;
-    case 2: return endpointDetachResponses;
+    case 1: return userAttachNotification;
+    case 2: return userDetachNotification;
+    case 3: return endpointAttachResponses;
+    case 4: return endpointDetachResponses;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -44,8 +50,10 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: userAttachResponse = (org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse)value$; break;
-    case 1: endpointAttachResponses = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse>)value$; break;
-    case 2: endpointDetachResponses = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse>)value$; break;
+    case 1: userAttachNotification = (org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification)value$; break;
+    case 2: userDetachNotification = (org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification)value$; break;
+    case 3: endpointAttachResponses = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse>)value$; break;
+    case 4: endpointDetachResponses = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -63,6 +71,36 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
    */
   public void setUserAttachResponse(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse value) {
     this.userAttachResponse = value;
+  }
+
+  /**
+   * Gets the value of the 'userAttachNotification' field.
+   */
+  public org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification getUserAttachNotification() {
+    return userAttachNotification;
+  }
+
+  /**
+   * Sets the value of the 'userAttachNotification' field.
+   * @param value the value to set.
+   */
+  public void setUserAttachNotification(org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification value) {
+    this.userAttachNotification = value;
+  }
+
+  /**
+   * Gets the value of the 'userDetachNotification' field.
+   */
+  public org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification getUserDetachNotification() {
+    return userDetachNotification;
+  }
+
+  /**
+   * Sets the value of the 'userDetachNotification' field.
+   * @param value the value to set.
+   */
+  public void setUserDetachNotification(org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification value) {
+    this.userDetachNotification = value;
   }
 
   /**
@@ -117,6 +155,8 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
     implements org.apache.avro.data.RecordBuilder<UserSyncResponse> {
 
     private org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse userAttachResponse;
+    private org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification userAttachNotification;
+    private org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification userDetachNotification;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse> endpointAttachResponses;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse> endpointDetachResponses;
 
@@ -132,13 +172,21 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
         this.userAttachResponse = data().deepCopy(fields()[0].schema(), other.userAttachResponse);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.endpointAttachResponses)) {
-        this.endpointAttachResponses = data().deepCopy(fields()[1].schema(), other.endpointAttachResponses);
+      if (isValidValue(fields()[1], other.userAttachNotification)) {
+        this.userAttachNotification = data().deepCopy(fields()[1].schema(), other.userAttachNotification);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.endpointDetachResponses)) {
-        this.endpointDetachResponses = data().deepCopy(fields()[2].schema(), other.endpointDetachResponses);
+      if (isValidValue(fields()[2], other.userDetachNotification)) {
+        this.userDetachNotification = data().deepCopy(fields()[2].schema(), other.userDetachNotification);
         fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.endpointAttachResponses)) {
+        this.endpointAttachResponses = data().deepCopy(fields()[3].schema(), other.endpointAttachResponses);
+        fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.endpointDetachResponses)) {
+        this.endpointDetachResponses = data().deepCopy(fields()[4].schema(), other.endpointDetachResponses);
+        fieldSetFlags()[4] = true;
       }
     }
     
@@ -149,13 +197,21 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
         this.userAttachResponse = data().deepCopy(fields()[0].schema(), other.userAttachResponse);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.endpointAttachResponses)) {
-        this.endpointAttachResponses = data().deepCopy(fields()[1].schema(), other.endpointAttachResponses);
+      if (isValidValue(fields()[1], other.userAttachNotification)) {
+        this.userAttachNotification = data().deepCopy(fields()[1].schema(), other.userAttachNotification);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.endpointDetachResponses)) {
-        this.endpointDetachResponses = data().deepCopy(fields()[2].schema(), other.endpointDetachResponses);
+      if (isValidValue(fields()[2], other.userDetachNotification)) {
+        this.userDetachNotification = data().deepCopy(fields()[2].schema(), other.userDetachNotification);
         fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.endpointAttachResponses)) {
+        this.endpointAttachResponses = data().deepCopy(fields()[3].schema(), other.endpointAttachResponses);
+        fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.endpointDetachResponses)) {
+        this.endpointDetachResponses = data().deepCopy(fields()[4].schema(), other.endpointDetachResponses);
+        fieldSetFlags()[4] = true;
       }
     }
 
@@ -184,6 +240,56 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
+    /** Gets the value of the 'userAttachNotification' field */
+    public org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification getUserAttachNotification() {
+      return userAttachNotification;
+    }
+    
+    /** Sets the value of the 'userAttachNotification' field */
+    public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse.Builder setUserAttachNotification(org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification value) {
+      validate(fields()[1], value);
+      this.userAttachNotification = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'userAttachNotification' field has been set */
+    public boolean hasUserAttachNotification() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'userAttachNotification' field */
+    public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse.Builder clearUserAttachNotification() {
+      userAttachNotification = null;
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'userDetachNotification' field */
+    public org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification getUserDetachNotification() {
+      return userDetachNotification;
+    }
+    
+    /** Sets the value of the 'userDetachNotification' field */
+    public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse.Builder setUserDetachNotification(org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification value) {
+      validate(fields()[2], value);
+      this.userDetachNotification = value;
+      fieldSetFlags()[2] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'userDetachNotification' field has been set */
+    public boolean hasUserDetachNotification() {
+      return fieldSetFlags()[2];
+    }
+    
+    /** Clears the value of the 'userDetachNotification' field */
+    public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse.Builder clearUserDetachNotification() {
+      userDetachNotification = null;
+      fieldSetFlags()[2] = false;
+      return this;
+    }
+
     /** Gets the value of the 'endpointAttachResponses' field */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse> getEndpointAttachResponses() {
       return endpointAttachResponses;
@@ -191,21 +297,21 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
     
     /** Sets the value of the 'endpointAttachResponses' field */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse.Builder setEndpointAttachResponses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse> value) {
-      validate(fields()[1], value);
+      validate(fields()[3], value);
       this.endpointAttachResponses = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[3] = true;
       return this; 
     }
     
     /** Checks whether the 'endpointAttachResponses' field has been set */
     public boolean hasEndpointAttachResponses() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[3];
     }
     
     /** Clears the value of the 'endpointAttachResponses' field */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse.Builder clearEndpointAttachResponses() {
       endpointAttachResponses = null;
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[3] = false;
       return this;
     }
 
@@ -216,21 +322,21 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
     
     /** Sets the value of the 'endpointDetachResponses' field */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse.Builder setEndpointDetachResponses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse> value) {
-      validate(fields()[2], value);
+      validate(fields()[4], value);
       this.endpointDetachResponses = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[4] = true;
       return this; 
     }
     
     /** Checks whether the 'endpointDetachResponses' field has been set */
     public boolean hasEndpointDetachResponses() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[4];
     }
     
     /** Clears the value of the 'endpointDetachResponses' field */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse.Builder clearEndpointDetachResponses() {
       endpointDetachResponses = null;
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[4] = false;
       return this;
     }
 
@@ -239,8 +345,10 @@ public class UserSyncResponse extends org.apache.avro.specific.SpecificRecordBas
       try {
         UserSyncResponse record = new UserSyncResponse();
         record.userAttachResponse = fieldSetFlags()[0] ? this.userAttachResponse : (org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse) defaultValue(fields()[0]);
-        record.endpointAttachResponses = fieldSetFlags()[1] ? this.endpointAttachResponses : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse>) defaultValue(fields()[1]);
-        record.endpointDetachResponses = fieldSetFlags()[2] ? this.endpointDetachResponses : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse>) defaultValue(fields()[2]);
+        record.userAttachNotification = fieldSetFlags()[1] ? this.userAttachNotification : (org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification) defaultValue(fields()[1]);
+        record.userDetachNotification = fieldSetFlags()[2] ? this.userDetachNotification : (org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification) defaultValue(fields()[2]);
+        record.endpointAttachResponses = fieldSetFlags()[3] ? this.endpointAttachResponses : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse>) defaultValue(fields()[3]);
+        record.endpointDetachResponses = fieldSetFlags()[4] ? this.endpointDetachResponses : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse>) defaultValue(fields()[4]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

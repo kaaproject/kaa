@@ -94,7 +94,7 @@ public class OperationsNode extends WorkerNodeTracker {
         for(SupportedChannel channel : nodeInfo.getSupportedChannelsArray()) {
             if(channel.getZkChannel().getChannelType().equals(channelType)) {
                 BaseStatistics stats = null;
-                switch (channelType) {
+                switch (channelType) { //NOSONAR
                 case HTTP:
                     ZkHttpStatistics zkHttpStats = (ZkHttpStatistics)channel.getZkChannel().getChannelStatistics();
                     stats = zkHttpStats.getZkStatistics();

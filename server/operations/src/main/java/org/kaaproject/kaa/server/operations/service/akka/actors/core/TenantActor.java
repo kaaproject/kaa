@@ -18,13 +18,17 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
@@ -163,6 +167,8 @@ public class TenantActor extends UntypedActor{
             processTermination((Terminated) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processNotificationMessage((ThriftNotificationMessage) message);
+        } else if (message instanceof EndpointUserActionRouteMessage){
+            processEndpointUserActionRouteMessage((EndpointUserActionRouteMessage) message);
         }
     }
 
@@ -186,11 +192,22 @@ public class TenantActor extends UntypedActor{
     private void processEndpointAwareMessage(EndpointAwareMessage message) {
         if(message instanceof EndpointUserConnectMessage){
             processUserAwareMessage((EndpointUserConnectMessage) message);
+        }else if(message instanceof EndpointUserDisconnectMessage){
+            processUserAwareMessage((EndpointUserDisconnectMessage) message);
         }else if(message instanceof EndpointEventSendMessage){
             processUserAwareMessage((EndpointEventSendMessage) message);
         }else{
             ActorRef applicationActor = getOrCreateApplicationActor(message.getAppToken());
             applicationActor.tell(message, self());
+        }
+    }
+
+    private void processEndpointUserActionRouteMessage(EndpointUserActionRouteMessage message) {
+        for(Entry<String, ActorRef> entry : applications.entrySet()){
+            if(!entry.getKey().equals(message.getOriginalApplicationToken())){
+                LOG.debug("[{}] Forwarding message to [{}] application", tenantId, entry.getKey());
+                entry.getValue().tell(message, self());
+            }
         }
     }
 

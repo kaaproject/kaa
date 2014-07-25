@@ -34,9 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OperationsServerLauncherIT {
-    private static final int STARTUP_TIMEOUT = 10000;
+    private static final int STARTUP_TIMEOUT = 30000;
 
-    private static final int SHUTDOWN_TIMEOUT = 20000;
+    private static final int SHUTDOWN_TIMEOUT = 30000;
 
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory.getLogger(OperationsServerLauncherIT.class);

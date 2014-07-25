@@ -43,12 +43,12 @@ public class EmptyDeltaType implements DeltaType {
 
     @Override
     public List<DeltaHandlerId> getRemovedItems() {
-        return null;
+        return null; //NOSONAR
     }
 
     @Override
     public List<Object> getAddedItems() {
-        return null;
+        return null; //NOSONAR
     }
 
 }

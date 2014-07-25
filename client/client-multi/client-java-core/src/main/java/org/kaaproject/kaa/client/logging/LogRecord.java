@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.logging;
 
 import java.io.IOException;
 
+import org.kaaproject.kaa.client.logging.gen.SuperRecord;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 
 /**
@@ -30,9 +31,8 @@ public class LogRecord {
     /**
      * Thread-local converter of log records to bytes.
      */
-    private static final ThreadLocal<AvroByteArrayConverter<SuperRecord>> converter 
-                            = new ThreadLocal<AvroByteArrayConverter<SuperRecord>>()
-    {
+    private static final ThreadLocal<AvroByteArrayConverter<SuperRecord>> CONVERTER 
+                            = new ThreadLocal<AvroByteArrayConverter<SuperRecord>>() {
         @Override
         protected AvroByteArrayConverter<SuperRecord> initialValue() {
             return new AvroByteArrayConverter<>(SuperRecord.class);
@@ -44,14 +44,14 @@ public class LogRecord {
     private final byte [] encodedRecord;
 
     /**
-     * Using for unit tests. Do not change it.
+     * Used for unit tests. Do not change it.
      */
     public LogRecord() {
         encodedRecord = new byte[3];
     }
 
     public LogRecord(SuperRecord record) throws IOException {
-        encodedRecord = converter.get().toByteArray(record);
+        encodedRecord = CONVERTER.get().toByteArray(record);
     }
 
     byte [] getData() {

@@ -43,17 +43,15 @@ public class JavaDynamicCompiler {
     /**
      * Instantiates a new java dynamic compiler.
      *
-     * @throws JavaDynamicException the java dynamic exception
      */
-    public JavaDynamicCompiler() throws JavaDynamicException {
+    public JavaDynamicCompiler() {
     }
     
     /**
      * Inits the.
      *
-     * @throws JavaDynamicException the java dynamic exception
      */
-    public void init() throws JavaDynamicException {
+    public void init() {
         compiler = getCompiler();
         if (compiler == null) {
             throw new JavaDynamicException("Compiler not found");
@@ -80,9 +78,8 @@ public class JavaDynamicCompiler {
      *
      * @param sources the sources
      * @return the class
-     * @throws JavaDynamicException the java dynamic exception
      */
-    public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources) throws JavaDynamicException {
+    public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources) {
         try {
             CompilationTask task = compiler.getTask(null, javaDynamicManager,
                     diagnostics, null, null, sources);

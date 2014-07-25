@@ -33,6 +33,9 @@ import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 
+/*
+ * TODO: extend javadocs for ProfileManager, DeltaManager, NotificationManager, KaaChannelManager, KaaDataMultiplexer, KaaDataDemultiplexer
+ */
 /**
  * Interface for the Kaa client.
  *
@@ -40,6 +43,21 @@ import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
  *
  * @author Yaroslav Zeygerman
  *
+ * @see ProfileManager
+ * @see ConfigurationManager
+ * @see DeltaManager
+ * @see ConfigurationPersistenceManager
+ * @see SchemaPersistenceManager
+ * @see NotificationManager
+ * @see EventFamilyFactory
+ * @see EndpointRegistrationManager
+ * @see EventListenersResolver
+ * @see KaaChannelManager
+ * @see KaaDataMultiplexer
+ * @see KaaDataDemultiplexer
+ * @see PublicKey
+ * @see PrivateKey
+ * @see LogCollector
  */
 public interface KaaClient {
 
@@ -123,7 +141,7 @@ public interface KaaClient {
     /**
      * Retrieves data multiplexer for communication with Operation server.
      *
-     * Need to be used in user implementation of an operation data channel.
+     * Required in user implementation of an operation data channel.
      *
      * @return {@link KaaDataMultiplexer} object
      */
@@ -132,7 +150,7 @@ public interface KaaClient {
     /**
      * Retrieves data demultiplexer for communication with Operation server.
      *
-     * Need to be used in user implementation of an operation data channel.
+     * Required in user implementation of an operation data channel.
      *
      * @return {@link KaaDataDemultiplexer} object
      */
@@ -141,7 +159,7 @@ public interface KaaClient {
     /**
      * Retrieves data multiplexer for communication with Bootstrap server.
      *
-     * Need to be used in user implementation of a bootstrap data channel.
+     * Required in user implementation of a bootstrap data channel.
      *
      * @return {@link KaaDataMultiplexer} object
      */
@@ -150,7 +168,7 @@ public interface KaaClient {
     /**
      * Retrieves data demultiplexer for communication with Bootstrap server.
      *
-     * Need to be used in user implementation of a bootstrap data channel.
+     * Required in user implementation of a bootstrap data channel.
      *
      * @return {@link KaaDataDemultiplexer} object
      */
@@ -159,19 +177,21 @@ public interface KaaClient {
     /**
      * Retrieves the client's public key.
      *
-     * Need to be used in user implementation of an operation data channel.
+     * Required in user implementation of an operation data channel.
      * Public key hash (SHA-1) is used by servers as identification number to
-     * uniquely distinguish each connected endpoint.
+     * uniquely identify each connected endpoint.
      *
      * @return client's public key
      */
     PublicKey getClientPublicKey();
+    
+    String getEndpointKeyHash();
 
     /**
      * Retrieves the client's private key.
      *
-     * Need to be used in user implementation of an operation data channel.
-     * Private key is used in the encryption schema between endpoint and servers.
+     * Required in user implementation of an operation data channel.
+     * Private key is used by encryption schema between endpoint and servers.
      *
      * @return client's private key
      */

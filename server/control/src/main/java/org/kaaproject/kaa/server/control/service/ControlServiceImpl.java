@@ -160,12 +160,12 @@ public class ControlServiceImpl implements ControlService {
         return new TServerSocket(new InetSocketAddress(host, port)) {
           @Override
           protected TSocket acceptImpl() throws TTransportException {
-              ServerSocket serverSocket_ = getServerSocket();
-              if (serverSocket_ == null) {
+              ServerSocket serverSocket = getServerSocket();
+              if (serverSocket == null) {
                   throw new TTransportException(TTransportException.NOT_OPEN, "No underlying server socket.");
                 }
                 try {
-                  Socket result = serverSocket_.accept();
+                  Socket result = serverSocket.accept();
                   TSocketWrapper result2 = new TSocketWrapper(result);
                   result2.setTimeout(0);
                   openedSockets.add(result2);
@@ -204,7 +204,7 @@ public class ControlServiceImpl implements ControlService {
         args.stopTimeoutVal = 3;
         args.stopTimeoutUnit = TimeUnit.SECONDS;
         
-        SynchronousQueue<Runnable> executorQueue =
+        SynchronousQueue<Runnable> executorQueue = //NOSONAR
                 new SynchronousQueue<Runnable>();
         executorService = new ThreadPoolExecutor(args.minWorkerThreads,
                                             args.maxWorkerThreads,

@@ -43,7 +43,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.HeadElement;
 import com.google.gwt.dom.client.LinkElement;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -57,6 +56,7 @@ import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class KaaAdmin implements EntryPoint {
 
@@ -152,15 +152,19 @@ public class KaaAdmin implements EntryPoint {
         switch (authInfo.getAuthority()) {
         case KAA_ADMIN:
             historyMapper = GWT.create(KaaAdminPlaceHistoryMapper.class);
+            clientFactory.setHomePlace(new TenantsPlace());
             break;
         case TENANT_ADMIN:
             historyMapper = GWT.create(TenantAdminPlaceHistoryMapper.class);
+            clientFactory.setHomePlace(new ApplicationsPlace());
             break;
         case TENANT_DEVELOPER:
             historyMapper = GWT.create(TenantDeveloperPlaceHistoryMapper.class);
+            clientFactory.setHomePlace(new ApplicationsPlace());
             break;
         case TENANT_USER:
             historyMapper = GWT.create(TenantUserPlaceHistoryMapper.class);
+            clientFactory.setHomePlace(new ApplicationsPlace());
             break;
 
         }

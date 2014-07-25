@@ -87,6 +87,18 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
             return new AvroByteArrayConverter<BootstrapNodeInfo>(BootstrapNodeInfo.class);
         }
     };
+    
+    /** The errors listener. */
+    private UnhandledErrorListener errorsListener = new UnhandledErrorListener() {
+        public void unhandledError(String message, Throwable e) {
+            LOG.error("Unrecoverable error: " + message, e);
+            try {
+                close();
+            } catch (IOException ioe) {
+                LOG.warn("Exception when closing.", ioe);
+            }
+        }
+    };
 
     /**
      * Instantiates a new control node tracker.
@@ -181,18 +193,6 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
             listener.onControlNodeChange(controlServerInfo);
         }
     }
-
-    /** The errors listener. */
-    private UnhandledErrorListener errorsListener = new UnhandledErrorListener() {
-        public void unhandledError(String message, Throwable e) {
-            LOG.error("Unrecoverable error: " + message, e);
-            try {
-                close();
-            } catch (IOException ioe) {
-                LOG.warn("Exception when closing.", ioe);
-            }
-        }
-    };
 
     /**
      * Checks if is connected.

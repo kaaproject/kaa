@@ -74,9 +74,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersViewImpl;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceController;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
-import com.google.gwt.place.shared.PlaceController;
 
 public class ClientFactoryImpl implements ClientFactory {
 
@@ -133,12 +134,14 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<EventClassFamilyDto> ecfsView = new EcfsViewImpl();
     private final EcfView ecfView = new EcfViewImpl(false);
     private final EcfView createEcfView = new EcfViewImpl(true);
-    
+
     private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl();
 
     private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
     private final AefMapView aefMapView = new AefMapViewImpl(false);
     private final AefMapView createAefMapView = new AefMapViewImpl(true);
+
+    private Place homePlace;
 
     @Override
     public EventBus getEventBus() {
@@ -353,6 +356,16 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public AefMapView getCreateAefMapView() {
         return createAefMapView;
+    }
+
+    @Override
+    public Place getHomePlace() {
+        return homePlace;
+    }
+
+    @Override
+    public void setHomePlace(Place homePlace) {
+        this.homePlace = homePlace;
     }
 
 }

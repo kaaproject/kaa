@@ -30,7 +30,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang.StringUtils;
@@ -142,7 +144,7 @@ public class NotificationServiceImpl implements NotificationService {
                 throw new DatabaseProcessingException("Can't serialize notification body using schema: " + schemaId);
             }
 
-            long currentTime = System.currentTimeMillis();
+            long currentTime = new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTimeInMillis();
             Date expiredAt = dto.getExpiredAt();
             dto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + TTL));
             dto.setLastTimeModify(new Date(currentTime));
@@ -306,7 +308,7 @@ public class NotificationServiceImpl implements NotificationService {
             } else {
                 throw new DatabaseProcessingException("Can't find notification schema by id " + schemaId);
             }
-            long currentTime = System.currentTimeMillis();
+            long currentTime = new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTimeInMillis();
             Date expiredAt = notificationDto.getExpiredAt();
             notificationDto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + TTL));
             notificationDto.setLastTimeModify(new Date(currentTime));

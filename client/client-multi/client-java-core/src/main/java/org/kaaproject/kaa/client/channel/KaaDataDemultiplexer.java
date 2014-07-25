@@ -20,7 +20,7 @@ package org.kaaproject.kaa.client.channel;
  * Demultiplexer is responsible for deserializing of response data and notifying
  * appropriate services.
  *
- * Need to be used in user implementation of any kind of data channel.
+ * Required in user implementation of any kind of data channel.
  *
  * @author Yaroslav Zeygerman
  *
@@ -28,9 +28,9 @@ package org.kaaproject.kaa.client.channel;
 public interface KaaDataDemultiplexer {
 
     /**
-     * Processes the give response bytes.
+     * Processes the given response bytes.
      *
-     * @param response buffer which is going to be processed.
+     * @param response buffer which to be processed.
      *
      */
     void processResponse(byte [] response) throws Exception;

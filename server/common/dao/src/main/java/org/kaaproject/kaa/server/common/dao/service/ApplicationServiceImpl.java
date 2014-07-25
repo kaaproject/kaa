@@ -64,6 +64,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     public static final String DUMMY_ENDPOINT_USER_VERIFIER = "dummyEndpointUserVerifier";
     public static final String MONGODB_ENDPOINT_LOG_APPENDER = "mongoDBLogAppender";
+    public static final String FILESYSTEM_ENDPOINT_LOG_APPENDER = "fileSystemLogAppender";
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationServiceImpl.class);
 
@@ -173,7 +174,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             if(applicationDto.getLogAppendersNames() == null || applicationDto.getLogAppendersNames().isEmpty()){
-                applicationDto.setLogAppendersNames(MONGODB_ENDPOINT_LOG_APPENDER);
+                applicationDto.setLogAppendersNames(MONGODB_ENDPOINT_LOG_APPENDER + "," + FILESYSTEM_ENDPOINT_LOG_APPENDER);
             }
 
             EndpointUserVerifier userVerifier = verifierResolver.resolve(applicationDto.getUserVerifierName());

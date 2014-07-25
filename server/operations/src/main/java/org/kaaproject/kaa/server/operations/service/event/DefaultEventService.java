@@ -151,7 +151,7 @@ public class DefaultEventService implements EventService {
             }
             Key other = (Key) obj;
             if (!getOuterType().equals(other.getOuterType())) {
-                return false; 
+                return false;
             }
             if (tenantId == null) {
                 if (other.tenantId != null) {
@@ -390,7 +390,7 @@ public class DefaultEventService implements EventService {
      */
     private List<EventRoute> transformEventRouteFromRouteInfoCollection(Collection<RouteInfo> routeInfos) {
         List<EventRoute> routes = new ArrayList<>();
-        HashMap<Key,List<org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo>> routeInfosTh = new HashMap<>();
+        HashMap<Key,List<org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo>> routeInfosTh = new HashMap<>(); //NOSONAR
         for(RouteInfo ri : routeInfos) {
             org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo riTh
                 = new org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo(

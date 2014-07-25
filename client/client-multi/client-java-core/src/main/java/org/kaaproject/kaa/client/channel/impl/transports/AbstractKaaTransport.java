@@ -20,7 +20,7 @@ import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaTransport;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

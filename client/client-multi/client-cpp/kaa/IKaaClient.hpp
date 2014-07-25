@@ -1,0 +1,151 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef IKAACLIENT_HPP_
+#define IKAACLIENT_HPP_
+
+#include "kaa/security/KeyUtils.hpp"
+
+namespace kaa {
+
+class IDeltaManager;
+class IProfileManager;
+class EventFamilyFactory;
+class INotificationManager;
+class IConfigurationManager;
+class IEventListenersResolver;
+class IExternalTransportManager;
+class ISchemaPersistanceManager;
+class IEndpointRegistrationManager;
+class IConfigurationPersistanceManager;
+class IKaaChannelManager;
+class ILogCollector;
+
+/**
+ * Interface for the Kaa client.
+ *
+ * Base interface to operate with @link Kaa @endlink library.
+ *
+ * @author Yaroslav Zeygerman
+ *
+ */
+class IKaaClient {
+public:
+
+    /**
+     * Retrieves Kaa delta manager.
+     *
+     * @return @link IDeltaManager @endlink object.
+     *
+     */
+    virtual IDeltaManager&                    getDeltaManager() = 0;
+
+    /**
+     * Retrieves Kaa profile manager.
+     *
+     * @return @link IProfileManager @endlink object.
+     *
+     */
+    virtual IProfileManager&                  getProfileManager() = 0;
+
+    /**
+     * Retrieves Kaa event family factory.
+     *
+     * @return @link IEventFamilyFactory @endlink object.
+     *
+     */
+    virtual EventFamilyFactory&               getEventFamilyFactory() = 0;
+
+    /**
+     * Retrieves Kaa notification manager.
+     *
+     * @return @link INotificationManager @endlink object.
+     *
+     */
+    virtual INotificationManager&             getNotificationManager() = 0;
+
+    /**
+     * Retrieves Kaa configuration manager.
+     *
+     * @return @link IConfigurationManager @endlink object.
+     *
+     */
+    virtual IConfigurationManager&            getConfigurationManager() = 0;
+
+    /**
+     * Retrieves Kaa schema persistence manager.
+     *
+     * @return @link ISchemaPersistenceManager @endlink object.
+     *
+     */
+    virtual ISchemaPersistanceManager&        getSchemaPersistanceManager() = 0;
+
+    /**
+     * Retrieves Kaa configuration persistence manager.
+     *
+     * @return @link IConfigurationPersistenceManager @endlink object.
+     *
+     */
+    virtual IConfigurationPersistanceManager& getConfigurationPersistanceManager() = 0;
+
+    /**
+     * Retrieves Kaa endpoint registration manager
+     *
+     * @return @link IEndpointRegistrationManager @endlink object
+     */
+    virtual IEndpointRegistrationManager&     getEndpointRegistrationManager() = 0;
+
+    /**
+     * Retrieves Kaa event listeners resolver
+     *
+     * @return @link IEventListenersResolver @endlink object
+     */
+    virtual IEventListenersResolver&          getEventListenersResolver() = 0;
+
+    /**
+     * Retrieves Kaa channel manager
+     *
+     * @return @link IKaaChannelManager @endlink object
+     */
+    virtual IKaaChannelManager&               getChannelManager() = 0;
+
+    /**
+     * Retrieves the client's public and private key.
+     *
+     * Required in user implementation of an operation data channel.
+     * Public key hash (SHA-1) is used by servers as identification number to
+     * uniquely identify each connected endpoint.
+     *
+     * Private key is used by encryption schema between endpoint and servers.
+     *
+     * @return client's public/private key pair
+     */
+    virtual const KeyPair&                    getClientKeyPair() = 0;
+
+    /**
+     * Retrieves Kaa log collector
+     *
+     * @return @link LogCollector @endlink object
+     */
+    virtual ILogCollector&                    getLogCollector() = 0;
+
+    virtual ~IKaaClient() { }
+};
+
+}
+
+
+#endif /* IKAACLIENT_HPP_ */

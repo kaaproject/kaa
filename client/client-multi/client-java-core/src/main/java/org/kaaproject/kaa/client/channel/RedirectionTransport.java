@@ -20,8 +20,7 @@ import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
 
 /**
- * Transport which is responsible for processing of the Redirection response
- * from server.
+ * Transport for processing the Redirection response from server.
  *
  * @author Yaroslav Zeygerman
  *
@@ -29,10 +28,11 @@ import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
 public interface RedirectionTransport {
 
     /**
-     * Sets the given Bootstrap manager to the current transport.
+     * Sets the given Bootstrap manager.
      *
-     * @param manager the Bootstrap manager which is going to be set.
+     * @param manager the Bootstrap manager to be set.
      * @see BootstrapManager
+     *
      */
     void setBootstrapManager(BootstrapManager manager);
 
@@ -42,6 +42,7 @@ public interface RedirectionTransport {
      *
      * @param response the response from the server.
      * @see RedirectSyncResponse
+     *
      */
     void onRedirectionResponse(RedirectSyncResponse response);
 

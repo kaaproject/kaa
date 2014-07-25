@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.channel;
 
 import org.kaaproject.kaa.client.KaaClientProperties;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
@@ -30,7 +30,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 public interface MetaDataTransport {
 
     /**
-     * Creates a new Meta data request.
+     * Creates new Meta data request.
      *
      * @return new Meta data  request.
      *
@@ -38,33 +38,33 @@ public interface MetaDataTransport {
     SyncRequestMetaData createMetaDataRequest();
 
     /**
-     * Sets the given client's properties to the current transport.
+     * Sets the given client's properties.
      *
-     * @param properties the client's properties which are going to be set.
+     * @param properties the client's properties to be set.
      *
      */
     void setClientProperties(KaaClientProperties properties);
 
     /**
-     * Sets the given client's state to the current transport.
+     * Sets the given client's state .
      *
-     * @param state the client's state which is going to be set.
+     * @param state the client's state to be set.
      *
      */
     void setClientState(KaaClientState state);
 
     /**
-     * Sets the given public key hash to the current transport.
+     * Sets the given public key hash.
      *
-     * @param hash the public key hash which is going to be set.
+     * @param hash the public key hash to be set.
      *
      */
     void setEndpointPublicKeyhash(EndpointObjectHash hash);
 
     /**
-     * Sets the given response timeout to the current transport.
+     * Sets the given response timeout.
      *
-     * @param timeout the response timeout which is going to be set.
+     * @param timeout the response timeout to be set.
      *
      */
     void setTimeout(long timeout);

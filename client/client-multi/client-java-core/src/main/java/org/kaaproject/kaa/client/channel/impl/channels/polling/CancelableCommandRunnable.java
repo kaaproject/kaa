@@ -29,8 +29,7 @@ public abstract class CancelableCommandRunnable implements CancelableRunnable {
             if (!Thread.currentThread().isInterrupted()) {
                 executeCommand();
             }
-        }
-        finally {
+        } finally {
             isRunning = false;
             synchronized(this) {
                 this.notifyAll();
@@ -43,7 +42,8 @@ public abstract class CancelableCommandRunnable implements CancelableRunnable {
             synchronized(this) {
                 try {
                     this.wait();
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e) { //NOSONAR
+                }
             }
         }
     }

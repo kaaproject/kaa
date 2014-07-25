@@ -299,7 +299,7 @@ public class MessageEncoderDecoder {
         }
     }
 
-    final protected static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    protected static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray(); //NOSONAR
 
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 3];

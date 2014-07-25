@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.channel.MetaDataTransport;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 

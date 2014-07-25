@@ -94,7 +94,11 @@ public class DefaultChannelManager implements KaaChannelManager {
                 LOG.debug("Applying server {} for channel \"{}\" type {}", server, channel.getId(), channel.getType());
                 channel.setServer(server);
             } else {
-                LOG.warn("Failed to find server for channel \"{}\" type {}", channel.getId(), channel.getType());
+                if (lastServers != null && lastServers.isEmpty()) {
+                    LOG.warn("Failed to find server for channel \"{}\" type {}", channel.getId(), channel.getType());
+                } else {
+                    LOG.debug("list of servers is empty for channel \"{}\" type {}", channel.getId(), channel.getType());
+                }
             }
             useNewChannel(channel);
         }

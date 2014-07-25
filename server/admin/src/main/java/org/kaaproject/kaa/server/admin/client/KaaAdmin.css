@@ -5,7 +5,7 @@
 @def common-font-size 14px;
 
 th {
-    white-space: normal !important;    
+    white-space: normal !important;
 }
 
 /** Example rules used by the template application (remove for your app) */
@@ -24,7 +24,7 @@ body {
     direction: ltr;
     margin: 10px;
     padding: 0;
-    
+
 }
 
 body, table td, select, button {
@@ -52,27 +52,27 @@ button::-moz-focus-inner
 }
 
 .b-app-header-title {
-	font-family: Arial; 
-	font-size: 34px; 
-	font-weight: bold; 
-	color: #666666; 
-	
-	text-align: center;
+    font-family: Arial;
+    font-size: 34px;
+    font-weight: bold;
+    color: #666666;
+    text-align: center;
+    cursor: pointer;
 }
 
 .b-app-header {
-	font-family: Arial; 
-	font-size: 21px; 
-	color: #666666; 
-	padding-left: 10px;
-	border-left: 2px solid #999999; 
+    font-family: Arial;
+    font-size: 21px;
+    color: #666666;
+    padding-left: 10px;
+    border-left: 2px solid #999999;
 }
 
 .b-app-header-menu {
-    font-family: Arial; 
-    font-size: 13px; 
-    color: #666666; 
-    font-weight: bold; 
+    font-family: Arial;
+    font-size: 13px;
+    color: #666666;
+    font-weight: bold;
     padding: 0 25px;
     cursor:pointer;
 }
@@ -94,148 +94,150 @@ button::-moz-focus-inner
 }
 
 .b-nav-content {
-	border-top: 1px solid #CCCCCC; 
+    border-top: 1px solid #CCCCCC;
+    overflow: auto;
 }
 
 .b-app-navigator {
-	padding-top: 8px;
+    padding-top: 8px;
+    overflow: auto;
 }
 
 .b-app-navigator a {
-	font-family: Arial; 
-	font-size: 14px;
-	text-decoration: none; 
-	cursor:pointer;
-	color: #666666; 
-	position: relative; 
-	clear: left; 
-	float: left; 
-	width: 100%;
-	margin-bottom: 
-	1px; 
-	padding: 10px 0 10px 25px;
+    font-family: Arial;
+    font-size: 14px;
+    text-decoration: none;
+    cursor:pointer;
+    color: #666666;
+    position: relative;
+    clear: left;
+    float: left;
+    width: 100%;
+    margin-bottom:
+    1px;
+    padding: 10px 0 10px 25px;
 }
 
-.b-app-navigator a:hover { 
-	background-color: #FFFFFF; 
+.b-app-navigator a:hover {
+    background-color: #FFFFFF;
 }
 
-.b-app-navigator .b-current { 
-	color: #000000; 
-	background-color: #FFFFFF; 
-	border-left: 10px solid #4B9BCC; 
-	padding-left: 15px;
+.b-app-navigator .b-current {
+    color: #000000;
+    background-color: #FFFFFF;
+    border-left: 10px solid #4B9BCC;
+    padding-left: 15px;
 }
 
 .b-app-sub-navigator .b-current {
-	font-weight: bold; 
-	background-color: #EFEFEF; 
+    font-weight: bold;
+    background-color: #EFEFEF;
 }
 
-.b-app-sub-navigator a:hover { 
-	background-color: #EFEFEF; 
+.b-app-sub-navigator a:hover {
+    background-color: #EFEFEF;
 }
 
 .b-app-content {
-	background-color: #FFFFFF; 
-	box-shadow: 0px 0px 8px rgba(0,0,0,0.5) inset;
+    background-color: #FFFFFF;
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.5) inset;
 }
 
 .b-app-sub-header {
-	background-color: #EFEFEF;
-	border-bottom: 2px solid #CCCCCC; 
+    background-color: #EFEFEF;
+    border-bottom: 2px solid #CCCCCC;
 }
 
 .b-app-sub-header-title {
-	font-family: Arial; 
-	font-size: 24px; 
-	font-weight: bold; 
-	color: #4D6C85; 
-	padding-left: 20px;
-	padding-right: 10px;
+    font-family: Arial;
+    font-size: 24px;
+    font-weight: bold;
+    color: #4D6C85;
+    padding-left: 20px;
+    padding-right: 10px;
 }
 
 .b-app-sub-header-text {
-	font-family: Arial; 
-	font-size: 17px; 
-	font-weight: bold; 
-	color: #4D6C85; 
+    font-family: Arial;
+    font-size: 17px;
+    font-weight: bold;
+    color: #4D6C85;
 }
 
 .b-app-sub-content {
-	background-color: #FFFFFF; 
-	border-left: 5px solid #CCCCCC; 
+    background-color: #FFFFFF;
+    border-left: 5px solid #CCCCCC;
 }
 
 .b-app-padded-panel {
-	padding-left: 30px;
+    padding-left: 30px;
 }
 
 .b-app-buttons-panel {
-	padding-left: 20px;
-	border-spacing: 15px;
+    padding-left: 20px;
+    border-spacing: 15px;
 }
 
 .b-app-content-title {
-	font-family: Arial;
-	font-size: 18px;
-  	font-weight: bold;
-  	color: #666666; 
-  	padding-left: 30px;
+    font-family: Arial;
+    font-size: 18px;
+    font-weight: bold;
+    color: #666666;
+    padding-left: 30px;
 }
 
 .b-app-content-sub-title {
-	font-family: Arial;
-	font-size: 18px;
-  	color: #666666; 
-  	padding-left: 35px;
+    font-family: Arial;
+    font-size: 18px;
+    color: #666666;
+    padding-left: 35px;
 }
 
 .b-app-content-notes {
-	font-family: Arial;
-	font-size: 13px;
-  	color: #666666; 
-  	padding-left: 35px;
+    font-family: Arial;
+    font-size: 13px;
+    color: #666666;
+    padding-left: 35px;
 }
 
 .b-app-field-notes {
-	font-family: Arial;
-	font-size: 13px;
-  	color: #666666; 
+    font-family: Arial;
+    font-size: 13px;
+    color: #666666;
 }
 
 .b-app-content-details-table {
-	padding-left: 35px;
-	padding-top: 5px;
+    padding-left: 35px;
+    padding-top: 5px;
 }
 
 .b-app-content-details-table td{
-	vertical-align: top;
+    vertical-align: top;
 }
 
 .b-app-content-details-table .gwt-Label {
-	font-family: Arial;
-	font-size: 14px;
-	color: #000000;
-	font-weight: bold;
+    font-family: Arial;
+    font-size: 14px;
+    color: #000000;
+    font-weight: bold;
 }
 
 .b-app-content-details-table .b-app-content-title-label {
     font-family: Arial;
     font-size: 17px;
     font-weight: bold;
-    color: #4D6C85; 
+    color: #4D6C85;
 }
 
 .b-app-content-details-table .secondary {
-	font-weight: normal;
+    font-weight: normal;
 }
 
 .required:after {
-	content: " *";
-	font-size: 16px;
-	color: #CC0000;
-	font-weight: bold;
+    content: " *";
+    font-size: 16px;
+    color: #CC0000;
+    font-weight: bold;
 }
 
 .b-app-content-details-table input, textarea {
@@ -262,22 +264,22 @@ button::-moz-focus-inner
 }
 
 .b-app-content-details-table input:focus, textarea:focus {
-	border-color: rgba(82, 168, 236, 0.8);
-  	outline: 0;
-  	outline: thin dotted \9;
-  	/* IE6-9 */
+    border-color: rgba(82, 168, 236, 0.8);
+    outline: 0;
+    outline: thin dotted \9;
+    /* IE6-9 */
 
-  	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-       -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 }
-	
+
 .LinkCell {
     overflow:visible; /* Shrinkwrap the text in IE7- */
     margin:0;
     padding:0;
     border:0;
-/*    color:#666666; /* Match your link colour */ 
+/*    color:#666666; /* Match your link colour */
     background:transparent;
     font:inherit; /* Inherit font settings (doesnâ€™t work in IE7-) */
     line-height:normal; /* Override line-height to avoid spacing issues */
@@ -304,12 +306,12 @@ button::-moz-focus-inner
     margin:0;
     padding:0;
     border:0;
-/*    color:#666666; /* Match your link colour */ 
+/*    color:#666666; /* Match your link colour */
     background:transparent;
-    font:inherit; /* Inherit font settings (doesn’t work in IE7-) */
+    font:inherit; /* Inherit font settings (doesnï¿½t work in IE7-) */
     line-height:normal; /* Override line-height to avoid spacing issues */
     text-decoration:underline; /* Make it look linky */
-    cursor:pointer; /* Buttons don’t make the cursor change in all browsers */
+    cursor:pointer; /* Buttons donï¿½t make the cursor change in all browsers */
     -moz-user-select:text; /* Make button text selectable in Gecko */
     font-size: 11px;
 }
@@ -331,13 +333,13 @@ button::-moz-focus-inner
 .gwt-Button, .gwt-ToggleButton {
     border: none;
     border-radius: 0px;
-	color: #FFFFFF;
-	cursor: pointer;
-	display: inline-block;
-	font-family: Arial;
-	font-size: 16px;
-	font-variant: normal;
-	font-weight: normal;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Arial;
+    font-size: 16px;
+    font-variant: normal;
+    font-weight: normal;
 /*    height: 2.14286em;*/
     line-height: 1.42857;
     margin: 0;
@@ -356,16 +358,16 @@ button::-moz-focus-inner
 }
 
 .gwt-Button[disabled], .gwt-ToggleButton[disabled] {
-	border: none;
-	border-radius: 0px;
+    border: none;
+    border-radius: 0px;
     cursor: default;
     background: #CCCCCC;
     color: #FFFFFF;
 }
 
 .gwt-Button[disabled]:hover, .gwt-ToggleButton[disabled]:hover {
-	border: none;
-	border-radius: 0px;
+    border: none;
+    border-radius: 0px;
 }
 
 .gwt-Button:active, .gwt-ToggleButton:active, .gwt-ToggleButton-down, .gwt-ToggleButton-down-hovering {
@@ -377,15 +379,15 @@ button::-moz-focus-inner
 }
 
 .b-app-back-button,  .b-app-back-button:hover {
-	border: 1px solid #CCCCCC;
-	background: #EEEEEE;
-	color: #444444;
-	padding: 2px 10px;
+    border: 1px solid #CCCCCC;
+    background: #EEEEEE;
+    color: #444444;
+    padding: 2px 10px;
 }
 
 .b-app-back-button:hover {
-	background: #CCCCCC;
-	border-color: #AAAAAA;
+    background: #CCCCCC;
+    border-color: #AAAAAA;
 }
 
 .b-app-back-button:after {
@@ -395,22 +397,22 @@ button::-moz-focus-inner
 }
 
 .b-app-back-button-header {
-	background: #F5F5F5;
+    background: #F5F5F5;
 }
 
 .b-app-back-button-panel {
-	padding-left: 10px;
+    padding-left: 10px;
 }
 
 .b-app-button-small {
-	padding: 4px 14px;
-	font-size: 14px;
-	font-weight: bold;
+    padding: 4px 14px;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .b-app-cell-button, .b-app-cell-button:hover {
-	padding: 4px 10px;
-	border: 1px solid #CCCCCC;
+    padding: 4px 10px;
+    border: 1px solid #CCCCCC;
     background: #EEEEEE;
     color: #444444;
 }
@@ -421,8 +423,8 @@ button::-moz-focus-inner
 }
 
 .b-app-cell-button-small, .b-app-cell-button-small:hover {
-	padding: 2px 6px;
-	font-size: 14px;
+    padding: 2px 6px;
+    font-size: 14px;
 }
 
 .actionPopup {
@@ -434,13 +436,13 @@ button::-moz-focus-inner
 }
 
 .gwt-MenuBar .gwt-MenuItem, .gwt-MenuItemLabel, .gwt-MenuItemContainer {
-	font-family: Arial;
+    font-family: Arial;
     font-size: 14px;
     line-height: 1.42857;
 }
 
 .gwt-MenuBar .gwt-MenuItem, .gwt-MenuItemContainer {
- 	cursor: pointer;
+    cursor: pointer;
 }
 
 .gwt-MenuBar .gwt-MenuItemLabel {
@@ -448,7 +450,7 @@ button::-moz-focus-inner
 }
 
 .gwt-MenuBar-horizontal {
-	background: none repeat scroll 0 0 selection-color;
+    background: none repeat scroll 0 0 selection-color;
     border-bottom-color: selection-color;
     color: #FFFFFF;
 }
@@ -463,15 +465,15 @@ button::-moz-focus-inner
 }
 
 .gwt-MenuBar-horizontal .gwt-MenuItem {
-	font-weight: normal;
+    font-weight: normal;
 }
 
 .gwt-MenuBar-horizontal .gwt-MenuItemLabel {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .gwt-MenuBar-horizontal .gwt-MenuItemLabel .gwt-Label {
-	color: #FFFFFF;
+    color: #FFFFFF;
 }
 
 .gwt-MenuBar-horizontal .gwt-MenuItemContainer {
@@ -498,7 +500,7 @@ button::-moz-focus-inner
 }
 
 .gwt-Label {
-	color: #666666;
+                                          color: #666666;
 }
 
 .gwt-DisclosurePanel .header td {
@@ -564,7 +566,7 @@ button::-moz-focus-inner
     width: 0;
     height: 0;
   }
-  
+
   @sprite .gwt-DialogBox .dialogBottomRight {
     gwt-image:'circles';
     background-position: -18px 0;
@@ -578,7 +580,7 @@ button::-moz-focus-inner
     transform: rotate(180deg);
     width: 0;
     height: 0;
-  }  
+  }
 }
 @else {
   @sprite .gwt-DialogBox .dialogBottomLeft {
@@ -594,8 +596,8 @@ button::-moz-focus-inner
     transform: rotate(180deg);
     width: 0;
     height: 0;
-  }	
-  
+  }
+
   @sprite .gwt-DialogBox .dialogBottomRight {
     gwt-image:'circles_ie6';
     background-position: -18px 0;
@@ -609,7 +611,7 @@ button::-moz-focus-inner
     transform: rotate(180deg);
     width: 0;
     height: 0;
-  }    
+  }
 }
 
 
@@ -724,19 +726,19 @@ button::-moz-focus-inner
 
 .loginPanel {
     /*background-color: #e7eef9;*/
-    
+
     background: none repeat scroll 0 0 #FFFFFF;
-    
+
     border: 1px solid gray;
     -moz-border-radius: 2px;
     border-radius: 2px;
-    
+
     -webkit-box-shadow: 1px 1px 4px #444444;
     -moz-box-shadow: 1px 1px 4px #444444;
     box-shadow: 1px 1px 4px #444444;
-    
+
     padding: 20px;
-    
+
     margin-left: auto;
     margin-right: auto;
     margin-top: 100px;

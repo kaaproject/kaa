@@ -64,10 +64,8 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         Criteria criteria = getCriteria();
         criteria.add(criterion);
         List<T> resultList = criteria.list();
-        if (LOG.isDebugEnabled()) {
-            if (resultList != null) {
-                LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
-            }
+        if (LOG.isDebugEnabled() && resultList != null) {
+            LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
         }
         return resultList;
     }
@@ -104,10 +102,8 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         }
         criteria.add(criterion);
         List<T> resultList = criteria.list();
-        if (LOG.isDebugEnabled()) {
-            if (resultList != null) {
-                LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
-            }
+        if (LOG.isDebugEnabled() && resultList != null) {
+            LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
         }
         return resultList;
     }
@@ -117,10 +113,8 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         String className = getSimpleClassName();
         LOG.debug("Find {} entities by criteria [{}] ", className, criteria);
         List<T> resultList = criteria.list();
-        if (LOG.isDebugEnabled()) {
-            if (resultList != null) {
-                LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
-            }
+        if (LOG.isDebugEnabled() && resultList != null) {
+            LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
         }
         return resultList;
     }
@@ -195,10 +189,8 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     @SuppressWarnings("unchecked")
     public List<T> find() {
         List<T> resultList = getCriteria().list();
-        if (LOG.isDebugEnabled()) {
-            if (resultList != null) {
-                LOG.debug("Found {} entities: [{}] ", getSimpleClassName(), Arrays.toString(resultList.toArray()));
-            }
+        if (LOG.isDebugEnabled() && resultList != null) {
+            LOG.debug("Found {} entities: [{}] ", getSimpleClassName(), Arrays.toString(resultList.toArray()));
         }
         return resultList;
     }

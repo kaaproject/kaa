@@ -1,0 +1,13 @@
+    void sendEventToAll(const ns${event_family_class_name} :: ${event_class_name}& event) {
+        sendEvent(event);
+    };
+
+    void sendEvent(const ns${event_family_class_name} :: ${event_class_name}& event, const std::string& target = "")
+    {
+        std::ostringstream stream;
+        AvroByteArrayConverter< ns${event_family_class_name} :: ${event_class_name} > converter;
+        converter.toByteArray(event, stream);
+        const auto& encodedData = stream.str();
+        std::vector<boost::uint8_t> buffer(encodedData.begin(), encodedData.end());
+        eventManager_.produceEvent("${event_class_fqn}", buffer, target);
+    }

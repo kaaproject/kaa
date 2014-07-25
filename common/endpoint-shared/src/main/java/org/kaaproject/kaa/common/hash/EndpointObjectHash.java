@@ -28,7 +28,7 @@ import java.util.Arrays;
 public final class EndpointObjectHash implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    final private byte[] data;
+    private final byte[] data;
 
     /**
      * Instantiates a new endpoint object hash.

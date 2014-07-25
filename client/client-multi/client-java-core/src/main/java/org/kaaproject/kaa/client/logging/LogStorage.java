@@ -19,22 +19,22 @@ package org.kaaproject.kaa.client.logging;
 /**
  * Interface for log storage.
  *
- * Responsible for persistence of each new log record, forming on demand
- * new log block for sending to the operation server, removal of sent records,
- * clean up of elder records if there is some limitation on a storage size. 
+ * Persists each new log record, forms on demand
+ * new log block for sending it to the operation server, removes already sent records,
+ * cleans up elder records if case limitation set on a storage size. 
  *
- * Reference implementation is present and use by default (@see MemoryLogStorage).
+ * Reference implementation used by default (@see MemoryLogStorage).
  */
 public interface LogStorage {
     /**
-     * Persist new log record.
+     * Persists new log record.
      *
      * @param record New record (@see LogRecord)
      */
     void addLogRecord(LogRecord record);
 
     /**
-     * Retrieve new log block of specified size for sending or 
+     * Retrieves new log block of specified size or 
      * null if there is no logs. The size of retrieved log records 
      * should NOT be greater than specified block size.
      *
@@ -44,14 +44,14 @@ public interface LogStorage {
     LogBlock getRecordBlock(long blockSize);
 
     /**
-     * Remove sent log records by its bloc id.
+     * Removes already sent log records by its bloc id.
      *
      * @param id Unique id of sent log block
      */
     void removeRecordBlock(String id);
 
     /**
-     * Remove records till inner storage has equal or less size
+     * Removes records untill inner storage has equal or less size
      * than specified one.
      *
      * @param maximumAllowedVolume Maximum size of inner storage
@@ -59,7 +59,7 @@ public interface LogStorage {
     void removeOldestRecord(long maximumAllowedVolume);
 
     /**
-     * Notify that sending of log block with specified id was failed.
+     * Notifies if sending of log block with specified id was failed.
      *
      * @param id Unique id of log block.
      */

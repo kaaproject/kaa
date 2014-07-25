@@ -19,14 +19,23 @@ package org.kaaproject.kaa.client.configuration.storage;
 import java.io.IOException;
 
 /**
- * Manager which is responsible for saving and loading of configuration data
+ * Manager for saving and loading of configuration data<br>
+ * <br>
+ * Provide {@link ConfigurationStorage} implementation instance to store merged
+ * configuration when configuration deltas are received from Operation server.
+ * Once {@link ConfigurationPersistenceManager#setConfigurationStorage(ConfigurationStorage)}
+ * is called {@link ConfigurationStorage#loadConfiguration()} will be invoked to
+ * load persisted configuration.<br>
  *
  * @author Yaroslav Zeygerman
+ * @see ConfigurationStorage
  *
  */
 public interface ConfigurationPersistenceManager {
 
     /**
+     * Provide storage object which is able to persist encoded configuration data.
+     *
      * @param storage Object which will save and load configuration data
      * @see ConfigurationStorage
      */

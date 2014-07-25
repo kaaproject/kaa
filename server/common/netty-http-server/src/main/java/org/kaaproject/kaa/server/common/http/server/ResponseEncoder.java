@@ -24,7 +24,6 @@ import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.Attribute;
-import io.netty.util.AttributeKey;
 
 /**
  * ResponseEncoder Class.

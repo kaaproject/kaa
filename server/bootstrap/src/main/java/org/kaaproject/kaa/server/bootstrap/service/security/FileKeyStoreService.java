@@ -109,8 +109,7 @@ public class FileKeyStoreService implements KeyStoreService {
      */
     private KeyPair generateKeyPair(String privateKeyLocation, String publicKeyLocation) {
         LOG.debug("Generating key pair (private at {}; public at {})", privateKeyLocation, publicKeyLocation);
-        KeyPair kp = KeyUtil.generateKeyPair(privateKeyLocation, publicKeyLocation);
-        return kp;
+        return KeyUtil.generateKeyPair(privateKeyLocation, publicKeyLocation);
     }
 
     /**

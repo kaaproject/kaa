@@ -22,7 +22,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
 
 /**
  * {@link KaaTransport} for the Bootstrap service.
- * It is responsible for updating the Bootstrap manager state.
+ * Updates the Bootstrap manager state.
  *
  * @author Yaroslav Zeygerman
  *
@@ -30,7 +30,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
 public interface BootstrapTransport extends KaaTransport {
 
     /**
-     * Creates a new Resolve request.
+     * Creates new Resolve request.
      *
      * @return Resovle request.
      *
@@ -38,17 +38,17 @@ public interface BootstrapTransport extends KaaTransport {
     Resolve createResolveRequest();
 
     /**
-     * Updates the state of the Bootstrap manager from the given response.
+     * Updates the state of the Bootstrap manager according the given response.
      *
      * @param servers response from Bootstrap server.
-     *
+     * 
      */
     void onResolveResponse(OperationsServerList servers);
 
     /**
-     * Sets the given Bootstrap manager to the current transport.
+     * Sets the given Bootstrap manager.
      *
-     * @param manager the Bootstrap manager which is going to be set.
+     * @param manager the Bootstrap manager to be set.
      *
      */
     void setBootstrapManager(BootstrapManager manager);

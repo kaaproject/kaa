@@ -17,11 +17,14 @@
 package org.kaaproject.kaa.server.common.dao.model.mongo;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.idToObjectId;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.idToString;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.bson.types.ObjectId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
@@ -43,7 +46,7 @@ public final class Notification implements ToDto<NotificationDto>, Serializable 
     @Field("application_id")
     private String applicationId;
     @Field("notification_schema_id")
-    private String schemaId;
+    private ObjectId schemaId;
     @Field("topic_id")
     private String topicId;
     private int version;
@@ -65,7 +68,7 @@ public final class Notification implements ToDto<NotificationDto>, Serializable 
     public Notification(NotificationDto dto) {
         this.id = dto.getId();
         this.applicationId = dto.getApplicationId();
-        this.schemaId = dto.getSchemaId();
+        this.schemaId = idToObjectId(dto.getSchemaId());
         this.topicId = dto.getTopicId();
         this.version = dto.getVersion();
         this.lastModifyTime = dto.getLastTimeModify();
@@ -83,7 +86,7 @@ public final class Notification implements ToDto<NotificationDto>, Serializable 
         return applicationId;
     }
 
-    public String getSchemaId() {
+    public ObjectId getSchemaId() {
         return schemaId;
     }
 
@@ -192,7 +195,7 @@ public final class Notification implements ToDto<NotificationDto>, Serializable 
         NotificationDto dto = new NotificationDto();
         dto.setId(id);
         dto.setApplicationId(applicationId);
-        dto.setSchemaId(schemaId);
+        dto.setSchemaId(idToString(schemaId));
         dto.setTopicId(topicId);
         dto.setLastTimeModify(lastModifyTime);
         dto.setVersion(version);

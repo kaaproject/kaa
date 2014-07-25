@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.configuration.delta;
 
 /**
- * Field with this delta type should set the new value ({@link DeltaType} implementation)
+ * Field with this delta type set the new value ({@link DeltaType} implementation)
  *
  * @author Yaroslav Zeygerman
  *

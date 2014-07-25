@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 public final class EndpointEvent {
 
-    private final static long DEFAULT_TIMEOUT = 60 * 1000L;
+    private static final long DEFAULT_TIMEOUT = 60 * 1000L;
 
     private final UUID uuid;
     private final EndpointObjectHash sender;

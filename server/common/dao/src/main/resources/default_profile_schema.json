@@ -1,6 +1,6 @@
 {
     "type": "record",
-    "name": "ProfileSchema",
+    "name": "Profile",
     "namespace": "org.kaa.config",
     "fields": [
         {

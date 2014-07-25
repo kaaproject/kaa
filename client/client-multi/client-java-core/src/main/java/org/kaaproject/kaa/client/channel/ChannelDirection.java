@@ -16,11 +16,11 @@
 package org.kaaproject.kaa.client.channel;
 
 /**
- * Describes traffic direction supported by channel
+ * Describes traffic direction that channel supports.
  */
 public enum ChannelDirection {
     /**
-     *  From the endpoint to a server
+     *  From the endpoint to the server
      */
     UP,
     /**
@@ -28,7 +28,7 @@ public enum ChannelDirection {
      */
     DOWN,
     /**
-     * In both way
+     * In both ways
      */
     BIDIRECTIONAL
 }

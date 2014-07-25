@@ -57,10 +57,9 @@ public class ControlThriftServiceAspect {
             PrintWriter writer = new PrintWriter(outStream);
             t.printStackTrace(writer); //NOSONAR
             writer.flush();
-            ControlThriftException pte = new ControlThriftException(
+            throw new ControlThriftException(
                     t.getMessage(), t.getClass().getName(),
                     outStream.toString());
-            throw pte;
         }
         return retVal;
     }

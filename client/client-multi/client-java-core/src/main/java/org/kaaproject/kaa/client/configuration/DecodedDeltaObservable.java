@@ -27,7 +27,8 @@ public interface DecodedDeltaObservable {
     /**
      * Subscribes new receiver for decoded data updates
      *
-     * @param receiver receiver which is going to get decoded configuration updates
+     * @param receiver receiver to get decoded configuration updates
+     * @see GenericDeltaReceiver
      *
      */
     void subscribeForUpdates(GenericDeltaReceiver receiver);
@@ -35,7 +36,8 @@ public interface DecodedDeltaObservable {
     /**
      * Unsubscribes receiver from decoded data updates
      *
-     * @param receiver receiver which is going to be unsubscribed from configuration updates
+     * @param receiver receiver to be unsubscribed from configuration updates
+     * @see GenericDeltaReceiver
      *
      */
     void unsubscribeFromUpdates(GenericDeltaReceiver receiver);

@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.operations.service.notification;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -167,7 +166,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
             if (notificationDto != null) {
                 Date date = notificationDto.getExpiredAt();
                 if (date != null && date.getTime() > now) {
-                    LOG.trace("[{}] notification expiration time is {}({}) which is later then {}", date.getTime(), date, now);
+                    LOG.trace("[{}] notification expiration time is {}({}) which is later then {}", endpointId, date.getTime(), date, now);
                     notificationDto.setId(unicastNotification.getId());
                     notifications.add(notificationDto);
                 }

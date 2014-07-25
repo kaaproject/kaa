@@ -15,6 +15,6 @@
  */
 
 /**
- * Provides implementation of transport stuff for each endpoint service
+ * Provides implementation of transport stuff for each Endpoint service
  */
 package org.kaaproject.kaa.client.channel.impl.transports;

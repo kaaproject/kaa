@@ -118,7 +118,11 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
             if (hasChanges && clientState != null) {
                 clientState.setAttachedEndpointsList(attachedEndpoints);
             }
-            processor.onUpdate(response.getEndpointAttachResponses(), response.getEndpointDetachResponses(), response.getUserAttachResponse());
+            processor.onUpdate(response.getEndpointAttachResponses()
+                    , response.getEndpointDetachResponses()
+                    , response.getUserAttachResponse()
+                    , response.getUserAttachNotification()
+                    , response.getUserDetachNotification());
             LOG.info("Processed user response");
         }
     }

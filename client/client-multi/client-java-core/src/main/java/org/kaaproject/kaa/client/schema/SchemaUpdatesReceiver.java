@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.schema;
 import org.apache.avro.Schema;
 
 /**
- * Interface for subscriber which is going to receive schema updates
+ * Interface for subscriber to receive schema updates
  *
  * @author Yaroslav Zeygerman
  *
@@ -27,7 +27,7 @@ import org.apache.avro.Schema;
 public interface SchemaUpdatesReceiver {
 
     /**
-     * Will be called on each schema update
+     * Called on each schema update
      *
      * @param schema new schema
      *

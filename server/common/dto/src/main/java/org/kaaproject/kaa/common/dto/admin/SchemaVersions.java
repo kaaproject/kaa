@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.common.dto.admin;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 
 import org.kaaproject.kaa.common.dto.SchemaDto;
 

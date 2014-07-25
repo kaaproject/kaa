@@ -43,7 +43,7 @@ public interface CommonRecord extends SchemaDependent {
     UUID getUuid();
 
     /**
-     * Tells if this record contains field with the given name.
+     * Checks if this record contains field with the given name.
      *
      * @param field the field name.
      * @return true if the record contains given field name, false otherwise.

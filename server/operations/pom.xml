@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.5.0</version>
+		<version>0.5.1</version>
 		<artifactId>server</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.server</groupId>
@@ -267,6 +267,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>
+                        <server_log_sufix></server_log_sufix>
                         <server_home_dir>.</server_home_dir>
                     </systemPropertyVariables>
                 </configuration>
@@ -446,6 +447,15 @@
                                         <type>perm</type>
                                         <filemode>755</filemode>
                                         <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/src/sh/bin</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/bin</prefix>
                                     </mapper>
                                 </data>
                                 <data>

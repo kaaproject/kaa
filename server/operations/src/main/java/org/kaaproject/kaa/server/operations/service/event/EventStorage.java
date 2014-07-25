@@ -57,10 +57,8 @@ public class EventStorage {
             if(targetAddress != null && targetAddress.getEndpointKey().equals(event.getSender())){
                 continue;
             }
-            if(entry.getValue().contains(key)){
-                if(event.getTarget() == null || target == null || event.getTarget().equals(target)){
-                    result.add(entry.getKey());
-                }
+            if(entry.getValue().contains(key) && (event.getTarget() == null || target == null || event.getTarget().equals(target))) {
+                result.add(entry.getKey());
             }
         }
         return result;

@@ -54,7 +54,7 @@ public class Neighbors implements OperationsNodeListener {
     private Random rnd = new Random();
 
     /** Hashtable of NeighborConnection, Key - thriftHost:thriftPort */
-    private Hashtable<String, NeighborConnection> neigbors;
+    private Hashtable<String, NeighborConnection> neigbors; //NOSONAR
     
     /** Synchronize object, used during neighbors list updates */
     private Object neighborsUpdateSync = new Object();
@@ -104,7 +104,8 @@ public class Neighbors implements OperationsNodeListener {
                         }
                     }
                 };
-                timerUpdate.schedule(taskUpdate, 0); //100 msec delay in reading nodes list
+                //100 msec delay in reading nodes list
+                timerUpdate.schedule(taskUpdate, 0);
             }
         }
     }
@@ -215,8 +216,7 @@ public class Neighbors implements OperationsNodeListener {
      */
     public List<NeighborConnection> getNeighbors() {
         synchronized (neighborsUpdateSync) {
-            LinkedList<NeighborConnection> neighbors = new LinkedList<>(neigbors.values());
-            return neighbors;
+            return new LinkedList<NeighborConnection>(neigbors.values()); //NOSONAR
         }
     }
     

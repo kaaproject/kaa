@@ -62,6 +62,9 @@ public class CliSessionState {
 
     /** The CLI client. */
     private CliClient client;
+    
+    /** The CLI Client Session State thread local storage. */
+    private static ThreadLocal<CliSessionState> tss = new ThreadLocal<CliSessionState>();
 
     /**
      * Instantiates a new cli session state.
@@ -150,9 +153,6 @@ public class CliSessionState {
     public CliClient getClient() {
         return client;
     }
-
-    /** The CLI Client Session State thread local storage. */
-    private static ThreadLocal<CliSessionState> tss = new ThreadLocal<CliSessionState>();
 
     /**
      * Start CLI Client Session State.

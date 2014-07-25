@@ -25,9 +25,9 @@ public enum SdkPlatform {
     String key;
     String contentType;
 
-    SdkPlatform(String _key, String _contentType) {
-        key = _key;
-        contentType = _contentType;
+    SdkPlatform(String key, String contentType) {
+        this.key = key;
+        this.contentType = contentType;
     }
 
     public String getResourceKey() {

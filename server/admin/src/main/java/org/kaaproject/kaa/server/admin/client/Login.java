@@ -32,6 +32,9 @@ import com.google.gwt.dom.client.HeadElement;
 import com.google.gwt.dom.client.LinkElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -87,8 +90,11 @@ public class Login implements EntryPoint {
     public void showLogin(){
         injectThemeStyleSheet();
         resources.css().ensureInjected();
+        EnterKeyDownHandler loginHandler = new EnterKeyDownHandler();
 
-        view.getLoginButton().addClickHandler(new LoginHandler());
+        view.getLoginButton().addClickHandler(loginHandler);
+        view.getUsernameBox().addKeyDownHandler(loginHandler);
+        view.getPasswordBox().addKeyDownHandler(loginHandler);
 
         view.clearMessages();
 
@@ -110,7 +116,21 @@ public class Login implements EntryPoint {
                 login(userName, password);
             }
         }
+    }
 
+    class EnterKeyDownHandler extends LoginHandler implements KeyDownHandler {
+        @Override
+        public void onKeyDown(KeyDownEvent event) {
+            if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+                String userName = view.getUsernameBox().getText();
+                String password = view.getPasswordBox().getText();
+                if (userName != null && password != null) {
+                    if (userName.length() > 0 && password.length() > 0) {
+                        onClick(null);
+                    }
+                }
+            }
+        }
     }
 
     private void createKaaAdmin(final String userName, final String password) {

@@ -90,7 +90,7 @@ public class OperationsServerListService {
      */
     public void updateList(List<ThriftOperationsServer> operationsServersList) {
         
-        LinkedList<OperationsServer> newList = new LinkedList<OperationsServer>();
+        LinkedList<OperationsServer> newList = new LinkedList<OperationsServer>(); //NOSONAR
         
         for(ThriftOperationsServer server : operationsServersList) {
             
@@ -99,7 +99,7 @@ public class OperationsServerListService {
                 
                 for(ThriftSupportedChannel thriftSupChannel : server.getSupportedChannels()) {
                     ThriftCommunicationParameters thriftParams = thriftSupChannel.getCommunicationParams();
-                    switch (thriftSupChannel.getType()) {
+                    switch (thriftSupChannel.getType()) { //NOSONAR
                     case HTTP:
                         HttpParameters httpParams = new HttpParameters();
                         httpParams.setHostName(thriftParams.getHttpParams().getHostName());

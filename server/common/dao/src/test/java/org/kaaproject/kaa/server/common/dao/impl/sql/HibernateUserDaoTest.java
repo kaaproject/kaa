@@ -61,4 +61,14 @@ public class HibernateUserDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(2, users.size());
     }
 
+    @Test
+    public void testRemoveByTenantId() {
+        Tenant tenant = generateTenant();
+        User user = generateUser(tenant, null);
+        userDao.removeByTenantId(tenant.getId().toString());
+        User found = userDao.findById(user.getId().toString());
+        Assert.assertNull(found);
+    }
+
+
 }

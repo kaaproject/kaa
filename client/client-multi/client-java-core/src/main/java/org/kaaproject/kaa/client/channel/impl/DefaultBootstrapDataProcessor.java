@@ -49,7 +49,7 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
             LOG.info("Created Resolve request {}", request);
             return requestConverter.toByteArray(request);
         }
-        return null;
+        return null; //NOSONAR
     }
 
     @Override

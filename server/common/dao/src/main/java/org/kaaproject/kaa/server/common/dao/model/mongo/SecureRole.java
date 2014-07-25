@@ -55,7 +55,7 @@ public final class SecureRole  implements ToDto<MongoRoleDto>, Serializable {
     
     private List<SecurePrivilege> convertPrivileges(List<MongoPrivilegeDto> dtos) {
         if (dtos == null) {
-            return null;
+            return null; //NOSONAR
         }
         List<SecurePrivilege> securePrivileges = new ArrayList<>();
         for (MongoPrivilegeDto dto : dtos) {

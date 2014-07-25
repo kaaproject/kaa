@@ -25,7 +25,7 @@ import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
 
 /**
  * {@link KaaTransport} for the Profile service.
- * It is responsible for updating the Profile manager state.
+ * Updates the Profile manager state.
  *
  * @author Yaroslav Zeygerman
  *
@@ -37,6 +37,7 @@ public interface ProfileTransport extends KaaTransport {
      *
      * @return new Profile update request.
      * @see ProfileSyncRequest
+     *
      */
     ProfileSyncRequest createProfileRequest() throws IOException;
 
@@ -45,22 +46,25 @@ public interface ProfileTransport extends KaaTransport {
      *
      * @param response the response from the server.
      * @see ProfileSyncResponse
+     *
      */
     void onProfileResponse(ProfileSyncResponse response) throws Exception ;
 
     /**
-     * Sets the given profile manager to the current transport.
+     * Sets the given Profile manager.
      *
-     * @param manager the profile manager which is going to be set.
+     * @param manager the Profile manager to be set.
      * @see ProfileManager
+     *
      */
     void setProfileManager(ProfileManager manager);
 
     /**
-     * Sets the given client's properties to the current transport.
+     * Sets the given client's properties.
      *
-     * @param properties the client's properties which are going to be set.
+     * @param properties the client's properties to be set.
      * @see KaaClientProperties
+     *
      */
     void setClientProperties(KaaClientProperties properties);
 }

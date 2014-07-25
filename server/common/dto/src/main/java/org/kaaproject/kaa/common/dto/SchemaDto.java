@@ -18,10 +18,14 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-public class SchemaDto implements HasId, Serializable {
-    
+public class SchemaDto implements HasId, Serializable, Comparable<SchemaDto> {
+
     private static final long serialVersionUID = 160273456580413787L;
-    
+
+    private static final int GT = 1;
+    private static final int LT = -1;
+    private static final int EQ = 0;
+
     protected String id;
     protected int majorVersion;
     protected int minorVersion;
@@ -93,8 +97,28 @@ public class SchemaDto implements HasId, Serializable {
         return "SchemaDto [id=" + id + ", majorVersion=" + majorVersion
                 + ", minorVersion=" + minorVersion + "]";
     }
-    
-    
-    
 
+    @Override
+    public int compareTo(SchemaDto o) {
+        int result;
+        if (o != null) {
+            result = compare(majorVersion, o.getMajorVersion());
+            if (result == EQ) {
+                result = compare(minorVersion, o.getMinorVersion());
+            }
+        } else {
+            result = LT;
+        }
+        return result;
+    }
+
+    private int compare(int x, int y) {
+        if (x > y) {
+            return GT;
+        } else if (y > x) {
+            return LT;
+        } else {
+            return EQ;
+        }
+    }
 }

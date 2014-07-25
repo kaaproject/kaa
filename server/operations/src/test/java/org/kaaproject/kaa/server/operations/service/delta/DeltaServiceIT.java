@@ -269,7 +269,8 @@ public class DeltaServiceIT {
         endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());
         endpointProfile.setConfigurationVersion(MAJOR_VERSION);
         endpointProfile.setProfileVersion(PROFILE_VERSION);
-        endpointProfile.setEndpointGroup(Collections.singletonList(egs));
+        endpointProfile.setCfGroupState(Collections.singletonList(egs));
+        endpointProfile.setNfGroupState(Collections.singletonList(egs));
         endpointProfile = endpointProfileDao.save(endpointProfile);
         assertNotNull(endpointProfile);
         assertNotNull(endpointProfile.getId());

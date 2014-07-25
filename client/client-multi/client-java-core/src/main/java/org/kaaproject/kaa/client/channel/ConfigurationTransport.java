@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
 
 /**
  * {@link KaaTransport} for the Configuration service.
- * It is responsible for updating the Configuration manager state.
+ * Updates the Configuration manager state.
  *
  * @author Yaroslav Zeygerman
  *
@@ -40,7 +40,7 @@ public interface ConfigurationTransport extends KaaTransport {
     ConfigurationSyncRequest createConfigurationRequest();
 
     /**
-     * Updates the state of the Configuration manager from the given response.
+     * Updates the state of the Configuration manager according to the given response.
      *
      * @param response the configuration response.
      * @see ConfigurationSyncResponse
@@ -48,23 +48,23 @@ public interface ConfigurationTransport extends KaaTransport {
     void onConfigurationResponse(ConfigurationSyncResponse response) throws Exception;
 
     /**
-     * Sets the configuration hash container to the current transport.
+     * Sets the configuration hash container.
      *
-     * @param container the container which is going to be set.
+     * @param container the container to be set.
      * @see ConfigurationHashContainer
      */
     void setConfigurationHashContainer(ConfigurationHashContainer container);
 
     /**
-     * Sets the configuration processor to the current transport.
+     * Sets the configuration processor.
      *
-     * @param processor the processor which is going to be set.
+     * @param processor the processor to be set.
      * @see ConfigurationProcessor
      */
     void setConfigurationProcessor(ConfigurationProcessor processor);
 
     /**
-     * Sets the schema processor to the current transport.
+     * Sets the schema processor.
      *
      * @param processor the processor which is going to be set.
      * @see SchemaProcessor

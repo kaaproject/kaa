@@ -330,7 +330,6 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     public void fireChanged() {
         if (!this.active) {
             boolean valid = body.getValue().length()>0;
-            valid &= schemaSelected;
             updateSaveButton(valid, !valid);
         }
     }

@@ -79,7 +79,7 @@ public final class AvroBinaryDelta implements RawBinaryDelta {
      * @param delta
      *            the delta
      */
-    public void addDelta(GenericRecord delta) {
+    public synchronized void addDelta(GenericRecord delta) {
         deltaQueue.offer(delta);
     }
 
@@ -90,7 +90,7 @@ public final class AvroBinaryDelta implements RawBinaryDelta {
      * org.kaaproject.kaa.server.operations.service.delta.RawBinaryDelta#getData()
      */
     @Override
-    public byte[] getData() throws IOException {
+    public synchronized byte[] getData() throws IOException {
         if (deltaQueue != null && !deltaQueue.isEmpty()) {
             GenericArray deltaArray = new GenericData.Array(deltaQueue.size(),
                     schema);
@@ -118,7 +118,7 @@ public final class AvroBinaryDelta implements RawBinaryDelta {
      * ()
      */
     @Override
-    public boolean hasChanges() {
+    public synchronized boolean hasChanges() {
         return serializedData != null || !deltaQueue.isEmpty();
     }
 

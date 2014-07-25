@@ -78,11 +78,9 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
      * @throws InvocationTargetException the invocation target exception
      */
     public ThriftClient(String endpointHost, int endpointPort, Class<T> clazz) 
-            throws NoSuchMethodException, 
-                   SecurityException, 
+            throws NoSuchMethodException,
                    InstantiationException, 
                    IllegalAccessException, 
-                   IllegalArgumentException, 
                    InvocationTargetException {
         this.tClass = clazz;
         this.endpointHost = endpointHost;

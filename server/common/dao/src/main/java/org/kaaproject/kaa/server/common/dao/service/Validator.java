@@ -21,11 +21,15 @@ import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is util class which uses for validate fields, object in service layer.
  */
 public class Validator {
+    /* The constant logger */
+    private static final Logger LOG = LoggerFactory.getLogger(Validator.class);
 
     /**
      * This method validate string id. Id is a string object which will be
@@ -103,6 +107,7 @@ public class Validator {
                     Long.valueOf(sid);
                     correct = true;
                 } catch (NumberFormatException e) {
+                   LOG.debug("Exception while validating id. Can not parse id to long");
                 }
             } else {
                 correct = true;

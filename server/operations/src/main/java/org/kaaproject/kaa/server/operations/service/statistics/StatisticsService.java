@@ -67,7 +67,7 @@ public class StatisticsService extends Thread implements SessionTrackable {
     private static final long DEFAULT_STATISTIC_COLLECTION_WINDOW = 300000; 
     
     /** Concurrent HashMap for storing sessions */
-    private ConcurrentHashMap<UUID, SessionHistory> sessions;
+    private ConcurrentHashMap<UUID, SessionHistory> sessions; //NOSONAR
     
     /** Timestamp of previous recalculation period */
     private long recalculationPreviouseTimestamp = 0;

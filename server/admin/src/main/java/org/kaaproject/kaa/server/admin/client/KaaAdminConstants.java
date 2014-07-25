@@ -164,6 +164,12 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Title")
     String title();
 
+    @DefaultStringValue("Public Key")
+    String publicKey();
+
+    @DefaultStringValue("Application Token")
+    String appToken();
+
     @DefaultStringValue("Add new application")
     String addNewApplication();
 
@@ -322,13 +328,13 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
 
     @DefaultStringValue("Profile schema details")
     String profileSchemaDetails();
-    
+
     @DefaultStringValue("Log schemas")
     String logSchemas();
-    
+
     @DefaultStringValue("Log schema")
     String logSchema();
-    
+
     @DefaultStringValue("Add log schema")
     String addLogSchema();
 

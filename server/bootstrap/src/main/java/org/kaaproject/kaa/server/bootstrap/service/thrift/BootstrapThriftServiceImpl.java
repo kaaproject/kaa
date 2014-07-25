@@ -91,7 +91,7 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
             LOG.trace("Operations Server {}", server.getName());
             for(ThriftSupportedChannel channel: server.getSupportedChannels()) {
                 LOG.trace("SupportedChannel {}", channel.getType().toString());
-                switch (channel.getType()) {
+                switch (channel.getType()) { //NOSONAR
                 case HTTP:
                     ThriftCommunicationParameters httpParams = channel.getCommunicationParams();
                     LOG.trace("HostName: {}, port {}",

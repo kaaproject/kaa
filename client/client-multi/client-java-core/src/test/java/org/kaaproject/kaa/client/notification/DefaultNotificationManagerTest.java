@@ -34,9 +34,9 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.NotificationTransport;
-import org.kaaproject.kaa.client.persistance.FilePersistentStorage;
-import org.kaaproject.kaa.client.persistance.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistance.KaaClientPropertiesStateTest;
+import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
+import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;

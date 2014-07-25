@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.client.channel;
 
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 
 /**
- * Transport interface that is responsible for request
- * and response processing for the specific service.
+ * Transport interface processing request
+ * and response for the specific service.
  *
  * @author Yaroslav Zeygerman
  *
@@ -30,7 +30,7 @@ public interface KaaTransport {
     /**
      * Sets the specific {@link KaaChannelManager} for the current transport.
      *
-     * @param channelManager manager that is going to be set.
+     * @param channelManager manager to be set.
      *
      */
     void setChannelManager(KaaChannelManager channelManager);
@@ -38,7 +38,7 @@ public interface KaaTransport {
     /**
      * Sets the client's state object.
      *
-     * @param state state object that is going to be set.
+     * @param state state object to be set.
      *
      */
     void setClientState(KaaClientState state);

@@ -18,11 +18,35 @@ package org.kaaproject.kaa.server.common.dao.model.mongo;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.logs.security.MongoResourceDto;
 import org.kaaproject.kaa.server.common.dao.model.mongo.SecureResource;
 
 public class SecureResourceTest {
+    
+    private static final String TEST_DB = "test db";
+    private static final String TEST_COLLECCTION = "test collection";
 
+    @Test
+    public void basicLogEventTest() {
+        SecureResource resource = new SecureResource();
+        
+        Assert.assertNull(resource.getDB());
+        Assert.assertNull(resource.getCollection());
+        
+        resource.setDB(TEST_DB);
+        resource.setCollection(TEST_COLLECCTION);
+        
+        Assert.assertEquals(TEST_DB, resource.getDB());
+        Assert.assertEquals(TEST_COLLECCTION, resource.getCollection());
+        
+        MongoResourceDto dto = resource.toDto();
+        
+        Assert.assertEquals(TEST_DB, dto.getDB());
+        Assert.assertEquals(TEST_COLLECCTION, dto.getCollection());
+    }
+    
     @Test
     public void hashCodeEqualsTest(){
         EqualsVerifier.forClass(SecureResource.class).suppress(Warning.NONFINAL_FIELDS).verify();

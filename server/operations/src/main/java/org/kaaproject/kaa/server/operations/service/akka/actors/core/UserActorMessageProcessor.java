@@ -22,8 +22,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -31,13 +33,14 @@ import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RemoteEndpointEventMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
 import org.kaaproject.kaa.server.operations.service.event.EndpointECFVersionMap;
@@ -127,6 +130,20 @@ public class UserActorMessageProcessor {
         versionMap.put(endpointKey, message.getEcfVersions());
 
         endpoints.put(getActorPathName(message.getOriginator()), endpointKey);
+    }
+
+    public void processEndpointDisconnectMessage(ActorContext context, EndpointUserDisconnectMessage message) {
+        List<String> actorsToRemove = new LinkedList<>();
+        for(Entry<String, EndpointObjectHash> entry : endpoints.entrySet()){
+            if(entry.getValue().equals(message.getKey())){
+                actorsToRemove.add(entry.getKey());
+            }
+        }
+        for(String actor : actorsToRemove){
+            LOG.debug("[{}] removed endpoint actor [{}]", userId, actor);
+            endpoints.remove(actor);
+        }
+        removeEndpoint(message.getKey());
     }
 
     protected String getActorPathName(ActorRef actorRef) {
@@ -231,30 +248,44 @@ public class UserActorMessageProcessor {
 
     private void sendPendingEvents(ActorContext context, RouteTableKey key, RouteTableAddress address) {
         List<EndpointEvent> events = eventStorage.getEvents(key, address);
-        for (EndpointEvent event : events) {
-            sendEventToRecepient(context, event, address);
+        if(events.size() > 0){
+            sendEventsToRecepient(context, address, events);
         }
     }
 
     private void sendEventToRecepients(ActorContext context, EndpointEvent event, Collection<RouteTableAddress> recipients) {
         for (RouteTableAddress recipient : recipients) {
-            sendEventToRecepient(context, event, recipient);
+            sendEventsToRecepient(context, recipient, Collections.singletonList(event));
         }
     }
 
-    private void sendEventToRecepient(ActorContext context, EndpointEvent event, RouteTableAddress recipient) {
-        if (!eventDeliveryTable.isDeliveryStarted(event, recipient)) {
+    private void sendEventsToRecepient(ActorContext context, RouteTableAddress recipient, List<EndpointEvent> events) {
+        List<EndpointEvent> eventsToSend = new ArrayList<>(events.size());
+        for(EndpointEvent event : events){
+            if (!eventDeliveryTable.isDeliveryStarted(event, recipient)) {
+                eventsToSend.add(event);
+            }
+        }
+
+        if(eventsToSend.size() > 0){
             if (recipient.isLocal()) {
-                LOG.debug("[{}] forwarding event {} to local recepient {}", userId, event, recipient);
-                EndpointEventReceiveMessage message = new EndpointEventReceiveMessage(userId, Collections.singletonList(event), recipient, context.self());
+                for(EndpointEvent event : eventsToSend){
+                    LOG.debug("[{}] forwarding event {} to local recepient {}", userId, event, recipient);
+                }
+                EndpointEventReceiveMessage message = new EndpointEventReceiveMessage(userId, eventsToSend, recipient, context.self());
                 sendEventToLocal(context, message);
             } else {
-                LOG.debug("[{}] forwarding event {} to remote recepient {}", userId, event, recipient);
-                RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(tenantId, userId, event, recipient);
-                eventService.sendEvent(remoteEvent);
+                for(EndpointEvent event : eventsToSend){
+                    LOG.debug("[{}] forwarding event {} to remote recepient {}", userId, event, recipient);
+                    RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(tenantId, userId, event, recipient);
+                    eventService.sendEvent(remoteEvent);
+                }
             }
-            LOG.debug("[{}] registering delivery attempt of event {} to recepient {}", userId, event, recipient);
-            eventDeliveryTable.registerDeliveryAttempt(event, recipient);
+
+            for(EndpointEvent event : eventsToSend){
+                LOG.debug("[{}] registering delivery attempt of event {} to recepient {}", userId, event, recipient);
+                eventDeliveryTable.registerDeliveryAttempt(event, recipient);
+            }
         }
     }
 
@@ -360,4 +391,6 @@ public class UserActorMessageProcessor {
                 .scheduleOnce(Duration.create(event.getTTL(), TimeUnit.MILLISECONDS), context.self(), new EndpointEventTimeoutMessage(event),
                         context.dispatcher(), context.self());
     }
+
+
 }

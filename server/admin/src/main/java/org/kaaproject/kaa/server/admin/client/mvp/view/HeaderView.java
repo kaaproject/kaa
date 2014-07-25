@@ -28,6 +28,7 @@ public interface HeaderView extends IsWidget {
 
     public interface Presenter {
         void goTo(Place place);
+        void goToHome();
     }
 
     public Label getUsernameLabel();

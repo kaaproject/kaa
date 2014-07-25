@@ -19,9 +19,12 @@ package org.kaaproject.kaa.client.event.registration;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 
 /**
- * Retrieves result of user authentication
+ * Retrieves result of user authentication<br>
+ * <br>
+ * Use this listener to retrieve result of attaching current endpoint to user.
  *
  * @author Taras Lemkin
+ * @see EndpointRegistrationManager
  *
  */
 public interface UserAuthResultListener {

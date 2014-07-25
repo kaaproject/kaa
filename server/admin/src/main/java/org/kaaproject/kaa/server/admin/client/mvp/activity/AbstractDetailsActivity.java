@@ -129,7 +129,7 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
             loadEntity();
         }
     }
-    
+
     protected void loadEntity() {
         getEntity(entityId, new AsyncCallback<T>() {
             @Override

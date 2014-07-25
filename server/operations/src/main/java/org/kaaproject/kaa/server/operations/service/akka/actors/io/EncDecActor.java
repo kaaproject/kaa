@@ -53,7 +53,7 @@ public class EncDecActor extends UntypedActor {
     private final ActorRef epsActor;
 
     /** Current redirection rules */
-    private final HashMap<Long, RedirectionRule> redirectionRules;
+    private final HashMap<Long, RedirectionRule> redirectionRules; //NOSONAR
 
     /** random */
     private final Random random;
@@ -211,7 +211,7 @@ public class EncDecActor extends UntypedActor {
                 .getChannelType(), response));
     }
 
-    public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) {
+    public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) { //NOSONAR
         RedirectionRule result = null;
         for (RedirectionRule rule : redirectionRules.values()) {
             if (random <= rule.redirectionProbability) {

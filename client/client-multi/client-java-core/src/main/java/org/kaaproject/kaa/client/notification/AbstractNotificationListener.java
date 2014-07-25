@@ -23,7 +23,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 
 /**
- * Implements {@link NotificationListener} and able to convert the raw notification's data to
+ * Implements {@link NotificationListener} and ables to convert the raw notification's data to
  * the needed object.
  *
  * @author Yaroslav Zeygerman

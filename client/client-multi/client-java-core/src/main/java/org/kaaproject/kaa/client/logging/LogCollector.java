@@ -18,50 +18,57 @@ package org.kaaproject.kaa.client.logging;
 
 import java.io.IOException;
 
+import org.kaaproject.kaa.client.logging.gen.SuperRecord;
+
 /**
  * Interface for log collector.
  *
- * Responsible for adding new log record to a local storage.
+ * Adds new log record to a local storage.
  *
- * May be configurable by setting user defined log record storage,
+ * May be configured by setting user defined log record storage,
  * storage status, upload configuration and log upload strategy.
  * Each of them may be set independently of others.
- * 
- * Reference implementation of each module is present and use by default.
+ *
+ * Reference implementation of each module used by default.
+ *
+ * @see LogStorage
+ * @see LogStorageStatus
+ * @see LogUploadStrategy
+ * @see LogUploadConfiguration
  */
 public interface LogCollector {
-    
+
     /**
-     * Added new log record to local storage.
-     * 
+     * Adds new log record to local storage.
+     *
      * @param record New log record object
      */
     void addLogRecord(SuperRecord record) throws IOException;
 
     /**
      * Set user implementation of a log storage.
-     * 
+     *
      * @param storage User-defined log storage object
      */
     void setStorage(LogStorage storage);
 
     /**
-     * Set user implementation of a log storage status. 
+     * Set user implementation of a log storage status.
      *
      * @param status User-defined log storage status object
      */
     void setStorageStatus(LogStorageStatus status);
 
     /**
-     * Set user implementation of a log upload strategy. 
-     * 
+     * Set user implementation of a log upload strategy.
+     *
      * @param strategy User-defined log upload strategy object.
      */
     void setUploadStrategy(LogUploadStrategy strategy);
 
     /**
-     * Set user implementation of a log upload configuration. 
-     * 
+     * Set user implementation of a log upload configuration.
+     *
      * @param configuration User-defined log upload configuration object.
      */
     void setConfiguration(LogUploadConfiguration configuration);

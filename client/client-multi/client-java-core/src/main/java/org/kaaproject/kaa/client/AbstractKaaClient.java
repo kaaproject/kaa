@@ -75,9 +75,9 @@ import org.kaaproject.kaa.client.logging.DefaultLogCollector;
 import org.kaaproject.kaa.client.logging.LogCollector;
 import org.kaaproject.kaa.client.notification.DefaultNotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationManager;
-import org.kaaproject.kaa.client.persistance.KaaClientPropertiesState;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
-import org.kaaproject.kaa.client.persistance.PersistentStorage;
+import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
+import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.profile.DefaultProfileManager;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.DefaultSchemaProcessor;
@@ -91,15 +91,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link KaaClient} implementation
+ * Abstract class that holds general elements of Kaa library.<br>
+ * <br>
+ * This class creates and binds Kaa library modules.
+ * Public access to each module is performed using {@link KaaClient} interface.<br><br>
+ * Class contains abstract methods
+ * {@link AbstractKaaClient#createHttpClient(String, PrivateKey, PublicKey, PublicKey)}
+ * and {@link AbstractKaaClient#createPersistentStorage()}
+ * which are used to reference the platform-specific implementation of http
+ * client and Kaa's state perisitant storage.<br><br>
+ * Http client ({@link AbstractHttpClient}) is used to provide basic
+ * communication using HTTP protocol with Bootstrap and Operation servers.<br>
  *
  * @author Yaroslav Zeygerman
  *
+ * @see KaaClient
+ * @see AbstractHttpClient
+ * @see PersistentStorage
  */
 public abstract class AbstractKaaClient implements KaaClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
-    private static final long LONG_POLL_TIMEOUT = 60000l;
+    private static final long LONG_POLL_TIMEOUT = 60000L;
 
     private final DefaultConfigurationProcessor configurationProcessor = new DefaultConfigurationProcessor();
     private boolean isInitialized = false;
@@ -151,7 +164,7 @@ public abstract class AbstractKaaClient implements KaaClient {
 
         kaaClientState = new KaaClientPropertiesState(createPersistentStorage(), properties);
         defaultOperationsChannel = new DefaultOperationsChannel(this, kaaClientState);
-        defaultBootstrapChannel = new DefaultBootstrapChannel(this);
+        defaultBootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
         defaultOperationsHttpChannel = new DefaultOperationHttpChannel(this, kaaClientState);
 
         BootstrapTransport bootstratpTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
@@ -184,7 +197,7 @@ public abstract class AbstractKaaClient implements KaaClient {
         profileManager = new DefaultProfileManager(profileTransport);
         bootstrapManager = new DefaultBootstrapManager(bootstratpTransport);
         notificationManager = new DefaultNotificationManager(this.kaaClientState, notificationTransport);
-        eventManager = new DefaultEventManager(eventTransport);
+        eventManager = new DefaultEventManager(this.kaaClientState, eventTransport);
         eventFamilyFactory = new EventFamilyFactory(this.eventManager);
         endpointRegistrationManager = new DefaultEndpointRegistrationManager(this.kaaClientState, userTransport, profileTransport);
         logCollector = new DefaultLogCollector(logTransport);
@@ -285,6 +298,19 @@ public abstract class AbstractKaaClient implements KaaClient {
         defaultBootstrapChannel.shutdown();
         defaultOperationsHttpChannel.shutdown();
     }
+    
+    void pause() {
+        kaaClientState.persist();
+        defaultOperationsChannel.pause();
+        defaultBootstrapChannel.pause();
+        defaultOperationsHttpChannel.pause();
+    }
+    
+    void resume() {
+        defaultOperationsChannel.resume();
+        defaultBootstrapChannel.resume();
+        defaultOperationsHttpChannel.resume();
+    }
 
     @Override
     public ProfileManager getProfileManager() {
@@ -359,6 +385,11 @@ public abstract class AbstractKaaClient implements KaaClient {
     @Override
     public PublicKey getClientPublicKey() {
         return kaaClientState.getPublicKey();
+    }
+    
+    @Override
+    public String getEndpointKeyHash() {
+        return kaaClientState.getEndpointKeyHash().getKeyHash();
     }
 
     @Override

@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.common.http.server;
 
-import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 

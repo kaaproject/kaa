@@ -28,11 +28,14 @@ import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.UserTransport;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +58,9 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
 
     private UserAttachRequest userAttachRequest;
     private UserAuthResultListener userAuthResultListener;
+
+    private CurrentEndpointAttachListener currentEndpointAttachListener;
+    private CurrentEndpointDetachListener currentEndpointDetachListener;
 
     private volatile UserTransport userTransport;
     private volatile ProfileTransport profileTransport;
@@ -156,44 +162,72 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     @Override
     public void onUpdate(List<EndpointAttachResponse> attachResponses,
             List<EndpointDetachResponse> detachResponses,
-            UserAttachResponse userResponse) throws IOException {
+            UserAttachResponse userResponse,
+            UserAttachNotification userAttachNotification,
+            UserDetachNotification userDetachNotification) throws IOException {
         if (userResponse != null) {
             if (userAuthResultListener != null) {
                 userAuthResultListener.onAuthResult(userResponse);
                 userAuthResultListener = null;
+            }
+            if (userResponse.getResult() == SyncResponseResultType.SUCCESS) {
+                state.setAttachedToUser(true);
+                if (currentEndpointAttachListener != null) {
+                    currentEndpointAttachListener.onAttachedToUser(userAttachRequest.getUserExternalId(), endpointAccessToken);
+                }
             }
             userAttachRequest = null;
         }
 
         if (attachResponses != null && !attachResponses.isEmpty()) {
             for (EndpointAttachResponse attached : attachResponses) {
-                notifyAttachedListener(attached.getResult(), endpointAttachListeners.remove(attached.getRequestId()));
+                notifyAttachedListener(attached.getResult(), endpointAttachListeners.remove(attached.getRequestId())
+                        , new EndpointKeyHash(attached.getEndpointKeyHash()));
                 attachEndpointRequests.remove(attached.getRequestId());
             }
         }
         if (detachResponses != null && !detachResponses.isEmpty()) {
             for (EndpointDetachResponse detached : detachResponses) {
                 notifyDetachedListener(detached.getResult(), endpointDetachListeners.remove(detached.getRequestId()));
-                detachEndpointRequests.remove(detached.getRequestId());
+                EndpointKeyHash endpointKeyHash = detachEndpointRequests.remove(detached.getRequestId());
+                if (endpointKeyHash != null && detached.getResult() == SyncResponseResultType.SUCCESS) {
+                    if (endpointKeyHash.equals(state.getEndpointKeyHash())) {
+                        state.setAttachedToUser(false);
+                    }
+                }
             }
         }
         if ((attachResponses != null && !attachResponses.isEmpty())
                 || (detachResponses != null && !detachResponses.isEmpty())) {
             notifyListeners();
         }
+
+        if (userAttachNotification != null) {
+            state.setAttachedToUser(true);
+            if (currentEndpointAttachListener != null) {
+                currentEndpointAttachListener.onAttachedToUser(userAttachNotification.getUserExternalId(), userAttachNotification.getEndpointAccessToken());
+            }
+        }
+
+        if (userDetachNotification != null) {
+            state.setAttachedToUser(false);
+            if (currentEndpointDetachListener != null) {
+                currentEndpointDetachListener.onDetachedFromUser(userDetachNotification.getEndpointAccessToken());
+            }
+        }
     }
 
     private void notifyAttachedListener(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result,
-            EndpointOperationResultListener resultListener) {
+            EndpointOperationResultListener resultListener, EndpointKeyHash keyHash) {
         if(resultListener != null){
-            resultListener.sendResponse("endpoint attached", result);
+            resultListener.sendResponse("endpoint attached", result, keyHash);
         }
     }
 
     private void notifyDetachedListener(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result,
             EndpointOperationResultListener resultListener) {
         if(resultListener != null){
-            resultListener.sendResponse("endpoint detached", result);
+            resultListener.sendResponse("endpoint detached", result, null);
         }
     }
 
@@ -247,6 +281,21 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     @Override
     public void setProfileTransport(ProfileTransport transport) {
         this.profileTransport = transport;
+    }
+
+    @Override
+    public boolean isAttachedToUser() {
+        return state.isAttachedToUser();
+    }
+
+    @Override
+    public void setAttachedListener(CurrentEndpointAttachListener listener) {
+        currentEndpointAttachListener = listener;
+    }
+
+    @Override
+    public void setDetachedListener(CurrentEndpointDetachListener listener) {
+        currentEndpointDetachListener = listener;
     }
 
 }

@@ -42,7 +42,10 @@
 	<bean id="keyStoreService" class="org.kaaproject.kaa.server.operations.service.security.FileKeyStoreService" />
 	<bean id="endpointUserService" class="org.kaaproject.kaa.server.operations.service.user.DefaultEndpointUserService" />
 	<bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender">
-        <constructor-arg name="name" value="appenderName"></constructor-arg>
+        <constructor-arg name="name" value="mongoDBLogAppender"></constructor-arg>
+    </bean>
+    <bean id="fileSystemLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogAppender">
+        <constructor-arg name="name" value="fileSystemLogAppender"></constructor-arg>
     </bean>
     <bean id="logAppenderService" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderService" />
     <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderResolver">
@@ -51,6 +54,7 @@
 
     <util:map id="appenderMap">
         <entry key="mongoDBLogAppender" value-ref="mongoDBLogAppender" />
+        <entry key="fileSystemLogAppender" value-ref="fileSystemLogAppender" />
     </util:map>
 
 

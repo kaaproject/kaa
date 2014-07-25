@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
-    public void findTopicsByAppId() {
+    public void testFindTopicsByAppId() {
         Topic topic = generateTopic(null, null);
         Application app = topic.getApplication();
         List<Topic> found = topicDao.findTopicsByAppId(app.getId().toString());
@@ -50,7 +52,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
     }
 
     @Test
-    public void findTopicsByAppIdAndType() {
+    public void testFindTopicsByAppIdAndType() {
         Topic topic = generateTopic(null, TopicTypeDto.VOLUNTARY);
         Application app = topic.getApplication();
         List<Topic> found = topicDao.findTopicsByAppIdAndType(app.getId().toString(), TopicTypeDto.VOLUNTARY);
@@ -59,7 +61,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
     }
 
     @Test
-    public void findTopicsByIds() {
+    public void testFindTopicsByIds() {
         Topic first = generateTopic(null, null);
         Application app = first.getApplication();
         Topic second = generateTopic(app, null);
@@ -71,7 +73,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
     }
 
     @Test
-    public void removeTopicsByAppId() {
+    public void testRemoveTopicsByAppId() {
         Topic topic = generateTopic(null, null);
         Application app = topic.getApplication();
         topicDao.removeTopicsByAppId(app.getId().toString());
@@ -80,7 +82,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
     }
 
     @Test
-    public void updateSeqNumber() {
+    public void testUpdateSeqNumber() {
         Topic topic = generateTopic(null, null);
         int seqNum = topic.getSequenceNumber();
         Topic updated = topicDao.getNextSeqNumber(topic.getId().toString());
@@ -90,7 +92,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
     }
 
     @Test
-    public void findVacantTopicsByGroupId() {
+    public void testFindVacantTopicsByGroupId() {
         Topic first = generateTopic(null, null);
         Application app = first.getApplication();
         Topic second = generateTopic(app, null);
@@ -116,5 +118,49 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
         Assert.assertEquals(secondTopics, firstGroupSet);
         Assert.assertEquals(firstTopics, secondGroupSet);
+    }
+
+    @Test
+    public void testFindVacantTopicsByAppId() {
+        Topic first = generateTopic(null, null);
+        Application app = first.getApplication();
+        Topic second = generateTopic(app, null);
+        Set<Topic> firstTopics = new HashSet<>();
+        firstTopics.add(first);
+        firstTopics.add(second);
+
+        Topic third = generateTopic(app, null);
+        Topic fourth = generateTopic(app, null);
+        Set<Topic> secondTopics = new HashSet<>();
+        secondTopics.add(third);
+        secondTopics.add(fourth);
+
+        generateEndpointGroup(app, firstTopics);
+        generateEndpointGroup(app, secondTopics);
+
+        List<Topic> foundOne = topicDao.findVacantTopicsByAppId(app.getId().toString(), getIds(firstTopics));
+
+        Set<Topic> firstGroupSet = new HashSet<>();
+        firstGroupSet.addAll(foundOne);
+
+        List<Topic> foundTwo = topicDao.findVacantTopicsByAppId(app.getId().toString(), getIds(secondTopics));
+
+        Set<Topic> secondGroupSet = new HashSet<>();
+        secondGroupSet.addAll(foundTwo);
+
+        Assert.assertEquals(secondTopics, firstGroupSet);
+        Assert.assertEquals(firstTopics, secondGroupSet);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private List<String> getIds(Set<Topic> topics) {
+        List<String> ids = Collections.emptyList();
+        if (topics != null && !topics.isEmpty()) {
+            ids = new ArrayList<>();
+            for (GenericModel model : topics) {
+                ids.add(model.getId().toString());
+            }
+        }
+        return ids;
     }
 }

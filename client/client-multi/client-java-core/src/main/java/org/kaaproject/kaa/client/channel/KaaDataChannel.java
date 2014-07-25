@@ -30,22 +30,22 @@ import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 public interface KaaDataChannel {
 
     /**
-     * Tells the channel to update the state of the specific service.
+     * Updates the channel's state of the specific service.
      *
-     * @param type the transport type of the service.
+     * @param type transport type of the service.
      * @see TransportType
+     *
      */
     void sync(TransportType type);
 
     /**
-     * Tells the channel to update the state of all supported services.
-     *
+     * Updates the channel's state of all supported services.
      */
     void syncAll();
 
     /**
      * Retrieves the channel's id.
-     * Id should be unique in scope of existing channels.
+     * It should be unique in existing channels scope.
      *
      * @return the channel's id.
      *
@@ -57,22 +57,25 @@ public interface KaaDataChannel {
      *
      * @return the channel's type.
      * @see ChannelType
+     *
      */
     ChannelType getType();
 
     /**
      * Sets the response demultiplexer for this channel.
      *
-     * @param demultiplexer demultiplexer instance which is going to be set.
+     * @param demultiplexer demultiplexer instance to be set.
      * @see KaaDataDemultiplexer
+     *
      */
     void setDemultiplexer(KaaDataDemultiplexer demultiplexer);
 
     /**
      * Sets the request multiplexer for this channel.
      *
-     * @param multiplexer multiplexer instance which is going to be set.
+     * @param multiplexer multiplexer instance to be set.
      * @see KaaDataMultiplexer
+     *
      */
     void setMultiplexer(KaaDataMultiplexer multiplexer);
 
@@ -81,14 +84,17 @@ public interface KaaDataChannel {
      *
      * @param server server's parameters.
      * @see ServerInfo
+     *
      */
     void setServer(ServerInfo server);
 
     /**
-     * Retrieves the map of transport types and their directions that are supported by this channel.
+     * Retrieves the map of transport types and their directions supported by this channel.
      *
      * @return the map of transport types.
      * @see TransportType
+     * @see ChannelDirection
+     *
      */
     Map<TransportType, ChannelDirection> getSupportedTransportTypes();
 }

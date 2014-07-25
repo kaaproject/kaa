@@ -33,7 +33,7 @@ public class SecureRoleMongoDao implements SecureRoleDao<SecureRole> {
     private static final Logger LOG = LoggerFactory.getLogger(SecureRoleMongoDao.class);
 
     @Autowired
-    protected MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
 
     @Override
     public String getDBName() {

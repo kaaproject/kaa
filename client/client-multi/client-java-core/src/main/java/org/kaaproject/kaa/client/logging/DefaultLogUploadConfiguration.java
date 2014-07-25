@@ -20,7 +20,8 @@ package org.kaaproject.kaa.client.logging;
  * Reference implementation of @see LogUploadConfiguration
  */
 public class DefaultLogUploadConfiguration implements LogUploadConfiguration {
-    public static final long MAX_BATCH_VOLUME = 32 * 1024; // in KB 
+    // in KB 
+    public static final long MAX_BATCH_VOLUME = 32 * 1024;
 
     private final long batchVolume;
     private final long maximumAllowedVolume;

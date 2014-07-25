@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 /**
- * Responsible for notifications' processing.
+ * Processes notifications.
  *
  * @author Yaroslav Zeygerman
  *
@@ -39,7 +39,7 @@ public interface NotificationProcessor {
     void topicsListUpdated(List<Topic> list);
 
     /**
-     * Called when new notifications arrive.
+     * Called when new notifications arrived.
      *
      * @param notifications the list of new notifications.
      * @see Notification

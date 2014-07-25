@@ -36,6 +36,9 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.EventTransport;
+import org.kaaproject.kaa.client.persistance.KaaClientPropertiesStateTest;
+import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
+import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
@@ -69,11 +72,13 @@ public class EventManagerTest {
     }
 
     @Test
-    public void testNoHandler() {
+    public void testNoHandler() throws IOException {
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
 
-        EventManager  eventManager = new DefaultEventManager(transport);
+        EventManager  eventManager = new DefaultEventManager(state, transport);
         eventManager.registerEventFamily(eventFamily);
         try {
             eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
@@ -86,12 +91,14 @@ public class EventManagerTest {
     }
 
     @Test
-    public void testOneEventForTwoDifferentFamilies() {
+    public void testOneEventForTwoDifferentFamilies() throws IOException {
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+
         EventTransport transport = Mockito.mock(EventTransport.class);
         ConcreteEventFamily eventFamily = new ConcreteEventFamily("kaa.test.event.PlayEvent");
         ConcreteEventFamily eventFamily2 = new ConcreteEventFamily("kaa.test.event.StopEvent");
 
-        EventManager eventManager = new DefaultEventManager(transport);
+        EventManager eventManager = new DefaultEventManager(state, transport);
 
         eventManager.registerEventFamily(eventFamily);
         eventManager.registerEventFamily(eventFamily2);
@@ -116,9 +123,11 @@ public class EventManagerTest {
     }
 
     @Test
-    public void checkFillRequest() {
+    public void checkFillRequest() throws IOException {
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+
         EventTransport transport = Mockito.mock(EventTransport.class);
-        EventManager eventManager = new DefaultEventManager(transport);
+        EventManager eventManager = new DefaultEventManager(state, transport);
 
         EventSyncRequest request = new EventSyncRequest();
         try {
@@ -126,8 +135,8 @@ public class EventManagerTest {
         } catch (IOException e) {
             assertTrue("Unexpected exception", false);
         }
-
-        eventManager.fillEventSyncRequest(request);
+        eventManager.fillEventListenersSyncRequest(request);
+        request.setEvents(eventManager.getPendingEvents());
 
         assertNotNull(request.getEvents());
         assertEquals(1, request.getEvents().size());
@@ -159,16 +168,18 @@ public class EventManagerTest {
             }
         });
 
-        eventManager.fillEventSyncRequest(request);
+        eventManager.fillEventListenersSyncRequest(request);
         assertNotNull(request.getEventListenersRequests());
         assertEquals(2, request.getEventListenersRequests().size());
         assertArrayEquals(eventFQNs.toArray(), request.getEventListenersRequests().get(0).getEventClassFQNs().toArray());
     }
 
     @Test
-    public void testEventListenersRequestResponse() {
+    public void testEventListenersRequestResponse() throws IOException {
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+
         EventTransport transport = Mockito.mock(EventTransport.class);
-        EventManager eventManager = new DefaultEventManager(transport);
+        EventManager eventManager = new DefaultEventManager(state, transport);
 
         List<String> eventFQNs =  new ArrayList<String>();
         eventFQNs.add("eventFQN1");

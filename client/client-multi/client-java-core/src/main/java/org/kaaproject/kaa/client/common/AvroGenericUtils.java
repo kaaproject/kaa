@@ -55,7 +55,7 @@ public class AvroGenericUtils {
     }
 
     /**
-     * Tells if the given value is GenericFixed.
+     * Checks if the given value is GenericFixed.
      *
      * @param field object which going to be verified.
      * @return true if the value is GenericFixed, false otherwise.
@@ -66,7 +66,7 @@ public class AvroGenericUtils {
     }
 
     /**
-     * Tells if the given value is GenericEnum.
+     * Checks if the given value is GenericEnum.
      *
      * @param field object which going to be verified.
      * @return true if the value is GenericEnum, false otherwise.
@@ -77,7 +77,7 @@ public class AvroGenericUtils {
     }
 
     /**
-     * Tells if the given value is GenericArray.
+     * Checks if the given value is GenericArray.
      *
      * @param field object which going to be verified.
      * @return true if the value is GenericArray, false otherwise.
@@ -88,7 +88,7 @@ public class AvroGenericUtils {
     }
 
     /**
-     * Tells if the given value is GenericRecord.
+     * Checkss if the given value is GenericRecord.
      *
      * @param field object which going to be verified.
      * @return true if the value is GenericRecord, false otherwise.
@@ -99,7 +99,7 @@ public class AvroGenericUtils {
     }
 
     /**
-     * Tells if the given value is UUID (value's schema is "org.kaaproject.configuration.uuidT").
+     * Checks if the given value is UUID (value's schema is "org.kaaproject.configuration.uuidT").
      *
      * @param field object which going to be verified.
      * @return true if the value is UUID, false otherwise.
@@ -126,7 +126,7 @@ public class AvroGenericUtils {
     }
 
     /**
-     * Tells if the given value is Reset (value's schema is "org.kaaproject.configuration.resetT").
+     * checks if the given value is Reset (value's schema is "org.kaaproject.configuration.resetT").
      *
      * @param field object which going to be verified.
      * @return true if the value is Reset, false otherwise.
@@ -140,7 +140,7 @@ public class AvroGenericUtils {
     }
 
     /**
-     * Tells if the given value is Unchanged (value's schema is "org.kaaproject.configuration.unchangedT").
+     * Checks if the given value is Unchanged (value's schema is "org.kaaproject.configuration.unchangedT").
      *
      * @param field object which going to be verified.
      * @return true if the value is Unchanged, false otherwise.

@@ -56,7 +56,8 @@ public class NeighborConnection {
     private static final int DEFAULT_MAX_NUMBER_OF_CONNECTION_TO_NEIGHBOR = 2;
     
     /** SOCKET_TIMEOUT on opened connection in seconds */
-    private static final long DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR = 20; //In seconds
+    //In seconds
+    private static final long DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR = 20;
     
     /** Default maximum number of event messages queue */
     private static final int DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH = 1024*1024;
@@ -108,7 +109,7 @@ public class NeighborConnection {
          */
         @Override
         public void run() {
-            LinkedList<EventMessage> messages = new LinkedList<>();
+            LinkedList<EventMessage> messages = new LinkedList<>(); //NOSONAR
             OperationsThriftService.Iface client = null;
             while(operate) {
                 try {

@@ -37,7 +37,7 @@ import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableRunnabl
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableScheduledFuture;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.PollCommand;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.RawDataProcessor;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
@@ -61,6 +61,8 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     private static final String CHANNEL_ID = "default_operations_long_poll_channel";
 
     private AbstractHttpClient httpClient;
+    private final Object httpClientLock = new Object();
+    private final Object httpClientSetLock = new Object();
     private KaaDataDemultiplexer demultiplexer;
     private KaaDataMultiplexer multiplexer;
 
@@ -68,22 +70,14 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     private final AbstractKaaClient client;
     private final KaaClientState state;
 
-    private final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(1) {
-        @Override
-        protected <V> RunnableScheduledFuture<V> decorateTask(
-                Runnable runnable, RunnableScheduledFuture<V> task) {
-            if (runnable instanceof CancelableRunnable) {
-                return new CancelableScheduledFuture<V>((CancelableRunnable)runnable, task);
-            }
-            return super.decorateTask(runnable, task);
-        }
-    };
+    private ScheduledExecutorService scheduler;
 
     private volatile Future<?> pollFuture;
     private volatile boolean stopped = true;
     private volatile boolean processingResponse = false;
     private volatile boolean taskPosted = false;
     private volatile boolean isShutdown = false;
+    private volatile boolean isPaused = false;
 
     private final CancelableCommandRunnable task = new CancelableCommandRunnable() {
 
@@ -91,17 +85,28 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         protected void executeCommand() {
             if (!stopped) {
                 taskPosted = false;
-                currentCommand = new PollCommand(httpClient,
-                        DefaultOperationsChannel.this,
-                        SUPPORTED_TYPES,
-                        currentServer);
-                if (!Thread.currentThread().isInterrupted()) {
-                    currentCommand.execute();
+                synchronized (httpClientSetLock) {
+                    while (httpClient==null && !stopped && !Thread.currentThread().isInterrupted()) {
+                        try {
+                            httpClientSetLock.wait();
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
                 }
-                currentCommand = null;
-                if (!taskPosted && !stopped && !Thread.currentThread().isInterrupted()) {
-                    taskPosted = true;
-                    pollFuture = scheduler.submit(task);
+                if (!stopped) {
+                    currentCommand = new PollCommand(httpClient,
+                            DefaultOperationsChannel.this,
+                            SUPPORTED_TYPES,
+                            currentServer);
+                    if (!Thread.currentThread().isInterrupted()) {
+                        currentCommand.execute();
+                    }
+                    currentCommand = null;
+                    if (!taskPosted && !stopped && !Thread.currentThread().isInterrupted()) {
+                        taskPosted = true;
+                        pollFuture = scheduler.submit(task);
+                    }
                 }
             }
         }
@@ -112,16 +117,28 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         this.state = state;
     }
 
+    protected ScheduledExecutorService createExecutor() {
+        LOG.info("Creating a new executor for channel {}", getId());
+        return new ScheduledThreadPoolExecutor(1) {
+            @Override
+            protected <V> RunnableScheduledFuture<V> decorateTask(
+                    Runnable runnable, RunnableScheduledFuture<V> task) {
+                if (runnable instanceof CancelableRunnable) {
+                    return new CancelableScheduledFuture<V>((CancelableRunnable)runnable, task);
+                }
+                return super.decorateTask(runnable, task);
+            }
+        };
+    }
+
     private void stopPollScheduler(boolean forced) {
         if (!stopped) {
             stopped = true;
-            if (!processingResponse) {
-                if (pollFuture != null) {
-                    LOG.info("Stopping poll future..");
-                    pollFuture.cancel(forced);
-                    if (forced) {
-                        task.waitUntilExecuted();
-                    }
+            if (!processingResponse && pollFuture != null) {
+                LOG.info("Stopping poll future..");
+                pollFuture.cancel(forced);
+                if (forced) {
+                    task.waitUntilExecuted();
                 }
             }
         }
@@ -130,6 +147,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     private void startPoll() {
         if (!stopped) {
             stopPollScheduler(true);
+        }
+        if (scheduler == null) {
+            scheduler = createExecutor();
         }
         stopped = false;
         LOG.info("Starting poll scheduler..");
@@ -143,27 +163,33 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
-    public synchronized LinkedHashMap<String, byte[]> createRequest(Map<TransportType, ChannelDirection> types) {
+    public LinkedHashMap<String, byte[]> createRequest(Map<TransportType, ChannelDirection> types) {//NOSONAR
+        LinkedHashMap<String, byte[]> request = null;
         try {
             byte[] requestBodyRaw = multiplexer.compileRequest(types);
-            return HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, httpClient.getEncoderDecoder());
+            synchronized (httpClientLock) {
+                request = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, httpClient.getEncoderDecoder());
+            }
         } catch (Exception e) {
             LOG.error("Failed to create request {}", e);
         }
-        return null;
+        return request;
     }
 
     @Override
-    public synchronized void onResponse(byte [] response) {
+    public void onResponse(byte [] response) {
         LOG.debug("Response for channel {} received", getId());
         byte[] decodedResponse;
         try {
             processingResponse = true;
-            decodedResponse = httpClient.getEncoderDecoder().decodeData(response);
+            synchronized (httpClientLock) {
+                decodedResponse = httpClient.getEncoderDecoder().decodeData(response);
+            }
             demultiplexer.processResponse(decodedResponse);
             processingResponse = false;
         } catch (Exception e) {
-            LOG.error("Failed to process response {}. Exception {}", Arrays.toString(response), e);
+            LOG.error("Failed to process response {}", Arrays.toString(response));
+            LOG.error("Exception stack trace: ", e);
         }
     }
 
@@ -186,6 +212,10 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             LOG.info("Can't sync. Channel {} is down", getId());
             return;
         }
+        if (isPaused) {
+            LOG.info("Can't sync. Channel {} is paused", getId());
+            return;
+        }
         LOG.info("Processing sync {} for channel {}", type, getId());
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null) {
@@ -205,6 +235,10 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     public synchronized void syncAll() {
         if (isShutdown) {
             LOG.info("Can't sync. Channel {} is down", getId());
+            return;
+        }
+        if (isPaused) {
+            LOG.info("Can't sync. Channel {} is paused", getId());
             return;
         }
         LOG.info("Processing sync all for channel {}", getId());
@@ -251,7 +285,12 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         if (server != null) {
             stopPoll();
             this.currentServer = (HttpLongPollServerInfo) server;
-            this.httpClient = client.createHttpClient(currentServer.getURL(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
+            synchronized (httpClientLock) {
+                this.httpClient = client.createHttpClient(currentServer.getURL(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
+                synchronized (httpClientSetLock) {
+                    httpClientSetLock.notifyAll();
+                }
+            }
             startPoll();
         }
     }
@@ -259,7 +298,23 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     public void shutdown() {
         isShutdown = true;
         stopPoll();
-        scheduler.shutdownNow();
+        if (scheduler != null) {
+            scheduler.shutdownNow();
+        }
+    }
+
+    public void pause() {
+        isPaused = true;
+        stopPoll();
+        if (scheduler != null) {
+            scheduler.shutdownNow();
+            scheduler = null;
+        }
+    }
+    
+    public void resume() {
+        isPaused = false;
+        startPoll();
     }
 
     @Override

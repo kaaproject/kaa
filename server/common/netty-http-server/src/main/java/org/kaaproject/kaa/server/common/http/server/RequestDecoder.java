@@ -25,7 +25,6 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.Attribute;
-import io.netty.util.AttributeKey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

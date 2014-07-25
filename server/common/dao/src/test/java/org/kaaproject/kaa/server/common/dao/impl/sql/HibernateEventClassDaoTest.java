@@ -20,7 +20,11 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
+import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
+import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -72,5 +76,30 @@ public class HibernateEventClassDaoTest extends HibernateAbstractTest {
         }
         Assert.assertNotNull(eventClass);
         Assert.assertEquals(dto, eventClass);
+    }
+
+    @Test
+    public void testFindByTenantIdAndFqn() {
+        EventClassFamily classFamily = generateEventClassFamily(null, 1).get(0);
+        Tenant tenant = classFamily.getTenant();
+        List<EventClass> events = generateEventClass(tenant, classFamily, 3);
+        EventClass ec = events.get(0);
+        List<EventClass> found = eventClassDao.findByTenantIdAndFqn(tenant.getId().toString(), ec.getFqn());
+        Assert.assertEquals(ec, found.get(0));
+    }
+
+    @Test
+    public void testFindByTenantIdAndFqnAndVersion() {
+        EventClassFamily classFamily = generateEventClassFamily(null, 1).get(0);
+        Tenant tenant = classFamily.getTenant();
+        List<EventClass> events = generateEventClass(tenant, classFamily, 1);
+        EventClass ec = events.get(0);
+        EventClassDto dto = ec.toDto();
+        dto.setVersion(2);
+        EventClass converted  = new EventClass(dto);
+        eventClassDao.save(converted);
+        EventClass found = eventClassDao.findByTenantIdAndFqnAndVersion(tenant.getId().toString(), ec.getFqn(), converted.getVersion());
+        Assert.assertEquals(converted.getFqn(), found.getFqn());
+        Assert.assertEquals(converted.getVersion(), found.getVersion());
     }
 }

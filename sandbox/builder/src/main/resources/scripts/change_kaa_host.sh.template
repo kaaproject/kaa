@@ -1,0 +1,18 @@
+#!/bin/bash
+
+newHost=$1
+
+function setNewHost() {
+
+    propFile=$1
+    property=$2
+
+    sed -i "s/\(${property}=\).*\$/\1${newHost}/" ${propFile}
+
+}
+
+${stop_services}
+
+${set_new_hosts}
+
+${start_services}

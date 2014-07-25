@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Field with this delta type should add new items ({@link DeltaType} implementation)
+ * Field with this delta type adds new items ({@link DeltaType} implementation)
  *
  * @author Yaroslav Zeygerman
  *

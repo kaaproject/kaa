@@ -15,14 +15,51 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.mongo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.logs.security.MongoUserDto;
 import org.kaaproject.kaa.server.common.dao.model.mongo.SecureUser;
 
 public class SecureUserTest {
+    
+    private static final String TEST_ID = "test id";
+    private static final String TEST_NAME = "test name";
+    private static final String TEST_PASSWORD = "test password";
+    private static final List<String> TEST_ROLES = new ArrayList<>();
 
+    @Test
+    public void basicLogEventTest() {
+        SecureUser user = new SecureUser();
+        
+        Assert.assertNull(user.getId());
+        Assert.assertNull(user.getUserName());
+        Assert.assertNull(user.getPassword());
+        Assert.assertNull(user.getRoles());
+        
+        user.setId(TEST_ID);
+        user.setUserName(TEST_NAME);
+        user.setPassword(TEST_PASSWORD);
+        user.setRoles(TEST_ROLES);
+        
+        Assert.assertEquals(TEST_ID, user.getId());
+        Assert.assertEquals(TEST_NAME, user.getUserName());
+        Assert.assertEquals(TEST_PASSWORD, user.getPassword());
+        Assert.assertEquals(TEST_ROLES, user.getRoles());
+        
+        MongoUserDto dto = user.toDto();
+        
+        Assert.assertEquals(TEST_ID, dto.getId());
+        Assert.assertEquals(TEST_NAME, dto.getUserName());
+        Assert.assertEquals(TEST_PASSWORD, dto.getPassword());
+        Assert.assertEquals(TEST_ROLES, dto.getRoles());
+    }
+    
     @Test
     public void hashCodeEqualsTest(){
         EqualsVerifier.forClass(SecureUser.class).suppress(Warning.NONFINAL_FIELDS).verify();

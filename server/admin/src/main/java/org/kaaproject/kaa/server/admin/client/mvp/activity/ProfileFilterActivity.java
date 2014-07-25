@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -84,6 +85,11 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
             String schemaId, String endpointGroupId, boolean create,
             boolean showActive, double random) {
         return new ProfileFilterPlace(applicationId, schemaId, endpointGroupId, create, showActive, random);
+    }
+
+    @Override
+    protected String customizeErrorMessage(Throwable caught) {
+        return Utils.getErrorMessage(caught);
     }
 
 }

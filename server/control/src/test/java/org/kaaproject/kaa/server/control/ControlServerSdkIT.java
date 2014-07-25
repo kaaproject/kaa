@@ -122,6 +122,61 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
+     * Test generate Cpp SDK.
+     *
+     * @throws TException
+     *             the t exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Test
+    public void testGenerateCppSdk() throws TException, IOException {
+        ApplicationDto application = createApplication();
+        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
+        LogSchemaDto logSchema = createLogSchema(application.getId());
+
+        Sdk sdk = client.generateSdk(SdkPlatform.CPP, application.getId(), 
+                profileSchema.getMajorVersion(), 
+                configSchema.getMajorVersion(),
+                notificationSchema.getMajorVersion(), 
+                null, logSchema.getMajorVersion());
+        Assert.assertNotNull(sdk);
+        Assert.assertFalse(strIsEmpty(sdk.getFileName()));
+        Assert.assertNotNull(sdk.getData());
+    }
+
+    /**
+     * Test generate Cpp SDK with event support.
+     *
+     * @throws TException
+     *             the t exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Test
+    public void testGenerateCppSdkWithEventSupport() throws TException, IOException {
+        ApplicationDto application = createApplication();
+        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
+        LogSchemaDto logSchema = createLogSchema(application.getId());
+
+        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
+        List<String> aefMapIds = Collections.singletonList(aefMap.getId());
+
+        Sdk sdk = client.generateSdk(SdkPlatform.CPP,
+                application.getId(),
+                profileSchema.getMajorVersion(),
+                configSchema.getMajorVersion(),
+                notificationSchema.getMajorVersion(),
+                aefMapIds, logSchema.getMajorVersion());
+
+        Assert.assertNotNull(sdk);
+        Assert.assertFalse(strIsEmpty(sdk.getFileName()));
+        Assert.assertNotNull(sdk.getData());
+    }
+
+    /**
      * Test generate java SDK with invalid application.
      *
      * @throws TException

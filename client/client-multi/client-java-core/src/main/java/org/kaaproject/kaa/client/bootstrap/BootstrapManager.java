@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
 
 /**
- * Bootstrap manager controls the list of available operation servers.
+ * Bootstrap manager manages the list of available operation servers.
  *
  * @author Yaroslav Zeygerman
  *
@@ -34,23 +34,23 @@ import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
 public interface BootstrapManager {
 
     /**
-     * Receives the latest endpoint servers' list from the bootstrap server.
+     * Receives the latest list of servers from the bootstrap server.
      *
      */
     void receiveOperationsServerList() throws TransportException;
 
     /**
-     * Retrieves next (in the list) endpoint's properties and applies it for Channel manager.
+     * Notifies Channel manager about new server meets given parameters. 
      *
      * @param type the channel's type (i.e. HTTP channel, HTTP long poll channel, etc.).
-     *
+     * @see ChannelType
      */
     void useNextOperationsServer(ChannelType type);
 
     /**
-     * Retrieves endpoint's properties by its DNS name and applies it for Channel manager.
+     * Update the Channel Manager with endpoint's properties retrieved by its DNS.
      *
-     * @param name endpoint's DNS name.
+     * @param name endpoint's DNS.
      *
      */
     void useNextOperationsServerByDnsName(String name);
@@ -58,16 +58,16 @@ public interface BootstrapManager {
     /**
      * Sets bootstrap transport object.
      *
-     * @param transport object which is going to be set.
-     *
+     * @param transport object to be set.
+     * @see BootstrapTransport
      */
     void setTransport(BootstrapTransport transport);
 
     /**
      * Sets Channel manager.
      *
-     * @param manager the channel manager which is going to be set.
-     *
+     * @param manager the channel manager to be set.
+     * @see KaaChannelManager
      */
     void setChannelManager(KaaChannelManager manager);
 
@@ -75,14 +75,12 @@ public interface BootstrapManager {
      * Updates the operation server list.
      *
      * @param list the operation server list.
-     *
+     * @see OperationsServerList
      */
     void onServerListUpdated(OperationsServerList list);
 
     /**
-     *
-     * @return current list of servers.
-     *
+     * Retrieves current list of servers.
      */
     List<OperationsServer> getOperationsServerList();
 }

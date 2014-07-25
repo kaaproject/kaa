@@ -61,10 +61,14 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
     private String accessToken;
     @Field("profile_schema_id")
     private String profileSchemaId;
-    @Field("endpoint_group_state")
-    private List<EndpointGroupState> endpointGroup;
-    @Field("seq_num")
-    private int sequenceNumber;
+    @Field("cf_group_state")
+    private List<EndpointGroupState> cfGroupState;
+    @Field("nf_group_state")
+    private List<EndpointGroupState> nfGroupState;
+    @Field("cf_seq_num")
+    private int cfSequenceNumber;
+    @Field("nf_seq_num")
+    private int nfSequenceNumber;
     @Field("changed_flag")
     private Boolean changedFlag;
     private DBObject profile;
@@ -104,8 +108,10 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         this.endpointUserId = dto.getEndpointUserId();
         this.accessToken = dto.getAccessToken();
         this.profileSchemaId = dto.getProfileSchemaId();
-        this.endpointGroup = convertDtoToModelList(dto.getEndpointGroups());
-        this.sequenceNumber = dto.getSequenceNumber();
+        this.cfGroupState = convertDtoToModelList(dto.getCfGroupStates());
+        this.nfGroupState = convertDtoToModelList(dto.getNfGroupStates());
+        this.cfSequenceNumber = dto.getCfSequenceNumber();
+        this.nfSequenceNumber = dto.getNfSequenceNumber();
         this.changedFlag = dto.getChangedFlag();
         this.profile = (DBObject) JSON.parse(dto.getProfile());
         this.profileHash = dto.getProfileHash();
@@ -170,20 +176,36 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         return profileSchemaId;
     }
 
-    public List<EndpointGroupState> getEndpointGroup() {
-        return endpointGroup;
+    public List<EndpointGroupState> getCfGroupState() {
+        return cfGroupState;
     }
 
-    public void setEndpointGroup(List<EndpointGroupState> endpointGroup) {
-        this.endpointGroup = endpointGroup;
+    public void setCfGroupState(List<EndpointGroupState> cfGroupState) {
+        this.cfGroupState = cfGroupState;
     }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
+    public List<EndpointGroupState> getNfGroupState() {
+        return nfGroupState;
     }
 
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
+    public void setNfGroupState(List<EndpointGroupState> nfGroupState) {
+        this.nfGroupState = nfGroupState;
+    }
+
+    public int getCfSequenceNumber() {
+        return cfSequenceNumber;
+    }
+
+    public void setCfSequenceNumber(int cfSequenceNumber) {
+        this.cfSequenceNumber = cfSequenceNumber;
+    }
+
+    public int getNfSequenceNumber() {
+        return nfSequenceNumber;
+    }
+
+    public void setNfSequenceNumber(int nfSequenceNumber) {
+        this.nfSequenceNumber = nfSequenceNumber;
     }
 
     public Boolean getChangedFlag() {
@@ -318,7 +340,10 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         if (profileVersion != that.profileVersion) {
             return false;
         }
-        if (sequenceNumber != that.sequenceNumber) {
+        if (cfSequenceNumber != that.cfSequenceNumber) {
+            return false;
+        }
+        if (nfSequenceNumber != that.nfSequenceNumber) {
             return false;
         }
         if (systemNfVersion != that.systemNfVersion) {
@@ -336,7 +361,10 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         if (!Arrays.equals(configurationHash, that.configurationHash)) {
             return false;
         }
-        if (endpointGroup != null ? !endpointGroup.equals(that.endpointGroup) : that.endpointGroup != null) {
+        if (cfGroupState != null ? !cfGroupState.equals(that.cfGroupState) : that.cfGroupState != null) {
+            return false;
+        }
+        if (nfGroupState != null ? !nfGroupState.equals(that.nfGroupState) : that.nfGroupState != null) {
             return false;
         }
         if (!Arrays.equals(endpointKey, that.endpointKey)) {
@@ -370,8 +398,10 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         result = 31 * result + (endpointKey != null ? Arrays.hashCode(endpointKey) : 0);
         result = 31 * result + (endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0);
         result = 31 * result + (profileSchemaId != null ? profileSchemaId.hashCode() : 0);
-        result = 31 * result + (endpointGroup != null ? endpointGroup.hashCode() : 0);
-        result = 31 * result + sequenceNumber;
+        result = 31 * result + (cfGroupState != null ? cfGroupState.hashCode() : 0);
+        result = 31 * result + (nfGroupState != null ? nfGroupState.hashCode() : 0);
+        result = 31 * result + cfSequenceNumber;
+        result = 31 * result + nfSequenceNumber;
         result = 31 * result + (changedFlag != null ? changedFlag.hashCode() : 0);
         result = 31 * result + (profile != null ? profile.hashCode() : 0);
         result = 31 * result + (profileHash != null ? Arrays.hashCode(profileHash) : 0);
@@ -394,8 +424,10 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
                 ", endpointKey=" + Arrays.toString(endpointKey) +
                 ", endpointKeyHash=" + Arrays.toString(endpointKeyHash) +
                 ", profileSchemaId=" + profileSchemaId +
-                ", endpointGroup=" + endpointGroup +
-                ", sequenceNumber=" + sequenceNumber +
+                ", cfGroupState=" + cfGroupState +
+                ", nfGroupState=" + nfGroupState +
+                ", cfSequenceNumber=" + cfSequenceNumber +
+                ", nfSequenceNumber=" + nfSequenceNumber +
                 ", changedFlag=" + changedFlag +
                 ", profile=" + profile +
                 ", profileHash=" + Arrays.toString(profileHash) +
@@ -414,9 +446,11 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
     public EndpointProfileDto toDto() {
         EndpointProfileDto dto = new EndpointProfileDto();
         dto.setId(id);
-        dto.setEndpointGroups(DaoUtil.<EndpointGroupStateDto>convertDtoList(endpointGroup));
+        dto.setCfGroupStates(DaoUtil.<EndpointGroupStateDto>convertDtoList(cfGroupState));
+        dto.setNfGroupStates(DaoUtil.<EndpointGroupStateDto>convertDtoList(nfGroupState));
         dto.setChangedFlag(changedFlag);
-        dto.setSequenceNumber(sequenceNumber);
+        dto.setCfSequenceNumber(cfSequenceNumber);
+        dto.setNfSequenceNumber(nfSequenceNumber);
         dto.setConfigurationHash(configurationHash);
         dto.setConfigurationVersion(configurationVersion);
         dto.setApplicationId(applicationId);

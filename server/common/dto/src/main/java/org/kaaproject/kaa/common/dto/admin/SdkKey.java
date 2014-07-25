@@ -23,7 +23,7 @@ public class SdkKey implements Serializable {
 
     private static final long serialVersionUID = 2433663439327120870L;
 
-    public final static String SDK_KEY_PARAMETER = "sdkKey";
+    public static final String SDK_KEY_PARAMETER = "sdkKey";
 
     private String applicationId;
     private Integer configurationSchemaVersion;
@@ -137,47 +137,63 @@ public class SdkKey implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         SdkKey other = (SdkKey) obj;
         if (aefMapIds == null) {
-            if (other.aefMapIds != null)
+            if (other.aefMapIds != null) {
                 return false;
-        } else if (!aefMapIds.equals(other.aefMapIds))
+            }
+        } else if (!aefMapIds.equals(other.aefMapIds)) {
             return false;
+        }
         if (applicationId == null) {
-            if (other.applicationId != null)
+            if (other.applicationId != null) {
                 return false;
-        } else if (!applicationId.equals(other.applicationId))
+            }
+        } else if (!applicationId.equals(other.applicationId)) {
             return false;
+        }
         if (configurationSchemaVersion == null) {
-            if (other.configurationSchemaVersion != null)
+            if (other.configurationSchemaVersion != null) {
                 return false;
+            }
         } else if (!configurationSchemaVersion
-                .equals(other.configurationSchemaVersion))
+                .equals(other.configurationSchemaVersion)) {
             return false;
+        }
         if (notificationSchemaVersion == null) {
-            if (other.notificationSchemaVersion != null)
+            if (other.notificationSchemaVersion != null) {
                 return false;
+            }
         } else if (!notificationSchemaVersion
-                .equals(other.notificationSchemaVersion))
+                .equals(other.notificationSchemaVersion)) {
             return false;
+        }
         if (profileSchemaVersion == null) {
-            if (other.profileSchemaVersion != null)
+            if (other.profileSchemaVersion != null) {
                 return false;
-        } else if (!profileSchemaVersion.equals(other.profileSchemaVersion))
+            }
+        } else if (!profileSchemaVersion.equals(other.profileSchemaVersion)) {
             return false;
+        }
         if (logSchemaVersion == null) {
-            if (other.logSchemaVersion != null)
+            if (other.logSchemaVersion != null) {
                 return false;
-        } else if (!logSchemaVersion.equals(other.logSchemaVersion))
+            }
+        } else if (!logSchemaVersion.equals(other.logSchemaVersion)) {
             return false;
-        if (targetPlatform != other.targetPlatform)
+        }
+        if (targetPlatform != other.targetPlatform) {
             return false;
+        }
         return true;
     }
 

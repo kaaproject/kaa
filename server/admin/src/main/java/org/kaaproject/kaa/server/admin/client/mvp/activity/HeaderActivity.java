@@ -110,4 +110,8 @@ public class HeaderActivity extends AbstractActivity implements
                 null);
     }
 
+    @Override
+    public void goToHome() {
+        clientFactory.getPlaceController().goTo(clientFactory.getHomePlace());
+    }
 }

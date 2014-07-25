@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.configuration;
 import org.apache.avro.generic.GenericRecord;
 
 /**
- * Interface for subscriber which is going to receive deltas in avro generic objects
+ * Interface for subscriber to receive deltas in avro generic objects
  *
  * @author Yaroslav Zeygerman
  *
@@ -27,7 +27,7 @@ import org.apache.avro.generic.GenericRecord;
 public interface GenericDeltaReceiver {
 
     /**
-     * Will be called on each deserialized delta
+     * Called on each deserialized delta
      *
      * @param index index of the current delta in the union list
      * @param data avro generic object with deserialized delta

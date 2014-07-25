@@ -83,6 +83,8 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
 
     protected abstract P getRecordPlaceImpl(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random);
 
+    protected abstract String customizeErrorMessage(Throwable caught);
+
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         recordView = getRecordView(create);
@@ -184,6 +186,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
 
                 @Override
                 public void onSuccess(List<SchemaDto> result) {
+                    recordView.getSchema().setValue(Utils.getMaxSchemaVersions(result));
                     recordView.getSchema().setAcceptableValues(result);
                     recordView.getRecordPanel().setData(record);
                     recordView.getRecordPanel().openDraft();
@@ -233,7 +236,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
                     }
 
                     public void onFailure(Throwable caught) {
-                        recordView.setErrorMessage(Utils.getErrorMessage(caught));
+                        recordView.setErrorMessage(customizeErrorMessage(caught));
                     }
         });
     }

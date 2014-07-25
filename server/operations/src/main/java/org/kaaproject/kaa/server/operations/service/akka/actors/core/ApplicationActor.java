@@ -34,7 +34,10 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.slf4j.Logger;
@@ -164,6 +167,10 @@ public class ApplicationActor extends UntypedActor {
             updateEndpointActor((EndpointStopMessage) message);
         } else if (message instanceof LogEventPackMessage) {
             processLogEventPackMessage((LogEventPackMessage) message);
+        } else if (message instanceof EndpointUserActionMessage){
+            processEndpointUserActionMessage((EndpointUserActionMessage) message, true);
+        } else if (message instanceof EndpointUserActionRouteMessage){
+            processEndpointUserActionMessage(((EndpointUserActionRouteMessage) message).getMessage(), false);
         }
     }
 
@@ -266,6 +273,8 @@ public class ApplicationActor extends UntypedActor {
             processEndpointTopicRegistration((TopicRegistrationRequestMessage) message);
         } else if (message instanceof EndpointUserConnectMessage) {
             processEndpointUserRegistration((EndpointUserConnectMessage) message);
+        } else if (message instanceof EndpointUserDisconnectMessage) {
+            processEndpointUserDeregistration((EndpointUserDisconnectMessage) message);
         } else if (message instanceof EndpointEventSendMessage) {
             processEndpointEventSendMessage((EndpointEventSendMessage) message);
         } else if (message instanceof EndpointEventReceiveMessage) {
@@ -317,6 +326,16 @@ public class ApplicationActor extends UntypedActor {
     }
 
     /**
+     * Process endpoint deregistration.
+     *
+     * @param message
+     *            the message
+     */
+    private void processEndpointUserDeregistration(EndpointUserDisconnectMessage message) {
+        context().parent().tell(message, self());
+    }
+
+    /**
      * Process session endpoint request.
      *
      * @param message
@@ -335,6 +354,18 @@ public class ApplicationActor extends UntypedActor {
             context().watch(endpointMetaData.actorRef);
         }
         endpointMetaData.actorRef.tell(message, self());
+    }
+
+    private void processEndpointUserActionMessage(EndpointUserActionMessage message, boolean escalate) {
+        ActorMetaData endpointMetaData = endpointSessions.get(message.getKey());
+        if (endpointMetaData != null) {
+            LOG.debug("[{}] Found affected endpoint and forwarding message to it", applicationToken);
+            endpointMetaData.actorRef.tell(message, self());
+        }else if(escalate){
+            LOG.debug("[{}] Failed to fing affected endpoint in scope of current application. Forwarding message to tenant actor", applicationToken);
+            EndpointUserActionRouteMessage routeMessage = new EndpointUserActionRouteMessage(message, applicationToken);
+            context().parent().tell(routeMessage, self());
+        }
     }
 
     private void updateEndpointActor(EndpointStopMessage message) {

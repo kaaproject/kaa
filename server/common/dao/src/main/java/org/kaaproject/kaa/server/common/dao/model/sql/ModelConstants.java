@@ -60,6 +60,7 @@ public final class ModelConstants {
     public static final String APPLICATION_SEQUENCE_NUMBER = SEQUENCE_NUMBER;
     public static final String APPLICATION_USER_VERIFIER_NAME = "user_verifier_name";
     public static final String APPLICATION_TENANT_ID = TENANT_ID;
+    public static final String PUBLIC_KEY_NAME = "public_key_name";
     public static final String APPLICATION_LOG_APPENDERS_NAMES = "log_appenders_names";
 
     /**

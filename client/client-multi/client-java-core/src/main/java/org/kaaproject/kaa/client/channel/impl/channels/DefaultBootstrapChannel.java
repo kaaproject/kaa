@@ -19,24 +19,17 @@ package org.kaaproject.kaa.client.channel.impl.channels;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
-import org.kaaproject.kaa.client.channel.BootstrapServerInfo;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
-import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.ServerInfo;
-import org.kaaproject.kaa.client.transport.AbstractHttpClient;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.CommonBSConstants;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultBootstrapChannel implements KaaDataChannel {
+public class DefaultBootstrapChannel extends AbstractHttpChannel {
 
     public static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(DefaultBootstrapChannel.class);
@@ -48,78 +41,36 @@ public class DefaultBootstrapChannel implements KaaDataChannel {
 
     private static final String CHANNEL_ID = "default_bootstrap_channel";
 
-    private AbstractHttpClient httpClient;
-    private KaaDataDemultiplexer demultiplexer;
-    private KaaDataMultiplexer multiplexer;
-
-    private BootstrapServerInfo currentServer;
-    private final AbstractKaaClient client;
-    private boolean lastConnectionFailed = false;
-    private volatile boolean isShutdown = false;
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
     private class BootstrapRunnable implements Runnable {
 
         @Override
         public void run() {
-            synchronized (DefaultBootstrapChannel.this) {
-                try {
-                    processTypes(SUPPORTED_TYPES);
-                    lastConnectionFailed = false;
-                } catch (Exception e) {
-                    LOG.error("Failed to receive operation servers list {}", e);
-                    lastConnectionFailed = true;
-                    client.getChannelMananager().onServerFailed(currentServer);
-                }
+            try {
+                processTypes(SUPPORTED_TYPES);
+                connectionFailed(false);
+            } catch (Exception e) {
+                LOG.error("Failed to receive operation servers list {}", e);
+                connectionFailed(true);
             }
         }
 
     }
 
-    public DefaultBootstrapChannel(AbstractKaaClient client) {
-        this.client = client;
+    public DefaultBootstrapChannel(AbstractKaaClient client, KaaClientState state) {
+        super(client, state);
     }
 
     private void processTypes(Map<TransportType, ChannelDirection> types) throws Exception {
-        byte [] requestBodyRaw = multiplexer.compileRequest(types);
+        byte [] requestBodyRaw = getMultiplexer().compileRequest(types);
+        byte[] responseDataRaw = null;
+        synchronized (this) {
+            LinkedHashMap<String, byte[]> requestEntity = new LinkedHashMap<String, byte[]>(); //NOSONAR
+            requestEntity.put(CommonBSConstants.APPLICATION_TOKEN_ATTR_NAME, requestBodyRaw);
 
-        LinkedHashMap<String, byte[]> requestEntity = new LinkedHashMap<String, byte[]>();
-        requestEntity.put(CommonBSConstants.APPLICATION_TOKEN_ATTR_NAME, requestBodyRaw);
-
-        LOG.debug("Going to execute {}", requestEntity);
-        byte[] responseDataRaw = httpClient.executeHttpRequest("", requestEntity);
-        demultiplexer.processResponse(responseDataRaw);
-    }
-
-    @Override
-    public synchronized void sync(TransportType type) {
-        if (isShutdown) {
-            LOG.info("Can't sync. Channel {} is down", getId());
-            return;
+            LOG.debug("Going to execute {}", requestEntity);
+            responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity);
         }
-        LOG.info("Processing sync {} for channel {}", type, getId());
-        if (multiplexer != null && demultiplexer != null) {
-            if (type.equals(TransportType.BOOTSTRAP)) {
-                executor.submit(new BootstrapRunnable());
-            } else {
-                LOG.error("Unsupported type {} for channel {}", type, getId());
-            }
-        } else{
-            LOG.warn("Multiplexer {} or Demultiplexer {} is not set", multiplexer, demultiplexer);
-        }
-    }
-
-    @Override
-    public synchronized void syncAll() {
-        if (isShutdown) {
-            LOG.info("Can't sync. Channel {} is down", getId());
-            return;
-        }
-        LOG.info("Processing sync all for channel {}", getId());
-        if (multiplexer != null && demultiplexer != null) {
-            executor.submit(new BootstrapRunnable());
-        }
+        getDemultiplexer().processResponse(responseDataRaw);
     }
 
     @Override
@@ -133,43 +84,14 @@ public class DefaultBootstrapChannel implements KaaDataChannel {
     }
 
     @Override
-    public synchronized void setDemultiplexer(KaaDataDemultiplexer demultiplexer) {
-        if (demultiplexer != null) {
-            this.demultiplexer = demultiplexer;
-        }
-    }
-
-    @Override
-    public synchronized void setMultiplexer(KaaDataMultiplexer multiplexer) {
-        if (multiplexer != null) {
-            this.multiplexer = multiplexer;
-        }
-    }
-
-    @Override
-    public synchronized void setServer(ServerInfo server) {
-        if (isShutdown) {
-            LOG.info("Can't set server. Channel {} is down", getId());
-            return;
-        }
-        if (server != null) {
-            this.currentServer = (BootstrapServerInfo) server;
-            this.httpClient = client.createHttpClient(currentServer.getURL(), null, null, currentServer.getPublicKey());
-            if (lastConnectionFailed) {
-                lastConnectionFailed = false;
-                syncAll();
-            }
-        }
-    }
-
-    public void shutdown() {
-        isShutdown = true;
-        executor.shutdownNow();
-    }
-
-    @Override
     public Map<TransportType, ChannelDirection> getSupportedTransportTypes() {
         return SUPPORTED_TYPES;
+    }
+
+    @Override
+    protected Runnable createChannelRunnable(
+            Map<TransportType, ChannelDirection> typeMap) {
+        return new BootstrapRunnable();
     }
 
 

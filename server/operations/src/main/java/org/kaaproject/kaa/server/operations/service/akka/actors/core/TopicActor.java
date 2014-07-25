@@ -60,7 +60,7 @@ public class TopicActor extends UntypedActor {
     private final Map<String, ActorInfo> endpointSessions;
 
     /** The notification cache. */
-    private final TreeMap<Integer, NotificationDto> notificationCache;
+    private final TreeMap<Integer, NotificationDto> notificationCache; //NOSONAR
 
     /**
      * Instantiates a new topic actor.
@@ -279,7 +279,7 @@ public class TopicActor extends UntypedActor {
     /**
      * The Class ActorInfo.
      */
-    public final static class ActorInfo {
+    public static final class ActorInfo {
 
         /** The actor ref. */
         private final ActorRef actorRef;

@@ -76,8 +76,7 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
     }
 
     @Override
-    public void setSchemaProcessor(SchemaProcessor processor)
-    {
+    public void setSchemaProcessor(SchemaProcessor processor) {
         this.schemaProcessor = processor;
     }
 

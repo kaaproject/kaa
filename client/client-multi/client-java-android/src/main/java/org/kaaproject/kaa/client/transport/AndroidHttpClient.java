@@ -54,7 +54,7 @@ public class AndroidHttpClient extends AbstractHttpClient {
 
     @Override
     public byte[] executeHttpRequest(
-            String uri, LinkedHashMap<String, byte[]> entity) throws Exception {
+            String uri, LinkedHashMap<String, byte[]> entity) throws Exception { //NOSONAR
         byte[] responseDataRaw = null;
         method = new HttpPost(url + uri);
         MultipartEntity requestEntity = new MultipartEntity();
@@ -62,22 +62,26 @@ public class AndroidHttpClient extends AbstractHttpClient {
             requestEntity.addPart(key, new ByteArrayBody(entity.get(key), null));
         }
         method.setEntity(requestEntity);
-        LOG.debug("Executing request {}", method.getRequestLine());
-        HttpResponse response = httpClient.execute(method);
-        try {
-            LOG.debug("Received {}", response.getStatusLine());
-            int status = response.getStatusLine().getStatusCode();
-            if (status >= 200 && status < 300) {
-                responseDataRaw = getResponseBody(response);
+        if (!Thread.currentThread().isInterrupted()) {
+            LOG.debug("Executing request {}", method.getRequestLine());
+            HttpResponse response = httpClient.execute(method);
+            try {
+                LOG.debug("Received {}", response.getStatusLine());
+                int status = response.getStatusLine().getStatusCode();
+                if (status >= 200 && status < 300) {
+                    responseDataRaw = getResponseBody(response);
+                } else {
+                    throw new TransportException(
+                            "Invalid response code from server: " + status);
+                }
+            } finally {
+                method = null;
             }
-            else {
-                throw new TransportException(
-                        "Invalid response code from server: " + status);
-            }
-        } finally {
-            method = null;
         }
-
+        else {
+            method = null;
+            throw new InterruptedException();
+        }
         return responseDataRaw;
     }
 

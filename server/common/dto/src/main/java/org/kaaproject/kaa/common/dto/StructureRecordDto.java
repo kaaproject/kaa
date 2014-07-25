@@ -106,8 +106,7 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
                 record.setInactiveStructureDto(structure);
             }
         }
-        List<StructureRecordDto<T>> result = new ArrayList<>(recordsMap.values());
-        return result;
+        return new ArrayList<>(recordsMap.values());
     }
 
     @Override

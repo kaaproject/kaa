@@ -33,7 +33,7 @@ public class CommandFactory {
     private static final Logger LOG = LoggerFactory
             .getLogger(DefaultServerInitializer.class);
 
-    private static Hashtable<String, Class<?>> commands = new Hashtable<String, Class<?>>();
+    private static Hashtable<String, Class<?>> commands = new Hashtable<String, Class<?>>(); //NOSONAR
 
     /**
      * addCommandClass - used for initializing factory during startup.
@@ -47,8 +47,7 @@ public class CommandFactory {
      */
     public static void addCommandClass(String className)
             throws ClassNotFoundException, NoSuchMethodException,
-            SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+            IllegalAccessException, InvocationTargetException {
         if (!commands.containsKey(className)) {
             Class<?> c = null;
             Class<?>[] noparams = {};
@@ -86,8 +85,7 @@ public class CommandFactory {
         if (commands.containsKey(command)) {
             LOG.trace("Command {} found", command);
             Class<?> c = commands.get(command);
-            CommandProcessor cp = (CommandProcessor) c.newInstance();
-            return cp;
+            return (CommandProcessor) c.newInstance();
         }
         LOG.warn("Requested command not found: {}", command);
         throw new Exception("Requested command not found"); //NOSONAR

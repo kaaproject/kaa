@@ -29,7 +29,7 @@ import org.kaaproject.kaa.client.channel.ProfileTransport;
 public class DefaultProfileListener implements ProfileListener {
     private final ProfileTransport transport;
 
-    DefaultProfileListener(ProfileTransport transport) {
+    public DefaultProfileListener(ProfileTransport transport) {
         this.transport = transport;
     }
 

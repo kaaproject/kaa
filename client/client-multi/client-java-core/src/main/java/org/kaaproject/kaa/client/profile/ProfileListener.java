@@ -22,7 +22,7 @@ import java.io.IOException;
  * Interface for the listener of profile updates.
  * 
  * DO NOT implement your own version. 
- * For correct work Kaa uses only {@link DefaultProfileListener}.
+ * For the correct operation of Kaa use only {@link DefaultProfileListener}.
  *
  * @author Yaroslav Zeygerman
  *

@@ -134,26 +134,26 @@ public abstract class CommandProcessor implements Callable<CommandProcessor> {
      * and create CommandProcessor instance using CommanFactory.getProcessor()
      * @throws Exception - if HttpRequest parse failed or CommandProcessor not found.
      */
-    abstract public void parse() throws Exception; //NOSONAR
+    public abstract void parse() throws Exception; //NOSONAR
 
     /**
      * process() - is run in executor thread and process requests.
      * @throws Exception - if some error occurred during processing.
      */
-    abstract public void process() throws Exception; //NOSONAR
+    public abstract void process() throws Exception; //NOSONAR
 
     /**
      * getHttpResponse() - encode processing result into HTTP Response.
      * @return HttpResponse.
      */
-    abstract public HttpResponse getHttpResponse();
+    public abstract HttpResponse getHttpResponse();
 
     /**
      * isNeedConnectionClose() - used to indicate is it necessary to close Channel after
      * HTTP response returned to client.
      * @return boolean - true to Close connection.
      */
-    abstract public boolean isNeedConnectionClose();
+    public abstract boolean isNeedConnectionClose();
 
 
     @Override

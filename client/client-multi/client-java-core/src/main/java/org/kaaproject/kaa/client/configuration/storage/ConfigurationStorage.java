@@ -19,10 +19,35 @@ package org.kaaproject.kaa.client.configuration.storage;
 import java.nio.ByteBuffer;
 
 /**
- * Interface for object which is going to save and load configuration data
+ * Interface for object to save and load configuration data<br>
+ * <br>
+ * Provide implementation instance of this interface to save and load serialized
+ * configuration. Configuration data is serialized according to the configuration
+ * schema.<br>
+ * <br>
+ * Configuration storage can be added using {@link ConfigurationPersistenceManager}
+ * accessed through {@link org.kaaproject.kaa.client.KaaClient} interface.<br>
+ * <pre>
+ * {@code
+ * class FileConfigurationStorage implements ConfigurationStorage {
+ *     public void saveConfiguration(ByteBuffer buffer) {
+ *         ...
+ *     }
+ *     public ByteBuffer loadConfiguration() {
+ *         ...
+ *     }
+ * }
+ * ...
+ * // Assuming Kaa instance is created
+ * KaaClient kaaClient = kaa.getClient();
+ *
+ * ConfigurationStorage configurationStorage = new FileConfigurationStorage();
+ * kaaClient.getConfigurationPersistenceManager().setConfigurationStorage(configurationStorage);
+ * }
+ * </pre>
  *
  * @author Yaroslav Zeygerman
- *
+ * @see ConfigurationPersistenceManager
  */
 public interface ConfigurationStorage {
 

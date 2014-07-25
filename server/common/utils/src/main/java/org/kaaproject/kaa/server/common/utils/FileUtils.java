@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class FileUtils {
     
-    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileUtils.class);
 
     /**
      * Read resource.
@@ -52,7 +52,7 @@ public class FileUtils {
             reader.close();
             result = fileData.toString();
         } catch (IOException e) {
-            logger.error("Unable to read from specified resource '"
+            LOG.error("Unable to read from specified resource '"
                     + resource + "'! Error: " + e.getMessage(), e);
             throw e;
         }
@@ -68,10 +68,9 @@ public class FileUtils {
      */
     public static byte[] readResourceBytes(String resource) throws IOException {
         try (InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
-            byte[] bytes = IOUtils.toByteArray(input);
-            return bytes;
+            return IOUtils.toByteArray(input);
         } catch (IOException e) {
-            logger.error("Unable to read from specified resource '"
+            LOG.error("Unable to read from specified resource '"
                     + resource + "'! Error: " + e.getMessage(), e);
             throw e;
         }
@@ -92,7 +91,7 @@ public class FileUtils {
             result.load(input);
             input.close();
         } catch (IOException e) {
-            logger.error("Unable to read from specified resource '"
+            LOG.error("Unable to read from specified resource '"
                     + resource + "'! Error: " + e.getMessage(), e);
             throw e;
         }

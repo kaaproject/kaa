@@ -28,8 +28,8 @@ public enum ResultCode {
 
     String key;
 
-    ResultCode(String _key) {
-        key = _key;
+    ResultCode(String key) {
+        this.key = key;
     }
 
     public String getResourceKey() {

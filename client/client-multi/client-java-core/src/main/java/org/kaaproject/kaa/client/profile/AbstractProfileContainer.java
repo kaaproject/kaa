@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
  */
 public abstract class AbstractProfileContainer<T extends SpecificRecordBase> implements ProfileContainer {
     private ProfileListener listener;
-    private AvroByteArrayConverter<T> converter;
+    private final AvroByteArrayConverter<T> converter;
 
     /**
      * Constructor for the AbstractProfileContainer.
@@ -55,8 +55,7 @@ public abstract class AbstractProfileContainer<T extends SpecificRecordBase> imp
     }
 
     /**
-     * Updates profile. Call this method when you finished updating your profile.
-     *
+     * Updates profile. Call this method when you finish to update your profile.
      */
     protected final void updateProfile() throws IOException {
         if (listener != null) {
@@ -71,6 +70,7 @@ public abstract class AbstractProfileContainer<T extends SpecificRecordBase> imp
      *
      * @param listener New profile listener.
      */
+    @Override
     public final void setProfileListener(ProfileListener listener) {
         this.listener = listener;
     }

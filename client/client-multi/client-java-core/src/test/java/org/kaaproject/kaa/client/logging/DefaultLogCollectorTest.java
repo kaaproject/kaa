@@ -19,6 +19,7 @@ package org.kaaproject.kaa.client.logging;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.LogTransport;
+import org.kaaproject.kaa.client.logging.gen.SuperRecord;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;

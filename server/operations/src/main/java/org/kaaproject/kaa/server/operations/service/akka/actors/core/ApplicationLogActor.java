@@ -152,6 +152,9 @@ public class ApplicationLogActor extends UntypedActor {
      */
     @Override
     public void postStop() {
+        for (LogAppender logAppender : logAppenders) {
+            logAppender.close();
+        }
         LOG.info("[{}] Stoped ", applicationToken);
     }
 }

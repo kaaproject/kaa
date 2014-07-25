@@ -60,7 +60,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         tenantName.setWidth("100%");
         tenantName.addInputHandler(this);
 
-        Label titleLabel = new Label(Utils.constants.title());
+        Label titleLabel = new Label(Utils.constants.tenantName());
         titleLabel.addStyleName("required");
         detailsTable.setWidget(0, 0, titleLabel);
         detailsTable.setWidget(0, 1, tenantName);
@@ -99,7 +99,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
     protected boolean validate() {
         boolean result = tenantName.getValue().length()>0;
         result &= userName.getValue().length()>0;
-        result &= email.getValue().length()>0;
+        result &= Utils.validateEmail(email.getValue());
         return result;
     }
 

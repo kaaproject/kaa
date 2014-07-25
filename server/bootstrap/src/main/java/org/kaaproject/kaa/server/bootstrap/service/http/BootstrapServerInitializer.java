@@ -61,8 +61,7 @@ public class BootstrapServerInitializer extends DefaultServerInitializer {
      * @see org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer#init()
      */
     @Override
-    public void init() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+    public void init() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         for (String commandClass : ((BootstrapConfig) getConf()).getCommandList()) {
             CommandFactory.addCommandClass(commandClass);
         }

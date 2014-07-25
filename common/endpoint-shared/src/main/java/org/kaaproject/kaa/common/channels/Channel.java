@@ -28,26 +28,26 @@ import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
  * @author Andrey Panasenko
  *
  */
-abstract public class Channel {
+public abstract class Channel {
 
     /**
      * Return List of supported transports for Channel
      * @return List<TransportTypes> of supported transports.
      */
-    abstract public List<TransportType> getSupportedTransports();
+    public abstract List<TransportType> getSupportedTransports();
 
     /**
      * Return AVRO ChannelType for Channel instance
      * @return ChannelType of Channel
      */
-    abstract public ChannelType getChannelType();
+    public abstract ChannelType getChannelType();
 
     /**
      * Check if specified TransportType is supported by Channel
      * @param type TransportTypes
      * @return boolean, true if specified type is supported by Channel
      */
-    abstract public boolean isTransportTypeSupported(TransportType type);
+    public abstract boolean isTransportTypeSupported(TransportType type);
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -94,8 +94,7 @@ abstract public class Channel {
         return isSupported;
     }
 
-    protected static List<TransportType> ListTransportTypesFromArray(TransportType[] supportedTransports) {
-        ArrayList<TransportType> supported = new ArrayList<>(Arrays.asList(supportedTransports));
-        return supported;
+    protected static List<TransportType> listTransportTypesFromArray(TransportType[] supportedTransports) {
+        return new ArrayList<>(Arrays.asList(supportedTransports)); //NOSONAR
     }
 }

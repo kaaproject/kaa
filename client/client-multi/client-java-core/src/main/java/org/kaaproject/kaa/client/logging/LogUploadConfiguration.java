@@ -19,11 +19,11 @@ package org.kaaproject.kaa.client.logging;
 /**
  * Interface for log upload configuration.
  *
- * Describe threshold values needed to upload strategy to decide whether logs
- * should be sent or clean up.
+ * Describes threshold values for upload strategy to decide whether logs
+ * should be sent or cleaned up.
  * 
- * Reference implementation is present (@see DefaultLogUploadConfiguration) 
- * and use by default (@see DefaultLogUploadStrategy).
+ * Reference implementation is  (@see DefaultLogUploadConfiguration) 
+ * and used by default (@see DefaultLogUploadStrategy).
  */
 public interface LogUploadConfiguration {
     long getBatchVolume();

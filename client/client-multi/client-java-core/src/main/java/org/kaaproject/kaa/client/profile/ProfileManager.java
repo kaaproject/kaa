@@ -24,18 +24,21 @@ package org.kaaproject.kaa.client.profile;
  *
  */
 public interface ProfileManager {
+
     /**
      * Sets profile container implemented by the user.
      *
      * @param container User-defined container
      * @see AbstractProfileContainer
+     *
      */
     void setProfileContainer(ProfileContainer container);
 
     /**
      * Retrieves container responsible for profile serializing
-     * 
-     * @return Container which contains a serialized profile
+     *
+     * @return Container which contains the serialized profile
+     *
      */
     SerializedProfileContainer getSerializedProfileContainer();
 

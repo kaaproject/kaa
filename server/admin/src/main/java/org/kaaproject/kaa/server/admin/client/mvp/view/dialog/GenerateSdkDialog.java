@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
+import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,7 +86,7 @@ public class GenerateSdkDialog extends KaaDialog {
 
             @Override
             public void onSuccess(final SchemaVersions schemaVersions) {
-                KaaAdmin.getDataSource().getAefMaps(applicationId, new AsyncCallback<List<AefMapInfoDto>> () {
+                KaaAdmin.getDataSource().getAefMaps(applicationId, new AsyncCallback<List<AefMapInfoDto>>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
@@ -120,10 +122,10 @@ public class GenerateSdkDialog extends KaaDialog {
         errorPanel.setVisible(false);
         dialogContents.add(errorPanel);
 
-        FlexTable table  = new FlexTable();
+        FlexTable table = new FlexTable();
         table.setCellSpacing(6);
 
-        int row=0;
+        int row = 0;
 
         ValueChangeHandler<SchemaDto> schemaValueChangeHandler = new ValueChangeHandler<SchemaDto>() {
             @Override
@@ -136,7 +138,9 @@ public class GenerateSdkDialog extends KaaDialog {
         label.addStyleName("required");
         configurationSchemaVersion = new SchemaListBox();
         configurationSchemaVersion.setWidth("80px");
-        configurationSchemaVersion.setAcceptableValues(schemaVersions.getConfigurationSchemaVersions());
+        List<SchemaDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
+        configurationSchemaVersion.setValue(getMaxSchemaVersions(confSchemaVersions));
+        configurationSchemaVersion.setAcceptableValues(confSchemaVersions);
         configurationSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
 
         table.setWidget(row, 0, label);
@@ -148,7 +152,9 @@ public class GenerateSdkDialog extends KaaDialog {
         label.addStyleName("required");
         profileSchemaVersion = new SchemaListBox();
         profileSchemaVersion.setWidth("80px");
-        profileSchemaVersion.setAcceptableValues(schemaVersions.getProfileSchemaVersions());
+        List<SchemaDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
+        profileSchemaVersion.setValue(getMaxSchemaVersions(pfSchemaVersions));
+        profileSchemaVersion.setAcceptableValues(pfSchemaVersions);
         profileSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
 
         table.setWidget(row, 0, label);
@@ -156,12 +162,13 @@ public class GenerateSdkDialog extends KaaDialog {
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
         row++;
 
-
         label = new Label(Utils.constants.notificationSchemaVersion());
         label.addStyleName("required");
         notificationSchemaVersion = new SchemaListBox();
         notificationSchemaVersion.setWidth("80px");
-        notificationSchemaVersion.setAcceptableValues(schemaVersions.getNotificationSchemaVersions());
+        List<SchemaDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
+        notificationSchemaVersion.setValue(getMaxSchemaVersions(notSchemaVersions));
+        notificationSchemaVersion.setAcceptableValues(notSchemaVersions);
         notificationSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
 
         table.setWidget(row, 0, label);
@@ -173,7 +180,9 @@ public class GenerateSdkDialog extends KaaDialog {
         label.addStyleName("required");
         logSchemaVersion = new SchemaListBox();
         logSchemaVersion.setWidth("80px");
-        logSchemaVersion.setAcceptableValues(schemaVersions.getLogSchemaVersions());
+        List<SchemaDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
+        logSchemaVersion.setValue(getMaxSchemaVersions(logSchemaVersions));
+        logSchemaVersion.setAcceptableValues(logSchemaVersions);
         logSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
 
         table.setWidget(row, 0, label);
@@ -189,21 +198,21 @@ public class GenerateSdkDialog extends KaaDialog {
             public String render(SdkPlatform object) {
                 if (object != null) {
                     return Utils.constants.getString(object.getResourceKey());
-                }
-                else {
+                } else {
                     return "";
                 }
             }
 
             @Override
-            public void render(SdkPlatform object, Appendable appendable)
-                    throws IOException {
+            public void render(SdkPlatform object, Appendable appendable) throws IOException {
                 appendable.append(render(object));
             }
         };
 
         targetPlatform = new ValueListBox<>(targetPlatformRenderer);
         targetPlatform.setWidth("80px");
+        // Set default sdk platform
+         targetPlatform.setValue(SdkPlatform.ANDROID);
         targetPlatform.setAcceptableValues(Arrays.asList(SdkPlatform.values()));
         targetPlatform.addValueChangeHandler(new ValueChangeHandler<SdkPlatform>() {
             @Override
@@ -217,7 +226,7 @@ public class GenerateSdkDialog extends KaaDialog {
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
         row++;
 
-        FlexTable ecfsTable  = new FlexTable();
+        FlexTable ecfsTable = new FlexTable();
         ecfsTable.setCellSpacing(6);
 
         availableAefMaps = new MultiAefMapListBox();
@@ -315,15 +324,16 @@ public class GenerateSdkDialog extends KaaDialog {
         addButton(closeButton);
 
         generateSdkButton.setEnabled(false);
+        fireChanged();
     }
 
     private void addAefMap() {
         List<AefMapInfoDto> selected = availableAefMaps.getValue();
         availableAefMaps.setValue(null, true);
-        Map<String,AefMapInfoDto> idMap = new HashMap<String, AefMapInfoDto>();
+        Map<String, AefMapInfoDto> idMap = new HashMap<String, AefMapInfoDto>();
         for (AefMapInfoDto aefMap : selected) {
             AefMapInfoDto previous = idMap.get(aefMap.getEcfId());
-            if (previous == null || aefMap.getVersion()>previous.getVersion()) {
+            if (previous == null || aefMap.getVersion() > previous.getVersion()) {
                 idMap.put(aefMap.getEcfId(), aefMap);
             }
         }
@@ -348,7 +358,7 @@ public class GenerateSdkDialog extends KaaDialog {
 
     private void updateAefMapLists(List<AefMapInfoDto> totalSelected) {
         List<AefMapInfoDto> available = new ArrayList<>();
-        Map<String,AefMapInfoDto> idMap = new HashMap<String, AefMapInfoDto>();
+        Map<String, AefMapInfoDto> idMap = new HashMap<String, AefMapInfoDto>();
         for (AefMapInfoDto aefMap : totalSelected) {
             idMap.put(aefMap.getEcfId(), aefMap);
         }
@@ -374,7 +384,6 @@ public class GenerateSdkDialog extends KaaDialog {
         }
     }
 
-
     private void updateAefMapButtons() {
         boolean availableSelected = availableAefMaps.getValue() != null && !availableAefMaps.getValue().isEmpty();
         boolean selectedSelected = selectedAefMaps.getValue() != null && !selectedAefMaps.getValue().isEmpty();
@@ -387,7 +396,7 @@ public class GenerateSdkDialog extends KaaDialog {
         generateSdkButton.setEnabled(valid);
     }
 
-    private void performGenerateSdk () {
+    private void performGenerateSdk() {
         SchemaDto configurationSchema = configurationSchemaVersion.getValue();
         SchemaDto profileSchema = profileSchemaVersion.getValue();
         SchemaDto notificationSchema = notificationSchemaVersion.getValue();
@@ -402,10 +411,8 @@ public class GenerateSdkDialog extends KaaDialog {
             }
         }
 
-        KaaAdmin.getDataSource().getSdk(applicationId, configurationSchema.getMajorVersion(),
-                profileSchema.getMajorVersion(), notificationSchema.getMajorVersion(), targetPlatformVal,
-                aefMapIds, logSchema.getMajorVersion(),
-                new AsyncCallback<String>() {
+        KaaAdmin.getDataSource().getSdk(applicationId, configurationSchema.getMajorVersion(), profileSchema.getMajorVersion(),
+                notificationSchema.getMajorVersion(), targetPlatformVal, aefMapIds, logSchema.getMajorVersion(), new AsyncCallback<String>() {
 
                     @Override
                     public void onFailure(Throwable caught) {
@@ -416,7 +423,7 @@ public class GenerateSdkDialog extends KaaDialog {
                     public void onSuccess(String key) {
                         ServletHelper.downloadSdk(key);
                     }
-        });
+                });
     }
 
     private boolean validate() {
@@ -429,11 +436,10 @@ public class GenerateSdkDialog extends KaaDialog {
     }
 
     private void setError(String error) {
-        if (error!= null) {
+        if (error != null) {
             errorPanel.setText(error);
             errorPanel.setVisible(true);
-        }
-        else {
+        } else {
             errorPanel.setText("");
             errorPanel.setVisible(false);
         }

@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import org.apache.avro.Schema;
 
 /**
- * Receives the data from stream and creates a schema object.
+ * Receives the data from stream and creates the schema object.
  *
  * @author Yaroslav Zeygerman
  *

@@ -27,7 +27,7 @@ public interface ProfileContainer {
     /**
      * Set Kaa profile listener {@link ProfileListener} for the container.
      * DO NOT use this API explicitly. When user sets his implementation
-     * of the profile container, Kaa will use this method to inject its 
+     * of the profile container, Kaa uses this method to inject its 
      * own listener {@link DefaultProfileListener}.
      * 
      * @param listener Listener that tracks profile updates

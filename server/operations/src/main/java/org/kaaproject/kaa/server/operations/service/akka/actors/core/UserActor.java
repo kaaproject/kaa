@@ -20,6 +20,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.E
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RemoteEndpointEventMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
@@ -103,6 +104,8 @@ public class UserActor extends UntypedActor {
         LOG.debug("[{}] Received: {}", userId, message);
         if (message instanceof EndpointUserConnectMessage) {
             processEndpointConnectMessage((EndpointUserConnectMessage) message);
+        } else if (message instanceof EndpointUserDisconnectMessage) {
+            processEndpointDisconnectMessage((EndpointUserDisconnectMessage) message);
         } else if (message instanceof EndpointEventSendMessage) {
             processEndpointEventSendMessage((EndpointEventSendMessage) message);
         } else if (message instanceof RemoteEndpointEventMessage) {
@@ -122,6 +125,11 @@ public class UserActor extends UntypedActor {
 
     private void processEndpointConnectMessage(EndpointUserConnectMessage message) {
         messageProcessor.processEndpointConnectMessage(context(), message);
+        context().watch(message.getOriginator());
+    }
+
+    private void processEndpointDisconnectMessage(EndpointUserDisconnectMessage message) {
+        messageProcessor.processEndpointDisconnectMessage(context(), message);
         context().watch(message.getOriginator());
     }
 

@@ -250,7 +250,9 @@ public class EndpointGroupActivity
     @Override
     protected void onEntityRetrieved() {
         detailsView.getName().setValue(entity.getName());
-        detailsView.getWeight().setValue(entity.getWeight());
+        if (!create) {
+            detailsView.getWeight().setValue(entity.getWeight());
+        }
         detailsView.getDescription().setValue(entity.getDescription());
         detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
         detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));

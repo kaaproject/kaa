@@ -22,7 +22,9 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultProfileTransport;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
+import org.kaaproject.kaa.client.profile.DefaultProfileListener;
+import org.kaaproject.kaa.client.profile.ProfileListener;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.profile.SerializedProfileContainer;
 import org.kaaproject.kaa.common.TransportType;
@@ -99,4 +101,16 @@ public class DefaultProfileTransportTest {
 
         Mockito.verify(channel, Mockito.times(1)).syncAll();
     }
+
+    @Test
+    public void testProfileListener() throws Exception {
+        ProfileTransport transport = Mockito.mock(ProfileTransport.class);
+        ProfileListener listener = new DefaultProfileListener(transport);
+
+        listener.onProfileUpdated(null);
+        listener.onProfileUpdated(new byte[1]);
+
+        Mockito.verify(transport, Mockito.times(1)).sync();
+    }
+
 }

@@ -96,6 +96,9 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
 
         detailsTable.getColumnFormatter().setWidth(0, "200px");
         detailsTable.getColumnFormatter().setWidth(1, "300px");
+        if (!create) {
+            detailsTable.getColumnFormatter().setWidth(2, "300px");
+        }
 
         initDetailsTable();
 

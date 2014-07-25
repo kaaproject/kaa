@@ -141,7 +141,7 @@ public class ControlZkService {
                         
                         @Override
                         public void doInTemplate(Client t) {
-                            try {
+                            try { //NOSONAR
                                 t.onNotification(thriftNotification);
                             } catch (TException e) {
                                 LOG.error(
@@ -181,7 +181,7 @@ public class ControlZkService {
         if (zkEnabled) {
             return controlZKNode.getCurrentBootstrapNodes();
         } else {
-            return null;
+            return null; //NOSONAR
         }
     }
 

@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -84,6 +85,15 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationD
             String schemaId, String endpointGroupId, boolean create,
             boolean showActive, double random) {
         return new ConfigurationPlace(applicationId, schemaId, endpointGroupId, create, showActive, random);
+    }
+
+    @Override
+    protected String customizeErrorMessage(Throwable caught) {
+        String message = caught.getMessage();
+        if (message != null && message.contains("uuid")) {
+            return Utils.messages.incorrectConfiguration();
+        }
+        return message;
     }
 
 }

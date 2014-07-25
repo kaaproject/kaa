@@ -1,0 +1,206 @@
+{
+    "type": "array",
+    "items": {
+        "type": "record",
+        "namespace": "org.kaaproject.configuration",
+        "name": "deltaT",
+        "fields": [
+            {
+                "name": "delta",
+                "type": [
+                    {
+                        "type": "record",
+                        "namespace": "org.kaa.config",
+                        "name": "testT",
+                        "fields": [
+                            {
+                                "name": "testField1",
+                                "type": [
+                                    "string",
+                                    {
+                                        "type": "enum",
+                                        "namespace": "org.kaaproject.configuration",
+                                        "name": "unchangedT",
+                                        "symbols": [
+                                            "unchanged"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "testField2",
+                                "type": [
+                                    {
+                                        "type": "record",
+                                        "namespace": "org.kaa.config",
+                                        "name": "testRecordT",
+                                        "fields": [
+                                            {
+                                                "name": "testField3",
+                                                "type": [
+                                                    "int",
+                                                    "org.kaaproject.configuration.unchangedT"
+                                                ]
+                                            },
+                                            {
+                                                "name": "__uuid",
+                                                "type": {
+                                                    "type": "fixed",
+                                                    "size": 16,
+                                                    "namespace": "org.kaaproject.configuration",
+                                                    "name": "uuidT"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "org.kaaproject.configuration.unchangedT",
+                                    "null"
+                                ]
+                            },
+                            {
+                                "name": "testArrayRecord1",
+                                "type": 
+                                {
+                                    "namespace": "org.kaa.config",
+                                    "name": "testArrayRecord1T",
+                                    "type": "record",
+                                    "fields": [
+                                        {
+                                            "name": "__uuid",
+                                            "type": "org.kaaproject.configuration.uuidT"
+                                        },
+                                        {
+                                            "name": "testArray1",
+                                            "type": [
+                                                {
+                                                    "name": "testArrayT",
+                                                    "namespace": "org.kaa.config",
+                                                    "type": "array",
+                                                    "items": [
+                                                        {
+                                                            "name": "recordArrayItemT",
+                                                            "namespace": "org.kaa.config",
+                                                            "type": "record",
+                                                            "fields": [
+                                                                {
+                                                                    "name": "__uuid",
+                                                                    "type": "org.kaaproject.configuration.uuidT"
+                                                                },
+                                                                {
+                                                                    "name": "enabled",
+                                                                    "type": [ 
+                                                                        "boolean",
+                                                                        "org.kaaproject.configuration.unchangedT"
+                                                                    ] 
+                                                                },
+                                                                {
+                                                                    "name": "strategy",
+                                                                    "type": [ 
+                                                                        {
+                                                                            "name": "strategyT",
+                                                                            "namespace": "org.kaa.config",
+                                                                            "type": "enum",
+                                                                            "symbols": [
+                                                                                "DEFAULT",
+                                                                                "CONCRETE1",
+                                                                                "CONCRETE2"
+                                                                            ]                                                        
+                                                                        },
+                                                                        "org.kaaproject.configuration.unchangedT",
+                                                                        "null"
+                                                                    ]                                                    
+                                                                }
+                                                            ]
+                                                        },
+                                                        "org.kaaproject.configuration.uuidT"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "enum",
+                                                    "namespace": "org.kaaproject.configuration",
+                                                    "name": "resetT",
+                                                    "symbols": [
+                                                        "reset"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "testArrayRecord2",
+                                "type": {
+                                    "namespace": "org.kaa.config",
+                                    "name": "testArrayRecord2T",
+                                    "type": "record",
+                                    "fields": [
+                                        {
+                                            "name": "__uuid",
+                                            "type": "org.kaaproject.configuration.uuidT"
+                                        },
+                                        {
+                                            "name": "testArray2",
+                                            "type": [   
+                                                {
+                                                    "namespace": "org.kaa.config",
+                                                    "name": "testArray2T",
+                                                    "type": "array",
+                                                    "items":  [ 
+                                                        "string" ,
+                                                        {
+                                                            "name": "recordArrayItem2T",
+                                                            "namespace": "org.kaa.config",
+                                                            "type": "record",
+                                                            "fields": [
+                                                                {
+                                                                    "name": "__uuid",
+                                                                    "type": "org.kaaproject.configuration.uuidT"
+                                                                },
+                                                                {
+                                                                    "name": "user",
+                                                                    "type": "string"
+                                                                },
+                                                                {
+                                                                    "name": "role",
+                                                                    "type": [
+                                                                        {
+                                                                            "name": "userRoleT",
+                                                                            "namespace": "org.kaa.config",
+                                                                            "type": "enum",
+                                                                            "symbols": [
+                                                                                "ADMIN",
+                                                                                "MODERATOR",
+                                                                                "USER",
+                                                                                "GUEST"
+                                                                            ]
+                                                                        },
+                                                                        "org.kaaproject.configuration.unchangedT"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                "org.kaaproject.configuration.resetT"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "__uuid",
+                                "type": "org.kaaproject.configuration.uuidT"
+                            }
+                        ]
+                    },
+                    "org.kaa.config.testRecordT",
+                    "org.kaa.config.recordArrayItemT",
+                    "org.kaa.config.recordArrayItem2T",
+                    "org.kaa.config.testArrayRecord1T",
+                    "org.kaa.config.testArrayRecord2T"
+                ]
+            }
+        ]
+    }
+}

@@ -40,7 +40,7 @@ public abstract class AbstractHttpClient {
         this.verificationEnabled = false;
     }
 
-    protected byte[] verifyResponse(byte[] body, byte[] signature) throws SecurityException, GeneralSecurityException {
+    protected byte[] verifyResponse(byte[] body, byte[] signature) throws GeneralSecurityException {
         if (!verificationEnabled || messageEncDec.verify(body, signature)) {
             return body;
         } else {
@@ -52,7 +52,7 @@ public abstract class AbstractHttpClient {
         return messageEncDec;
     }
 
-    public abstract byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity) throws Exception;
+    public abstract byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity) throws Exception; //NOSONAR
 
     public abstract void close() throws IOException;
 

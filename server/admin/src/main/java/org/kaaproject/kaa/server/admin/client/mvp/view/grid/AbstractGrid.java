@@ -29,9 +29,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCel
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionsButtonCell;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionsButtonCell.ActionMenuItemListener;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.LinkCell;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.UneditableCheckboxCell;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -83,7 +83,7 @@ public abstract class AbstractGrid<T, K> extends DockLayoutPanel implements HasR
     public AbstractGrid(Style.Unit unit, boolean enableActions) {
         this(unit, enableActions, false, false);
     }
-    
+
     public AbstractGrid(Style.Unit unit, boolean enableActions, boolean embedded) {
         this(unit, enableActions, embedded, false);
     }
@@ -241,7 +241,7 @@ public abstract class AbstractGrid<T, K> extends DockLayoutPanel implements HasR
             final BooleanValueProvider<T> valueProvider, float prefWidth) {
         Header<SafeHtml> header = new SafeHtmlHeader(
                 SafeHtmlUtils.fromSafeConstant(title));
-        Column<T, Boolean> column = new Column<T, Boolean>(new CheckboxCell()) {
+        Column<T, Boolean> column = new Column<T, Boolean>(new UneditableCheckboxCell()) {
             @Override
             public Boolean getValue(T item) {
                 return valueProvider.getValue(item);

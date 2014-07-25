@@ -52,7 +52,7 @@ public class EventSchemaProcessorImpl implements EventSchemaProcessor {
                 eventClassSchema.setFqn(parsedEventClassSchema.getFullName());
                 String strClassType = parsedEventClassSchema.getProp(CLASS_TYPE);
                 EventClassType classType = null;
-                try {
+                try { //NOSONAR
                     classType = EventClassType.valueOf(strClassType.toUpperCase());
                 } catch (Exception e) {
                     LOG.error("Can't process provided event class family schema. Invalid classType [{}]", strClassType);

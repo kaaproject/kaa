@@ -595,11 +595,10 @@ public class ConcurrentCacheService implements CacheService {
                             .getVersion()));
                     if (!routeKeys.contains(routeTableKey)) {
                         for (ApplicationEventMapDto eventMap : mapping.getEventMaps()) {
-                            if (eventMap.getEventClassId().equals(eventClass.getId())) {
-                                if (ApplicationEventAction.SINK == eventMap.getAction() || ApplicationEventAction.BOTH == eventMap.getAction()) {
-                                    routeKeys.add(routeTableKey);
-                                    break;
-                                }
+                            if (eventMap.getEventClassId().equals(eventClass.getId()) && 
+                                    (ApplicationEventAction.SINK == eventMap.getAction() || ApplicationEventAction.BOTH == eventMap.getAction())) {
+                                routeKeys.add(routeTableKey);
+                                break;
                             }
                         }
                     }

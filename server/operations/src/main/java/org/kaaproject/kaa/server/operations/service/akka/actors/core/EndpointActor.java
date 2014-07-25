@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.A
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,6 +119,8 @@ public class EndpointActor extends UntypedActor {
             processRequestTimeoutMessage((RequestTimeoutMessage) message);
         } else if (message instanceof ActorTimeoutMessage){
             processActorTimeoutMessage((ActorTimeoutMessage) message);
+        } else if(message instanceof EndpointUserActionMessage){
+            processEndpointUserActionMessage((EndpointUserActionMessage) message);
         } else if(message instanceof EndpointStopMessage){
             LOG.debug("[{}] Received stop request from application actor", actorKey);
             context().stop(self());
@@ -148,6 +151,10 @@ public class EndpointActor extends UntypedActor {
 
     private void processActorTimeoutMessage(ActorTimeoutMessage message) {
         messageProcessor.processActorTimeoutMessage(context(), message);
+    }
+
+    private void processEndpointUserActionMessage(EndpointUserActionMessage message) {
+        messageProcessor.processEndpointUserActionMessage(context(), message);
     }
 
     /*

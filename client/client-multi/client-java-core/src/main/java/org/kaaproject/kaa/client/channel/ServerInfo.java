@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.channel;
 
 /**
- * Interface for server info information.
+ * Interface for server information.
  * Used by {@link KaaDataChannel} and {@link KaaChannelManager}
  */
 public interface ServerInfo {

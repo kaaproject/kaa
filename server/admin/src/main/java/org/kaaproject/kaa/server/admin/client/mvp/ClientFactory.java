@@ -44,8 +44,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 
-import com.google.web.bindery.event.shared.EventBus;
+import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.web.bindery.event.shared.EventBus;
 
 public interface ClientFactory {
     EventBus getEventBus();
@@ -101,11 +102,14 @@ public interface ClientFactory {
     BaseListView<EventClassFamilyDto> getEcfsView();
     EcfView getEcfView();
     EcfView getCreateEcfView();
-    
+
     EcfSchemaView getEcfSchemaView();
-    
+
     BaseListView<ApplicationEventFamilyMapDto> getAefMapsView();
     AefMapView getAefMapView();
     AefMapView getCreateAefMapView();
+
+    Place getHomePlace();
+    void setHomePlace(Place homePlace);
 
 }

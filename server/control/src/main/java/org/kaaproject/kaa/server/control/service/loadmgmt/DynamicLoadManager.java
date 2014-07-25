@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService.Client;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftChannelType;
@@ -411,7 +409,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
 
                 @Override
                 public void doInTemplate(Client t) {
-                    try {
+                    try { //NOSONAR
                         List<ThriftOperationsServer> operationsServersList = new ArrayList<>();
                         for(String dnsName : opsServersMap.keySet()) {
                             operationsServersList.add(opsServersMap.get(dnsName).opsServer);
@@ -463,7 +461,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
 
                 @Override
                 public void doInTemplate(org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Client t) {
-                    try {
+                    try { //NOSONAR
                         t.setRedirectionRule(rule);
                         LOG.info("Operations {} set redirection rule: {} <> {}"
                                 , dnsName, rule.getDnsName(), rule.getRedirectionProbability());

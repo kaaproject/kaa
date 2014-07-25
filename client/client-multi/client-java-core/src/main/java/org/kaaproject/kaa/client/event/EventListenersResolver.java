@@ -19,10 +19,37 @@ package org.kaaproject.kaa.client.event;
 import java.util.List;
 
 /**
- * Public access interface for events listeners resolution request
+ * Public access interface for events listener resolution request.<br>
+ * <br>
+ * Use this module to find endpoints which are able to receive events by list of
+ * events' fully-qualified names.<br>
+ * <b>NOTE:</b> Operations server will respond with list of endpoints which
+ * can receive <b>ALL</b> listed event types (FQNs).
+ *
+ * For example:
+ *
+ * <pre>
+ * {@code
+ * List<String> fqnsToBeSupported = new ArrayList<String>();
+ * fqnsToBeSupported.add("org.kaaproject.test.FooEvent");
+ * fqnsToBeSupported.add("org.kaaproject.test.BarEvent");
+ *
+ * EventListenersResolver resolver = kaaClient.getEventListenerResolver();
+ * resolver.findEventListeners(fqnsToBeSupported, new FetchEventListeners() {
+ *     public void onEventListenersReceived(List<String> eventListeners) {
+ *         System.out.println("Found " + eventListeners.size() + " event targets");
+ *     }
+ *     public void onRequestFailed() {
+ *         System.out.println("Request failed for some reason.");
+ *     }
+ * });
+ * }
+ * </pre>
+ * This code will receive list of endpoints which support receiving event types
+ * {@code "org.kaaproject.test.FooEvent"} <b>AND</b> {@code "org.kaaproject.test.BarEvent"}.
  *
  * @author Taras Lemkin
- *
+ * @see FetchEventListeners
  */
 public interface EventListenersResolver {
 

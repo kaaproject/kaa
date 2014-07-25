@@ -22,7 +22,7 @@ import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 
 /**
- * Responsible for processing of Logging requests and responses.
+ * Processes the Logging requests and responses.
  *
  * @author Yaroslav Zeygerman
  *

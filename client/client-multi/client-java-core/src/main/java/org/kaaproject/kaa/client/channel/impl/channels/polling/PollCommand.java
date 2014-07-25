@@ -34,6 +34,7 @@ public class PollCommand implements Command {
     private final RawDataProcessor processor;
     private final Map<TransportType, ChannelDirection> transportTypes;
     private final HttpLongPollServerInfo serverInfo;
+    private volatile boolean canceled = false;
 
     public PollCommand(AbstractHttpClient client, RawDataProcessor processor, Map<TransportType, ChannelDirection> transportTypes, HttpLongPollServerInfo serverInfo) {
         this.httpClient = client;
@@ -45,20 +46,31 @@ public class PollCommand implements Command {
     @Override
     public void execute() {
         try {
-            LinkedHashMap<String, byte[]> request = processor.createRequest(transportTypes);
-            if (request != null) {
-                byte[] responseDataRaw = httpClient.executeHttpRequest("", request);
-                processor.onResponse(responseDataRaw);
+            if (httpClient != null ) {
+                LinkedHashMap<String, byte[]> request = processor.createRequest(transportTypes); //NOSONAR
+                if (request != null && !canceled) {
+                    byte[] responseDataRaw = httpClient.executeHttpRequest("", request);
+                    processor.onResponse(responseDataRaw);
+                }
+            }
+            else {
+                LOG.warn("Unable to execute http request, http client is null.");
             }
         } catch (Exception e) {
-            LOG.error("Server failed {}", e);
+            if (!canceled) {
+                LOG.error("Server failed {}", e);
+            }
+            else {
+                LOG.debug("PollCommand execution aborted");
+            }
             processor.onServerError(serverInfo);
         }
     }
 
     @Override
     public void cancel() {
-        if (httpClient.canAbort()) {
+        canceled = true;
+        if (httpClient != null && httpClient.canAbort()) {
             httpClient.abort();
         }
     }

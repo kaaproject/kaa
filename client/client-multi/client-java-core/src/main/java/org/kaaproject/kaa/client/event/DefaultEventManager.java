@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
@@ -45,12 +46,14 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultEventManager implements EventManager {
 
-    private final static Logger LOG = LoggerFactory.getLogger(DefaultEventManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultEventManager.class);
     private final Set<EventFamily>  registeredEventFamilies = new HashSet<EventFamily>();
     private final List<Event>       currentEvents = new LinkedList<Event>();
+    private final Object            eventsGuard = new Object();
     private final Map<String, EventListenersRequestBinding> eventListenersRequests = new HashMap<String, EventListenersRequestBinding>();
     private final EventTransport transport;
     private final AtomicInteger eventSequence = new AtomicInteger();
+    private final KaaClientState state;
 
     private class EventListenersRequestBinding {
         private final FetchEventListeners     listener;
@@ -81,18 +84,13 @@ public class DefaultEventManager implements EventManager {
         }
     }
 
-    public DefaultEventManager(EventTransport transport) {
+    public DefaultEventManager(KaaClientState state, EventTransport transport) {
+        this.state = state;
         this.transport = transport;
     }
 
     @Override
-    public void fillEventSyncRequest(EventSyncRequest request) {
-        if (!currentEvents.isEmpty()) {
-            LOG.debug("Going to send {} event{}", currentEvents.size()
-                    , (currentEvents.size() == 1 ? "" : "s")); //NOSONAR
-            List<Event> events = new LinkedList<Event>(currentEvents);
-            request.setEvents(events);
-        }
+    public void fillEventListenersSyncRequest(EventSyncRequest request) {
         if (!eventListenersRequests.isEmpty()) {
             LOG.debug("There are {} unresolved eventListenersResolution request{}"
                     , eventListenersRequests.size()
@@ -110,14 +108,18 @@ public class DefaultEventManager implements EventManager {
 
     @Override
     public void clearState() {
-        currentEvents.clear();
+        synchronized (eventsGuard) {
+            currentEvents.clear();
+        }
     }
 
     @Override
     public void produceEvent(String eventFqn, byte[] data, String target) throws IOException {
         LOG.info("Producing event [eventClassFQN: {}, target: {}]"
                 , eventFqn, (target != null ? target : "broadcast")); //NOSONAR
-        currentEvents.add(new Event(eventSequence.getAndIncrement(), eventFqn, ByteBuffer.wrap(data), null, target));
+        synchronized (eventsGuard) {
+            currentEvents.add(new Event(state.getAndIncrementEventSeqNum(), eventFqn, ByteBuffer.wrap(data), null, target));
+        }
         transport.sync();
     }
 
@@ -165,6 +167,16 @@ public class DefaultEventManager implements EventManager {
                 }
             }
         }
+    }
+
+    @Override
+    public List<Event> getPendingEvents() {
+        List<Event> pendingEvents = new ArrayList<Event>();
+        synchronized (eventsGuard) {
+            pendingEvents.addAll(currentEvents);
+            currentEvents.clear();
+        }
+        return pendingEvents;
     }
 
 }

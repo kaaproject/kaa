@@ -24,12 +24,14 @@ import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification;
 
 /**
- * This processor is responsible for applying of the endpoint registration
- * updates that are received from the remote server.
+ * This processor that applies the endpoint registration
+ * updates received from the remote server.
  *
  * @author Taras Lemkin
  *
@@ -73,6 +75,8 @@ public interface EndpointRegistrationProcessor {
      */
     void onUpdate(List<EndpointAttachResponse> attachResponses,
             List<EndpointDetachResponse> detachResponses,
-            UserAttachResponse userResponse) throws IOException;
+            UserAttachResponse userResponse,
+            UserAttachNotification userAttachNotification,
+            UserDetachNotification userDetachNotification) throws IOException;
 
 }

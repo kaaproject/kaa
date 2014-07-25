@@ -44,7 +44,7 @@ public class HttpService implements ServiceChannel{
     private static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(HttpService.class);
 
-    private static final boolean redirectionSupported = true;
+    private static final boolean REDIRECTION_SUPPORTED = true;
 
     /** The netty. */
     private NettyHttpServer netty;
@@ -97,10 +97,10 @@ public class HttpService implements ServiceChannel{
     }
 
     /**
-     * @return the redirectionsupported
+     * @return the redirection supported
      */
     public static boolean isRedirectionsupported() {
-        return redirectionSupported;
+        return REDIRECTION_SUPPORTED;
     }
 
     /* (non-Javadoc)
@@ -109,13 +109,12 @@ public class HttpService implements ServiceChannel{
     @Override
     public SupportedChannel getZkSupportedChannel() throws ZkChannelException {
         
-        ZkSupportedChannel ZkChannel = new ZkSupportedChannel(
+        ZkSupportedChannel zkChannel = new ZkSupportedChannel(
                 ZkChannelsUtils.getZkChannelTypeFromChanneltype(getChannelType()), 
                 isRedirectionsupported(), 
                 getZkCommunicationParameters(), 
                 getChannelStatistics());
-        SupportedChannel supportedChannel = new SupportedChannel(ZkChannel );
-        return supportedChannel;
+        return new SupportedChannel(zkChannel);
     }
     
     /**
@@ -144,9 +143,8 @@ public class HttpService implements ServiceChannel{
      * @return
      */
     private BaseStatistics getBasicStatistics() {
-        BaseStatistics stats = new BaseStatistics(
+        return new BaseStatistics(
                 0, 0, 0, System.currentTimeMillis());
-        return stats;
     }
 
     /**
@@ -171,8 +169,7 @@ public class HttpService implements ServiceChannel{
      * @return
      */
     private ZkHttpLpComunicationParameters getZkHttpLpComunicationParameters() {
-        ZkHttpLpComunicationParameters params = new ZkHttpLpComunicationParameters(getIpCommunicationParameters());
-        return params;
+        return new ZkHttpLpComunicationParameters(getIpCommunicationParameters());
     }
 
     /**
@@ -186,7 +183,6 @@ public class HttpService implements ServiceChannel{
      * @return
      */
     private ZkHttpComunicationParameters getZkHttpComunicationParameters() {
-        ZkHttpComunicationParameters params = new ZkHttpComunicationParameters(getIpCommunicationParameters());
-        return params;
+        return new ZkHttpComunicationParameters(getIpCommunicationParameters());
     }
 }

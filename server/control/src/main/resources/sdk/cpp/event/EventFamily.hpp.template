@@ -1,0 +1,107 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef ${event_family_class_name}_HPP_
+#define ${event_family_class_name}_HPP_
+
+#include <set>
+#include <list>
+#include <string>
+#include <vector>
+#include <sstream>
+
+#include <boost/cstdint.hpp>
+
+#include "kaa/logging/Log.hpp"
+#include "kaa/gen/EndpointGen.hpp"
+#include "kaa/event/IEventFamily.hpp"
+#include "kaa/event/IEventManager.hpp"
+#include "kaa/common/AvroByteArrayConverter.hpp"
+
+#include "kaa/event/gen/${event_family_class_name}Gen.hpp"
+
+namespace kaa {
+
+class ${event_family_class_name} : public IEventFamily
+{
+public:
+    class ${event_family_class_name}Listener
+    {
+    public:
+
+        ${event_family_listener_methods}
+
+        virtual ~${event_family_class_name}Listener() {}
+    };
+
+public:
+    ${event_family_class_name}(IEventManager& manager)
+        : eventManager_(manager)
+    {
+        eventFQNs_ = ${add_supported_event_class_fqns};
+    }
+
+    virtual void onGenericEvent(const std::string& fqn
+                              , const std::vector<boost::uint8_t>& data
+                              , const std::string& source)
+    {
+        if (fqn.empty() || data.empty()) {
+            KAA_LOG_WARN("Failed to process incoming event: bad data");
+            return;
+        }
+
+        ${event_family_listeners_on_generic_event}
+
+    }
+
+    ${event_family_send_event_methods}
+
+    virtual const FQNList& getSupportedEventClassFQNs() {
+        return eventFQNs_;
+    }
+
+    void addEventFamilyListener(${event_family_class_name}Listener* listener)
+    {
+        if (listener != nullptr) {
+            listeners_.insert(listener);
+        }
+    }
+
+    void removeEventFamilyListener(${event_family_class_name}Listener* listener)
+    {
+        if (listener != nullptr) {
+            listeners_.erase(listener);
+        }
+    }
+
+private:
+    template<typename EventType>
+    void onEvent(const EventType& event, const std::string& source)
+    {
+        for (auto* listener : listeners_) {
+            listener->onEvent(event, source);
+        }
+    }
+
+private:
+    IEventManager&                           eventManager_;
+    std::list<std::string>                   eventFQNs_;
+    std::set<${event_family_class_name}Listener*>   listeners_;
+};
+
+}
+
+#endif /* ${event_family_class_name}_HPP_ */

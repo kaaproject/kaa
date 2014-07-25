@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 /**
- * Manager which is responsible for the notifications delivery.
+ * Manager for the notifications delivery.
  *
  * @author Yaroslav Zeygerman
  *
@@ -36,8 +36,9 @@ public interface NotificationManager {
      * If there is no specific listener for some mandatory topic,
      * notifications with that topic will be caught by this handler.
      *
-     * @param listener the listener which is going to receive notification.
+     * @param listener the listener to receive notification.
      * @see AbstractNotificationListener
+     *
      */
     void addMandatoryTopicsListener(NotificationListener listener);
 
@@ -46,14 +47,16 @@ public interface NotificationManager {
      *
      * @param listener the listener which is no longer needs updates.
      * @see AbstractNotificationListener
+     *
      */
     void removeMandatoryTopicsListener(NotificationListener listener);
 
     /**
      * Adds listener of topics' list updates.
      *
-     * @param listener the listener which is going to receive updates.
+     * @param listener the listener to receive updates.
      * @see NotificationTopicListListener
+     *
      */
     void addTopicListListener(NotificationTopicListListener listener);
 
@@ -62,18 +65,20 @@ public interface NotificationManager {
      *
      * @param listener listener the listener which is no longer needs updates.
      * @see NotificationTopicListListener
+     *
      */
     void removeTopicListListener(NotificationTopicListListener listener);
 
     /**
-     * Update (subscribe/unsubscribe) info about topic's subscriptions.
-     * May consist several subscribers for the same topic.
+     * Updates (subscribes/unsubscribes) info about topic's subscriptions.
+     * May consist of several subscribers for the same topic.
      *
      * @throws KaaException when topic isn't found or bad subscription
      * info was passed (empty id or null subscriber).
      *
      * @param subscribers collections of pairs topic id/subscriber info.
      * @see NotificationListenerInfo
+     *
      */
     void updateTopicSubscriptions(Map<String, List<NotificationListenerInfo>> subscribers)
                                                             throws UnavailableTopicException;
@@ -83,6 +88,7 @@ public interface NotificationManager {
      *
      * @return the list of topics' names.
      * @see Topic
+     *
      */
     List<Topic> getTopics();
 
@@ -91,14 +97,16 @@ public interface NotificationManager {
      *
      * @return the list of Subscription commands.
      * @see SubscriptionCommand
+     *
      */
     List<SubscriptionCommand> releaseSubscriptionCommands();
 
     /**
      * Sets the transport to Notification manager.
      *
-     * @param transport the transport object which is going to be set.
+     * @param transport the transport object to be set.
      * @see NotificationTransport
+     *
      */
     void setTransport(NotificationTransport transport);
 }

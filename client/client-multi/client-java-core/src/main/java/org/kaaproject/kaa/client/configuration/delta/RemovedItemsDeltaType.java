@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Field with this delta type should remove items by their handler ids ({@link DeltaType} implementation)
+ * Field with this delta type removes items by their handler ids ({@link DeltaType} implementation)
  *
  * @author Yaroslav Zeygerman
  *

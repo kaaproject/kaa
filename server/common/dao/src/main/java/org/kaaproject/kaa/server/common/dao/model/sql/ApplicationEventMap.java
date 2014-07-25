@@ -36,7 +36,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 
 @Entity
 @Table(name = APPLICATION_EVENT_MAP_TABLE_NAME)
-public class ApplicationEventMap extends GenericModel<ApplicationEventMapDto> {
+public final class ApplicationEventMap extends GenericModel<ApplicationEventMapDto> {
 
     private static final long serialVersionUID = 3766947955702551264L;
 

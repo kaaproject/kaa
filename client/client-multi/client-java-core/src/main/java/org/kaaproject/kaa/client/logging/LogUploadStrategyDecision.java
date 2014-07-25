@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.logging;
 
 /**
- * Describe possible decision of defined log upload strategy (@see LogUploadStrategy)
+ * Describes possible decisions of defined log upload strategy (@see LogUploadStrategy)
  */
 public enum LogUploadStrategyDecision {
     NOOP,

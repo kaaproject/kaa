@@ -32,7 +32,7 @@ public interface AttachedEndpointListChangedListener {
      * Callback on attached endpoints list changed
      *
      * @param attachedEndpoints
-     * 
+     *
      * @see EndpointAccessToken
      * @see EndpointKeyHash
      */

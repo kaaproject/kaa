@@ -21,31 +21,33 @@ import java.io.Serializable;
 /**
  * The Class HistoryKey is used to model key of cache entry for history of application changes.
  * Application change is a change of active profile or configuration for particular application endpoint group.
- * Contains appToken, old and new app seq numbers, profile and conf versions 
- * 
+ * Contains appToken, old and new app seq numbers, profile and conf versions
+ *
  * @author ashvayka
  */
 public final class HistoryKey implements Serializable{
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8365579177309710618L;
-    
-    
+
+
     /** The app token. */
     private final String appToken;
-    
+
     /** The old seq number. */
     private final int oldSeqNumber;
-    
+
     /** The new seq number. */
     private final int newSeqNumber;
-    
+
     /** The conf schema version. */
     private final int confSchemaVersion;
-    
+
     /** The profile schema version. */
     private final int profileSchemaVersion;
-    
+
+    private final HistorySubject historySubject;
+
     /**
      * Instantiates a new history key.
      *
@@ -55,9 +57,10 @@ public final class HistoryKey implements Serializable{
      * @param confSchemaVersion the conf schema version
      * @param profileSchemaVersion the profile schema version
      */
-    public HistoryKey(String appToken, int oldSeqNumber, int newSeqNumber, int confSchemaVersion, int profileSchemaVersion) {
+    public HistoryKey(String appToken, HistorySubject historySubject, int oldSeqNumber, int newSeqNumber, int confSchemaVersion, int profileSchemaVersion) {
         super();
         this.appToken = appToken;
+        this.historySubject = historySubject;
         this.oldSeqNumber = oldSeqNumber;
         this.newSeqNumber = newSeqNumber;
         this.confSchemaVersion = confSchemaVersion;
@@ -109,33 +112,28 @@ public final class HistoryKey implements Serializable{
         return profileSchemaVersion;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((appToken == null) ? 0 : appToken.hashCode());
         result = prime * result + confSchemaVersion;
+        result = prime * result + ((historySubject == null) ? 0 : historySubject.hashCode());
         result = prime * result + newSeqNumber;
         result = prime * result + oldSeqNumber;
         result = prime * result + profileSchemaVersion;
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj){
+        if (this == obj) {
             return true;
         }
-        if (obj == null){
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()){
+        if (getClass() != obj.getClass()) {
             return false;
         }
         HistoryKey other = (HistoryKey) obj;
@@ -149,6 +147,9 @@ public final class HistoryKey implements Serializable{
         if (confSchemaVersion != other.confSchemaVersion) {
             return false;
         }
+        if (historySubject != other.historySubject) {
+            return false;
+        }
         if (newSeqNumber != other.newSeqNumber) {
             return false;
         }
@@ -160,4 +161,6 @@ public final class HistoryKey implements Serializable{
         }
         return true;
     }
+
+
 }

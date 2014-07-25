@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.common.http.server;
 
-import java.util.Random;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -31,7 +30,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.util.Attribute;
-import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;

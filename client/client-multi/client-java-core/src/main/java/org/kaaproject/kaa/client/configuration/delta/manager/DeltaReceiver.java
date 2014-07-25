@@ -31,6 +31,7 @@ public interface DeltaReceiver {
      *
      * @param delta configuration delta
      * @see ConfigurationDelta
+     *
      */
     void loadDelta(ConfigurationDelta delta);
 

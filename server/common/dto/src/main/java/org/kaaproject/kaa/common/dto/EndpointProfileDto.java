@@ -33,10 +33,12 @@ public class EndpointProfileDto implements HasId, Serializable {
     private String endpointUserId;
     private String accessToken;
     private String profileSchemaId;
-    private List<EndpointGroupStateDto> endpointGroupState;
+    private List<EndpointGroupStateDto> cfGroupState;
+    private List<EndpointGroupStateDto> nfGroupState;
+    private int cfSequenceNumber;
+    private int nfSequenceNumber;
     private List<String> subscriptions;
     private byte[] ntHash;
-    private int sequenceNumber;
     private Boolean changedFlag;
     private String profile;
     private byte[] profileHash;
@@ -108,20 +110,20 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.profileSchemaId = profileSchemaId;
     }
 
-    public List<EndpointGroupStateDto> getEndpointGroups() {
-        return endpointGroupState;
+    public List<EndpointGroupStateDto> getCfGroupStates() {
+        return cfGroupState;
     }
 
-    public void setEndpointGroups(List<EndpointGroupStateDto> endpointGroupId) {
-        this.endpointGroupState = endpointGroupId;
+    public void setCfGroupStates(List<EndpointGroupStateDto> cfGroupState) {
+        this.cfGroupState = cfGroupState;
     }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
+    public List<EndpointGroupStateDto> getNfGroupStates() {
+        return nfGroupState;
     }
 
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
+    public void setNfGroupStates(List<EndpointGroupStateDto> nfGroupState) {
+        this.nfGroupState = nfGroupState;
     }
 
     public Boolean getChangedFlag() {
@@ -172,12 +174,20 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.configurationVersion = configurationVersion;
     }
 
-    public List<EndpointGroupStateDto> getEndpointGroupState() {
-        return endpointGroupState;
+    public int getCfSequenceNumber() {
+        return cfSequenceNumber;
     }
 
-    public void setEndpointGroupState(List<EndpointGroupStateDto> endpointGroupState) {
-        this.endpointGroupState = endpointGroupState;
+    public void setCfSequenceNumber(int cfSequenceNumber) {
+        this.cfSequenceNumber = cfSequenceNumber;
+    }
+
+    public int getNfSequenceNumber() {
+        return nfSequenceNumber;
+    }
+
+    public void setNfSequenceNumber(int nfSequenceNumber) {
+        this.nfSequenceNumber = nfSequenceNumber;
     }
 
     public List<String> getSubscriptions() {
@@ -264,7 +274,10 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (profileVersion != that.profileVersion) {
             return false;
         }
-        if (sequenceNumber != that.sequenceNumber) {
+        if (cfSequenceNumber != that.cfSequenceNumber) {
+            return false;
+        }
+        if (nfSequenceNumber != that.nfSequenceNumber) {
             return false;
         }
         if (systemNfVersion != that.systemNfVersion) {
@@ -282,7 +295,10 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (!Arrays.equals(configurationHash, that.configurationHash)) {
             return false;
         }
-        if (endpointGroupState != null ? !endpointGroupState.equals(that.endpointGroupState) : that.endpointGroupState != null) {
+        if (cfGroupState != null ? !cfGroupState.equals(that.cfGroupState) : that.cfGroupState != null) {
+            return false;
+        }
+        if (nfGroupState != null ? !nfGroupState.equals(that.nfGroupState) : that.nfGroupState != null) {
             return false;
         }
         if (!Arrays.equals(endpointKey, that.endpointKey)) {
@@ -316,10 +332,12 @@ public class EndpointProfileDto implements HasId, Serializable {
         result = 31 * result + (endpointKey != null ? Arrays.hashCode(endpointKey) : 0);
         result = 31 * result + (endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0);
         result = 31 * result + (profileSchemaId != null ? profileSchemaId.hashCode() : 0);
-        result = 31 * result + (endpointGroupState != null ? endpointGroupState.hashCode() : 0);
+        result = 31 * result + (cfGroupState != null ? cfGroupState.hashCode() : 0);
+        result = 31 * result + (nfGroupState != null ? nfGroupState.hashCode() : 0);
         result = 31 * result + (subscriptions != null ? subscriptions.hashCode() : 0);
         result = 31 * result + (ntHash != null ? Arrays.hashCode(ntHash) : 0);
-        result = 31 * result + sequenceNumber;
+        result = 31 * result + nfSequenceNumber;
+        result = 31 * result + cfSequenceNumber;
         result = 31 * result + (changedFlag != null ? changedFlag.hashCode() : 0);
         result = 31 * result + (profile != null ? profile.hashCode() : 0);
         result = 31 * result + (profileHash != null ? Arrays.hashCode(profileHash) : 0);
@@ -349,14 +367,18 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(accessToken);
         builder.append(", profileSchemaId=");
         builder.append(profileSchemaId);
-        builder.append(", endpointGroupState=");
-        builder.append(endpointGroupState);
+        builder.append(", cfGroupState=");
+        builder.append(cfGroupState);
+        builder.append(", nfGroupState=");
+        builder.append(nfGroupState);
         builder.append(", subscriptions=");
         builder.append(subscriptions);
         builder.append(", ntHash=");
         builder.append(Arrays.toString(ntHash));
-        builder.append(", sequenceNumber=");
-        builder.append(sequenceNumber);
+        builder.append(", cfSequenceNumber=");
+        builder.append(cfSequenceNumber);
+        builder.append(", nfSequenceNumber=");
+        builder.append(nfSequenceNumber);
         builder.append(", changedFlag=");
         builder.append(changedFlag);
         builder.append(", profile=");

@@ -127,7 +127,7 @@ public class ConcurrentCacheServiceTest {
     private static final ConfigurationIdKey TEST_CONF_ID_KEY = new ConfigurationIdKey(APP_ID, TEST_APP_SEQ_NUMBER, CONF1_SCHEMA_VERSION,
             ENDPOINT_GROUP1_ID);
 
-    private static final HistoryKey TEST_HISTORY_KEY = new HistoryKey(TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER, TEST_APP_SEQ_NUMBER_NEW,
+    private static final HistoryKey TEST_HISTORY_KEY = new HistoryKey(TEST_APP_TOKEN, HistorySubject.CONFIGURATION, TEST_APP_SEQ_NUMBER, TEST_APP_SEQ_NUMBER_NEW,
             CONF1_SCHEMA_VERSION, PROFILE1_SCHEMA_VERSION);
 
     private static final AppVersionKey TEST_GET_PROFILES_KEY = new AppVersionKey(TEST_APP_TOKEN, PROFILE1_SCHEMA_VERSION);

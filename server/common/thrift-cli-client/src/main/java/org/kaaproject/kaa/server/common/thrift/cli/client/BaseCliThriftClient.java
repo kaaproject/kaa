@@ -26,12 +26,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftException;
 import org.kaaproject.kaa.server.common.thrift.gen.cli.CommandResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class BaseCliThriftClient.<br>
  * Main class to start CLI Client session.
  */
 public class BaseCliThriftClient {
+    /** The Constant logger. */
+    private static final Logger LOG = LoggerFactory
+            .getLogger(BaseCliThriftClient.class);
 
     /** The prompt used in console. */
     public static String prompt = "kaa-console";
@@ -92,8 +97,6 @@ public class BaseCliThriftClient {
                 }
                 ret = -10002;
                 err.println("[Thrift Error]: " + errMsg);
-            } finally {
-
             }
 
         } else {
@@ -116,6 +119,7 @@ public class BaseCliThriftClient {
                         try {
                             port = Integer.valueOf(strPort);
                         } catch (Exception e) {
+                            LOG.error("Unexpected exception while parsing port. Can not parse String: {} to Integer", strPort);
                         }
                         if (port > 0) {
                             parsed = true;

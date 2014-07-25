@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.util;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
+import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdminConstants;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
 import org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages;
@@ -41,6 +44,8 @@ public class Utils {
     private static final DateTimeFormat simpleDateFormat = DateTimeFormat.getFormat("MM/dd/yyyy");
     private static final DateTimeFormat simpleDateTimeFormat = DateTimeFormat.getFormat("MM/dd/yyyy h:mm a");
 
+    private static final int INCORRECT_IDX = -1;
+
 
     public static String getErrorMessage(Throwable throwable) {
         if (throwable instanceof KaaAdminServiceException) {
@@ -56,12 +61,49 @@ public class Utils {
         }
     }
 
+    public static String customizeErrorMessage(Throwable throwable) {
+        String message = throwable.getMessage();
+        if(message != null) {
+            if(message.contains("[") && message.contains("]")) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("Incorrect schema: ");
+                builder.append(message.substring(0, message.indexOf("[")));
+                String[] array =  message.substring(message.indexOf("["), message.indexOf("]")).split(";");
+                if(array != null && array.length == 2) {
+                    builder.append(array[1]);
+                    message = builder.toString();
+                }
+            }
+        }
+        return message;
+    }
+
+
     public static String millisecondsToDateString(long millis) {
         return simpleDateFormat.format(new Date(millis));
     }
 
     public static String millisecondsToDateTimeString(long millis) {
         return simpleDateTimeFormat.format(new Date(millis));
+    }
+
+    public static boolean validateEmail(String mail) {
+        boolean result = false;
+        if (mail != null && mail.length() != 0) {
+            if (mail.indexOf('@') != INCORRECT_IDX && mail.indexOf('.') != INCORRECT_IDX) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public static SchemaDto getMaxSchemaVersions(List<SchemaDto> schemas) {
+        SchemaDto maxLogSchema = null;
+        if (schemas != null && !schemas.isEmpty()) {
+            Collections.sort(schemas, Collections.reverseOrder());
+            maxLogSchema = schemas.get(0);
+        }
+        return maxLogSchema;
     }
 
 }

@@ -25,7 +25,8 @@ public class TenantUserDto extends UserDto {
 
     private String tenantName;
 
-    public TenantUserDto() {}
+    public TenantUserDto() {
+    }
 
     public TenantUserDto(String externalUid,
             String username,
@@ -59,18 +60,23 @@ public class TenantUserDto extends UserDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TenantUserDto other = (TenantUserDto) obj;
         if (getTenantId() == null) {
-            if (other.getTenantId() != null)
+            if (other.getTenantId() != null) {
                 return false;
-        } else if (!getTenantId().equals(other.getTenantId()))
+            }
+        } else if (!getTenantId().equals(other.getTenantId())) {
             return false;
+        }
         return true;
     }
 

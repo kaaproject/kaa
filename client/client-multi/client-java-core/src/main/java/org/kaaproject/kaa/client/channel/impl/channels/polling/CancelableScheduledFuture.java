@@ -43,8 +43,7 @@ public class CancelableScheduledFuture<V> implements RunnableScheduledFuture<V> 
         if (mayInterruptIfRunning) {
             cancelableRunnable.cancel();
         }
-        boolean isCanceled = this.futureTask.cancel(mayInterruptIfRunning);
-        return isCanceled;
+        return this.futureTask.cancel(mayInterruptIfRunning);
     }
 
     @Override

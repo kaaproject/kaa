@@ -99,6 +99,7 @@ public class ControlApiCliThriftClient {
                         try {
                             port = Integer.valueOf(strPort);
                         } catch (Exception e) {
+                            LOG.error("Unexpected exception while parsing port. Can not parse String: {} to Integer", strPort);
                         }
                         if (port > 0) {
                             parsed = true;

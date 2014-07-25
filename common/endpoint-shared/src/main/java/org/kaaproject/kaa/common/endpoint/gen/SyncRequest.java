@@ -7,8 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"syncRequestMetaData\",\"type\":[{\"type\":\"record\",\"name\":\"SyncRequestMetaData\",\"fields\":[{\"name\":\"applicationToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointPublicKeyHash\",\"type\":\"bytes\"},{\"name\":\"profileHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"timeout\",\"type\":\"long\"}]},\"null\"]},{\"name\":\"profileSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"ProfileSyncRequest\",\"fields\":[{\"name\":\"endpointPublicKey\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"profileBody\",\"type\":\"bytes\"},{\"name\":\"versionInfo\",\"type\":{\"type\":\"record\",\"name\":\"EndpointVersionInfo\",\"fields\":[{\"name\":\"configVersion\",\"type\":\"int\"},{\"name\":\"profileVersion\",\"type\":\"int\",\"default\":\"1\"},{\"name\":\"systemNfVersion\",\"type\":\"int\",\"default\":\"0\"},{\"name\":\"userNfVersion\",\"type\":\"int\",\"default\":\"0\"},{\"name\":\"eventFamilyVersions\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EventClassFamilyVersionInfo\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"version\",\"type\":\"int\"}]}},\"null\"]},{\"name\":\"logSchemaVersion\",\"type\":\"int\",\"default\":\"0\"}]}},{\"name\":\"endpointAccessToken\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]},\"null\"]},{\"name\":\"configurationSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"ConfigurationSyncRequest\",\"fields\":[{\"name\":\"appStateSeqNumber\",\"type\":\"int\"},{\"name\":\"configurationHash\",\"type\":[\"bytes\",\"null\"]}]},\"null\"]},{\"name\":\"notificationSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"NotificationSyncRequest\",\"fields\":[{\"name\":\"appStateSeqNumber\",\"type\":\"int\"},{\"name\":\"topicListHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"topicStates\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"TopicState\",\"fields\":[{\"name\":\"topicId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"seqNumber\",\"type\":\"int\"}]}},\"null\"]},{\"name\":\"acceptedUnicastNotifications\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"null\"]},{\"name\":\"subscriptionCommands\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"SubscriptionCommand\",\"fields\":[{\"name\":\"topicId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"command\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionCommandType\",\"symbols\":[\"ADD\",\"REMOVE\"]}}]}},\"null\"]}]},\"null\"]},{\"name\":\"userSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"UserSyncRequest\",\"fields\":[{\"name\":\"userAttachRequest\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachRequest\",\"fields\":[{\"name\":\"userExternalId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"userAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]},\"null\"]},{\"name\":\"endpointAttachRequests\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointAttachRequest\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},\"null\"]},{\"name\":\"endpointDetachRequests\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointDetachRequest\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointKeyHash\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},\"null\"]}]},\"null\"]},{\"name\":\"eventSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"EventSyncRequest\",\"fields\":[{\"name\":\"eventListenersRequests\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EventListenersRequest\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventClassFQNs\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}}]}},\"null\"]},{\"name\":\"events\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Event\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"},{\"name\":\"eventClassFQN\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventData\",\"type\":\"bytes\"},{\"name\":\"source\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"target\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]}},\"null\"]}]},\"null\"]},{\"name\":\"logSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"LogSyncRequest\",\"fields\":[{\"name\":\"requestId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"logEntries\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"LogEntry\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}},\"null\"]}]},\"null\"]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":[\"int\",\"null\"]},{\"name\":\"syncRequestMetaData\",\"type\":[{\"type\":\"record\",\"name\":\"SyncRequestMetaData\",\"fields\":[{\"name\":\"applicationToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointPublicKeyHash\",\"type\":\"bytes\"},{\"name\":\"profileHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"timeout\",\"type\":\"long\"}]},\"null\"]},{\"name\":\"profileSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"ProfileSyncRequest\",\"fields\":[{\"name\":\"endpointPublicKey\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"profileBody\",\"type\":\"bytes\"},{\"name\":\"versionInfo\",\"type\":{\"type\":\"record\",\"name\":\"EndpointVersionInfo\",\"fields\":[{\"name\":\"configVersion\",\"type\":\"int\"},{\"name\":\"profileVersion\",\"type\":\"int\",\"default\":\"1\"},{\"name\":\"systemNfVersion\",\"type\":\"int\",\"default\":\"0\"},{\"name\":\"userNfVersion\",\"type\":\"int\",\"default\":\"0\"},{\"name\":\"eventFamilyVersions\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EventClassFamilyVersionInfo\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"version\",\"type\":\"int\"}]}},\"null\"]},{\"name\":\"logSchemaVersion\",\"type\":\"int\",\"default\":\"0\"}]}},{\"name\":\"endpointAccessToken\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]},\"null\"]},{\"name\":\"configurationSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"ConfigurationSyncRequest\",\"fields\":[{\"name\":\"appStateSeqNumber\",\"type\":\"int\"},{\"name\":\"configurationHash\",\"type\":[\"bytes\",\"null\"]}]},\"null\"]},{\"name\":\"notificationSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"NotificationSyncRequest\",\"fields\":[{\"name\":\"appStateSeqNumber\",\"type\":\"int\"},{\"name\":\"topicListHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"topicStates\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"TopicState\",\"fields\":[{\"name\":\"topicId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"seqNumber\",\"type\":\"int\"}]}},\"null\"]},{\"name\":\"acceptedUnicastNotifications\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"null\"]},{\"name\":\"subscriptionCommands\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"SubscriptionCommand\",\"fields\":[{\"name\":\"topicId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"command\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionCommandType\",\"symbols\":[\"ADD\",\"REMOVE\"]}}]}},\"null\"]}]},\"null\"]},{\"name\":\"userSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"UserSyncRequest\",\"fields\":[{\"name\":\"userAttachRequest\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachRequest\",\"fields\":[{\"name\":\"userExternalId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"userAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]},\"null\"]},{\"name\":\"endpointAttachRequests\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointAttachRequest\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},\"null\"]},{\"name\":\"endpointDetachRequests\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointDetachRequest\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointKeyHash\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},\"null\"]}]},\"null\"]},{\"name\":\"eventSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"EventSyncRequest\",\"fields\":[{\"name\":\"eventListenersRequests\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EventListenersRequest\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventClassFQNs\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}}]}},\"null\"]},{\"name\":\"events\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Event\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"},{\"name\":\"eventClassFQN\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventData\",\"type\":\"bytes\"},{\"name\":\"source\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"target\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]}},\"null\"]}]},\"null\"]},{\"name\":\"logSyncRequest\",\"type\":[{\"type\":\"record\",\"name\":\"LogSyncRequest\",\"fields\":[{\"name\":\"requestId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"logEntries\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"LogEntry\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}},\"null\"]}]},\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
+   private java.lang.Integer requestId;
    private org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData syncRequestMetaData;
    private org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest profileSyncRequest;
    private org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest configurationSyncRequest;
@@ -27,7 +28,8 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * All-args constructor.
    */
-  public SyncRequest(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData syncRequestMetaData, org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest profileSyncRequest, org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest configurationSyncRequest, org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest notificationSyncRequest, org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest userSyncRequest, org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest eventSyncRequest, org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest logSyncRequest) {
+  public SyncRequest(java.lang.Integer requestId, org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData syncRequestMetaData, org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest profileSyncRequest, org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest configurationSyncRequest, org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest notificationSyncRequest, org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest userSyncRequest, org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest eventSyncRequest, org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest logSyncRequest) {
+    this.requestId = requestId;
     this.syncRequestMetaData = syncRequestMetaData;
     this.profileSyncRequest = profileSyncRequest;
     this.configurationSyncRequest = configurationSyncRequest;
@@ -41,13 +43,14 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return syncRequestMetaData;
-    case 1: return profileSyncRequest;
-    case 2: return configurationSyncRequest;
-    case 3: return notificationSyncRequest;
-    case 4: return userSyncRequest;
-    case 5: return eventSyncRequest;
-    case 6: return logSyncRequest;
+    case 0: return requestId;
+    case 1: return syncRequestMetaData;
+    case 2: return profileSyncRequest;
+    case 3: return configurationSyncRequest;
+    case 4: return notificationSyncRequest;
+    case 5: return userSyncRequest;
+    case 6: return eventSyncRequest;
+    case 7: return logSyncRequest;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -55,15 +58,31 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: syncRequestMetaData = (org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData)value$; break;
-    case 1: profileSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest)value$; break;
-    case 2: configurationSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest)value$; break;
-    case 3: notificationSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest)value$; break;
-    case 4: userSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest)value$; break;
-    case 5: eventSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest)value$; break;
-    case 6: logSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest)value$; break;
+    case 0: requestId = (java.lang.Integer)value$; break;
+    case 1: syncRequestMetaData = (org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData)value$; break;
+    case 2: profileSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest)value$; break;
+    case 3: configurationSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest)value$; break;
+    case 4: notificationSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest)value$; break;
+    case 5: userSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest)value$; break;
+    case 6: eventSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest)value$; break;
+    case 7: logSyncRequest = (org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
+  }
+
+  /**
+   * Gets the value of the 'requestId' field.
+   */
+  public java.lang.Integer getRequestId() {
+    return requestId;
+  }
+
+  /**
+   * Sets the value of the 'requestId' field.
+   * @param value the value to set.
+   */
+  public void setRequestId(java.lang.Integer value) {
+    this.requestId = value;
   }
 
   /**
@@ -192,6 +211,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<SyncRequest>
     implements org.apache.avro.data.RecordBuilder<SyncRequest> {
 
+    private java.lang.Integer requestId;
     private org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData syncRequestMetaData;
     private org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest profileSyncRequest;
     private org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest configurationSyncRequest;
@@ -208,67 +228,100 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.syncRequestMetaData)) {
-        this.syncRequestMetaData = data().deepCopy(fields()[0].schema(), other.syncRequestMetaData);
+      if (isValidValue(fields()[0], other.requestId)) {
+        this.requestId = data().deepCopy(fields()[0].schema(), other.requestId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.profileSyncRequest)) {
-        this.profileSyncRequest = data().deepCopy(fields()[1].schema(), other.profileSyncRequest);
+      if (isValidValue(fields()[1], other.syncRequestMetaData)) {
+        this.syncRequestMetaData = data().deepCopy(fields()[1].schema(), other.syncRequestMetaData);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.configurationSyncRequest)) {
-        this.configurationSyncRequest = data().deepCopy(fields()[2].schema(), other.configurationSyncRequest);
+      if (isValidValue(fields()[2], other.profileSyncRequest)) {
+        this.profileSyncRequest = data().deepCopy(fields()[2].schema(), other.profileSyncRequest);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.notificationSyncRequest)) {
-        this.notificationSyncRequest = data().deepCopy(fields()[3].schema(), other.notificationSyncRequest);
+      if (isValidValue(fields()[3], other.configurationSyncRequest)) {
+        this.configurationSyncRequest = data().deepCopy(fields()[3].schema(), other.configurationSyncRequest);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.userSyncRequest)) {
-        this.userSyncRequest = data().deepCopy(fields()[4].schema(), other.userSyncRequest);
+      if (isValidValue(fields()[4], other.notificationSyncRequest)) {
+        this.notificationSyncRequest = data().deepCopy(fields()[4].schema(), other.notificationSyncRequest);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.eventSyncRequest)) {
-        this.eventSyncRequest = data().deepCopy(fields()[5].schema(), other.eventSyncRequest);
+      if (isValidValue(fields()[5], other.userSyncRequest)) {
+        this.userSyncRequest = data().deepCopy(fields()[5].schema(), other.userSyncRequest);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.logSyncRequest)) {
-        this.logSyncRequest = data().deepCopy(fields()[6].schema(), other.logSyncRequest);
+      if (isValidValue(fields()[6], other.eventSyncRequest)) {
+        this.eventSyncRequest = data().deepCopy(fields()[6].schema(), other.eventSyncRequest);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.logSyncRequest)) {
+        this.logSyncRequest = data().deepCopy(fields()[7].schema(), other.logSyncRequest);
+        fieldSetFlags()[7] = true;
       }
     }
     
     /** Creates a Builder by copying an existing SyncRequest instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncRequest other) {
             super(org.kaaproject.kaa.common.endpoint.gen.SyncRequest.SCHEMA$);
-      if (isValidValue(fields()[0], other.syncRequestMetaData)) {
-        this.syncRequestMetaData = data().deepCopy(fields()[0].schema(), other.syncRequestMetaData);
+      if (isValidValue(fields()[0], other.requestId)) {
+        this.requestId = data().deepCopy(fields()[0].schema(), other.requestId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.profileSyncRequest)) {
-        this.profileSyncRequest = data().deepCopy(fields()[1].schema(), other.profileSyncRequest);
+      if (isValidValue(fields()[1], other.syncRequestMetaData)) {
+        this.syncRequestMetaData = data().deepCopy(fields()[1].schema(), other.syncRequestMetaData);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.configurationSyncRequest)) {
-        this.configurationSyncRequest = data().deepCopy(fields()[2].schema(), other.configurationSyncRequest);
+      if (isValidValue(fields()[2], other.profileSyncRequest)) {
+        this.profileSyncRequest = data().deepCopy(fields()[2].schema(), other.profileSyncRequest);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.notificationSyncRequest)) {
-        this.notificationSyncRequest = data().deepCopy(fields()[3].schema(), other.notificationSyncRequest);
+      if (isValidValue(fields()[3], other.configurationSyncRequest)) {
+        this.configurationSyncRequest = data().deepCopy(fields()[3].schema(), other.configurationSyncRequest);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.userSyncRequest)) {
-        this.userSyncRequest = data().deepCopy(fields()[4].schema(), other.userSyncRequest);
+      if (isValidValue(fields()[4], other.notificationSyncRequest)) {
+        this.notificationSyncRequest = data().deepCopy(fields()[4].schema(), other.notificationSyncRequest);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.eventSyncRequest)) {
-        this.eventSyncRequest = data().deepCopy(fields()[5].schema(), other.eventSyncRequest);
+      if (isValidValue(fields()[5], other.userSyncRequest)) {
+        this.userSyncRequest = data().deepCopy(fields()[5].schema(), other.userSyncRequest);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.logSyncRequest)) {
-        this.logSyncRequest = data().deepCopy(fields()[6].schema(), other.logSyncRequest);
+      if (isValidValue(fields()[6], other.eventSyncRequest)) {
+        this.eventSyncRequest = data().deepCopy(fields()[6].schema(), other.eventSyncRequest);
         fieldSetFlags()[6] = true;
       }
+      if (isValidValue(fields()[7], other.logSyncRequest)) {
+        this.logSyncRequest = data().deepCopy(fields()[7].schema(), other.logSyncRequest);
+        fieldSetFlags()[7] = true;
+      }
+    }
+
+    /** Gets the value of the 'requestId' field */
+    public java.lang.Integer getRequestId() {
+      return requestId;
+    }
+    
+    /** Sets the value of the 'requestId' field */
+    public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setRequestId(java.lang.Integer value) {
+      validate(fields()[0], value);
+      this.requestId = value;
+      fieldSetFlags()[0] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'requestId' field has been set */
+    public boolean hasRequestId() {
+      return fieldSetFlags()[0];
+    }
+    
+    /** Clears the value of the 'requestId' field */
+    public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearRequestId() {
+      requestId = null;
+      fieldSetFlags()[0] = false;
+      return this;
     }
 
     /** Gets the value of the 'syncRequestMetaData' field */
@@ -278,21 +331,21 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'syncRequestMetaData' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setSyncRequestMetaData(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData value) {
-      validate(fields()[0], value);
+      validate(fields()[1], value);
       this.syncRequestMetaData = value;
-      fieldSetFlags()[0] = true;
+      fieldSetFlags()[1] = true;
       return this; 
     }
     
     /** Checks whether the 'syncRequestMetaData' field has been set */
     public boolean hasSyncRequestMetaData() {
-      return fieldSetFlags()[0];
+      return fieldSetFlags()[1];
     }
     
     /** Clears the value of the 'syncRequestMetaData' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearSyncRequestMetaData() {
       syncRequestMetaData = null;
-      fieldSetFlags()[0] = false;
+      fieldSetFlags()[1] = false;
       return this;
     }
 
@@ -303,21 +356,21 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'profileSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setProfileSyncRequest(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest value) {
-      validate(fields()[1], value);
+      validate(fields()[2], value);
       this.profileSyncRequest = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'profileSyncRequest' field has been set */
     public boolean hasProfileSyncRequest() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'profileSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearProfileSyncRequest() {
       profileSyncRequest = null;
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -328,21 +381,21 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'configurationSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setConfigurationSyncRequest(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest value) {
-      validate(fields()[2], value);
+      validate(fields()[3], value);
       this.configurationSyncRequest = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[3] = true;
       return this; 
     }
     
     /** Checks whether the 'configurationSyncRequest' field has been set */
     public boolean hasConfigurationSyncRequest() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[3];
     }
     
     /** Clears the value of the 'configurationSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearConfigurationSyncRequest() {
       configurationSyncRequest = null;
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[3] = false;
       return this;
     }
 
@@ -353,21 +406,21 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'notificationSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setNotificationSyncRequest(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest value) {
-      validate(fields()[3], value);
+      validate(fields()[4], value);
       this.notificationSyncRequest = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[4] = true;
       return this; 
     }
     
     /** Checks whether the 'notificationSyncRequest' field has been set */
     public boolean hasNotificationSyncRequest() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[4];
     }
     
     /** Clears the value of the 'notificationSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearNotificationSyncRequest() {
       notificationSyncRequest = null;
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[4] = false;
       return this;
     }
 
@@ -378,21 +431,21 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'userSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setUserSyncRequest(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest value) {
-      validate(fields()[4], value);
+      validate(fields()[5], value);
       this.userSyncRequest = value;
-      fieldSetFlags()[4] = true;
+      fieldSetFlags()[5] = true;
       return this; 
     }
     
     /** Checks whether the 'userSyncRequest' field has been set */
     public boolean hasUserSyncRequest() {
-      return fieldSetFlags()[4];
+      return fieldSetFlags()[5];
     }
     
     /** Clears the value of the 'userSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearUserSyncRequest() {
       userSyncRequest = null;
-      fieldSetFlags()[4] = false;
+      fieldSetFlags()[5] = false;
       return this;
     }
 
@@ -403,21 +456,21 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'eventSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setEventSyncRequest(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest value) {
-      validate(fields()[5], value);
+      validate(fields()[6], value);
       this.eventSyncRequest = value;
-      fieldSetFlags()[5] = true;
+      fieldSetFlags()[6] = true;
       return this; 
     }
     
     /** Checks whether the 'eventSyncRequest' field has been set */
     public boolean hasEventSyncRequest() {
-      return fieldSetFlags()[5];
+      return fieldSetFlags()[6];
     }
     
     /** Clears the value of the 'eventSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearEventSyncRequest() {
       eventSyncRequest = null;
-      fieldSetFlags()[5] = false;
+      fieldSetFlags()[6] = false;
       return this;
     }
 
@@ -428,21 +481,21 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'logSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setLogSyncRequest(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest value) {
-      validate(fields()[6], value);
+      validate(fields()[7], value);
       this.logSyncRequest = value;
-      fieldSetFlags()[6] = true;
+      fieldSetFlags()[7] = true;
       return this; 
     }
     
     /** Checks whether the 'logSyncRequest' field has been set */
     public boolean hasLogSyncRequest() {
-      return fieldSetFlags()[6];
+      return fieldSetFlags()[7];
     }
     
     /** Clears the value of the 'logSyncRequest' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearLogSyncRequest() {
       logSyncRequest = null;
-      fieldSetFlags()[6] = false;
+      fieldSetFlags()[7] = false;
       return this;
     }
 
@@ -450,13 +503,14 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     public SyncRequest build() {
       try {
         SyncRequest record = new SyncRequest();
-        record.syncRequestMetaData = fieldSetFlags()[0] ? this.syncRequestMetaData : (org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData) defaultValue(fields()[0]);
-        record.profileSyncRequest = fieldSetFlags()[1] ? this.profileSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest) defaultValue(fields()[1]);
-        record.configurationSyncRequest = fieldSetFlags()[2] ? this.configurationSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest) defaultValue(fields()[2]);
-        record.notificationSyncRequest = fieldSetFlags()[3] ? this.notificationSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest) defaultValue(fields()[3]);
-        record.userSyncRequest = fieldSetFlags()[4] ? this.userSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest) defaultValue(fields()[4]);
-        record.eventSyncRequest = fieldSetFlags()[5] ? this.eventSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest) defaultValue(fields()[5]);
-        record.logSyncRequest = fieldSetFlags()[6] ? this.logSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest) defaultValue(fields()[6]);
+        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.Integer) defaultValue(fields()[0]);
+        record.syncRequestMetaData = fieldSetFlags()[1] ? this.syncRequestMetaData : (org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData) defaultValue(fields()[1]);
+        record.profileSyncRequest = fieldSetFlags()[2] ? this.profileSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest) defaultValue(fields()[2]);
+        record.configurationSyncRequest = fieldSetFlags()[3] ? this.configurationSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest) defaultValue(fields()[3]);
+        record.notificationSyncRequest = fieldSetFlags()[4] ? this.notificationSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest) defaultValue(fields()[4]);
+        record.userSyncRequest = fieldSetFlags()[5] ? this.userSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest) defaultValue(fields()[5]);
+        record.eventSyncRequest = fieldSetFlags()[6] ? this.eventSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest) defaultValue(fields()[6]);
+        record.logSyncRequest = fieldSetFlags()[7] ? this.logSyncRequest : (org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest) defaultValue(fields()[7]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

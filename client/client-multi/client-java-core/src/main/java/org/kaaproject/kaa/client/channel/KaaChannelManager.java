@@ -22,7 +22,8 @@ import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 /**
- * Channel manager is responsible for channels' control.
+ * Channel manager establishes/removes channels' links between client and
+ * server.
  *
  * @author Yaroslav Zeygerman
  *
@@ -30,48 +31,55 @@ import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 public interface KaaChannelManager {
 
     /**
-     * Adds the channel to the manager.
+     * Updates the manager by adding the channel.
      *
-     * @param channel channel which is going to be added.
+     * @param channel
+     *            channel to be added.
      * @see KaaDataChannel
+     *
      */
     void addChannel(KaaDataChannel channel);
 
     /**
-     * Removes the channel from the manager.
+     * Updates the manager by removing the channel from the manager.
      *
-     * @param channel channel which is going to be removed.
+     * @param channel channel to be removed.
      * @see KaaDataChannel
+     *
      */
     void removeChannel(KaaDataChannel channel);
 
     /**
-     * Retrieves the current channels' list.
+     * Retrieves the list of current channels.
      *
      * @return the channels' list.
      * @see KaaDataChannel
+     *
      */
     List<KaaDataChannel> getChannels();
 
     /**
-     * Retrieves channels by the specific type (HTTP, HTTP_LP, BOOTSTRAP and etc.).
+     * Retrieves the list of channels by the specific type (HTTP, HTTP_LP,
+     * BOOTSTRAP and etc.).
      *
      * @param type type of the channel.
      * @return the channels' list.
      *
      * @see ChannelType
      * @see KaaDataChannel
+     *
      */
     List<KaaDataChannel> getChannelsByType(ChannelType type);
 
     /**
-     * Retrieves channels by the specific transport type.
+     * Retrieves the list of channels by the specific transport type.
      *
      * @param type the transport's type.
      * @return the channels' list.
      *
      * @see TransportType
      * @see KaaDataChannel
+     *
      */
     KaaDataChannel getChannelByTransportType(TransportType type);
 
@@ -82,28 +90,30 @@ public interface KaaChannelManager {
      * @return channel object.
      *
      * @see KaaDataChannel
+     *
      */
     KaaDataChannel getChannel(String id);
 
     /**
-     * Reports to Channel Manager about the broken server.
+     * Reports to Channel Manager in case link with server was not established.
      *
-     * @param server the broken server parameters.
+     * @param server the parameters of server that was not connected.
      * @see ServerInfo
+     *
      */
     void onServerFailed(ServerInfo server);
 
     /**
      * Reports to Channel Manager about the new server.
      *
-     * @param newServer the new server parameters.
+     * @param newServer the parameters of the new server.
      * @see ServerInfo
+     *
      */
     void onServerUpdated(ServerInfo newServer);
 
     /**
-     * Clears the channels list.
+     * Clears the list of channels.
      */
     void clearChannelList();
-
 }

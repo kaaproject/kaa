@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2014 CyberVision, Inc.
- 
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
+
        http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,10 @@
   limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
-	xmlns:util="http://www.springframework.org/schema/util" xmlns:cache="http://www.springframework.org/schema/cache"
-	xsi:schemaLocation="
+                                          xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+                                          xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+                                          xmlns:util="http://www.springframework.org/schema/util" xmlns:cache="http://www.springframework.org/schema/cache"
+                                          xsi:schemaLocation="
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
@@ -28,23 +28,23 @@
             http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
             http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
-	<cache:annotation-driven/>
-	
-	<context:component-scan base-package="org.kaaproject.kaa.server.operations" />
+                                          <cache:annotation-driven/>
 
-	<import resource="classpath:common-dao-context.xml" />
+                                          <context:component-scan base-package="org.kaaproject.kaa.server.operations" />
 
-	<util:properties id="properties" location="classpath:/operations-server.properties" />
-	<bean id="operationsService" class="org.kaaproject.kaa.server.operations.service.DefaultOperationsService" />
-	<bean id="operationsBootstrapService" class="org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService" />
-	<bean id="deltaService" class="org.kaaproject.kaa.server.operations.service.delta.DefaultDeltaService" />
-	<bean id="cacheService" class="org.kaaproject.kaa.server.operations.service.cache.concurrent.ConcurrentCacheService" />
-	<bean id="profileService" class="org.kaaproject.kaa.server.operations.service.profile.DefaultProfileService" />
-	<bean id="deltaCalculatorFactory" class="org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory" />
-	<bean id="keyStoreService" class="org.kaaproject.kaa.server.operations.service.security.FileKeyStoreService" />
-	<bean id="endpointUserService" class="org.kaaproject.kaa.server.operations.service.user.DefaultEndpointUserService" />
+                                          <import resource="classpath:common-dao-context.xml" />
+
+                                          <util:properties id="properties" location="classpath:/operations-server.properties" />
+                                          <bean id="operationsService" class="org.kaaproject.kaa.server.operations.service.DefaultOperationsService" />
+                                          <bean id="operationsBootstrapService" class="org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService" />
+                                          <bean id="deltaService" class="org.kaaproject.kaa.server.operations.service.delta.DefaultDeltaService" />
+                                          <bean id="cacheService" class="org.kaaproject.kaa.server.operations.service.cache.concurrent.ConcurrentCacheService" />
+                                          <bean id="profileService" class="org.kaaproject.kaa.server.operations.service.profile.DefaultProfileService" />
+                                          <bean id="deltaCalculatorFactory" class="org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory" />
+                                          <bean id="keyStoreService" class="org.kaaproject.kaa.server.operations.service.security.FileKeyStoreService" />
+                                          <bean id="endpointUserService" class="org.kaaproject.kaa.server.operations.service.user.DefaultEndpointUserService" />
     <bean id="logAppenderService" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderService" />
-    
+
 
     <bean id="operationsServerConfig" class="org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig">
         <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
@@ -90,25 +90,42 @@
         </property>
     </bean>
 
-	<bean id="configurationOverrideFactory" class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory" />
+                                          <bean id="configurationOverrideFactory" class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory" />
 
-	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
-		<property name="locateExistingServerIfPossible" value="true" />
-	</bean>
+                                          <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+                                                                                    <property name="locateExistingServerIfPossible" value="true" />
+                                          </bean>
 
-	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="ehcache.xml" />
+                                          <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="ehcache.xml" />
 
-	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache" />
+                                          <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache" />
 
-	<bean id="ehcacheManager" factory-bean="cacheManager" factory-method="getCacheManager" />
+                                          <bean id="ehcacheManager" factory-bean="cacheManager" factory-method="getCacheManager" />
 
-	<bean id="managementService" class="net.sf.ehcache.management.ManagementService" init-method="init" destroy-method="dispose">
-		<constructor-arg ref="ehcacheManager" />
-		<constructor-arg ref="mbeanServer" />
-		<constructor-arg index="2" value="true" />
-		<constructor-arg index="3" value="true" />
-		<constructor-arg index="4" value="true" />
-		<constructor-arg index="5" value="true" />
-	</bean>
+                                          <bean id="managementService" class="net.sf.ehcache.management.ManagementService" init-method="init" destroy-method="dispose">
+                                                                                    <constructor-arg ref="ehcacheManager" />
+                                                                                    <constructor-arg ref="mbeanServer" />
+                                                                                    <constructor-arg index="2" value="true" />
+                                                                                    <constructor-arg index="3" value="true" />
+                                                                                    <constructor-arg index="4" value="true" />
+                                                                                    <constructor-arg index="5" value="true" />
+                                          </bean>
+
+                                          <bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender">
+        <constructor-arg name="name" value="mongoDBLogAppender"></constructor-arg>
+    </bean>
+
+    <bean id="fileSystemLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogAppender">
+        <constructor-arg name="name" value="fileSystemLogAppender"></constructor-arg>
+    </bean>
+
+                                          <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderResolver">
+        <constructor-arg name="appenderMap" ref="appenderMap"></constructor-arg>
+    </bean>
+
+    <util:map id="appenderMap">
+        <entry key="mongoDBLogAppender" value-ref="mongoDBLogAppender" />
+        <entry key="fileSystemLogAppender" value-ref="fileSystemLogAppender" />
+    </util:map>
 
 </beans>

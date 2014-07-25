@@ -62,5 +62,7 @@ public interface KaaAdminMessages extends Messages {
     @DefaultMessage("Page {0} of {1}")
     String pagerText(int current, int total);
 
+    @DefaultMessage("Incorrect configuration. Validate your configuration regarding schema version.")
+    String incorrectConfiguration();
 
 }

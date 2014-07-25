@@ -168,7 +168,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
                 break;
             }
         }
-        if (serviceChannels.size() > 0) {
+        if (!serviceChannels.isEmpty()) {
 
             if (getConfig().isZkEnabled()) {
                 startZK();
@@ -242,8 +242,6 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
         } catch (TTransportException e) {
             LOG.error("TTransportException", e);
-        } finally {
-
         }
     }
 

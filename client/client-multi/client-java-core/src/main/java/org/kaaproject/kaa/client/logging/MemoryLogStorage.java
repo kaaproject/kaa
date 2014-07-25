@@ -32,7 +32,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
 
     private class Bucket {
         private final String id;
-        private final LinkedList<LogRecord> records;
+        private final LinkedList<LogRecord> records; //NOSONAR
 
         private final long maxBucketSize;
         private long consumedSize;
@@ -83,7 +83,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         public long getConsumedSize() {
             return consumedSize;
         }
-    };
+    }
 
     private long maxBucketSize;
     private Bucket currentBucket;

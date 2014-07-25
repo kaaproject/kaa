@@ -19,15 +19,23 @@ package org.kaaproject.kaa.client.schema.storage;
 import java.io.IOException;
 
 /**
- * Manager which is responsible for saving and loading of schema
+ * Manager that saves and loads the schema<br>
+ * <br>
+ * Provide {@link SchemaStorage} implementation instance to store updates for
+ * configuration schema.
+ * Once {@link SchemaPersistenceManager#setSchemaStorage(SchemaStorage)}
+ * is called {@link SchemaStorage#loadSchema()} will be invoked to
+ * load persisted configuration schema.<br>
  *
  * @author Yaroslav Zeygerman
- *
+ * @see SchemaStorage
  */
 public interface SchemaPersistenceManager {
 
     /**
-     * @param storage object which will save and load schema data
+     * Provide storage object which is able to persist configuration schema.
+     *
+     * @param storage object that saves and loads schema data
      * @see SchemaStorage
      */
     void setSchemaStorage(SchemaStorage storage) throws IOException;

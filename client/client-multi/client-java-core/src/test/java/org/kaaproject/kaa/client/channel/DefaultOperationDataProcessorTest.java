@@ -37,6 +37,7 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.Any;
 
 public class DefaultOperationDataProcessorTest {
 
@@ -99,7 +100,7 @@ public class DefaultOperationDataProcessorTest {
 
         assertNotNull(operationsDataProcessor.compileRequest(transportTypes));
         Mockito.verify(profileTransport, Mockito.times(1)).createProfileRequest();
-        Mockito.verify(eventTransport, Mockito.times(1)).createEventRequest();
+        Mockito.verify(eventTransport, Mockito.times(1)).createEventRequest(Mockito.anyInt());
         Mockito.verify(notificationTransport, Mockito.times(1)).createNotificationRequest();
         Mockito.verify(configurationTransport, Mockito.times(1)).createConfigurationRequest();
         Mockito.verify(userTransport, Mockito.times(1)).createUserRequest();
@@ -137,7 +138,7 @@ public class DefaultOperationDataProcessorTest {
 
         assertNotNull(operationsDataProcessor.compileRequest(transportTypes));
         Mockito.verify(profileTransport, Mockito.times(0)).createProfileRequest();
-        Mockito.verify(eventTransport, Mockito.times(0)).createEventRequest();
+        Mockito.verify(eventTransport, Mockito.times(0)).createEventRequest(Mockito.anyInt());
         Mockito.verify(notificationTransport, Mockito.times(0)).createNotificationRequest();
         Mockito.verify(configurationTransport, Mockito.times(0)).createConfigurationRequest();
         Mockito.verify(userTransport, Mockito.times(0)).createUserRequest();

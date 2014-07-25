@@ -32,7 +32,7 @@ public class CacheTemporaryMemorizerTest {
         Computable<Integer, Integer> slowCancelable = new Computable<Integer, Integer>() {
             @Override
             public Integer compute(Integer key) {
-                throw new CancellationException("I am to slow");
+                throw new CancellationException("I am too slow");
             }
         };
         
@@ -55,7 +55,7 @@ public class CacheTemporaryMemorizerTest {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                throw new CancellationException("I am to slow");
+                throw new CancellationException("I am too slow");
             }
         };
         

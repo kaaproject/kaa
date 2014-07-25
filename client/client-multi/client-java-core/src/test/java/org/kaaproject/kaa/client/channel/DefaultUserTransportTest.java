@@ -20,11 +20,13 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultUserTransport;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationProcessor;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 import org.mockito.Mockito;
 
@@ -78,6 +80,6 @@ public class DefaultUserTransportTest {
         transport.setEndpointRegistrationProcessor(processor);
         transport.onUserResponse(response);
 
-        Mockito.verify(processor, Mockito.times(1)).onUpdate(Mockito.anyListOf(EndpointAttachResponse.class), Mockito.anyListOf(EndpointDetachResponse.class), Mockito.any(UserAttachResponse.class));
+        Mockito.verify(processor, Mockito.times(1)).onUpdate(Mockito.anyListOf(EndpointAttachResponse.class), Mockito.anyListOf(EndpointDetachResponse.class), Mockito.any(UserAttachResponse.class), Mockito.any(UserAttachNotification.class), Mockito.any(UserDetachNotification.class));
     }
 }

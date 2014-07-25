@@ -17,16 +17,14 @@
 package org.kaaproject.kaa.client.configuration;
 
 /**
+ * Interface for configuration processing is finished observers.
  *
- * @author Yaroslav Zeygerman
- *
+ * Receiver can be subscribed/unsubscribed via {@link ConfigurationProcessedObservable}
  */
 public interface ConfigurationProcessedObserver {
 
-   /**
-    * Will be called when all delta are processed
-    *
-    */
+    /**
+     * Notify about configuration processing is finished.
+     */
     void onConfigurationProcessed();
-
 }

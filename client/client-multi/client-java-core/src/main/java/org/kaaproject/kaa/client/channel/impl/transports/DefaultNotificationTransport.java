@@ -110,7 +110,7 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
                 processor.notificationReceived(notifications);
             }
             sentNotificationCommands.clear();
-            clientState.setAppStateSeqNumber(response.getAppStateSeqNumber());
+            clientState.setNotificationSeqNumber(response.getAppStateSeqNumber());
             LOG.info("Processed notification response");
         }
     }

@@ -30,9 +30,13 @@ function start()
 	    SERVER_LOG_DIR=/var/log/kaa
 	fi
 	
+    if [ -z $SERVER_LOG_SUFIX ]; then
+        SERVER_LOG_SUFIX=
+    fi	
+	
 	JMX_OPTIONS="-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=$SERVER_JMX_PORT -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
 	
-	JAVA_OPTIONS="$JAVA_OPTIONS -Dfile.encoding=UTF8 -Dserver_log_dir=$SERVER_LOG_DIR -Dserver_home_dir=$SERVER_HOME $JMX_OPTIONS"
+	JAVA_OPTIONS="$JAVA_OPTIONS -Dfile.encoding=UTF8 -Dserver_log_dir=$SERVER_LOG_DIR -Dserver_log_sufix=$SERVER_LOG_SUFIX -Dserver_home_dir=$SERVER_HOME $JMX_OPTIONS"
         
 	echo "Starting $SERVER_NAME..."
 	
@@ -40,7 +44,7 @@ function start()
 	      mkdir -p ${SERVER_LOG_DIR}
 	fi
 	
-	exec java -cp "$CONF:$LIB/*" $JAVA_OPTIONS $SERVER_MAIN_CLASS $SERVER_ARGS >>${SERVER_LOG_DIR}/${NAME}-server.out 2>&1
+	exec java -cp "$CONF:$LIB/*" $JAVA_OPTIONS $SERVER_MAIN_CLASS $SERVER_ARGS >>${SERVER_LOG_DIR}/${NAME}-server${SERVER_LOG_SUFIX}.out 2>&1
 }
 
 start

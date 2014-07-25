@@ -26,6 +26,9 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.KaaClientProperties;
+import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
+import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;

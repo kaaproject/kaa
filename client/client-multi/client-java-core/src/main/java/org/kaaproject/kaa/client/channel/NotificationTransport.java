@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
 
 /**
  * {@link KaaTransport} for the Notification service.
- * It is responsible for updating the Notification manager state.
+ * Updates the Notification manager state.
  *
  * @author Yaroslav Zeygerman
  *
@@ -35,30 +35,34 @@ public interface NotificationTransport extends KaaTransport {
      *
      * @return new Notification request.
      * @see NotificationSyncRequest
+     *
      */
     NotificationSyncRequest createNotificationRequest();
 
     /**
-     * Updates the state of the Notification manager from the given response.
+     * Updates the state of the Notification manager according to the given response.
      *
      * @param response the response from the server.
      * @see NotificationSyncResponse
+     *
      */
     void onNotificationResponse(NotificationSyncResponse response) throws Exception;
 
     /**
-     * Sets the given Notification processor to the current transport.
+     * Sets the given Notification processor.
      *
-     * @param processor the Notification processor which is going to be set.
+     * @param processor the Notification processor which to be set.
      * @see NotificationProcessor
+     *
      */
     void setNotificationProcessor(NotificationProcessor processor);
 
     /**
-     * Sets the given notification manager to the current transport.
+     * Sets the given Notification manager.
      *
-     * @param manager the Notification manager which is going to be set.
+     * @param manager the Notification manager to be set.
      * @see NotificationManager
+     *
      */
     void setNotificationManager(NotificationManager manager);
 

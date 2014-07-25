@@ -29,7 +29,8 @@ public class AuthResultDto implements Serializable {
     private KaaAuthorityDto authority;
     private Result authResult;
 
-    public AuthResultDto() {}
+    public AuthResultDto() {
+    }
 
     public AuthResultDto(String username, String displayName, KaaAuthorityDto authority, Result authResult) {
         super();

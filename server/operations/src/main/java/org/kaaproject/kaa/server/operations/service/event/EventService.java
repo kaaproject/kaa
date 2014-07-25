@@ -39,26 +39,26 @@ public interface EventService {
      * @return OperationsServerConfig
      */
     public OperationsServerConfig getConfig();
-    
+
     /**
      * OperationsServerConfig setter.
      * @param OperationsServerConfig config
      */
     public void setConfig(OperationsServerConfig config);
-    
+
     /**
      * Return list of all neighbor connections
      * @return List<NeighborConnection>
      */
     public List<NeighborConnection> getNeighbors();
-    
+
     /**
      * Stop Event service.
      */
     public void shutdown();
 
     /**
-     * Send Remote Endpoint Event to specified in event neighbor, 
+     * Send Remote Endpoint Event to specified in event neighbor,
      * neighbor used from remoteEndpointEvent.getRecipient().getServerId();
      * @param event RemoteEndpointEvent
      */
@@ -75,7 +75,7 @@ public interface EventService {
     /**
      * Send collection of RouteInfos to specified list of operations servers.
      * null in serverIdList mean broadcast to all servers.
-     * @param routeInfos Collection<RouteInfo> 
+     * @param routeInfos Collection<RouteInfo>
      * @param serverIdList list of operations servers in thriftHost:thriftPort format.
      */
     public void sendRouteInfo(Collection<RouteInfo> routeInfos, String... serverIdList);

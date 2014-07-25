@@ -22,7 +22,7 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
 
 /**
  * {@link KaaTransport} for the Event service.
- * It is responsible for updating the Event manager state.
+ * Updates the Event manager state.
  *
  * @author Yaroslav Zeygerman
  *
@@ -32,24 +32,35 @@ public interface EventTransport extends KaaTransport {
     /**
      * Creates the Event request.
      *
+     * @param requestId new request id of the SyncRequest.
+     *
      * @return new Event request.
+     * @see EventSyncRequest
      *
      */
-    EventSyncRequest createEventRequest();
+    EventSyncRequest createEventRequest(Integer requestId);
 
     /**
-     * Updates the state of the Event manager from the given response.
+     * Updates the state of the Event manager according to the given response.
      *
      * @param response the response from the server.
+     * @see EventSyncResponse
      *
      */
     void onEventResponse(EventSyncResponse response);
 
     /**
-     * Sets the given Event manager to the current transport.
+     * Notifies event transport about response from server for specific request.
+     *
+     * @param requestId request id of the corresponding SyncRequest
+     */
+    void onSyncResposeIdReceived(Integer requestId);
+
+    /**
+     * Sets the given Event manager.
      *
      * @param manager the Event manager which is going to be set.
-     *
+     * @see EventManager
      */
     void setEventManager(EventManager manager);
 

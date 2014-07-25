@@ -19,6 +19,7 @@ package org.kaaproject.kaa.client.event;
 import java.io.IOException;
 import java.util.List;
 
+import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 
@@ -31,7 +32,7 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 public interface EventManager extends EventListenersResolver {
 
     /**
-     * Add event family object which can handle concrete event.
+     * Add event family object which can handle specified event.
      *
      * @param eventFamily EventFamily instance
      * @see EventFamily
@@ -66,12 +67,20 @@ public interface EventManager extends EventListenersResolver {
     void eventListenersResponseReceived(List<EventListenersResponse> response);
 
     /**
-     * Adds new events and event listener requests to the given Sync request.
+     * Adds new event listener requests to the given Sync request.
      *
      * @param request the Event sync request.
      * @see EventSyncRequest
      */
-    void fillEventSyncRequest(EventSyncRequest request);
+    void fillEventListenersSyncRequest(EventSyncRequest request);
+
+    /**
+     * Retrieves list of pending events and removes them from EventManager.
+     *
+     * @return List of Event objects
+     * @see Event
+     */
+    List<Event> getPendingEvents();
 
     /**
      * Clears the current manager's state.

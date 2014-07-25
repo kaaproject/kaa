@@ -22,8 +22,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
-import org.kaaproject.kaa.client.persistance.AndroidInternalPersistentStorage;
-import org.kaaproject.kaa.client.persistance.PersistentStorage;
+import org.kaaproject.kaa.client.persistence.AndroidInternalPersistentStorage;
+import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.AndroidHttpClient;
 

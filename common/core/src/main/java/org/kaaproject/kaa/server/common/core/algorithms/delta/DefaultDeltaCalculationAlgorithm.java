@@ -764,7 +764,7 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
             }
         }
 
-        LinkedList<RecordTuple> nextRecords = new LinkedList<RecordTuple>();
+        LinkedList<RecordTuple> nextRecords = new LinkedList<RecordTuple>(); //NOSONAR
         if (!hasDifferences) {
             for (Field oldField : oldSchema.getFields()) {
                 Object newValue = newRoot.get(oldField.name());

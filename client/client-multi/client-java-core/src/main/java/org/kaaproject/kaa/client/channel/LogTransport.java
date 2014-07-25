@@ -22,7 +22,7 @@ import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 
 /**
  * {@link KaaTransport} for the Logging service.
- * It is responsible for sending logs to the remote server.
+ * Used for sending logs to the remote server.
  *
  * @author Yaroslav Zeygerman
  *
@@ -30,25 +30,27 @@ import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 public interface LogTransport extends KaaTransport {
 
     /**
-     * Creates the Log request. It consists of current log records.
+     * Creates the Log request that consists of current log records.
      *
-     * @return new Log request;
+     * @return new Log request
+     * @see LogSyncRequest
      *
      */
     LogSyncRequest createLogRequest();
 
     /**
-     * Updates the state of the Log collector from the given response.
+     * Updates the state of the Log collector according to the given response.
      *
      * @param response the response from the server.
+     * @see LogSyncResponse
      *
      */
     void onLogResponse(LogSyncResponse response);
 
     /**
-     * Sets the given Log processor to the current transport.
+     * Sets the given Log processor.
      *
-     * @param processor the Log processor which is going to be set.
+     * @param processor the Log processor to be set.
      *
      */
     void setLogProcessor(LogProcessor processor);

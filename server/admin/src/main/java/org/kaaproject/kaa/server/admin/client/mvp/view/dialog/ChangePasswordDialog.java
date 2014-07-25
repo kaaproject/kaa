@@ -28,6 +28,9 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -36,7 +39,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ChangePasswordDialog extends KaaDialog implements InputEventHandler {
+public class ChangePasswordDialog extends KaaDialog {
 
     private KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
 
@@ -61,6 +64,8 @@ public class ChangePasswordDialog extends KaaDialog implements InputEventHandler
         super(false, true);
 
         this.username = username;
+
+        InputChangeHandler handler = new InputChangeHandler(listener);
 
         setWidth("500px");
 
@@ -89,7 +94,9 @@ public class ChangePasswordDialog extends KaaDialog implements InputEventHandler
         oldPassword = new ExtendedPasswordTextBox();
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, oldPassword);
-        oldPassword.addInputHandler(this);
+        oldPassword.addInputHandler(handler);
+        oldPassword.addKeyDownHandler(handler);
+
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
         row++;
         label = new Label(Utils.constants.newPassword());
@@ -97,7 +104,9 @@ public class ChangePasswordDialog extends KaaDialog implements InputEventHandler
         newPassword = new ExtendedPasswordTextBox();
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, newPassword);
-        newPassword.addInputHandler(this);
+        newPassword.addInputHandler(handler);
+        newPassword.addKeyDownHandler(handler);
+
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
         row++;
         label = new Label(Utils.constants.newPasswordAgain());
@@ -105,29 +114,14 @@ public class ChangePasswordDialog extends KaaDialog implements InputEventHandler
         newPasswordAgain = new ExtendedPasswordTextBox();
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, newPasswordAgain);
-        newPasswordAgain.addInputHandler(this);
+        newPasswordAgain.addInputHandler(handler);
+        newPasswordAgain.addKeyDownHandler(handler);
+
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 
         dialogContents.add(table);
 
-        changePasswordButton = new Button(Utils.constants.change_password(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                performChangePassword(new AsyncCallback<ResultCode>() {
-                    @Override
-                    public void onFailure(Throwable caught) {}
-
-                    @Override
-                    public void onSuccess(ResultCode result) {
-                        if (result==ResultCode.OK) {
-                            hide();
-                            listener.onChangePassword();
-                        }
-                    }
-
-                });
-            }
-        });
+        changePasswordButton = new Button(Utils.constants.change_password(), handler);
 
         Button cancelButton = new Button(Utils.constants.cancel(), new ClickHandler() {
             @Override
@@ -140,12 +134,6 @@ public class ChangePasswordDialog extends KaaDialog implements InputEventHandler
         addButton(cancelButton);
 
         changePasswordButton.setEnabled(false);
-    }
-
-    @Override
-    public void onInputChanged(InputEvent event) {
-        boolean valid = validate();
-        changePasswordButton.setEnabled(valid);
     }
 
     private boolean validate() {
@@ -200,6 +188,45 @@ public class ChangePasswordDialog extends KaaDialog implements InputEventHandler
         else {
             errorPanel.setText("");
             errorPanel.setVisible(false);
+        }
+    }
+
+    class InputChangeHandler implements ClickHandler, KeyDownHandler, InputEventHandler {
+
+        final Listener listener;
+
+        public InputChangeHandler(Listener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void onClick(ClickEvent event) {
+            performChangePassword(new AsyncCallback<ResultCode>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                }
+
+                @Override
+                public void onSuccess(ResultCode result) {
+                    if (result == ResultCode.OK) {
+                        hide();
+                        listener.onChangePassword();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onKeyDown(KeyDownEvent event) {
+            if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER && validate()) {
+                onClick(null);
+            }
+        }
+
+        @Override
+        public void onInputChanged(InputEvent event) {
+            boolean valid = validate();
+            changePasswordButton.setEnabled(valid);
         }
     }
 

@@ -101,10 +101,8 @@ public abstract class KeyUtil {
      */
     private static File makeDirs(String privateKeyFile) {
         File privateFile = new File(privateKeyFile);
-        if(privateFile.getParentFile() != null && !privateFile.getParentFile().exists()){
-            if(!privateFile.getParentFile().mkdirs()){
-                LOG.warn("Failed to create required directories: {}", privateFile.getParentFile().getAbsolutePath());
-            }
+        if(privateFile.getParentFile() != null && !privateFile.getParentFile().exists() && !privateFile.getParentFile().mkdirs()){
+            LOG.warn("Failed to create required directories: {}", privateFile.getParentFile().getAbsolutePath());
         }
         return privateFile;
     }
@@ -148,8 +146,7 @@ public abstract class KeyUtil {
     public static KeyPair generateKeyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator clientKeyGen = KeyPairGenerator.getInstance(RSA);
         clientKeyGen.initialize(2048);
-        KeyPair clientKeyPair = clientKeyGen.genKeyPair();
-        return clientKeyPair;
+        return clientKeyGen.genKeyPair();
     }
 
     /**

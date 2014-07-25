@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.NotificationTransport;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType;

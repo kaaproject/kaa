@@ -27,8 +27,10 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 public interface ConfigurationHashContainer {
 
     /**
-     * @return configuration data hash.
+     * Retrieves configuration data hash.
+     *
      * @see EndpointObjectHash
+     *
      */
     EndpointObjectHash getConfigurationHash();
 

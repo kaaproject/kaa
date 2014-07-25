@@ -115,7 +115,8 @@ public class DefaultProfileService implements ProfileService {
             dto.setAccessToken(request.getAccessToken());
         }
 
-        dto.setSequenceNumber(0);
+        dto.setCfSequenceNumber(0);
+        dto.setNfSequenceNumber(0);
         dto.setChangedFlag(Boolean.FALSE);
 
         return endpointService.saveEndpointProfile(dto);
@@ -147,8 +148,10 @@ public class DefaultProfileService implements ProfileService {
         populateVersionStates(applicationDto.getTenantId(), dto, request.getVersionInfo());
 
         List<EndpointGroupStateDto> egsList = new ArrayList<>();
-        dto.setEndpointGroups(egsList);
-        dto.setSequenceNumber(0);
+        dto.setCfGroupStates(egsList);
+        dto.setCfSequenceNumber(0);
+        dto.setNfGroupStates(egsList);
+        dto.setNfSequenceNumber(0);
         return endpointService.saveEndpointProfile(dto);
     }
 

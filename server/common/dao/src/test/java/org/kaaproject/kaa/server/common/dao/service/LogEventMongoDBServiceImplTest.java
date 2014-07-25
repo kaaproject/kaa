@@ -69,14 +69,9 @@ public class LogEventMongoDBServiceImplTest extends AbstractTest {
         MongoDBTestRunner.tearDown();
     }
 
-    @Before
-    public void beforeTest() throws IOException {
-        MongoDataLoader.loadData();
-    }
-
     @After
     public void afterTest() {
-        MongoDBTestRunner.getDB().dropDatabase();
+        clearDBData();
     }
 
     @Test
@@ -94,17 +89,22 @@ public class LogEventMongoDBServiceImplTest extends AbstractTest {
 
         Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection("system.roles").count());
         
-        LogEventMongoDBServiceImpl logEventMongoDBServiceImpl = mock(LogEventMongoDBServiceImpl.class);  
-        SecureRoleDao<SecureRole> secureRoleMongoDao = mock(SecureRoleMongoDao.class);
-        MongoTemplate mongoTemplate = mock(MongoTemplate.class);
+        SecureRoleMongoDao secureRoleMongoDao = new SecureRoleMongoDao() {
+            
+            @Override
+            public String getDBName() {
+                return "kaa";
+            }
+            
+            @Override
+            public SecureRole saveRole(SecureRole dto) {
+                return dto;
+            }
+        };
         
-        ReflectionTestUtils.setField(secureRoleMongoDao, "mongoTemplate", mongoTemplate);
-        ReflectionTestUtils.setField(logEventMongoDBServiceImpl, "secureRoleDao", secureRoleMongoDao);
+        ReflectionTestUtils.setField(logEventService, "secureRoleDao", secureRoleMongoDao);
         
-        logEventMongoDBServiceImpl.createRole(TEST_ROLE, TEST_COLLECTION);
-        secureRoleMongoDao.saveRole(null);
-        
-        ((SecureRoleMongoDao) verify(ReflectionTestUtils.getField(logEventMongoDBServiceImpl, "secureRoleDao"))).saveRole(any(SecureRole.class));
+        logEventService.createRole(TEST_ROLE, TEST_COLLECTION);
     }
 
     @Test

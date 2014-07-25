@@ -39,6 +39,6 @@ public class SdkGeneratorTest {
         SdkGenerator generator = factory.createSdkGenerator(SdkPlatform.JAVA);
         Assert.assertNotNull(generator);
         generator = factory.createSdkGenerator(SdkPlatform.CPP);
-        Assert.assertNull(generator);
+        Assert.assertNotNull(generator);
     }
 }

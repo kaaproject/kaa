@@ -19,10 +19,13 @@ package org.kaaproject.kaa.client.configuration.manager;
 import org.kaaproject.kaa.client.common.CommonRecord;
 
 /**
- * Interface for subscriber which is going to receive full configuration
+ * Interface for subscriber to receive full configuration<br>
+ * <br>
+ * Instance of this interface implementation can be subscribed for updates in
+ * {@link ConfigurationManager}
  *
  * @author Yaroslav Zeygerman
- *
+ * @see ConfigurationManager
  */
 public interface ConfigurationReceiver {
 

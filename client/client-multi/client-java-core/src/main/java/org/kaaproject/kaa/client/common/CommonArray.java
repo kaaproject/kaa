@@ -27,7 +27,7 @@ import java.util.List;
 public interface CommonArray extends SchemaDependent {
 
     /**
-     * @return list with common values
+     * @return list of common values
      * @see CommonValue
      */
     List<CommonValue> getList();

@@ -224,7 +224,7 @@ public class UserServiceImpl implements UserService {
                     KaaAuthorityDto.TENANT_DEVELOPER.name(),
                     KaaAuthorityDto.TENANT_USER.name()));
         } else {
-            return null;
+            return null; //NOSONAR
         }
     }
 

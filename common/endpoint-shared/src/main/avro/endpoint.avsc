@@ -89,6 +89,23 @@
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
+ "name": "UserAttachNotification",
+ "fields": [
+     {"name": "userExternalId", "type": "string"},
+     {"name": "endpointAccessToken", "type": "string"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "UserDetachNotification",
+ "fields": [
+     {"name": "endpointAccessToken", "type": "string"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
  "name": "EndpointAttachRequest",
  "fields": [
      {"name": "requestId", "type": "string"},
@@ -301,6 +318,8 @@
  "name": "UserSyncResponse",
  "fields": [
      {"name": "userAttachResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse", "null"]},
+     {"name": "userAttachNotification", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification", "null"]},
+     {"name": "userDetachNotification", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification", "null"]},
      {"name": "endpointAttachResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse"}, "null"]},
      {"name": "endpointDetachResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse"}, "null"]}
  ]
@@ -336,6 +355,7 @@
  "type": "record",
  "name": "SyncRequest",
  "fields": [
+     {"name": "requestId", "type": ["int", "null"]},
      {"name": "syncRequestMetaData", "type": ["org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData", "null"]},
      {"name": "profileSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest", "null"]},
      {"name": "configurationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest", "null"]},
@@ -350,6 +370,7 @@
  "type": "record",
  "name": "SyncResponse",
  "fields": [
+     {"name": "requestId", "type": ["int", "null"]},
      {"name": "status", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
      {"name": "profileSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse", "null"]},
  	 {"name": "configurationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse", "null"]},

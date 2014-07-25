@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultLogUploadStrategy implements LogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogUploadStrategy.class);
     
-    public DefaultLogUploadStrategy() { }
+    public DefaultLogUploadStrategy() {
+    }
 
     @Override
     public LogUploadStrategyDecision isUploadNeeded(LogUploadConfiguration configuration, LogStorageStatus status) {

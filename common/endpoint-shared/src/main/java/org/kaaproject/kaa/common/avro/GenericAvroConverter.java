@@ -46,7 +46,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
     private static final Logger LOG = LoggerFactory
             .getLogger(GenericAvroConverter.class);
 
-    private final static Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private Schema schema;
     private DatumReader<T> datumReader;

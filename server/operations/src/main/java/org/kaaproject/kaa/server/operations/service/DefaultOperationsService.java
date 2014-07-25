@@ -68,6 +68,7 @@ import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaService;
 import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
 import org.kaaproject.kaa.server.operations.service.history.HistoryDeltaService;
@@ -145,10 +146,11 @@ public class DefaultOperationsService implements OperationsService {
         LOG.trace("[{}][{}] processing sync. request: ", endpointId, requestHash, request);
 
         if (!validate(endpointId, request)) {
-            return SyncResponseHolder.failure();
+            return SyncResponseHolder.failure(request.getRequestId());
         }
 
         SyncResponseHolder response = new SyncResponseHolder(new SyncResponse());
+        response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.SUCCESS);
 
         EndpointProfileDto profile = null;
@@ -193,7 +195,7 @@ public class DefaultOperationsService implements OperationsService {
         }
 
         if (request.getEventSyncRequest() != null) {
-            LOG.trace("[{}][{}] procesing event sync request {}.", endpointId, requestHash, request.getUserSyncRequest());
+            LOG.trace("[{}][{}] procesing event sync request {}.", endpointId, requestHash, request.getEventSyncRequest());
             EventSyncResponse eventSyncResponse = processEventSyncResponse(endpointId, requestHash, appSeqNumber, request.getEventSyncRequest(), profile);
             response.setEventSyncResponse(eventSyncResponse);
         }
@@ -204,9 +206,11 @@ public class DefaultOperationsService implements OperationsService {
             ConfigurationSyncRequest confSyncRequest = request.getConfigurationSyncRequest();
             LOG.trace("[{}][{}] procesing configuration sync request {}.", endpointId, requestHash, confSyncRequest);
             LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", endpointId, requestHash, confSyncRequest.getAppStateSeqNumber(), curAppSeqNumber);
-            LOG.debug("[{}][{}] calculating configuration delta", endpointId, requestHash);
-            HistoryDelta historyDelta = fetchHistory(endpointId, requestHash, metaData.getApplicationToken(), profile, confSyncRequest.getAppStateSeqNumber(),
-                    curAppSeqNumber);
+            int startSeqNumber = Math.min(confSyncRequest.getAppStateSeqNumber(), profile.getCfSequenceNumber());
+            LOG.debug("[{}][{}] calculating configuration delta using seq number {}", endpointId, requestHash, startSeqNumber);
+            confSyncRequest.setAppStateSeqNumber(startSeqNumber);
+            HistoryDelta historyDelta = fetchHistory(endpointId, requestHash, metaData.getApplicationToken(), profile, HistorySubject.CONFIGURATION,
+                    startSeqNumber, curAppSeqNumber);
             GetDeltaResponse confResponse = calculateConfigurationDelta(metaData, confSyncRequest, profile, historyDelta, curAppSeqNumber);
             ConfigurationSyncResponse confSyncResponse = buildConfSyncResponse(confResponse, curAppSeqNumber);
             response.setConfigurationSyncResponse(confSyncResponse);
@@ -214,7 +218,8 @@ public class DefaultOperationsService implements OperationsService {
             if (historyDelta.isSmthChanged()) {
                 List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
                 LOG.debug("[{}][{}] Updating profile with endpoint groups.size {}, groups: {}", endpointId, requestHash, endpointGroups.size(), endpointGroups);
-                profile.setEndpointGroups(endpointGroups);
+                profile.setCfGroupStates(endpointGroups);
+                profile.setCfSequenceNumber(curAppSeqNumber);
                 updateProfileRequired = true;
             }
         }
@@ -223,9 +228,10 @@ public class DefaultOperationsService implements OperationsService {
             NotificationSyncRequest nfSyncRequest = request.getNotificationSyncRequest();
             LOG.trace("[{}][{}] procesing notification sync request {}.", endpointId, requestHash, nfSyncRequest);
             LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", endpointId, requestHash, nfSyncRequest.getAppStateSeqNumber(), curAppSeqNumber);
-            HistoryDelta historyDelta = fetchHistory(endpointId, requestHash, metaData.getApplicationToken(), profile, nfSyncRequest.getAppStateSeqNumber(),
-                    curAppSeqNumber);
-            LOG.debug("[{}][{}] calculating notification delta", endpointId, requestHash);
+            int startSeqNumber = Math.min(nfSyncRequest.getAppStateSeqNumber(), profile.getNfSequenceNumber());
+            LOG.debug("[{}][{}] calculating notification delta using seq number {}", endpointId, requestHash, startSeqNumber);
+            HistoryDelta historyDelta = fetchHistory(endpointId, requestHash, metaData.getApplicationToken(), profile, HistorySubject.NOTIFICATION,
+                    startSeqNumber, curAppSeqNumber);
             GetNotificationResponse notificationResponse = calculateNotificationDelta(nfSyncRequest, profile, historyDelta);
             response.setSubscriptionStates(notificationResponse.getSubscriptionStates());
             NotificationSyncResponse nfSyncResponse = buildNotificationSyncResponse(notificationResponse, curAppSeqNumber);
@@ -235,7 +241,8 @@ public class DefaultOperationsService implements OperationsService {
             if (historyDelta.isSmthChanged()) {
                 List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
                 LOG.debug("[{}][{}] Updating profile with endpoint groups.size {}, groups: {}", endpointId, requestHash, endpointGroups.size(), endpointGroups);
-                profile.setEndpointGroups(endpointGroups);
+                profile.setNfGroupStates(endpointGroups);
+                profile.setNfSequenceNumber(curAppSeqNumber);
                 updateProfileRequired = true;
             }
         }
@@ -407,11 +414,13 @@ public class DefaultOperationsService implements OperationsService {
                 }
                 topicList.add(topic);
             }
-            if (notificationResponse.hasDelta()) {
-                response.setResponseStatus(SyncResponseStatus.DELTA);
-            }
             response.setAvailableTopics(topicList);
         }
+
+        if (notificationResponse.hasDelta()) {
+            response.setResponseStatus(SyncResponseStatus.DELTA);
+        }
+
         response.setAppStateSeqNumber(curAppSeqNumber);
         return response;
     }
@@ -522,17 +531,18 @@ public class DefaultOperationsService implements OperationsService {
      * @throws GetDeltaException
      *             the get delta exception
      */
-    private GetDeltaResponse calculateConfigurationDelta(SyncRequestMetaData metaData, ConfigurationSyncRequest request, EndpointProfileDto profile, HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException {
+    private GetDeltaResponse calculateConfigurationDelta(SyncRequestMetaData metaData, ConfigurationSyncRequest request, EndpointProfileDto profile,
+            HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException {
         GetDeltaRequest deltaRequest;
-        int curEndpointSeqNumber = Math.min(request.getAppStateSeqNumber(), profile.getSequenceNumber());
-        if(request.getConfigurationHash() != null){
-            deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), EndpointObjectHash.fromBytes(request.getConfigurationHash().array()), curEndpointSeqNumber);
-        }else{
-            deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), curEndpointSeqNumber);
+        if (request.getConfigurationHash() != null) {
+            deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(),
+                    EndpointObjectHash.fromBytes(request.getConfigurationHash().array()),
+                    request.getAppStateSeqNumber());
+        } else {
+            deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), request.getAppStateSeqNumber());
         }
         deltaRequest.setEndpointProfile(profile);
-        GetDeltaResponse confResponse = deltaService.getDelta(deltaRequest, historyDelta, curAppSeqNumber);
-        return confResponse;
+        return deltaService.getDelta(deltaRequest, historyDelta, curAppSeqNumber);
     }
 
     /**
@@ -546,15 +556,14 @@ public class DefaultOperationsService implements OperationsService {
      *            the cur app seq number
      * @return the history delta
      */
-    private HistoryDelta fetchHistory(String endpointId, int requesHash, String applicationToken, EndpointProfileDto profile, int startSeqNumber,
-            int endSeqNumber) {
-        int curEndpointSeqNumber = Math.min(startSeqNumber, profile.getSequenceNumber());
+    private HistoryDelta fetchHistory(String endpointId, int requesHash, String applicationToken, EndpointProfileDto profile, HistorySubject subject,
+            int startSeqNumber, int endSeqNumber) {
         if (isFirstRequest(profile)) {
             LOG.debug("[{}] Profile has no endpoint groups yet. calculating full list", endpointId);
             return historyDeltaService.getDelta(profile, applicationToken, endSeqNumber);
         } else {
             LOG.debug("[{}] Profile has endpoint groups. Calculating changes", endpointId);
-            return historyDeltaService.getDelta(profile, applicationToken, curEndpointSeqNumber, endSeqNumber);
+            return historyDeltaService.getDelta(profile, subject, applicationToken, startSeqNumber, endSeqNumber);
         }
     }
 
@@ -578,6 +587,7 @@ public class DefaultOperationsService implements OperationsService {
      */
     public static SyncResponseHolder buildProfileResyncResponse(SyncRequest request) {
         SyncResponse response = new SyncResponse();
+        response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.PROFILE_RESYNC);
         return new SyncResponseHolder(response);
     }

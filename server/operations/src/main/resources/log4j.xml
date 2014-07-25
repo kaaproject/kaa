@@ -18,21 +18,24 @@
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.EnhancedPatternLayout">
-            <param name="ConversionPattern" value="[%d  %-5p %c{1}]  %m%n"/>
+            <param name="ConversionPattern" value="[%d{ISO8601}][%t][%p][%C{1}] - %m%n"/>
         </layout>
     </appender>
 
     <appender name="fileLogAppender" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="${server_log_dir}/kaa-operations-server.log" />
+        <param name="File" value="${server_log_dir}/kaa-operations-server${server_log_sufix}.log" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{HH:mm:ss:SSS} - %p - %C{1} - %m%n"/>
+            <param name="ConversionPattern" value="[%d{ISO8601}][%t][%p][%C{1}] - %m%n"/>
         </layout>
     </appender>
 
     <category name="org.kaaproject.kaa">
         <level value="TRACE"/>
+    </category>
+    <category name="org.kaaproject.kaa.server.operations.service.statistics">
+        <level value="INFO"/>
     </category>
     <category name="org.springframework">
         <level value="INFO"/>

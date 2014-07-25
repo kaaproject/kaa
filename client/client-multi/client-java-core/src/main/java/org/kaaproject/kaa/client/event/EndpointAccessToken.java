@@ -66,6 +66,7 @@ public class EndpointAccessToken {
         return true;
     }
 
+    @Override
     public String toString() {
         return token;
     }

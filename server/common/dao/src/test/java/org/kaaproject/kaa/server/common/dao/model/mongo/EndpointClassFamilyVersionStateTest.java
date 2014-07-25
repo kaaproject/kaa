@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.common.dao.model.mongo;
 
-import org.kaaproject.kaa.server.common.dao.model.mongo.EventClassFamilyVersionState;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
+import org.kaaproject.kaa.server.common.dao.model.mongo.EventClassFamilyVersionState;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
@@ -37,5 +39,11 @@ public class EndpointClassFamilyVersionStateTest {
         Assert.assertEquals(state.getEcfId(), state2.getEcfId());
         Assert.assertEquals(state.getVersion(), state2.getVersion());
     }
+
+    @Test
+    public void hashCodeEqualsTest(){
+        EqualsVerifier.forClass(EventClassFamilyVersionState.class).suppress(Warning.NONFINAL_FIELDS).verify();
+    }
+
 
 }

@@ -27,7 +27,7 @@ public interface SchemaObservable {
     /**
      * Subscribes new receiver for schema updates
      *
-     * @param receiver receiver which is going to get schema updates
+     * @param receiver receiver to get schema updates
      *
      */
     void subscribeForSchemaUpdates(SchemaUpdatesReceiver receiver);
@@ -35,7 +35,7 @@ public interface SchemaObservable {
     /**
      * Unsubscribes receiver from schema updates
      *
-     * @param receiver receiver which is going to be unsubscribed from schema updates
+     * @param receiver receiver to be unsubscribed from schema updates
      *
      */
     void unsubscribeFromSchemaUpdates(SchemaUpdatesReceiver receiver);

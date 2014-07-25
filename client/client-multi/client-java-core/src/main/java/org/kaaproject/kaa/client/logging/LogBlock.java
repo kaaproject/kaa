@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * Wrapper class for sending log block.
- * Each this block should have its unique id 
+ * Each log block should have its unique id
  * to be mapped in the log storage and delivery stuff.
  */
 public class LogBlock {
@@ -32,12 +32,12 @@ public class LogBlock {
     /**
      * Sending log block
      */
-    private List<LogRecord> logRecords;
+    private final List<LogRecord> logRecords;
 
     /**
-     * Construct wrapper for sending log block.
-     * 
-     * @param id Unique id using for mapping in a delivery stuff and local log storage 
+     * Constructs wrapper for sending log block.
+     *
+     * @param id Unique id used for mapping in a delivery stuff and local log storage
      * @param records Sending log block
      */
     public LogBlock(String id, List<LogRecord> records) {
@@ -46,8 +46,8 @@ public class LogBlock {
     }
 
     /**
-     * Retrieve log block id
-     * 
+     * Retrieves log block id
+     *
      * @return Unique log block id
      */
     String getBlockId() {
@@ -55,8 +55,8 @@ public class LogBlock {
     }
 
     /**
-     * Retrieve sending log records.
-     * 
+     * Retrieves sending log records.
+     *
      * @return List of sending log records.
      */
     List<LogRecord> getRecords() {

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public abstract class SHA1HashUtils {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 
-    protected static final Logger LOG = LoggerFactory.getLogger(SHA1HashUtils.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(SHA1HashUtils.class); //NOSONAR
 
     /** The Constant digest. */
     private static final ThreadLocal<MessageDigest> DIGEST = new ThreadLocal<MessageDigest>() {
@@ -44,6 +44,7 @@ public abstract class SHA1HashUtils {
         try {
             return MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
+            LOG.error("No such algorithm: {}", algorithm);
             return null;
         }
     }

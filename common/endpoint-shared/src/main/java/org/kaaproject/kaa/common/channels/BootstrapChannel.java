@@ -35,7 +35,7 @@ public class BootstrapChannel extends Channel {
      * @return List<TransportTypes> of supported transports.
      */
     public static List<TransportType> getSupportedTransportTypes() {
-        return ListTransportTypesFromArray(supportedTransports);
+        return listTransportTypesFromArray(supportedTransports);
     }
     
     /**

@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.operations.service.http;
 
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
-import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
@@ -27,7 +26,6 @@ import org.kaaproject.kaa.server.common.http.server.CommandFactory;
 import org.kaaproject.kaa.server.common.http.server.CommandProcessor;
 import org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer;
 import org.kaaproject.kaa.server.operations.service.config.NettyHttpServiceChannelConfig;
-import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.http.handler.AkkaHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +56,7 @@ public class OperationsServerInitializer extends DefaultServerInitializer {
      * #init()
      */
     @Override
-    public void init() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException {
+    public void init() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         LOG.info("Operations Server Initializer Init() started: ");
         for (String commandClass : ((NettyHttpServiceChannelConfig) getConf()).getCommandList()) {
             CommandFactory.addCommandClass(commandClass);

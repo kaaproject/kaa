@@ -247,7 +247,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      * @throws JsonMappingException the json mapping exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private Object processEnum(Map<String, Object> schemaNode) throws JsonGenerationException, JsonMappingException, IOException {
+    private Object processEnum(Map<String, Object> schemaNode) throws IOException {
         Schema avroSchema = getSchemaFromRaw(schemaNode);
         GenericEnumSymbol result = new GenericData.EnumSymbol(avroSchema, avroSchema.getEnumSymbols().get(0));
         String fullName = getFullNameFromRaw(schemaNode);
@@ -266,7 +266,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      * @throws JsonMappingException the json mapping exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private Object processFixed(Map<String, Object> schemaNode) throws JsonGenerationException, JsonMappingException, IOException {
+    private Object processFixed(Map<String, Object> schemaNode) throws IOException {
         Integer size = (Integer) schemaNode.get(SIZE_FIELD);
 
         byte [] bytes = new byte [size];

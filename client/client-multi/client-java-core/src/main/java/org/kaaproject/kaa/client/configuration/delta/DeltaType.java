@@ -27,7 +27,7 @@ import java.util.List;
 public interface DeltaType {
 
     /**
-     * Tells if the field was set to default value
+     * Checks if the field was set to default value
      *
      * @return true if the field set to default, false otherwise
      *
@@ -35,7 +35,7 @@ public interface DeltaType {
     boolean isDefault();
 
     /**
-     * Tells if the container field was cleared
+     * Checks if the container field have been cleared
      *
      * @return true if the container field is cleared, false if not (or field is not array)
      *

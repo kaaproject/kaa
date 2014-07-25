@@ -105,7 +105,6 @@ public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<
         criteria.add(Restrictions.and(
                 Restrictions.eq(ECF_REFERENCE, Long.valueOf(ecfId)),
                 Restrictions.eq(VERSION_PROPERTY, version)));
-        List<ApplicationEventFamilyMap> applicationEventFamilyMaps = findListByCriteria(criteria);
-        return applicationEventFamilyMaps;
+        return findListByCriteria(criteria);
     }
 }

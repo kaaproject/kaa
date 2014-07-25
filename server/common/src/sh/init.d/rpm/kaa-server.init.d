@@ -80,6 +80,7 @@ done
 
 export SERVER_HOME
 export SERVER_LOG_DIR
+export SERVER_LOG_SUFIX
 export JAVA_OPTIONS
 
 start() {

@@ -45,7 +45,6 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.thrift.TException;
-import org.bson.types.ObjectId;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -69,6 +68,8 @@ import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -76,6 +77,8 @@ import org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter;
  * Used to process Control API commands from API console.
  */
 public class ControlApiCommandProcessor {
+    /* The constant logger */ 
+    private static final Logger LOG = LoggerFactory.getLogger(ControlApiCommandProcessor.class);
 
     /** The Constant UTF8. */
     private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -132,7 +135,6 @@ public class ControlApiCommandProcessor {
     private static final String ID_OPTION = " Id option";
     private static final String OUTPUT_FILE_TO_STORE_IDS = "Output file to store Object Ids";
     private static final String TOTAL = "Total: ";
-    private static final String ERROR = "'! Error: ";
     private static final String SPECIFIED_FILE = "Specified file '";
 
     /**
@@ -453,7 +455,7 @@ public class ControlApiCommandProcessor {
      * @return the control api help command
      */
     private ControlApiCommand helpCommand() {
-        ControlApiCommand command = new ControlApiCommand("help",
+        return new ControlApiCommand("help",
                 "display available commands") {
             @Override
             public void runCommand(CommandLine line,
@@ -462,7 +464,6 @@ public class ControlApiCommandProcessor {
                 help(writer);
             }
         };
-        return command;
     }
 
     /**
@@ -1210,7 +1211,7 @@ public class ControlApiCommandProcessor {
             if (line.hasOption("w")) {
                 String weightStr = line.getOptionValue("w");
                 Integer weight;
-                try {
+                try { //NOSONAR
                     weight = Integer.valueOf(weightStr);
                 } catch (NumberFormatException nfe) {
                     errorWriter.println("Unable to parse weight option!");
@@ -1816,14 +1817,14 @@ public class ControlApiCommandProcessor {
 
             writer.println("Saving SDK to file: " + outputFile.getAbsolutePath());
 
-            try {
+            try { //NOSONAR
                 FileOutputStream fos = new FileOutputStream(outputFile);
                 fos.write(sdk.getData());
                 fos.flush();
                 fos.close();
                 writer.println("Saved SDK to file: " + outputFile.getAbsolutePath());
             } catch (IOException e) {
-                writer.println("Unable to save SDK file: " + outputFile.getAbsolutePath());
+                LOG.error("Unable to save SDK file: {}", outputFile.getAbsolutePath());
             }
 
         } catch (TException e) {
@@ -2015,7 +2016,7 @@ public class ControlApiCommandProcessor {
             }
             if (line.hasOption("l")) {
                 String ttl = line.getOptionValue("l");
-                try {
+                try { //NOSONAR
                     long time = System.currentTimeMillis() + (Integer.valueOf(ttl) * 1000L);
                     notificationDto.setExpiredAt(new Date(time));
                 } catch (NumberFormatException ex) {
@@ -2144,7 +2145,7 @@ public class ControlApiCommandProcessor {
             }
             if (line.hasOption("l")) {
                 String ttl = line.getOptionValue("l");
-                try {
+                try { //NOSONAR
                     long time = System.currentTimeMillis() + (Integer.valueOf(ttl) * 1000L);
                     notification.setExpiredAt(new Date(time));
                 } catch (NumberFormatException ex) {
@@ -2267,10 +2268,10 @@ public class ControlApiCommandProcessor {
                 String type = line.getOptionValue("t");
                 if (StringUtils.isNotBlank(type)) {
                     NotificationTypeDto typeDto;
-                    try {
+                    try { //NOSONAR
                         typeDto = NotificationTypeDto.valueOf(type);
                     } catch (IllegalArgumentException ex) {
-                        errorWriter.println("Incorrect type of notification");
+                        LOG.error("Incorrect type of notification {}", ex);
                         return;
                     }
                     notificationSchemaDto.setType(typeDto);
@@ -3203,11 +3204,9 @@ public class ControlApiCommandProcessor {
                 reader.close();
                 result = fileData.toString();
             } catch (FileNotFoundException e) {
-                errorWriter.println("Unable to locate specified file '" + file
-                        + "'!");
+                LOG.error("Unable to locate specified file '{}'!", file);
             } catch (IOException e) {
-                errorWriter.println("Unable to read from specified file '"
-                        + file + ERROR + e.getMessage());
+                LOG.error("Unable to read from specified file '{}'! Error:  {}", file, e.getMessage());
                 e.printStackTrace(errorWriter); //NOSONAR
             }
         } else if (!f.exists()) {
@@ -3239,8 +3238,7 @@ public class ControlApiCommandProcessor {
             writer.flush();
             writer.close();
         } catch (Exception e) {
-            errorWriter.println("Unable to write Object Id to specified file '"
-                    + file + ERROR + e.getMessage());
+            LOG.error("Unable to write Object Id to specified file '{}'! Error: {}", file, e.getMessage());
         }
     }
 
@@ -3269,9 +3267,7 @@ public class ControlApiCommandProcessor {
             writer.flush();
             writer.close();
         } catch (Exception e) {
-            errorWriter
-                    .println("Unable to write Object Ids to specified file '"
-                            + file + ERROR + e.getMessage());
+            LOG.error("Unable to write Object Ids to specified file '{}'! Error: {}", file, e.getMessage());
         }
     }
 

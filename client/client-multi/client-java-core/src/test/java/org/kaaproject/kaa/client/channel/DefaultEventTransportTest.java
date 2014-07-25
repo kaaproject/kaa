@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultEventTransport;
 import org.kaaproject.kaa.client.event.EventManager;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
@@ -64,10 +64,10 @@ public class DefaultEventTransportTest {
         EventManager manager = Mockito.mock(EventManager.class);
 
         EventTransport transport = new DefaultEventTransport();
-        transport.createEventRequest();
+        transport.createEventRequest(1);
         transport.setEventManager(manager);
-        transport.createEventRequest();
-        Mockito.verify(manager, Mockito.times(1)).fillEventSyncRequest(Mockito.any(EventSyncRequest.class));
+        transport.createEventRequest(2);
+        Mockito.verify(manager, Mockito.times(1)).fillEventListenersSyncRequest(Mockito.any(EventSyncRequest.class));
     }
 
     @Test

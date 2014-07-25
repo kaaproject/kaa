@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultMetaDataTransport;
-import org.kaaproject.kaa.client.persistance.KaaClientState;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.mockito.Mockito;
