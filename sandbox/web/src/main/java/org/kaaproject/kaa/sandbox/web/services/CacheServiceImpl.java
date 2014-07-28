@@ -24,6 +24,7 @@ import org.kaaproject.kaa.sandbox.web.services.util.Utils;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,17 +32,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class CacheServiceImpl implements CacheService {
 
-    private static final String TENANT_DEVELOPER_USER = "devuser";
-    private static final String TENANT_DEVELOPER_PASSWORD = "devuser123";
-    
     @Autowired
     private AdminClientProvider clientProvider;
+    
+    /** The thrift host. */
+    @Value("#{properties[tenant_developer_user]}")
+    private String tenantDeveloperUser;
+
+    /** The thrift port. */
+    @Value("#{properties[tenant_developer_password]}")
+    private String tenantDeveloperPassword;
     
     @Override
     @Cacheable("sdkCache")
     public FileData getSdk(SdkKey key) throws SandboxServiceException {
         AdminClient client = clientProvider.getClient();
-        client.login(TENANT_DEVELOPER_USER, TENANT_DEVELOPER_PASSWORD);
+        client.login(tenantDeveloperUser, tenantDeveloperPassword);
         FileData fileData;
         try {
             fileData = client.downloadSdk(key);

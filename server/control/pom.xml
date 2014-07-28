@@ -270,6 +270,16 @@
                                     <outputDirectory>${sdk.path}/android</outputDirectory>
                                     <destFileName>kaa-client-sdk-android-${project.version}.jar</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-cpp</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>cpp-sdk</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${sdk.path}/cpp</outputDirectory>
+                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                </artifactItem>								
                             </artifactItems>
                         </configuration>
                     </execution>

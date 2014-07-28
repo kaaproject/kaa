@@ -354,6 +354,8 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         executeSudoSsh("chmod +x " + SANDBOX_FOLDER + "/"+CHANGE_KAA_HOST);
         executeSudoSsh("cp -r " + DEMO_PROJECTS_PATH + " " + SANDBOX_FOLDER + "/");
         executeSudoSsh("cp -r " + SANDBOX_PATH+"/*" + " " + ADMIN_FOLDER + "/");
+        executeSudoSsh("sed -i \"s/\\(tenant_developer_user=\\).*\\$/\\1"+AbstractDemoBuilder.tenantDeveloperUser+"/\" " + ADMIN_FOLDER +"/conf/sandbox-server.properties");
+        executeSudoSsh("sed -i \"s/\\(tenant_developer_password=\\).*\\$/\\1"+AbstractDemoBuilder.tenantDeveloperPassword+"/\" " + ADMIN_FOLDER +"/conf/sandbox-server.properties");
     }
     
     protected boolean isWin32() {
