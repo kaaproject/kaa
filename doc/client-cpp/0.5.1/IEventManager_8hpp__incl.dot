@@ -1,0 +1,25 @@
+digraph "/var/lib/jenkins/workspace/kaa_public/client/client-multi/client-cpp/kaa/event/IEventManager.hpp"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/kaa/event\l/IEventManager.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="string",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="vector",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="boost/cstdint.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="kaa/gen/EndpointGen.hpp",height=0.2,width=0.4,color="black",URL="$kaa_2gen_2EndpointGen_8hpp.html"];
+  Node5 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="sstream",height=0.2,width=0.4,color="grey75"];
+  Node5 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="boost/any.hpp",height=0.2,width=0.4,color="grey75"];
+  Node5 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="avro/Specific.hh",height=0.2,width=0.4,color="grey75"];
+  Node5 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="avro/Encoder.hh",height=0.2,width=0.4,color="grey75"];
+  Node5 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 [label="avro/Decoder.hh",height=0.2,width=0.4,color="grey75"];
+}

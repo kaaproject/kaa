@@ -1,0 +1,17 @@
+digraph "kaa::ProfileUpdateManager"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="kaa::ProfileUpdateManager",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa::UpdateManagerMock",height=0.2,width=0.4,color="black",URL="$classkaa_1_1UpdateManagerMock.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="IUpdateManager",height=0.2,width=0.4,color="grey75"];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" profile" ,fontname="FreeSans"];
+  Node4 [label="kaa::BasicEndpointProfile",height=0.2,width=0.4,color="black",URL="$structkaa_1_1BasicEndpointProfile.html"];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" profileBody" ,fontname="FreeSans"];
+  Node5 [label="std::string",height=0.2,width=0.4,color="grey75",tooltip="STL class. "];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="std::basic_string\<\l char \>",height=0.2,width=0.4,color="grey75",tooltip="STL class. "];
+}

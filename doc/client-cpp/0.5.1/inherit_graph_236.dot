@@ -1,0 +1,14 @@
+digraph "Graphical Class Hierarchy"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="IExternalTransportManager",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa::ExternalTransportManagerMock",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ExternalTransportManagerMock.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="kaa::BootstrapTransportMock",height=0.2,width=0.4,color="black",URL="$classkaa_1_1BootstrapTransportMock.html"];
+  Node2 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="kaa::EndpointTransportFake",height=0.2,width=0.4,color="black",URL="$classkaa_1_1EndpointTransportFake.html"];
+}

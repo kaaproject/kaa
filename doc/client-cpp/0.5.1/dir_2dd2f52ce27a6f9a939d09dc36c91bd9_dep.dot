@@ -1,0 +1,10 @@
+digraph "/var/lib/jenkins/workspace/kaa_public/client/client-multi/client-cpp/kaa/common/exception" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_f09aedf21136cf3760d7f5c15a2e0d3d {
+    graph [ bgcolor="#ddddee", pencolor="black", label="common" fontname="FreeSans", fontsize="10", URL="dir_f09aedf21136cf3760d7f5c15a2e0d3d.html"]
+  dir_2dd2f52ce27a6f9a939d09dc36c91bd9 [shape=box, label="exception", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_2dd2f52ce27a6f9a939d09dc36c91bd9.html"];
+  }
+}

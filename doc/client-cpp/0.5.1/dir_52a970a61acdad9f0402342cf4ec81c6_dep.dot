@@ -1,0 +1,14 @@
+digraph "/var/lib/jenkins/workspace/kaa_public/client/client-multi/client-cpp/build/CMakeFiles" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_264bc6e64d8c1f7582579bdc8202c23b {
+    graph [ bgcolor="#ddddee", pencolor="black", label="build" fontname="FreeSans", fontsize="10", URL="dir_264bc6e64d8c1f7582579bdc8202c23b.html"]
+  subgraph clusterdir_52a970a61acdad9f0402342cf4ec81c6 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_52a970a61acdad9f0402342cf4ec81c6.html"];
+    dir_52a970a61acdad9f0402342cf4ec81c6 [shape=plaintext label="CMakeFiles"];
+    dir_02e391d600a9f741861347643c9537e6 [shape=box label="2.8.12.2" color="red" fillcolor="white" style="filled" URL="dir_02e391d600a9f741861347643c9537e6.html"];
+  }
+  }
+}

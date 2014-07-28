@@ -1,0 +1,14 @@
+digraph "/var/lib/jenkins/workspace/kaa_public/client/client-multi/client-cpp/kaa/logging" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_1ac78b1500c3fd9a977bacb448b54d1a {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_1ac78b1500c3fd9a977bacb448b54d1a.html"]
+  dir_0570cb3da8df100b0aae6c5ed4d4516b [shape=box, label="logging", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_0570cb3da8df100b0aae6c5ed4d4516b.html"];
+  }
+  dir_80ec5060bc6d7f417824a467cc449eef [shape=box label="gen" URL="dir_80ec5060bc6d7f417824a467cc449eef.html"];
+  dir_f09aedf21136cf3760d7f5c15a2e0d3d [shape=box label="common" color="red" URL="dir_f09aedf21136cf3760d7f5c15a2e0d3d.html"];
+  dir_0570cb3da8df100b0aae6c5ed4d4516b->dir_80ec5060bc6d7f417824a467cc449eef [headlabel="2", labeldistance=1.5 headhref="dir_000063_000057.html"];
+  dir_0570cb3da8df100b0aae6c5ed4d4516b->dir_f09aedf21136cf3760d7f5c15a2e0d3d [headlabel="2", labeldistance=1.5 headhref="dir_000063_000046.html"];
+}

@@ -1,0 +1,30 @@
+digraph "/var/lib/jenkins/workspace/kaa_public/client/client-multi/client-cpp/kaa/common/types/CommonRecord.hpp"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/kaa/common\l/types/CommonRecord.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/impl/common\l/CommonTypesFactory.cpp",height=0.2,width=0.4,color="black",URL="$CommonTypesFactory_8cpp.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/impl/common\l/types/CommonRecord.cpp",height=0.2,width=0.4,color="black",URL="$CommonRecord_8cpp.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/kaa/common\l/CommonValueTools.hpp",height=0.2,width=0.4,color="black",URL="$CommonValueTools_8hpp.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/impl/configuration\l/manager/Strategies.cpp",height=0.2,width=0.4,color="black",URL="$Strategies_8cpp.html"];
+  Node4 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/test/impl\l/common/CommonTypesFactoryTest.cpp",height=0.2,width=0.4,color="black",URL="$CommonTypesFactoryTest_8cpp.html"];
+  Node4 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/test/impl\l/configuration/ConfigurationTests.cpp",height=0.2,width=0.4,color="black",URL="$ConfigurationTests_8cpp.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/test/headers\l/configuration/ConfigurationTests.hpp",height=0.2,width=0.4,color="black",URL="$ConfigurationTests_8hpp.html"];
+  Node8 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/test/impl\l/configuration/delta/DeltaTest.cpp",height=0.2,width=0.4,color="black",URL="$DeltaTest_8cpp.html"];
+  Node8 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/test/impl\l/configuration/ProcessConfigurationTest.cpp",height=0.2,width=0.4,color="black",URL="$ProcessConfigurationTest_8cpp.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/test/impl\l/configuration/ConfigurationPersistance\lTest.cpp",height=0.2,width=0.4,color="black",URL="$ConfigurationPersistanceTest_8cpp.html"];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}

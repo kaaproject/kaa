@@ -1,0 +1,27 @@
+var classkaa_1_1UpdateManagerMock =
+[
+    [ "UpdateManagerMock", "classkaa_1_1UpdateManagerMock.html#af9b1728dbc8cc4411409ff8a31f8b775", null ],
+    [ "~UpdateManagerMock", "classkaa_1_1UpdateManagerMock.html#a7585def07f9a622a97ae0dbb612b5ce7", null ],
+    [ "addSyncRequestUpdater", "classkaa_1_1UpdateManagerMock.html#a63713c4a1c520a84fd89e55e0f00cb87", null ],
+    [ "addUpdateListener", "classkaa_1_1UpdateManagerMock.html#a58a96974074214daa7b94ddf84af89ee", null ],
+    [ "failover", "classkaa_1_1UpdateManagerMock.html#a458ded54778ec09bdd5797347b8b71c9", null ],
+    [ "getAcceptedNotificationIds", "classkaa_1_1UpdateManagerMock.html#a726d77a68781ac82fdb1af30a9f4d0a8", null ],
+    [ "getCurrentState", "classkaa_1_1UpdateManagerMock.html#a91addcbcfa328f8ed1e00268d9f7666c", null ],
+    [ "getRequestFactory", "classkaa_1_1UpdateManagerMock.html#a403a887233fd66e98876eb21a95a6578", null ],
+    [ "getSubscriptionCommands", "classkaa_1_1UpdateManagerMock.html#abd6544f07d7f469156e48631955cb36a", null ],
+    [ "getTopicStates", "classkaa_1_1UpdateManagerMock.html#ae6e2e540b2cc18aaf986fc549127f096", null ],
+    [ "onEndpointAccessTokenChanged", "classkaa_1_1UpdateManagerMock.html#a70dd94ff6cfdb8f789e1ac09dfcbe019", null ],
+    [ "onProfileChanged", "classkaa_1_1UpdateManagerMock.html#ad2c3ef689cf4e88cdc14e75c3932edae", null ],
+    [ "onSyncResponse", "classkaa_1_1UpdateManagerMock.html#a852c7ca357c38d06aadd4814c8449d0c", null ],
+    [ "removeSyncRequestUpdater", "classkaa_1_1UpdateManagerMock.html#ac4752b4cdc5a38dfb7f55ebe9d59691c", null ],
+    [ "removeUpdateListener", "classkaa_1_1UpdateManagerMock.html#a19e64e076932ead639283638c3957ec8", null ],
+    [ "resync", "classkaa_1_1UpdateManagerMock.html#a138b2097fae38c3c60b94f98459e01ef", null ],
+    [ "setConfigurtionHashContainer", "classkaa_1_1UpdateManagerMock.html#a99a9868ef9a3a16ab251557bee94bbb7", null ],
+    [ "setPublicKey", "classkaa_1_1UpdateManagerMock.html#ac4313a8cf15fb7d97a7582f0e0d3aa32", null ],
+    [ "setSerializedProfileContainer", "classkaa_1_1UpdateManagerMock.html#aeed2a4c694632045ddce60b59c775ef9", null ],
+    [ "setTransport", "classkaa_1_1UpdateManagerMock.html#a7766b9302d09b9b95e7c16276b3701e2", null ],
+    [ "setTransportExceptionHandler", "classkaa_1_1UpdateManagerMock.html#ad0338a911695db8ed16a71e92d5c9c74", null ],
+    [ "start", "classkaa_1_1UpdateManagerMock.html#a9427cfb1dfa46c67f2f15e16610a6829", null ],
+    [ "stop", "classkaa_1_1UpdateManagerMock.html#a94fd50f8705824be3a6c0b1fb46ee813", null ],
+    [ "updateSubscriptionCommands", "classkaa_1_1UpdateManagerMock.html#a04f1e7e5dfac77b9a49402d3dcbb93cf", null ]
+];

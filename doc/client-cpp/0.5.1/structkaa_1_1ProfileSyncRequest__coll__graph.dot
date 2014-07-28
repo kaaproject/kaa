@@ -1,0 +1,18 @@
+digraph "kaa::ProfileSyncRequest"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="kaa::ProfileSyncRequest",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" profileBody" ,fontname="FreeSans"];
+  Node2 [label="std::vector\< uint8_t \>",height=0.2,width=0.4,color="grey75"];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" endpointPublicKey" ,fontname="FreeSans"];
+  Node3 [label="kaa::_endpoint_avsc\l_Union__8__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____8____.html"];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" endpointAccessToken" ,fontname="FreeSans"];
+  Node4 [label="kaa::_endpoint_avsc\l_Union__9__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____9____.html"];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" versionInfo" ,fontname="FreeSans"];
+  Node5 [label="kaa::EndpointVersionInfo",height=0.2,width=0.4,color="black",URL="$structkaa_1_1EndpointVersionInfo.html"];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" eventFamilyVersions" ,fontname="FreeSans"];
+  Node6 [label="kaa::_endpoint_avsc\l_Union__0__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____0____.html"];
+}

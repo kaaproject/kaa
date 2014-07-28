@@ -1,0 +1,24 @@
+digraph "kaa::SyncResponse"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="kaa::SyncResponse",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" configurationSyncResponse" ,fontname="FreeSans"];
+  Node2 [label="kaa::_endpoint_avsc\l_Union__43__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____43____.html"];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" notificationSyncResponse" ,fontname="FreeSans"];
+  Node3 [label="kaa::_endpoint_avsc\l_Union__44__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____44____.html"];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" userSyncResponse" ,fontname="FreeSans"];
+  Node4 [label="kaa::_endpoint_avsc\l_Union__45__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____45____.html"];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" eventSyncResponse" ,fontname="FreeSans"];
+  Node5 [label="kaa::_endpoint_avsc\l_Union__46__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____46____.html"];
+  Node6 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" redirectSyncResponse" ,fontname="FreeSans"];
+  Node6 [label="kaa::_endpoint_avsc\l_Union__47__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____47____.html"];
+  Node7 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" logSyncResponse" ,fontname="FreeSans"];
+  Node7 [label="kaa::_endpoint_avsc\l_Union__48__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____48____.html"];
+  Node8 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" requestId" ,fontname="FreeSans"];
+  Node8 [label="kaa::_endpoint_avsc\l_Union__41__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____41____.html"];
+  Node9 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" profileSyncResponse" ,fontname="FreeSans"];
+  Node9 [label="kaa::_endpoint_avsc\l_Union__42__",height=0.2,width=0.4,color="black",URL="$structkaa_1_1__endpoint__avsc__Union____42____.html"];
+}

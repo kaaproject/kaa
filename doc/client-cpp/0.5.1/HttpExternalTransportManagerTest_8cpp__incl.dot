@@ -1,0 +1,48 @@
+digraph "/var/lib/jenkins/workspace/kaa_public/client/client-multi/client-cpp/test/impl/http/HttpExternalTransportManagerTest.cpp"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/test/impl\l/http/HttpExternalTransportManagerTest.cpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="boost/test/unit_test.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="kaa/transport/HttpExternal\lTransportManager.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="kaa/transport/IKaaDataChannel.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="kaa/security/KeyUtils.hpp",height=0.2,width=0.4,color="black",URL="$KeyUtils_8hpp.html"];
+  Node5 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="botan/botan.h",height=0.2,width=0.4,color="grey75"];
+  Node5 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="string",height=0.2,width=0.4,color="grey75"];
+  Node5 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="utility",height=0.2,width=0.4,color="grey75"];
+  Node5 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="boost/cstdint.hpp",height=0.2,width=0.4,color="grey75"];
+  Node5 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 [label="boost/scoped_array.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 [label="kaa/http/HttpResponse.hpp",height=0.2,width=0.4,color="black",URL="$HttpResponse_8hpp.html"];
+  Node11 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 [label="kaa/http/IHttpResponse.hpp",height=0.2,width=0.4,color="black",URL="$IHttpResponse_8hpp.html"];
+  Node12 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node13 [label="boost/shared_array.hpp",height=0.2,width=0.4,color="grey75"];
+  Node12 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 -> Node14 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node14 [label="vector",height=0.2,width=0.4,color="grey75"];
+  Node11 -> Node15 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node15 [label="map",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node16 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node16 [label="headers/update/RequestFactory\lMock.hpp",height=0.2,width=0.4,color="black",URL="$RequestFactoryMock_8hpp.html"];
+  Node16 -> Node17 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node17 [label="kaa/update/IRequestFactory.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node18 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node18 [label="headers/security/Encoder\lDecoderStub.hpp",height=0.2,width=0.4,color="black",URL="$EncoderDecoderStub_8hpp.html"];
+  Node18 -> Node19 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node19 [label="kaa/security/IEncoderDecoder.hpp",height=0.2,width=0.4,color="black",URL="$IEncoderDecoder_8hpp.html"];
+  Node19 -> Node20 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node20 [label="botan/rsa.h",height=0.2,width=0.4,color="grey75"];
+  Node19 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}

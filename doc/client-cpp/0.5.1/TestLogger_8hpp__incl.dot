@@ -1,0 +1,16 @@
+digraph "/var/lib/jenkins/workspace/kaa_public/client/client-multi/client-cpp/test/headers/TestLogger.hpp"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_public/client/client\l-multi/client-cpp/test/headers\l/TestLogger.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa/logging/ILogger.hpp",height=0.2,width=0.4,color="black",URL="$ILogger_8hpp.html"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="boost/smart_ptr/shared\l_ptr.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="kaa/logging/LoggerFactory.hpp",height=0.2,width=0.4,color="black",URL="$LoggerFactory_8hpp.html"];
+  Node4 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="fstream",height=0.2,width=0.4,color="grey75"];
+}

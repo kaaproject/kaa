@@ -1,0 +1,18 @@
+digraph "Graphical Class Hierarchy"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="kaa::IBootstrapManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IBootstrapManager.html"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa::BootstrapManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1BootstrapManager.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="kaa::MockBootstrapManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1MockBootstrapManager.html"];
+  Node4 [label="noncopyable",height=0.2,width=0.4,color="grey75"];
+  Node4 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 -> Node5 [dir="back",color="firebrick4",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="kaa::HttpDataProcessor",height=0.2,width=0.4,color="black",URL="$classkaa_1_1HttpDataProcessor.html"];
+  Node4 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="kaa::HttpUtils",height=0.2,width=0.4,color="black",URL="$classkaa_1_1HttpUtils.html"];
+}
