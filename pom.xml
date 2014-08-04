@@ -352,6 +352,7 @@
                         <exclude>**/test/resources/kaa_status.file</exclude>
                         <exclude>**/build/**</exclude>
                         <exclude>**/gcovr</exclude>
+						<exclude>**/README.md</exclude>
                     </excludes>
                 </configuration>
             </plugin>
