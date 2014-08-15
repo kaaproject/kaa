@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
+import java.security.KeyPair;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
@@ -27,11 +29,13 @@ import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.OperationsServerActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.EncDecActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
+import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +75,10 @@ public class DefaultAkkaService implements AkkaService {
     @Autowired
     private CacheService cacheService;
 
+    /** The cache service. */
+    @Autowired
+    private KeyStoreService keyStoreService;
+
     /** The operations service. */
     @Autowired
     private OperationsService operationsService;
@@ -86,7 +94,7 @@ public class DefaultAkkaService implements AkkaService {
     /** The event service. */
     @Autowired
     private EventService eventService;
-    
+
     @Autowired
     private LogAppenderService logAppenderService;
 
@@ -100,9 +108,11 @@ public class DefaultAkkaService implements AkkaService {
         LOG.info("Initializing Akka system...");
         akka = ActorSystem.create(EPS);
         LOG.info("Initializing Akka EPS actor...");
-        opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService, notificationDeltaService, eventService, applicationService, logAppenderService)), EPS);
+        opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService, notificationDeltaService, eventService,
+                applicationService, logAppenderService)), EPS);
         LOG.info("Initializing Akka io router...");
-        ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor))), "ioRouter");
+        ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor, cacheService, new KeyPair(
+                keyStoreService.getPublicKey(), keyStoreService.getPrivateKey())))), "ioRouter");
         LOG.info("Initializing Akka event service listener...");
         listener = new AkkaEventServiceListener(opsActor);
         eventService.addListener(listener);
@@ -155,13 +165,18 @@ public class DefaultAkkaService implements AkkaService {
         }
     }
 
+    @PreDestroy
+    public void preDestroy() {
+        eventService.removeListener(listener);
+    }
+
     @Override
-    public void process(NettyCommandAwareMessage message) {
+    public void process(SessionAware message) {
         ioRouter.tell(message, ActorRef.noSender());
     }
 
-    @PreDestroy
-    public void preDestroy(){
-        eventService.removeListener(listener);
+    @Override
+    public void process(SessionInitRequest message) {
+        ioRouter.tell(message, ActorRef.noSender());
     }
 }

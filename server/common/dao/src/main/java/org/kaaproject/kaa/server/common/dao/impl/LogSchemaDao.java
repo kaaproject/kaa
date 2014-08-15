@@ -41,7 +41,7 @@ public interface LogSchemaDao<T> extends Dao<T> {
      * @return the Log Schema
      */
     T findByApplicationIdAndVersion(String applicationId, int version);
-    
+
     /**
      * Remove by application id.
      *
@@ -56,4 +56,12 @@ public interface LogSchemaDao<T> extends Dao<T> {
      * @return the notification schema
      */
     T findLatestLogSchemaByAppId(String applicationId);
+
+    /**
+     * Find vacant schemas by appender id.
+     *
+     * @param appenderId
+     * @return the list of vacant schemas
+     */
+    List<T> findVacantSchemasByAppenderId(String appenderId);
 }

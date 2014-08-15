@@ -25,6 +25,9 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -39,9 +42,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
+import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
+import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
+import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.AsyncProcessor.editLogAppender;
 import org.kaaproject.kaa.server.control.TestCluster;
 import org.kaaproject.kaa.server.control.cli.ControlApiCliThriftClient;
 import org.kaaproject.kaa.server.control.cli.ControlClientSessionState;
@@ -675,9 +682,71 @@ public class ControlServerCliIT {
         editProfileSchemaCli(cli, null, applicationId, null, null, false);
         editConfigSchemaCli(cli, null, applicationId, null, null, false);
         editNotificationSchemaCli(cli, null, applicationId, null, null, NotificationTypeDto.USER, false, false);
-        editLogSchemaCli(cli, null, applicationId, 1, null, false);
+        createLogSchemaCli(cli, null, applicationId, 1, null, false);
         boolean result = generateSdkCli(cli, applicationId, 1, 1, 2, 1);
         Assert.assertTrue(result);
+    }
+
+    /**
+     * Test execute edit log appender conmmand from cli.
+     *
+     * @throws TException             the t exception
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
+    @Test
+    public void testExecuteEditLogAppenderCommandFromCli() throws TException, UnsupportedEncodingException {
+        controlClientConnect();
+        ControlApiCliThriftClient cli = new ControlApiCliThriftClient();
+        String applicationId = editApplicationCli(cli, null, "testApplication", null, "testTenant", false);
+        listLogSchemasCli(cli, applicationId, true);
+
+        String schemaId = createLogSchemaCli(cli, null, applicationId, 1, null, false);
+        List<HostInfoDto> hosts = new ArrayList<>();
+        hosts.add(new HostInfoDto("localhost", 12345, 0));
+        hosts.add(new HostInfoDto("localhost", 23456, 10));
+        createLogAppenderCli(cli, null, applicationId, schemaId, "FlumeAppender", LogAppenderTypeDto.FLUME, hosts, false);
+    }
+
+    /**
+     * @param cli
+     * @throws UnsupportedEncodingException
+     */
+    private void createLogAppenderCli(ControlApiCliThriftClient cli, String appenderId, String applicationId, String schemaId, String name,
+            LogAppenderTypeDto type, List<HostInfoDto> hosts, boolean createOut) throws UnsupportedEncodingException {
+        cliOut.reset();
+        boolean create = strIsEmpty(appenderId);
+        String cmdLine = (create ? "create" : "edit") + "LogAppender";
+
+        if (!create) {
+            cmdLine += " -i " + appenderId;
+        } else {
+            cmdLine += " -a " + applicationId;
+            cmdLine += " -s " + schemaId;
+            cmdLine += " -n " + name;
+            cmdLine += " -t " + type.name();
+
+            if (hosts != null && !hosts.isEmpty()) {
+                String flumeHosts = "";
+                Iterator<HostInfoDto> it = hosts.iterator();
+                while (it.hasNext()) {
+                    HostInfoDto host = it.next();
+                    flumeHosts += host.getPriority() + ":" + host.getHostname() + ":" + host.getPort();
+                    if (it.hasNext()) {
+                        flumeHosts += ",";
+                    }
+                }
+                cmdLine += " -hs " + flumeHosts;
+            }
+        }
+
+        if (createOut) {
+            cmdLine += " -o dummy.obj";
+        }
+
+        int result = cli.processLine(cmdLine);
+        Assert.assertEquals(0, result);
+        String output = cliOut.toString("UTF-8");
+        Assert.assertTrue(output.trim().startsWith("Created new Log Appender with id: "));
     }
 
     /**
@@ -910,12 +979,10 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         if (create) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             String id = output.trim().substring("Created new tenant with id: ".length()).trim();
             return id;
         }
         else if (tenantId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Tenant with id " + FAKE_SQL_ID + " not found!"));
             return tenantId;
         }
@@ -972,12 +1039,10 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         if (create) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             String id = output.trim().substring("Created new user with id: ".length()).trim();
             return id;
         }
         else if (userId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("User with id " + FAKE_SQL_ID + " not found!"));
             return userId;
         }
@@ -1037,12 +1102,10 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         if (create) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             String id = output.trim().substring("Created new application with id: ".length()).trim();
             return id;
         }
         else if (applicationId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Application with id " + FAKE_SQL_ID + " not found!"));
             return applicationId;
         }
@@ -1217,12 +1280,10 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         if (create) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             String id = output.trim().substring("Created new Profile Schema with id: ".length()).trim();
             return id;
         }
         else if (profileSchemaId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Profile Schema with id " + FAKE_SQL_ID + " not found!"));
             return profileSchemaId;
         }
@@ -1326,12 +1387,10 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         if (create) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             String id = output.trim().substring("Created new Configuration Schema with id: ".length()).trim();
             return id;
         }
         else if (configSchemaId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Configuration Schema with id " + FAKE_SQL_ID + " not found!"));
             return configSchemaId;
         }
@@ -1393,12 +1452,10 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         if (create) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             String id = output.trim().substring("Created new Endpoint Group with id: ".length()).trim();
             return id;
         }
         else if (endpointGroupId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Endpoint Group with id " + FAKE_SQL_ID + " not found!"));
             return endpointGroupId;
         }
@@ -1484,12 +1541,10 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         if (create) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             String id = output.trim().substring("Created new Profile Filter with id: ".length()).trim();
             return id;
         }
         else if (profileFilterId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Profile Filter with id " + FAKE_SQL_ID + " not found!"));
             return profileFilterId;
         }
@@ -1551,7 +1606,6 @@ public class ControlServerCliIT {
         if (create) {
             String out = output.trim();
             int index = "Created new Configuration with id: ".length();
-            logger.debug(" ---> TEST LOGS: " + out);
             if (out.length() > index) {
                 return out.substring(index).trim();
             } else {
@@ -1560,12 +1614,10 @@ public class ControlServerCliIT {
             }
         }
         else if (configurationId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Configuration with id " + FAKE_SQL_ID + " not found!"));
             return configurationId;
         }
         else {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Configuration updated."));
             return configurationId;
         }
@@ -1618,12 +1670,10 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         if (create) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             String id = output.trim().substring("Created new Topic with id: ".length()).trim();
             return id;
         }
         else if (topicId.equals(FAKE_SQL_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Topic with id " + FAKE_SQL_ID + " not found!"));
             return topicId;
         }
@@ -1699,15 +1749,12 @@ public class ControlServerCliIT {
         String output = cliOut.toString("UTF-8");
         if (create) {
             String test = output.trim();
-            logger.debug(" ---> TEST LOGS: " + test);
             String id = test.substring("Created new endpoint user with id: ".length()).trim();
             return id;
         } else if (endpointUserId.equals(FAKE_ID)) {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Endpoint user with id " + FAKE_ID + " not found!"));
             return endpointUserId;
         } else {
-            logger.debug(" ---> TEST LOGS: " + output.trim());
             Assert.assertTrue(output.trim().startsWith("Endpoint user updated."));
             return endpointUserId;
         }
@@ -1733,13 +1780,12 @@ public class ControlServerCliIT {
         Assert.assertTrue(output.trim().startsWith("List of EndpointUsers:"));
     }
 
-    private void editLogSchemaCli(ControlApiCliThriftClient cli, String logSchemaObjId, String applicationId, int logSchemaVersion, String schemaPath, boolean createOut) throws UnsupportedEncodingException {
+    private String createLogSchemaCli(ControlApiCliThriftClient cli, String logSchemaObjId, String applicationId, int logSchemaVersion, String schemaPath, boolean createOut) throws UnsupportedEncodingException {
         cliOut.reset();
         boolean create = strIsEmpty(logSchemaObjId);
         String cmdLine = (create ? "create" : "edit") + "LogSchema";
 
         cmdLine += " -a " + applicationId;
-        cmdLine += " -v " + logSchemaVersion;
 
         if (!create) {
             cmdLine += " -i " + logSchemaObjId;
@@ -1747,6 +1793,8 @@ public class ControlServerCliIT {
 
         if (!strIsEmpty(schemaPath)) {
             cmdLine += " -f " + schemaPath;
+        } else {
+            cmdLine += " -f " + getTestFile("testLogSchema.json");
         }
 
         if (createOut) {
@@ -1756,7 +1804,35 @@ public class ControlServerCliIT {
         int result = cli.processLine(cmdLine);
         Assert.assertEquals(0, result);
         String output = cliOut.toString("UTF-8");
-        Assert.assertTrue(output.trim().startsWith("LogSchema:"));
+        String logSchemaId = null;
+        if(create) {
+            String test = output.trim();
+            logSchemaId = test.substring("Created new Log Schema with id: ".length()).trim();
+        } else {
+            logSchemaId = logSchemaObjId;
+            Assert.assertTrue(output.trim().startsWith("LogSchema:"));
+        }
+        return logSchemaId;
+    }
+
+    /**
+     * Lists the endpoint users from cli.
+     *
+     * @param cli the control cli client
+     * @param tenantId the tenant Id
+     * @param createOut create output file with object id
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
+    private void listLogSchemasCli(ControlApiCliThriftClient cli, String appId, boolean createOut) throws UnsupportedEncodingException {
+        cliOut.reset();
+        String cmdLine = "listLogSchemas -a " + appId;
+        if (createOut) {
+            cmdLine += " -o dummy.obj";
+        }
+        int result = cli.processLine(cmdLine);
+        Assert.assertEquals(0, result);
+        String output = cliOut.toString("UTF-8");
+        Assert.assertTrue(output.trim().startsWith("List of LogSchema:"));
     }
 
     /**

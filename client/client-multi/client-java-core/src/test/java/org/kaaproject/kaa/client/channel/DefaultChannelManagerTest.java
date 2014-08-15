@@ -184,6 +184,11 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel2.getType()).thenReturn(ChannelType.HTTP);
         Mockito.when(channel2.getId()).thenReturn("mock_channel2");
 
+        KaaDataChannel channel3 = Mockito.mock(KaaDataChannel.class);
+        Mockito.when(channel3.getSupportedTransportTypes()).thenReturn(typesForChannel2);
+        Mockito.when(channel3.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel3.getId()).thenReturn("mock_tcp_channel3");
+
         KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
         channelManager.addChannel(channel1);
         channelManager.addChannel(channel2);
@@ -194,14 +199,30 @@ public class DefaultChannelManagerTest {
         ServerInfo opServer2 = new HttpServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channelManager.onServerUpdated(opServer2);
 
+
         Mockito.verify(channel1, Mockito.times(1)).setServer(opServer);
         Mockito.verify(channel2, Mockito.times(1)).setServer(opServer2);
 
         assertEquals(channel2, channelManager.getChannelByTransportType(TransportType.PROFILE));
 
         channelManager.removeChannel(channel2);
-        assertEquals(channel1, channelManager.getChannelByTransportType(TransportType.PROFILE));
+
+        ServerInfo opServer3 = new KaaTcpServerInfo("localhost", 9009, KeyUtil.generateKeyPair().getPublic());
+        channelManager.addChannel(channel3);
+        channelManager.onServerUpdated(opServer3);
+
+        Mockito.verify(channel3, Mockito.times(1)).setServer(opServer3);
+
+        assertEquals(channel3, channelManager.getChannelByTransportType(TransportType.PROFILE));
         assertNull(channelManager.getChannelByTransportType(TransportType.USER));
+    }
+
+    @Test
+    public void testServerInfo() throws Exception {
+        AbstractServerInfo serverInfo = new KaaTcpServerInfo("localhost", 9909, KeyUtil.generateKeyPair().getPublic());
+        assertEquals("URL is not empty for TCP server info " + serverInfo.toString(), "", serverInfo.getURL());
+        serverInfo = new KaaTcpServerInfo("localhost", 9009, KeyUtil.generateKeyPair().getPublic().getEncoded());
+        assertEquals("URL is not empty for TCP server info " + serverInfo.toString(), "", serverInfo.getURL());
     }
 
 }

@@ -39,6 +39,13 @@ DefaultOperationLongPollChannel::DefaultOperationLongPollChannel(IKaaChannelMana
     , stopped_(true), connectionInProgress_(false), taskPosted_(false), firstStart_(true)
     , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager) {}
 
+DefaultOperationLongPollChannel::~DefaultOperationLongPollChannel()
+{
+    stopPoll();
+    io_.stop();
+    pollThread_.join();
+}
+
 void DefaultOperationLongPollChannel::startPoll()
 {
     KAA_LOG_INFO("Starting poll scheduler..");
@@ -223,6 +230,11 @@ void DefaultOperationLongPollChannel::setServer(IServerInfoPtr server)
     } else {
         KAA_LOG_ERROR(boost::format("Invalid server info for channel %1%") % getId());
     }
+}
+
+void DefaultOperationLongPollChannel::syncAck(TransportType type)
+{
+    KAA_LOG_DEBUG(boost::format("Sync ack operation is not supported by channel %1%.") % getId());
 }
 
 }

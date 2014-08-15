@@ -29,6 +29,7 @@ import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
@@ -40,11 +41,14 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.appender.LogAppenderViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.appender.LogAppendersViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.application.ApplicationViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.application.ApplicationsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchemaViewImpl;
@@ -130,6 +134,10 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<TopicDto> topicsView = new TopicsViewImpl();
     private final TopicView topicView = new TopicViewImpl(false);
     private final TopicView createTopicView = new TopicViewImpl(true);
+
+    private final BaseListView<LogAppenderDto> appendersView = new LogAppendersViewImpl();
+    private final LogAppenderView appenderView = new LogAppenderViewImpl(false);
+    private final LogAppenderView createAppenderView = new LogAppenderViewImpl(true);
 
     private final BaseListView<EventClassFamilyDto> ecfsView = new EcfsViewImpl();
     private final EcfView ecfView = new EcfViewImpl(false);
@@ -366,6 +374,21 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public void setHomePlace(Place homePlace) {
         this.homePlace = homePlace;
+    }
+
+    @Override
+    public BaseListView<LogAppenderDto> getAppendersView() {
+        return appendersView;
+    }
+
+    @Override
+    public LogAppenderView getAppenderView() {
+        return appenderView;
+    }
+
+    @Override
+    public LogAppenderView getCreateAppenderView() {
+        return createAppenderView;
     }
 
 }

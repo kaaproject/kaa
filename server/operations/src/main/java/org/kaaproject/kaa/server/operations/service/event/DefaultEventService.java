@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -60,7 +61,10 @@ public class DefaultEventService implements EventService {
     /** neigbors collector */
     private final Neighbors neighbors;
 
+    private OperationsNode operationsNode;
+
     /** The operations server config. */
+    @Autowired
     private OperationsServerConfig operationsServerConfig;
 
     /** Listeners list which registered to receive event from thrift server. */
@@ -84,96 +88,6 @@ public class DefaultEventService implements EventService {
         }
     };
 
-
-    /**
-     * Key Class, used to unique repack sending messages.
-     */
-    public class Key {
-        private String userId;
-        private String tenantId;
-        /**
-         * @param userId2
-         * @param tenantId2
-         */
-        public Key(String userId, String tenantId) {
-            this.userId = userId;
-            this.tenantId = tenantId;
-        }
-        /**
-         * @return the userId
-         */
-        public String getUserId() {
-            return userId;
-        }
-        /**
-         * @return the tenantId
-         */
-        public String getTenantId() {
-            return tenantId;
-        }
-        /**
-         * @param userId the userId to set
-         */
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-        /**
-         * @param tenantId the tenantId to set
-         */
-        public void setTenantId(String tenantId) {
-            this.tenantId = tenantId;
-        }
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getOuterType().hashCode();
-            result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
-            result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-            return result;
-        }
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            Key other = (Key) obj;
-            if (!getOuterType().equals(other.getOuterType())) {
-                return false;
-            }
-            if (tenantId == null) {
-                if (other.tenantId != null) {
-                    return false;
-                }
-            } else if (!tenantId.equals(other.tenantId)) {
-                return false;
-            }
-            if (userId == null) {
-                if (other.userId != null) {
-                    return false;
-                }
-            } else if (!userId.equals(other.userId)) {
-                return false;
-            }
-            return true;
-        }
-        private DefaultEventService getOuterType() {
-            return DefaultEventService.this;
-        }
-
-    }
 
     /**
      * Default constructor.
@@ -390,7 +304,7 @@ public class DefaultEventService implements EventService {
      */
     private List<EventRoute> transformEventRouteFromRouteInfoCollection(Collection<RouteInfo> routeInfos) {
         List<EventRoute> routes = new ArrayList<>();
-        HashMap<Key,List<org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo>> routeInfosTh = new HashMap<>(); //NOSONAR
+        HashMap<UserTenantKey,List<org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo>> routeInfosTh = new HashMap<>(); //NOSONAR
         for(RouteInfo ri : routeInfos) {
             org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo riTh
                 = new org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo(
@@ -398,14 +312,14 @@ public class DefaultEventService implements EventService {
                     transformECFV(ri.getEcfVersions()),
                     ri.getAddress().getApplicationToken(),
                     ByteBuffer.wrap(ri.getAddress().getEndpointKey().getData()));
-            Key key = new Key(ri.getUserId(), ri.getTenantId());
+            UserTenantKey key = new UserTenantKey(ri.getUserId(), ri.getTenantId());
 
             if (!routeInfosTh.containsKey(key)) {
                 routeInfosTh.put(key, new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo>());
             }
             routeInfosTh.get(key).add(riTh);
         }
-        for(Key key : routeInfosTh.keySet()) {
+        for(UserTenantKey key : routeInfosTh.keySet()) {
 
             EventRoute route = new EventRoute(
                     key.getUserId(),
@@ -596,7 +510,16 @@ public class DefaultEventService implements EventService {
      */
     @Override
     public void setZkNode(OperationsNode operationsNode) {
+        this.operationsNode = operationsNode;
         neighbors.setZkNode(operationsNode);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.operations.service.event.EventService#getZkNode()
+     */
+    @Override
+    public OperationsNode getZkNode() {
+        return operationsNode;
     }
 
 }

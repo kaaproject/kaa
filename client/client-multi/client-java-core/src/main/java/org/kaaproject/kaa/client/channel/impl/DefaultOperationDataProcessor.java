@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.client.channel.impl;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
@@ -33,12 +32,11 @@ import org.kaaproject.kaa.client.channel.RedirectionTransport;
 import org.kaaproject.kaa.client.channel.UserTransport;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDataDemultiplexer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationDataProcessor.class);
-    private AtomicInteger   requestsCounter = new AtomicInteger(0);
+    private final AtomicInteger   requestsCounter = new AtomicInteger(0);
     private final AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
     private final AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
 
@@ -95,6 +93,7 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     public synchronized void processResponse(byte[] response) throws Exception {
         if (response != null) {
             SyncResponse syncResponse = responseConverter.fromByteArray(response);
+
             LOG.info("Received Sync response: {}", syncResponse);
             if (syncResponse.getConfigurationSyncResponse() != null && configurationTransport != null) {
                 configurationTransport.onConfigurationResponse(syncResponse.getConfigurationSyncResponse());
@@ -136,9 +135,7 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
                 boolean isDownDirection = type.getValue().equals(ChannelDirection.DOWN);
                 switch(type.getKey()) {
                     case CONFIGURATION:
-                        if (isDownDirection) {
-                            request.setConfigurationSyncRequest(new ConfigurationSyncRequest());
-                        } else if (configurationTransport != null) {
+                        if (configurationTransport != null) {
                             request.setConfigurationSyncRequest(configurationTransport.createConfigurationRequest());
                         }
                         break;
@@ -150,10 +147,12 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
                         }
                         break;
                     case NOTIFICATION:
-                        if (isDownDirection) {
-                            request.setNotificationSyncRequest(new NotificationSyncRequest());
-                        } else if (notificationTransport != null) {
-                            request.setNotificationSyncRequest(notificationTransport.createNotificationRequest());
+                        if (notificationTransport != null) {
+                            if (isDownDirection) {
+                                request.setNotificationSyncRequest(notificationTransport.createEmptyNotificationRequest());
+                            } else {
+                                request.setNotificationSyncRequest(notificationTransport.createNotificationRequest());
+                            }
                         }
                         break;
                     case PROFILE:
@@ -185,5 +184,4 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
         }
         return null; //NOSONAR
     }
-
 }

@@ -18,8 +18,10 @@ package org.kaaproject.kaa.client.channel;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultEventTransport;
@@ -62,12 +64,16 @@ public class DefaultEventTransportTest {
     @Test
     public void testCreateRequest() {
         EventManager manager = Mockito.mock(EventManager.class);
+        Mockito.when(manager.getPendingEvents()).thenReturn(Arrays.asList(new Event(), new Event()));
 
         EventTransport transport = new DefaultEventTransport();
         transport.createEventRequest(1);
         transport.setEventManager(manager);
         transport.createEventRequest(2);
         Mockito.verify(manager, Mockito.times(1)).fillEventListenersSyncRequest(Mockito.any(EventSyncRequest.class));
+
+        EventSyncRequest request = transport.createEventRequest(3);
+        Assert.assertTrue(request.getEvents().size() == 4);
     }
 
     @Test
@@ -94,5 +100,22 @@ public class DefaultEventTransportTest {
 
         Mockito.verify(manager, Mockito.times(3)).onGenericEvent(Mockito.eq("eventClassFQN"), Mockito.eq(new byte [] { 1, 2, 3 }), Mockito.eq("source"));
         Mockito.verify(manager, Mockito.times(1)).eventListenersResponseReceived(listeners);
+    }
+
+    @Test
+    public void testRemoveByResponseId() {
+        EventManager manager = Mockito.mock(EventManager.class);
+        Mockito.when(manager.getPendingEvents()).thenReturn(Arrays.asList(new Event(), new Event()));
+
+        EventTransport transport = new DefaultEventTransport();
+        transport.createEventRequest(1);
+        transport.setEventManager(manager);
+        transport.createEventRequest(2);
+        transport.createEventRequest(3);
+
+        transport.onSyncResposeIdReceived(3);
+
+        EventSyncRequest request = transport.createEventRequest(4);
+        Assert.assertTrue(request.getEvents().size() == 2);
     }
 }

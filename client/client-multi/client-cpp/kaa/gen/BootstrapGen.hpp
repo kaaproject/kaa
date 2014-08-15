@@ -39,6 +39,7 @@ enum ChannelType {
     HTTP,
     HTTP_LP,
     BOOTSTRAP,
+    KAATCP,
 };
 
 struct HTTPLPComunicationParameters {
@@ -59,6 +60,15 @@ struct HTTPComunicationParameters {
         { }
 };
 
+struct KaaTCPComunicationParameters {
+    std::string hostName;
+    int32_t port;
+    KaaTCPComunicationParameters() :
+        hostName(std::string()),
+        port(int32_t())
+        { }
+};
+
 struct _bootstrap_avsc_Union__0__ {
 private:
     size_t idx_;
@@ -69,6 +79,8 @@ public:
     void set_HTTPComunicationParameters(const HTTPComunicationParameters& v);
     HTTPLPComunicationParameters get_HTTPLPComunicationParameters() const;
     void set_HTTPLPComunicationParameters(const HTTPLPComunicationParameters& v);
+    KaaTCPComunicationParameters get_KaaTCPComunicationParameters() const;
+    void set_KaaTCPComunicationParameters(const KaaTCPComunicationParameters& v);
     _bootstrap_avsc_Union__0__();
 };
 
@@ -116,6 +128,8 @@ public:
     void set_HTTPLPComunicationParameters(const HTTPLPComunicationParameters& v);
     HTTPComunicationParameters get_HTTPComunicationParameters() const;
     void set_HTTPComunicationParameters(const HTTPComunicationParameters& v);
+    KaaTCPComunicationParameters get_KaaTCPComunicationParameters() const;
+    void set_KaaTCPComunicationParameters(const KaaTCPComunicationParameters& v);
     OperationsServerList get_OperationsServerList() const;
     void set_OperationsServerList(const OperationsServerList& v);
     _bootstrap_avsc_Union__1__();
@@ -146,6 +160,20 @@ HTTPLPComunicationParameters _bootstrap_avsc_Union__0__::get_HTTPLPComunicationP
 inline
 void _bootstrap_avsc_Union__0__::set_HTTPLPComunicationParameters(const HTTPLPComunicationParameters& v) {
     idx_ = 1;
+    value_ = v;
+}
+
+inline
+KaaTCPComunicationParameters _bootstrap_avsc_Union__0__::get_KaaTCPComunicationParameters() const {
+    if (idx_ != 2) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<KaaTCPComunicationParameters >(value_);
+}
+
+inline
+void _bootstrap_avsc_Union__0__::set_KaaTCPComunicationParameters(const KaaTCPComunicationParameters& v) {
+    idx_ = 2;
     value_ = v;
 }
 
@@ -206,8 +234,22 @@ void _bootstrap_avsc_Union__1__::set_HTTPComunicationParameters(const HTTPComuni
 }
 
 inline
-OperationsServerList _bootstrap_avsc_Union__1__::get_OperationsServerList() const {
+KaaTCPComunicationParameters _bootstrap_avsc_Union__1__::get_KaaTCPComunicationParameters() const {
     if (idx_ != 4) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<KaaTCPComunicationParameters >(value_);
+}
+
+inline
+void _bootstrap_avsc_Union__1__::set_KaaTCPComunicationParameters(const KaaTCPComunicationParameters& v) {
+    idx_ = 4;
+    value_ = v;
+}
+
+inline
+OperationsServerList _bootstrap_avsc_Union__1__::get_OperationsServerList() const {
+    if (idx_ != 5) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<OperationsServerList >(value_);
@@ -215,7 +257,7 @@ OperationsServerList _bootstrap_avsc_Union__1__::get_OperationsServerList() cons
 
 inline
 void _bootstrap_avsc_Union__1__::set_OperationsServerList(const OperationsServerList& v) {
-    idx_ = 4;
+    idx_ = 5;
     value_ = v;
 }
 
@@ -234,7 +276,7 @@ template<> struct codec_traits<kaa::Resolve> {
 
 template<> struct codec_traits<kaa::ChannelType> {
     static void encode(Encoder& e, kaa::ChannelType v) {
-		if (v < kaa::HTTP || v > kaa::BOOTSTRAP)
+		if (v < kaa::HTTP || v > kaa::KAATCP)
 		{
 			std::ostringstream error;
 			error << "enum value " << v << " is out of bound for kaa::ChannelType and cannot be encoded";
@@ -244,7 +286,7 @@ template<> struct codec_traits<kaa::ChannelType> {
     }
     static void decode(Decoder& d, kaa::ChannelType& v) {
 		size_t index = d.decodeEnum();
-		if (index < kaa::HTTP || index > kaa::BOOTSTRAP)
+		if (index < kaa::HTTP || index > kaa::KAATCP)
 		{
 			std::ostringstream error;
 			error << "enum value " << index << " is out of bound for kaa::ChannelType and cannot be decoded";
@@ -276,6 +318,17 @@ template<> struct codec_traits<kaa::HTTPComunicationParameters> {
     }
 };
 
+template<> struct codec_traits<kaa::KaaTCPComunicationParameters> {
+    static void encode(Encoder& e, const kaa::KaaTCPComunicationParameters& v) {
+        avro::encode(e, v.hostName);
+        avro::encode(e, v.port);
+    }
+    static void decode(Decoder& d, kaa::KaaTCPComunicationParameters& v) {
+        avro::decode(d, v.hostName);
+        avro::decode(d, v.port);
+    }
+};
+
 template<> struct codec_traits<kaa::_bootstrap_avsc_Union__0__> {
     static void encode(Encoder& e, kaa::_bootstrap_avsc_Union__0__ v) {
         e.encodeUnionIndex(v.idx());
@@ -286,11 +339,14 @@ template<> struct codec_traits<kaa::_bootstrap_avsc_Union__0__> {
         case 1:
             avro::encode(e, v.get_HTTPLPComunicationParameters());
             break;
+        case 2:
+            avro::encode(e, v.get_KaaTCPComunicationParameters());
+            break;
         }
     }
     static void decode(Decoder& d, kaa::_bootstrap_avsc_Union__0__& v) {
         size_t n = d.decodeUnionIndex();
-        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        if (n >= 3) { throw avro::Exception("Union index too big"); }
         switch (n) {
         case 0:
             {
@@ -304,6 +360,13 @@ template<> struct codec_traits<kaa::_bootstrap_avsc_Union__0__> {
                 kaa::HTTPLPComunicationParameters vv;
                 avro::decode(d, vv);
                 v.set_HTTPLPComunicationParameters(vv);
+            }
+            break;
+        case 2:
+            {
+                kaa::KaaTCPComunicationParameters vv;
+                avro::decode(d, vv);
+                v.set_KaaTCPComunicationParameters(vv);
             }
             break;
         }
@@ -362,13 +425,16 @@ template<> struct codec_traits<kaa::_bootstrap_avsc_Union__1__> {
             avro::encode(e, v.get_HTTPComunicationParameters());
             break;
         case 4:
+            avro::encode(e, v.get_KaaTCPComunicationParameters());
+            break;
+        case 5:
             avro::encode(e, v.get_OperationsServerList());
             break;
         }
     }
     static void decode(Decoder& d, kaa::_bootstrap_avsc_Union__1__& v) {
         size_t n = d.decodeUnionIndex();
-        if (n >= 5) { throw avro::Exception("Union index too big"); }
+        if (n >= 6) { throw avro::Exception("Union index too big"); }
         switch (n) {
         case 0:
             {
@@ -399,6 +465,13 @@ template<> struct codec_traits<kaa::_bootstrap_avsc_Union__1__> {
             }
             break;
         case 4:
+            {
+                kaa::KaaTCPComunicationParameters vv;
+                avro::decode(d, vv);
+                v.set_KaaTCPComunicationParameters(vv);
+            }
+            break;
+        case 5:
             {
                 kaa::OperationsServerList vv;
                 avro::decode(d, vv);

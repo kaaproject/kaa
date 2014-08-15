@@ -15,10 +15,10 @@
   limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                          xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
-                                          xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
-                                          xmlns:util="http://www.springframework.org/schema/util" xmlns:cache="http://www.springframework.org/schema/cache"
-                                          xsi:schemaLocation="
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:cache="http://www.springframework.org/schema/cache"
+    xsi:schemaLocation="
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
@@ -28,23 +28,27 @@
             http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
             http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
-                                          <cache:annotation-driven/>
+    <cache:annotation-driven />
 
-                                          <context:component-scan base-package="org.kaaproject.kaa.server.operations" />
+    <context:component-scan base-package="org.kaaproject.kaa.server.operations" />
 
-                                          <import resource="classpath:common-dao-context.xml" />
+    <import resource="classpath:common-dao-context.xml" />
 
-                                          <util:properties id="properties" location="classpath:/operations-server.properties" />
-                                          <bean id="operationsService" class="org.kaaproject.kaa.server.operations.service.DefaultOperationsService" />
-                                          <bean id="operationsBootstrapService" class="org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService" />
-                                          <bean id="deltaService" class="org.kaaproject.kaa.server.operations.service.delta.DefaultDeltaService" />
-                                          <bean id="cacheService" class="org.kaaproject.kaa.server.operations.service.cache.concurrent.ConcurrentCacheService" />
-                                          <bean id="profileService" class="org.kaaproject.kaa.server.operations.service.profile.DefaultProfileService" />
-                                          <bean id="deltaCalculatorFactory" class="org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory" />
-                                          <bean id="keyStoreService" class="org.kaaproject.kaa.server.operations.service.security.FileKeyStoreService" />
-                                          <bean id="endpointUserService" class="org.kaaproject.kaa.server.operations.service.user.DefaultEndpointUserService" />
+    <util:properties id="properties" location="classpath:/operations-server.properties" />
+
+    <!-- Main Services -->
+
+    <bean id="operationsService" class="org.kaaproject.kaa.server.operations.service.DefaultOperationsService" />
+    <bean id="operationsBootstrapService" class="org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService" />
+    <bean id="deltaService" class="org.kaaproject.kaa.server.operations.service.delta.DefaultDeltaService" />
+    <bean id="cacheService" class="org.kaaproject.kaa.server.operations.service.cache.concurrent.ConcurrentCacheService" />
+    <bean id="profileService" class="org.kaaproject.kaa.server.operations.service.profile.DefaultProfileService" />
+    <bean id="deltaCalculatorFactory" class="org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory" />
+    <bean id="keyStoreService" class="org.kaaproject.kaa.server.operations.service.security.FileKeyStoreService" />
+    <bean id="endpointUserService" class="org.kaaproject.kaa.server.operations.service.user.DefaultEndpointUserService" />
     <bean id="logAppenderService" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderService" />
 
+    <!-- Configuration from properties file -->
 
     <bean id="operationsServerConfig" class="org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig">
         <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
@@ -56,76 +60,149 @@
         <property name="zkMaxRetryTime" value="#{properties[zk_max_retry_time]}" />
         <property name="zkSleepTime" value="#{properties[zk_sleep_time]}" />
         <property name="zkIgnoreErrors" value="#{properties[zk_ignore_errors]}" />
-        <property name="channelList">
+    </bean>
+
+    <!-- Netty Services -->
+
+    <!-- HTTP -->
+
+    <bean id="httpStatisticsService" class="org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory" factory-method="getService">
+        <constructor-arg value="HTTP" />
+    </bean>
+
+    <bean id="httpSyncCommandFactory" class="org.kaaproject.kaa.server.operations.service.http.commands.SyncCommandFactory">
+        <property name="commandName" value="Sync" />
+    </bean>
+
+    <bean id="httpLongSyncCommandFactory" class="org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommandFactory">
+        <property name="commandName" value="LongSync" />
+    </bean>
+
+    <bean id="nettyHttpChannelConfig" class="org.kaaproject.kaa.server.operations.service.config.HttpChannelConfig">
+        <property name="bindInterface" value="#{properties[channel_http_host]}" />
+        <property name="port" value="#{properties[channel_http_port]}" />
+        <property name="clientMaxBodySize" value="#{properties[http_maxContentLength]}" />
+        <property name="executorThreadSize" value="#{properties[executorThreadSize]}" />
+        <property name="sessionTrack" ref="httpStatisticsService" />
+        <property name="commandList">
             <list>
-                <bean class="org.kaaproject.kaa.server.operations.service.config.HttpChannelConfig">
-                    <property name="bindInterface" value="#{properties[channel_http_host]}" />
-                    <property name="port" value="#{properties[channel_http_port]}" />
-                    <property name="channelEnabled" value="#{properties[channel_http_enable]}" />
-                    <property name="clientMaxBodySize" value="#{properties[http_maxContentLength]}" />
-                    <property name="serverInitializerClass" value="#{properties[serverInitializerClass]}" />
-                    <property name="executorThreadSize" value="#{properties[executorThreadSize]}" />
-                    <property name="commandList">
-                        <list>
-                            <value>org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand</value>
-                            <value>org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommand</value>
-                        </list>
-                    </property>
-                </bean>
-                <bean class="org.kaaproject.kaa.server.operations.service.config.HttpLpChannelConfig">
-                    <property name="bindInterface" value="#{properties[channel_http_lp_host]}" />
-                    <property name="port" value="#{properties[channel_http_lp_port]}" />
-                    <property name="channelEnabled" value="#{properties[channel_http_lp_enable]}" />
-                    <property name="clientMaxBodySize" value="#{properties[http_maxContentLength]}" />
-                    <property name="serverInitializerClass" value="#{properties[serverInitializerClass]}" />
-                    <property name="executorThreadSize" value="#{properties[executorThreadSize]}" />
-                    <property name="commandList">
-                        <list>
-                            <value>org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand</value>
-                            <value>org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommand</value>
-                        </list>
-                    </property>
-                </bean>
+                <ref bean="httpSyncCommandFactory" />
+                <ref bean="httpLongSyncCommandFactory" />
             </list>
         </property>
     </bean>
 
-                                          <bean id="configurationOverrideFactory" class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory" />
+    <bean id="nettyHttpServerInitializer" class="org.kaaproject.kaa.server.operations.service.http.HttpServerInitializer" />
 
-                                          <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
-                                                                                    <property name="locateExistingServerIfPossible" value="true" />
-                                          </bean>
-
-                                          <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="ehcache.xml" />
-
-                                          <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache" />
-
-                                          <bean id="ehcacheManager" factory-bean="cacheManager" factory-method="getCacheManager" />
-
-                                          <bean id="managementService" class="net.sf.ehcache.management.ManagementService" init-method="init" destroy-method="dispose">
-                                                                                    <constructor-arg ref="ehcacheManager" />
-                                                                                    <constructor-arg ref="mbeanServer" />
-                                                                                    <constructor-arg index="2" value="true" />
-                                                                                    <constructor-arg index="3" value="true" />
-                                                                                    <constructor-arg index="4" value="true" />
-                                                                                    <constructor-arg index="5" value="true" />
-                                          </bean>
-
-                                          <bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender">
-        <constructor-arg name="name" value="mongoDBLogAppender"></constructor-arg>
+    <bean id="nettyHttpServer" class="org.kaaproject.kaa.server.operations.service.http.HttpService">
+        <constructor-arg ref="operationsServerConfig" />
+        <constructor-arg ref="nettyHttpChannelConfig" />
+        <constructor-arg ref="nettyHttpServerInitializer" />
     </bean>
 
-    <bean id="fileSystemLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogAppender">
-        <constructor-arg name="name" value="fileSystemLogAppender"></constructor-arg>
+    <!-- HTTP LP -->
+
+    <bean id="httpLpStatisticsService" class="org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory" factory-method="getService">
+        <constructor-arg value="HTTP_LP" />
     </bean>
 
-                                          <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderResolver">
-        <constructor-arg name="appenderMap" ref="appenderMap"></constructor-arg>
+    <bean id="httpLpSyncCommandFactory" class="org.kaaproject.kaa.server.operations.service.http.commands.SyncCommandFactory">
+        <property name="commandName" value="Sync" />
+    </bean>
+    <bean id="httpLpLongSyncCommandFactory" class="org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommandFactory">
+        <property name="commandName" value="LongSync" />
     </bean>
 
-    <util:map id="appenderMap">
-        <entry key="mongoDBLogAppender" value-ref="mongoDBLogAppender" />
-        <entry key="fileSystemLogAppender" value-ref="fileSystemLogAppender" />
-    </util:map>
+    <bean id="nettyHttpLpChannelConfig" class="org.kaaproject.kaa.server.operations.service.config.HttpLpChannelConfig">
+        <property name="bindInterface" value="#{properties[channel_http_lp_host]}" />
+        <property name="port" value="#{properties[channel_http_lp_port]}" />
+        <property name="clientMaxBodySize" value="#{properties[http_maxContentLength]}" />
+        <property name="executorThreadSize" value="#{properties[executorThreadSize]}" />
+        <property name="sessionTrack" ref="httpLpStatisticsService" />
+        <property name="commandList">
+            <list>
+                <ref bean="httpLpSyncCommandFactory" />
+                <ref bean="httpLpLongSyncCommandFactory" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="nettyHttpLpServerInitializer" class="org.kaaproject.kaa.server.operations.service.http.HttpServerInitializer" />
+
+    <bean id="nettyHttpLpServer" class="org.kaaproject.kaa.server.operations.service.http.HttpService">
+        <constructor-arg ref="operationsServerConfig" />
+        <constructor-arg ref="nettyHttpLpChannelConfig" />
+        <constructor-arg ref="nettyHttpLpServerInitializer" />
+    </bean>
+
+    <!-- KAA TCP -->
+
+    <bean id="nettyKaaTcpStatisticsService" class="org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory" factory-method="getService">
+        <constructor-arg value="KAATCP" />
+    </bean>
+
+    <bean id="kaaTcpCommandFactory" class="org.kaaproject.kaa.server.operations.service.tcp.commands.KaaTcpCommandFactory" />
+
+    <bean id="nettyKaaTcpChannelConfig" class="org.kaaproject.kaa.server.operations.service.config.KaaTcpServiceChannelConfig">
+        <property name="bindInterface" value="#{properties[channel_kaa_tcp_host]}" />
+        <property name="port" value="#{properties[channel_kaa_tcp_port]}" />
+        <property name="sessionTrack" ref="nettyKaaTcpStatisticsService" />
+        <property name="commandList">
+            <list>
+                <ref bean="kaaTcpCommandFactory" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="nettyKaaTcpServerInitializer" class="org.kaaproject.kaa.server.operations.service.tcp.KaaTcpServerInitializer" />
+
+    <bean id="nettyKaaTcpServer" class="org.kaaproject.kaa.server.operations.service.tcp.KaaTcpService">
+        <constructor-arg ref="operationsServerConfig" />
+        <constructor-arg ref="nettyKaaTcpChannelConfig" />
+        <constructor-arg ref="nettyKaaTcpServerInitializer" />
+    </bean>
+
+    <!-- Netty Servers List -->
+
+    <util:list id="nettyServersList" value-type="org.kaaproject.kaa.server.operations.service.bootstrap.ServiceChannel">
+        <ref bean="nettyHttpServer" />
+        <ref bean="nettyHttpLpServer" />
+        <ref bean="nettyKaaTcpServer" />
+    </util:list>
+
+    <!-- MISC -->
+
+    <bean id="configurationOverrideFactory" class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory" />
+
+    <!-- JMX -->
+
+    <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+        <property name="locateExistingServerIfPossible" value="true" />
+    </bean>
+
+    <!-- EHCAHCE -->
+
+    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="ehcache.xml" />
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache" />
+
+    <bean id="ehcacheManager" factory-bean="cacheManager" factory-method="getCacheManager" />
+
+    <bean id="managementService" class="net.sf.ehcache.management.ManagementService" init-method="init" destroy-method="dispose">
+        <constructor-arg ref="ehcacheManager" />
+        <constructor-arg ref="mbeanServer" />
+        <constructor-arg index="2" value="true" />
+        <constructor-arg index="3" value="true" />
+        <constructor-arg index="4" value="true" />
+        <constructor-arg index="5" value="true" />
+    </bean>
+
+    <!-- Log Appenders -->
+
+    <bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender" />
+
+    <bean id="fileSystemLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogAppender" />
+
+    <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderBuilder" />
 
 </beans>

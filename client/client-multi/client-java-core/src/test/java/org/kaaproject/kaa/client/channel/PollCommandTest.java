@@ -45,7 +45,7 @@ public class PollCommandTest {
 
         command.execute();
 
-        Mockito.verify(client, Mockito.times(1)).executeHttpRequest(Mockito.eq(""), Mockito.any(LinkedHashMap.class));
+        Mockito.verify(client, Mockito.times(1)).executeHttpRequest(Mockito.eq(""), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean());
         Mockito.verify(processor, Mockito.times(1)).onResponse(Mockito.any(byte[].class));
         Mockito.verify(processor, Mockito.times(2)).createRequest(transportTypes);
 
@@ -63,7 +63,7 @@ public class PollCommandTest {
         Map<TransportType, ChannelDirection> transportTypes = new HashMap<>();
         HttpLongPollServerInfo serverInfo = Mockito.mock(HttpLongPollServerInfo.class);
 
-        Mockito.when(client.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class))).thenThrow(new Exception());
+        Mockito.when(client.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(new Exception());
 
         PollCommand command = new PollCommand(client, processor, transportTypes, serverInfo);
         command.execute();

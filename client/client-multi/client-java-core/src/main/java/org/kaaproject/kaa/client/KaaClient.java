@@ -33,9 +33,6 @@ import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 
-/*
- * TODO: extend javadocs for ProfileManager, DeltaManager, NotificationManager, KaaChannelManager, KaaDataMultiplexer, KaaDataDemultiplexer
- */
 /**
  * Interface for the Kaa client.
  *
@@ -184,7 +181,15 @@ public interface KaaClient {
      * @return client's public key
      */
     PublicKey getClientPublicKey();
-    
+
+    /**
+     * Retrieves endpoint public key hash. <br>
+     * <br>
+     * Required in {@link EndpointRegistrationManager} implementation
+     * to react on detach response from Operations server.
+     *
+     * @return String containing current endpoint's public key hash.
+     */
     String getEndpointKeyHash();
 
     /**

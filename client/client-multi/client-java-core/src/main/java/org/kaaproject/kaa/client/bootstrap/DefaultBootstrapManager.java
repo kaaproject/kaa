@@ -31,6 +31,7 @@ import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.HttpLongPollServerInfo;
 import org.kaaproject.kaa.client.channel.HttpServerInfo;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
 import org.kaaproject.kaa.client.channel.ServerInfo;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
@@ -41,9 +42,11 @@ import org.kaaproject.kaa.common.channels.Channel;
 import org.kaaproject.kaa.common.channels.ChannelFactory;
 import org.kaaproject.kaa.common.channels.HttpChannel;
 import org.kaaproject.kaa.common.channels.HttpLongPollChannel;
+import org.kaaproject.kaa.common.channels.KaaTcpChannel;
 import org.kaaproject.kaa.common.channels.ParsingException;
 import org.kaaproject.kaa.common.channels.communication.HttpLongPollParameters;
 import org.kaaproject.kaa.common.channels.communication.HttpParameters;
+import org.kaaproject.kaa.common.channels.communication.KaaTcpParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +84,10 @@ public class DefaultBootstrapManager implements BootstrapManager {
             case HTTP_LP:
                 HttpLongPollParameters longPollParams = HttpLongPollChannel.getHttpLongPollParametersFromSupportedChannel(supportedChannel);
                 info = new HttpLongPollServerInfo(longPollParams.getHostName(), longPollParams.getPort(), server.getPublicKey().array());
+                break;
+            case KAATCP:
+                KaaTcpParameters tcpParams = KaaTcpChannel.getKaaTcpParametersFromSupportedChannel(supportedChannel);
+                info = new KaaTcpServerInfo(tcpParams.getHostName(), tcpParams.getPort(), server.getPublicKey().array());
                 break;
             default:
                 throw new BootstrapRuntimeException("Invalid type");

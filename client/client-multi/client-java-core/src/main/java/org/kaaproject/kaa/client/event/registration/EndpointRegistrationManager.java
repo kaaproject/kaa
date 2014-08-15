@@ -97,7 +97,7 @@ public interface EndpointRegistrationManager {
     /**
      * Updates with new endpoint attach request<br>
      * <br>
-     * {@link resultListener} is populated with {@link EndpointKeyHash} of an
+     * {@link EndpointOperationResultListener} is populated with {@link EndpointKeyHash} of an
      * attached endpoint.
      *
      * @param endpointAccessToken Access token of the attaching endpoint

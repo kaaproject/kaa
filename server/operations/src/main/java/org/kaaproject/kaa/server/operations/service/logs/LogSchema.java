@@ -23,7 +23,6 @@ public class LogSchema {
     private LogSchemaDto logSchemaDto;
 
     public LogSchema(LogSchemaDto logSchemaDto) {
-        super();
         this.logSchemaDto = logSchemaDto;
     }
 

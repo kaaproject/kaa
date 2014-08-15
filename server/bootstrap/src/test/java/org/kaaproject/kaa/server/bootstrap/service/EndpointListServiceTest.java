@@ -48,84 +48,61 @@ public class EndpointListServiceTest {
 
     @Test
     public void testEndpointListServiceInitWithNullBootstrapNode() {
-        BootstrapConfig bootstrapConfig = mock(BootstrapConfig.class);
-
-        OperationsServerListService endpointListService = new OperationsServerListService(bootstrapConfig);
+        OperationsServerListService endpointListService = new OperationsServerListService();
         endpointListService.init();
 
         Assert.assertNotNull(endpointListService.getOpsServerList());
-        verify(bootstrapConfig, times(1)).getBootstrapNode();
     }
 
     @Test
-
     public void testEndpointListServiceDeinitWithBootstrapNode() {
-        BootstrapNode bootstrapNode = mock(BootstrapNode.class);
-        List<OperationsNodeInfo> endpointNodes = Arrays.asList(
-                new OperationsNodeInfo(new ConnectionInfo("host1", 123,  null), System.currentTimeMillis(), new ArrayList<SupportedChannel>()),
-                new OperationsNodeInfo(new ConnectionInfo("host2", 123,  null), System.currentTimeMillis(), new ArrayList<SupportedChannel>()),
-                new OperationsNodeInfo(new ConnectionInfo("host3", 123,  null), System.currentTimeMillis(), new ArrayList<SupportedChannel>()));
-        when(bootstrapNode.getCurrentOperationServerNodes()).thenReturn(endpointNodes);
-        BootstrapConfig config = new BootstrapConfig();
-        config.setBootstrapNode(bootstrapNode);
-
-        OperationsServerListService endpointListService = new OperationsServerListService(config);
+        OperationsServerListService endpointListService = new OperationsServerListService();
         endpointListService.init();
+        endpointListService.stop();
 
-        endpointListService.deinit();
-        
     }
 
     @Test
     public void testEndpointListServiceUpdateList() {
-        BootstrapNode bootstrapNode = mock(BootstrapNode.class);
-        List<OperationsNodeInfo> endpointNodes = Arrays.asList(
-                new OperationsNodeInfo(new ConnectionInfo("host1", 123,  null), System.currentTimeMillis(), new ArrayList<SupportedChannel>()),
-                new OperationsNodeInfo(new ConnectionInfo("host2", 123,  null), System.currentTimeMillis(), new ArrayList<SupportedChannel>()),
-                new OperationsNodeInfo(new ConnectionInfo("host3", 123,  null), System.currentTimeMillis(), new ArrayList<SupportedChannel>()));
-        when(bootstrapNode.getCurrentOperationServerNodes()).thenReturn(endpointNodes);
-        BootstrapConfig config = new BootstrapConfig();
-        config.setBootstrapNode(bootstrapNode);
-
-        OperationsServerListService endpointListService = new OperationsServerListService(config);
+        OperationsServerListService endpointListService = new OperationsServerListService();
         endpointListService.init();
-        
-ByteBuffer pk = ByteBuffer.wrap(new byte[] {1,2,3});
-        
+
+        ByteBuffer pk = ByteBuffer.wrap(new byte[] { 1, 2, 3 });
+
         List<ThriftSupportedChannel> scl1 = new ArrayList<>();
-        ThriftIpParameters ip1 = new ThriftIpParameters("host1",123);
+        ThriftIpParameters ip1 = new ThriftIpParameters("host1", 123);
         ThriftCommunicationParameters com11 = new ThriftCommunicationParameters();
         com11.setHttpParams(ip1);
         ThriftSupportedChannel sc11 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com11);
         scl1.add(sc11);
-        ThriftOperationsServer s1 = new ThriftOperationsServer("host1", 10, pk, scl1 );
-        
+        ThriftOperationsServer s1 = new ThriftOperationsServer("host1", 10, pk, scl1);
+
         List<ThriftSupportedChannel> scl2 = new ArrayList<>();
-        ThriftIpParameters ip2 = new ThriftIpParameters("host2",123);
+        ThriftIpParameters ip2 = new ThriftIpParameters("host2", 123);
         ThriftCommunicationParameters com12 = new ThriftCommunicationParameters();
-        com12.setHttpParams(ip2);
-        ThriftSupportedChannel sc12 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com12);
+        com12.setHttpLpParams(ip2);
+        ThriftSupportedChannel sc12 = new ThriftSupportedChannel(ThriftChannelType.HTTP_LP, com12);
         scl2.add(sc12);
-        ThriftOperationsServer s2 = new ThriftOperationsServer("host2", 10, pk, scl2 );
-        
+        ThriftOperationsServer s2 = new ThriftOperationsServer("host2", 10, pk, scl2);
+
         List<ThriftSupportedChannel> scl3 = new ArrayList<>();
-        ThriftIpParameters ip3 = new ThriftIpParameters("host3",123);
+        ThriftIpParameters ip3 = new ThriftIpParameters("host3", 123);
         ThriftCommunicationParameters com13 = new ThriftCommunicationParameters();
-        com13.setHttpParams(ip3);
-        ThriftSupportedChannel sc13 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com13);
+        com13.setKaaTcpParams(ip3);
+        ThriftSupportedChannel sc13 = new ThriftSupportedChannel(ThriftChannelType.KAATCP, com13);
         scl3.add(sc13);
-        ThriftOperationsServer s3 = new ThriftOperationsServer("host3", 10, pk, scl3 );
-        
+        ThriftOperationsServer s3 = new ThriftOperationsServer("host3", 10, pk, scl3);
+
         List<ThriftOperationsServer> operationsServersList = new ArrayList<>();
         operationsServersList.add(s1);
         operationsServersList.add(s2);
         operationsServersList.add(s3);
         endpointListService.updateList(operationsServersList);
-        
+
         OperationsServerList list = endpointListService.getOpsServerList();
         assertNotNull(list);
         assertNotNull(list.getOperationsServerArray());
         assertEquals(3, list.getOperationsServerArray().size());
     }
-    
+
 }

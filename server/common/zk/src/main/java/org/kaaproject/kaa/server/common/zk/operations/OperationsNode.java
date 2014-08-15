@@ -29,6 +29,7 @@ import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
 import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +45,6 @@ public class OperationsNode extends WorkerNodeTracker {
 
     /** The node info. */
     private OperationsNodeInfo nodeInfo;
-
-    /** The node path. */
-    private String nodePath;
 
     /**
      * Instantiates a new endpoint node.
@@ -103,21 +101,25 @@ public class OperationsNode extends WorkerNodeTracker {
                     ZkHttpLpStatistics zkHttpLpStats = (ZkHttpLpStatistics)channel.getZkChannel().getChannelStatistics();
                     stats = zkHttpLpStats.getZkStatistics();
                     break;
+                case KAATCP:
+                    ZkKaaTcpStatistics zkTcpStats = (ZkKaaTcpStatistics)channel.getZkChannel().getChannelStatistics();
+                    stats = zkTcpStats.getZkStatistics();
+                    break;
                 }
                 if (stats != null) {
                     stats.setDeltaCalculationCount(deltaCalculationCount);
                     stats.setProcessedRequestCount(processedRequestCount);
                     stats.setRegisteredUsersCount(registeredUsersCount);
+                    try {
+                        client.setData().forPath(nodePath,
+                                operationsNodeAvroConverter.get().toByteArray(nodeInfo));
+                    } catch (Exception e) {
+                        LOG.error("Unknown Error", e);
+                        close();
+                    }
                 }
                 break;
             }
-        }
-        try {
-            client.setData().forPath(nodePath,
-                    operationsNodeAvroConverter.get().toByteArray(nodeInfo));
-        } catch (Exception e) {
-            LOG.error("Unknown Error", e);
-            close();
         }
     }
 

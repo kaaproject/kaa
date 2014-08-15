@@ -443,7 +443,6 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Account role")
     String accountRole();
 
-
     @DefaultStringValue("Account profile")
     String accountProfile();
 
@@ -534,7 +533,42 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Selected")
     String selected();
 
+    @DefaultStringValue("Log Appenders")
+    String logAppenders();
+
+    @DefaultStringValue("Log Appender")
+    String logAppender();
+
+    @DefaultStringValue("Log Appender Type")
+    String logAppenderType();
+
+    @DefaultStringValue("Add new log appender")
+    String addNewLogAppender();
+
+    @DefaultStringValue("Add log appender")
+    String addLogAppender();
+
+    @DefaultStringValue("Log Appender details")
+    String logAppenderDetails();
+
+    @DefaultStringValue("Log Appender Status")
+    String logAppenderStatus();
+
+    @DefaultStringValue("Hosts balancing")
+    String logAppenderHostsBalancing();
+
+    @DefaultStringValue("Add host")
+    String addHost();
+    
+    @DefaultStringValue("Remove host")
+    String remHost();
+
+    @DefaultStringValue("Host")
+    String host();
+
+    @DefaultStringValue("Port")
+    String port();
+
+    @DefaultStringValue("Priority")
+    String priority();
 }
-
-
-

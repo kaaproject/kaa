@@ -140,6 +140,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
             public void onDataChanged(DataEvent event) {
                 if (event.checkClass(dataClass)) {
                     dataProvider.reload(listView.getDisplay());
+                    onCustomDataChangedEvent(event);
                 }
             }
           }));
@@ -156,6 +157,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
       }
 
       protected void onCustomRowAction(RowActionEvent<String> event) {}
+      protected void onCustomDataChangedEvent(DataEvent event) {}
 
     class DataLoadCallback implements
             AsyncCallback<List<T>> {

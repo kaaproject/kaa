@@ -77,7 +77,7 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
     public HasClickHandlers getAddButton() {
         return addButton;
     }
-
+    
     @Override
     public HasClickHandlers getBackButton() {
         return backButton;

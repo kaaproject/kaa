@@ -22,6 +22,7 @@ import org.kaaproject.kaa.client.channel.KaaTransport;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,11 +59,23 @@ public abstract class AbstractKaaTransport implements KaaTransport {
     }
 
     protected void syncByType(TransportType type) {
+        syncByType(type, false);
+    }
+
+    protected void syncAckByType(TransportType type) {
+        syncByType(type, true);
+    }
+
+    protected void syncByType(TransportType type, boolean ack) {
         LOG.debug("Lookup channel by type {}", type);
         KaaDataChannel channel = getChannel(type);
         LOG.debug("Going to invoke sync method on channel {}", channel);
         if (channel != null) {
-            channel.sync(type);
+            if(ack){
+                channel.syncAck(type);
+            }else{
+                channel.sync(type);
+            }
         }
     }
 
@@ -72,5 +85,24 @@ public abstract class AbstractKaaTransport implements KaaTransport {
             channel.syncAll();
         }
     }
+
+    @Override
+    public void sync() {
+        syncByType(getTransportType());
+    }
+
+    protected void syncAck() {
+        syncAckByType(getTransportType());
+    }
+
+    protected void syncAck(SyncResponseStatus status){
+        if(status != SyncResponseStatus.NO_DELTA){
+            LOG.info("Sending ack due to response status: {}", status);
+            syncAck();
+        }
+    }
+
+
+    abstract protected TransportType getTransportType();
 
 }

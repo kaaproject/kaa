@@ -37,9 +37,8 @@ boost::shared_ptr<IHttpRequest> HttpDataProcessor::createOperationRequest(const 
     const Botan::SecureVector<boost::uint8_t>& encodedSessionKey = encDec_->getEncodedSessionKey();
     const std::string& bodyEncoded = encDec_->encodeData(data.data(), data.size());
     const Botan::SecureVector<boost::uint8_t>& clientSignature =
-            encDec_->signData(
-                    reinterpret_cast<const boost::uint8_t *>(bodyEncoded.c_str()),
-                    bodyEncoded.length());
+            encDec_->signData(reinterpret_cast<const boost::uint8_t *>(
+                    encodedSessionKey.begin()), encodedSessionKey.size());
 
     boost::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
     post->setBodyField("signature",
@@ -53,7 +52,6 @@ boost::shared_ptr<IHttpRequest> HttpDataProcessor::createOperationRequest(const 
 
 std::string HttpDataProcessor::retrieveOperationResponse(const IHttpResponse& response)
 {
-    verifyResponse(response);
     SharedBody rawResponse = response.getBody();
     return encDec_->decodeData(rawResponse.first.get(), rawResponse.second);
 }

@@ -16,11 +16,8 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.http;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
-import org.kaaproject.kaa.server.bootstrap.service.http.ProtocolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -33,13 +30,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ProtocolServiceIT {
 
     @Autowired
-    protected BootstrapConfig bootstrapConfig;
-    
+    protected ProtocolService nettyHttpServer;
+
+    @Autowired
+    protected BootstrapServerInitializer serverInitializer;
+
     @Test
     public void testStartStopSuccess() {
-        ProtocolService protocolService = new ProtocolService(bootstrapConfig);
-        protocolService.start();
-        protocolService.stop();
-        Assert.assertTrue(true);
+        nettyHttpServer.start();
+        nettyHttpServer.stop();
     }
 }

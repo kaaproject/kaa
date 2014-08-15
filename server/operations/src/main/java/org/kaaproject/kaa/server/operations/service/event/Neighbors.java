@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Neighbors Class.
  * Collect all Operations Servers neighbors through listening ZooKeeper OperationsNode changes.
- * Use thriftHost:thriftPort as server Key and hold Hashtable of NeighborConnection. 
+ * Use thriftHost:thriftPort as server Key and hold Hashtable of NeighborConnection.
  * @author Andrey Panasenko
  *
  */
@@ -41,34 +41,34 @@ public class Neighbors implements OperationsNodeListener {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(Neighbors.class);
-    
+
     /** Event service */
-    private DefaultEventService eventService;
-    
+    private final DefaultEventService eventService;
+
     /** Self ID in thriftHost:thriftPort */
     private String selfId;
-    
+
     /** Unique integer, used in logging mostly in tests */
-    private int uniqId;
-    
-    private Random rnd = new Random();
+    private final int uniqId;
+
+    private final Random rnd = new Random();
 
     /** Hashtable of NeighborConnection, Key - thriftHost:thriftPort */
-    private Hashtable<String, NeighborConnection> neigbors; //NOSONAR
-    
+    private final Hashtable<String, NeighborConnection> neigbors; //NOSONAR
+
     /** Synchronize object, used during neighbors list updates */
-    private Object neighborsUpdateSync = new Object();
-    
+    private final Object neighborsUpdateSync = new Object();
+
     /** timer and task, used to postpone correct ZK node listener registration */
     private Timer timerUpdate;
     private TimerTask taskUpdate;
-    
+
     /** ZooKeeper Operations Node */
     private OperationsNode zkNode;
     /** Synchronize object, initZK() waite until zkNode is set using this object */
-    private Object zkNodeSetSync = new Object();
-    
-    
+    private final Object zkNodeSetSync = new Object();
+
+
     /**
      * Default constructor.
      * If zkNode is not set, postpone timer task to wait until node is set.
@@ -109,7 +109,7 @@ public class Neighbors implements OperationsNodeListener {
             }
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener#onNodeAdded(org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo)
      */
@@ -170,13 +170,13 @@ public class Neighbors implements OperationsNodeListener {
         LOG.debug("OperationsServer {} Nighbors({}) ZooKeeper initialization comlete. Now {} neighbors.",selfId, uniqId, neigbors.size());
         return;
     }
-    
+
     /**
      * Load initial Operations Servers list from ZK node.
      */
     private void updateOperationsServersList() {
-        LOG.debug("OperationsServer {} Nighbors({}) Update server list. Now {} neighbors.",selfId, uniqId, neigbors.size());        
-        OperationsNode node = eventService.getConfig().getZkNode();
+        LOG.debug("OperationsServer {} Nighbors({}) Update server list. Now {} neighbors.",selfId, uniqId, neigbors.size());
+        OperationsNode node = eventService.getZkNode();
         List<OperationsNodeInfo> nodes = node.getCurrentOperationServerNodes();
         for(OperationsNodeInfo opServer : nodes) {
             String opId = getOperationsServerID(opServer.getConnectionInfo());
@@ -190,7 +190,7 @@ public class Neighbors implements OperationsNodeListener {
             }
         }
     }
-    
+
     /**
      * Shutdown all neighbors connections and cancel timer task if exist.
      */
@@ -207,9 +207,9 @@ public class Neighbors implements OperationsNodeListener {
             timerUpdate.cancel();
             timerUpdate = null;
         }
-        
+
     }
-    
+
     /**
      * Return current list of Neighbors.
      * @return List<NeighborConnection> neighbors.
@@ -219,7 +219,7 @@ public class Neighbors implements OperationsNodeListener {
             return new LinkedList<NeighborConnection>(neigbors.values()); //NOSONAR
         }
     }
-    
+
     /**
      * Return specific Neighbor connection by Id
      * @param serverId String in format thriftHost:thriftPort
@@ -230,7 +230,7 @@ public class Neighbors implements OperationsNodeListener {
             return neigbors.get(serverId);
         }
     }
-    
+
     /**
      * Build server ID from ConnectionInfo object.
      * @param info ConnectionInfo
@@ -278,6 +278,6 @@ public class Neighbors implements OperationsNodeListener {
     public String toString() {
         return "Neighbors [uniqId=" + uniqId + "]";
     }
-    
-    
+
+
 }

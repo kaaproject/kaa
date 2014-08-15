@@ -18,34 +18,36 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint
 
 import io.netty.channel.ChannelHandlerContext;
 
-import org.apache.avro.specific.SpecificRecordBase;
+import java.util.UUID;
+
 import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand;
+import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
+import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import akka.actor.ActorRef;
 
 /**
  * The Class SyncRequestMessage.
  */
-public class SyncRequestMessage extends EndpointAwareMessage {
+public class SyncRequestMessage extends EndpointAwareMessage implements ChannelAware{
+
+    private static final Logger LOG = LoggerFactory.getLogger(SyncRequestMessage.class);
 
     /** The command. */
-    protected final AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command;
-
-    /** The handler uuid. */
-    private final String channelId;
-
-    /** The channel context. */
-    private final ChannelHandlerContext channelContext;
-
-    /** The type of channel. */
-    private final ChannelType channelType;
+    private final Request command;
 
     /** The request. */
     private final SyncRequest request;
+
+    /** The session. */
+    private final NettySessionInfo session;
 
     /**
      * Instantiates a new sync request message.
@@ -59,14 +61,11 @@ public class SyncRequestMessage extends EndpointAwareMessage {
      * @param originator
      *            the originator
      */
-    public SyncRequestMessage(AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command, String channelId,
-            ChannelHandlerContext channelContext, ChannelType channelType, String appToken, EndpointObjectHash key, SyncRequest request, ActorRef originator) {
-        super(appToken, key, originator);
-        this.command = command;
-        this.channelId = channelId;
-        this.channelContext = channelContext;
-        this.channelType = channelType;
+    public SyncRequestMessage(NettySessionInfo session, SyncRequest request, Request requestMessage, ActorRef originator) {
+        super(session.getApplicationToken(), session.getKey(), originator);
+        this.command = requestMessage;
         this.request = request;
+        this.session = session;
     }
 
     /**
@@ -78,42 +77,81 @@ public class SyncRequestMessage extends EndpointAwareMessage {
         return request;
     }
 
-    public String getChannelId() {
-        return channelId;
+    @Override
+    public UUID getChannelUuid() {
+        return session.getUuid();
     }
 
+    @Override
     public ChannelType getChannelType() {
-        return channelType;
+        return session.getChannelType();
     }
 
+    @Override
     public ChannelHandlerContext getChannelContext() {
-        return channelContext;
+        return session.getCtx();
     }
 
-    public AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> getCommand() {
+    public NettySessionInfo getSession() {
+        return session;
+    }
+
+    public Request getCommand() {
         return command;
     }
 
+    public void cleanRequest() {
+        UUID channelUuid = getChannelUuid();
+        LOG.debug("[{}] Cleanup profile request", channelUuid);
+        request.setProfileSyncRequest(null);
+        if(request.getUserSyncRequest() != null){
+            LOG.debug("[{}] Cleanup user request", channelUuid);
+            request.setUserSyncRequest(new UserSyncRequest());
+        }
+        if(request.getEventSyncRequest() != null){
+            LOG.debug("[{}] Cleanup event request", channelUuid);
+            request.setEventSyncRequest(new EventSyncRequest());
+        }
+        if(request.getLogSyncRequest() != null){
+            LOG.debug("[{}] Cleanup log request", channelUuid);
+            request.getLogSyncRequest().setLogEntries(null);
+        }
+        if(request.getNotificationSyncRequest() != null){
+            LOG.debug("[{}] Cleanup notification request", channelUuid);
+            request.getNotificationSyncRequest().setSubscriptionCommands(null);
+            request.getNotificationSyncRequest().setAcceptedUnicastNotifications(null);
+        }
+    }
+
     public void update(SyncRequestMessage syncRequest) {
+        UUID channelUuid = getChannelUuid();
         SyncRequest other = syncRequest.getRequest();
+        request.setRequestId(other.getRequestId());
         request.getSyncRequestMetaData().setProfileHash(other.getSyncRequestMetaData().getProfileHash());
+        LOG.debug("[{}] Updated request id and profile hash", channelUuid);
         if (other.getConfigurationSyncRequest() != null) {
             request.setConfigurationSyncRequest(other.getConfigurationSyncRequest());
+            LOG.debug("[{}] Updated configuration request", channelUuid);
         }
         if (other.getNotificationSyncRequest() != null) {
             request.setNotificationSyncRequest(other.getNotificationSyncRequest());
+            LOG.debug("[{}] Updated notification request", channelUuid);
         }
         if (other.getProfileSyncRequest() != null) {
             request.setProfileSyncRequest(other.getProfileSyncRequest());
+            LOG.debug("[{}] Updated profile request", channelUuid);
         }
         if (other.getUserSyncRequest() != null) {
             request.setUserSyncRequest(other.getUserSyncRequest());
+            LOG.debug("[{}] Updated user request", channelUuid);
         }
         if (other.getEventSyncRequest() != null) {
             request.setEventSyncRequest(other.getEventSyncRequest());
+            LOG.debug("[{}] Updated event request", channelUuid);
         }
         if (other.getLogSyncRequest() != null) {
             request.setLogSyncRequest(other.getLogSyncRequest());
+            LOG.debug("[{}] Updated log request", channelUuid);
         }
     }
 
@@ -135,4 +173,5 @@ public class SyncRequestMessage extends EndpointAwareMessage {
             return false;
         }
     }
+
 }

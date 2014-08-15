@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/**
- *
- */
 package org.kaaproject.kaa.server.operations.service.http.commands;
 
 
@@ -25,11 +22,6 @@ package org.kaaproject.kaa.server.operations.service.http.commands;
  * The Class UpdateEndpointCommand.
  */
 public class LongSyncCommand extends SyncCommand {
-
-    static {
-        COMMAND_NAME = LONG_SYNC_COMMAND;
-        LOG.info("CommandName: " + COMMAND_NAME);
-    }
 
     @Override
     public ChannelType getChannelType() {

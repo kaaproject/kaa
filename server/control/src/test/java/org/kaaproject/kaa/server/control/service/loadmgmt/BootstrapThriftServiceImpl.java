@@ -25,6 +25,7 @@ import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.bootstrap.gen.HTTPComunicationParameters;
 import org.kaaproject.kaa.common.bootstrap.gen.HTTPLPComunicationParameters;
+import org.kaaproject.kaa.common.bootstrap.gen.KaaTCPComunicationParameters;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
 import org.kaaproject.kaa.common.bootstrap.gen.SupportedChannel;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
@@ -43,11 +44,11 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements 
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
             .getLogger(BootstrapThriftServiceImpl.class);
-    
+
     private Map<String, OperationsServer> opServerMap;
-    
-    private Object sync;
-    
+
+    private final Object sync;
+
     public BootstrapThriftServiceImpl() {
         opServerMap = null;
         sync = new Object();
@@ -65,7 +66,7 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements 
      */
     @Override
     protected void initServiceCommands() {
-        
+
     }
 
     public Map<String, OperationsServer> getOperatonsServerMap() {
@@ -74,14 +75,14 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements 
                 try {
                     sync.wait(60000);
                 } catch (InterruptedException e) {
-                    
+
                 }
             }
         }
-        
+
         return opServerMap;
     }
-    
+
     public void reset() {
         synchronized (sync) {
             opServerMap = null;
@@ -94,21 +95,21 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements 
     @Override
     public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList) throws TException {
         synchronized (sync) {
-            if (operationsServersList.size() > 0 
+            if (operationsServersList.size() > 0
                     && opServerMap == null) {
                 opServerMap = new HashMap<String, OperationsServer>();
-            
+
                 for(ThriftOperationsServer thriftServer : operationsServersList) {
                     OperationsServer opServer = new OperationsServer(
-                            thriftServer.getName(), 
-                            thriftServer.getPriority(), 
-                            ByteBuffer.wrap(thriftServer.getPublicKey()), 
+                            thriftServer.getName(),
+                            thriftServer.getPriority(),
+                            ByteBuffer.wrap(thriftServer.getPublicKey()),
                             transfromThriftSupportedChannels(thriftServer.getSupportedChannels()));
                     LOG.info("onOperationsServerListUpdate: ThriftOperationsServer {} ",thriftServer.toString());
                     LOG.info("onOperationsServerListUpdate: OperationsServer {} ",opServer.toString());
                     opServerMap.put(thriftServer.getName(), opServer );
                 }
-            
+
                 sync.notify();
             }
         }
@@ -135,6 +136,11 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements 
                         thriftSuppChannel.getCommunicationParams().getHttpLpParams().getHostName(),
                         thriftSuppChannel.getCommunicationParams().getHttpLpParams().getPort());
                 break;
+            case KAATCP:
+                channelType = ChannelType.KAATCP;
+                communicationParameters = new KaaTCPComunicationParameters(
+                        thriftSuppChannel.getCommunicationParams().getKaaTcpParams().getHostName(),
+                        thriftSuppChannel.getCommunicationParams().getKaaTcpParams().getPort());
             default:
                 break;
             }

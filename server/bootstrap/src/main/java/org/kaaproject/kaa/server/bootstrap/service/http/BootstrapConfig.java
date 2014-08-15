@@ -16,11 +16,7 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.http;
 
-import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
-import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
-import org.kaaproject.kaa.server.common.http.server.Config;
-import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.kaaproject.kaa.server.common.server.Config;
 
 /**
  * BootstrapConfig Class.
@@ -30,61 +26,5 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 public class BootstrapConfig extends Config {
-
-    /** The bootstrap service. */
-    @Autowired
-    private BootstrapInitializationService bootstrapInitializationService;
-
-    /** Operations servers list gather service. */
-
-    private OperationsServerListService endpointListService;
-
-    /** Bootstrap ZK service */
-    private BootstrapNode bootstrapNode;
-
-    /**
-     * @return the bootstrapService
-     */
-    public BootstrapInitializationService getBootstrapInitializationService() {
-        return bootstrapInitializationService;
-    }
-
-    /**
-     * @param bootstrapService the bootstrapService to set
-     */
-    public void setBootstrapInitializationService(BootstrapInitializationService bootstrapService) {
-        this.bootstrapInitializationService = bootstrapService;
-    }
-
-    /**
-     * @return the operationsListService
-     */
-    public OperationsServerListService getOperationsServerListService() {
-        return endpointListService;
-    }
-
-    /**
-     * @param operationsListService the operationsListService to set
-     */
-    public void setOperationsServerListService(OperationsServerListService endpointListService) {
-        this.endpointListService = endpointListService;
-    }
-
-    /**
-     * BootstrapNode getter.
-     * @return BootstrapNode
-     */
-    public BootstrapNode getBootstrapNode() {
-        return bootstrapNode;
-    }
-
-    /**
-     * BootstrapNode setter.
-     *
-     * @param bootstrapNode Bootstrap ZK service
-     */
-    public void setBootstrapNode(BootstrapNode bootstrapNode) {
-        this.bootstrapNode = bootstrapNode;
-    }
 
 }

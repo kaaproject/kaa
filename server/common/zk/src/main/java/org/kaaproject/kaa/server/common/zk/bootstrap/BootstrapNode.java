@@ -31,16 +31,13 @@ import org.slf4j.LoggerFactory;
  * The Class BootstrapNode.
  */
 public class BootstrapNode extends WorkerNodeTracker {
-    
+
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
             .getLogger(BootstrapNode.class);
-    
+
     /** The node info. */
     private BootstrapNodeInfo nodeInfo;
-    
-    /** The node path. */
-    private String nodePath;
 
     /**
      * Instantiates a new bootstrap node.
@@ -54,7 +51,7 @@ public class BootstrapNode extends WorkerNodeTracker {
         super(zkHostPortList, retryPolicy);
         this.nodeInfo = nodeInfo;
     }
-    
+
     @Override
     public boolean createZkNode() throws IOException {
         return doZKClientAction(new ZKClientAction() {
@@ -71,7 +68,7 @@ public class BootstrapNode extends WorkerNodeTracker {
                 LOG.info("Created node with path: " + nodePath);
             }
         });
-    }    
+    }
 
     /**
      * Updates current ZK node data.

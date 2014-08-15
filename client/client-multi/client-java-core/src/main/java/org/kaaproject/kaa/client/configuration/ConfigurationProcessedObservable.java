@@ -27,7 +27,7 @@ public interface ConfigurationProcessedObservable {
     /**
      * Subscribes observer of configuration processing finished.
      *
-     * @param observer Receiver to be subscribed.
+     * @param callback Receiver to be subscribed.
      * @see ConfigurationProcessedObserver
      *
      */
@@ -36,7 +36,7 @@ public interface ConfigurationProcessedObservable {
     /**
      * Unsubscribes observer of configuration processing finished.
      *
-     * @param observer Receiver to be unsubscribed.
+     * @param callback Receiver to be unsubscribed.
      * @see ConfigurationProcessedObserver
      *
      */

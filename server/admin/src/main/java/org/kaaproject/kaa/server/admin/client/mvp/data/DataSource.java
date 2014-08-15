@@ -41,6 +41,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
@@ -456,7 +457,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void loadLogSchemas(String applicationId,
             final AsyncCallback<List<LogSchemaDto>> callback) {
         rpcService.getLogSchemasByApplicationId(applicationId,
@@ -466,6 +467,16 @@ public class DataSource {
                     }
                 });
 
+    }
+
+    public void loadLogSchemasVersion(String applicationId,
+            final AsyncCallback<List<SchemaDto>> callback) {
+        rpcService.getLogSchemasVersions(applicationId,
+                new DataCallback<List<SchemaDto>>(callback) {
+                    @Override
+                    protected void onResult(List<SchemaDto> result) {
+                    }
+                });
     }
 
     public void editLogSchema(LogSchemaDto logSchema, String fileItemName,
@@ -845,6 +856,48 @@ public class DataSource {
                     protected void onResult(Void result) {
                     }
                 });
+    }
+
+    public void loadLogAppenders(String applicationId,
+            final AsyncCallback<List<LogAppenderDto>> callback) {
+        rpcService.getLogAppendersByApplicationId(applicationId,
+                new DataCallback<List<LogAppenderDto>>(callback) {
+            @Override
+            protected void onResult(List<LogAppenderDto> result) {
+            }
+        });
+    }
+
+    public void getLogAppender(String appenderId,
+            final AsyncCallback<LogAppenderDto> callback) {
+        rpcService.getLogAppender(appenderId,
+                new DataCallback<LogAppenderDto>(callback) {
+            @Override
+            protected void onResult(LogAppenderDto result) {
+            }
+        });
+    }
+
+    public void editLogAppender(LogAppenderDto dto,
+            final AsyncCallback<LogAppenderDto> callback) {
+        rpcService.editLogAppender(dto,
+                new DataCallback<LogAppenderDto>(callback) {
+            @Override
+            protected void onResult(LogAppenderDto result) {
+            }
+        });
+    }
+
+    public void removeLogAppender(String appenderId,
+            final AsyncCallback<Void> callback) {
+        rpcService.deleteLogAppender(appenderId,
+                new DataCallback<Void>(callback) {
+            @Override
+            protected void onResult(Void result) {
+                eventBus.fireEvent(new DataEvent(
+                        LogAppenderDto.class));
+            }
+        });
     }
 
     abstract class DataCallback<T> implements AsyncCallback<T> {

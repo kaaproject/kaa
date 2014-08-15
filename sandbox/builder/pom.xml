@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.5.1</version>
+		<version>0.5.2</version>
 		<artifactId>sandbox</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.sandbox</groupId>
@@ -30,6 +30,7 @@
 
     <properties>
         <main.dir>${basedir}/../..</main.dir>
+        <spring.version>3.2.10.RELEASE</spring.version>
         <base.path>${project.build.directory}/sandbox</base.path>
         <distro.path>${base.path}/distro</distro.path>
         <base.images.url>http://www.kaaproject.org/Uploads/</base.images.url>
@@ -56,11 +57,6 @@
             <artifactId>commons-lang</artifactId>
             <version>${commons-lang.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpcomponents.version}</version>
-        </dependency>               
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

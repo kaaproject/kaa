@@ -16,22 +16,17 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.http;
 
-import io.netty.util.concurrent.EventExecutorGroup;
-
-import java.lang.reflect.InvocationTargetException;
-
-import org.kaaproject.kaa.server.common.http.server.CommandFactory;
-import org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer;
+import org.kaaproject.kaa.server.common.server.http.DefaultHttpServerInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The Class BootstrapServerInitializer.
  */
-public class BootstrapServerInitializer extends DefaultServerInitializer {
+public class BootstrapServerInitializer extends DefaultHttpServerInitializer {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultServerInitializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpServerInitializer.class);
 
     /**
      * Instantiates a new bootstrap server initializer.
@@ -40,31 +35,4 @@ public class BootstrapServerInitializer extends DefaultServerInitializer {
         super();
         LOG.info("Initializing Bootstrap server...");
     }
-
-    /**
-     * Instantiates a new bootstrap server initializer.
-     *
-     * @param conf the conf
-     * @param executor the executor
-     */
-    public BootstrapServerInitializer(BootstrapConfig conf, EventExecutorGroup executor) {
-        super(conf, executor);
-        LOG.info("Initializing Bootstrap server...");
-        try {
-            init();
-        } catch (Exception e) {
-            LOG.error("Error initializing Bootstrap server", e);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer#init()
-     */
-    @Override
-    public void init() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        for (String commandClass : ((BootstrapConfig) getConf()).getCommandList()) {
-            CommandFactory.addCommandClass(commandClass);
-        }
-    }
-
 }

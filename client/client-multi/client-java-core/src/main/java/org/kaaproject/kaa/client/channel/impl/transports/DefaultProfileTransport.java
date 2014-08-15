@@ -92,4 +92,9 @@ public class DefaultProfileTransport extends AbstractKaaTransport implements
         this.properties = properties;
     }
 
+    @Override
+    protected TransportType getTransportType() {
+        return TransportType.PROFILE;
+    }
+
 }

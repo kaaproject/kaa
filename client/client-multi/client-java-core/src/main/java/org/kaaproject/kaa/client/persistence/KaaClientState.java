@@ -33,7 +33,7 @@ public interface KaaClientState {
 
     PrivateKey getPrivateKey();
     PublicKey getPublicKey();
-    
+
     EndpointKeyHash getEndpointKeyHash();
 
     void setAppStateSeqNumber(int appStateSeqNumber);
@@ -53,7 +53,7 @@ public interface KaaClientState {
 
     void addTopic(Topic topic);
     void removeTopic(String topicId);
-    void updateTopicSubscriptionInfo(String topicId, Integer sequenceNumber);
+    boolean updateTopicSubscriptionInfo(String topicId, Integer sequenceNumber);
 
     Map<String, Integer> getNfSubscriptions();
     List<Topic> getTopics();

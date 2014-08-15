@@ -27,6 +27,7 @@ import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
+import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class ChannelMap {
 
     private final String endpointKey;
     private final String actorKey;
-    private final Map<String, ChannelMetaData> map;
+    private final Map<UUID, ChannelMetaData> map;
 
     protected ChannelMap(String endpointKey, String actorKey) {
         super();
@@ -46,13 +47,13 @@ public class ChannelMap {
         this.map = new HashMap<>();
     }
 
-    public ChannelMetaData getById(String id){
+    public ChannelMetaData getById(UUID id){
         return this.map.get(id);
     }
 
     public ChannelMetaData getByRequestId(UUID id){
         for(ChannelMetaData data : this.map.values()){
-            if(data.getRequest().getUuid().equals(id)){
+            if(data.getRequest().getChannelUuid().equals(id)){
                 return data;
             }
         }
@@ -80,11 +81,10 @@ public class ChannelMap {
     }
 
     static final class ChannelMetaData{
-        private final String id;
-        ChannelType type;
-        ChannelHandlerContext context;
+        private final NettySessionInfo session;
         SyncRequestMessage request;
         SyncResponseHolder response;
+        private long lastActivityTime;
 
         public ChannelMetaData(SyncRequestMessage request){
             this(request, null);
@@ -92,9 +92,7 @@ public class ChannelMap {
 
         public ChannelMetaData(SyncRequestMessage request, SyncResponseHolder response) {
             super();
-            this.id = request.getChannelId();
-            this.type = request.getChannelType();
-            this.context = request.getChannelContext();
+            this.session = request.getSession();
             this.request = request;
             this.response = response;
         }
@@ -103,20 +101,25 @@ public class ChannelMap {
             this.request.update(syncRequest);
         }
 
-        public void updateResponse(SyncResponseHolder response){
+        public void updateReqResp(SyncResponseHolder response){
+            cleanRequest();
             this.response = response;
         }
 
-        public String getId() {
-            return id;
+        public UUID getId() {
+            return session.getUuid();
         }
 
         public ChannelType getType() {
-            return type;
+            return session.getChannelType();
         }
 
         public ChannelHandlerContext getContext() {
-            return context;
+            return session.getCtx();
+        }
+
+        public int getKeepAlive() {
+            return session.getKeepAlive();
         }
 
         public SyncRequestMessage getRequest() {
@@ -127,11 +130,23 @@ public class ChannelMap {
             return response;
         }
 
+        public long getLastActivityTime() {
+            return lastActivityTime;
+        }
+
+        public void setLastActivityTime(long lastActivityTime) {
+            this.lastActivityTime = lastActivityTime;
+        }
+
+        public void cleanRequest() {
+            request.cleanRequest();
+        }
+
         @Override
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((id == null) ? 0 : id.hashCode());
+            result = prime * result + ((session == null) ? 0 : session.hashCode());
             return result;
         }
 
@@ -147,11 +162,11 @@ public class ChannelMap {
                 return false;
             }
             ChannelMetaData other = (ChannelMetaData) obj;
-            if (id == null) {
-                if (other.id != null) {
+            if (session == null) {
+                if (other.session != null) {
                     return false;
                 }
-            } else if (!id.equals(other.id)) {
+            } else if (!session.equals(other.session)) {
                 return false;
             }
             return true;
@@ -160,15 +175,14 @@ public class ChannelMap {
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append("ChannelMetaData [id=");
-            builder.append(id);
-            builder.append(", type=");
-            builder.append(type);
-            builder.append(", context=");
-            builder.append(context);
+            builder.append("ChannelMetaData [session=");
+            builder.append(session);
             builder.append("]");
             return builder.toString();
         }
+
+
+
     }
 
     public boolean isEmpty() {

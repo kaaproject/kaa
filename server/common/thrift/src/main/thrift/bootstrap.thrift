@@ -22,7 +22,8 @@ namespace java org.kaaproject.kaa.server.common.thrift.gen.bootstrap
 
 enum ThriftChannelType {
   HTTP = 1,
-  HTTP_LP = 2
+  HTTP_LP = 2,
+  KAATCP = 3
 }
 
 struct ThriftIpParameters {
@@ -32,10 +33,12 @@ struct ThriftIpParameters {
 
 typedef ThriftIpParameters ThriftHttpParameters
 typedef ThriftIpParameters ThriftHttpLpParameters
+typedef ThriftIpParameters ThriftKaaTcpParameters
 
 union ThriftCommunicationParameters {
   1: ThriftHttpParameters httpParams
   2: ThriftHttpLpParameters httpLpParams
+  3: ThriftKaaTcpParameters kaaTcpParams
 }
 
 struct ThriftSupportedChannel {

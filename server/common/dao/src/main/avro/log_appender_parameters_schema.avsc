@@ -1,0 +1,80 @@
+{
+
+    "name":"LogAppenderParameters",
+    "type":"record",
+    "namespace":"org.kaaproject.kaa.server.common.dao.model.sql.avro.gen",
+    "fields":[
+        {
+            "name":"appenderParameters",
+            "type":[
+                {
+                    "name":"MongoAppenderParameters",
+                    "type":"record",
+                    "fields":[
+                        {
+                            "name":"collectionName",
+                            "type":"string"
+                        }
+                    ]
+                },
+                {
+                    "name":"FileAppenderParameters",
+                    "type":"record",
+                    "fields":[
+                        {
+                            "name":"filePath",
+                            "type":"string"
+                        }
+                    ]
+                },
+                {
+                    "name":"FlumeAppenderParameters",
+                    "namespace":"org.kaaproject.kaa.server.common.dao.model.sql.avro.gen",
+                    "type":"record",
+                    "fields":[
+                        {
+                            "name":"hostsInfo",
+                            "type":{
+                                "type":"array",
+                                "items":[
+                                    {
+                                        "namespace":"org.kaaproject.kaa.server.common.dao.model.sql.avro.gen",
+                                        "name":"HostInfo",
+                                        "type":"record",
+                                        "fields":[
+                                            {
+                                                "name":"hostname",
+                                                "type":"string"
+                                            },
+                                            {
+                                                "name":"port",
+                                                "type":"int"
+                                            },
+                                            {
+                                                "name":"priority",
+                                                "type":"int"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                        "name": "balancingType",
+                        "type": {
+                            "type": "enum",
+                            "name": "FlumeBalancingType",
+                            "symbols": [
+                                "PRIORITIZED",
+                                "ROUND_ROBIN"
+                            ]
+                        }
+                    }
+                    ]
+                },
+                "null"
+            ]
+        }
+    ]
+
+}

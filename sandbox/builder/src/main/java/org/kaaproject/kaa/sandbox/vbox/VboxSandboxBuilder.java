@@ -64,8 +64,6 @@ public class VboxSandboxBuilder extends AbstractSandboxBuilder {
         deleteForwardedPorts();
         forwardPort("ssh", 22, sshForwardPort);
         forwardPort("web-gui", DEFAULT_WEB_ADMIN_PORT, webAdminForwardPort);
-        clearSharedFolders();
-        createSharedFolder();
     }
 
     @Override
@@ -77,12 +75,10 @@ public class VboxSandboxBuilder extends AbstractSandboxBuilder {
 
     @Override
     protected void provisionBoxImpl() throws Exception {
-        scheduleMountSharedFolder();
     }
 
     @Override
     protected void unprovisionBoxImpl() throws Exception {
-        scheduleUnmountSharedFolder();
     }
 
     @Override
@@ -100,7 +96,7 @@ public class VboxSandboxBuilder extends AbstractSandboxBuilder {
         boolean poweredOff = false;
         if (!skipShutdown) {
             int retry = 0;
-            while (!(poweredOff = isPoweredOff()) && retry < 5) {
+            while (!(poweredOff = isPoweredOff()) && retry < 20) {
                 Thread.sleep(5000);
                 retry++;
             }
@@ -116,7 +112,6 @@ public class VboxSandboxBuilder extends AbstractSandboxBuilder {
 
     @Override
     protected void cleanupBoxImpl() throws Exception {
-        clearSharedFolders();
         deleteForwardedPorts();
         forwardPort("ssh", 22, DEFAULT_SSH_FORWARD_PORT);
         forwardPort("web-gui", DEFAULT_WEB_ADMIN_PORT, DEFAULT_WEB_ADMIN_PORT);
@@ -151,36 +146,6 @@ public class VboxSandboxBuilder extends AbstractSandboxBuilder {
     @Override
     protected boolean boxRunning() throws Exception {
         return getVmState().equals("running");
-    }
-    
-    private void clearSharedFolders() throws Exception {
-        logger.info("Clearing shared folders ...");
-        String info = vboxManage(false, "showvminfo", boxName, "--machinereadable");
-        
-        for (String line : info.split("\n")) {
-            Matcher m = sharedFolderPattern.matcher(line.trim());
-            if (m.matches()) {
-                String name = m.group(1);
-                vboxManage("sharedfolder", "remove", boxName, "--name", name);
-            }
-        }
-    }
-    
-    private void createSharedFolder() throws Exception {
-        logger.info("Creating shared folder '{}' ...", SHARED_FOLDER);
-        vboxManage("sharedfolder", "add", boxName, "--name", SHARED_FOLDER, "--hostpath", basePath.getAbsolutePath());
-        vboxManage("setextradata", boxName, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/"+SHARED_FOLDER, "1");
-    }
-    
-    private void scheduleMountSharedFolder() throws Exception {
-        scheduleSudoSshCommand("mkdir -p /" + SHARED_FOLDER);
-        String mountCommand = "mount -t vboxsf -o uid=`id -u kaa`,gid=`getent group kaa | cut -d: -f3`,dmode=1777,fmode=777 "+SHARED_FOLDER+" /"+SHARED_FOLDER;
-        scheduleSudoSshCommand(mountCommand);
-    }
-    
-    private void scheduleUnmountSharedFolder() throws Exception {
-        scheduleSudoSshCommand("umount /"+SHARED_FOLDER);
-        scheduleSudoSshCommand("rm -rf /" + SHARED_FOLDER);
     }
     
     private void forwardPort(String name, int guestPort, int hostPort) throws Exception {

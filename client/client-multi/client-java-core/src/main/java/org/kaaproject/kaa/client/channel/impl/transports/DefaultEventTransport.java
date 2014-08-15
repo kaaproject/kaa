@@ -42,11 +42,6 @@ public class DefaultEventTransport extends AbstractKaaTransport implements
     private final EventComparator eventComparator = new EventComparator();
 
     @Override
-    public void sync() {
-        syncByType(TransportType.EVENT);
-    }
-
-    @Override
     public EventSyncRequest createEventRequest(Integer requestId) {
         if (manager != null) {
             EventSyncRequest request = new EventSyncRequest();
@@ -86,12 +81,12 @@ public class DefaultEventTransport extends AbstractKaaTransport implements
                 for (Event event : events) {
                     manager.onGenericEvent(event.getEventClassFQN(), event.getEventData().array(), event.getSource());
                 }
-                if (response.getEventListenersResponses() != null && !response.getEventListenersResponses().isEmpty()) {
-                    manager.eventListenersResponseReceived(response.getEventListenersResponses());
-                }
+            }
+            if (response.getEventListenersResponses() != null && !response.getEventListenersResponses().isEmpty()) {
+                manager.eventListenersResponseReceived(response.getEventListenersResponses());
             }
         }
-        LOG.info("Processed event response");
+        LOG.info("Processed event response.");
     }
 
     @Override
@@ -112,6 +107,11 @@ public class DefaultEventTransport extends AbstractKaaTransport implements
     public void onSyncResposeIdReceived(Integer requestId) {
         LOG.debug("Events sent with request id {} were accepted.", requestId);
         sentEvents.remove(requestId);
+    }
+
+    @Override
+    protected TransportType getTransportType() {
+        return TransportType.EVENT;
     }
 
 }

@@ -49,7 +49,7 @@ public class PollCommand implements Command {
             if (httpClient != null ) {
                 LinkedHashMap<String, byte[]> request = processor.createRequest(transportTypes); //NOSONAR
                 if (request != null && !canceled) {
-                    byte[] responseDataRaw = httpClient.executeHttpRequest("", request);
+                    byte[] responseDataRaw = httpClient.executeHttpRequest("", request, false);
                     processor.onResponse(responseDataRaw);
                 }
             }

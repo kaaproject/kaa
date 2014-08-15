@@ -37,10 +37,10 @@ public class ControlServerApplicationIT extends AbstractTestControlServer {
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory
             .getLogger(ControlServerApplicationIT.class);
-    
+
     /**
      * Test create application.
-     * 
+     *
      * @throws TException
      *             the t exception
      */
@@ -50,26 +50,42 @@ public class ControlServerApplicationIT extends AbstractTestControlServer {
         Assert.assertFalse(strIsEmpty(application.getId()));
         Assert.assertFalse(strIsEmpty(application.getApplicationToken()));
     }
-    
+
     /**
      * Test get application.
-     * 
+     *
      * @throws TException
      *             the t exception
      */
     @Test
     public void testGetApplication() throws TException {
         ApplicationDto application = createApplication();
-        
+
         ApplicationDto storedApplication = toDto(client.getApplication(application.getId()));
-        
+
         Assert.assertNotNull(storedApplication);
         assertApplicationsEquals(application, storedApplication);
     }
-    
+
+    /**
+     * Test get application by application token.
+     *
+     * @throws TException
+     *             the t exception
+     */
+    @Test
+    public void testGetApplicationByAppToken() throws TException {
+        ApplicationDto application = createApplication();
+
+        ApplicationDto storedApplication = toDto(client.getApplicationByApplicationToken(application.getApplicationToken()));
+
+        Assert.assertNotNull(storedApplication);
+        assertApplicationsEquals(application, storedApplication);
+    }
+
     /**
      * Test get applications by tenant id.
-     * 
+     *
      * @throws TException
      *             the t exception
      */
@@ -81,13 +97,13 @@ public class ControlServerApplicationIT extends AbstractTestControlServer {
             ApplicationDto application = createApplication(tenant.getId());
             applications.add(application);
         }
-        
+
         Collections.sort(applications, new IdComparator());
-        
+
         List<ApplicationDto> storedApplications = toDtoList(client.getApplicationsByTenantId(tenant.getId()));
 
         Collections.sort(storedApplications, new IdComparator());
-        
+
         Assert.assertEquals(applications.size(), storedApplications.size());
         for (int i=0;i<applications.size();i++) {
             ApplicationDto application = applications.get(i);
@@ -95,28 +111,28 @@ public class ControlServerApplicationIT extends AbstractTestControlServer {
             assertApplicationsEquals(application, storedApplication);
         }
     }
-    
+
     /**
      * Test update application.
-     * 
+     *
      * @throws TException
      *             the t exception
      */
     @Test
     public void testUpdateApplication() throws TException {
         ApplicationDto application = createApplication();
-        
+
         application.setName(generateString(APPLICATION));
-        
+
         ApplicationDto updatedApplication = toDto(client
                 .editApplication(toDataStruct(application)));
-        
+
         assertApplicationsEquals(updatedApplication, application);
     }
-    
+
     /**
      * Test delete application.
-     * 
+     *
      * @throws TException
      *             the t exception
      */

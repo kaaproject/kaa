@@ -27,16 +27,21 @@ import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.WriterAppender;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppender;
 import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
 import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
-import org.kaaproject.kaa.server.operations.service.logs.service.FileSystemLogEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Component
 public class FileSystemLogAppender implements LogAppender{
 
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLogAppender.class);
@@ -49,31 +54,42 @@ public class FileSystemLogAppender implements LogAppender{
     private org.apache.log4j.Logger logger;
     private WriterAppender fileAppender;
 
+    private String appenderId;
     private String name;
 
     @Value("#{properties[date_pattern]}")
     private String datePattern;
     @Value("#{properties[layout_pattern]}")
     private String layoutPattern;
-
     @Value("#{properties[logs_root_dir]}")
     private String logsRootPath;
+
     private String tenantDirName;
     private String applicationDirName;
 
     private boolean closed = false;
+
+    public FileSystemLogAppender() {
+    }
 
     public FileSystemLogAppender(String name) {
         this.name = name;
     }
 
     @Override
+    public String getAppenderId() {
+        return appenderId;
+    }
+
+    public void setAppenderId(String appenderId) {
+        this.appenderId = appenderId;
+    }
+
     public void setTenantId(String tenantId) {
         tenantDirName = "tenant_" + tenantId;
         fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName);
     }
 
-    @Override
     public void setApplicationId(String applicationId) {
         applicationDirName = "application_" + applicationId;
         fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName + "/" + applicationDirName);
@@ -134,16 +150,6 @@ public class FileSystemLogAppender implements LogAppender{
         }
     }
 
-    @Override
-    public LogAppender copy() {
-        FileSystemLogAppender copy = new FileSystemLogAppender(name);
-        copy.fileSystemLogEventService = this.fileSystemLogEventService;
-        copy.datePattern = this.datePattern;
-        copy.layoutPattern = this.layoutPattern;
-        copy.logsRootPath = this.logsRootPath;
-        return copy;
-    }
-
     private WriterAppender initAppender(String path) {
         LOG.debug("Starting initialize rolling file appender");
         DailyRollingFileAppender fileAppender = new DailyRollingFileAppender();
@@ -161,16 +167,18 @@ public class FileSystemLogAppender implements LogAppender{
     }
 
     @Override
-    public void init(String logAppenderName, String tenantId,
-            String applicationId) {
+    public void init(LogAppenderDto appender) {
         LOG.debug("Starting initialize new instance of file system log appender");
-        setName(logAppenderName);
+        String appId = appender.getApplicationId();
+
+        setName(appender.getName());
         fileSystemLogEventService.createRootLogDirCommand(logsRootPath);
-        setTenantId(tenantId);
-        setApplicationId(applicationId);
+
+        setTenantId(appender.getTenantId());
+        setApplicationId(appId);
         fileAppender = initAppender(logsRootPath + "/" + tenantDirName + "/" + applicationDirName + "/application.log");
         logger = initLogger(applicationDirName);
-        fileSystemLogEventService.createUserAndGroup(applicationId,
+        fileSystemLogEventService.createUserAndGroup(appId,
                 logsRootPath + "/" + tenantDirName + "/" + applicationDirName);
     }
 

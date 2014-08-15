@@ -24,6 +24,8 @@
 #include <boost/uuid/name_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
 
+namespace kaa {
+
 class UuidGenerator {
 public:
     static std::string generateUuid() {
@@ -54,5 +56,6 @@ public:
     }
 };
 
+} // namespace kaa
 
 #endif /* UUIDGENERATOR_HPP_ */

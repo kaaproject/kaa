@@ -16,13 +16,13 @@
 package org.kaaproject.kaa.sandbox.web.services;
 
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
-import org.kaaproject.kaa.sandbox.admin.AdminClient;
-import org.kaaproject.kaa.sandbox.admin.FileData;
 import org.kaaproject.kaa.sandbox.web.services.cache.CacheService;
 import org.kaaproject.kaa.sandbox.web.services.rest.AdminClientProvider;
 import org.kaaproject.kaa.sandbox.web.services.util.Utils;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
+import org.kaaproject.kaa.server.common.admin.AdminClient;
+import org.kaaproject.kaa.server.common.admin.FileData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachePut;

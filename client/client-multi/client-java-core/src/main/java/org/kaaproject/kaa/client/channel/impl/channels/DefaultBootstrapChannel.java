@@ -68,7 +68,7 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
             requestEntity.put(CommonBSConstants.APPLICATION_TOKEN_ATTR_NAME, requestBodyRaw);
 
             LOG.debug("Going to execute {}", requestEntity);
-            responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity);
+            responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, true);
         }
         getDemultiplexer().processResponse(responseDataRaw);
     }

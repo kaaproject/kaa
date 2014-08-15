@@ -66,6 +66,7 @@ button::-moz-focus-inner
     color: #666666;
     padding-left: 10px;
     border-left: 2px solid #999999;
+    display: table-cell;
 }
 
 .b-app-header-menu {
@@ -93,9 +94,30 @@ button::-moz-focus-inner
     width: 0;
 }
 
+.b-nav-panel {
+	border-top: 1px solid #CCCCCC;
+    height: 100%;
+    float: left;
+    display: inline-block;
+}
+
+.b-nav-label {
+    width: 20px;
+    cursor: pointer;
+    float:right;
+    position: relative;
+    text-align: center;
+    border-color: #CCC;
+    border-style: solid;
+    border-width: 1px 0 1px 1px;
+    color: #444;
+    font-wight: bold;
+    margin-top: 5px;
+}
+
 .b-nav-content {
-    border-top: 1px solid #CCCCCC;
-    overflow: auto;
+    overflow-y: auto;
+    float: left;
 }
 
 .b-app-navigator {
@@ -141,6 +163,15 @@ button::-moz-focus-inner
 .b-app-content {
     background-color: #FFFFFF;
     box-shadow: 0px 0px 8px rgba(0,0,0,0.5) inset;
+    height: 100%;
+	display: flex;
+}
+
+.b-app-content-close {
+    background-color: #FFFFFF;
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.5) inset;
+    height: 100%;
+    margin-left: 20px;
 }
 
 .b-app-sub-header {
@@ -770,6 +801,11 @@ button::-moz-focus-inner
     border: 1px solid #2F5BB7;
     color: #FFFFFF;
     text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+}
+
+.button-margin-left {
+	margin-left: 300px;
+	margin-right: 35px;
 }
 
 

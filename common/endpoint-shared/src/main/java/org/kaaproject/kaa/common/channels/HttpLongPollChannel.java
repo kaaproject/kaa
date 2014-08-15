@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.channels.communication.HttpLongPollParameters;
  */
 public class HttpLongPollChannel extends Channel {
     private static ChannelType type = ChannelType.HTTP_LP;
-    
+
     private static TransportType[] supportedTransports = new TransportType[] {
         TransportType.CONFIGURATION,
         TransportType.EVENT,
@@ -37,12 +37,12 @@ public class HttpLongPollChannel extends Channel {
         TransportType.PROFILE,
         TransportType.USER
     };
-    
+
     /**
      * Default Constructor
      */
     public HttpLongPollChannel() {
-        
+
     }
 
     /**
@@ -60,20 +60,20 @@ public class HttpLongPollChannel extends Channel {
             params.setPort(((HTTPLPComunicationParameters)obj).getPort().intValue());
             return params;
         } else {
-            throw new ParsingException("Error: Communication parameters with incorrect Class.");
+            throw new ParsingException("Error: Communication parameters is not HTTPLPComunicationParameters.");
         }
     }
-    
+
     /**
      * Create Avro SupportedChannel object from HttpLongPollParameters
-     * @param params HttpLongPollParameters 
+     * @param params HttpLongPollParameters
      * @return SupportedChannel
      */
     public static SupportedChannel getSupportedChannelFromHttpLongPollParameters(HttpLongPollParameters params) {
         HTTPLPComunicationParameters communicationParameters = new HTTPLPComunicationParameters(params.getHostName(), params.getPort());
-        return new SupportedChannel(getType(), (Object)communicationParameters );
+        return new SupportedChannel(getType(), communicationParameters );
     }
-    
+
     /**
      * Return List of supported transports for Channel
      * @return List<TransportTypes> of supported transports.
@@ -81,7 +81,7 @@ public class HttpLongPollChannel extends Channel {
     public static List<TransportType> getSupportedTransportTypes() {
         return listTransportTypesFromArray(supportedTransports);
     }
-    
+
     /**
      * Return AVRO ChannelType for Channel
      * @return ChannelType of Channel
@@ -91,14 +91,14 @@ public class HttpLongPollChannel extends Channel {
     }
 
     /**
-     * Check if specified TransportType is supported by specific Channel 
+     * Check if specified TransportType is supported by specific Channel
      * @param type TransportTypes
      * @return boolean, true if specified type is supported by Channel
      */
     public static boolean isTransportSupported(TransportType type) {
         return isTransportTypeSupported(supportedTransports, type);
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.common.channels.Channel#getSupportedTransports()
      */

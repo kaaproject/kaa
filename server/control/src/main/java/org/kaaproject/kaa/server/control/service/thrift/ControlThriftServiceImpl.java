@@ -53,18 +53,20 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculationAlgorithm;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
+import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
+import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogEventService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
@@ -151,9 +153,12 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     @Autowired
     private LogSchemaService logSchemaService;
-    
+
     @Autowired
     private LogEventService logEventService;
+
+    @Autowired
+    private LogAppendersService logAppenderService;
 
     /** The thrift host. */
     @Value("#{properties[build_version]}")
@@ -347,6 +352,20 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     public DataStruct getApplication(String applicationId) throws TException {
         return toDataStruct(applicationService
                 .findAppById(applicationId));
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getApplicationByApplicationToken(java.lang.String)
+     */
+    /* GUI method */
+    @Override
+    public DataStruct getApplicationByApplicationToken(String applicationToken) throws TException {
+        return toDataStruct(applicationService
+                .findAppByApplicationToken(applicationToken));
     }
 
     /*
@@ -963,7 +982,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         return toDataStructList(notificationService.findNotificationSchemasByAppIdAndType(applicationId,
                 notificationType));
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#editLogSchema(java.lang.String)
      */
@@ -983,7 +1002,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             throws ControlThriftException, TException {
         return toDataStructList(logSchemaService.findLogSchemasByAppId(applicationId));
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getLogSchema(java.lang.String)
      */
@@ -991,6 +1010,15 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     @Override
     public DataStruct getLogSchema(String logSchemaId) throws TException {
         return toDataStruct(logSchemaService.findLogSchemaById(logSchemaId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#getLogSchemaByApplicationIdAndVersion(java.lang.String, java.lang.String)
+     */
+    /* GUI method */
+    @Override
+    public DataStruct getLogSchemaByApplicationIdAndVersion(String applicationId, int version) throws TException {
+        return toDataStruct(logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, version));
     }
 
     /* (non-Javadoc)
@@ -1469,5 +1497,63 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         logEventService.createCollection(collectionName);
         logEventService.createRole(roleName, collectionName);
         logEventService.createUser(userName, password, roleName);
+    }
+
+    @Override
+    public List<DataStruct> getLogAppendersByApplicationId(String applicationId) throws ControlThriftException, TException {
+        return toDataStructList(logAppenderService.findAllAppendersByAppId(applicationId));
+    }
+
+    @Override
+    public DataStruct getLogAppender(String logAppenderId) throws ControlThriftException, TException {
+        return toDataStruct(logAppenderService.findLogAppenderById(logAppenderId));
+    }
+
+    @Override
+    public DataStruct editLogAppender(DataStruct logAppender) throws ControlThriftException, TException {
+        LogAppenderDto appenderDto = ThriftDtoConverter.<LogAppenderDto> toDto(logAppender);
+        DataStruct dataStruct = null;
+        if (appenderDto != null) {
+            LogAppenderDto saved = logAppenderService.saveLogAppender(appenderDto);
+            if (saved != null) {
+                Notification thriftNotification = new Notification();
+                thriftNotification.setAppId(saved.getApplicationId());
+                thriftNotification.setAppenderId(saved.getId());
+                if (appenderDto.getId() == null) {
+                    LOG.info("Add new log appender ...");
+                    thriftNotification.setOp(Operation.ADD_LOG_APPENDER);
+                    LOG.info("Send notification to operation servers about new appender.");
+                } else {
+                    thriftNotification.setOp(Operation.UPDATE_LOG_APPENDER);
+                    LOG.info("Send notification to operation servers about update appender configuration.");
+                }
+                dataStruct = toDataStruct(saved);
+                controlZKService.sendEndpointNotification(thriftNotification);
+            }
+        }
+        return dataStruct;
+    }
+
+    @Override
+    public DataStruct registerLogAppender(String logAppenderId) throws ControlThriftException, TException {
+        return toDataStruct(logAppenderService.registerLogAppenderById(logAppenderId));
+    }
+
+    @Override
+    public DataStruct unregisterLogAppender(String logAppenderId) throws ControlThriftException, TException {
+        return toDataStruct(logAppenderService.unregisterLogAppenderById(logAppenderId));
+    }
+
+    @Override
+    public void deleteLogAppender(String logAppenderId) throws ControlThriftException, TException {
+        LogAppenderDto logAppenderDto = logAppenderService.findLogAppenderById(logAppenderId);
+        LOG.info("Remove log appender ...");
+        logAppenderService.removeLogAppenderById(logAppenderId);
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(logAppenderDto.getApplicationId());
+        thriftNotification.setAppenderId(logAppenderDto.getId());
+        thriftNotification.setOp(Operation.REMOVE_LOG_APPENDER);
+        LOG.info("Send notification to operation servers about removing appender.");
+        controlZKService.sendEndpointNotification(thriftNotification);
     }
 }

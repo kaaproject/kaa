@@ -24,15 +24,15 @@ import java.util.List;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.server.common.http.server.BadRequestException;
+import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEncodedRequestMessage;
-import org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
+import org.kaaproject.kaa.server.operations.service.http.commands.AbstractHttpSyncCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class TestAkkaService extends Thread implements AkkaService {
     private boolean operate = true;
 
     /** List of commands queue */
-    private final List<NettyEncodedRequestMessage> commands;
+    private final List<SessionInitRequest> commands;
 
     /**
      * Constructor
@@ -101,7 +101,7 @@ public class TestAkkaService extends Thread implements AkkaService {
         logger.info("Test Akka Service started: ");
         setName("Test_Service:");
         while(operate) {
-            NettyEncodedRequestMessage command = null;
+            SessionInitRequest command = null;
             try {
                 synchronized (commands) {
                     if (commands.size() > 0) {
@@ -140,7 +140,7 @@ public class TestAkkaService extends Thread implements AkkaService {
      * Add command to queue
      * @param command NettyEncodedRequestMessage
      */
-    public void addCommand(NettyEncodedRequestMessage command) {
+    public void addCommand(SessionInitRequest command) {
         synchronized (commands) {
             commands.add(command);
             commands.notify();
@@ -151,21 +151,22 @@ public class TestAkkaService extends Thread implements AkkaService {
      * Process command
      * @param command NettyEncodedRequestMessage
      */
-    private void process(NettyEncodedRequestMessage command) {
-
-        try {
-            SpecificRecordBase request = command.getCommand().decode();
-
-            command.getCommand().process();
-
-
-            command.getCommand().encode(getResponse(request, command.getCommand()));
-
-            command.getChannelContext().writeAndFlush(command.getCommand());
-
-        } catch (BadRequestException | GeneralSecurityException | IOException | GetDeltaException e) {
-            command.getChannelContext().fireExceptionCaught(e);
-        }
+    @Override
+    public void process(SessionInitRequest command) {
+//        TODO: FIX THIS
+//        try {
+//            SpecificRecordBase request = command.getCommand().decode();
+//
+//            command.getCommand().process();
+//
+//
+//            command.getCommand().encode(getResponse(request, command.getCommand()));
+//
+//            command.getChannelContext().writeAndFlush(command.getCommand());
+//
+//        } catch (BadRequestException | GeneralSecurityException | IOException | GetDeltaException e) {
+//            command.getChannelContext().fireExceptionCaught(e);
+//        }
 
     }
 
@@ -179,7 +180,7 @@ public class TestAkkaService extends Thread implements AkkaService {
      * @throws IOException
      * @throws GetDeltaException
      */
-    private SpecificRecordBase getResponse(SpecificRecordBase request, AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command)
+    private SpecificRecordBase getResponse(SpecificRecordBase request, AbstractHttpSyncCommand command)
             throws BadRequestException, GeneralSecurityException, IOException, GetDeltaException {
 
         if (request == null || command == null) {
@@ -204,8 +205,8 @@ public class TestAkkaService extends Thread implements AkkaService {
     }
 
     @Override
-    public void process(NettyCommandAwareMessage message) {
+    public void process(SessionAware message) {
         // TODO Auto-generated method stub
-
     }
+
 }

@@ -16,7 +16,8 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.http;
 
-import org.kaaproject.kaa.server.common.http.server.NettyHttpServer;
+import org.kaaproject.kaa.server.common.server.http.DefaultHttpServerInitializer;
+import org.kaaproject.kaa.server.common.server.http.NettyHttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +28,11 @@ import org.slf4j.LoggerFactory;
  * @author Andrey Panasenko
  */
 public class ProtocolService {
-    
+
     /** The Constant logger */
     private static final Logger LOG = LoggerFactory
             .getLogger(ProtocolService.class);
-    
+
     /** Netty server instance */
     private NettyHttpServer netty;
     private final BootstrapConfig config;
@@ -40,9 +41,9 @@ public class ProtocolService {
      * ProtocolService constructor
      * @param config BootstrapConfig
      */
-    public ProtocolService(BootstrapConfig config) {
+    public ProtocolService(BootstrapConfig config, DefaultHttpServerInitializer serverInitializer) {
         this.config = config;
-        this.netty = new NettyHttpServer(this.config);
+        this.netty = new NettyHttpServer(this.config, serverInitializer);
     }
 
     /**

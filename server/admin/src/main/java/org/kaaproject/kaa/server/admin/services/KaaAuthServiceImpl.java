@@ -29,7 +29,9 @@ import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.Authority;
 import org.kaaproject.kaa.server.admin.services.entity.User;
+import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
+import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -122,6 +124,10 @@ public class KaaAuthServiceImpl implements KaaAuthService {
         org.kaaproject.kaa.server.admin.services.entity.User userEntity =
                 new org.kaaproject.kaa.server.admin.services.entity.User();
 
+        if (!checkPasswordStrength(password)) {
+            throw new KaaAdminServiceException("Bad password strength. Password length must be greater than 5 characters.", ServiceErrorCode.GENERAL_ERROR);
+        }
+        
         userEntity.setUsername(username);
         userEntity.setPassword(passwordEncoder.encodePassword(password, null));
         userEntity.setEnabled(true);

@@ -22,7 +22,7 @@ import java.util.ListIterator;
 import java.util.Random;
 import java.util.UUID;
 
-import org.kaaproject.kaa.server.common.http.server.Track;
+import org.kaaproject.kaa.server.common.server.Track;
 import org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommand;
 import org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand;
 

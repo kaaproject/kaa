@@ -65,4 +65,10 @@ public interface KaaAdminMessages extends Messages {
     @DefaultMessage("Incorrect configuration. Validate your configuration regarding schema version.")
     String incorrectConfiguration();
 
+    @DefaultMessage("Are you sure you want to delete selected log appender?")
+    String removeLogAppenderQuestion();
+
+    @DefaultMessage("Remove log appender")
+    String removeLogAppenderTitle();
+
 }

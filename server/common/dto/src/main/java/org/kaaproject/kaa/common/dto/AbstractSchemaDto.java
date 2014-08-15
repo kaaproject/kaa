@@ -24,7 +24,6 @@ public abstract class AbstractSchemaDto extends SchemaDto {
 
     protected String applicationId;
     protected String schema;
-//    protected DataSchema schema;
     protected String name;
     protected String description;
     protected String createdUsername;
@@ -38,14 +37,6 @@ public abstract class AbstractSchemaDto extends SchemaDto {
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
-
-//    public DataSchema getSchema() {
-//        return schema;
-//    }
-//
-//    public void setSchema(DataSchema schema) {
-//        this.schema = schema;
-//    }
 
     public String getSchema() {
         return schema;

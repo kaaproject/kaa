@@ -47,6 +47,8 @@ import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
 import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
 import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpStatistics;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.OperationsServerLoadHistory;
 import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.Rebalancer;
@@ -222,7 +224,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
     @Override
     public void onNodeAdded(OperationsNodeInfo nodeInfo) {
         String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
-        
+
         addNewOperationsServer(dnsName, nodeInfo);
 
         LOG.info("Operations server {} added. Updating {} Bootstrap servers", dnsName, bootstrapsMap.size());
@@ -233,7 +235,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
 
     /**
      * Transform Zk List of supported channels into bootstrap thrift list of supported channels
-     * @param supportedChannelsArray 
+     * @param supportedChannelsArray
      * @return List<ThriftSupportedChannel>
      */
     private List<ThriftSupportedChannel> getThriftSupportedChannelsFromZkSupportedChannels(List<SupportedChannel> supportedChannelsArray, OperationsServerMeta meta) {
@@ -246,15 +248,22 @@ public class DynamicLoadManager implements OperationsNodeListener,
                 thriftType = ThriftChannelType.HTTP;
                 ZkHttpComunicationParameters zkCommParams = (ZkHttpComunicationParameters) channel.getZkChannel().getCommunicationParameters();
                 communicationParams.setHttpParams(new ThriftIpParameters(
-                        zkCommParams.getZkComunicationParameters().getHostName().toString(), 
+                        zkCommParams.getZkComunicationParameters().getHostName().toString(),
                         zkCommParams.getZkComunicationParameters().getPort().intValue()));
                 break;
             case HTTP_LP:
                 thriftType = ThriftChannelType.HTTP_LP;
                 ZkHttpLpComunicationParameters zkLpCommParams = (ZkHttpLpComunicationParameters) channel.getZkChannel().getCommunicationParameters();
                 communicationParams.setHttpLpParams(new ThriftIpParameters(
-                        zkLpCommParams.getZkComunicationParameters().getHostName().toString(), 
+                        zkLpCommParams.getZkComunicationParameters().getHostName().toString(),
                         zkLpCommParams.getZkComunicationParameters().getPort().intValue()));
+                break;
+            case KAATCP:
+                thriftType = ThriftChannelType.KAATCP;
+                ZkKaaTcpComunicationParameters zkTcpCommParams = (ZkKaaTcpComunicationParameters) channel.getZkChannel().getCommunicationParameters();
+                communicationParams.setKaaTcpParams(new ThriftIpParameters(
+                        zkTcpCommParams.getZkComunicationParameters().getHostName().toString(),
+                        zkTcpCommParams.getZkComunicationParameters().getPort().intValue()));
                 break;
             default:
                 break;
@@ -279,7 +288,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
             opsServersMap.get(dnsName).opsServer.setPublicKey(nodeInfo.getConnectionInfo().getPublicKey());
 
             for(SupportedChannel channel : nodeInfo.getSupportedChannelsArray()) {
-                if(opsServersMap.containsKey(dnsName) 
+                if(opsServersMap.containsKey(dnsName)
                         && opsServersMap.get(dnsName).history.containsKey(channel.getZkChannel().getChannelType())) {
 
                     int registeredUsersCount = 0;
@@ -297,14 +306,19 @@ public class DynamicLoadManager implements OperationsNodeListener,
                         registeredUsersCount = httpLpStats.getZkStatistics().getRegisteredUsersCount();
                         processedRequestCount = httpLpStats.getZkStatistics().getProcessedRequestCount();
                         deltaCalculationCount = httpLpStats.getZkStatistics().getDeltaCalculationCount();
-                        break;                        
-
+                        break;
+                    case KAATCP:
+                        ZkKaaTcpStatistics tcpStats = (ZkKaaTcpStatistics) channel.getZkChannel().getChannelStatistics();
+                        registeredUsersCount = tcpStats.getZkStatistics().getRegisteredUsersCount();
+                        processedRequestCount = tcpStats.getZkStatistics().getProcessedRequestCount();
+                        deltaCalculationCount = tcpStats.getZkStatistics().getDeltaCalculationCount();
+                        break;
                     default:
                         break;
                     }
                     opsServersMap.get(dnsName).history.get(channel.getZkChannel().getChannelType()).addOpsServerLoad(
-                            registeredUsersCount, 
-                            processedRequestCount, 
+                            registeredUsersCount,
+                            processedRequestCount,
                             deltaCalculationCount);
                 }
             }
@@ -375,7 +389,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
     /**
      * Gets the bootstrap name from connection info.
      *
-     * @param BootstrapNodeInfo 
+     * @param BootstrapNodeInfo
      * @return the bootstrap host name and bootstrap port from connection info
      */
     private String getBootstrapNameFromNodeInfo(BootstrapNodeInfo nodeInfo) {
@@ -385,7 +399,7 @@ public class DynamicLoadManager implements OperationsNodeListener,
         name.append(nodeInfo.getBootstrapPort());
         return name.toString();
     }
-    
+
     /**
      * Update bootstrap.
      *

@@ -28,7 +28,6 @@ UserTransport::UserTransport(IRegistrationProcessor & manager, IKaaChannelManage
 
 boost::shared_ptr<UserSyncRequest> UserTransport::createUserRequest()
 {
-    bool isEmpty = true;
     auto attachUsr = manager_.getUserAttachRequest();
     auto attachEps = manager_.getEndpointsToAttach();
     auto detachEps = manager_.getEndpointsToDetach();
@@ -37,14 +36,12 @@ boost::shared_ptr<UserSyncRequest> UserTransport::createUserRequest()
     if (attachUsr.get() == nullptr) {
         request->userAttachRequest.set_null();
     } else {
-        isEmpty = false;
         request->userAttachRequest.set_UserAttachRequest(*attachUsr);
     }
 
     if (attachEps.empty()) {
         request->endpointAttachRequests.set_null();
     } else {
-        isEmpty = false;
         std::vector<EndpointAttachRequest> requests;
         for (const auto& idToTokenPair : attachEps) {
             EndpointAttachRequest subRequest;
@@ -58,7 +55,6 @@ boost::shared_ptr<UserSyncRequest> UserTransport::createUserRequest()
     if (detachEps.empty()) {
         request->endpointDetachRequests.set_null();
     } else {
-        isEmpty = false;
         std::vector<EndpointDetachRequest> requests;
         for (const auto& idToHashPair : detachEps) {
             EndpointDetachRequest subRequest;
@@ -69,9 +65,6 @@ boost::shared_ptr<UserSyncRequest> UserTransport::createUserRequest()
         request->endpointDetachRequests.set_array(requests);
     }
 
-    if (isEmpty) {
-        request.reset();
-    }
     return request;
 }
 

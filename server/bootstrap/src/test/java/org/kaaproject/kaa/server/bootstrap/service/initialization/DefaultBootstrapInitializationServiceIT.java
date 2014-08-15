@@ -15,11 +15,14 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.bootstrap.service.initialization;
 
-import org.junit.Ignore;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +30,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
@@ -40,12 +39,13 @@ import static org.junit.Assert.fail;
 @ContextConfiguration(locations = "/bootstrapTestContext.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class DefaultBootstrapInitializationServiceIT {
-    
-    
+
+
     class TestLauncher extends Thread {
         DefaultBootstrapInitializationService service;
-        
-        
+
+
+        @Override
         public void run() {
             if (service != null) {
                 try {
@@ -55,7 +55,7 @@ public class DefaultBootstrapInitializationServiceIT {
                 }
             }
         }
-        
+
         public void shutdown() {
             if (service != null) {
                 try {
@@ -67,16 +67,16 @@ public class DefaultBootstrapInitializationServiceIT {
             }
         }
     }
-    
-    
+
+
     private static final String SERVER_HOME_DIR = "/tmp";
     static {
         System.setProperty("server_home_dir", SERVER_HOME_DIR);
     }
-    
+
     @Autowired
     public DefaultBootstrapInitializationService dbiService;
-    
+
     /**
      * Test method for {@link org.kaaproject.kaa.server.bootstrap.service.initialization.DefaultBootstrapInitializationService#start()}.
      */
@@ -88,19 +88,18 @@ public class DefaultBootstrapInitializationServiceIT {
         l.service = dbiService;
         l.start();
         try {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             fail(e.toString());
         }
         assertNotNull(dbiService.getKeyStoreService());
         assertNotNull(dbiService.getBootstrapThriftService());
-        assertNotNull(dbiService.getBootstrapNode());
         assertNotNull(l);
         assertNotNull(l.service);
         l.shutdown();
-        
+
     }
-    
+
     /**
      * Test method for {@link org.kaaproject.kaa.server.bootstrap.service.initialization.DefaultBootstrapInitializationService#stop()}.
      */
@@ -121,8 +120,7 @@ public class DefaultBootstrapInitializationServiceIT {
         l.shutdown();
         assertNotNull(dbiService);
         assertNull(dbiService.getBootstrapNode());
-        assertNull(dbiService.getOperationsServerListService());
         assertNull(dbiService.getHttpService());
     }
-    
+
 }

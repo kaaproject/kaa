@@ -33,11 +33,6 @@ public class DefaultLogTransport extends AbstractKaaTransport implements
     private LogProcessor processor;
 
     @Override
-    public void sync() {
-        syncByType(TransportType.LOGGING);
-    }
-
-    @Override
     public void setLogProcessor(LogProcessor processor) {
         this.processor = processor;
     }
@@ -65,6 +60,11 @@ public class DefaultLogTransport extends AbstractKaaTransport implements
         } else {
             LOG.error("Can't process response. LogProcessor is null");
         }
+    }
+
+    @Override
+    protected TransportType getTransportType() {
+        return TransportType.LOGGING;
     }
 
 }

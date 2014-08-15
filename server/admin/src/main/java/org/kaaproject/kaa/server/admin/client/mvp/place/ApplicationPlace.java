@@ -108,6 +108,7 @@ public class ApplicationPlace extends TreePlace {
             result.add(new TopicsPlace(applicationId));
             result.add(new EndpointGroupsPlace(applicationId));
             result.add(new AefMapsPlace(applicationId));
+            result.add(new LogAppendersPlace(applicationId));
             callback.onSuccess(result, display);
         }
 

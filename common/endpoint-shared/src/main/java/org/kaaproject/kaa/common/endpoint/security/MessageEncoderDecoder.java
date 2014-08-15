@@ -17,12 +17,15 @@
 package org.kaaproject.kaa.common.endpoint.security;
 
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -110,6 +113,19 @@ public class MessageEncoderDecoder {
         }
     }
 
+    /**
+     * Instantiates a new message encoder decoder.
+     *
+     * @param privateKey
+     *            the private key
+     * @param publicKey
+     *            the public key
+     * @param remotePublicKey
+     *            the remote public key
+     */
+    public MessageEncoderDecoder(PrivateKey privateKey, PublicKey publicKey) {
+        this(privateKey, publicKey, null);
+    }
 
     /**
      * Instantiates a new message encoder decoder.
@@ -148,6 +164,14 @@ public class MessageEncoderDecoder {
         return keyCipher.doFinal(key.getEncoded());
     }
 
+    public SecretKey getDecodedSessionKey(){
+        return sessionKey;
+    }
+
+    public void setDecodedSessionKey(SecretKey secretKey){
+        this.sessionKey = secretKey;
+    }
+
     /**
      * Encode data using sessionKey.
      *
@@ -176,12 +200,16 @@ public class MessageEncoderDecoder {
      *             the general security exception
      */
     public byte[] decodeData(byte[] message, byte[] encodedKey) throws GeneralSecurityException {
+        decodeSessionKey(encodedKey);
+
+        return decodeData(message);
+    }
+
+    public void decodeSessionKey(byte[] encodedKey) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher sessionKeyCipher = RSA_CIPHER.get();
         sessionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] sessionKeyBytes = sessionKeyCipher.doFinal(encodedKey);
         sessionKey = new SecretKeySpec(sessionKeyBytes, 0, SESSION_KEY_SIZE / 8, SESSION_KEY_ALGORITHM);
-
-        return decodeData(message);
     }
 
     /**

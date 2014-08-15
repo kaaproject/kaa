@@ -35,14 +35,13 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class BaseDetailsViewImpl extends Composite implements InputEventHandler,
-                                                                       ChangeHandler,
-                                                                       BaseDetailsView {
+public abstract class BaseDetailsViewImpl extends Composite implements InputEventHandler, ChangeHandler, BaseDetailsView {
 
     interface BaseDetailsViewImplUiBinder extends UiBinder<Widget, BaseDetailsViewImpl> { }
     private static BaseDetailsViewImplUiBinder uiBinder = GWT.create(BaseDetailsViewImplUiBinder.class);
@@ -58,12 +57,13 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
     @UiField public Button cancelButton;
     @UiField public HTMLPanel requiredFieldsNoteLabel;
     @UiField (provided=true) public AlertPanel errorPanel;
+    @UiField public FlowPanel footer;
 
     protected final boolean create;
 
     private boolean hasChanged = false;
 
-    private Presenter presenter;
+    protected Presenter presenter;
 
     protected final boolean editable;
 
@@ -213,6 +213,10 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
             saveButton.setText(enabled ? Utils.constants.save() : Utils.constants.saved());
         }
         saveButton.setEnabled(enabled);
+    }
+
+    protected FlowPanel getFooter() {
+        return footer;
     }
 
 }

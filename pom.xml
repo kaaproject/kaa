@@ -1,26 +1,14 @@
-<!--
-  Copyright 2014 CyberVision, Inc.
+<!-- Copyright 2014 CyberVision, Inc. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with 
+    the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, 
+    software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+    License for the specific language governing permissions and limitations under the License. -->
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.kaaproject</groupId>
     <artifactId>kaa</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <packaging>pom</packaging>
 
     <name>Kaa</name>
@@ -60,6 +48,8 @@
         <ehcache.version>2.8.1</ehcache.version>
         <ehcache-spring.version>1.2.0</ehcache-spring.version>
         <rat.version>0.10</rat.version>
+        <flume.version>1.5.0.1</flume.version>
+        <hadoop.version>2.4.1</hadoop.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -122,6 +112,7 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.17</version>
                         <configuration>
                             <argLine>${jacoco.agent.argLine}</argLine>
                             <systemPropertyVariables>
@@ -157,7 +148,7 @@
                                 <exclude>**/unittest_result.xml</exclude>
                                 <exclude>**/test/resources/kaa_status.file</exclude>
                                 <exclude>**/build/**</exclude>
-                                 <exclude>**/gcovr</exclude>
+                                <exclude>**/gcovr</exclude>
                             </excludes>
                         </configuration>
                         <executions>
@@ -195,6 +186,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
@@ -207,6 +199,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9.1</version>
                     <configuration>
                         <detectOfflineLinks>false</detectOfflineLinks>
                     </configuration>
@@ -223,8 +216,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                 </plugin>
-                <!--This plugin's configuration is used to store Eclipse
-                    m2e settings only. It has no influence on the Maven build itself. -->
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -346,13 +338,16 @@
                         <exclude>**/_remote.repositories</exclude>
                         <exclude>**/*client.log.*</exclude>
                         <exclude>**/*server.log.*</exclude>
-					    <exclude>**/gcovr.log</exclude>
+                        <exclude>**/gcovr.log</exclude>
                         <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/unittest_result.xml</exclude>
                         <exclude>**/test/resources/kaa_status.file</exclude>
                         <exclude>**/build/**</exclude>
                         <exclude>**/gcovr</exclude>
-						<exclude>**/README.md</exclude>
+                        <exclude>**/README.md</exclude>
+                        <exclude>**/gen/*.java</exclude>
+                        <exclude>**/*.avsc</exclude>
+                        <exclude>**/*.iml</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -401,41 +396,15 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
                 <version>${spring.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-bom</artifactId>
-                <version>${spring.security.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-releasetrain</artifactId>
-                <version>${spring.data.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-digester3</artifactId>
-                <version>${commons-digester3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
+                <groupId>org.apache.flume</groupId>
+                <artifactId>flume-ng-clients</artifactId>
+                <version>${flume.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -501,9 +470,8 @@
                     </tags>
                 </configuration>
             </plugin>
-            <!-- uncomment when all licence headers will be added <plugin>
-                <groupId>org.apache.rat</groupId> <artifactId>apache-rat-plugin</artifactId>
-                <version>${rat.version}</version> </plugin> -->
+            <!-- uncomment when all licence headers will be added <plugin> <groupId>org.apache.rat</groupId> <artifactId>apache-rat-plugin</artifactId> <version>${rat.version}</version> 
+                </plugin> -->
         </plugins>
     </reporting>
 

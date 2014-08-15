@@ -3,7 +3,7 @@
  "namespace": "org.kaaproject.kaa.server.common.zk.gen",
  "type": "enum",
  "name": "ZkChannelType",
- "symbols" : ["HTTP", "HTTP_LP"]
+ "symbols" : ["HTTP", "HTTP_LP", "KAATCP"]
 },
 {
  "namespace": "org.kaaproject.kaa.server.common.zk.gen",
@@ -44,6 +44,14 @@
 {
  "namespace": "org.kaaproject.kaa.server.common.zk.gen",
  "type": "record",
+ "name": "ZkKaaTcpComunicationParameters",
+ "fields" : [
+    {"name": "ZkComunicationParameters", "type": "org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
  "name": "ZkHttpLpStatistics",
  "fields" : [
     {"name" : "ZkStatistics", "type" : "org.kaaproject.kaa.server.common.zk.gen.BaseStatistics"}
@@ -60,17 +68,27 @@
 {
  "namespace": "org.kaaproject.kaa.server.common.zk.gen",
  "type": "record",
+ "name": "ZkKaaTcpStatistics",
+ "fields" : [
+    {"name" : "ZkStatistics", "type" : "org.kaaproject.kaa.server.common.zk.gen.BaseStatistics"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.server.common.zk.gen",
+ "type": "record",
  "name": "ZkSupportedChannel",
  "fields": [
      {"name": "ChannelType", "type": "org.kaaproject.kaa.server.common.zk.gen.ZkChannelType"},
      {"name": "RedirectionSupported", "type": "boolean"},
      {"name": "CommunicationParameters", "type": [
         "org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters",
-        "org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters" 
+        "org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters",
+        "org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters"  
      ]},
      {"name": "ChannelStatistics", "type": [
         "org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics",
-        "org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics"
+        "org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics",
+        "org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpStatistics"
      ]}
  ]
 },

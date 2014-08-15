@@ -16,13 +16,6 @@
 
 package org.kaaproject.kaa.client.transport;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.LinkedHashMap;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.Charsets;
 import org.apache.http.Header;
@@ -32,6 +25,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.ByteArrayBuffer;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.LinkedHashMap;
+
 import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class AndroidHttpClient extends AbstractHttpClient {
 
     private DefaultHttpClient httpClient;
     private volatile HttpPost method;
- 
+
     public AndroidHttpClient(String url, PrivateKey privateKey,
             PublicKey publicKey, PublicKey remotePublicKey) {
         super(url, privateKey, publicKey, remotePublicKey);
@@ -53,8 +53,9 @@ public class AndroidHttpClient extends AbstractHttpClient {
     }
 
     @Override
-    public byte[] executeHttpRequest(
-            String uri, LinkedHashMap<String, byte[]> entity) throws Exception { //NOSONAR
+    public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity
+            , boolean verifyResponse) throws Exception { //NOSONAR
+
         byte[] responseDataRaw = null;
         method = new HttpPost(url + uri);
         MultipartEntity requestEntity = new MultipartEntity();
@@ -69,7 +70,7 @@ public class AndroidHttpClient extends AbstractHttpClient {
                 LOG.debug("Received {}", response.getStatusLine());
                 int status = response.getStatusLine().getStatusCode();
                 if (status >= 200 && status < 300) {
-                    responseDataRaw = getResponseBody(response);
+                    responseDataRaw = getResponseBody(response, verifyResponse);
                 } else {
                     throw new TransportException(
                             "Invalid response code from server: " + status);
@@ -85,39 +86,47 @@ public class AndroidHttpClient extends AbstractHttpClient {
         return responseDataRaw;
     }
 
-    private byte[] getResponseBody(HttpResponse response) throws IOException,
+    private byte[] getResponseBody(HttpResponse response, boolean verifyResponse) throws IOException,
             GeneralSecurityException {
-        Header signatureHeader = response
-                .getFirstHeader(CommonEPConstans.SIGNATURE_HEADER_NAME);
 
         HttpEntity resEntity = response.getEntity();
-        if (resEntity != null && signatureHeader != null) {
-
+        if (resEntity != null) {
             byte[] body = toByteArray(resEntity);
-            byte[] signature;
-            if (signatureHeader.getValue() != null) {
-                signature = Base64.decodeBase64(signatureHeader.getValue()
-                        .getBytes(Charsets.UTF_8));
-            } else {
-                signature = new byte[0];
-            }
-
             consume(resEntity);
 
-            // LOG.debug("Remote Public Key: {}" +
-            // messageEncDec.getRemotePublicKey().getEncoded().length);
-            // LOG.debug(MessageEncoderDecoder.bytesToHex(messageEncDec.getRemotePublicKey().getEncoded()));
-            // LOG.debug("Signature size: {}" + signature.length);
-            // LOG.debug(MessageEncoderDecoder.bytesToHex(signature));
-            // LOG.debug("Body size: {}" + body.length);
-            // LOG.debug(MessageEncoderDecoder.bytesToHex(body));
+            if (verifyResponse) {
+                Header signatureHeader = response
+                        .getFirstHeader(CommonEPConstans.SIGNATURE_HEADER_NAME);
 
-            return verifyResponse(body, signature);
+                if (signatureHeader == null) {
+                    throw new IOException("can't verify message");
+                }
+
+                byte[] signature;
+                if (signatureHeader.getValue() != null) {
+                    signature = Base64.decodeBase64(signatureHeader.getValue()
+                            .getBytes(Charsets.UTF_8));
+                } else {
+                    signature = new byte[0];
+                }
+
+                // LOG.debug("Remote Public Key: {}" +
+                // messageEncDec.getRemotePublicKey().getEncoded().length);
+                // LOG.debug(MessageEncoderDecoder.bytesToHex(messageEncDec.getRemotePublicKey().getEncoded()));
+                // LOG.debug("Signature size: {}" + signature.length);
+                // LOG.debug(MessageEncoderDecoder.bytesToHex(signature));
+                // LOG.debug("Body size: {}" + body.length);
+                // LOG.debug(MessageEncoderDecoder.bytesToHex(body));
+
+                return verifyResponse(body, signature);
+            } else {
+                return body;
+            }
         } else {
             throw new IOException("can't read message");
         }
     }
-    
+
     private static byte[] toByteArray(final HttpEntity entity) throws IOException {
         if (entity == null) {
             throw new IllegalArgumentException("HTTP entity may not be null");
@@ -145,7 +154,7 @@ public class AndroidHttpClient extends AbstractHttpClient {
         }
         return buffer.toByteArray();
     }
-    
+
     private static void consume(final HttpEntity entity) throws IOException {
         if (entity == null) {
             return;

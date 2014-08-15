@@ -21,7 +21,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
  * @author Andrey Panasenko
  *
  */
-public class HttpLpChannelConfig extends NettyHttpServiceChannelConfig {
+public class HttpLpChannelConfig extends HttpServiceChannelConfig {
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.config.NettyHttpServiceChannelConfig#getChannelType()

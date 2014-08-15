@@ -62,10 +62,13 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
     private NodeCache controlCache;
 
     /** The listeners. */
-    private List<ControlNodeListener> listeners;
+    private final List<ControlNodeListener> listeners;
+
+    /** The node path. */
+    protected String nodePath;
 
     /** The control node avro converter. */
-    protected ThreadLocal<AvroByteArrayConverter<ControlNodeInfo>> controlNodeAvroConverter = new ThreadLocal<AvroByteArrayConverter<ControlNodeInfo>>(){ 
+    protected ThreadLocal<AvroByteArrayConverter<ControlNodeInfo>> controlNodeAvroConverter = new ThreadLocal<AvroByteArrayConverter<ControlNodeInfo>>(){
         @Override
         protected AvroByteArrayConverter<ControlNodeInfo> initialValue() {
             return new AvroByteArrayConverter<ControlNodeInfo>(ControlNodeInfo.class);
@@ -78,8 +81,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
         protected AvroByteArrayConverter<OperationsNodeInfo> initialValue() {
             return new AvroByteArrayConverter<OperationsNodeInfo>(OperationsNodeInfo.class);
         }
-    };    
-    
+    };
+
     /** The bootstrap node avro converter. */
     protected ThreadLocal<AvroByteArrayConverter<BootstrapNodeInfo>> bootstrapNodeAvroConverter = new ThreadLocal<AvroByteArrayConverter<BootstrapNodeInfo>>(){
         @Override
@@ -87,9 +90,10 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
             return new AvroByteArrayConverter<BootstrapNodeInfo>(BootstrapNodeInfo.class);
         }
     };
-    
+
     /** The errors listener. */
-    private UnhandledErrorListener errorsListener = new UnhandledErrorListener() {
+    private final UnhandledErrorListener errorsListener = new UnhandledErrorListener() {
+        @Override
         public void unhandledError(String message, Throwable e) {
             LOG.error("Unrecoverable error: " + message, e);
             try {
@@ -102,7 +106,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /**
      * Instantiates a new control node tracker.
-     * 
+     *
      * @param zkHostPortList
      *            the zk host port list
      * @param retryPolicy
@@ -114,7 +118,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /**
      * Instantiates a new control node tracker.
-     * 
+     *
      * @param zkHostPortList
      *            the zk host port list
      * @param sessionTimeoutMs
@@ -136,7 +140,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /**
      * Start.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -147,7 +151,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
         if(createZkNode()){
             controlCache = new NodeCache(client, CONTROL_SERVER_NODE_PATH);
             controlCache.getListenable().addListener(new NodeCacheListener() {
-    
+
                 @Override
                 public void nodeChanged() throws Exception {
                     ChildData currentData = controlCache.getCurrentData();
@@ -165,12 +169,12 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
             LOG.warn("Failed to create ZK node!");
         }
     }
-    
+
     public abstract boolean createZkNode() throws IOException;
 
     /**
      * On no master.
-     * 
+     *
      * @throws IOException
      *             Signals that an I/O exception has occurred.
      */
@@ -182,7 +186,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /**
      * On master change.
-     * 
+     *
      * @param currentData
      *            the current data
      */
@@ -196,7 +200,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /**
      * Checks if is connected.
-     * 
+     *
      * @return true, if is connected
      */
     public boolean isConnected() {
@@ -205,7 +209,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /**
      * Adds the listener.
-     * 
+     *
      * @param listener
      *            the listener
      */
@@ -216,7 +220,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /**
      * Removes the listener.
-     * 
+     *
      * @param listener
      *            the listener
      * @return true, if successful
@@ -233,7 +237,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.io.Closeable#close()
      */
     @Override
@@ -243,12 +247,22 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
         if(controlCache != null){
             controlCache.close();
         }
+
+        if(nodePath != null){
+            try {
+                client.delete().forPath(nodePath);
+                LOG.debug("Node with path {} successfully deleted", nodePath);
+            } catch (Exception e) {
+                LOG.debug("Failed to delete node", e);
+            }
+        }
+
         client.close();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.zk.ControlNodeAware#getControlServerInfo
      * ()
@@ -264,7 +278,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     /**
      * Extract control server info.
-     * 
+     *
      * @param currentData
      *            the current data
      * @return the control node info
@@ -278,11 +292,11 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
         }
         return controlServerInfo;
     }
-    
+
     public boolean doZKClientAction(ZKClientAction action) throws IOException{
         return doZKClientAction(action, false);
     }
-    
+
     public boolean doZKClientAction(ZKClientAction action, boolean throwIOException) throws IOException{
         try{
             action.doWithZkClient(client);
@@ -295,9 +309,9 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
             }else{
                 return false;
             }
-        }        
+        }
     }
-    
+
     public static interface ZKClientAction{
         void doWithZkClient(CuratorFramework client) throws Exception; //NOSONAR
     }

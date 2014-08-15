@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import javax.persistence.Column;
+
 public final class ModelConstants {
 
     /**
@@ -239,6 +241,38 @@ public final class ModelConstants {
      * Log schema constants.
      */
     public static final String LOG_SCHEMA_TABLE_NAME = "log_schema";
+
+    /**
+     * Log appender constants.
+     */
+    public static final String LOG_APPENDER_TABLE_NAME = "log_appender";
+    public static final String LOG_APPENDER_NAME = "name";
+    public static final String LOG_APPENDER_APPLICATION_ID = "application_id";
+    public static final String LOG_APPENDER_LOG_SCHEMA_ID = "log_schema_id";
+    public static final String LOG_APPENDER_STATUS = "status";
+    public static final String LOG_APPENDER_TYPE = "type";
+    public static final String LOG_APPENDER_PROPERTIES = "properties";
+    public static final String LOG_APPENDER_DESCRIPTION = DESCRIPTION;
+    public static final String LOG_APPENDER_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String LOG_APPENDER_CREATED_TIME = CREATED_TIME;
+
+    /**
+     * File log appender constants.
+     */
+    public static final String FILE_LOG_APPENDER_TABLE_NAME = "file_log_appender";
+    public static final String FILE_LOG_APPENDER_PATH = "file_path";
+
+    /**
+     * Flume log appender constants.
+     */
+    public static final String FLUME_LOG_APPENDER_TABLE_NAME = "flume_log_appender";
+    public static final String FLUME_LOG_APPENDER_HOSTS = "hosts";
+
+    /**
+     * Mongo log appender constants.
+     */
+    public static final String MONGO_LOG_APPENDER_TABLE_NAME = "MONGO_log_appender";
+    public static final String MONGO_LOG_APPENDER_COLLECTION_NAME = "collection_name";
 
     private ModelConstants() {
         throw new UnsupportedOperationException("Not supported");

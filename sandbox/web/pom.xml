@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.5.1</version>
+		<version>0.5.2</version>
 		<artifactId>sandbox</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.sandbox</groupId>
@@ -249,6 +249,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9</version>
 				<executions>
 					<execution>
 						<id>add-source</id>

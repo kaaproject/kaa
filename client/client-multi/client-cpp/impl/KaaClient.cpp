@@ -155,22 +155,17 @@ void KaaClient::initKaaTransport()
     notificationManager_->setTransport(boost::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
 
     bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
-    opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), clientKeys_));
-    opsLPHttpChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), clientKeys_));
+    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
 
     bootstrapChannel_->setDemultiplexer(bootstrapProcessor_.get());
     bootstrapChannel_->setMultiplexer(bootstrapProcessor_.get());
-    opsHttpChannel_->setDemultiplexer(operationsProcessor_.get());
-    opsHttpChannel_->setMultiplexer(operationsProcessor_.get());
-    opsLPHttpChannel_->setDemultiplexer(operationsProcessor_.get());
-    opsLPHttpChannel_->setMultiplexer(operationsProcessor_.get());
+    opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
+    opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
 
     KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
     channelManager_->addChannel(bootstrapChannel_.get());
-    KAA_LOG_INFO(boost::format("Going to set default operations http lp channel: %1%") % opsLPHttpChannel_.get());
-    channelManager_->addChannel(opsLPHttpChannel_.get());
-    KAA_LOG_INFO(boost::format("Going to set default operations http channel: %1%") % opsHttpChannel_.get());
-    channelManager_->addChannel(opsHttpChannel_.get());
+    KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
+    channelManager_->addChannel(opsTcpChannel_.get());
 }
 
 void KaaClient::initClientKeys()

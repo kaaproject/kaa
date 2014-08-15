@@ -49,6 +49,7 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
   private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.STRING, (short)11);
   private static final org.apache.thrift.protocol.TField KEY_HASH_FIELD_DESC = new org.apache.thrift.protocol.TField("keyHash", org.apache.thrift.protocol.TType.STRING, (short)12);
   private static final org.apache.thrift.protocol.TField OP_FIELD_DESC = new org.apache.thrift.protocol.TField("op", org.apache.thrift.protocol.TType.I32, (short)13);
+  private static final org.apache.thrift.protocol.TField APPENDER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("appenderId", org.apache.thrift.protocol.TType.STRING, (short)14);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -73,6 +74,7 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
    * @see Operation
    */
   public Operation op; // required
+  public String appenderId; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -92,7 +94,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
      * 
      * @see Operation
      */
-    OP((short)13, "op");
+    OP((short)13, "op"),
+    APPENDER_ID((short)14, "appenderId");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -133,6 +136,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
           return KEY_HASH;
         case 13: // OP
           return OP;
+        case 14: // APPENDER_ID
+          return APPENDER_ID;
         default:
           return null;
       }
@@ -207,6 +212,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , true)));
     tmpMap.put(_Fields.OP, new org.apache.thrift.meta_data.FieldMetaData("op", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, Operation.class)));
+    tmpMap.put(_Fields.APPENDER_ID, new org.apache.thrift.meta_data.FieldMetaData("appenderId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "id")));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Notification.class, metaDataMap);
   }
@@ -227,7 +234,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     String unicastNotificationId,
     String topicId,
     ByteBuffer keyHash,
-    Operation op)
+    Operation op,
+    String appenderId)
   {
     this();
     this.appId = appId;
@@ -247,6 +255,7 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.topicId = topicId;
     this.keyHash = keyHash;
     this.op = op;
+    this.appenderId = appenderId;
   }
 
   /**
@@ -286,6 +295,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     if (other.isSetOp()) {
       this.op = other.op;
     }
+    if (other.isSetAppenderId()) {
+      this.appenderId = other.appenderId;
+    }
   }
 
   public Notification deepCopy() {
@@ -311,6 +323,7 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.topicId = null;
     this.keyHash = null;
     this.op = null;
+    this.appenderId = null;
   }
 
   public String getAppId() {
@@ -639,6 +652,30 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     }
   }
 
+  public String getAppenderId() {
+    return this.appenderId;
+  }
+
+  public Notification setAppenderId(String appenderId) {
+    this.appenderId = appenderId;
+    return this;
+  }
+
+  public void unsetAppenderId() {
+    this.appenderId = null;
+  }
+
+  /** Returns true if field appenderId is set (has been assigned a value) and false otherwise */
+  public boolean isSetAppenderId() {
+    return this.appenderId != null;
+  }
+
+  public void setAppenderIdIsSet(boolean value) {
+    if (!value) {
+      this.appenderId = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case APP_ID:
@@ -745,6 +782,14 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       }
       break;
 
+    case APPENDER_ID:
+      if (value == null) {
+        unsetAppenderId();
+      } else {
+        setAppenderId((String)value);
+      }
+      break;
+
     }
   }
 
@@ -789,6 +834,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     case OP:
       return getOp();
 
+    case APPENDER_ID:
+      return getAppenderId();
+
     }
     throw new IllegalStateException();
   }
@@ -826,6 +874,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       return isSetKeyHash();
     case OP:
       return isSetOp();
+    case APPENDER_ID:
+      return isSetAppenderId();
     }
     throw new IllegalStateException();
   }
@@ -960,6 +1010,15 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
         return false;
     }
 
+    boolean this_present_appenderId = true && this.isSetAppenderId();
+    boolean that_present_appenderId = true && that.isSetAppenderId();
+    if (this_present_appenderId || that_present_appenderId) {
+      if (!(this_present_appenderId && that_present_appenderId))
+        return false;
+      if (!this.appenderId.equals(that.appenderId))
+        return false;
+    }
+
     return true;
   }
 
@@ -1031,6 +1090,11 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     builder.append(present_op);
     if (present_op)
       builder.append(op.getValue());
+
+    boolean present_appenderId = true && (isSetAppenderId());
+    builder.append(present_appenderId);
+    if (present_appenderId)
+      builder.append(appenderId);
 
     return builder.toHashCode();
   }
@@ -1173,6 +1237,16 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetAppenderId()).compareTo(other.isSetAppenderId());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetAppenderId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.appenderId, other.appenderId);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -1278,6 +1352,14 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       sb.append("null");
     } else {
       sb.append(this.op);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("appenderId:");
+    if (this.appenderId == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.appenderId);
     }
     first = false;
     sb.append(")");
@@ -1429,6 +1511,14 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 14: // APPENDER_ID
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.appenderId = iprot.readString();
+              struct.setAppenderIdIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1501,6 +1591,11 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
         oprot.writeI32(struct.op.getValue());
         oprot.writeFieldEnd();
       }
+      if (struct.appenderId != null) {
+        oprot.writeFieldBegin(APPENDER_ID_FIELD_DESC);
+        oprot.writeString(struct.appenderId);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1558,7 +1653,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       if (struct.isSetOp()) {
         optionals.set(12);
       }
-      oprot.writeBitSet(optionals, 13);
+      if (struct.isSetAppenderId()) {
+        optionals.set(13);
+      }
+      oprot.writeBitSet(optionals, 14);
       if (struct.isSetAppId()) {
         oprot.writeString(struct.appId);
       }
@@ -1598,12 +1696,15 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       if (struct.isSetOp()) {
         oprot.writeI32(struct.op.getValue());
       }
+      if (struct.isSetAppenderId()) {
+        oprot.writeString(struct.appenderId);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Notification struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(13);
+      BitSet incoming = iprot.readBitSet(14);
       if (incoming.get(0)) {
         struct.appId = iprot.readString();
         struct.setAppIdIsSet(true);
@@ -1655,6 +1756,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       if (incoming.get(12)) {
         struct.op = Operation.findByValue(iprot.readI32());
         struct.setOpIsSet(true);
+      }
+      if (incoming.get(13)) {
+        struct.appenderId = iprot.readString();
+        struct.setAppenderIdIsSet(true);
       }
     }
   }

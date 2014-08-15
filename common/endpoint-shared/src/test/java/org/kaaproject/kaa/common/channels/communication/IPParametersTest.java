@@ -37,6 +37,11 @@ public class IPParametersTest {
         p1.setPort(10);
         p2.setPort(10);
         assertEquals(p1.hashCode(), p2.hashCode());
+
+        IPParameters p3 = new IPParameters();
+        p3.setPort(10);
+        assertNotEquals(p1.hashCode(), p3.hashCode());
+        assertNotEquals(p2.hashCode(), p3.hashCode());
     }
 
     /**

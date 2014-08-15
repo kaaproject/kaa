@@ -46,6 +46,15 @@ public:
     virtual NotificationSyncRequestPtr createNotificationRequest() = 0;
 
     /**
+     * Creates a new  empty Notification request.
+     *
+     * @return new empty  Notification request.
+     * @see NotificationSyncRequest
+     *
+     */
+    virtual NotificationSyncRequestPtr createEmptyNotificationRequest() = 0;
+
+    /**
      * Updates the state of the Notification manager according to the given response.
      *
      * @param response the response from the server.

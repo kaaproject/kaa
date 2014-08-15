@@ -22,16 +22,19 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpDisconnectMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpPingMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
-
 
 /**
  * The Class EndpointActor.
@@ -44,6 +47,7 @@ public class EndpointActor extends UntypedActor {
     private final String actorKey;
 
     private final EndpointActorMessageProcessor messageProcessor;
+
     /**
      * Instantiates a new endpoint actor.
      *
@@ -109,39 +113,53 @@ public class EndpointActor extends UntypedActor {
         LOG.debug("[{}] Received: {}", actorKey, message);
         if (message instanceof SyncRequestMessage) {
             processEndpointSync((SyncRequestMessage) message);
-        } else if (message instanceof EndpointEventReceiveMessage){
-            processEndpointEventReceiveMessage((EndpointEventReceiveMessage)message);
+        } else if (message instanceof EndpointEventReceiveMessage) {
+            processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
+        } else if (message instanceof NettyTcpDisconnectMessage) {
+            processDisconnectMessage((ChannelAware) message);
+        } else if (message instanceof NettyTcpPingMessage) {
+            processPingMessage((ChannelAware) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processThriftNotification((ThriftNotificationMessage) message);
         } else if (message instanceof NotificationMessage) {
             processNotification((NotificationMessage) message);
         } else if (message instanceof RequestTimeoutMessage) {
             processRequestTimeoutMessage((RequestTimeoutMessage) message);
-        } else if (message instanceof ActorTimeoutMessage){
+        } else if (message instanceof ActorTimeoutMessage) {
             processActorTimeoutMessage((ActorTimeoutMessage) message);
-        } else if(message instanceof EndpointUserActionMessage){
+        } else if (message instanceof ChannelTimeoutMessage) {
+            processChannelTimeoutMessage((ChannelTimeoutMessage) message);
+        } else if (message instanceof EndpointUserActionMessage) {
             processEndpointUserActionMessage((EndpointUserActionMessage) message);
-        } else if(message instanceof EndpointStopMessage){
+        } else if (message instanceof EndpointStopMessage) {
             LOG.debug("[{}] Received stop request from application actor", actorKey);
             context().stop(self());
-        }else {
+        } else {
             LOG.warn("[{}] Received unknown message {}", actorKey, message);
         }
     }
 
-    private void processEndpointSync(SyncRequestMessage message){
+    private void processEndpointSync(SyncRequestMessage message) {
         messageProcessor.processEndpointSync(context(), message);
     }
 
-    private void processEndpointEventReceiveMessage(EndpointEventReceiveMessage message){
+    private void processEndpointEventReceiveMessage(EndpointEventReceiveMessage message) {
         messageProcessor.processEndpointEventReceiveMessage(context(), message);
     }
 
-    private void processThriftNotification(ThriftNotificationMessage message){
+    private void processDisconnectMessage(ChannelAware message) {
+        messageProcessor.processDisconnectMessage(context(), message);
+    }
+
+    private void processPingMessage(ChannelAware message) {
+        messageProcessor.processPingMessage(context(), message);
+    }
+
+    private void processThriftNotification(ThriftNotificationMessage message) {
         messageProcessor.processThriftNotification(context(), message);
     }
 
-    private void processNotification(NotificationMessage message){
+    private void processNotification(NotificationMessage message) {
         messageProcessor.processNotification(context(), message);
     }
 
@@ -151,6 +169,10 @@ public class EndpointActor extends UntypedActor {
 
     private void processActorTimeoutMessage(ActorTimeoutMessage message) {
         messageProcessor.processActorTimeoutMessage(context(), message);
+    }
+
+    private void processChannelTimeoutMessage(ChannelTimeoutMessage message) {
+        messageProcessor.processChannelTimeoutMessage(context(), message);
     }
 
     private void processEndpointUserActionMessage(EndpointUserActionMessage message) {

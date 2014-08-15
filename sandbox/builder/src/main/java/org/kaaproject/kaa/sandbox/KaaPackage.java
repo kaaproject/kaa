@@ -17,38 +17,23 @@ package org.kaaproject.kaa.sandbox;
 
 public enum KaaPackage {
 
-    BOOTSTRAP("bootstrap", 
-            "kaa-bootstrap", 
-            "/etc/kaa-bootstrap/conf/bootstrap-server.properties", 
-            new String[] {"netty_host"}),
-    CONTROL("control", 
-            "kaa-control", 
-            "/etc/kaa-control/conf/control-server.properties", 
-            new String[] {}),
-    OPERATIONS("operations", 
-            "kaa-operations", 
-            "/etc/kaa-operations/conf/operations-server.properties", 
-            new String[] {"channel_http_host", "channel_http_lp_host"}),
-    ADMIN("admin", 
-            "kaa-admin", 
-            "/etc/kaa-admin/conf/admin-server.properties", 
-            new String[] {});
-    
+    BOOTSTRAP("bootstrap", "kaa-bootstrap", "/etc/kaa-bootstrap/conf/bootstrap-server.properties", new String[] { "netty_host" }), 
+    CONTROL("control", "kaa-control", "/etc/kaa-control/conf/control-server.properties", new String[] {}), 
+    OPERATIONS("operations", "kaa-operations", "/etc/kaa-operations/conf/operations-server.properties", new String[] { "channel_http_host", "channel_http_lp_host", "channel_kaa_tcp_host" }), 
+    ADMIN("admin", "kaa-admin", "/etc/kaa-admin/conf/admin-server.properties", new String[] {});
+
     String packageName;
     String serviceName;
     String propertiesFile;
     String[] hostProperties;
-    
-    KaaPackage(String _packageName, 
-            String _serviceName, 
-            String _propertiesFile, 
-            String[] _hostProperties) {
+
+    KaaPackage(String _packageName, String _serviceName, String _propertiesFile, String[] _hostProperties) {
         packageName = _packageName;
         serviceName = _serviceName;
         propertiesFile = _propertiesFile;
         hostProperties = _hostProperties;
     }
-    
+
     public String getPackageName() {
         return packageName;
     }
@@ -56,13 +41,13 @@ public enum KaaPackage {
     public String getServiceName() {
         return serviceName;
     }
-    
+
     public String getPropertiesFile() {
         return propertiesFile;
     }
-    
+
     public String[] getHostProperties() {
         return hostProperties;
     }
-    
+
 }

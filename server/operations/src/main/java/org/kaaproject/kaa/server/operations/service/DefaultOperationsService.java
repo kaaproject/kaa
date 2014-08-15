@@ -612,6 +612,8 @@ public class DefaultOperationsService implements OperationsService {
      */
     @Override
     public SyncResponse updateSyncResponse(SyncResponse response, List<NotificationDto> notificationDtos, String unicastNotificationId) {
+        LOG.debug("Updating sync response {}", response);
+        boolean modified = false;
         NotificationSyncResponse notificationResponse = response.getNotificationSyncResponse();
         if (notificationResponse == null) {
             notificationResponse = new NotificationSyncResponse();
@@ -623,17 +625,46 @@ public class DefaultOperationsService implements OperationsService {
             notifications = new ArrayList<Notification>();
         }
         for (NotificationDto notificationDto : notificationDtos) {
-            notifications.add(convertNotification(notificationDto));
+            Notification newNotification = convertNotification(notificationDto);
+            boolean found = false;
+            for(Notification oldNotification : notifications){
+                if(oldNotification.getSeqNumber() == newNotification.getSeqNumber()){
+                    found = true;
+                }
+            }
+            if(!found){
+                modified = true;
+                notifications.add(newNotification);
+            }else{
+                LOG.debug("Notification with seq number {} is already present in response", newNotification.getSeqNumber());
+            }
         }
         if (unicastNotificationId != null) {
-            NotificationDto unicast = notificationDeltaService.findUnicastNotificationById(unicastNotificationId);
-            notifications.add(convertNotification(unicast));
+            boolean found = false;
+            for(Notification oldNotification : notifications){
+                if(oldNotification.getUid() != null && oldNotification.getUid().equals(unicastNotificationId)){
+                    found = true;
+                }
+            }
+            if(!found){
+                modified = true;
+                NotificationDto unicast = notificationDeltaService.findUnicastNotificationById(unicastNotificationId);
+                notifications.add(convertNotification(unicast));
+            }else{
+                LOG.debug("Notification with uid [{}] is already present in response", unicastNotificationId);
+            }
         }
 
-        notificationResponse.setNotifications(notifications);
+        if(modified){
+            notificationResponse.setNotifications(notifications);
+            notificationResponse.setResponseStatus(SyncResponseStatus.DELTA);
+            LOG.debug("Updated sync response {}", response);
+            return response;
+        }else{
+            LOG.debug("Sync response was not updated!");
+            return null;
+        }
 
-        notificationResponse.setResponseStatus(SyncResponseStatus.DELTA);
-        return response;
     }
 
     @Override

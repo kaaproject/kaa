@@ -270,6 +270,8 @@ public:
                 return "HTTP_LP";
             case ChannelType::BOOTSTRAP:
                 return "BOOTSTRAP";
+            case ChannelType::KAATCP:
+                return "KAATCP";
         }
         return "null";
     }
@@ -422,6 +424,17 @@ public:
         }
 
         return description;
+    }
+
+    static std::string SingleNotificationToString(const Notification& notification) {
+        std::ostringstream stream;
+        stream << "{";
+        stream << KVSTRING(id, notification.topicId) << ", ";
+        stream << KVSTRING(type, notification.type) << ", ";
+        stream << KVSTRING(sn, (notification.seqNumber.is_null() ? 0 : notification.seqNumber.get_int())) << ", ";
+        stream << KVSTRING(uid, (notification.uid.is_null() ? "null" : notification.uid.get_string()));
+        stream << "}";
+        return stream.str();
     }
 
     static std::string NotificationToString(const NotificationSyncResponse::notifications_t& notifications) {

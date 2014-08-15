@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.5.1</version>
+        <version>0.5.2</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-cpp</artifactId>
@@ -191,8 +191,10 @@
                             <haveGraph>true</haveGraph>
                             <generateHtml>true</generateHtml>
                             <generateLatex>false</generateLatex>
+                            <filePatterns>*.hpp *.dox</filePatterns>
                             <inputDirectory>${basedir}/kaa</inputDirectory>
                             <outputDirectory>${basedir}/target/apidocs</outputDirectory>
+                            <excludePatterns>*/gen/* */test/*</excludePatterns>
                         </configuration>
                         <executions>
                             <execution>

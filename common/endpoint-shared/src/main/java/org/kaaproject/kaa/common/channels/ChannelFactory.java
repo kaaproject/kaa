@@ -22,7 +22,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.SupportedChannel;
  * ChannelFactory Class.
  * Provides utilities to work with Avro SupportedChannel object.
  * Possible usage:
- * 
+ *
  * Channel channel =  getChannelFromSupportedChannel(supportedChannel);
  *      switch(channel.getChannelType()) {
  *          case HTTP:
@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.SupportedChannel;
  *              ....
  *              break;
  *      }
- * 
+ *
  * @author Andrey Panasenko
  *
  */
@@ -47,12 +47,14 @@ public class ChannelFactory {
             return new HttpLongPollChannel();
         case BOOTSTRAP:
             return new BootstrapChannel();
+        case KAATCP:
+            return new KaaTcpChannel();
         default:
             return null;
         }
     }
-    
-    public static Channel getChannelFromSupportedChannel(SupportedChannel supportedChannel) 
+
+    public static Channel getChannelFromSupportedChannel(SupportedChannel supportedChannel)
             throws ParsingException {
         ChannelType type = supportedChannel.getChannelType();
         switch (type) {
@@ -62,8 +64,10 @@ public class ChannelFactory {
             return new HttpLongPollChannel();
         case BOOTSTRAP:
             return new BootstrapChannel();
+        case KAATCP:
+            return new KaaTcpChannel();
         }
         throw new ParsingException("ChannelType "+type.toString()+" unparsed.");
     }
-    
+
 }

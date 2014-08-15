@@ -81,9 +81,10 @@ set (KAA_SOURCE_FILES
         impl/event/EventManager.cpp
         impl/event/EventTransport.cpp
         impl/log/LoggingTransport.cpp
-        impl/channel/impl/DefaultOperationLongPollChannel.cpp
-        impl/channel/impl/DefaultOperationHttpChannel.cpp
+        #impl/channel/impl/DefaultOperationLongPollChannel.cpp
+        #impl/channel/impl/DefaultOperationHttpChannel.cpp
         impl/channel/impl/DefaultBootstrapChannel.cpp
+        impl/channel/impl/DefaultOperationTcpChannel.cpp
         impl/channel/OperationsDataProcessor.cpp
         impl/channel/BootstrapDataProcessor.cpp
         impl/channel/RedirectionTransport.cpp
@@ -92,6 +93,11 @@ set (KAA_SOURCE_FILES
         impl/log/LogCollector.cpp
         impl/log/LogRecord.cpp
         impl/log/MemoryLogStorage.cpp
+        impl/kaatcp/KaaTcpCommon.cpp
+        impl/kaatcp/KaaTcpParser.cpp
+        impl/kaatcp/ConnackMessage.cpp
+        impl/kaatcp/KaaSyncResponse.cpp
+        impl/kaatcp/KaaTcpResponseProcessor.cpp
     )
 
 add_library(kaacpp_o OBJECT ${KAA_SOURCE_FILES})

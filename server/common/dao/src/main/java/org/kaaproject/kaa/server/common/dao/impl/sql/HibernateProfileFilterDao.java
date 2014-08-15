@@ -181,7 +181,7 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
 
     @Override
     public ProfileFilter deactivate(String id, String deactivatedUsername) {
-        LOG.debug("Deactivate profile filter and increment seq_num, found by id [{}] ", id);
+        LOG.debug("Deactivate profile filter, found by id [{}] ", id);
         ProfileFilter filter = findById(id);
         if (filter != null) {
             filter.setStatus(UpdateStatus.DEPRECATED);

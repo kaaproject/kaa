@@ -15,8 +15,8 @@
  */
 package org.kaaproject.kaa.sandbox.demo;
 
-import org.kaaproject.kaa.sandbox.admin.AdminClient;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
+import org.kaaproject.kaa.server.common.admin.AdminClient;
 
 public interface DemoBuilder {
 

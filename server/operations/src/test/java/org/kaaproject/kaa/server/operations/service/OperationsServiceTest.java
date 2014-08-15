@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.apache.avro.Schema;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -42,8 +41,6 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorTest;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaServiceIT;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
@@ -74,8 +71,6 @@ public class OperationsServiceTest {
     private NotificationDto unicastNfDto;
     private NotificationDto systemTopicNfDto;
     private NotificationDto userTopicNfDto;
-    private RawBinaryDelta binaryDelta;
-    private String deltaSchemaBody;
 
     @Before
     public void before() throws IOException{
@@ -113,9 +108,6 @@ public class OperationsServiceTest {
         userTopic.setId(USER_TOPIC_ID);
         userTopic.setType(TopicTypeDto.VOLUNTARY);
         userTopic.setName(USER_TOPIC_NAME);
-
-        deltaSchemaBody = OperationsServiceIT.getResourceAsString(COMPLEX_PROTOCOL_SCHEMA);
-        binaryDelta = DefaultDeltaCalculatorTest.getComplexFieldDelta(new Schema.Parser().parse(deltaSchemaBody));
     }
 
     @Test
@@ -123,10 +115,7 @@ public class OperationsServiceTest {
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
         SyncResponse result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), null);
-        assertNotNull(result);
-        assertNotNull(result.getNotificationSyncResponse());
-        assertNotNull(result.getNotificationSyncResponse().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSyncResponse().getResponseStatus());
+        assertNull(result);
     }
 
     @Test
@@ -134,7 +123,11 @@ public class OperationsServiceTest {
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
         response.setNotificationSyncResponse(new NotificationSyncResponse());
-        SyncResponse result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), null);
+        NotificationDto nfDto = new NotificationDto();
+        nfDto.setId("nfId");
+        nfDto.setBody("body".getBytes());
+        nfDto.setType(NotificationTypeDto.SYSTEM);
+        SyncResponse result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
         assertNotNull(result);
         assertNotNull(result.getNotificationSyncResponse());
         assertNotNull(result.getNotificationSyncResponse().getNotifications());
@@ -148,7 +141,7 @@ public class OperationsServiceTest {
 
         response.setNotificationSyncResponse(new NotificationSyncResponse());
 
-        result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), null);
+        result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
         assertNotNull(result);
         assertNotNull(result.getNotificationSyncResponse());
         assertNotNull(result.getNotificationSyncResponse().getNotifications());

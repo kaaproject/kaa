@@ -32,20 +32,15 @@ import io.netty.handler.codec.http.multipart.HttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-
 import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.bootstrap.CommonBSConstants;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
 import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
-import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
-import org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService;
-import org.kaaproject.kaa.server.common.http.server.BadRequestException;
-import org.kaaproject.kaa.server.common.http.server.CommandProcessor;
-import org.kaaproject.kaa.server.common.http.server.NettyHttpServer;
+import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
+import org.kaaproject.kaa.server.common.server.BadRequestException;
+import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
 
 /**
  * ResolveCommand Class.
@@ -76,14 +71,12 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
         LOG.info("CommandName: " + COMMAND_NAME);
     }
 
-    protected BootstrapConfig conf;
     protected byte[] responseBody;
     protected byte[] requestData;
     protected byte[] responseSignature;
     protected String applicationToken;
 
-    protected PublicKey serverPublic;
-    protected PrivateKey serverPrivate;
+    protected OperationsServerListService operationsServerListService;
     protected MessageEncoderDecoder crypt;
 
     protected AvroByteArrayConverter<Resolve> requestConverter;
@@ -98,17 +91,6 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
         responseConverter = new AvroByteArrayConverter<OperationsServerList>(OperationsServerList.class);
     }
 
-    @Override
-    public void setServer(NettyHttpServer server) {
-        super.setServer(server);
-        conf = (BootstrapConfig)server.getConf();
-        KeyStoreService keyStoreService = conf.getBootstrapInitializationService().getKeyStoreService();
-        serverPrivate = keyStoreService.getPrivateKey();
-        serverPublic = keyStoreService.getPublicKey();
-        crypt = new MessageEncoderDecoder(serverPrivate, serverPublic, null);
-        LOG.trace("CommandName: {}: keyStoreService set", COMMAND_NAME);
-    }
-
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#parse()
      */
@@ -116,7 +98,7 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
     public void parse() throws Exception {
         LOG.trace("CommandName {}: parse", COMMAND_NAME);
         HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
-        HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(factory, getHttpRequest());
+        HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(factory, getRequest());
         InterfaceHttpData data = decoder.getBodyHttpData(APPLICATION_TOKEN_ATTR_NAME);
         if (data != null) {
             Attribute attribute = (Attribute) data;
@@ -139,7 +121,7 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
             Resolve r = requestConverter.fromByteArray(requestData);
             LOG.trace("CommandName {}, application token {}", COMMAND_NAME, r.getApplicationToken());
             applicationToken = r.getApplicationToken();
-            OperationsServerList serverList  = conf.getOperationsServerListService().getOpsServerList();
+            OperationsServerList serverList  = operationsServerListService.getOpsServerList();
             responseBody = responseConverter.toByteArray(serverList);
             responseSignature = crypt.sign(responseBody);
             LOG.trace("CommandName {} response signed", COMMAND_NAME);
@@ -150,7 +132,7 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
      * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#getHttpResponse()
      */
     @Override
-    public HttpResponse getHttpResponse() {
+    public HttpResponse getResponse() {
 //        logger.debug("Public Key: {}" + crypt.getPublicKey().getEncoded().length);
 //        logger.trace(MessageEncoderDecoder.bytesToHex(crypt.getPublicKey().getEncoded()));
 //        logger.debug("Signature size: {}" + responseSignature.length);

@@ -44,8 +44,8 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
 
     protected T entity;
     protected boolean create;
-    protected V detailsView;
 
+    protected V detailsView;
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
     public AbstractDetailsActivity(P place, ClientFactory clientFactory) {

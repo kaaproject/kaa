@@ -50,6 +50,9 @@ enum Operation {
       REMOVE_CONF_VERSION = 12,
       REMOVE_PROF_VERSION = 13,
       REMOVE_NOTIFICATION_VERSION = 14
+      ADD_LOG_APPENDER = 15
+      REMOVE_LOG_APPENDER = 16
+      UPDATE_LOG_APPENDER = 17
 }
 
 /**
@@ -61,7 +64,7 @@ enum EventRouteUpdateType {
       UPDATE = 3
 }
 
-/** 
+/**
 * Defines types of messages, all pass through one interface and demultiplex by this enum
 */
 enum EventMessageType {
@@ -84,6 +87,7 @@ struct Notification {
   11: id topicId
   12: binary keyHash
   13: Operation op
+  14: id appenderId
 }
 
 struct RedirectionRule {
@@ -96,7 +100,7 @@ struct RedirectionRule {
 struct EventClassFamilyVersion {
   1: endpoint_class_family_id endpointClassFamilyId
   2: shared.Integer  endpointClassFamilyVersion
-} 
+}
 
 struct RouteInfo {
   1: EventRouteUpdateType updateType
@@ -154,17 +158,17 @@ service OperationsThriftService extends cli.CliThriftService{
 *   Application Sequence Numbers
 */
   void onNotification(1: Notification notification);
-  
+
 
 /**
 *  Set redirection rule for Operations server
 */
   void setRedirectionRule(1: RedirectionRule redirectionRule);
-  
-  
+
+
 /**
 *  Interface to send unified event messages
-*/  
+*/
   void sendEventMessage(1: list<EventMessage> messages);
-  
+
 }

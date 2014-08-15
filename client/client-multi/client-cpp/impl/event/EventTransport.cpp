@@ -35,8 +35,6 @@ boost::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(boost::in
     std::list<Event> pendingEvents = eventManager_.getPendingEvents();
     boost::shared_ptr<EventSyncRequest> request(new EventSyncRequest);
 
-    bool isEmpty = true;
-
     if (resolveRequests.empty()) {
         request->eventListenersRequests.set_null();
     } else {
@@ -48,7 +46,6 @@ boost::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(boost::in
             requests.push_back(req);
         }
         request->eventListenersRequests.set_array(requests);
-        isEmpty = false;
     }
 
     KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, eventsGuard_);
@@ -67,11 +64,6 @@ boost::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(boost::in
         std::sort(eventsCopy.begin(), eventsCopy.end(), [&](const Event& l, const Event& r) -> bool { return l.seqNum < r.seqNum; });
         request->events.set_array(eventsCopy);
         events_.insert(std::make_pair(requestId, pendingEvents));
-        isEmpty = false;
-    }
-
-    if (isEmpty) {
-        request.reset();
     }
 
     return request;

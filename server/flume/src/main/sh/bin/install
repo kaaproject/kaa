@@ -1,0 +1,627 @@
+#!/bin/bash
+#
+# Copyright 2014 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+flumeType=$1
+
+existConfigFile=$2
+pathToConfigFile=$3
+
+generatedDate=`date +'%Y%m%d%H%M%S'`
+tmpPath=/tmp/kaa-flume-${generatedDate}
+
+function specify_parameter()
+{
+    retval=""
+    param_desc=$1
+
+    read -r -p "[INPUT] Please specify ${param_desc}: " retval
+    if [ -z ${retval} ]
+    then
+	echo >&2 "[WARNING] ${param_desc} can't be empty!"
+	retval=$( specify_parameter ${param_desc} )
+    fi
+    
+    echo "$retval"
+}
+
+function specify_parameter_with_def()
+{
+    retval=""
+    param_desc=$1
+    def_val=$2
+
+    read -r -p "[INPUT] Please specify ${param_desc} [default: '${def_val}']: " retval
+    if [ -z "${retval}" ]
+    then
+	retval="$def_val"
+    fi
+    
+    echo "$retval"
+}
+
+function cleanup ()
+{
+    if [ -d "${tmpPath}" ]; then
+	rm -r "${tmpPath}"
+    fi
+}
+
+function post_install()
+{
+    if [ ! -d /flume ]; then
+	mkdir /flume
+    fi
+    
+    chown -R flume:flume /flume
+    
+    cleanup
+
+    echo "[INFO]"
+    echo "[INFO] DONE!"
+}
+
+function install_sink()
+{
+    echo "[INFO] Configuring Kaa Flume Sink"
+
+    if [[ "$existConfigFile" == "-c" ]]; then
+        if [[ "$pathToConfigFile" == "" ]]; then
+            echo "Enter path to config file!"
+            exit
+        fi
+        answer=1
+    	oldIFS="$IFS"
+    	IFS="="
+    	i=0
+    	while read name value
+    	do
+       		eval arrayName[i]="$name"
+       		eval arrayValue[i]="$value"
+       		((i++))
+    	done < $pathToConfigFile
+    	IFS="$oldIFS"
+
+    	for((i = 0; i < ${#arrayName[@]}; i++))
+    	do
+    		case ${arrayName[i]} in
+    			sinkHostName ) sinkHostName=${arrayValue[i]}
+    			;;
+    			sinkPort ) sinkPort=${arrayValue[i]}
+    			;;
+    			nameNode ) nameNode=${arrayValue[i]}
+    			;;
+    			hdfsRoot ) hdfsRoot=${arrayValue[i]}
+    			;;
+    			avroSchemaSource ) avroSchemaSource=${arrayValue[i]}
+    			;;
+    		esac
+    	done
+    	if [[ -z "$sinkHostName" ]]; then
+        	echo "Could not find parameter 'sinkHostName'!"
+        	exit
+    	elif [[ -z "$sinkPort" ]]; then
+        	echo "Could not find parameter 'sinkPort'!"
+        	exit
+    	elif [[ -z "nameNode" ]]; then
+        	echo "Could not find parameter 'nameNode'!"
+        	exit
+    	elif [[ -z "hdfsRoot" ]]; then
+        	echo "Could not find parameter 'hdfsRoot'!"
+        	exit
+    	elif [[ -z "avroSchemaSource" ]]; then
+       		echo "Could not find parameter 'avroSchemaSource'!"
+        	exit
+    	fi
+    	if [[ "$avroSchemaSource" == "rest" ]]; then
+		for((i = 0; i < ${#arrayName[@]}; i++))
+		do
+	    		case ${arrayName[i]} in
+	    			kaaRestHost ) kaaRestHost=${arrayValue[i]}
+		    		;;
+	    			kaaRestPort ) kaaRestPort=${arrayValue[i]}
+		    		;;
+	   	    		kaaRestUser ) kaaRestUser=${arrayValue[i]}
+	   	    		;;
+		    		kaaRestPassword ) kaaRestPassword=${arrayValue[i]}
+		    		;;
+		    	esac
+	    	done
+    		if [[ -z "$kaaRestHost" ]]; then
+        		echo "Could not find parameter 'kaaRestHost'!"
+        		exit
+    		elif [[ -z "$kaaRestPort" ]]; then
+        		echo "Could not find parameter 'kaaRestPort'!"
+        		exit
+    		elif [[ -z "kaaRestUser" ]]; then
+        		echo "Could not find parameter 'kaaRestUser'!"
+        		exit
+    		elif [[ -z "kaaRestPassword" ]]; then
+       			echo "Could not find parameter 'kaaRestPassword'!"
+        		exit
+    		fi
+    	else
+		for((i = 0; i < ${#arrayName[@]}; i++))
+	    	do
+	    		case ${arrayName[i]} in
+	    			avroSchemaLocalRoot ) avroSchemaLocalRoot=${arrayValue[i]}
+		    		;;
+		    	esac
+	    	done
+  		if [[ -z "$avroSchemaLocalRoot" ]]; then
+        		echo "Could not find parameter 'avroSchemaLocalRoot'!"
+        		exit
+		fi
+      	fi
+    else
+    	sinkHostName=$( specify_parameter "Kaa Sink Host Name" )
+	sinkPort=$( specify_parameter "Kaa Sink Port" )
+    	nameNode=$( specify_parameter "Name node [host:port] or nameservice name" )
+    	hdfsRoot=$( specify_parameter_with_def "HDFS root path" "logs" )
+    	avroSchemaSource=$( specify_parameter_with_def "Avro schema source type [rest|local]" "rest" )
+	if [[ "$avroSchemaSource" == "rest" ]]; then
+		kaaRestHost=$( specify_parameter "Kaa Admin Rest API host" )
+		kaaRestPort=$( specify_parameter_with_def "Kaa Admin Rest API port" "8080" )
+		kaaRestUser=$( specify_parameter "Kaa Admin User" )
+		kaaRestPassword=$( specify_parameter "Kaa Admin Password" )
+	else
+		avroSchemaLocalRoot=$( specify_parameter "Absolute path to local schema files" )
+	fi
+
+    	echo "[INFO]"
+    	echo "[INFO] You have entered the following configuration values:"
+    	echo "[INFO] ===================================================="
+    	echo "[INFO] Kaa Sink Host Name                        : ${sinkHostName}"
+    	echo "[INFO] Kaa Sink Port                             : ${sinkPort}"
+    	echo "[INFO] Name node [host:port] or nameservice name : ${nameNode}"
+	echo "[INFO] HDFS root path                            : ${hdfsRoot}"
+	echo "[INFO] Avro schema source type [rest|local]      : ${avroSchemaSource}"
+	if [[ "$avroSchemaSource" == "rest" ]]; then
+		echo "[INFO] Kaa Admin Rest API host                   : ${kaaRestHost}"
+		echo "[INFO] Kaa Admin Rest API port                   : ${kaaRestPort}"
+		echo "[INFO] Kaa Admin User                            : ${kaaRestUser}"
+		echo "[INFO] Kaa Admin Password                        : ${kaaRestPassword}"
+	else
+		echo "[INFO] Absolute path to local schema files       : ${avroSchemaLocalRoot}"
+	fi      
+    	echo "[INFO] ===================================================="
+    	echo "[INFO]"
+    	echo "[INFO] Options:"
+    	echo "[INFO] 1 - Let's Rock'n'Roll!!"
+    	echo "[INFO] 0 - Quit"
+    	echo "[INFO]"
+    	read -p "[INPUT] Are you sure you want to execute this configuration? " answer
+    fi
+    if [[ ${answer} -ne 1 ]]
+    then
+	echo "[INFO] Exit by user, shutting Down..."
+	exit
+    fi
+    
+    if [ ! -d "${tmpPath}" ]; then
+	mkdir ${tmpPath}
+    fi
+    
+    cp -r ${KAA_FLUME_CONF}/conf.sink.template ${tmpPath}
+    cp -r ${KAA_FLUME_CONF}/init.d/kaa-flume-sink.template ${tmpPath}
+    flume_conf=${tmpPath}/conf.sink.template/flume.conf    
+    
+    echo "[INFO]"
+    echo "[INFO] Replacing flume.conf variables ..."
+    echo "[INFO]"
+
+    eventsPerTransaction="100"
+
+    if [[ "$avroSchemaSource" == "rest" ]]; then
+	avroSchemaLocalRoot=""
+    else
+	kaaRestHost=""
+	kaaRestPort=""
+	kaaRestUser=""
+	kaaRestPassword=""
+    fi
+
+    tmpVar=`echo ${eventsPerTransaction} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${eventsPerTransaction}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${sinkHostName} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${kaa-sinkHostName}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${sinkPort} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${kaa-sinkPort}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${nameNode} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${nameNode}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${hdfsRoot} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${hdfsRoot}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${avroSchemaSource} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${avroSchemaSource}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${kaaRestHost} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${kaaRestHost}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${kaaRestPort} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${kaaRestPort}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${kaaRestUser} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${kaaRestUser}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${kaaRestPassword} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${kaaRestPassword}/'$tmpVar'/'  ${flume_conf}
+
+    tmpVar=`echo ${avroSchemaLocalRoot} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${avroSchemaLocalRoot}/'$tmpVar'/'  ${flume_conf}
+
+    existingFlumeConfDir=/etc/flume-ng/conf.sink
+
+    if [ -d "${existingFlumeConfDir}" ]; then
+        if [[ "$existConfigFile" == "-c" ]]; then
+            answer=1
+        else
+    	    echo "[WARNING]"
+	        echo "[WARNING] Target Kaa Sink config directory already exists!"
+	        echo "[INFO]"
+	        echo "[INFO] Options:"
+	        echo "[INFO] 1 - Overwrite!!"
+	        echo "[INFO] 0 - Quit"
+	        echo "[INFO]"
+	        read -p "[INPUT] Are you sure you want to overwrite old configuration? " answer
+	    fi
+	if [[ ${answer} -ne 1 ]]
+	then
+	    echo "[INFO] Exit by user, shutting Down..."
+	    cleanup
+	    exit
+	else
+	    rm -r ${existingFlumeConfDir}
+	fi
+    fi
+
+    cp -r ${tmpPath}/conf.sink.template /etc/flume-ng/conf.sink
+    cp ${tmpPath}/kaa-flume-sink.template /etc/init.d/kaa-flume-sink
+    chmod +x /etc/init.d/kaa-flume-sink
+    chown -R flume:flume /etc/flume-ng/conf.sink
+
+    post_install
+}
+
+function install_source()
+{
+    echo "[INFO] Configuring Kaa Flume Source"
+
+    if [[ "$existConfigFile" == "-c" ]]; then
+        if [[ "$pathToConfigFile" == "" ]]; then
+                echo "Enter path to config file!"
+                exit
+        fi
+        answer=1
+	    oldIFS="$IFS"
+	    IFS="="
+	    i=0
+	    while read name value
+	    do
+   	    	eval arrayName[i]="$name"
+   	    	eval arrayValue[i]="$value"
+   	    	((i++))
+	    done < $pathToConfigFile
+	    IFS="$oldIFS"
+
+	    for((i = 0; i < ${#arrayName[@]}; i++))
+	    do
+		    case ${arrayName[i]} in
+	    		    sourceInstanceName ) sourceInstanceName=${arrayValue[i]}
+	    		    ;;
+	    		    sourceHostName ) sourceHostName=${arrayValue[i]}
+	    		    ;;
+	    		    sourcePort ) sourcePort=${arrayValue[i]}
+	    		    ;;
+			    sinksCount ) sinksCount=${arrayValue[i]}
+			    ;;
+		    esac
+	    done
+	    if [[ -z "$sourceInstanceName" ]]; then
+            	echo "Could not find parameter 'sourceInstanceName'!"
+            	exit
+	    elif [[ -z "$sourceHostName" ]]; then
+            	echo "Could not find parameter 'sourceHostName'!"
+            	exit
+	    elif [[ -z "$sourcePort" ]]; then
+            	echo "Could not find parameter 'sourcePort'!"
+            	exit
+	    elif [[ -z "$sinksCount" ]]; then
+            	echo "Could not find parameter 'sinksCount'!"
+            	exit
+            fi
+	    for (( c=1; c<=${sinksCount}; c++ ))
+	    do
+	        for (( j=1; j<=${sinksCount}; j++ ))
+	        do
+	    	sinkName[($c-1)*${sinksCount}+$j]="sink$c-$j"
+	       done
+	       fileChannelName[$c]="fileChannel$c"
+	    	for((i = 0; i < ${#arrayName[@]}; i++))
+	    	do
+	    		case ${arrayName[i]} in
+	       			sinkHostName$c ) sinkHostName[$c]=${arrayValue[i]}
+	    			;;
+	    			sinkPort$c ) sinkPort[$c]=${arrayValue[i]}
+	    			;;
+	    		esac
+	    	done
+            if [[ -z ${sinkHostName[$c]} ]]; then
+                echo "Could not find parameter 'sinkHostName$c'!"
+                exit
+            elif [[ -z ${sinkPort[$c]} ]]; then
+                echo "Could not find parameter 'sinkPort$c'!"
+                exit
+            fi
+	    done
+	    for (( c=1; c<=${sinksCount}; c++ ))
+	    do
+            for (( j=1; j<=${sinksCount}; j++ ))
+	        do
+		    if [ $c -eq 1 -a $j -eq 1 ]
+		    then
+		        sinkNames="${sinkName[($c-1)*${sinksCount}+$j]}"
+		    else
+		        sinkNames="${sinkNames} ${sinkName[($c-1)*${sinksCount}+$j]}"
+		    fi
+	        done
+
+    	    if [ $c -eq 1 ]
+    	    then
+        	    fileChannelNames="${fileChannelName[$c]}"
+    	    else
+		        fileChannelNames="${fileChannelNames} ${fileChannelName[$c]}"
+    	    fi
+	done
+else
+
+    sinksCount=0
+    sinkNames=""
+    fileChannelNames=""
+
+    declare -a sinkName
+    declare -a sinkHostName
+    declare -a sinkPort
+    declare -a fileChannelName
+
+	sourceInstanceName=$( specify_parameter_with_def "Kaa Flume Source Instance Name" "default" )
+	sourceHostName=$( specify_parameter_with_def "Kaa Flume Source Host Name" "localhost" )
+	sourcePort=$( specify_parameter "Kaa Flume Source Port" )
+        sinksCount=$( specify_parameter "Target Kaa Flume Sinks Count" )
+    
+	for (( c=1; c<=${sinksCount}; c++ ))
+	do
+	    for (( j=1; j<=${sinksCount}; j++ ))
+	    do
+		sinkName[($c-1)*${sinksCount}+$j]="sink$c-$j"
+	    done
+	    fileChannelName[$c]="fileChannel$c"
+	    sinkHostName[$c]=$( specify_parameter "Target Kaa Flume Sink $c Host Name" )
+	    sinkPort[$c]=$( specify_parameter "Target Kaa Flume Sink $c Port" )
+	done
+    
+	for (( c=1; c<=${sinksCount}; c++ ))
+	do
+    	    for (( j=1; j<=${sinksCount}; j++ ))
+	    do
+		if [ $c -eq 1 -a $j -eq 1 ]
+		then
+		    sinkNames="${sinkName[($c-1)*${sinksCount}+$j]}"
+		else
+		    sinkNames="${sinkNames} ${sinkName[($c-1)*${sinksCount}+$j]}"
+		fi
+	    done
+
+    	    if [ $c -eq 1 ]
+    	    then
+        	fileChannelNames="${fileChannelName[$c]}"
+    	    else
+		fileChannelNames="${fileChannelNames} ${fileChannelName[$c]}"
+    	    fi
+	done
+
+    echo "[INFO]"
+    echo "[INFO] You have entered the following configuration values:"
+    echo "[INFO] ===================================================="
+    echo "[INFO] Kaa Flume Source Instance Name          : ${sourceInstanceName}"
+    echo "[INFO] Kaa Flume Source Host Name              : ${sourceHostName}"
+    echo "[INFO] Kaa Flume Source Port                   : ${sourcePort}"
+    echo "[INFO] Target Kaa Flume Sinks Count            : ${sinksCount}"
+    echo "[INFO] ===================================================="
+    for (( c=1; c<=${sinksCount}; c++ ))
+    do
+        echo "[INFO] Target Kaa Flume Sink $c Host Name : ${sinkHostName[$c]}"
+        echo "[INFO] Target Kaa Flume Sink $c Port      : ${sinkPort[$c]}"
+    done
+    echo "[INFO] ===================================================="
+    echo "[INFO]"
+    echo "[INFO] Options:"
+    echo "[INFO] 1 - Let's Rock'n'Roll!!"
+    echo "[INFO] 0 - Quit"
+    echo "[INFO]"
+    read -p "[INPUT] Are you sure you want to execute this configuration? " answer
+    fi
+    if [[ ${answer} -ne 1 ]]
+    then
+	echo "[INFO] Exit by user, shutting Down..."
+	exit
+    fi
+    
+    if [ ! -d "${tmpPath}" ]; then
+	mkdir ${tmpPath}
+    fi
+    
+    cp -r ${KAA_FLUME_CONF}/conf.source.template ${tmpPath}
+    cp -r ${KAA_FLUME_CONF}/init.d/kaa-flume-source.template ${tmpPath}
+    
+    flume_conf=${tmpPath}/conf.source.template/flume.conf
+    
+    echo "[INFO]"
+    echo "[INFO] Replacing flume.conf variables ..."
+    echo "[INFO]"
+
+    tmpVar=`echo ${sourceInstanceName} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${sourceInstanceName}/'$tmpVar'/g'  ${flume_conf}
+
+    tmpVar=`echo ${sourceHostName} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${kaa-sourceHostName}/'$tmpVar'/g'  ${flume_conf}
+
+    tmpVar=`echo ${sourcePort} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${kaa-sourcePort}/'$tmpVar'/'  ${flume_conf}
+
+    agentFullName="${sourceInstanceName}"
+    
+	tmpVar=`echo ${sinkNames} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+	sed -i -e 's/${sinks}/'"$tmpVar"'/'  ${flume_conf}
+
+	tmpVar=`echo ${fileChannelNames} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+	sed -i -e 's/${fileChannels}/'"$tmpVar"'/'  ${flume_conf}
+
+	for (( c=1; c<=${sinksCount}; c++ ))       
+	do
+    	    echo "" >> ${flume_conf}
+    	    echo "kaa-source-${agentFullName}.channels.${fileChannelName[$c]}.type = file" >> ${flume_conf}
+    	    echo "kaa-source-${agentFullName}.channels.${fileChannelName[$c]}.capacity = 100000000" >> ${flume_conf}
+    	    echo "kaa-source-${agentFullName}.channels.${fileChannelName[$c]}.transactionCapacity = 10000000" >> ${flume_conf}
+    	    echo "kaa-source-${agentFullName}.channels.${fileChannelName[$c]}.keep-alive = 1" >> ${flume_conf}
+    	    echo "kaa-source-${agentFullName}.channels.${fileChannelName[$c]}.write-timeout = 30" >> ${flume_conf}
+    	    echo "kaa-source-${agentFullName}.channels.${fileChannelName[$c]}.checkpointDir = /flume/kaa-source-${agentFullName}/file-channel$c/checkpoint" >> ${flume_conf}
+    	    echo "kaa-source-${agentFullName}.channels.${fileChannelName[$c]}.dataDirs = /flume/kaa-source-${agentFullName}/file-channel$c/data" >> ${flume_conf}
+	done
+
+	for (( c=1; c<=${sinksCount}; c++ ))
+	do
+	    for (( j=1; j<=${sinksCount}; j++ ))
+    	    do
+    		sinkIndex=$(( (($c-1)+($j-1))%${sinksCount}+1 ))
+    		echo "" >> ${flume_conf}    		
+    		echo "kaa-source-${agentFullName}.sinks.${sinkName[($c-1)*${sinksCount}+$j]}.type = avro" >> ${flume_conf}
+    		echo "kaa-source-${agentFullName}.sinks.${sinkName[($c-1)*${sinksCount}+$j]}.hostname = ${sinkHostName[$sinkIndex]}" >> ${flume_conf}
+    		echo "kaa-source-${agentFullName}.sinks.${sinkName[($c-1)*${sinksCount}+$j]}.port = ${sinkPort[$sinkIndex]}" >> ${flume_conf}
+    		echo "kaa-source-${agentFullName}.sinks.${sinkName[($c-1)*${sinksCount}+$j]}.channel = ${fileChannelName[$c]}" >> ${flume_conf}
+    		echo "kaa-source-${agentFullName}.sinks.${sinkName[($c-1)*${sinksCount}+$j]}.batch-size = 2" >> ${flume_conf}
+    	    done
+	done
+    
+	if [ $sinksCount -gt 1 ]
+	then
+	    declare -a groupSinkNames
+	    sinkGroupNames=""
+	    for (( c=1; c<=${sinksCount}; c++ ))
+	    do
+		if [ $c -eq 1 ]
+		then
+		    sinkGroupNames="group$c"
+		else
+	    	    sinkGroupNames="${sinkGroupNames} group$c"
+		fi                                    	    
+		for (( j=1; j<=${sinksCount}; j++ ))
+    		do
+        	    if [ $j -eq 1 ]
+		    then
+	    		groupSinkNames[$c]="${sinkName[($c-1)*${sinksCount}+$j]}"
+    		    else
+    	    		groupSinkNames[$c]="${groupSinkNames[$c]} ${sinkName[($c-1)*${sinksCount}+$j]}"
+    		    fi
+        	done
+	    done
+	    echo "" >> ${flume_conf}
+	    echo "kaa-source-${agentFullName}.sinkgroups = ${sinkGroupNames}" >> ${flume_conf}
+	    for (( c=1; c<=${sinksCount}; c++ ))
+	    do
+		echo "" >> ${flume_conf}
+		echo "kaa-source-${agentFullName}.sinkgroups.group$c.sinks = ${groupSinkNames[$c]}" >> ${flume_conf}
+		echo "kaa-source-${agentFullName}.sinkgroups.group$c.processor.type = failover" >> ${flume_conf}
+		for (( j=1; j<=${sinksCount}; j++ ))
+		do
+		    priority=$(( $j * 5 ))
+		    echo "kaa-source-${agentFullName}.sinkgroups.group$c.processor.priority.${sinkName[($c-1)*${sinksCount}+$j]} = ${priority}" >> ${flume_conf}
+		done
+            	echo "kaa-source-${agentFullName}.sinkgroups.group$c.processor.maxpenalty = 60000" >> ${flume_conf}
+	    done
+	fi
+    
+    log4j_properties=${tmpPath}/conf.source.template/log4j.properties
+
+    echo "[INFO]"
+    echo "[INFO] Replacing log4j.properties variables ..."
+    echo "[INFO]"
+
+    tmpVar=`echo ${sourceInstanceName} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${sourceInstanceName}/'$tmpVar'/'  ${log4j_properties}
+
+    agent_template=${tmpPath}/kaa-flume-source.template
+
+    echo "[INFO]"
+    echo "[INFO] Replacing kaa-flume-source.template variables ..."
+    echo "[INFO]"
+
+    tmpVar=`echo ${sourceInstanceName} | sed -e s/"\/"/"\\\\\\\\\/"/g`
+    sed -i -e 's/${sourceInstanceName}/'$tmpVar'/'  ${agent_template}
+
+    target_conf_dir=/etc/flume-ng/conf.source-${agentFullName}
+
+    if [ -d "$target_conf_dir" ]; then
+    if [[ "$existConfigFile" == "-c" ]]; then
+        answer=1
+    else
+	    echo "[WARNING]"
+	    echo "[WARNING] Target agent config directory already exists!"
+	    echo "[INFO]"
+	    echo "[INFO] Options:"
+	    echo "[INFO] 1 - Overwrite!!"
+	    echo "[INFO] 0 - Quit"
+	    echo "[INFO]"
+	    read -p "[INPUT] Are you sure you want to overwrite old configuration? " answer
+	fi
+	if [[ ${answer} -ne 1 ]]
+	then
+	    echo "[INFO] Exit by user, shutting Down..."
+	    cleanup
+	    exit
+	else
+	    rm -r "$target_conf_dir"
+	fi
+    fi
+
+    cp -r ${tmpPath}/conf.source.template "$target_conf_dir"
+    cp ${agent_template} /etc/init.d/kaa-flume-source-${agentFullName}
+    chmod +x /etc/init.d/kaa-flume-source-${agentFullName}
+
+    chown -R flume:flume "$target_conf_dir"
+
+    post_install
+
+}
+
+function install()
+{
+	if [ "${flumeType}" == "sink" ]
+	then
+	    install_sink
+	elif [ "${flumeType}" == "source" ]
+	then
+	    install_source
+	else
+	    echo "Please specify Kaa Flume configuration type: <sink|source>"
+	    exit
+	fi
+}
+
+install

@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Copyright 2014 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -e
+
+if [ -d /usr/lib/kaa-flume ]; then
+    rm -rf /usr/lib/kaa-flume
+fi
+
+if ! id kaa > /dev/null 2>&1 ; then
+    adduser --system --no-create-home --group --disabled-password --shell /bin/false kaa
+fi  
+
+if [ -f /etc/security/limits.d/flume.conf ]; then
+    rm -rf /etc/security/limits.d/flume.conf  	
+fi
+
+touch /etc/security/limits.d/flume.conf
+
+echo "flume - nofile 32768" >> /etc/security/limits.d/flume.conf
+echo "flume - nproc 65536" >> /etc/security/limits.d/flume.conf
+
+chmod -R 666 /etc/security/limits.d/flume.conf

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.LogEventService;
@@ -33,7 +34,12 @@ import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Component
 public class MongoDBLogAppender implements LogAppender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLogAppender.class);
@@ -46,27 +52,17 @@ public class MongoDBLogAppender implements LogAppender {
     @Autowired
     private LogEventService logEventService;
 
+    private String appenderId;
     private String name;
     private String collectionName;
 
     private boolean closed = false;
 
+    public MongoDBLogAppender() {
+    }
+
     public MongoDBLogAppender(String name) {
         this.name = name;
-    }
-
-    @Override
-    public void setTenantId(String tenantId) { //NOSONAR
-    }
-
-    @Override
-    public void setApplicationId(String applicationId) {
-        if (collectionName == null) {
-            collectionName = "logs_" + applicationService.findAppById(applicationId).getApplicationToken();
-            logEventService.createCollection(collectionName);
-        } else {
-            LOG.error("Appender is already initialized..");
-        }
     }
 
     @Override
@@ -82,6 +78,15 @@ public class MongoDBLogAppender implements LogAppender {
     @Override
     public void close() {
         closed = true;
+    }
+
+    @Override
+    public String getAppenderId() {
+        return appenderId;
+    }
+
+    public void setAppenderId(String appenderId) {
+        this.appenderId = appenderId;
     }
 
     private GenericAvroConverter<GenericRecord> getConverter(String schema) {
@@ -120,17 +125,17 @@ public class MongoDBLogAppender implements LogAppender {
     }
 
     @Override
-    public LogAppender copy() {
-        MongoDBLogAppender copy = new MongoDBLogAppender(name);
-        copy.applicationService = this.applicationService;
-        copy.logEventService = this.logEventService;
-        return copy;
+    public void init(LogAppenderDto appender) {
+        createCollection(appender.getApplicationToken());
     }
 
-    @Override
-    public void init(String logAppenderName, String tenantId, String applicationId) {
-        setName(logAppenderName);
-        setApplicationId(applicationId);
+    private void createCollection(String applicationToken) {
+        if (collectionName == null) {
+            collectionName = "logs_" + applicationToken;
+            logEventService.createCollection(collectionName);
+        } else {
+            LOG.error("Appender is already initialized..");
+        }
     }
 
 }

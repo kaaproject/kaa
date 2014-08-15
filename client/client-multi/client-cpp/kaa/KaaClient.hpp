@@ -38,8 +38,7 @@
 #include "kaa/channel/BootstrapDataProcessor.hpp"
 #include "kaa/channel/OperationsDataProcessor.hpp"
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
-#include "kaa/channel/impl/DefaultOperationHttpChannel.hpp"
-#include "kaa/channel/impl/DefaultOperationLongPollChannel.hpp"
+#include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
 #include "kaa/log/LogCollector.hpp"
 
 namespace kaa {
@@ -101,8 +100,7 @@ private:
     boost::scoped_ptr<OperationsDataProcessor>  operationsProcessor_;
 
     boost::shared_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
-    boost::shared_ptr<DefaultOperationHttpChannel>      opsHttpChannel_;
-    boost::shared_ptr<DefaultOperationLongPollChannel>  opsLPHttpChannel_;
+    boost::shared_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
 
     boost::scoped_ptr<LogCollector>      logCollector_;
 

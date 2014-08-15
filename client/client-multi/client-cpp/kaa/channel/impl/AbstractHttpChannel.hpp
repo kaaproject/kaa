@@ -46,7 +46,7 @@ public:
 
     virtual void sync(TransportType type);
     virtual void syncAll();
-
+    virtual void syncAck(TransportType type);
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer);
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(IServerInfoPtr server);
@@ -164,6 +164,12 @@ void AbstractHttpChannel<Type>::syncAll()
         lastConnectionFailed_ = true;
         KAA_LOG_WARN(boost::format("Can't sync channel %1%. Server is null") % getId());
     }
+}
+
+template <ChannelType Type>
+void AbstractHttpChannel<Type>::syncAck(TransportType type)
+{
+    KAA_LOG_DEBUG(boost::format("Sync ack operation is not supported by channel %1%.") % getId());
 }
 
 template <ChannelType Type>

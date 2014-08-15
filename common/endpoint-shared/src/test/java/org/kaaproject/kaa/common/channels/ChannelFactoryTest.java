@@ -22,6 +22,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.bootstrap.gen.SupportedChannel;
 import org.kaaproject.kaa.common.channels.communication.HttpLongPollParameters;
 import org.kaaproject.kaa.common.channels.communication.HttpParameters;
+import org.kaaproject.kaa.common.channels.communication.KaaTcpParameters;
 
 /**
  * @author Andrey Panasenko
@@ -34,6 +35,7 @@ public class ChannelFactoryTest {
         assertEquals(ChannelType.BOOTSTRAP,ChannelFactory.getChannelFromChannelType(ChannelType.BOOTSTRAP).getChannelType());
         assertEquals(ChannelType.HTTP,ChannelFactory.getChannelFromChannelType(ChannelType.HTTP).getChannelType());
         assertEquals(ChannelType.HTTP_LP,ChannelFactory.getChannelFromChannelType(ChannelType.HTTP_LP).getChannelType());
+        assertEquals(ChannelType.KAATCP,ChannelFactory.getChannelFromChannelType(ChannelType.KAATCP).getChannelType());
     }
 
     @Test
@@ -41,6 +43,7 @@ public class ChannelFactoryTest {
         assertEquals(ChannelType.BOOTSTRAP,ChannelFactory.getChannelFromSupportedChannel(new SupportedChannel(ChannelType.BOOTSTRAP, null)).getChannelType());
         assertEquals(ChannelType.HTTP,ChannelFactory.getChannelFromSupportedChannel(new SupportedChannel(ChannelType.HTTP, null)).getChannelType());
         assertEquals(ChannelType.HTTP_LP,ChannelFactory.getChannelFromSupportedChannel(new SupportedChannel(ChannelType.HTTP_LP, null)).getChannelType());
+        assertEquals(ChannelType.KAATCP,ChannelFactory.getChannelFromSupportedChannel(new SupportedChannel(ChannelType.KAATCP, null)).getChannelType());
     }
 
 
@@ -80,29 +83,38 @@ public class ChannelFactoryTest {
             fail(e.toString());
         }
     }
-    
+
     @Test
     public void testGetChannelFromSupportedChannel() {
-        
+
         String hostName = "localhost";
         int port = 100;
         HttpParameters httpCommunicationParameters = new HttpParameters();
         httpCommunicationParameters.setHostName(hostName);
         httpCommunicationParameters.setPort(port);
-        
+
+        KaaTcpParameters tcpCommunicationParameters = new KaaTcpParameters();
+        tcpCommunicationParameters.setHostName(hostName);
+        tcpCommunicationParameters.setPort(port);
+
         SupportedChannel httpSupportedChannel = new SupportedChannel(ChannelType.HTTP, httpCommunicationParameters);
         SupportedChannel httpLpSupportedChannel = new SupportedChannel(ChannelType.HTTP_LP, httpCommunicationParameters);
         SupportedChannel bsSupportedChannel = new SupportedChannel(ChannelType.BOOTSTRAP, null);
+        SupportedChannel tcpSupportedChannel = new SupportedChannel(ChannelType.KAATCP, tcpCommunicationParameters);
         try {
             Channel httpChannel = ChannelFactory.getChannelFromSupportedChannel(httpSupportedChannel);
             Channel httpLpChannel = ChannelFactory.getChannelFromSupportedChannel(httpLpSupportedChannel);
             Channel bsChannel = ChannelFactory.getChannelFromSupportedChannel(bsSupportedChannel);
+            Channel tcpChannel = ChannelFactory.getChannelFromSupportedChannel(tcpSupportedChannel);
             assertNotNull(httpChannel);
             assertNotNull(httpLpChannel);
             assertNotNull(bsChannel);
+            assertNotNull(tcpChannel);
+
             assertEquals(ChannelType.HTTP, httpChannel.getChannelType());
             assertEquals(ChannelType.HTTP_LP, httpLpChannel.getChannelType());
             assertEquals(ChannelType.BOOTSTRAP, bsChannel.getChannelType());
+            assertEquals(ChannelType.KAATCP, tcpChannel.getChannelType());
         } catch (ParsingException e) {
             fail(e.toString());
         }

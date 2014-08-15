@@ -16,48 +16,55 @@
 
 package org.kaaproject.kaa.server.operations.service.logs;
 
-import org.kaaproject.kaa.server.operations.service.logs.aware.ApplicationAware;
-import org.kaaproject.kaa.server.operations.service.logs.aware.TenantAware;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 
-public interface LogAppender extends TenantAware, ApplicationAware {
-        
+/**
+ * The Interface LogAppender.
+ */
+public interface LogAppender {
+
     /**
      * Set the name of this appender.
      * @param name the name of this appender
      */
     public void setName(String name);
-    
+
     /**
      * Return the name of this appender.
      * @return the name of this appender
      */
     public String getName();
-    
+
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
+    public String getAppenderId();
+
+    /**
+     * Set the id of appender.
+     *
+     * @param appenderId the id of this appender
+     */
+    public void setAppenderId(String appenderId);
+
     /**
      * Release any resources allocated within the appender such as file
      * handles, network connections, etc.
      */
     public void close();
-    
+
     /**
      * Log in <code>LogAppender</code> specific way.
      * @param logEventPack the pack of Log Events
      */
     public void doAppend(LogEventPack logEventPack);
-    
+
     /**
-     * Return the copy of log appender
-     * 
-     * @return copy of log appender
+     * Change parameters of log appender.
+     *
+     * @param appender the appender
      */
-    LogAppender copy();
-    
-    /**
-     * Change parameters of log appender
-     * 
-     * @param logAppenderName new log appender name
-     * @param tenantId new tenantId
-     * @param applicationId new application id
-     */
-    void init(String logAppenderName, String tenantId, String applicationId);
+    void init(LogAppenderDto appender);
 }

@@ -23,6 +23,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -51,8 +52,7 @@ import org.springframework.stereotype.Service;
 public class ControlServiceImpl implements ControlService {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ControlServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ControlServiceImpl.class);
 
     /** The thrift host. */
     @Value("#{properties[thrift_host]}")
@@ -64,7 +64,7 @@ public class ControlServiceImpl implements ControlService {
 
     /** The Thrift server. */
     private TServer server;
-    
+
     /** The Thrift server executor service. */
     private ExecutorService executorService;
 
@@ -75,7 +75,7 @@ public class ControlServiceImpl implements ControlService {
     /** The control zookeeper service. */
     @Autowired
     private ControlZkService controlZkService;
-    
+
     /** Dynamic Load Distribution Service */
     @Autowired
     private LoadDistributionService loadMgmtService;
@@ -84,25 +84,43 @@ public class ControlServiceImpl implements ControlService {
 
     /*
      * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#start()
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#start()
      */
     @Override
     public void start() {
         if (!serviceStarted) {
+
+            final CountDownLatch thriftStartupLatch = new CountDownLatch(1);
+            final CountDownLatch thriftShutdownLatch = new CountDownLatch(1);
+
+            startThrift(thriftStartupLatch, thriftShutdownLatch);
+
+            try {
+                thriftStartupLatch.await();
+            } catch (InterruptedException e) {
+                LOG.error("Interrupted while waiting for thrift to start...", e);
+            }
+
             serviceStarted = true;
             controlZkService.start();
             loadMgmtService.setZkService(controlZkService);
             loadMgmtService.start();
-            // blocking method
-            startThrift();
+
+            LOG.info("Control Server Started.");
+
+            try {
+                thriftShutdownLatch.await();
+            } catch (InterruptedException e) {
+                LOG.error("Interrupted while waiting for thrift to stop...", e);
+            }
+
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#stop()
      */
     @Override
@@ -117,105 +135,130 @@ public class ControlServiceImpl implements ControlService {
 
     /**
      * Start thrift.
+     *
+     * @param thriftShutdownLatch
+     * @param thriftStartupLatch
      */
-    private void startThrift() {
-        LOG.info("Initializing Thrift Service for Control Server....");
-        LOG.info("host: " + host);
-        LOG.info("port: " + port);
+    private void startThrift(final CountDownLatch thriftStartupLatch, final CountDownLatch thriftShutdownLatch) {
 
-        try {
-            ControlThriftService.Processor<ControlThriftService.Iface> processor = new ControlThriftService.Processor<ControlThriftService.Iface>(
-                    controlService);
-            TServerTransport serverTransport = createServerSocket();
-            server = createServer(serverTransport, processor);
+        Runnable thriftRunnable = new Runnable() {
 
-            LOG.info("Control Server Started.");
+            @Override
+            public void run() {
 
-            server.serve();
-            
-            if (executorService != null && !executorService.isTerminated()) {
-                for (TSocketWrapper socket : new ArrayList<>(openedSockets)) {
-                    if (socket.getSocket() != null && !socket.getSocket().isClosed()) {
-                        socket.close();
+                LOG.info("Initializing Thrift Service for Control Server....");
+                LOG.info("host: " + host);
+                LOG.info("port: " + port);
+
+                try {
+                    ControlThriftService.Processor<ControlThriftService.Iface> processor = new ControlThriftService.Processor<ControlThriftService.Iface>(
+                            controlService);
+                    TServerTransport serverTransport = createServerSocket();
+                    server = createServer(serverTransport, processor);
+
+                    LOG.info("Thrift Control Server Started.");
+
+                    thriftStartupLatch.countDown();
+
+                    server.serve();
+
+                    if (executorService != null && !executorService.isTerminated()) {
+                        for (TSocketWrapper socket : new ArrayList<>(openedSockets)) {
+                            if (socket.getSocket() != null && !socket.getSocket().isClosed()) {
+                                socket.close();
+                            }
+                        }
+                        LOG.info("Terminating executor service.");
+                        executorService.shutdownNow();
+                    }
+
+                    LOG.info("Thrift Control Server Stopped.");
+
+                    thriftShutdownLatch.countDown();
+
+                } catch (TTransportException e) {
+                    LOG.error("TTransportException", e);
+                } finally{
+                    if(thriftStartupLatch.getCount() > 0){
+                        thriftStartupLatch.countDown();
+                    }
+                    if(thriftShutdownLatch.getCount() > 0){
+                        LOG.info("Thrift Control Server Stopped.");
+                        thriftShutdownLatch.countDown();
                     }
                 }
-                LOG.info("Terminating executor service.");
-                executorService.shutdownNow();
             }
+        };
 
-            LOG.info("Control Server Stopped.");
-
-        } catch (TTransportException e) {
-            LOG.error("TTransportException", e);
-        }
+        new Thread(thriftRunnable).start();
     }
-    
+
     /**
      * Creates the server socket.
      *
      * @return the t server transport
-     * @throws TTransportException the t transport exception
+     * @throws TTransportException
+     *             the t transport exception
      */
     public TServerTransport createServerSocket() throws TTransportException {
         return new TServerSocket(new InetSocketAddress(host, port)) {
-          @Override
-          protected TSocket acceptImpl() throws TTransportException {
-              ServerSocket serverSocket = getServerSocket();
-              if (serverSocket == null) {
-                  throw new TTransportException(TTransportException.NOT_OPEN, "No underlying server socket.");
+            @Override
+            protected TSocket acceptImpl() throws TTransportException {
+                ServerSocket serverSocket = getServerSocket();
+                if (serverSocket == null) {
+                    throw new TTransportException(TTransportException.NOT_OPEN, "No underlying server socket.");
                 }
                 try {
-                  Socket result = serverSocket.accept();
-                  TSocketWrapper result2 = new TSocketWrapper(result);
-                  result2.setTimeout(0);
-                  openedSockets.add(result2);
-                  return result2;
+                    Socket result = serverSocket.accept();
+                    TSocketWrapper result2 = new TSocketWrapper(result);
+                    result2.setTimeout(0);
+                    openedSockets.add(result2);
+                    return result2;
                 } catch (IOException iox) {
-                  throw new TTransportException(iox);
+                    throw new TTransportException(iox);
                 }
-          }
+            }
         };
     }
-    
-    private Set<TSocketWrapper> openedSockets = new HashSet<TSocketWrapper>();
-    
+
+    private final Set<TSocketWrapper> openedSockets = new HashSet<TSocketWrapper>();
+
     class TSocketWrapper extends TSocket {
         public TSocketWrapper(Socket socket) throws TTransportException {
             super(socket);
         }
-        
+
         @Override
         public void close() {
             super.close();
             openedSockets.remove(this);
         }
     }
-    
+
     /**
      * Creates the server.
      *
-     * @param serverTransport the server transport
-     * @param processor the processor
+     * @param serverTransport
+     *            the server transport
+     * @param processor
+     *            the processor
      * @return the t server
      */
-    public TServer createServer(TServerTransport serverTransport,
-                                ControlThriftService.Processor<ControlThriftService.Iface> processor) {
+    public TServer createServer(TServerTransport serverTransport, ControlThriftService.Processor<ControlThriftService.Iface> processor) {
         TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
         args.stopTimeoutVal = 3;
         args.stopTimeoutUnit = TimeUnit.SECONDS;
-        
-        SynchronousQueue<Runnable> executorQueue = //NOSONAR
-                new SynchronousQueue<Runnable>();
-        executorService = new ThreadPoolExecutor(args.minWorkerThreads,
-                                            args.maxWorkerThreads,
-                                            60,
-                                            TimeUnit.SECONDS,
-                                            executorQueue);
+
+        SynchronousQueue<Runnable> executorQueue = // NOSONAR
+        new SynchronousQueue<Runnable>();
+        executorService = new ThreadPoolExecutor(args.minWorkerThreads, args.maxWorkerThreads, 60, TimeUnit.SECONDS, executorQueue);
         args.executorService = executorService;
         return new TThreadPoolServer(args);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#started()
      */
     @Override

@@ -75,7 +75,7 @@ public class DefaultBootstrapChannelTest {
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
         Mockito.when(
                 httpClient.executeHttpRequest(Mockito.anyString(),
-                        Mockito.any(LinkedHashMap.class))).thenReturn(
+                        Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenReturn(
                 new byte[] { 5, 5, 5 });
 
         AbstractKaaClient client = Mockito.mock(AbstractKaaClient.class);
@@ -116,7 +116,7 @@ public class DefaultBootstrapChannelTest {
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
         Mockito.when(
                 httpClient.executeHttpRequest(Mockito.anyString(),
-                        Mockito.any(LinkedHashMap.class))).thenThrow(new Exception());
+                        Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(new Exception());
 
         AbstractKaaClient client = Mockito.mock(AbstractKaaClient.class);
         Mockito.when(
@@ -153,7 +153,7 @@ public class DefaultBootstrapChannelTest {
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
         Mockito.when(
                 httpClient.executeHttpRequest(Mockito.anyString(),
-                        Mockito.any(LinkedHashMap.class))).thenThrow(new Exception());
+                        Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(new Exception());
 
         AbstractKaaClient client = Mockito.mock(AbstractKaaClient.class);
         Mockito.when(

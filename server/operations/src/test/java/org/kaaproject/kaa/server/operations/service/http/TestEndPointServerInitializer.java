@@ -21,16 +21,20 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.util.UUID;
 
-import org.kaaproject.kaa.server.common.http.server.CommandProcessor;
-import org.kaaproject.kaa.server.operations.service.config.NettyHttpServiceChannelConfig;
-import org.kaaproject.kaa.server.operations.service.http.OperationsServerInitializer;
+import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
 
 /**
  * Test Initializator Class.
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  *
  */
-public class TestEndPointServerInitializer extends OperationsServerInitializer {
+public class TestEndPointServerInitializer extends HttpServerInitializer {
+
+    TestAkkaService testAkkaService;
+    public TestEndPointServerInitializer(TestAkkaService testAkkaService) {
+        this.testAkkaService = testAkkaService;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer#getMainHandler(java.util.UUID)
@@ -39,7 +43,7 @@ public class TestEndPointServerInitializer extends OperationsServerInitializer {
     protected SimpleChannelInboundHandler<CommandProcessor> getMainHandler(UUID uuid){
         return new TestHandler(
                 uuid,
-                (TestAkkaService) ((NettyHttpServiceChannelConfig) getConf()).getOperationServerConfig().getAkkaService(),
+                testAkkaService,
                 new DefaultEventExecutorGroup(1));
     }
 }

@@ -19,14 +19,17 @@ package org.kaaproject.kaa.server.bootstrap.service.thrift;
 import java.util.List;
 
 import org.apache.thrift.TException;
-import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
+import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
+import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChannel;
+import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,8 +43,13 @@ import org.springframework.stereotype.Service;
 public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
     BootstrapThriftService.Iface {
 
+    @Autowired
+    BootstrapInitializationService bootstrapInitializationService;
+
+    @Autowired
+    OperationsServerListService operationsServerListService;
+
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapThriftServiceImpl.class);
-    private BootstrapConfig config;
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService#getServerShortName()
@@ -56,21 +64,6 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
      */
     @Override
     protected void initServiceCommands() {
-    }
-
-    /**
-     * BootstrapConfig getter.
-     * @return BootstrapConfig the config
-     */
-    public BootstrapConfig getConfig() {
-        return config;
-    }
-
-    /**
-     * @param BootstrapConfig config the config to set
-     */
-    public void setConfig(BootstrapConfig config) {
-        this.config = config;
     }
 
     /**
@@ -95,23 +88,47 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
                 case HTTP:
                     ThriftCommunicationParameters httpParams = channel.getCommunicationParams();
                     LOG.trace("HostName: {}, port {}",
-                            httpParams.getHttpParams().getHostName(), 
-                            httpParams.getHttpParams().getPort()); 
+                            httpParams.getHttpParams().getHostName(),
+                            httpParams.getHttpParams().getPort());
                     break;
                 case HTTP_LP:
                     ThriftCommunicationParameters httpLpParams = channel.getCommunicationParams();
                     LOG.trace("HostName: {}, port {}",
-                            httpLpParams.getHttpLpParams().getHostName(), 
-                            httpLpParams.getHttpLpParams().getPort());                    
+                            httpLpParams.getHttpLpParams().getHostName(),
+                            httpLpParams.getHttpLpParams().getPort());
+                    break;
+                case KAATCP:
+                    ThriftCommunicationParameters kaaTcpParams = channel.getCommunicationParams();
+                    LOG.trace("HostName: {}, port {}",
+                            kaaTcpParams.getKaaTcpParams().getHostName(),
+                            kaaTcpParams.getKaaTcpParams().getPort());
                     break;
                 }
             }
         }
-        if (getConfig() != null && getConfig().getOperationsServerListService() != null) {
+        if (operationsServerListService != null) {
             LOG.trace("Updating OperationsServerListService");
-            getConfig().getOperationsServerListService().updateList(operationsServersList);
+            operationsServerListService.updateList(operationsServersList);
         } else {
             throw new TException("Bootstrap server not initialized properly, config not set");
         }
+    }
+
+    @Override
+    public void shutdown() throws TException {
+        LOG.info("Received shutdown command.");
+
+        Runnable shutdownCommmand = new Runnable() {
+            @Override
+            public void run() {
+                LOG.info("Stopping Bootstrap Server Application...");
+                bootstrapInitializationService.stop();
+                ThriftExecutor.shutdown();
+            }
+        };
+
+        Thread shutdownThread = new Thread(shutdownCommmand);
+        shutdownThread.setName("Bootstrap Server Shutdown Thread");
+        shutdownThread.start();
     }
 }

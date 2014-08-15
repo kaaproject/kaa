@@ -22,7 +22,43 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 
 /**
- * Container for the profile object which should be implemented by the user
+ * Abstract container for the profile object.<br>
+ * <br>
+ * Should be used to implement user profile container.
+ * It is responsible for serializing profile and notifying Kaa stuff
+ * about any updates ({@link AbstractProfileContainer#updateProfile()}).
+ * Profile class is auto-generated according to predefined Avro schema.<br>
+ * <br>
+ * <pre>
+ * {@code
+ * // Assume, BasicEndpointProfile is a profile class auto-generated according to predefined Avro schema
+ * public class BasicProfileContainer extends AbstractProfileContainer<BasicEndpointProfile> {
+ *     private BasicEndpointProfile profile = new BasicEndpointProfile();
+ *
+ *     public BasicProfileContainer() {}
+ *     public BasicEndpointProfile getProfile() {
+ *         return profile;
+ *     }
+ *     protected Class<BasicEndpointProfile> getProfileClass() {
+ *         return BasicEndpointProfile.class;
+ *     }
+ *     // User-define method
+ *     public void setNewProfile(BasicEndpointProfile profile) {
+ *         this.profile = profile;
+ *         // Update method should be called to notify about changes in the profile.
+ *         updateProfile();
+ *     }
+ * }
+ *
+ * BasicProfileContainer container = new BasicProfileContainer();
+ * ProfileManager manager = kaaClient.getProfileManager();
+ * manager.setProfileContainer(container);
+ *
+ * // Assume, profile is changed. Current implementation of the profile container
+ * // notifies Kaa inner stuff about profile update.
+ * container.setNewProfile(new BasicEndpointProfile());
+ * }
+ * </pre>
  *
  * @author Yaroslav Zeygerman
  *
@@ -64,9 +100,10 @@ public abstract class AbstractProfileContainer<T extends SpecificRecordBase> imp
     }
 
     /**
-     * Sets new profile listener.
-     * DO NOT use this API explicitly.
-     * @see ProfileContainer
+     * Sets profile listener.<br>
+     * <br>
+     * <b>NOTE:</b>DO NOT use this API explicitly.
+     * This method is used for post initialization of a user defined profile container.
      *
      * @param listener New profile listener.
      */

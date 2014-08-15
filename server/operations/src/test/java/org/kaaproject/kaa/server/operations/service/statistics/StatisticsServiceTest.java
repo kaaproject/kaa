@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
-import org.kaaproject.kaa.server.common.http.server.Track;
+import org.kaaproject.kaa.server.common.server.Track;
 import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
@@ -64,8 +64,6 @@ public class StatisticsServiceTest {
         when(configMock.getStatisticsUpdateTimes()).thenReturn(5);
 
         zkNodeMock = mock(OperationsNode.class);
-        when(configMock.getZkNode()).thenReturn(zkNodeMock);
-
     }
 
     @After
@@ -81,6 +79,7 @@ public class StatisticsServiceTest {
         StatisticsService service = StatisticsFactory.getService(ChannelType.HTTP);
         assertNotNull(service);
         service.setConfig(configMock);
+        service.setZkNode(zkNodeMock);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {

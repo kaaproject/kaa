@@ -46,11 +46,6 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
     private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
 
     @Override
-    public void sync() {
-        syncByType(TransportType.USER);
-    }
-
-    @Override
     public UserSyncRequest createUserRequest() {
         if (processor != null) {
             UserSyncRequest request = new UserSyncRequest();
@@ -85,6 +80,7 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
                     for (EndpointAttachResponse attached : response.getEndpointAttachResponses()) {
                         EndpointAccessToken attachedToken = attachEndpointRequests.remove(attached.getRequestId());
                         if (attached.getResult() == SyncResponseResultType.SUCCESS) {
+                            LOG.info("Token {}", attachedToken);
                             attachedEndpoints.put(attachedToken, new EndpointKeyHash(attached.getEndpointKeyHash()));
                             hasChanges = true;
                         } else {
@@ -103,7 +99,9 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
                                 for (Map.Entry<EndpointAccessToken, EndpointKeyHash> entry : attachedEndpoints.entrySet()) {
                                     if (detachedEndpointKeyHash.equals(entry.getValue())) {
                                         EndpointKeyHash removed = attachedEndpoints.remove(entry.getKey());
-                                        hasChanges = (removed != null);
+                                        if (!hasChanges) {
+                                            hasChanges = (removed != null);
+                                        }
                                         break;
                                     }
                                 }
@@ -130,6 +128,11 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
     @Override
     public void setEndpointRegistrationProcessor(EndpointRegistrationProcessor manager) {
         this.processor = manager;
+    }
+
+    @Override
+    protected TransportType getTransportType() {
+        return TransportType.USER;
     }
 
 }

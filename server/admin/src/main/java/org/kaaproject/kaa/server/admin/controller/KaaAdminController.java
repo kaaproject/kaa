@@ -48,6 +48,7 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -467,13 +468,24 @@ public class KaaAdminController {
     }
 
     /**
-     * Gets the log schema by her id.
+     * Gets the log schema by its id.
      *
      */
     @RequestMapping(value="logSchema/{logSchemaId}", method=RequestMethod.GET)
     @ResponseBody
     public LogSchemaDto getLogSchema(@PathVariable String logSchemaId) throws KaaAdminServiceException {
         return kaaAdminService.getLogSchema(logSchemaId);
+    }
+
+    /**
+     * Gets the log schema by its id.
+     *
+     */
+    @RequestMapping(value="logSchema/{applicationToken}/{schemaVersion}", method=RequestMethod.GET)
+    @ResponseBody
+    public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(@PathVariable String applicationToken,
+                                                                 @PathVariable int schemaVersion) throws KaaAdminServiceException {
+        return kaaAdminService.getLogSchemaByApplicationTokenAndVersion(applicationToken, schemaVersion);
     }
 
     /**
@@ -486,6 +498,46 @@ public class KaaAdminController {
             @RequestParam("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         return kaaAdminService.editLogSchema(logSchema, data);
+    }
+
+    /**
+     * Gets all log appenders by application id.
+     *
+     */
+    @RequestMapping(value="logAppenders/{applicationId}", method=RequestMethod.GET)
+    @ResponseBody
+    public List<LogAppenderDto> getLogAppendersByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.getLogAppendersByApplicationId(applicationId);
+    }
+
+    /**
+     * Gets the log appender by its id.
+     *
+     */
+    @RequestMapping(value="logAppender/{logAppenderId}", method=RequestMethod.GET)
+    @ResponseBody
+    public LogAppenderDto getLogAppender(@PathVariable String logAppenderId) throws KaaAdminServiceException {
+        return kaaAdminService.getLogAppender(logAppenderId);
+    }
+
+    /**
+     * Edits log appender.
+     *
+     */
+    @RequestMapping(value="logAppender", method=RequestMethod.POST)
+    @ResponseBody
+    public LogAppenderDto editLogAppender(@RequestBody LogAppenderDto logAppender) throws KaaAdminServiceException {
+        return kaaAdminService.editLogAppender(logAppender);
+    }
+
+    /**
+     * Delete log appender by its id.
+     *
+     */
+    @RequestMapping(value="delLogAppender", method=RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteLogAppender(@RequestParam(value="logAppenderId") String logAppenderId) throws KaaAdminServiceException {
+        kaaAdminService.deleteLogAppender(logAppenderId);
     }
 
     /**

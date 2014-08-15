@@ -16,17 +16,13 @@
 
 package org.kaaproject.kaa.server.operations.service.http;
 
-import java.util.UUID;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.concurrent.EventExecutorGroup;
 
-import org.apache.avro.specific.SpecificRecordBase;
-import org.kaaproject.kaa.server.common.http.server.CommandProcessor;
-import org.kaaproject.kaa.server.common.http.server.DefaultHandler;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEncodedRequestMessage;
-import org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand;
-import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
+import java.util.UUID;
+
+import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
+import org.kaaproject.kaa.server.common.server.http.DefaultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,10 +56,11 @@ public class TestHandler extends DefaultHandler {
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx,
             final CommandProcessor msg) throws Exception {
-        AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase> command = (AbstractOperationsCommand<SpecificRecordBase, SpecificRecordBase>) msg;
-        NettyEncodedRequestMessage message = new NettyEncodedRequestMessage(uuidToStr(uuid), ctx, command, ChannelType.HTTP);
-        LOG.trace("Forwarding {} to akka", message);
-        akkaService.addCommand(message);
+//        TODO: fix this
+//        AbstractHttpSyncCommand<SpecificRecordBase, SpecificRecordBase> command = (AbstractHttpSyncCommand<SpecificRecordBase, SpecificRecordBase>) msg;
+//        NettyEncodedRequestMessage message = new NettyEncodedRequestMessage(uuidToStr(uuid), ctx, command, ChannelType.HTTP);
+//        LOG.trace("Forwarding {} to akka", message);
+//        akkaService.addCommand(message);
     }
 
     /**

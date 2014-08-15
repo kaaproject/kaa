@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject</groupId>
-        <version>0.5.1</version>
+        <version>0.5.2</version>
         <artifactId>kaa</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa</groupId>
@@ -47,6 +47,7 @@
         <module>operations</module>
         <module>control</module>
         <module>bootstrap</module>
+        <module>flume</module>
     </modules>
 
     <dependencies>
@@ -94,6 +95,12 @@
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.flume</groupId>
+                <artifactId>flume-ng-clients</artifactId>
+                <version>${flume.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>nl.jqno.equalsverifier</groupId>
                 <artifactId>equalsverifier</artifactId>

@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.sandbox.web.services.rest;
 
-import org.kaaproject.kaa.sandbox.admin.AdminClient;
+import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.springframework.beans.factory.InitializingBean;
 
 public class AdminClientProvider implements InitializingBean {

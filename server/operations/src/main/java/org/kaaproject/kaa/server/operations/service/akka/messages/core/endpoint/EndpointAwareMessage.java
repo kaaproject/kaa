@@ -65,7 +65,7 @@ public class EndpointAwareMessage {
      * @param originator
      *            the originator
      */
-    EndpointAwareMessage(UUID uuid, String appToken, EndpointObjectHash key, ActorRef originator) {
+    protected EndpointAwareMessage(UUID uuid, String appToken, EndpointObjectHash key, ActorRef originator) {
         super();
         this.uuid = uuid;
         this.appToken = appToken;

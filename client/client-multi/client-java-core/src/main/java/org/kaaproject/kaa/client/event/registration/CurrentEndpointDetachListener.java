@@ -26,7 +26,7 @@ package org.kaaproject.kaa.client.event.registration;
  * @author Taras Lemkin
  *
  * @see EndpointRegistrationManager
- * @see EndpointRegistrationManager#setDetachedListener(CurrentEndpointAttachListener)
+ * @see EndpointRegistrationManager#setDetachedListener
  */
 public interface CurrentEndpointDetachListener {
 

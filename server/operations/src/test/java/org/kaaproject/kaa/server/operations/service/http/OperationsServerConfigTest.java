@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.operations.service.http;
 
@@ -37,21 +37,15 @@ public class OperationsServerConfigTest {
     public void test() {
         DefaultOperationsBootstrapService ebs = mock(DefaultOperationsBootstrapService.class);
         OperationsNode en = mock(OperationsNode.class);
-        
+
         OperationsServerConfig config = new OperationsServerConfig();
         assertNotNull(config);
-        
-        config.setOperationsBootstrapService(ebs);
-        assertEquals(ebs, config.getOperationsBootstrapService());
-        
+
         config.setStatisticsCalculationWindow(10101);
         assertEquals(10101, config.getStatisticsCalculationWindow());
-        
+
         config.setStatisticsUpdateTimes(10);
         assertEquals(10, config.getStatisticsUpdateTimes());
-        
-        config.setZkNode(en);
-        assertEquals(en, config.getZkNode());
     }
 
 }

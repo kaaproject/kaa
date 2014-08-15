@@ -11,7 +11,7 @@
  "namespace": "org.kaaproject.kaa.common.bootstrap.gen",
  "type": "enum",
  "name": "ChannelType",
- "symbols" : ["HTTP", "HTTP_LP", "BOOTSTRAP"]
+ "symbols" : ["HTTP", "HTTP_LP", "BOOTSTRAP", "KAATCP"]
 },
 {
  "namespace": "org.kaaproject.kaa.common.bootstrap.gen",
@@ -26,6 +26,15 @@
  "namespace": "org.kaaproject.kaa.common.bootstrap.gen",
  "type": "record",
  "name": "HTTPComunicationParameters",
+ "fields": [
+     {"name": "hostName", "type": "string"},
+     {"name": "port", "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.bootstrap.gen",
+ "type": "record",
+ "name": "KaaTCPComunicationParameters",
  "fields": [
      {"name": "hostName", "type": "string"},
      {"name": "port", "type": "int"}
@@ -56,7 +65,8 @@
                                             {"name": "channelType", "type": "org.kaaproject.kaa.common.bootstrap.gen.ChannelType"},
                                             {"name": "communicationParameters", "type": [
                                                 "org.kaaproject.kaa.common.bootstrap.gen.HTTPComunicationParameters",
-                                                "org.kaaproject.kaa.common.bootstrap.gen.HTTPLPComunicationParameters"]}
+                                                "org.kaaproject.kaa.common.bootstrap.gen.HTTPLPComunicationParameters",
+                                                "org.kaaproject.kaa.common.bootstrap.gen.KaaTCPComunicationParameters"]}
                                         ]
                                 }
                             }

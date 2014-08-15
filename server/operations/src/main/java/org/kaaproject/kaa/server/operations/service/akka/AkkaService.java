@@ -18,7 +18,8 @@ package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
 
 import akka.actor.ActorSystem;
 
@@ -37,9 +38,15 @@ public interface AkkaService {
 
     /**
      * process request message
-     * @param redirectionRule
-     */    
-    void process(NettyCommandAwareMessage message);
+     * @param message
+     */
+    void process(SessionAware message);
+
+    /**
+     * process request message
+     * @param message
+     */
+    void process(SessionInitRequest message);
 
     /**
      * On redirection rule set

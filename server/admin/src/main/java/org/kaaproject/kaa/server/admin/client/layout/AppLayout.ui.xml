@@ -18,19 +18,14 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
         xmlns:gwt="urn:import:com.google.gwt.user.client.ui"
         xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client">
-       
-        <gwt:DockLayoutPanel unit="PX">
-                <gwt:north size="60">
-                		<gwt:SimplePanel ui:field="appHeader" />
-                </gwt:north>    
-               
-                <gwt:west size="200">
-                		<gwt:SimplePanel styleName="b-nav-content" ui:field="navContent" />
-                </gwt:west>
-               
-                <gwt:center>
-                        <kaa:layout.SimpleWidgetPanel styleName="b-app-content" ui:field="appContent" />
-                </gwt:center>
-        </gwt:DockLayoutPanel>
-       
+
+        <gwt:FlowPanel ui:field="mainLayoutPanel">
+            <gwt:SimplePanel ui:field="appHeader" />
+            <gwt:FlowPanel ui:field="navPanel">
+                <!-- org.kaaproject.kaa.server.admin.client.layout.CustomDeckLayoutPanel styleName="b-nav-content" ui:field="navContent" />
+                <gwt:SimplePanel ui:field="navPanelButton" /-->
+            </gwt:FlowPanel>
+            <kaa:layout.SimpleWidgetPanel styleName="b-app-content" ui:field="appContent" />
+        </gwt:FlowPanel>
+
 </ui:UiBinder>

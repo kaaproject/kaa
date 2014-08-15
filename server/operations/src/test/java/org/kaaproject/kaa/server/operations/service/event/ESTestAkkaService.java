@@ -19,7 +19,8 @@ package org.kaaproject.kaa.server.operations.service.event;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
 
 import akka.actor.ActorSystem;
 
@@ -38,14 +39,18 @@ public class ESTestAkkaService implements AkkaService {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#process(org.kaaproject.kaa.server.operations.service.akka.messages.io.NettyCommandAwareMessage)
-     */
     @Override
-    public void process(NettyCommandAwareMessage message) {
+    public void process(SessionAware message) {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void process(SessionInitRequest message) {
+        // TODO Auto-generated method stub
+
+    }
+
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#onRedirectionRule(org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule)

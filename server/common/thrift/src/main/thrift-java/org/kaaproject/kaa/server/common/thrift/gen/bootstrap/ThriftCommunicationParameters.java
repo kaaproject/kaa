@@ -37,11 +37,13 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ThriftCommunicationParameters");
   private static final org.apache.thrift.protocol.TField HTTP_PARAMS_FIELD_DESC = new org.apache.thrift.protocol.TField("httpParams", org.apache.thrift.protocol.TType.STRUCT, (short)1);
   private static final org.apache.thrift.protocol.TField HTTP_LP_PARAMS_FIELD_DESC = new org.apache.thrift.protocol.TField("httpLpParams", org.apache.thrift.protocol.TType.STRUCT, (short)2);
+  private static final org.apache.thrift.protocol.TField KAA_TCP_PARAMS_FIELD_DESC = new org.apache.thrift.protocol.TField("kaaTcpParams", org.apache.thrift.protocol.TType.STRUCT, (short)3);
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     HTTP_PARAMS((short)1, "httpParams"),
-    HTTP_LP_PARAMS((short)2, "httpLpParams");
+    HTTP_LP_PARAMS((short)2, "httpLpParams"),
+    KAA_TCP_PARAMS((short)3, "kaaTcpParams");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -60,6 +62,8 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
           return HTTP_PARAMS;
         case 2: // HTTP_LP_PARAMS
           return HTTP_LP_PARAMS;
+        case 3: // KAA_TCP_PARAMS
+          return KAA_TCP_PARAMS;
         default:
           return null;
       }
@@ -106,6 +110,8 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT        , "ThriftHttpParameters")));
     tmpMap.put(_Fields.HTTP_LP_PARAMS, new org.apache.thrift.meta_data.FieldMetaData("httpLpParams", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT        , "ThriftHttpLpParameters")));
+    tmpMap.put(_Fields.KAA_TCP_PARAMS, new org.apache.thrift.meta_data.FieldMetaData("kaaTcpParams", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT        , "ThriftKaaTcpParameters")));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ThriftCommunicationParameters.class, metaDataMap);
   }
@@ -137,6 +143,12 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
     return x;
   }
 
+  public static ThriftCommunicationParameters kaaTcpParams(ThriftIpParameters value) {
+    ThriftCommunicationParameters x = new ThriftCommunicationParameters();
+    x.setKaaTcpParams(value);
+    return x;
+  }
+
 
   @Override
   protected void checkType(_Fields setField, Object value) throws ClassCastException {
@@ -151,6 +163,11 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
           break;
         }
         throw new ClassCastException("Was expecting value of type ThriftIpParameters for field 'httpLpParams', but got " + value.getClass().getSimpleName());
+      case KAA_TCP_PARAMS:
+        if (value instanceof ThriftIpParameters) {
+          break;
+        }
+        throw new ClassCastException("Was expecting value of type ThriftIpParameters for field 'kaaTcpParams', but got " + value.getClass().getSimpleName());
       default:
         throw new IllegalArgumentException("Unknown field id " + setField);
     }
@@ -181,6 +198,16 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
             return null;
           }
+        case KAA_TCP_PARAMS:
+          if (field.type == KAA_TCP_PARAMS_FIELD_DESC.type) {
+            ThriftIpParameters kaaTcpParams;
+            kaaTcpParams = new ThriftIpParameters();
+            kaaTcpParams.read(iprot);
+            return kaaTcpParams;
+          } else {
+            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
+            return null;
+          }
         default:
           throw new IllegalStateException("setField wasn't null, but didn't match any of the case statements!");
       }
@@ -200,6 +227,10 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
       case HTTP_LP_PARAMS:
         ThriftIpParameters httpLpParams = (ThriftIpParameters)value_;
         httpLpParams.write(oprot);
+        return;
+      case KAA_TCP_PARAMS:
+        ThriftIpParameters kaaTcpParams = (ThriftIpParameters)value_;
+        kaaTcpParams.write(oprot);
         return;
       default:
         throw new IllegalStateException("Cannot write union with unknown field " + setField_);
@@ -221,6 +252,11 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
           httpLpParams = new ThriftIpParameters();
           httpLpParams.read(iprot);
           return httpLpParams;
+        case KAA_TCP_PARAMS:
+          ThriftIpParameters kaaTcpParams;
+          kaaTcpParams = new ThriftIpParameters();
+          kaaTcpParams.read(iprot);
+          return kaaTcpParams;
         default:
           throw new IllegalStateException("setField wasn't null, but didn't match any of the case statements!");
       }
@@ -240,6 +276,10 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
         ThriftIpParameters httpLpParams = (ThriftIpParameters)value_;
         httpLpParams.write(oprot);
         return;
+      case KAA_TCP_PARAMS:
+        ThriftIpParameters kaaTcpParams = (ThriftIpParameters)value_;
+        kaaTcpParams.write(oprot);
+        return;
       default:
         throw new IllegalStateException("Cannot write union with unknown field " + setField_);
     }
@@ -252,6 +292,8 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
         return HTTP_PARAMS_FIELD_DESC;
       case HTTP_LP_PARAMS:
         return HTTP_LP_PARAMS_FIELD_DESC;
+      case KAA_TCP_PARAMS:
+        return KAA_TCP_PARAMS_FIELD_DESC;
       default:
         throw new IllegalArgumentException("Unknown field id " + setField);
     }
@@ -300,6 +342,20 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
     value_ = value;
   }
 
+  public ThriftIpParameters getKaaTcpParams() {
+    if (getSetField() == _Fields.KAA_TCP_PARAMS) {
+      return (ThriftIpParameters)getFieldValue();
+    } else {
+      throw new RuntimeException("Cannot get field 'kaaTcpParams' because union is currently set to " + getFieldDesc(getSetField()).name);
+    }
+  }
+
+  public void setKaaTcpParams(ThriftIpParameters value) {
+    if (value == null) throw new NullPointerException();
+    setField_ = _Fields.KAA_TCP_PARAMS;
+    value_ = value;
+  }
+
   public boolean isSetHttpParams() {
     return setField_ == _Fields.HTTP_PARAMS;
   }
@@ -307,6 +363,11 @@ public class ThriftCommunicationParameters extends org.apache.thrift.TUnion<Thri
 
   public boolean isSetHttpLpParams() {
     return setField_ == _Fields.HTTP_LP_PARAMS;
+  }
+
+
+  public boolean isSetKaaTcpParams() {
+    return setField_ == _Fields.KAA_TCP_PARAMS;
   }
 
 

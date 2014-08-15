@@ -289,7 +289,7 @@ public class BootstrapStartIT {
      * Test Bootstrap update endpoint lists nodes.
      */
     @Test
-    public void BootstrapUpdateTest() {
+    public void bootstrapUpdateTest() {
         assertNotNull("Bootstrap not started",bootstrap);
         List<BootstrapNodeInfo> nodes = listener.getNodes();
 
@@ -335,7 +335,7 @@ public class BootstrapStartIT {
             logger.info("Server Name {} 1",host);
             ThriftOperationsServer sendServ = getThriftOperationsServerByName(host, update);
             if (sendServ != null) {
-                
+
                 assertEquals(sendServ.priority, server.getPriority().intValue());
 
                 assertEquals(sendServ.publicKey, server.getPublicKey());
@@ -374,7 +374,7 @@ public class BootstrapStartIT {
                             logger.info("Server Name {} 2",host);
                             ThriftOperationsServer sendServ = getThriftOperationsServerByName(host,update);
                             if (sendServ != null) {
-                                
+
                                 assertEquals(sendServ.priority, server.getPriority().intValue());
 
                                 assertEquals(sendServ.publicKey, server.getPublicKey());
@@ -491,11 +491,11 @@ public class BootstrapStartIT {
         }
         return operationsServersList;
     }
-    
+
     private ThriftOperationsServer getThriftOperationsServerByName(String name, List<ThriftOperationsServer> list) {
         ThriftOperationsServer server = null;
         for(ThriftOperationsServer s : list) {
-            logger.info("getThriftOperationsServerByName name: {}; s.getName {}",name,s.getName()); 
+            logger.info("getThriftOperationsServerByName name: {}; s.getName {}",name,s.getName());
             if (s.getName() != null && s.getName().equals(name)) {
                 server = s;
                 break;
@@ -503,7 +503,7 @@ public class BootstrapStartIT {
         }
         return server;
     }
-    
+
     private ByteBuffer getRandomByteBuffer(int size) {
         byte[] buffer = new byte[size];
         rnd.nextBytes(buffer);

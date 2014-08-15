@@ -18,6 +18,8 @@ package org.kaaproject.kaa.client.channel.impl.transports;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +35,7 @@ import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.gen.TopicState;
 import org.slf4j.Logger;
@@ -64,8 +67,14 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     }
 
     @Override
-    public void sync() {
-        syncByType(TransportType.NOTIFICATION);
+    public NotificationSyncRequest createEmptyNotificationRequest() {
+        if (clientState != null && manager != null) {
+            NotificationSyncRequest request = new NotificationSyncRequest();
+            request.setAppStateSeqNumber(clientState.getNotificationSeqNumber());
+            request.setTopicStates(getTopicStates());
+            return request;
+        }
+        return null;
     }
 
     @Override
@@ -88,7 +97,9 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     @Override
     public void onNotificationResponse(NotificationSyncResponse response) throws IOException {
         if (processor != null && clientState != null) {
-            acceptedUnicastNotificationIds.clear();
+            if(response.getResponseStatus() == SyncResponseStatus.NO_DELTA){
+                acceptedUnicastNotificationIds.clear();
+            }
             List<Topic> topics = response.getAvailableTopics();
             if (topics != null) {
                 for (Topic topic : topics) {
@@ -98,21 +109,63 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
             }
             List<Notification> notifications = response.getNotifications();
             if (notifications != null) {
-                for (Notification notification : notifications) {
+                List<Notification> newNotifications = new ArrayList<>(notifications.size());
+
+                List<Notification> unicastNotifications = getUnicastNotifications(notifications);
+                List<Notification> multicastNotifications = getMulticastNotifications(notifications);
+
+                for (Notification notification : unicastNotifications) {
                     LOG.info("Received {}", notification);
-                    if (notification.getUid() != null) {
-                        LOG.info("Adding {} to unicast accepted notifications", notification.getUid());
-                        acceptedUnicastNotificationIds.add(notification.getUid());
-                    } else {
-                        clientState.updateTopicSubscriptionInfo(notification.getTopicId(), notification.getSeqNumber());
+                    if(acceptedUnicastNotificationIds.add(notification.getUid())){
+                        newNotifications.add(notification);
+                    }else{
+                        LOG.info("Notification with uid [{}] was already received", notification.getUid());
                     }
                 }
-                processor.notificationReceived(notifications);
+
+                for (Notification notification : multicastNotifications) {
+                    LOG.info("Received {}", notification);
+                    if(clientState.updateTopicSubscriptionInfo(notification.getTopicId(), notification.getSeqNumber())){
+                        newNotifications.add(notification);
+                    }else{
+                        LOG.info("Notification with seq number {} was already received", notification.getSeqNumber());
+                    }
+                }
+                processor.notificationReceived(newNotifications);
             }
             sentNotificationCommands.clear();
             clientState.setNotificationSeqNumber(response.getAppStateSeqNumber());
-            LOG.info("Processed notification response");
+
+            syncAck(response.getResponseStatus());
+
+            LOG.info("Processed notification response.");
         }
+    }
+
+    private List<Notification> getUnicastNotifications(List<Notification> notifications) {
+        List<Notification> result = new ArrayList<>();
+        for(Notification notification : notifications){
+            if(notification.getUid() != null){
+                result.add(notification);
+            }
+        }
+        return result;
+    }
+
+    private List<Notification> getMulticastNotifications(List<Notification> notifications) {
+        List<Notification> result = new ArrayList<>();
+        for(Notification notification : notifications){
+            if(notification.getUid() == null){
+                result.add(notification);
+            }
+        }
+        Collections.sort(result, new Comparator<Notification>() {
+            @Override
+            public int compare(Notification o1, Notification o2) {
+                return o1.getSeqNumber() - o2.getSeqNumber();
+            }
+        });
+        return result;
     }
 
     @Override
@@ -123,6 +176,11 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     @Override
     public void setNotificationManager(NotificationManager manager) {
         this.manager = manager;
+    }
+
+    @Override
+    protected TransportType getTransportType() {
+        return TransportType.NOTIFICATION;
     }
 
 }

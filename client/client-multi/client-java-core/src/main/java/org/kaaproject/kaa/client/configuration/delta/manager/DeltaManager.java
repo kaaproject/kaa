@@ -16,13 +16,22 @@
 
 package org.kaaproject.kaa.client.configuration.delta.manager;
 
+import org.kaaproject.kaa.client.configuration.delta.ConfigurationDelta;
 import org.kaaproject.kaa.client.configuration.delta.DeltaHandlerId;
+import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
 
 /**
- * Interface for the delta manager
+ * Interface for managing partial configuration updates.<br>
+ * <br>
+ * Use this manager to subscribe {@link DeltaReceiver} implementation for
+ * receiving configuration deltas instead of full resync updates
+ * from {@link ConfigurationManager}
  *
  * @author Yaroslav Zeygerman
  *
+ * @see DeltaHandlerId
+ * @see DeltaReceiver
+ * @see ConfigurationDelta
  */
 public interface DeltaManager {
 

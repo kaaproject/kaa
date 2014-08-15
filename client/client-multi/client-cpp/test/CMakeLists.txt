@@ -86,6 +86,7 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/impl/DefaultOperationLongPollChannel.cpp
         ../impl/channel/impl/DefaultOperationHttpChannel.cpp
         ../impl/channel/impl/DefaultBootstrapChannel.cpp
+        ../impl/channel/impl/DefaultOperationTcpChannel.cpp
         ../impl/channel/OperationsDataProcessor.cpp
         ../impl/channel/BootstrapDataProcessor.cpp
         ../impl/channel/RedirectionTransport.cpp
@@ -96,6 +97,11 @@ set ( KAA_TEST_SOURCES
         ../impl/log/LogCollector.cpp
         ../impl/log/LogRecord.cpp
         ../impl/log/MemoryLogStorage.cpp
+        ../impl/kaatcp/KaaTcpCommon.cpp
+        ../impl/kaatcp/KaaTcpParser.cpp
+        ../impl/kaatcp/ConnackMessage.cpp
+        ../impl/kaatcp/KaaSyncResponse.cpp
+        ../impl/kaatcp/KaaTcpResponseProcessor.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
@@ -127,6 +133,7 @@ set ( KAA_TEST_SOURCES
         impl/channel/KaaChannelManagerTest.cpp
         impl/notification/NotificationTransportTest.cpp
         impl/notification/NotificationManagerTest.cpp
+        impl/kaatcp/KaaTcpTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

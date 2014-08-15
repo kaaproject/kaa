@@ -32,5 +32,5 @@ public interface PlaceConstants {
     public static final String CREATE = "create";
     public static final String SHOW_ACTIVE = "active";
     public static final String RANDOM = "random";
-
+    public static final String APPENDER_ID = "appenderId";
 }

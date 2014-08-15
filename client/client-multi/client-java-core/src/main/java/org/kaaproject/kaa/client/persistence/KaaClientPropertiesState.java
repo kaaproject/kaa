@@ -250,13 +250,13 @@ public class KaaClientPropertiesState implements KaaClientState {
         }
         return publicKey;
     }
-    
+
     private void updateEndpointKeyHash(KeyPair kp) {
         EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(kp.getPublic().getEncoded());
         String keyHash = new String(Base64.encodeBase64(publicKeyHash.getData()));
         state.setProperty(ENDPOINT_KEY_HASH, keyHash);
     }
-    
+
     @Override
     public EndpointKeyHash getEndpointKeyHash() {
         String storedKeyHash = state.getProperty(ENDPOINT_KEY_HASH);
@@ -312,14 +312,18 @@ public class KaaClientPropertiesState implements KaaClientState {
     }
 
     @Override
-    public void updateTopicSubscriptionInfo(String topicId, Integer sequenceNumber) {
+    public boolean updateTopicSubscriptionInfo(String topicId, Integer sequenceNumber) {
         TopicSubscriptionInfo subscriptionInfo = nfSubscriptions.get(topicId);
-
+        boolean updated = false;
         if (subscriptionInfo != null) {
-            subscriptionInfo.setSeqNumber(Math.max(sequenceNumber, subscriptionInfo.getSeqNumber()));
-            nfSubscriptions.put(topicId, subscriptionInfo);
-            LOG.info("Updated seqNumber to {} for {} subscription", subscriptionInfo.getSeqNumber(), topicId);
+            if(sequenceNumber > subscriptionInfo.getSeqNumber()){
+                updated = true;
+                subscriptionInfo.setSeqNumber(sequenceNumber);
+                nfSubscriptions.put(topicId, subscriptionInfo);
+                LOG.info("Updated seqNumber to {} for {} subscription", subscriptionInfo.getSeqNumber(), topicId);
+            }
         }
+        return updated;
     }
 
     @Override

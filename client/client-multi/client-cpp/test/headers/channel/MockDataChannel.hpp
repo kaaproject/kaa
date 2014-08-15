@@ -23,7 +23,7 @@ class MockDataChannel: public IDataChannel {
 public:
     virtual void sync(TransportType type) {}
     virtual void syncAll() {}
-
+    virtual void syncAck(TransportType type) {}
     virtual const std::string& getId() const {
         static std::string id("id");
         return id;

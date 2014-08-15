@@ -28,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
@@ -35,14 +36,19 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
@@ -50,7 +56,10 @@ import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
+import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
@@ -63,7 +72,9 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
@@ -90,7 +101,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-import org.kaaproject.kaa.server.operations.service.delta.DeltaServiceIT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +128,7 @@ public class OperationsServiceIT extends AbstractTest {
 
     private static final int CONF_SCHEMA_VERSION = 2;
     private static final int PROFILE_SCHEMA_VERSION = 2;
-    private static final int APPLICATION_SEQ_NUMBER = 5;
+    private static final int APPLICATION_SEQ_NUMBER = 9;
 
     private static final String CUSTOMER_ID = "CustomerId";
     private static final String APPLICATION_NAME = "ApplicationName";
@@ -142,6 +152,8 @@ public class OperationsServiceIT extends AbstractTest {
     private Tenant customer;
     private ProfileSchema profileSchema;
     private ProfileFilterDto profileFilter;
+    private TopicDto mandatoryTopicDto;
+    private TopicDto voluntaryTopicDto;
 
     private final GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
 
@@ -150,6 +162,12 @@ public class OperationsServiceIT extends AbstractTest {
 
     @Autowired
     protected ConfigurationService configurationService;
+
+    @Autowired
+    protected NotificationService notificationService;
+
+    @Autowired
+    protected TopicService topicService;
 
     @Autowired
     protected ApplicationService applicationService;
@@ -277,6 +295,41 @@ public class OperationsServiceIT extends AbstractTest {
         userDto = endpointService.saveEndpointUser(userDto);
         Assert.assertNotNull(userDto);
         Assert.assertNotNull(userDto.getId());
+
+        mandatoryTopicDto = new TopicDto();
+        mandatoryTopicDto.setApplicationId(applicationDto.getId());
+        mandatoryTopicDto.setName("Mandatory");
+        mandatoryTopicDto.setType(TopicTypeDto.MANDATORY);
+        mandatoryTopicDto = topicService.saveTopic(mandatoryTopicDto);
+
+        voluntaryTopicDto = new TopicDto();
+        voluntaryTopicDto.setApplicationId(applicationDto.getId());
+        voluntaryTopicDto.setName("Voluntary");
+        voluntaryTopicDto.setType(TopicTypeDto.VOLUNTARY);
+        voluntaryTopicDto = topicService.saveTopic(voluntaryTopicDto);
+
+
+        List<EndpointGroupDto> groups =  endpointService.findEndpointGroupsByAppId(applicationDto.getId());
+        for(EndpointGroupDto group : groups){
+            endpointService.addTopicToEndpointGroup(group.getId(), mandatoryTopicDto.getId());
+            endpointService.addTopicToEndpointGroup(group.getId(), voluntaryTopicDto.getId());
+        }
+
+        NotificationSchemaDto userSchemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(applicationDto.getId(), NotificationTypeDto.USER, 1);
+
+        NotificationDto mNotificationDto = new NotificationDto();
+        mNotificationDto.setTopicId(mandatoryTopicDto.getId());
+        mNotificationDto.setSchemaId(userSchemaDto.getId());
+        mNotificationDto.setType(NotificationTypeDto.USER);
+        mNotificationDto.setBody("{\"message\": \"mandatory\"}".getBytes(Charset.forName("UTF-8")));
+        notificationService.saveNotification(mNotificationDto);
+
+        NotificationDto vNotificationDto = new NotificationDto();
+        vNotificationDto.setTopicId(voluntaryTopicDto.getId());
+        vNotificationDto.setSchemaId(userSchemaDto.getId());
+        vNotificationDto.setType(NotificationTypeDto.USER);
+        vNotificationDto.setBody("{\"message\": \"voluntary\"}".getBytes(Charset.forName("UTF-8")));
+        notificationService.saveNotification(vNotificationDto);
 
     }
 
@@ -441,6 +494,65 @@ public class OperationsServiceIT extends AbstractTest {
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSyncResponse().getConfSchemaBody());
         Assert.assertNull(response.getNotificationSyncResponse());
+    }
+
+    @Test
+    public void basicMandatoryNotificationsTest() throws GetDeltaException, IOException {
+        basicRegistrationTest();
+        byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
+
+        SyncRequest request = new SyncRequest();
+
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setApplicationToken(application.getApplicationToken());
+        md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
+        md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+        request.setSyncRequestMetaData(md);
+
+        NotificationSyncRequest nfSyncRequest = new NotificationSyncRequest();
+        nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
+
+        request.setNotificationSyncRequest(nfSyncRequest);
+
+        SyncResponse response = operationsService.sync(request).getResponse();
+        Assert.assertNotNull(response);
+        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getNotificationSyncResponse());
+        Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSyncResponse().getResponseStatus());
+        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSyncResponse().getAppStateSeqNumber());
+        Assert.assertNotNull(response.getNotificationSyncResponse().getNotifications());
+        //Only mandatory notification
+        Assert.assertEquals(1, response.getNotificationSyncResponse().getNotifications().size());
+    }
+
+    @Test
+    public void basicVoluntaryNotificationsTest() throws GetDeltaException, IOException {
+        basicRegistrationTest();
+        byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
+
+        SyncRequest request = new SyncRequest();
+
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setApplicationToken(application.getApplicationToken());
+        md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
+        md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+        request.setSyncRequestMetaData(md);
+
+        NotificationSyncRequest nfSyncRequest = new NotificationSyncRequest();
+        nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
+        SubscriptionCommand command = new SubscriptionCommand(voluntaryTopicDto.getId(), SubscriptionCommandType.ADD);
+        nfSyncRequest.setSubscriptionCommands(Collections.singletonList(command));
+        request.setNotificationSyncRequest(nfSyncRequest);
+
+        SyncResponse response = operationsService.sync(request).getResponse();
+        Assert.assertNotNull(response);
+        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getNotificationSyncResponse());
+        Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSyncResponse().getResponseStatus());
+        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSyncResponse().getAppStateSeqNumber());
+        Assert.assertNotNull(response.getNotificationSyncResponse().getNotifications());
+        //Mandatory + Voluntary notification
+        Assert.assertEquals(2, response.getNotificationSyncResponse().getNotifications().size());
     }
 
     @Test

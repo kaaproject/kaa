@@ -67,7 +67,7 @@ std::vector<boost::uint8_t> OperationsDataProcessor::compileRequest(const std::m
         switch (t.first) {
             case TransportType::PROFILE :
                 if (isDownDirection) {
-                    request.profileSyncRequest.set_ProfileSyncRequest(ProfileSyncRequest());
+                    request.profileSyncRequest.set_null();
                 } else if (profileTransport_) {
                     auto ptr = profileTransport_->createProfileRequest();
                     if (ptr) {
@@ -82,9 +82,7 @@ std::vector<boost::uint8_t> OperationsDataProcessor::compileRequest(const std::m
                     % LoggingUtils::ProfileSyncRequestToString(request.profileSyncRequest));
                 break;
             case TransportType::CONFIGURATION:
-                if (isDownDirection) {
-                    request.configurationSyncRequest.set_ConfigurationSyncRequest(ConfigurationSyncRequest());
-                } else if (configurationTransport_) {
+                if (configurationTransport_) {
                     auto ptr = configurationTransport_->createConfigurationRequest();
                     if (ptr) {
                         request.configurationSyncRequest.set_ConfigurationSyncRequest(*ptr);
@@ -98,14 +96,16 @@ std::vector<boost::uint8_t> OperationsDataProcessor::compileRequest(const std::m
                    % LoggingUtils::ConfigurationSyncRequestToString(request.configurationSyncRequest));
                 break;
             case TransportType::NOTIFICATION:
-                if (isDownDirection) {
-                    request.notificationSyncRequest.set_NotificationSyncRequest(NotificationSyncRequest());
-                } else if (notificationTransport_) {
-                    auto ptr = notificationTransport_->createNotificationRequest();
-                    if (ptr) {
-                        request.notificationSyncRequest.set_NotificationSyncRequest(*ptr);
+                if (notificationTransport_) {
+                    if (isDownDirection) {
+                        request.notificationSyncRequest.set_NotificationSyncRequest(*notificationTransport_->createEmptyNotificationRequest());
                     } else {
-                        request.notificationSyncRequest.set_null();
+                        auto ptr = notificationTransport_->createNotificationRequest();
+                        if (ptr) {
+                            request.notificationSyncRequest.set_NotificationSyncRequest(*ptr);
+                        } else {
+                            request.notificationSyncRequest.set_null();
+                        }
                     }
                 } else {
                     KAA_LOG_WARN("Notification transport was not specified.");
@@ -115,7 +115,11 @@ std::vector<boost::uint8_t> OperationsDataProcessor::compileRequest(const std::m
                 break;
             case TransportType::USER:
                 if (isDownDirection) {
-                    request.userSyncRequest.set_UserSyncRequest(UserSyncRequest());
+                    UserSyncRequest user;
+                    user.endpointAttachRequests.set_null();
+                    user.endpointDetachRequests.set_null();
+                    user.userAttachRequest.set_null();
+                    request.userSyncRequest.set_UserSyncRequest(user);
                 } else if (userTransport_) {
                     auto ptr = userTransport_->createUserRequest();
                     if (ptr) {
@@ -131,7 +135,10 @@ std::vector<boost::uint8_t> OperationsDataProcessor::compileRequest(const std::m
                 break;
             case TransportType::EVENT:
                 if (isDownDirection) {
-                    request.eventSyncRequest.set_EventSyncRequest(EventSyncRequest());
+                    EventSyncRequest event;
+                    event.eventListenersRequests.set_null();
+                    event.events.set_null();
+                    request.eventSyncRequest.set_EventSyncRequest(event);
                 } else if (eventTransport_) {
                     auto ptr = eventTransport_->createEventRequest(requestId);
                     if (ptr) {
@@ -147,7 +154,10 @@ std::vector<boost::uint8_t> OperationsDataProcessor::compileRequest(const std::m
                 break;
             case TransportType::LOGGING:
                 if (isDownDirection) {
-                    request.logSyncRequest.set_LogSyncRequest(LogSyncRequest());
+                    LogSyncRequest log;
+                    log.logEntries.set_null();
+                    log.requestId.set_null();
+                    request.logSyncRequest.set_LogSyncRequest(log);
                 } else if (loggingTransport_) {
                     auto ptr = loggingTransport_->createLogSyncRequest();
                     if (ptr) {

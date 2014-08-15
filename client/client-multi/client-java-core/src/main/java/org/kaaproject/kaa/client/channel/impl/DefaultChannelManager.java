@@ -29,6 +29,7 @@ import org.kaaproject.kaa.client.channel.HttpLongPollServerInfo;
 import org.kaaproject.kaa.client.channel.HttpServerInfo;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
 import org.kaaproject.kaa.client.channel.ServerInfo;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
@@ -91,13 +92,13 @@ public class DefaultChannelManager implements KaaChannelManager {
                 server = lastServers.get(channel.getType());
             }
             if (server != null) {
-                LOG.debug("Applying server {} for channel \"{}\" type {}", server, channel.getId(), channel.getType());
+                LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getType());
                 channel.setServer(server);
             } else {
                 if (lastServers != null && lastServers.isEmpty()) {
-                    LOG.warn("Failed to find server for channel \"{}\" type {}", channel.getId(), channel.getType());
+                    LOG.warn("Failed to find server for channel [{}] type {}", channel.getId(), channel.getType());
                 } else {
-                    LOG.debug("list of servers is empty for channel \"{}\" type {}", channel.getId(), channel.getType());
+                    LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getType());
                 }
             }
             useNewChannel(channel);
@@ -155,6 +156,9 @@ public class DefaultChannelManager implements KaaChannelManager {
         if (info instanceof BootstrapServerInfo) {
             return ChannelType.BOOTSTRAP;
         }
+        if (info instanceof KaaTcpServerInfo) {
+            return ChannelType.KAATCP;
+        }
         return null;
     }
 
@@ -164,7 +168,7 @@ public class DefaultChannelManager implements KaaChannelManager {
         lastServers.put(typeToVerify, newServer);
         for (KaaDataChannel channel : channels) {
             if (channel.getType().equals(typeToVerify)) {
-                LOG.debug("Applying server {} for channel \"{}\" type {}", newServer, channel.getId(), channel.getType());
+                LOG.debug("Applying server {} for channel [{}] type {}", newServer, channel.getId(), channel.getType());
                 channel.setServer(newServer);
             }
         }

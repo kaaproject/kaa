@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.bootstrap.service.initialization;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.retry.RetryUntilElapsed;
@@ -44,17 +45,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * DefaultBootstrapInitializationService Class.
- * Starts and stops all services in the Bootstrap service:
- * 1. CLI Thrift service;
- * 2. ZooKeeper service;
- * 3. Netty HTTP service.
+ * DefaultBootstrapInitializationService Class. Starts and stops all services in
+ * the Bootstrap service: 1. CLI Thrift service; 2. ZooKeeper service; 3. Netty
+ * HTTP service.
  *
  * @author Andrey Panasenko
  */
 @Service
-public class DefaultBootstrapInitializationService implements
-        BootstrapInitializationService {
+public class DefaultBootstrapInitializationService implements BootstrapInitializationService {
 
     /** Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapInitializationService.class);
@@ -101,8 +99,10 @@ public class DefaultBootstrapInitializationService implements
     private TServer server;
 
     /** The http service. */
+    @Autowired
     private ProtocolService httpService;
 
+    @Autowired
     private OperationsServerListService operationsServerListService;
 
     /** The key store service. */
@@ -123,49 +123,62 @@ public class DefaultBootstrapInitializationService implements
         return keyStoreService;
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService#start()
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.
+     * BootstrapInitializationService#start()
      */
     @Override
     public void start() {
-        LOG.trace("Starting Bootstrap service..."+propertiesToString());
+        LOG.trace("Starting Bootstrap service..." + propertiesToString());
         try {
+            LOG.trace("Bootstrap Service ZK started");
+            if (operationsServerListService == null) {
+                throw new Exception("Error initializing OperationsServerListService()"); // NOSONAR
+            }
+
+            operationsServerListService.init();
+
+            LOG.trace("Config: " + getConfig().toString());
+
+            httpService.start();
+
+            final CountDownLatch thriftStartupLatch = new CountDownLatch(1);
+            final CountDownLatch thriftShutdownLatch = new CountDownLatch(1);
+
+            startThrift(thriftStartupLatch, thriftShutdownLatch);
+
+            try {
+                thriftStartupLatch.await();
+            } catch (InterruptedException e) {
+                LOG.error("Interrupted while waiting for thrift to start...", e);
+            }
+
             if (zkEnabled) {
                 startZK();
             }
-            LOG.trace("Bootstrap Service ZK started");
-            if (operationsServerListService == null) {
-                operationsServerListService = new OperationsServerListService(getConfig());
-                if (operationsServerListService == null) {
-                    throw new Exception("Error initializing OperationsServerListService()"); //NOSONAR
-                }
-                getConfig().setOperationsServerListService(operationsServerListService);
-                if (zkEnabled) {
-                    getConfig().setBootstrapNode(bootstrapNode);
-                }
-                operationsServerListService.init();
+
+            try {
+                thriftShutdownLatch.await();
+            } catch (InterruptedException e) {
+                LOG.error("Interrupted while waiting for thrift to stop...", e);
             }
-
-            LOG.trace("Config: "+getConfig().toString());
-
-            httpService = new ProtocolService(getConfig());
-            httpService.start();
-
-            bootstrapThriftService.setConfig(getConfig());
-
-            startThrift();
         } catch (Exception e) {
             LOG.error("Error starting Bootstrap Service", e);
         }
 
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService#stop()
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.
+     * BootstrapInitializationService#stop()
      */
     @Override
     public void stop() {
-        LOG.trace("Stopping Bootstrap Service..."+propertiesToString());
+        LOG.trace("Stopping Bootstrap Service..." + propertiesToString());
 
         if (httpService != null) {
             httpService.stop();
@@ -173,8 +186,7 @@ public class DefaultBootstrapInitializationService implements
         }
 
         if (operationsServerListService != null) {
-            operationsServerListService.deinit();
-            operationsServerListService = null;
+            operationsServerListService.stop();
         }
 
         if (zkEnabled) {
@@ -189,45 +201,69 @@ public class DefaultBootstrapInitializationService implements
 
     /**
      * Start thrift.
+     *
+     * @param thriftShutdownLatch
+     * @param thriftStartupLatch
      */
-    private void startThrift() {
-        LOG.info("Initializing Thrift service for Bootstrap server at {}:{}...", thriftHost, thriftPort);
+    private void startThrift(final CountDownLatch thriftStartupLatch, final CountDownLatch thriftShutdownLatch) {
+        Runnable thriftRunnable = new Runnable() {
 
-        try {
-            BootstrapThriftService.Processor<BootstrapThriftService.Iface> processor = new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(bootstrapThriftService);
+            @Override
+            public void run() {
 
-            TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(thriftHost, thriftPort));
-            
-            TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
-            args.stopTimeoutVal = 3;
-            args.stopTimeoutUnit = TimeUnit.SECONDS;
-            server = new TThreadPoolServer(args);
+                LOG.info("Initializing Thrift service for Bootstrap server at {}:{}...", thriftHost, thriftPort);
 
-            LOG.info("Bootstrap Server Started");
+                try {
+                    BootstrapThriftService.Processor<BootstrapThriftService.Iface> processor = new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(
+                            bootstrapThriftService);
 
-            server.serve();
+                    TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(thriftHost, thriftPort));
 
-            LOG.info("Bootstrap Server Stopped");
+                    TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
+                    args.stopTimeoutVal = 3;
+                    args.stopTimeoutUnit = TimeUnit.SECONDS;
+                    server = new TThreadPoolServer(args);
 
-        } catch (TTransportException e) {
-            LOG.error("TTransportException", e);
-        } finally {
-            server = null;
-        }
+                    LOG.info("Bootstrap Server Started");
+
+                    thriftStartupLatch.countDown();
+
+                    server.serve();
+
+                    LOG.info("Bootstrap Server Stopped");
+
+                    thriftShutdownLatch.countDown();
+                } catch (TTransportException e) {
+                    LOG.error("TTransportException", e);
+                } finally {
+                    server = null;
+
+                    if(thriftStartupLatch.getCount() > 0){
+                        thriftStartupLatch.countDown();
+                    }
+                    if(thriftShutdownLatch.getCount() > 0){
+                        LOG.info("Thrift Bootstrap Server Stopped.");
+                        thriftShutdownLatch.countDown();
+                    }
+                }
+            }
+        };
+
+        new Thread(thriftRunnable).start();
     }
-
 
     /**
      * Start zk.
+     *
      * @throws Exception
      */
-    private void startZK() throws Exception { //NOSONAR
+    private void startZK() throws Exception { // NOSONAR
         if (zkEnabled) {
             LOG.info("Bootstrap Server starting ZooKepper connection to {}", zkHostPortList);
             BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
             ByteBuffer keyData = ByteBuffer.wrap(keyStoreService.getPublicKey().getEncoded());
-            LOG.trace("Bootstrap server: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}"
-                    , thriftHost, thriftPort, nettyHost, nettyPort);
+            LOG.trace("Bootstrap server: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}", thriftHost, thriftPort, nettyHost,
+                    nettyPort);
             ConnectionInfo connectionInfo = new ConnectionInfo(thriftHost, thriftPort, keyData);
             nodeInfo.setBootstrapHostName(nettyHost);
             nodeInfo.setBootstrapPort(nettyPort);
@@ -284,18 +320,19 @@ public class DefaultBootstrapInitializationService implements
 
     /**
      * Return properties for printing in logs.
+     *
      * @return String representation of properties
      */
     private String propertiesToString() {
         StringBuffer sb = new StringBuffer();
         sb.append("\nProperties: \n");
-        sb.append("thriftHost: "+thriftHost+"\n");
-        sb.append("thriftPort: "+thriftPort+"\n");
-        sb.append("zkEnabled: "+zkEnabled+"\n");
-        sb.append("zkHostPortList: "+zkHostPortList+"\n");
-        sb.append("zkMaxRetryTime: "+zkMaxRetryTime+"\n");
-        sb.append("zkSleepTime: "+zkSleepTime+"\n");
-        sb.append("zkIgnoreErrors: "+zkIgnoreErrors+"\n");
+        sb.append("thriftHost: " + thriftHost + "\n");
+        sb.append("thriftPort: " + thriftPort + "\n");
+        sb.append("zkEnabled: " + zkEnabled + "\n");
+        sb.append("zkHostPortList: " + zkHostPortList + "\n");
+        sb.append("zkMaxRetryTime: " + zkMaxRetryTime + "\n");
+        sb.append("zkSleepTime: " + zkSleepTime + "\n");
+        sb.append("zkIgnoreErrors: " + zkIgnoreErrors + "\n");
         return sb.toString();
     }
 }

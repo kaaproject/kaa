@@ -30,6 +30,15 @@ public class SchemaDto implements HasId, Serializable, Comparable<SchemaDto> {
     protected int majorVersion;
     protected int minorVersion;
 
+    public SchemaDto() {
+    }
+
+    public SchemaDto(String id, int majorVersion, int minorVersion) {
+        this.id = id;
+        this.majorVersion = majorVersion;
+        this.minorVersion = minorVersion;
+    }
+
     public String getId() {
         return id;
     }

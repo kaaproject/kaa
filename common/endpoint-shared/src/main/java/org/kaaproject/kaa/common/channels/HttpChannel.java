@@ -25,13 +25,13 @@ import org.kaaproject.kaa.common.channels.communication.HttpParameters;
 
 /**
  * HttpChannel Class.
- * 
+ *
  * @author Andrey Panasenko
  *
  */
 public class HttpChannel extends Channel {
     private static ChannelType type = ChannelType.HTTP;
-    
+
     private static TransportType[] supportedTransports = new TransportType[] {
         TransportType.CONFIGURATION,
         TransportType.EVENT,
@@ -40,12 +40,12 @@ public class HttpChannel extends Channel {
         TransportType.USER,
         TransportType.LOGGING
     };
-    
+
     /**
      * Default Constructor.
      */
     public HttpChannel() {
-        
+
     }
 
     /**
@@ -54,7 +54,7 @@ public class HttpChannel extends Channel {
      * @return HttpParameters
      * @throws ParsingException if parsing failed.
      */
-    public static HttpParameters getHttpParametersFromSupportedChannel(SupportedChannel supportedChannel) 
+    public static HttpParameters getHttpParametersFromSupportedChannel(SupportedChannel supportedChannel)
         throws ParsingException {
         Object obj = supportedChannel.getCommunicationParameters();
         if (obj instanceof HTTPComunicationParameters) {
@@ -63,20 +63,20 @@ public class HttpChannel extends Channel {
             params.setPort(((HTTPComunicationParameters)obj).getPort().intValue());
             return params;
         } else {
-            throw new ParsingException("Error: Communication parameters with incorrect Class.");
+            throw new ParsingException("Error: Communication parameters is not HTTPComunicationParameters.");
         }
     }
-    
+
     /**
      * Create Avro SupportedChannel object from HttpParameters
-     * @param params HttpParameters 
+     * @param params HttpParameters
      * @return SupportedChannel
      */
     public static SupportedChannel getSupportedChannelFromHttpParameters(HttpParameters params) {
         HTTPComunicationParameters communicationParameters = new HTTPComunicationParameters(params.getHostName(), params.getPort());
-        return new SupportedChannel(getType(), (Object)communicationParameters );
+        return new SupportedChannel(getType(), communicationParameters );
     }
-    
+
     /**
      * Return List of supported transports for Channel
      * @return List<TransportTypes> of supported transports.
@@ -84,7 +84,7 @@ public class HttpChannel extends Channel {
     public static List<TransportType> getSupportedTransportTypes() {
         return listTransportTypesFromArray(supportedTransports);
     }
-    
+
     /**
      * Return AVRO ChannelType for Channel
      * @return ChannelType of Channel
@@ -94,14 +94,14 @@ public class HttpChannel extends Channel {
     }
 
     /**
-     * Check if specified TransportType is supported by specific Channel 
+     * Check if specified TransportType is supported by specific Channel
      * @param type TransportTypes
      * @return boolean, true if specified type is supported by Channel
      */
     public static boolean isTransportSupported(TransportType type) {
         return isTransportTypeSupported(supportedTransports, type);
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.common.channels.Channel#getSupportedTransports()
      */
@@ -125,6 +125,6 @@ public class HttpChannel extends Channel {
     public boolean isTransportTypeSupported(TransportType type) {
         return isTransportTypeSupported(supportedTransports, type);
     }
-    
-    
+
+
 }

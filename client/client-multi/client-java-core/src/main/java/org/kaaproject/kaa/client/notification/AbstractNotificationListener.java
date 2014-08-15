@@ -23,8 +23,27 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 
 /**
- * Implements {@link NotificationListener} and ables to convert the raw notification's data to
- * the needed object.
+ * Abstract listener for received notifications.<br>
+ * <br>
+ * Responsible for processing notifications either on a specific topic or all at once.<br>
+ * <pre>
+ * {@code
+ * // Assume, BasicNotification is a notification class auto-generated according to predefined Avro schema
+ * public class UserNotificationListener extends AbstractNotificationListener<BasicNotification> {
+ *     public UserNotificationListener() {}
+ *     protected Class<BasicNotification> getNotificationClass() {
+ *         return BasicNotification.class;
+ *     }
+ *     public void onNotification(String topicId, BasicNotification notification) {
+ *         System.out.println("Got notification: " + notification.toString());
+ *     }
+ * }
+ *
+ * // Add listener to catch notifications on all mandatory topics
+ * UserNotificationListener mandatoryListener = new UserNotificationListener();
+ * kaaClient.getNotificationManager().addMandatoryTopicsListener(mandatoryListener);
+ * }
+ * </pre>
  *
  * @author Yaroslav Zeygerman
  *

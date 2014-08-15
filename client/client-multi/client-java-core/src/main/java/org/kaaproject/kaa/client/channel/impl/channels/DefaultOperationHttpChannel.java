@@ -69,7 +69,7 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
         byte [] decodedResponse = null;
         synchronized (this) {
             LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, getHttpClient().getEncoderDecoder());
-            byte [] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity);
+            byte [] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, false);
             decodedResponse = getHttpClient().getEncoderDecoder().decodeData(responseDataRaw);
         }
         getDemultiplexer().processResponse(decodedResponse);

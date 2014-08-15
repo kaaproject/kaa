@@ -1,0 +1,9 @@
+Package: kaa-[[artifactId]]
+Version: [[version]]
+Section: misc
+Priority: optional
+Architecture: all
+Depends: flume-ng
+Maintainer: kaaproject
+Description: Kaa Flume Agents
+Distribution: development

@@ -15,39 +15,59 @@
  */
 
 package org.kaaproject.kaa.server.operations.service.logs;
-
-import java.util.HashMap;
-import java.util.Map;
+import static org.mockito.Mockito.*;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
+import org.kaaproject.kaa.server.common.dao.LogEventService;
 import org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class DefaultLogAppenderResolverTest {
-    
+
     private static final String APPENDER_NAME = "appender";
-    private static final String FAKE_NAME = "fake";
-    
+
     private static final MongoDBLogAppender MONGO_DB_LOG_APPENDER = new MongoDBLogAppender(APPENDER_NAME);
-    
-    private static final Map<String, LogAppender> APPENDER_MAP = new HashMap<>();
-    
-    private static final DefaultLogAppenderResolver DEFAULT_LOG_APPENDER_RESOLVER = new DefaultLogAppenderResolver(APPENDER_MAP);
-    
-    @BeforeClass
-    public static void init() {
-        APPENDER_MAP.put(APPENDER_NAME, MONGO_DB_LOG_APPENDER);
+
+
+    private static final DefaultLogAppenderBuilder DEFAULT_LOG_APPENDER_RESOLVER = new DefaultLogAppenderBuilder();
+    private LogAppenderDto dto = null;
+    private ApplicationContext applicationContext;
+    private LogEventService logEventService;;
+
+    @Before
+    public void init() {
+        applicationContext = mock(ApplicationContext.class);
+        logEventService = mock(LogEventService.class);
+
+        ReflectionTestUtils.setField(DEFAULT_LOG_APPENDER_RESOLVER, "applicationContext", applicationContext);
+        ReflectionTestUtils.setField(MONGO_DB_LOG_APPENDER, "logEventService", logEventService);
+
+        dto = new LogAppenderDto();
+        dto.setApplicationId("1");
+        dto.setTenantId("2");
+        dto.setName(APPENDER_NAME);
+        dto.setSchema(new SchemaDto("12", 1, 0));
+        dto.setStatus(LogAppenderStatusDto.REGISTERED);
+        dto.setType(LogAppenderTypeDto.MONGO);
     }
-    
+
     @Test
-    public void resolveTest() {        
-        LogAppender logAppender = DEFAULT_LOG_APPENDER_RESOLVER.resolve(APPENDER_NAME);
+    public void getAppenderTest() {
+        when(applicationContext.getBean(MongoDBLogAppender.class)).thenReturn(MONGO_DB_LOG_APPENDER);
+        LogAppender logAppender = DEFAULT_LOG_APPENDER_RESOLVER.getAppender(dto);
         Assert.assertEquals(APPENDER_NAME, logAppender.getName());
     }
-    
-    @Test(expected = NullPointerException.class)
-    public void resolveNoSuchAppenderTest() {        
-        LogAppender logAppender = DEFAULT_LOG_APPENDER_RESOLVER.resolve(FAKE_NAME);
+
+    @Test
+    public void resolveNoSuchAppenderTest() {
+        LogAppender logAppender = DEFAULT_LOG_APPENDER_RESOLVER.getAppender(null);
+        Assert.assertNull(logAppender);
     }
 }

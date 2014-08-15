@@ -112,4 +112,10 @@ public interface EventService {
      */
     public void setZkNode(OperationsNode operationsNode);
 
+    /**
+     * Used to get ZooKepper node.
+     * @param operationsNode
+     */
+    public OperationsNode getZkNode();
+
 }

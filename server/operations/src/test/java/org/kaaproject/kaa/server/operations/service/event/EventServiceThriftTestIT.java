@@ -148,7 +148,7 @@ public class EventServiceThriftTestIT {
     @Before
     public void beforeTest() throws Exception {
         eventService.setConfig(new OperationsServerConfig());
-        eventService.getConfig().setZkNode(TestCluster.getOperationsNode());
+        eventService.setZkNode(TestCluster.getOperationsNode());
         for(int i=0; i<numberOfServers;i++) {
             ThriftRunner runner = new ThriftRunner(thriftHostBase, thriftPortBase+i);
             executor.execute(runner);
@@ -280,7 +280,6 @@ public class EventServiceThriftTestIT {
             operationsNode = new OperationsNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(3000, 1000));
             try {
                 operationsNode.start();
-                eventService.getConfig().setZkNode(operationsNode);
                 eventService.setZkNode(operationsNode);
                 LOG.info("Operations Server {}:{} Zk node set in Config",thriftHost,thriftPort);
             } catch (Exception e) {
@@ -385,7 +384,7 @@ public class EventServiceThriftTestIT {
     }
 
     @Test
-    public void NodesInitializationTest() {
+    public void nodesInitializationTest() {
         LOG.info("Starting initialization tests...");
 
         final ESTest test = new ESTest();

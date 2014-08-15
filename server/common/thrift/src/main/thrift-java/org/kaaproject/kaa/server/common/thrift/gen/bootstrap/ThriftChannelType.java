@@ -13,7 +13,8 @@ import org.apache.thrift.TEnum;
 
 public enum ThriftChannelType implements org.apache.thrift.TEnum {
   HTTP(1),
-  HTTP_LP(2);
+  HTTP_LP(2),
+  KAATCP(3);
 
   private final int value;
 
@@ -38,6 +39,8 @@ public enum ThriftChannelType implements org.apache.thrift.TEnum {
         return HTTP;
       case 2:
         return HTTP_LP;
+      case 3:
+        return KAATCP;
       default:
         return null;
     }

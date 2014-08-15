@@ -58,6 +58,7 @@ void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResp
             std::vector<boost::uint8_t> schema = response.confSchemaBody.get_bytes();
             schemaProcessor_->loadSchema(schema.data(), schema.size());
         }
+        syncAck();
     }
 }
 

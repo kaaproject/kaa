@@ -44,6 +44,15 @@ public interface KaaDataChannel {
     void syncAll();
 
     /**
+     * Notifies channel about successful acknowledgment of the sync only in case of smth change.
+     *
+     * @param type transport type of the service.
+     * @see TransportType
+     *
+     */
+    void syncAck(TransportType type);
+
+    /**
      * Retrieves the channel's id.
      * It should be unique in existing channels scope.
      *

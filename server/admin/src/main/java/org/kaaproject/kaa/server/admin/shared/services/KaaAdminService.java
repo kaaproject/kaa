@@ -39,6 +39,7 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -109,10 +110,12 @@ public interface KaaAdminService extends RemoteService {
 
     public LogSchemaDto getLogSchema(String logSchemaId) throws KaaAdminServiceException;
 
+    public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken, int version) throws KaaAdminServiceException;
+
     public LogSchemaDto editLogSchema(LogSchemaDto logSchema, String fileItemName) throws KaaAdminServiceException;
 
     public LogSchemaDto editLogSchema(LogSchemaDto profileSchema, byte[] schema) throws KaaAdminServiceException;
-    
+
     public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     public EndpointGroupDto getEndpointGroup(String endpointGroupId) throws KaaAdminServiceException;
@@ -190,5 +193,15 @@ public interface KaaAdminService extends RemoteService {
     public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException;
+
+    public List<LogAppenderDto> getLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
+
+    public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException;
+
+    public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException;
+
+    public void deleteLogAppender(String appenderId) throws KaaAdminServiceException;
+
+    public List<SchemaDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException;
 
 }

@@ -16,23 +16,18 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.avro.specific.SpecificRecordBase;
-import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.server.common.http.server.BadRequestException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.RuleTimeoutMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEncodedRequestMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyEndpointSyncMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.NettyDecodedResponseMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAwareRequest;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.SessionResponse;
+import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +44,9 @@ public class EncDecActor extends UntypedActor {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(EncDecActor.class);
 
-    /** The eps actor. */
-    private final ActorRef epsActor;
-
+    private final EncDecActorMessageProcessor messageProcessor;
     /** Current redirection rules */
-    private final HashMap<Long, RedirectionRule> redirectionRules; //NOSONAR
-
+    private final HashMap<Long, RedirectionRule> redirectionRules; // NOSONAR
     /** random */
     private final Random random;
 
@@ -64,9 +56,9 @@ public class EncDecActor extends UntypedActor {
      * @param epsActor
      *            the eps actor
      */
-    public EncDecActor(ActorRef epsActor) {
+    public EncDecActor(ActorRef epsActor, CacheService cacheService, KeyPair serverKeys) {
         super();
-        this.epsActor = epsActor;
+        this.messageProcessor = new EncDecActorMessageProcessor(epsActor, cacheService, serverKeys);
         this.redirectionRules = new HashMap<>();
         this.random = new Random();
     }
@@ -102,15 +94,21 @@ public class EncDecActor extends UntypedActor {
         /** The eps actor. */
         private final ActorRef epsActor;
 
+        private final CacheService cacheService;
+
+        private final KeyPair serverKeys;
+
         /**
          * Instantiates a new actor creator.
          *
          * @param epsActor
          *            the eps actor
          */
-        public ActorCreator(ActorRef epsActor) {
+        public ActorCreator(ActorRef epsActor, CacheService cacheService, KeyPair serverKeys) {
             super();
             this.epsActor = epsActor;
+            this.cacheService = cacheService;
+            this.serverKeys = serverKeys;
         }
 
         /*
@@ -120,7 +118,7 @@ public class EncDecActor extends UntypedActor {
          */
         @Override
         public EncDecActor create() throws Exception {
-            return new EncDecActor(epsActor);
+            return new EncDecActor(epsActor, cacheService, serverKeys);
         }
     }
 
@@ -132,16 +130,27 @@ public class EncDecActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message);
-        if (message instanceof NettyEncodedRequestMessage) {
+        if (message instanceof SessionInitRequest) {
             RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
             if (redirection == null) {
-                decodeAndForward((NettyEncodedRequestMessage) message);
+                messageProcessor.decodeAndForward(context(), (SessionInitRequest) message);
             } else {
-                encodeAndReply(redirection, (NettyEncodedRequestMessage) message);
+                messageProcessor.redirect(redirection, (SessionInitRequest) message);
             }
-        } else if (message instanceof NettyDecodedResponseMessage) {
-            encodeAndReply((NettyDecodedResponseMessage) message);
-        } else if (message instanceof RedirectionRule) {
+        } else if (message instanceof SessionAware) {
+            if(message instanceof SessionAwareRequest){
+                RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
+                if (redirection == null) {
+                    messageProcessor.decodeAndForward(context(), (SessionAwareRequest) message);
+                } else {
+                    messageProcessor.redirect(redirection, (SessionAwareRequest) message);
+                }
+            }else{
+                messageProcessor.forward(context(), (SessionAware) message);
+            }
+        } else if (message instanceof SessionResponse) {
+            messageProcessor.encodeAndReply((SessionResponse) message);
+        }  else if (message instanceof RedirectionRule) {
             applyRedirectionRule((RedirectionRule) message);
         } else if (message instanceof RuleTimeoutMessage) {
             removeRedirectionRule((RuleTimeoutMessage) message);
@@ -163,55 +172,7 @@ public class EncDecActor extends UntypedActor {
         }
     }
 
-    /**
-     * Decode and forward.
-     *
-     * @param msg
-     *            the msg
-     */
-    private void decodeAndForward(NettyEncodedRequestMessage msg) {
-        try {
-            SpecificRecordBase record = msg.getCommand().decode();
-            if (record instanceof SyncRequest) {
-                NettyEndpointSyncMessage nettySyncMessage = new NettyEndpointSyncMessage((SyncRequest) record, msg);
-                this.epsActor.tell(nettySyncMessage.toEndpointMessage(self()), self());
-            } else {
-                LOG.warn("unknown request param: {}", record);
-                msg.getChannelContext().fireExceptionCaught(new RuntimeException("unknown request param: " + record));
-            }
-        } catch (BadRequestException | GeneralSecurityException | IOException e) {
-            LOG.trace("Command decode failed " + msg);
-            msg.getChannelContext().fireExceptionCaught(e);
-        }
-    }
-
-    /**
-     * Encode and reply.
-     *
-     * @param msg
-     *            the msg
-     */
-    private void encodeAndReply(NettyDecodedResponseMessage msg) {
-        try {
-            LOG.debug("ENCODE AND REPLY " + msg);
-            msg.getCommand().encode(msg.getResponse());
-            msg.getChannelContext().writeAndFlush(msg.getCommand());
-        } catch (GeneralSecurityException | IOException e) {
-            LOG.debug("Command decode failed " + msg);
-            msg.getChannelContext().fireExceptionCaught(e);
-        }
-    }
-
-    private void encodeAndReply(RedirectionRule redirection, NettyEncodedRequestMessage message) {
-        RedirectSyncResponse redirectSyncResponse = new RedirectSyncResponse(redirection.getDnsName());
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.REDIRECT);
-        response.setRedirectSyncResponse(redirectSyncResponse);
-        encodeAndReply(new NettyDecodedResponseMessage(message.getHandlerUuid(), message.getChannelContext(), message.getCommand(), message.getCommand()
-                .getChannelType(), response));
-    }
-
-    public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) { //NOSONAR
+    public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) { // NOSONAR
         RedirectionRule result = null;
         for (RedirectionRule rule : redirectionRules.values()) {
             if (random <= rule.redirectionProbability) {

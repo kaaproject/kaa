@@ -64,9 +64,6 @@ public class ApplicationActor extends UntypedActor {
     /** The notification delta service. */
     private final NotificationDeltaService notificationDeltaService;
 
-    /** The application log actor */
-    private final ActorRef applicationLogActor;
-
     /** The endpoint sessions. */
     private final Map<EndpointObjectHash, ActorMetaData> endpointSessions;
 
@@ -76,6 +73,14 @@ public class ApplicationActor extends UntypedActor {
     private final Map<String, ActorRef> topicSessions;
 
     private final String applicationToken;
+
+    private final Map<String, ActorRef> logsSessions;
+
+    private final LogAppenderService logAppenderService;
+
+    private final ApplicationService applicationService;
+
+    private ActorRef applicationLogActor;
 
     /**
      * Instantiates a new application actor.
@@ -88,12 +93,15 @@ public class ApplicationActor extends UntypedActor {
     private ApplicationActor(OperationsService operationsService, NotificationDeltaService notificationDeltaService,
             ApplicationService applicationService, LogAppenderService logAppenderService, String applicationToken) {
         this.operationsService = operationsService;
+        this.applicationService = applicationService;
+        this.logAppenderService = logAppenderService;
         this.notificationDeltaService = notificationDeltaService;
-        this.applicationLogActor = context().actorOf(Props.create(new ApplicationLogActor.ActorCreator(logAppenderService, applicationService, applicationToken)));
         this.applicationToken = applicationToken;
         this.endpointSessions = new HashMap<>();
         this.endpointActorMap = new HashMap<>();
         this.topicSessions = new HashMap<>();
+        this.logsSessions = new HashMap<>();
+        this.applicationLogActor = getOrCreateLogActor(null, logAppenderService, applicationService);
     }
 
     /**
@@ -181,7 +189,12 @@ public class ApplicationActor extends UntypedActor {
      *            the message
      */
     private void processLogEventPackMessage(LogEventPackMessage message) {
-        LOG.debug("[{}] processing log event pack message", applicationToken);
+        LOG.debug("[{}] Processing log event pack message", applicationToken);
+        applicationLogActor.tell(message, self());
+    }
+
+    private void processLogNotificationMessage(ThriftNotificationMessage message) {
+        LOG.debug("[{}] Processing thrift notification message", applicationToken);
         applicationLogActor.tell(message, self());
     }
 
@@ -199,6 +212,9 @@ public class ApplicationActor extends UntypedActor {
         } else if (notification.isSetUnicastNotificationId()) {
             LOG.debug("[{}] Forwarding message to specific endpoint", applicationToken);
             sendToSpecificEndpoint(message);
+        } else if(notification.isSetAppenderId()){
+            LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
+            processLogNotificationMessage(message);
         } else {
             LOG.debug("[{}] Broadcasting message to all endpoints", applicationToken);
             broadcastToAllEndpoints(message);
@@ -405,10 +421,24 @@ public class ApplicationActor extends UntypedActor {
                 }
             } else if (topicSessions.remove(name) != null) {
                 LOG.debug("[{}] removed topic: {}", applicationToken, localActor);
+            } else if (logsSessions.remove(name) != null)  {
+                LOG.debug("[{}] removed log: {}", applicationToken, localActor);
+                applicationLogActor = getOrCreateLogActor(name, logAppenderService, applicationService);
+                LOG.debug("[{}] created log: {}", applicationToken, applicationLogActor);
             }
         } else {
             LOG.warn("remove commands for remote actors are not supported yet!");
         }
+    }
+
+    private ActorRef getOrCreateLogActor(String name, LogAppenderService logAppenderService, ApplicationService applicationService) {
+        ActorRef logActor = logsSessions.get(name);
+        if (logActor == null) {
+            logActor = context().actorOf(Props.create(new ApplicationLogActor.ActorCreator(logAppenderService, applicationService, applicationToken)));
+            context().watch(logActor);
+            logsSessions.put(logActor.path().name(), logActor);
+        }
+        return logActor;
     }
 
     /**

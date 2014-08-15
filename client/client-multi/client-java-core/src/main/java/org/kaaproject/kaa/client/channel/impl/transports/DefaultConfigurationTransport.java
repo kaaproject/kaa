@@ -61,11 +61,6 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
     private SchemaProcessor schemaProcessor;
 
     @Override
-    public void sync() {
-        syncByType(TransportType.CONFIGURATION);
-    }
-
-    @Override
     public void setConfigurationHashContainer(ConfigurationHashContainer container) {
         this.hashContainer = container;
     }
@@ -107,8 +102,14 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
             if (confBody != null) {
                 configProcessor.processConfigurationData(confBody, response.getResponseStatus().equals(SyncResponseStatus.RESYNC));
             }
-            LOG.info("Processed configuration response");
+            syncAck(response.getResponseStatus());
+            LOG.info("Processed configuration response.");
         }
+    }
+
+    @Override
+    protected TransportType getTransportType() {
+        return TransportType.CONFIGURATION;
     }
 
 }

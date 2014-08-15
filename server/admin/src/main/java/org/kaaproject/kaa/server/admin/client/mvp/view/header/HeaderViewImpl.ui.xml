@@ -22,7 +22,7 @@
             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
                 <gwt:HorizontalPanel height="100%">
                     <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-                        <gwt:Label styleName="b-app-header-title" width="200px" height="100%" ui:field="title">
+                        <gwt:Label styleName="b-app-header-title" width="220px" height="100%" ui:field="title">
                             Kaa
                         </gwt:Label>
                     </gwt:cell>

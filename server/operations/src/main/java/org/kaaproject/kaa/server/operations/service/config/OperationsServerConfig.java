@@ -16,44 +16,18 @@
 
 package org.kaaproject.kaa.server.operations.service.config;
 
-import java.util.List;
-
-import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
-import org.kaaproject.kaa.server.operations.service.OperationsService;
-import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
-import org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService;
-import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 
 /**
  * The Class OperationsServerConfig.
  */
 public class OperationsServerConfig {
 
-    /** The end point service. */
-    @Autowired
-    private OperationsBootstrapService operationsBootstrapService;
-
-    /** The operations service. */
-    @Autowired
-    private OperationsService operationsService;
-
-    /** The akka service. */
-    @Autowired
-    private AkkaService akkaService;
-
-    /** ZK operations node */
-    private OperationsNode zkNode;
-    
-    private List<ServiceChannelConfig> channelList;
-
     /** Statistics collect window in seconds */
     private long statisticsCalculationWindow;
-    
+
     /** Number of statistics update during collect window */
     private int statisticsUpdateTimes;
-    
+
     /** The thrift host. */
     private String thriftHost;
 
@@ -74,51 +48,6 @@ public class OperationsServerConfig {
 
     /** The zk ignore errors. */
     private boolean zkIgnoreErrors;
-
-    
-    /**
-     * Gets the end point service.
-     * 
-     * @return the end point service
-     */
-    public OperationsBootstrapService getOperationsBootstrapService() {
-        return operationsBootstrapService;
-    }
-
-    /**
-     * Sets the end point service.
-     * 
-     * @param operationsBootstrapService
-     *            the new end point service
-     */
-    public void setOperationsBootstrapService(DefaultOperationsBootstrapService operationsBootstrapService) {
-        this.operationsBootstrapService = operationsBootstrapService;
-    }
-
-    /**
-     * Gets the operations service.
-     * 
-     * @return the operations service
-     */
-    public OperationsService getOperationsService() {
-        return operationsService;
-    }
-
-    /**
-     * Gets the akka service.
-     * 
-     * @return the akka service
-     */
-    public AkkaService getAkkaService() {
-        return akkaService;
-    }
-
-    /**
-     * @param akkaService the akkaService to set
-     */
-    public void setAkkaService(AkkaService akkaService) {
-        this.akkaService = akkaService;
-    }
 
     /**
      * Statistics collect window getter.
@@ -150,34 +79,6 @@ public class OperationsServerConfig {
      */
     public void setStatisticsUpdateTimes(int statisticsUpdateTimes) {
         this.statisticsUpdateTimes = statisticsUpdateTimes;
-    }
-
-    /**
-     * @return the zkNode
-     */
-    public OperationsNode getZkNode() {
-        return zkNode;
-    }
-
-    /**
-     * @param zkNode the zkNode to set
-     */
-    public void setZkNode(OperationsNode zkNode) {
-        this.zkNode = zkNode;
-    }
-
-    /**
-     * @return the channelList
-     */
-    public List<ServiceChannelConfig> getChannelList() {
-        return channelList;
-    }
-
-    /**
-     * @param channelList the channelList to set
-     */
-    public void setChannelList(List<ServiceChannelConfig> channelList) {
-        this.channelList = channelList;
     }
 
     /**

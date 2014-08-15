@@ -17,7 +17,10 @@ package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_SCHEMA_TABLE_NAME;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
@@ -30,6 +33,9 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 public final class LogSchema extends Schema<LogSchemaDto> {
 
     private static final long serialVersionUID = 5801830095239766386L;
+
+    @OneToMany(mappedBy = "logSchema")
+    private Set<LogAppender> logAppenders;
 
     public LogSchema() {
     }

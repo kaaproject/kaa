@@ -87,8 +87,12 @@ public class DefaultConfigurationTransportTest {
         response.setAppStateSeqNumber(5);
         response.setResponseStatus(SyncResponseStatus.DELTA);
 
+        KaaChannelManager channelManagerMock = Mockito.mock(KaaChannelManager.class);
+        KaaDataChannel channelMock = Mockito.mock(KaaDataChannel.class);
+        Mockito.when(channelManagerMock.getChannelByTransportType(TransportType.CONFIGURATION)).thenReturn(channelMock);
 
         ConfigurationTransport transport = new DefaultConfigurationTransport();
+        transport.setChannelManager(channelManagerMock);
         transport.onConfigurationResponse(response);
         transport.setClientState(clientState);
         transport.onConfigurationResponse(response);

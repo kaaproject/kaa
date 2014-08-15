@@ -37,7 +37,9 @@ import com.google.gwt.place.shared.WithTokenizers;
     TopicsPlace.Tokenizer.class,
     TopicPlace.Tokenizer.class,
     AefMapsPlace.Tokenizer.class,
-    AefMapPlace.Tokenizer.class})
+    AefMapPlace.Tokenizer.class,
+    LogAppendersPlace.Tokenizer.class,
+    LogAppenderPlace.Tokenizer.class})
 public interface TenantDeveloperPlaceHistoryMapper extends PlaceHistoryMapper
 {
 }

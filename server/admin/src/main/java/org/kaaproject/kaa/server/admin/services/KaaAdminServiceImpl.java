@@ -25,12 +25,14 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.iharder.Base64;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
+import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -58,6 +60,7 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -71,6 +74,7 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
+import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +115,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             List<TenantUserDto> tenantUsers = new ArrayList<TenantUserDto>(tenantAdmins.size());
             for (TenantAdminDto tenantAdmin : tenantAdmins) {
                 TenantUserDto tenantUser = toTenantUser(tenantAdmin);
-                tenantUsers.add(tenantUser);
+                if (tenantUser != null) {
+                    tenantUsers.add(tenantUser);
+                }
             }
             return tenantUsers;
 
@@ -547,7 +553,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throw Utils.handleException(e);
         }
     }
-    
+
     @Override
     public List<LogSchemaDto> getLogSchemasByApplicationId(
             String applicationId) throws KaaAdminServiceException {
@@ -569,6 +575,31 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    @Override
+    public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(
+            String applicationToken, int version) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplicationByApplicationToken(applicationToken));
+            checkTenantId(storedApplication.getTenantId());
+            return toDto(clientProvider.getClient().getLogSchemaByApplicationIdAndVersion(storedApplication.getId(), version));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<SchemaDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        List<SchemaDto> logSchemaVersions = Collections.emptyList();
+        try {
+            logSchemaVersions = toDtoList(clientProvider.getClient().getLogSchemaVersionsByApplicationId(applicationId));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+        return logSchemaVersions;
     }
 
     @Override
@@ -598,7 +629,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
-    }    
+    }
 
     @Override
     public List<EndpointGroupDto> getEndpointGroupsByApplicationId(
@@ -891,6 +922,50 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     }
 
     @Override
+    public List<LogAppenderDto> getLogAppendersByApplicationId(String appId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return toDtoList(clientProvider.getClient().getLogAppendersByApplicationId(appId));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return toDto(clientProvider.getClient().getLogAppender(appenderId));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+			if (isEmpty(appender.getId())) {
+				appender.setCreatedUsername(getCurrentUser().getUsername());
+			}
+            return toDto(clientProvider.getClient().editLogAppender(toDataStruct(appender)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public void deleteLogAppender(String appenderId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            clientProvider.getClient().deleteLogAppender(appenderId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public void addTopicToEndpointGroup(String endpointGroupId, String topicId)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -1085,15 +1160,21 @@ public class KaaAdminServiceImpl implements KaaAdminService {
 
     private TenantUserDto toTenantUser(TenantAdminDto tenantAdmin) {
         User user = userFacade.findById(Long.valueOf(tenantAdmin.getExternalUid()));
-        TenantUserDto tenantUser = new TenantUserDto(user.getId().toString(),
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getMail(),
-                KaaAuthorityDto.valueOf(user.getAuthorities().iterator().next().getAuthority()));
-        tenantUser.setId(tenantAdmin.getUserId());
-        tenantUser.setTenantId(tenantAdmin.getTenant().getId());
-        tenantUser.setTenantName(tenantAdmin.getTenant().getName());
+        logger.debug("Convert tenant admin to tenant user {}.", user);
+        TenantUserDto tenantUser = null;
+        if (user != null) {
+            tenantUser = new TenantUserDto(user.getId().toString(),
+                    user.getUsername(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getMail(),
+                    KaaAuthorityDto.valueOf(user.getAuthorities().iterator().next().getAuthority()));
+            tenantUser.setId(tenantAdmin.getUserId());
+            tenantUser.setTenantId(tenantAdmin.getTenant().getId());
+            tenantUser.setTenantName(tenantAdmin.getTenant().getName());
+        } else {
+            logger.debug("Can't find tenant user by external id {}.", tenantAdmin.getExternalUid());
+        }
         return tenantUser;
     }
 
@@ -1195,8 +1276,5 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throw new KaaAdminServiceException(ServiceErrorCode.NOT_AUTHORIZED);
         }
     }
-
-
-
 
 }

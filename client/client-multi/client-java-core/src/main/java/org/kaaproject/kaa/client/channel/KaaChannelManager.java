@@ -18,15 +18,80 @@ package org.kaaproject.kaa.client.channel;
 
 import java.util.List;
 
+import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
+import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
+import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 /**
  * Channel manager establishes/removes channels' links between client and
- * server.
+ * server.<br>
+ * <br>
+ * Use this manager to add or remove specific network channel implementation
+ * for client-server communication.<br>
+ * <br>
+ * <pre>
+ * {@code
+ * class SpecificDataChannel implements KaaDataChannel {...}
+ * ...
+ * SpecificDataChannel dataChannel1 = new SpecificDataChannel();
+ * kaaClient.getChannelManager().addChannel(dataChannel1);
+ * }
+ * </pre>
+ * The code above registers new data channel in the KaaChannelManager instance.
+ * This channel will be used by each transport abstraction which is supported by
+ * this channel (See {@link KaaDataChannel#getSupportedTransportTypes()}).<br>
+ * <br>
+ * Channel manager will use the latest added channel for each {@link TransportType}
+ * for data transferring. For example, if there are two {@link KaaDataChannel}
+ * implementations <b>ChannelA</b> and <b>ChannelB</b> such as:
+ * <br>
+ * <il>
+ *      <li>
+ *          <b>ChannelA</b> is data transceiver ({@link ChannelDirection#BIDIRECTIONAL})
+ *          for transport types [{@link TransportType#EVENT}, {@link TransportType#LOGGING}];
+ *      </li>
+ *      <li>
+ *          <b>ChannelB</b> is data transmitter ({@link ChannelDirection#UP})
+ *          for [{@link TransportType#EVENT}].
+ *      </li>
+ * <il>
+ * <br>
+ * and they are added to {@link #addChannel(KaaDataChannel)} in the following order:
+ * <br>
+ * <pre>
+ * {@code
+ * ChannelA channelA = new ChannelA();
+ * ChannelB channelB = new ChannelB();
+ * kaaClient.getChannelManager().addChannel(channelA);
+ * kaaClient.getChannelManager().addChannel(channelB);
+ * }
+ * </pre>
+ * then <b>ChannelA</b> instance will be used to receive {@link TransportType#EVENT}
+ * and {@link TransportType#LOGGING} data, but to transmit only {@link TransportType#LOGGING}
+ * data. For {@link TransportType#EVENT} data transmission will be used
+ * <b>ChannelB</b> instance.<br>
+ * <b>NOTE:</b> If mentioned above channels will be added in reverse order,
+ * <b>ChannelB</b> instance will not be used until channelA will not be removed
+ * using {@link #removeChannel(KaaDataChannel)}<br>
+ * <br>
+ * On Kaa initialization KaaChannelManager instance is populated with
+ * {@link DefaultBootstrapChannel}, {@link DefaultOperationsChannel} and
+ * {@link DefaultOperationHttpChannel} (in given order).<br>
+ * <br>
+ * Calling {@link #removeChannel(KaaDataChannel)} forces KaaChannelManager to
+ * remove given channel and reset TransportType-to-Channel internal mapping with
+ * applicable channel if such exists.<br>
+ * <br>
+ * Call to {@link #clearChannelList()} removes <b>all</b> existing channels.<br>
+ * <br>
+ * If physical connection to remote server failed, call {@link #onServerFailed(ServerInfo)}
+ * to switch to another available server.
  *
  * @author Yaroslav Zeygerman
  *
+ * @see KaaDataChannel
  */
 public interface KaaChannelManager {
 

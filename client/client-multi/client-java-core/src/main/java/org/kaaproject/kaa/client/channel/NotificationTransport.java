@@ -40,6 +40,15 @@ public interface NotificationTransport extends KaaTransport {
     NotificationSyncRequest createNotificationRequest();
 
     /**
+     * Creates a new empty Notification request.
+     *
+     * @return new empty Notification request.
+     * @see NotificationSyncRequest
+     *
+     */
+    NotificationSyncRequest createEmptyNotificationRequest();
+
+    /**
      * Updates the state of the Notification manager according to the given response.
      *
      * @param response the response from the server.

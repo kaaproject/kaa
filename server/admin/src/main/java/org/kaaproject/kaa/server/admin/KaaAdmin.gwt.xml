@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2014 CyberVision, Inc.
- 
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
+
        http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,8 +16,8 @@
 -->
 
 <!--
-	When updating your version of GWT, you should also update this DTD reference,
-	so that your app can take advantage of the latest GWT module capabilities.
+    When updating your version of GWT, you should also update this DTD reference,
+    so that your app can take advantage of the latest GWT module capabilities.
 -->
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.6.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.6.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to='kaaAdmin'>
@@ -30,37 +30,43 @@
   <!-- inherits name="com.google.gwt.user.theme.standard.StandardResources"/ -->
   <!-- inherits name="com.google.gwt.user.theme.chrome.ChromeResources"/ -->
   <!--  inherits name="com.google.gwt.user.theme.dark.DarkResources"/-->
-  
+
     <!-- Enable debug ID. -->
   <inherits name="com.google.gwt.user.Debug"/>
   <inherits name="com.google.gwt.activity.Activity"/>
   <inherits name="com.google.gwt.place.Place"/>
-  
-  <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
-  
-  <!--  inherits name='com.google.gwt.visualization.Visualization'/-->
-  
-  <set-property name="gwt.enableDebugId" value="true"/> 
-  
-	<!-- Other module inherits                                      -->
 
-	<!-- Specify the app entry point class.                         -->
-	<entry-point class='org.kaaproject.kaa.server.admin.client.KaaAdmin' />
-	
-	<!-- Use ClientFactoryImpl by default -->
+  <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
+
+  <!--  inherits name='com.google.gwt.visualization.Visualization'/-->
+
+  <set-property name="gwt.enableDebugId" value="true"/>
+
+    <!--  Need for SuperDev mode-->
+    <add-linker name="xsiframe"/>
+    <set-configuration-property name="devModeRedirectEnabled" value="true"/>
+    <!-- enable source maps -->
+    <set-property name="compiler.useSourceMaps" value="true" />
+
+    <!-- Other module inherits                                      -->
+
+    <!-- Specify the app entry point class.                         -->
+    <entry-point class='org.kaaproject.kaa.server.admin.client.KaaAdmin' />
+
+    <!-- Use ClientFactoryImpl by default -->
     <replace-with class="org.kaaproject.kaa.server.admin.client.mvp.ClientFactoryImpl">
-    	<when-type-is class="org.kaaproject.kaa.server.admin.client.mvp.ClientFactory"/>
+        <when-type-is class="org.kaaproject.kaa.server.admin.client.mvp.ClientFactory"/>
     </replace-with>
-	
-	  <!-- Internationalization support. -->
+
+    <!-- Internationalization support. -->
     <extend-property name="locale" values="en"/>
-    
+
     <set-property-fallback name="locale" value="en"/>
     <set-configuration-property name="locale.cookie" value="KAA_ADMIN_LOCALE"/>
-  	<set-configuration-property name="locale.useragent" value="Y"/>
+    <set-configuration-property name="locale.useragent" value="Y"/>
 
-	<!-- Specify the paths for translatable code                    -->
-	<source path='client' />
-	<source path='shared' />
-	
+    <!-- Specify the paths for translatable code                    -->
+    <source path='client' />
+    <source path='shared' />
+
 </module>

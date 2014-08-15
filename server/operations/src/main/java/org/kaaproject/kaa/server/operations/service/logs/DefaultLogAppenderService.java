@@ -17,12 +17,12 @@
 package org.kaaproject.kaa.server.operations.service.logs;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,39 +42,53 @@ public class DefaultLogAppenderService implements LogAppenderService {
     private LogSchemaService logSchemaService;
 
     @Autowired
-    private LogAppenderResolver logAppenderResolver;
+    private LogAppenderBuilder logAppenderResolver;
+
+    @Autowired
+    private LogAppendersService logAppendersService;
 
     @Override
-    public List<LogAppender> getApplicationAppenders(String applicationId) {
-        ApplicationDto applicationDto = applicationService.findAppById(applicationId);
-        String applicationToken = applicationDto.getApplicationToken();
-        LOG.debug("Finding all appenders for application with ApplicationToken: [{}] ", applicationToken);
+    public List<LogAppender> getApplicationAppenders(String applicationId, String applicationToken) {
+        LOG.debug("[{}] Get log appenders by application id [{}]", applicationId, applicationToken);
+        List<LogAppenderDto> appenders = logAppendersService.findRegisteredLogAppendersByAppId(applicationId);
+        LOG.debug("[{}] Found all appenders [{}] for application.", applicationToken, appenders);
+        List<LogAppender> logAppenders = new ArrayList<>(appenders.size());
 
-        String tenantId = applicationDto.getTenantId();
-        String appendersNames = applicationDto.getLogAppendersNames();
-        LOG.debug("All appenders names: [{}], for application", appendersNames);
-
-        if (appendersNames == null) {
-            LOG.debug("Appenders list for application is empty");
-            return Collections.emptyList();
-        }else{
-            String[] logAppendersNames = appendersNames.split(",");
-            List<LogAppender> logAppenders = new ArrayList<>(logAppendersNames.length);
-            LOG.debug("Starting initialize appenders..");
-            for (String logAppenderName : logAppendersNames) {
-                LogAppender logAppender = logAppenderResolver.resolve(logAppenderName);
-                logAppender.init(logAppenderName, tenantId, applicationId);
+        for (LogAppenderDto appender : appenders) {
+            try {
+                LogAppender logAppender = logAppenderResolver.getAppender(appender);
                 logAppenders.add(logAppender);
+            } catch (Exception e) {
+                LOG.warn("[{}] Can't initialize log appender [{}]", applicationToken, appender);
+                continue;
             }
-            return logAppenders;
         }
+        return logAppenders;
+    }
+
+    @Override
+    public LogAppender getApplicationAppender(String appenderId, String applicationToken) {
+        LOG.debug("[{}] Get log appender by id [{}]", applicationToken, appenderId);
+        LogAppenderDto appender = logAppendersService.findLogAppenderById(appenderId);
+        LOG.debug("[{}] Found appender [{}] by appender id [{}] ", applicationToken, appender, appenderId);
+        LogAppender logAppender = null;
+        try {
+            logAppender = logAppenderResolver.getAppender(appender);
+        } catch (Exception e) {
+            LOG.warn("[{}] Can't initialize log appender [{}]", applicationToken, appender);
+        }
+        return logAppender;
     }
 
     @Override
     public LogSchema getLogSchema(String applicationId, int logSchemaVersion) {
         LOG.debug("Fetching log schema for application {} and version {}", applicationId, logSchemaVersion);
+        LogSchema logSchema = null;
         LogSchemaDto logSchemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
-        return new LogSchema(logSchemaDto);
+        if (logSchemaDto != null) {
+            logSchema = new LogSchema(logSchemaDto);
+        }
+        return logSchema;
     }
 
 }

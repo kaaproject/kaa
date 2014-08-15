@@ -29,6 +29,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppendersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
@@ -96,7 +98,7 @@ public class AppActivityMapper implements ActivityMapper {
             else if (clazz ==  EcfSchemaPlace.class) {
                 return new EcfSchemaActivity((EcfSchemaPlace) place, clientFactory);
             }
-            
+
             else if (clazz == ProfileSchemasPlace.class) {
                 return new ProfileSchemasActivity((ProfileSchemasPlace) place, clientFactory);
             }
@@ -117,7 +119,7 @@ public class AppActivityMapper implements ActivityMapper {
             else if (clazz == NotificationSchemaPlace.class) {
                 return new NotificationSchemaActivity((NotificationSchemaPlace) place, clientFactory);
             }
-            
+
             else if (clazz == LogSchemasPlace.class) {
                 return new LogSchemasActivity((LogSchemasPlace) place, clientFactory);
             }
@@ -146,12 +148,18 @@ public class AppActivityMapper implements ActivityMapper {
             else if (clazz == TopicPlace.class) {
                 return new TopicActivity((TopicPlace) place, clientFactory);
             }
-            
+
             else if (clazz == AefMapsPlace.class) {
                 return new AefMapsActivity((AefMapsPlace) place, clientFactory);
             }
             else if (clazz ==  AefMapPlace.class) {
                 return new AefMapActivity((AefMapPlace) place, clientFactory);
+            }
+            else if (clazz ==  LogAppendersPlace.class) {
+                return new LogAppendersActivity((LogAppendersPlace) place, clientFactory);
+            }
+            else if (clazz ==  LogAppenderPlace.class) {
+                return new LogAppenderActivity((LogAppenderPlace) place, clientFactory);
             }
 
         }

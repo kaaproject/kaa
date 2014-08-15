@@ -52,6 +52,11 @@ public:
     virtual void syncAll() = 0;
 
     /**
+     * Updates the channel's state of all supported services.
+     */
+    virtual void syncAck(TransportType type) = 0;
+
+    /**
      * Retrieves the channel's id.
      * It should be unique in existing channels scope.
      *

@@ -210,7 +210,7 @@ public class HibernateConfigurationDao extends HibernateAbstractDao<Configuratio
 
     @Override
     public Configuration deactivate(String id, String deactivatedUsername) {
-        LOG.debug("Deactivate configuration with id [{}] and increment sequence number.", id);
+        LOG.debug("Deactivate configuration with id [{}].", id);
         Configuration configuration = findById(id);
         if (configuration != null) {
             configuration.setStatus(UpdateStatus.DEPRECATED);

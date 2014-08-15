@@ -18,6 +18,7 @@
 #define DEFAULTNOTIFICATIONTRANSPORT_HPP_
 
 #include <map>
+#include <set>
 #include <string>
 
 #include <boost/cstdint.hpp>
@@ -26,6 +27,7 @@
 #include "kaa/channel/transport/INotificationTransport.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
+#include "kaa/notification/INotificationProcessor.hpp"
 
 namespace kaa {
 
@@ -40,6 +42,8 @@ public:
     {
         setClientState(status);
     }
+
+    virtual NotificationSyncRequestPtr createEmptyNotificationRequest();
 
     virtual NotificationSyncRequestPtr createNotificationRequest();
 
@@ -56,11 +60,14 @@ public:
     virtual void sync() {
         syncByType(type_);
     }
+private:
+    Notifications getUnicastNotifications(const Notifications & notifications);
+    Notifications getMulticastNotifications(const Notifications & notifications);
 
 private:
     INotificationProcessor*   notificationProcessor_;
 
-    std::list<std::string>                   acceptedUnicastNotificationIds_;
+    std::set<std::string>                    acceptedUnicastNotificationIds_;
     std::map<std::string, boost::int32_t>    notificationSubscriptions_;
     SubscriptionCommands                     subscriptions_;
 };

@@ -56,6 +56,10 @@ protected:
         getChannel()->syncAll();
     }
 
+    void syncAck(TransportType transportType = Type) {
+        getChannel(transportType)->syncAck(transportType);
+    }
+
 protected:
     const TransportType         type_;
     IKaaChannelManager &        channelManager_;

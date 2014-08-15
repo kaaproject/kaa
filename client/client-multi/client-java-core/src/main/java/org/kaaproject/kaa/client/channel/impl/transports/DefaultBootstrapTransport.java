@@ -32,11 +32,6 @@ public class DefaultBootstrapTransport extends AbstractKaaTransport implements B
     }
 
     @Override
-    public void sync() {
-        syncByType(TransportType.BOOTSTRAP);
-    }
-
-    @Override
     public Resolve createResolveRequest() {
         if (clientState != null) {
             Resolve request = new Resolve();
@@ -56,6 +51,11 @@ public class DefaultBootstrapTransport extends AbstractKaaTransport implements B
     @Override
     public void setBootstrapManager(BootstrapManager manager) {
         this.manager = manager;
+    }
+
+    @Override
+    protected TransportType getTransportType() {
+        return TransportType.BOOTSTRAP;
     }
 
 }

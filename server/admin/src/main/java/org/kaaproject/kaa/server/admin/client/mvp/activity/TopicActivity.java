@@ -96,10 +96,9 @@ public class TopicActivity
     }
 
     @Override
-    protected void editEntity(TopicDto entity,
-            AsyncCallback<TopicDto> callback) {
-        KaaAdmin.getDataSource().editTopic(entity, callback);
-    }
+	protected void editEntity(TopicDto entity, AsyncCallback<TopicDto> callback) {
+		KaaAdmin.getDataSource().editTopic(entity, callback);
+	}
 
     private void sendNotification() {
         SendNotificationDialog.showSendNotificationDialog(applicationId,

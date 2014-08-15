@@ -25,12 +25,30 @@ import java.util.List;
 public interface LogAppenderService {
 
     /**
-     * Return List of all Appenders available for Application with specific application id
+     * Return List of all Appenders available for Application with specific application id.
      *
      * @param applicationId the application id of Application
+     * @param applicationToken
      * @return List of all Appenders available for Application
      */
-    List<LogAppender> getApplicationAppenders(String applicationId);
+    List<LogAppender> getApplicationAppenders(String applicationId, String applicationToken);
 
+    /**
+     * Gets the log schema.
+     *
+     * @param applicationId the application id
+     * @param logSchemaVersion the log schema version
+     * @return the log schema
+     */
     LogSchema getLogSchema(String applicationId, int logSchemaVersion);
+
+    /**
+     * Gets the application appender.
+     *
+     * @param appenderId the appender id
+     * @param applicationToken
+     * @return the application appender
+     */
+    LogAppender getApplicationAppender(String appenderId, String applicationToken);
+
 }

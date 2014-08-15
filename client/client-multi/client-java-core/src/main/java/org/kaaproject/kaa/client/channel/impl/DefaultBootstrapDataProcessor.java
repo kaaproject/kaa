@@ -60,5 +60,4 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
             transport.onResolveResponse(list);
         }
     }
-
 }

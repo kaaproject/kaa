@@ -118,7 +118,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     protected ScheduledExecutorService createExecutor() {
-        LOG.info("Creating a new executor for channel {}", getId());
+        LOG.info("Creating a new executor for channel [{}]", getId());
         return new ScheduledThreadPoolExecutor(1) {
             @Override
             protected <V> RunnableScheduledFuture<V> decorateTask(
@@ -140,6 +140,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
                 if (forced) {
                     task.waitUntilExecuted();
                 }
+                LOG.info("Poll scheduler stopped");
             }
         }
     }
@@ -178,7 +179,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
 
     @Override
     public void onResponse(byte [] response) {
-        LOG.debug("Response for channel {} received", getId());
+        LOG.debug("Response for channel [{}] received", getId());
         byte[] decodedResponse;
         try {
             processingResponse = true;
@@ -196,34 +197,34 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     @Override
     public void onServerError(ServerInfo info) {
         if (!stopped) {
-            LOG.debug("Channel {} connection failed", getId());
+            LOG.debug("Channel [{}] connection failed", getId());
             synchronized (this) {
                 stopPollScheduler(false);
             }
             client.getChannelMananager().onServerFailed(info);
         } else {
-            LOG.debug("Channel {} connection aborted", getId());
+            LOG.debug("Channel [{}] connection aborted", getId());
         }
     }
 
     @Override
     public synchronized void sync(TransportType type) {
         if (isShutdown) {
-            LOG.info("Can't sync. Channel {} is down", getId());
+            LOG.info("Can't sync. Channel [{}] is down", getId());
             return;
         }
         if (isPaused) {
-            LOG.info("Can't sync. Channel {} is paused", getId());
+            LOG.info("Can't sync. Channel [{}] is paused", getId());
             return;
         }
-        LOG.info("Processing sync {} for channel {}", type, getId());
+        LOG.info("Processing sync {} for channel [{}]", type, getId());
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null) {
                 if (SUPPORTED_TYPES.get(type) != null) {
                     stopPoll();
                     startPoll();
                 } else {
-                    LOG.error("Unsupported type {} for channel {}", type, getId());
+                    LOG.error("Unsupported type {} for channel [{}]", type, getId());
                 }
             } else {
                 LOG.warn("Can't sync. Server is null");
@@ -234,14 +235,14 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     @Override
     public synchronized void syncAll() {
         if (isShutdown) {
-            LOG.info("Can't sync. Channel {} is down", getId());
+            LOG.info("Can't sync. Channel [{}] is down", getId());
             return;
         }
         if (isPaused) {
-            LOG.info("Can't sync. Channel {} is paused", getId());
+            LOG.info("Can't sync. Channel [{}] is paused", getId());
             return;
         }
-        LOG.info("Processing sync all for channel {}", getId());
+        LOG.info("Processing sync all for channel [{}]", getId());
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null) {
                 stopPoll();
@@ -250,6 +251,11 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
                 LOG.warn("Can't sync. Server is null");
             }
         }
+    }
+
+    @Override
+    public void syncAck(TransportType type) {
+        LOG.info("Sync ack message is ignored for Channel {}", getId());
     }
 
     @Override
@@ -279,17 +285,19 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     @Override
     public synchronized void setServer(ServerInfo server) {
         if (isShutdown) {
-            LOG.info("Can't set server. Channel {} is down", getId());
+            LOG.info("Can't set server. Channel [{}] is down", getId());
             return;
         }
         if (server != null) {
             stopPoll();
             this.currentServer = (HttpLongPollServerInfo) server;
             synchronized (httpClientLock) {
+                LOG.debug("Channel [{}]: creating HTTP client..", getId());
                 this.httpClient = client.createHttpClient(currentServer.getURL(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
                 synchronized (httpClientSetLock) {
                     httpClientSetLock.notifyAll();
                 }
+                LOG.debug("Channel [{}]: HTTP client created", getId());
             }
             startPoll();
         }
@@ -311,7 +319,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             scheduler = null;
         }
     }
-    
+
     public void resume() {
         isPaused = false;
         startPoll();

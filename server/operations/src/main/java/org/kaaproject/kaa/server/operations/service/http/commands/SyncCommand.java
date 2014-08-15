@@ -19,26 +19,12 @@
  */
 package org.kaaproject.kaa.server.operations.service.http.commands;
 
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-
 import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-
 
 /**
- * The Class UpdateEndpointCommand.
+ * The Class SyncCommand.
  */
-public class SyncCommand extends AbstractOperationsCommand<SyncRequest, SyncResponse> implements CommonEPConstans {
-
-    static {
-        COMMAND_NAME = SYNC_COMMAND;
-        LOG.info("CommandName: " + COMMAND_NAME);
-    }
+public class SyncCommand extends AbstractHttpSyncCommand implements CommonEPConstans {
 
     @Override
     public ChannelType getChannelType() {
@@ -51,47 +37,6 @@ public class SyncCommand extends AbstractOperationsCommand<SyncRequest, SyncResp
     public SyncCommand() {
         super();
         LOG.trace("CommandName: " + COMMAND_NAME + ": Created..");
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand#getRequestConverterClass()
-     */
-    @Override
-    protected Class<SyncRequest> getRequestConverterClass() {
-        return SyncRequest.class;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand#getResponseConverterClass()
-     */
-    @Override
-    protected Class<SyncResponse> getResponseConverterClass() {
-        return SyncResponse.class;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand#getPublicKey(org.apache.avro.specific.SpecificRecordBase)
-     */
-    @Override
-    protected PublicKey getPublicKey(SyncRequest request) throws GeneralSecurityException {
-        PublicKey endpointKey = null;
-        if(request.getProfileSyncRequest() != null && request.getProfileSyncRequest().getEndpointPublicKey() != null){
-            byte[] publicKeySrc = request.getProfileSyncRequest().getEndpointPublicKey().array();
-            endpointKey = KeyUtil.getPublic(publicKeySrc);
-        }
-        if(endpointKey == null){
-            EndpointObjectHash hash = EndpointObjectHash.fromBytes(request.getSyncRequestMetaData().getEndpointPublicKeyHash().array());
-            endpointKey = cacheService.getEndpointKey(hash);
-        }
-        return endpointKey;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.http.commands.AbstractOperationsCommand#processParsedRequest(org.apache.avro.specific.SpecificRecordBase)
-     */
-    @Override
-    protected SyncResponse processParsedRequest(SyncRequest epRequest) throws GetDeltaException {
-        return operationsService.sync(epRequest).getResponse();
     }
 
     /* (non-Javadoc)

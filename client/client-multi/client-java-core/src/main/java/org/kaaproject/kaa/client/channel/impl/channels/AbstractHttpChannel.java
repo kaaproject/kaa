@@ -72,9 +72,6 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             LOG.info("Can't sync. Channel {} is paused", getId());
             return;
         }
-        if (executor == null) {
-            executor = createExecutor();
-        }
         LOG.info("Processing sync {} for channel {}", type, getId());
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null) {
@@ -103,9 +100,6 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             LOG.info("Can't sync. Channel {} is paused", getId());
             return;
         }
-        if (executor == null) {
-            executor = createExecutor();
-        }
         LOG.info("Processing sync all for channel {}", getId());
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null) {
@@ -115,6 +109,11 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
                 LOG.warn("Can't sync. Server is null");
             }
         }
+    }
+
+    @Override
+    public void syncAck(TransportType type) {
+        LOG.info("Sync ack message is ignored for Channel {}", getId());
     }
 
     @Override
@@ -137,6 +136,9 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             LOG.info("Can't set server. Channel {} is down", getId());
             return;
         }
+        if (executor == null) {
+            executor = createExecutor();
+        }
         if (server != null) {
             this.currentServer = (AbstractServerInfo) server;
             this.httpClient = client.createHttpClient(currentServer.getURL(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
@@ -153,7 +155,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             executor.shutdownNow();
         }
     }
-    
+
     public void pause() {
         isPaused = true;
         if (executor != null) {
@@ -161,7 +163,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             executor = null;
         }
     }
-    
+
     public void resume() {
         isPaused = false;
         if (lastConnectionFailed) {

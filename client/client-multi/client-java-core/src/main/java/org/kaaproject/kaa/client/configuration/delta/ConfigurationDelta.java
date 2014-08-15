@@ -20,7 +20,7 @@ package org.kaaproject.kaa.client.configuration.delta;
  * Interface for the delta object
  *
  * @author Yaroslav Zeygerman
- *
+ * @see DeltaType
  */
 public interface ConfigurationDelta {
 

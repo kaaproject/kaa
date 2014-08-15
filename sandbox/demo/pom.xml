@@ -7,7 +7,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.5.1</version>
+		<version>0.5.2</version>
 		<artifactId>sandbox</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.sandbox</groupId>
@@ -20,37 +20,14 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<main.dir>${basedir}/../..</main.dir>
+		<spring.version>3.2.10.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>utils</artifactId>
+            <artifactId>admin-rest-client</artifactId>
             <version>${project.version}</version>
-        </dependency>        
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>dto</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang.version}</version>
-        </dependency>
-		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpclient</artifactId>
-		    <version>${httpcomponents.version}</version>
-		</dependency>		        
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>           
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>net.iharder</groupId>

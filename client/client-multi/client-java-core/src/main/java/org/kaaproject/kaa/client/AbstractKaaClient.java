@@ -47,8 +47,7 @@ import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
-import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
-import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
+import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultBootstrapTransport;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultConfigurationTransport;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultEventTransport;
@@ -146,9 +145,8 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     private final EndpointObjectHash publicKeyHash;
 
-    private final DefaultOperationsChannel defaultOperationsChannel;
-    private final DefaultOperationHttpChannel defaultOperationsHttpChannel;
     private final DefaultBootstrapChannel defaultBootstrapChannel;
+    private final DefaultOperationTcpChannel defaultOperationTcpChannel;
 
     AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         properties = new KaaClientProperties();
@@ -163,9 +161,6 @@ public abstract class AbstractKaaClient implements KaaClient {
         }
 
         kaaClientState = new KaaClientPropertiesState(createPersistentStorage(), properties);
-        defaultOperationsChannel = new DefaultOperationsChannel(this, kaaClientState);
-        defaultBootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
-        defaultOperationsHttpChannel = new DefaultOperationHttpChannel(this, kaaClientState);
 
         BootstrapTransport bootstratpTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
         ProfileTransport profileTransport = new DefaultProfileTransport();
@@ -187,10 +182,9 @@ public abstract class AbstractKaaClient implements KaaClient {
 
         bootstrapDataProcessor.setBootstrapTransport(bootstratpTransport);
 
-        defaultOperationsChannel.setMultiplexer(operationsDataProcessor);
-        defaultOperationsChannel.setDemultiplexer(operationsDataProcessor);
-        defaultOperationsHttpChannel.setMultiplexer(operationsDataProcessor);
-        defaultOperationsHttpChannel.setDemultiplexer(operationsDataProcessor);
+
+        defaultBootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
+
         defaultBootstrapChannel.setMultiplexer(bootstrapDataProcessor);
         defaultBootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
 
@@ -203,9 +197,12 @@ public abstract class AbstractKaaClient implements KaaClient {
         logCollector = new DefaultLogCollector(logTransport);
 
         channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
+        defaultOperationTcpChannel = new DefaultOperationTcpChannel(kaaClientState, channelManager);
+        defaultOperationTcpChannel.setMultiplexer(operationsDataProcessor);
+        defaultOperationTcpChannel.setDemultiplexer(operationsDataProcessor);
+
         channelManager.addChannel(defaultBootstrapChannel);
-        channelManager.addChannel(defaultOperationsChannel);
-        channelManager.addChannel(defaultOperationsHttpChannel);
+        channelManager.addChannel(defaultOperationTcpChannel);
         bootstrapManager.setChannelManager(channelManager);
 
         publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
@@ -294,22 +291,17 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     void stop() {
         kaaClientState.persist();
-        defaultOperationsChannel.shutdown();
         defaultBootstrapChannel.shutdown();
-        defaultOperationsHttpChannel.shutdown();
+        defaultOperationTcpChannel.shutdown();
     }
-    
+
     void pause() {
         kaaClientState.persist();
-        defaultOperationsChannel.pause();
         defaultBootstrapChannel.pause();
-        defaultOperationsHttpChannel.pause();
     }
-    
+
     void resume() {
-        defaultOperationsChannel.resume();
         defaultBootstrapChannel.resume();
-        defaultOperationsHttpChannel.resume();
     }
 
     @Override
@@ -386,7 +378,7 @@ public abstract class AbstractKaaClient implements KaaClient {
     public PublicKey getClientPublicKey() {
         return kaaClientState.getPublicKey();
     }
-    
+
     @Override
     public String getEndpointKeyHash() {
         return kaaClientState.getEndpointKeyHash().getKeyHash();

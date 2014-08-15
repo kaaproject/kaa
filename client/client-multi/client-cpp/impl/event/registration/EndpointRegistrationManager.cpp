@@ -64,6 +64,11 @@ void EndpointRegistrationManager::onUserAttach(const UserSyncResponse::userAttac
 
     if (!response.is_null()) {
         if (response.get_UserAttachResponse().result == SyncResponseResultType::SUCCESS) {
+            if (userAttachRequest_.get() == nullptr) {
+                KAA_LOG_ERROR(boost::format("Got UserAttachResponse without leading UserAttachRequest. Probably duplicated message from server."));
+                return;
+            }
+
             status_->setEndpointAttachStatus(true);
 
             KAA_LOG_INFO(boost::format("Current endpoint was attached to '%1%'") % userAttachRequest_->userExternalId);

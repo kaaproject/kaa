@@ -16,38 +16,42 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.http;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kaaproject.kaa.server.common.http.server.NettyHttpServer;
+import org.kaaproject.kaa.server.common.server.http.DefaultHttpServerInitializer;
+import org.kaaproject.kaa.server.common.server.http.NettyHttpServer;
 
 
 public class ProtocolServiceTest {
 
     private static NettyHttpServer serverMock;
+    private static DefaultHttpServerInitializer initializerMock;
     private static BootstrapConfig config;
-    
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         config = new BootstrapConfig();
         serverMock = mock(NettyHttpServer.class);
+        initializerMock = mock(DefaultHttpServerInitializer.class);
         when(serverMock.getConf()).thenReturn(config);
     }
 
     @Test
     public void testProtocolService() {
-        ProtocolService ps = new ProtocolService(config);
+        ProtocolService ps = new ProtocolService(config, initializerMock);
         ps.setNetty(serverMock);
         assertNotNull(ps);
     }
 
     @Test
     public void testStart() {
-        ProtocolService ps = new ProtocolService(config);
+        ProtocolService ps = new ProtocolService(config, initializerMock);
         ps.setNetty(serverMock);
         ps.start();
         verify(serverMock, times(1)).init();
@@ -56,7 +60,7 @@ public class ProtocolServiceTest {
 
     @Test
     public void testStop() {
-        ProtocolService ps = new ProtocolService(config);
+        ProtocolService ps = new ProtocolService(config, initializerMock);
         ps.setNetty(serverMock);
         ps.stop();
         verify(serverMock, times(1)).shutdown();

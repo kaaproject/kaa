@@ -42,67 +42,67 @@ import com.twitter.common.thrift.ThriftFactory;
 /**
  * Neighbor Connection Class.
  * Hold thrift connection pool to specific operations server.
- * Provides sendEventMessage() for send messages to neighbor Operations Server 
+ * Provides sendEventMessage() for send messages to neighbor Operations Server
  * @author Andrey Panasenko
  *
  */
-public class NeighborConnection {
-    
+public final class NeighborConnection {
+
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(NeighborConnection.class);
-    
+
     /** Default maximum number of opened connections to neighbor */
     private static final int DEFAULT_MAX_NUMBER_OF_CONNECTION_TO_NEIGHBOR = 2;
-    
+
     /** SOCKET_TIMEOUT on opened connection in seconds */
     //In seconds
     private static final long DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR = 20;
-    
+
     /** Default maximum number of event messages queue */
     private static final int DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH = 1024*1024;
-    
+
     /** ID of connection in thriftHost:thriftPort formar */
     private String id;
-    
+
     /** ConnectionInfo of neighbor Operations server */
     private ConnectionInfo connectionInfo;
-    
+
     /** Real maximum number of opened connections to neighbor, if not set use default */
     private int maxNumberConnection = DEFAULT_MAX_NUMBER_OF_CONNECTION_TO_NEIGHBOR;
-    
+
     /** Real SOCKET_TIMEOUT on opened connection, if not set used default */
     private long socketTimeout = DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR;
-    
+
     /** Real maximum number of event messages queue */
-    private int messageQueueLingth = DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH;
-    
+    private final int messageQueueLingth = DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH;
+
     /** Thrift classes */
     private ThriftFactory<OperationsThriftService.Iface> clientFactory;
     private Thrift<OperationsThriftService.Iface> thrift;
-    
+
 
     /** Blocking queue of event messages */
     private LinkedBlockingQueue<EventMessage> messageQueue;
-    
+
     private Random rnd;
-    
-    /** Fixed Thread pool to run event workers */ 
+
+    /** Fixed Thread pool to run event workers */
     private ExecutorService executor;
-    
+
     /** Future list of event workers */
     private List<Future<?>> workers;
-    
+
     /** event service */
-    private DefaultEventService eventService;
+    private final DefaultEventService eventService;
     /**
      * EventWorker Class.
      * Provides sending EventMessages asynchronously.
-     * EventWorker blocks if messageQueue is empty in poll() operation. 
+     * EventWorker blocks if messageQueue is empty in poll() operation.
      */
     public class EventWorker implements Runnable {
 
-        private int uniqueId = rnd.nextInt(maxNumberConnection*1000);
+        private final int uniqueId = rnd.nextInt(maxNumberConnection*1000);
         private boolean operate = true;
         /* (non-Javadoc)
          * @see java.lang.Runnable#run()
@@ -132,7 +132,7 @@ public class NeighborConnection {
             }
         }
     }
-    
+
     /**
      * Constructor.
      * @param connectionInfo neighbor operations server ConnectionInfo
@@ -146,7 +146,7 @@ public class NeighborConnection {
         setConnectionInfo(connectionInfo);
         init();
     }
-    
+
     /**
      * Constructor
      * @param connectionInfo neighbor operations server ConnectionInfo
@@ -173,7 +173,7 @@ public class NeighborConnection {
         thrift = clientFactory.withMaxConnectionsPerEndpoint(maxNumberConnection).withSocketTimeout(Amount.of(socketTimeout, Time.SECONDS)).build(backends);
         initWorkers();
     }
-    
+
     /**
      * Initialize event workers.
      */
@@ -181,9 +181,9 @@ public class NeighborConnection {
         for(int i = 0 ; i < getMaxNumberConnection(); i++) {
             EventWorker worker = new EventWorker();
             workers.add(executor.submit(worker));
-        }        
+        }
     }
-    
+
     /**
      * Cancel event workers.
      */
@@ -193,7 +193,7 @@ public class NeighborConnection {
         }
         workers.clear();
     }
-    
+
     /**
      * Return Thrift service client interface.
      * @return OperationsThriftService.Iface
@@ -201,7 +201,7 @@ public class NeighborConnection {
     public OperationsThriftService.Iface getClient() {
         return thrift.builder().disableStats().withRequestTimeout(Amount.of(socketTimeout, Time.SECONDS)).create();
     }
-    
+
     /**
      * Stops neighbor Operations server connections.
      */
@@ -215,7 +215,7 @@ public class NeighborConnection {
         }
         thrift.close();
     }
-    
+
     /**
      * Send List<EventMessage> to neighbor Operartions Server.
      * @param messages List<EventMessage>
@@ -229,7 +229,7 @@ public class NeighborConnection {
             }
         }
     }
-    
+
     /**
      * Neighbor Operations Server ID getter.
      * @return the id
@@ -291,7 +291,7 @@ public class NeighborConnection {
     public void setSocketTimeout(long socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -335,6 +335,6 @@ public class NeighborConnection {
     public String toString() {
         return "NeighborConnection [Id=" + id + "]";
     }
-    
-    
+
+
 }

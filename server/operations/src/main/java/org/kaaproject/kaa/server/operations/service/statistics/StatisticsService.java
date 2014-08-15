@@ -24,10 +24,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
-import org.kaaproject.kaa.server.common.http.server.SessionTrackable;
-import org.kaaproject.kaa.server.common.http.server.Track;
+import org.kaaproject.kaa.server.common.server.SessionTrackable;
+import org.kaaproject.kaa.server.common.server.Track;
 import org.kaaproject.kaa.server.common.zk.ZkChannelException;
 import org.kaaproject.kaa.server.common.zk.ZkChannelsUtils;
+import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.statistics.SessionHistory.RequestHistory;
 import org.slf4j.Logger;
@@ -37,13 +38,13 @@ import org.slf4j.LoggerFactory;
  * StatisticsService Class.
  * Singletone, use static getService() to get instance
  * Service collects:
- * 1.  private int processedRequestCount - Number of requests (SYNC, LongSYNC) 
+ * 1.  private int processedRequestCount - Number of requests (SYNC, LongSYNC)
  *     processed completely during collect window period.
- * 2.  private int registeredUsersCount - average number of online users (LongSYNC) 
+ * 2.  private int registeredUsersCount - average number of online users (LongSYNC)
  *     during collect window period.
  * 3.  private int deltaCalculationCount - average Delta calculation time during collect window period.
- * 
- *  processedRequestCount - 
+ *
+ *  processedRequestCount -
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  *
  */
@@ -52,59 +53,61 @@ public class StatisticsService extends Thread implements SessionTrackable {
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
             .getLogger(StatisticsService.class);
-    
+
     /** Statistics service type */
     private ChannelType channelType;
-    
+
+    private OperationsNode operationsNode;
+
     /** Default thread name */
     private static final String THREAD_NAME = "StatisticsServiceThread";
-    
-    /** Default value for statistics update, how many times in statistics window*/ 
+
+    /** Default value for statistics update, how many times in statistics window*/
     private static final int DEFAULT_STATISTIC_UPDATE_TIMES = 60;
-    
+
     /** Default value for statistics collect window in ms */
     //in ms, 5 minutes
-    private static final long DEFAULT_STATISTIC_COLLECTION_WINDOW = 300000; 
-    
+    private static final long DEFAULT_STATISTIC_COLLECTION_WINDOW = 300000;
+
     /** Concurrent HashMap for storing sessions */
-    private ConcurrentHashMap<UUID, SessionHistory> sessions; //NOSONAR
-    
+    private final ConcurrentHashMap<UUID, SessionHistory> sessions; //NOSONAR
+
     /** Timestamp of previous recalculation period */
     private long recalculationPreviouseTimestamp = 0;
 
-    /** List for average calculation with sliding window */ 
-    private List<Integer> processedRequestsWindow;
-    private List<Integer> onlineSessionsWindow;
-    private List<Integer> deltaSyncWindow;
-    
+    /** List for average calculation with sliding window */
+    private final List<Integer> processedRequestsWindow;
+    private final List<Integer> onlineSessionsWindow;
+    private final List<Integer> deltaSyncWindow;
+
     /** Calculated average values */
     private int averageProcessedRequests = 0;
     private int averageOnlineSessions = 0;
     private int averageDeltaSync = 0;
-    
-    
+
+
     /** boolean which used to control operation mode in Thread run() cycle */
     private boolean operate = false;
-    
+
     /** sync object */
-    private Object sync = new Object();
-    
+    private final Object sync = new Object();
+
     /** Statistics collect window in ms */
     private long recalculationPeriod = DEFAULT_STATISTIC_COLLECTION_WINDOW/DEFAULT_STATISTIC_UPDATE_TIMES;
-    
+
     /** Statistics Update Times */
     private int statsUpdateTimes = DEFAULT_STATISTIC_UPDATE_TIMES;
-    
+
     /** EndpointConfig  */
     OperationsServerConfig config;
-    
+
     /**
      * @param type
      */
     public StatisticsService(ChannelType type) {
         this.channelType = type;
         sessions = new ConcurrentHashMap<UUID, SessionHistory>();
-        processedRequestsWindow = new LinkedList<>(); 
+        processedRequestsWindow = new LinkedList<>();
         onlineSessionsWindow = new LinkedList<>();
         deltaSyncWindow = new LinkedList<>();
         initConfig();
@@ -117,13 +120,13 @@ public class StatisticsService extends Thread implements SessionTrackable {
             LOG.debug("StatisticsService: recalculation_period set to "+recalculationPeriod);
         }
     }
-    
+
     @Override
     public void start() {
         operate = true;
         super.start();
     }
-    
+
     @Override
     public void run() {
         this.setName(THREAD_NAME);
@@ -136,11 +139,11 @@ public class StatisticsService extends Thread implements SessionTrackable {
                     recalculate(recalculationPreviouseTimestamp, recalculationStart);
                     recalculationPreviouseTimestamp = recalculationStart;
                     long recalculateDuration =  System.currentTimeMillis() - recalculationStart;
-                    
+
                     LOG.trace("Recalculated:\nAverage Processed Requests = "+averageProcessedRequests
                             +"\nAverage online sessions = "+averageOnlineSessions
                             +"\nAverage request processing time = "+averageDeltaSync);
-                    
+
                     if (recalculationPeriod > recalculateDuration) {
                         LOG.trace("Statistics Service Recalculate going to sleep "+(recalculationPeriod - recalculateDuration));
                         sync.wait(recalculationPeriod - recalculateDuration);
@@ -153,10 +156,10 @@ public class StatisticsService extends Thread implements SessionTrackable {
         }
         LOG.info("Statistics Service stoped.");
     }
-    
-    /** 
+
+    /**
      * Stop Statistics Service.
-     */    
+     */
     protected void shutdown() {
         LOG.info("Statistics Service shutdown....");
         operate = false;
@@ -170,9 +173,9 @@ public class StatisticsService extends Thread implements SessionTrackable {
             LOG.trace("Statistics Service shutdown join() Interupted");
         } finally {
             LOG.info("Statistics Service shutdown complete.");
-        }        
+        }
     }
-    
+
     /**
      * Recalculate average statistics values.
      * First calculates values for current interval, from startInterval to stopInterval.
@@ -216,23 +219,23 @@ public class StatisticsService extends Thread implements SessionTrackable {
         for(UUID uuid : closedSessions) {
             sessions.remove(uuid);
         }
-        
+
         int deltaLastValue = 0;
         if (deltaElementsNumber > 0) {
             deltaLastValue = deltaSum/deltaElementsNumber;
         }
-        
+
         LOG.debug("processedRequests="+processedRequests+"; onlineSessions="+onlineSessions+"; deltaLastValue="+deltaLastValue+";");
-        
+
         averageProcessedRequests = calculateWindow(processedRequestsWindow, processedRequests);
         averageOnlineSessions = calculateWindow(onlineSessionsWindow, onlineSessions);
         averageDeltaSync = calculateWindow(deltaSyncWindow, deltaLastValue);
-        
+
         LOG.debug("processedRequestsWindow.size()="+processedRequestsWindow.size()+"; onlineSessionsWindow.size()="+onlineSessionsWindow.size()+"; deltaSyncWindow.size()="+deltaSyncWindow.size()+";");
         LOG.debug("averageProcessedRequests="+averageProcessedRequests+"; averageOnlineSessions="+averageOnlineSessions+"; averageDeltaSync="+averageDeltaSync+";");
         updateNodeInfo();
     }
-    
+
     /**
      * Recalculate average value for window
      * @param list - list of window elements.
@@ -254,18 +257,17 @@ public class StatisticsService extends Thread implements SessionTrackable {
         }
         return average;
     }
-    
+
     /**
      * Updates calculates statistics values in ZooKepper OperationsNode
      */
     private void updateNodeInfo() {
-        if (config != null && config.getZkNode() != null) {
+        if (config != null && operationsNode != null) {
             try {
-                
-                config.getZkNode().updateNodeStatsValues(
+                operationsNode.updateNodeStatsValues(
                         ZkChannelsUtils.getZkChannelTypeFromChanneltype(getChannelType()),
-                        averageDeltaSync, 
-                        averageProcessedRequests, 
+                        averageDeltaSync,
+                        averageProcessedRequests,
                         averageOnlineSessions);
             } catch (IOException e) {
                 LOG.error("Error update statistics values on ZooKepper: "+e);
@@ -274,7 +276,7 @@ public class StatisticsService extends Thread implements SessionTrackable {
             }
         }
     }
-    
+
         @Override
     public Track newSession(UUID uuid) {
         SessionHistory track = new SessionHistory(uuid);
@@ -317,6 +319,10 @@ public class StatisticsService extends Thread implements SessionTrackable {
      */
     public void setChannelType(ChannelType channelType) {
         this.channelType = channelType;
+    }
+
+    public void setZkNode(OperationsNode operationsNode) {
+        this.operationsNode = operationsNode;
     }
 }
 

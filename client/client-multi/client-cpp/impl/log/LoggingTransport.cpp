@@ -34,7 +34,7 @@ void LoggingTransport::sync()
 
 boost::shared_ptr<LogSyncRequest> LoggingTransport::createLogSyncRequest()
 {
-    boost::shared_ptr<LogSyncRequest> request;
+    boost::shared_ptr<LogSyncRequest> request(new LogSyncRequest());
 
     LogSyncRequest logBlockRequest = collector_.getLogUploadRequest();
     if (!logBlockRequest.requestId.is_null() && !logBlockRequest.requestId.get_string().empty()) {

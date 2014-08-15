@@ -32,11 +32,11 @@ namespace kaa {
 class DefaultOperationLongPollChannel : public IDataChannel {
 public:
     DefaultOperationLongPollChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys);
-    virtual ~DefaultOperationLongPollChannel() { }
+    virtual ~DefaultOperationLongPollChannel();
 
     virtual void sync(TransportType type);
     virtual void syncAll();
-
+    virtual void syncAck(TransportType type);
     virtual const std::string& getId() const { return CHANNEL_ID; }
     virtual ChannelType getType() const { return ChannelType::HTTP_LP; }
 

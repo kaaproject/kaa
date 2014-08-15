@@ -43,7 +43,7 @@ public class ControlNode extends WorkerNodeTracker {
 
     /**
      * Instantiates a new control node.
-     * 
+     *
      * @param currentNodeInfo
      *            the current node info
      * @param zkHostPortList
@@ -58,7 +58,7 @@ public class ControlNode extends WorkerNodeTracker {
 
     /**
      * Instantiates a new control node.
-     * 
+     *
      * @param currentNodeInfo
      *            the current node info
      * @param zkHostPortList
@@ -79,7 +79,7 @@ public class ControlNode extends WorkerNodeTracker {
      * Updates current node data. In case this is master node - will also update
      * ZK node; Although it is possible that we will have race condition here, i
      * expect possibility is quite low and can be ignored in first releases.
-     * 
+     *
      * @param currentNodeInfo
      *            the current node info
      * @throws IOException
@@ -93,13 +93,13 @@ public class ControlNode extends WorkerNodeTracker {
                 public void doWithZkClient(CuratorFramework client) throws Exception {
                     client.setData().forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH, controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
                 }
-            }, true);            
+            }, true);
         }
     }
 
     /**
      * Checks if is master.
-     * 
+     *
      * @return true, if is master
      */
     public boolean isMaster() {
@@ -117,17 +117,17 @@ public class ControlNode extends WorkerNodeTracker {
 
     /**
      * Gets the current node info.
-     * 
+     *
      * @return the current node info
      */
     public ControlNodeInfo getCurrentNodeInfo() {
         return currentNodeInfo;
     }
-    
+
     @Override
     public boolean createZkNode() throws IOException {
         try {
-            client.create().withMode(CreateMode.EPHEMERAL)
+            nodePath = client.create().withMode(CreateMode.EPHEMERAL)
                     .forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH, controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
         } catch (NodeExistsException e) {
             LOG.info("master already exists");
@@ -137,11 +137,11 @@ public class ControlNode extends WorkerNodeTracker {
             throw new IOException(e);
         }
         return true;
-    }    
+    }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.common.zk.ControlNodeTracker#onNoMaster()
      */
     @Override

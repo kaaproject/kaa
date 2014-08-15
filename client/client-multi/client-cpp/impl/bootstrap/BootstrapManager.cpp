@@ -26,6 +26,7 @@
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/channel/server/OperationServerHttpInfo.hpp"
 #include "kaa/channel/server/OperationServerLongPollInfo.hpp"
+#include "kaa/channel/server/OperationServerKaaTcpInfo.hpp"
 
 namespace kaa {
 
@@ -63,6 +64,12 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
             KAA_LOG_DEBUG(boost::format("Server name: %1%, Parameters: %2%:%3%")
                      % server.name % params.hostName % params.port);
             IServerInfoPtr info(new OperationServerLongPollInfo(params.hostName, params.port, pubKey));
+            return info;
+        }
+        case ChannelType::KAATCP: {
+            KaaTCPComunicationParameters params = channel.communicationParameters.get_KaaTCPComunicationParameters();
+            Botan::MemoryVector<boost::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
+            IServerInfoPtr info(new OperationServerKaaTcpInfo(params.hostName, params.port, pubKey));
             return info;
         }
         default:
@@ -152,6 +159,7 @@ void BootstrapManager::onServerListUpdated(const OperationsServerList& list)
             switch (channel.channelType) {
                 case ChannelType::HTTP:
                 case ChannelType::HTTP_LP:
+                case ChannelType::KAATCP:
                     break;
                 default:
                     throw KaaException("Unsupported channel type");

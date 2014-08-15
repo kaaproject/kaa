@@ -57,12 +57,14 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OperationsThriftServiceImpl.class);
 
-
+    /** The operations bootstrap service. */
     @Autowired
     OperationsBootstrapService operationsBootstrapService;
+
     /** The cache service. */
     @Autowired
     CacheService cacheService;
+
     /** The akka service. */
     @Autowired
     AkkaService akkaService;
@@ -72,6 +74,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
     ApplicationService applicationService;
 
     /** The event service */
+    @Autowired
     EventService eventService;
 
     /*
@@ -176,7 +179,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
         shutdownThread.start();
     }
 
-    
+
     public void setEventService(EventService eventService) {
         this.eventService = eventService;
     }
@@ -187,6 +190,5 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
     @Override
     public void sendEventMessage(List<EventMessage> messages) throws TException {
         eventService.sendEventMessage(messages);
-        
     }
 }

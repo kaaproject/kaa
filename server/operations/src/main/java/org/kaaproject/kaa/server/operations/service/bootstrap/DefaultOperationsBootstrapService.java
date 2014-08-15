@@ -21,6 +21,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.retry.RetryUntilElapsed;
@@ -39,14 +40,10 @@ import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.config.NettyHttpServiceChannelConfig;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
-import org.kaaproject.kaa.server.operations.service.config.ServiceChannelConfig;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
-import org.kaaproject.kaa.server.operations.service.http.HttpService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory;
-import org.kaaproject.kaa.server.operations.service.statistics.StatisticsService;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +51,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * The Class for Operations bootstrap process.
- * Main methods are {@link #start() start} and {@link #stop() stop}
- * Launches Transport and ZK services
+ * The Class for Operations bootstrap process. Main methods are {@link #start()
+ * start} and {@link #stop() stop} Launches Transport and ZK services
  *
  * @author ashvayka
  */
@@ -64,17 +60,13 @@ import org.springframework.stereotype.Service;
 public class DefaultOperationsBootstrapService implements OperationsBootstrapService {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DefaultOperationsBootstrapService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationsBootstrapService.class);
 
     /** The server. */
     private TServer server;
 
     /** The operations node. */
     private OperationsNode operationsNode;
-
-    /** The Service Channels List */
-    private List<ServiceChannel> serviceChannels;
 
     /** The operations thrift service. */
     @Autowired
@@ -100,37 +92,49 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     @Autowired
     private OperationsServerConfig operationsServerConfig;
 
+    @Autowired
+    private List<ServiceChannel> nettyServersList;
+
     /** The event service */
     @Autowired
     private EventService eventService;
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService#getEndpointService()
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.operations.service.bootstrap.
+     * OperationsBootstrapService#getEndpointService()
      */
     @Override
     public OperationsService getOperationsService() {
         return operationsService;
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService#getKeyStoreService()
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.operations.service.bootstrap.
+     * OperationsBootstrapService#getKeyStoreService()
      */
     @Override
     public KeyStoreService getKeyStoreService() {
         return keyStoreService;
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService#getCacheService()
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.operations.service.bootstrap.
+     * OperationsBootstrapService#getCacheService()
      */
     @Override
     public CacheService getCacheService() {
         return cacheService;
     }
 
-
     /**
      * OperationsServerConfig getter
+     *
      * @return OperationsServerConfig
      */
     private OperationsServerConfig getConfig() {
@@ -145,37 +149,37 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
      */
     @Override
     public void start() {
-
         operationsService.setPublicKey(keyStoreService.getPublicKey());
-        eventService.setConfig(getConfig());
+
         operationsThriftService.setEventService(eventService);
-        
-        for(ServiceChannelConfig channelConf : getConfig().getChannelList()) {
-            LOG.info("Channel {} initializing....", channelConf.getChannelType().toString());
-            switch (channelConf.getChannelType()) {
-            case HTTP:
-            case HTTP_LP:
-                StatisticsService statistics = StatisticsFactory.getService(channelConf.getChannelType());
-                ((NettyHttpServiceChannelConfig)channelConf).setSessionTrack(statistics);
-                ((NettyHttpServiceChannelConfig)channelConf).setOperationServerConfig(getConfig());
-                ServiceChannel channel = new HttpService((NettyHttpServiceChannelConfig)channelConf);
-                channel.start();
-                //TODO need to added blocking while channels starts to check if all is OK
-                serviceChannels.add(channel);
-                break;
-            default:
-                LOG.error("Channel {} unrecognized....",channelConf.getChannelType().toString());
-                break;
-            }
+
+        for (ServiceChannel server : nettyServersList) {
+            LOG.info("Channel {} initializing....", server.getChannelType());
+            server.start();
         }
-        if (!serviceChannels.isEmpty()) {
+
+        if (!nettyServersList.isEmpty()) {
+
+            final CountDownLatch thriftStartupLatch = new CountDownLatch(1);
+            final CountDownLatch thriftShutdownLatch = new CountDownLatch(1);
+
+            startThrift(thriftStartupLatch, thriftShutdownLatch);
+
+            try {
+                thriftStartupLatch.await();
+            } catch (InterruptedException e) {
+                LOG.error("Interrupted while waiting for thrift to start...", e);
+            }
 
             if (getConfig().isZkEnabled()) {
                 startZK();
             }
 
-            // Blocking method call
-            startThrift();
+            try {
+                thriftShutdownLatch.await();
+            } catch (InterruptedException e) {
+                LOG.error("Interrupted while waiting for thrift to stop...", e);
+            }
         } else {
             LOG.error("Operations start failed, No one Service Channels started...");
         }
@@ -189,12 +193,12 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
      */
     @Override
     public void stop() {
-        for(ServiceChannel channel : serviceChannels) {
-            channel.stop();
+        for (ServiceChannel server : nettyServersList) {
+            server.stop();
         }
-        serviceChannels.clear();
+        nettyServersList.clear();
         StatisticsFactory.shutdown();
-        if( akkaService != null){
+        if (akkaService != null) {
             akkaService.getActorSystem().shutdown();
         }
         if (getConfig().isZkEnabled()) {
@@ -217,32 +221,53 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
     /**
      * Start thrift service.
+     *
+     * @param thriftShutdownLatch
+     * @param thriftStartupLatch
      */
-    private void startThrift() {
+    private void startThrift(final CountDownLatch thriftStartupLatch, final CountDownLatch thriftShutdownLatch) {
+        Runnable thriftRunnable = new Runnable() {
 
-        LOG.info("Initializing Thrift Service for Operations Server....");
-        LOG.info("thrift host: {}", getConfig().getThriftHost());
-        LOG.info("thrift port: {}", getConfig().getThriftPort());
+            @Override
+            public void run() {
+                LOG.info("Initializing Thrift Service for Operations Server....");
+                LOG.info("thrift host: {}", getConfig().getThriftHost());
+                LOG.info("thrift port: {}", getConfig().getThriftPort());
 
-        try {
-            OperationsThriftService.Processor<OperationsThriftService.Iface> processor = new OperationsThriftService.Processor<OperationsThriftService.Iface>(
-                    operationsThriftService);
-            TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(getConfig().getThriftHost(), getConfig().getThriftPort()));
-            
-            TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
-            args.stopTimeoutVal = 3;
-            args.stopTimeoutUnit = TimeUnit.SECONDS;
-            server = new TThreadPoolServer(args);
+                try {
+                    OperationsThriftService.Processor<OperationsThriftService.Iface> processor = new OperationsThriftService.Processor<OperationsThriftService.Iface>(
+                            operationsThriftService);
+                    TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(getConfig().getThriftHost(), getConfig().getThriftPort()));
 
-            LOG.info("Operations Server Started.");
+                    TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
+                    args.stopTimeoutVal = 3;
+                    args.stopTimeoutUnit = TimeUnit.SECONDS;
+                    server = new TThreadPoolServer(args);
 
-            server.serve();
+                    LOG.info("Thrift Operations Server Started.");
 
-            LOG.info("Operations Server Stopped.");
+                    thriftStartupLatch.countDown();
 
-        } catch (TTransportException e) {
-            LOG.error("TTransportException", e);
-        }
+                    server.serve();
+
+                    LOG.info("Thrift Operations Server Stopped.");
+
+                    thriftShutdownLatch.countDown();
+                } catch (TTransportException e) {
+                    LOG.error("TTransportException", e);
+                } finally{
+                    if(thriftStartupLatch.getCount() > 0){
+                        thriftStartupLatch.countDown();
+                    }
+                    if(thriftShutdownLatch.getCount() > 0){
+                        LOG.info("Thrift Operations Server Stopped.");
+                        thriftShutdownLatch.countDown();
+                    }
+                }
+            }
+        };
+
+        new Thread(thriftRunnable).start();
     }
 
     /**
@@ -254,34 +279,26 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
         ConnectionInfo connectionInfo = new ConnectionInfo(getConfig().getThriftHost(), getConfig().getThriftPort(), keyData);
         nodeInfo.setConnectionInfo(connectionInfo);
         List<SupportedChannel> suppChannels = new ArrayList<>();
-        for(ServiceChannel sc : serviceChannels) {
+        for (ServiceChannel sc : nettyServersList) {
             try {
                 suppChannels.add(sc.getZkSupportedChannel());
             } catch (ZkChannelException e) {
-                LOG.error("Error advertize Channel ",e);
+                LOG.error("Error advertize Channel ", e);
             }
         }
-        nodeInfo.setSupportedChannelsArray(suppChannels );
-        operationsNode = new OperationsNode(nodeInfo, getConfig().getZkHostPortList(), new RetryUntilElapsed(getConfig().getZkMaxRetryTime(), getConfig().getZkSleepTime()));
+        nodeInfo.setSupportedChannelsArray(suppChannels);
+        operationsNode = new OperationsNode(nodeInfo, getConfig().getZkHostPortList(), new RetryUntilElapsed(getConfig().getZkMaxRetryTime(), getConfig()
+                .getZkSleepTime()));
         try {
             operationsNode.start();
-            getConfig().setZkNode(operationsNode);
             eventService.setZkNode(operationsNode);
         } catch (Exception e) {
             if (getConfig().isZkIgnoreErrors()) {
                 LOG.info("Failed to register operations in ZooKeeper", e);
             } else {
                 LOG.error("Failed to register operations in ZooKeeper", e);
-                throw new RuntimeException(e); //NOSONAR
+                throw new RuntimeException(e); // NOSONAR
             }
         }
     }
-
-    /**
-     * 
-     */
-    public DefaultOperationsBootstrapService() {
-        serviceChannels = new ArrayList<>();
-    }
-
 }

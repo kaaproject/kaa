@@ -33,7 +33,7 @@ public class HttpRequestCreator {
         if (body != null && messageEncDec != null) {
             byte[] requestKeyEncoded = messageEncDec.getEncodedSessionKey();
             byte[] requestBodyEncoded = messageEncDec.encodeData(body);
-            byte[] signature = messageEncDec.sign(requestBodyEncoded);
+            byte[] signature = messageEncDec.sign(requestKeyEncoded);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Signature size: {}", signature.length);

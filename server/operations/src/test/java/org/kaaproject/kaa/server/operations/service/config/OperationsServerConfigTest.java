@@ -15,9 +15,11 @@
  */
 package org.kaaproject.kaa.server.operations.service.config;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static org.junit.Assert.*;
 
 /**
  * @author Andrey Panasenko
@@ -54,32 +55,5 @@ public class OperationsServerConfigTest {
         assertEquals(3000, config.getZkMaxRetryTime());
         assertEquals(1000, config.getZkSleepTime());
         assertEquals(true, config.isZkIgnoreErrors());
-
-        assertNotNull(config.getChannelList());
-        assertEquals(2, config.getChannelList().size());
-        assertEquals(ChannelType.HTTP, config.getChannelList().get(0).getChannelType());
-        assertEquals(ChannelType.HTTP_LP, config.getChannelList().get(1).getChannelType());
-        assertEquals("localhost",((HttpChannelConfig)config.getChannelList().get(0)).getBindInterface());
-        assertEquals("localhost",((HttpLpChannelConfig)config.getChannelList().get(1)).getBindInterface());
-        assertEquals(9999,((HttpChannelConfig)config.getChannelList().get(0)).getPort());
-        assertEquals(9998,((HttpLpChannelConfig)config.getChannelList().get(1)).getPort());
-        assertEquals(true,((HttpChannelConfig)config.getChannelList().get(0)).isChannelEnabled());
-        assertEquals(true,((HttpLpChannelConfig)config.getChannelList().get(1)).isChannelEnabled());
-
-        assertEquals(8192,((HttpChannelConfig)config.getChannelList().get(0)).getClientMaxBodySize());
-        assertEquals(8192,((HttpLpChannelConfig)config.getChannelList().get(1)).getClientMaxBodySize());
-
-        assertEquals("org.kaaproject.kaa.server.operations.service.http.OperationsServerInitializer",((HttpChannelConfig)config.getChannelList().get(0)).getServerInitializerClass());
-        assertEquals("org.kaaproject.kaa.server.operations.service.http.OperationsServerInitializer",((HttpLpChannelConfig)config.getChannelList().get(1)).getServerInitializerClass());
-
-        assertEquals(3,((HttpChannelConfig)config.getChannelList().get(0)).getExecutorThreadSize());
-        assertEquals(3,((HttpLpChannelConfig)config.getChannelList().get(1)).getExecutorThreadSize());
-
-        //Test commandlist
-        assertNotNull(((HttpChannelConfig)config.getChannelList().get(0)).getCommandList());
-        assertEquals(2, ((HttpChannelConfig)config.getChannelList().get(0)).getCommandList().size());
-
-        assertNotNull(((HttpLpChannelConfig)config.getChannelList().get(1)).getCommandList());
-        assertEquals(2, ((HttpLpChannelConfig)config.getChannelList().get(1)).getCommandList().size());
     }
 }

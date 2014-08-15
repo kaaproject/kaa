@@ -23,13 +23,15 @@ import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
  *
  */
 public class ZkChannelsUtils {
-    public static ZkChannelType getZkChannelTypeFromChanneltype(ChannelType channeltype) 
+    public static ZkChannelType getZkChannelTypeFromChanneltype(ChannelType channeltype)
             throws ZkChannelException {
         switch (channeltype) {
         case HTTP:
             return ZkChannelType.HTTP;
         case HTTP_LP:
             return ZkChannelType.HTTP_LP;
+        case KAATCP:
+            return ZkChannelType.KAATCP;
         default:
         }
         throw new ZkChannelException("Error transforming Bootstrap channelType "+channeltype.toString()+" to ZkChannelType");

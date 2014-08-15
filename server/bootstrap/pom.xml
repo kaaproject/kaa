@@ -19,7 +19,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.5.1</version>
+		<version>0.5.2</version>
 		<artifactId>server</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.server</groupId>
@@ -53,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>netty-http-server</artifactId>
+            <artifactId>netty-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -187,6 +187,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>
@@ -198,6 +199,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -399,7 +401,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <name>kaa-${artifactId}</name>
+                            <name>kaa-${project.artifactId}</name>
                             <classifier>${build.number}-${scm.version}</classifier>
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>

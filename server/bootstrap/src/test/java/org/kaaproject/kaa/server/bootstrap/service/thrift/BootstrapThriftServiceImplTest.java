@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.bootstrap.service.thrift;
 
@@ -28,17 +28,22 @@ import static org.mockito.Mockito.when;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.thrift.TException;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
 import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
+import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftChannelType;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftIpParameters;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChannel;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
@@ -46,16 +51,15 @@ import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChan
  */
 public class BootstrapThriftServiceImplTest {
 
-    private static BootstrapConfig confMock;
-    private static OperationsServerListService endpointListMock;
+    private static OperationsServerListService operationsListMock;
+    private static BootstrapInitializationService bootstrapInitializationService;
     /**
      * @throws java.lang.Exception
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        confMock = mock(BootstrapConfig.class);
-        endpointListMock = mock(OperationsServerListService.class);
-        when(confMock.getOperationsServerListService()).thenReturn(endpointListMock);
+        operationsListMock = mock(OperationsServerListService.class);
+        bootstrapInitializationService = mock(BootstrapInitializationService.class);
     }
 
     /**
@@ -83,11 +87,11 @@ public class BootstrapThriftServiceImplTest {
     @Test
     public void testOnEndpointServerListUpdate() {
         BootstrapThriftServiceImpl b = new BootstrapThriftServiceImpl();
+        ReflectionTestUtils.setField(b, "operationsServerListService", operationsListMock);
         assertNotNull(b);
-        b.setConfig(confMock);
-        
+
         ByteBuffer pk = ByteBuffer.wrap(new byte[] {1,2,3});
-        
+
         List<ThriftSupportedChannel> scl1 = new ArrayList<>();
         ThriftIpParameters ip1 = new ThriftIpParameters("host1",123);
         ThriftCommunicationParameters com11 = new ThriftCommunicationParameters();
@@ -95,55 +99,50 @@ public class BootstrapThriftServiceImplTest {
         ThriftSupportedChannel sc11 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com11);
         scl1.add(sc11);
         ThriftOperationsServer s1 = new ThriftOperationsServer("host1", 10, pk, scl1 );
-        
+
         List<ThriftSupportedChannel> scl2 = new ArrayList<>();
         ThriftIpParameters ip2 = new ThriftIpParameters("host2",123);
         ThriftCommunicationParameters com12 = new ThriftCommunicationParameters();
-        com12.setHttpParams(ip2);
-        ThriftSupportedChannel sc12 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com12);
+        com12.setHttpLpParams(ip2);
+        ThriftSupportedChannel sc12 = new ThriftSupportedChannel(ThriftChannelType.HTTP_LP, com12);
         scl2.add(sc12);
         ThriftOperationsServer s2 = new ThriftOperationsServer("host2", 10, pk, scl2 );
-        
+
         List<ThriftSupportedChannel> scl3 = new ArrayList<>();
         ThriftIpParameters ip3 = new ThriftIpParameters("host3",123);
         ThriftCommunicationParameters com13 = new ThriftCommunicationParameters();
-        com13.setHttpParams(ip3);
-        ThriftSupportedChannel sc13 = new ThriftSupportedChannel(ThriftChannelType.HTTP, com13);
+        com13.setKaaTcpParams(ip3);
+        ThriftSupportedChannel sc13 = new ThriftSupportedChannel(ThriftChannelType.KAATCP, com13);
         scl3.add(sc13);
         ThriftOperationsServer s3 = new ThriftOperationsServer("host3", 10, pk, scl3 );
-        
+
         List<ThriftOperationsServer> operationsServersList = new ArrayList<>();
         operationsServersList.add(s1);
         operationsServersList.add(s2);
         operationsServersList.add(s3);
         try {
             b.onOperationsServerListUpdate(operationsServersList);
-            verify(endpointListMock, times(1)).updateList(operationsServersList);
+            verify(operationsListMock, times(1)).updateList(operationsServersList);
         } catch (TException e) {
             fail(e.toString());
         }
     }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.bootstrap.service.thrift.BootstrapThriftServiceImpl#getConfig()}.
-     */
     @Test
-    public void testGetConfig() {
+    public void testShutdown() {
         BootstrapThriftServiceImpl b = new BootstrapThriftServiceImpl();
-        assertNotNull(b);
-        b.setConfig(confMock);
-        assertEquals(confMock, b.getConfig());
-    }
+        ReflectionTestUtils.setField(b, "operationsServerListService", operationsListMock);
+        ReflectionTestUtils.setField(b, "bootstrapInitializationService", bootstrapInitializationService);
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.bootstrap.service.thrift.BootstrapThriftServiceImpl#setConfig(org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig)}.
-     */
-    @Test
-    public void testSetConfig() {
-        BootstrapThriftServiceImpl b = new BootstrapThriftServiceImpl();
-        assertNotNull(b);
-        b.setConfig(confMock);
-        assertEquals(confMock, b.getConfig());
+        try {
+            b.shutdown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Mockito.verify(bootstrapInitializationService, Mockito.timeout(10000)).stop();
+
+
     }
 
 }

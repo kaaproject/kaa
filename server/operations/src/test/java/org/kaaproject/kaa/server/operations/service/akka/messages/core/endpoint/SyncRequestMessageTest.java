@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
+import java.util.UUID;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.TransportType;
@@ -26,18 +28,23 @@ import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
+import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 
 public class SyncRequestMessageTest {
 
     @Test
     public void testIsValid(){
+
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), null, ChannelType.HTTP, null, null, "applicationToken", 0);
+
         SyncRequest request = new SyncRequest();
         request.setSyncRequestMetaData(new SyncRequestMetaData());
-        SyncRequestMessage message = new SyncRequestMessage(null, null, null, null, null, null, request, null);
+        SyncRequestMessage message = new SyncRequestMessage(session, request, null, null);
 
         SyncRequest other = new SyncRequest();
         other.setSyncRequestMetaData(new SyncRequestMetaData());
-        SyncRequestMessage otherMessage = new SyncRequestMessage(null, null, null, null, null, null, other, null);
+        SyncRequestMessage otherMessage = new SyncRequestMessage(session, other, null, null);
 
         Assert.assertFalse(message.isValid(TransportType.BOOTSTRAP));
 

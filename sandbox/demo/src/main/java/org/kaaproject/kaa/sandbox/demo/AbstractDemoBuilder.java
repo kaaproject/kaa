@@ -24,8 +24,8 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
-import org.kaaproject.kaa.sandbox.admin.AdminClient;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
+import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

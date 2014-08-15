@@ -19,8 +19,6 @@ package org.kaaproject.kaa.server.common.dao.impl.mongo;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import com.mongodb.DB;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -33,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -56,13 +55,23 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
+import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
+import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
+import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
+import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
+import org.kaaproject.kaa.common.dto.logs.avro.MongoAppenderParametersDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
 import org.kaaproject.kaa.server.common.core.configuration.BaseDataFactory;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
@@ -74,6 +83,7 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
+import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogEventService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
@@ -111,6 +121,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.mongodb.DB;
+
 public class AbstractTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTest.class);
@@ -129,6 +141,10 @@ public class AbstractTest {
     protected static final String ENDPOINT_USER_NAME = "Generated Test Endpoint User Name";
     protected static final String SCHEMA = "Generated Test Schema";
     protected static final String COLLECTION_NAME = "collection name";
+
+    protected static final String DEFAULT_FLUME_HOST = "localhost";
+    protected static final int DEFAULT_FLUME_PORT = 9764;
+    protected static final int DEFAULT_FLUME_PRIORITY = 0;
 
     protected List<String> tenants = new ArrayList<String>();
     protected List<String> users = new ArrayList<String>();
@@ -193,6 +209,8 @@ public class AbstractTest {
     protected ConfigurationService configurationService;
     @Autowired
     protected NotificationService notificationService;
+    @Autowired
+    protected LogAppendersService logAppendersService;
 
     protected Application application;
 
@@ -201,7 +219,7 @@ public class AbstractTest {
         users.add("530cb57de4b08e6930468c9a");
 
         logSchemas.add("530cb57de4b08e6930468c99");
-        
+
         apps.add("52fe2de7e4b0082727dd214b");
         apps.add("52fe2de7e4b0082727dd214c");
         apps.add("52fe2de7e4b0082727dd214d");
@@ -462,7 +480,7 @@ public class AbstractTest {
         tenant = userService.saveTenant(tenant);
         return tenant;
     }
-    
+
     protected List<LogSchemaDto> generateLogSchema(String appId, int count) {
         List<LogSchemaDto> schemas = Collections.emptyList();
         try {
@@ -631,5 +649,49 @@ public class AbstractTest {
         endpointUser.setTenantId(tenantId);
         endpointUser = endpointService.saveEndpointUser(endpointUser);
         return endpointUser;
+    }
+
+    protected LogAppenderDto generateLogAppender(String appId, String schemaId, LogAppenderTypeDto type, LogAppenderStatusDto status) {
+        LogAppenderDto logAppender = null;
+        ApplicationDto app = null;
+        LogSchemaDto schema = null;
+        if(isBlank(appId)){
+            app = generateApplication();
+            appId = app.getId();
+        } else {
+            app = applicationDao.findById(appId).toDto();
+        }
+        if(isBlank(schemaId)){
+            schema = generateLogSchema(appId, 1).get(0);
+            schemaId = schema.getId();
+        }
+        logAppender = new LogAppenderDto();
+        logAppender.setApplicationId(appId);
+        logAppender.setName("Generated Appender");
+        logAppender.setSchema(new SchemaDto(schemaId, schema.getMajorVersion(), schema.getMinorVersion()));
+        logAppender.setTenantId(app.getTenantId());
+        logAppender.setStatus(status != null ? status : LogAppenderStatusDto.REGISTERED);
+        logAppender.setType(type != null ? type : LogAppenderTypeDto.FILE);
+
+        LogAppenderParametersDto parameters = new LogAppenderParametersDto();
+
+
+        switch(logAppender.getType()) {
+            case FILE:
+                parameters.setParameters(new FileAppenderParametersDto("testPath"));
+                break;
+            case FLUME:
+                FlumeAppenderParametersDto flumeProp = new FlumeAppenderParametersDto();
+                flumeProp.setBalancingType(FlumeBalancingTypeDto.PRIORITIZED);
+                HostInfoDto host = new HostInfoDto(DEFAULT_FLUME_HOST, DEFAULT_FLUME_PORT, DEFAULT_FLUME_PRIORITY);
+                flumeProp.setHosts(Arrays.asList(host));
+                parameters.setParameters(flumeProp);
+                break;
+            case MONGO:
+                parameters.setParameters(new MongoAppenderParametersDto("testCollections"));
+                break;
+        }
+        logAppender.setProperties(parameters);
+        return logAppendersService.saveLogAppender(logAppender);
     }
 }

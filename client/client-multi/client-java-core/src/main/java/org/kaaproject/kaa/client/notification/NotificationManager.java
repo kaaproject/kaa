@@ -24,17 +24,25 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 /**
- * Manager for the notifications delivery.
+ * Interface for the notifications delivery system.<br>
+ * <br>
+ * Responsible for processing received topic/notification updates,
+ * subscribing for voluntary topic updates and unsubscribing from them.<br>
  *
  * @author Yaroslav Zeygerman
+ *
+ * @see AbstractNotificationListener
+ * @see NotificationListenerInfo
+ * @see NotificationTopicListListener
  *
  */
 public interface NotificationManager {
 
     /**
-     * Registers listener for all mandatory topics' updates.
-     * If there is no specific listener for some mandatory topic,
-     * notifications with that topic will be caught by this handler.
+     * Add listener for all mandatory topics' updates.<br>
+     * <br>
+     * If specific listener is needed for some mandatory topic,
+     * use {@link NotificationManager#updateTopicSubscriptions}
      *
      * @param listener the listener to receive notification.
      * @see AbstractNotificationListener
@@ -70,8 +78,44 @@ public interface NotificationManager {
     void removeTopicListListener(NotificationTopicListListener listener);
 
     /**
-     * Updates (subscribes/unsubscribes) info about topic's subscriptions.
-     * May consist of several subscribers for the same topic.
+     * Updates (subscribe/unsubscribe) info about topic's subscriptions.<br>
+     * <br>
+     * Basic usage is to subscribe for voluntary topic updates and
+     * unsubscribe from them. More than one listener may be used for
+     * the same topic.<br>
+     * <br>
+     * Also it may be used to add/remove specific listener(s)
+     * for some mandatory topic.
+     * <pre>
+     * {@code
+     * // Assume, BasicNotification is a notification class auto-generated according to predefined Avro schema
+     * public class UserNotificationListener extends AbstractNotificationListener<BasicNotification> {
+     *     public UserNotificationListener() {}
+     *     protected Class<BasicNotification> getNotificationClass() {
+     *         return BasicNotification.class;
+     *     }
+     *     public void onNotification(String topicId, BasicNotification notification) {
+     *         System.out.println("Got notification: " + notification.toString());
+     *     }
+     * }
+     *
+     * // Assume, there are one mandatory topic with id "mand_id" and
+     * // one voluntary with id "vol_id".
+     * Map<String, List<NotificationListenerInfo>> subscriptions = new HashMap<>();
+     *
+     * // Add specific listener for "mand_id" topic
+     * UserNotificationListener mandatoryListener = new UserNotificationListener();
+     * subscriptions.put("mand_id", Arrays.asList(
+     *      new NotificationListenerInfo(mandatoryListener, NotificationListenerInfo.Action.ADD)));
+     *
+     * // Subscribe for voluntary topic updates
+     * UserNotificationListener voluntaryListener = new UserNotificationListener();
+     * subscriptions.put("vol_id", Arrays.asList(
+     *      new NotificationListenerInfo(voluntaryListener, NotificationListenerInfo.Action.ADD)));
+     *
+     * kaaClient.getNotificationManager().updateTopicSubscriptions(subscriptions);
+     * }
+     * </pre>
      *
      * @throws KaaException when topic isn't found or bad subscription
      * info was passed (empty id or null subscriber).
@@ -93,7 +137,9 @@ public interface NotificationManager {
     List<Topic> getTopics();
 
     /**
-     * Retrieves and clears the current list of Subscription commands.
+     * Retrieves and clears the current list of Subscription commands.<br>
+     * <br>
+     * <b>NOTE:</b>DO NOT call method explicitly.
      *
      * @return the list of Subscription commands.
      * @see SubscriptionCommand
@@ -102,7 +148,9 @@ public interface NotificationManager {
     List<SubscriptionCommand> releaseSubscriptionCommands();
 
     /**
-     * Sets the transport to Notification manager.
+     * Sets the transport to Notification manager.<br>
+     * <br>
+     * <b>NOTE:</b>DO NOT call method explicitly.
      *
      * @param transport the transport object to be set.
      * @see NotificationTransport

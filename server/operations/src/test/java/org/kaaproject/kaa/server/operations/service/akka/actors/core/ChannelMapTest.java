@@ -16,16 +16,19 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import io.netty.channel.ChannelHandlerContext;
+
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
+import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
+import org.mockito.Mockito;
 
 
 public class ChannelMapTest {
@@ -34,9 +37,11 @@ public class ChannelMapTest {
     public void testGetRequestById(){
         ChannelMap map = new ChannelMap("endpointKey", "actorKey");
         Assert.assertNull(map.getByRequestId(UUID.randomUUID()));
-        SyncRequestMessage message = new SyncRequestMessage(null, null, null, null, null, null, null, null);
+        ChannelHandlerContext ctxMock = Mockito.mock(ChannelHandlerContext.class);
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), ctxMock, ChannelType.HTTP, null, null, "applicationToken", 0);
+        SyncRequestMessage message = new SyncRequestMessage(session, null, null, null);
         map.addChannel(new ChannelMetaData(message));
-        Assert.assertNotNull(map.getByRequestId(message.getUuid()));
+        Assert.assertNotNull(map.getByRequestId(message.getChannelUuid()));
         Assert.assertNull(map.getByRequestId(UUID.randomUUID()));
     }
 
@@ -45,16 +50,17 @@ public class ChannelMapTest {
         SyncRequest request = new SyncRequest();
         request.setSyncRequestMetaData(new SyncRequestMetaData());
         UUID sameUid = UUID.randomUUID();
-        SyncRequestMessage message = new SyncRequestMessage(null, sameUid.toString(), null, ChannelType.HTTP, null, null, request, null);
+        ChannelHandlerContext ctxMock = Mockito.mock(ChannelHandlerContext.class);
+        NettySessionInfo session = new NettySessionInfo(sameUid, ctxMock, ChannelType.HTTP, null, null, "applicationToken", 0);
+        SyncRequestMessage message = new SyncRequestMessage(session, request, null, null);
         ChannelMetaData md1 = new ChannelMetaData(message);
-        SyncRequestMessage message2 = new SyncRequestMessage(null, sameUid.toString(), null, ChannelType.HTTP, null, null, request, null);
+        SyncRequestMessage message2 = new SyncRequestMessage(session, request, null, null);
         ChannelMetaData md2 = new ChannelMetaData(message2);
         Assert.assertEquals(md1, md2);
         SyncRequest newRequest = new SyncRequest();
         newRequest.setSyncRequestMetaData(new SyncRequestMetaData());
-        md2.updateRequest(new SyncRequestMessage(null, sameUid.toString(), null, ChannelType.TCP, "appToken", EndpointObjectHash.fromBytes(new byte[0]), request, null));
+        md2.updateRequest(new SyncRequestMessage(session, request, null, null));
         Assert.assertEquals(md1, md2);
-
     }
 
 }
