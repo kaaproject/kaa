@@ -1,0 +1,13 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classkaa_1_1IConfigurationHashContainer.html" title="kaa::IConfigurationHashContainer" alt="" coords="27,5,240,33"/>
+<area shape="rect" id="node3" href="$classkaa_1_1IConfigurationPersistanceManager.html" title="kaa::IConfigurationPersistanceManager" alt="" coords="311,55,556,83"/>
+<area shape="rect" id="node5" href="$classkaa_1_1ConfigurationPersistanceManager.html" title="kaa::ConfigurationPersistanceManager" alt="" coords="605,55,848,83"/>
+<area shape="rect" id="node6" href="$classkaa_1_1IConfigurationProcessedObservable.html" title="kaa::IConfigurationProcessedObservable" alt="" coords="5,157,261,185"/>
+<area shape="rect" id="node8" href="$classkaa_1_1IConfigurationProcessor.html" title="kaa::IConfigurationProcessor" alt="" coords="340,157,527,185"/>
+<area shape="rect" id="node10" href="$classkaa_1_1ConfigurationProcessor.html" title="kaa::ConfigurationProcessor" alt="" coords="636,157,817,185"/>
+<area shape="rect" id="node11" href="$classkaa_1_1IConfigurationReceiver.html" title="kaa::IConfigurationReceiver" alt="" coords="44,55,223,83"/>
+<area shape="rect" id="node13" href="$classkaa_1_1IDecodedDeltaObservable.html" title="kaa::IDecodedDeltaObservable" alt="" coords="33,207,233,235"/>
+<area shape="rect" id="node15" href="$classkaa_1_1ISchemaUpdatesReceiver.html" title="kaa::ISchemaUpdatesReceiver" alt="" coords="33,106,233,134"/>
+<area shape="rect" id="node19" href="$classkaa_1_1ISchemaPersistanceManager.html" title="kaa::ISchemaPersistanceManager" alt="" coords="324,106,543,134"/>
+<area shape="rect" id="node21" href="$classkaa_1_1SchemaPersistanceManager.html" title="kaa::SchemaPersistanceManager" alt="" coords="619,106,835,134"/>
+</map>

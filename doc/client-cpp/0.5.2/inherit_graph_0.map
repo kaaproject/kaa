@@ -1,0 +1,9 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classkaa_1_1AbstractStrategy.html" title="kaa::AbstractStrategy" alt="" coords="5,131,152,159"/>
+<area shape="rect" id="node3" href="$classkaa_1_1ArrayProcessStrategy.html" title="kaa::ArrayProcessStrategy" alt="" coords="212,5,385,33"/>
+<area shape="rect" id="node5" href="$classkaa_1_1ArrayResetStrategy.html" title="kaa::ArrayResetStrategy" alt="" coords="219,55,379,83"/>
+<area shape="rect" id="node7" href="$classkaa_1_1CommonProcessStrategy.html" title="kaa::CommonProcessStrategy" alt="" coords="200,106,397,134"/>
+<area shape="rect" id="node9" href="$classkaa_1_1NullProcessStrategy.html" title="kaa::NullProcessStrategy" alt="" coords="215,157,383,185"/>
+<area shape="rect" id="node11" href="$classkaa_1_1RecordProcessStrategy.html" title="kaa::RecordProcessStrategy" alt="" coords="205,207,392,235"/>
+<area shape="rect" id="node13" href="$classkaa_1_1UuidProcessStrategy.html" title="kaa::UuidProcessStrategy" alt="" coords="213,258,384,286"/>
+</map>

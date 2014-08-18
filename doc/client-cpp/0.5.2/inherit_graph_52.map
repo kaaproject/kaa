@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classkaa_1_1ICommonValue.html" title="kaa::ICommonValue" alt="" coords="17,145,156,173"/>
+<area shape="rect" id="node3" href="$classkaa_1_1CommonEnum.html" title="kaa::CommonEnum" alt="" coords="276,5,409,33"/>
+<area shape="rect" id="node5" href="$classkaa_1_1CommonFixed.html" title="kaa::CommonFixed" alt="" coords="277,55,408,83"/>
+<area shape="rect" id="node7" href="$classkaa_1_1CommonNull.html" title="kaa::CommonNull" alt="" coords="281,207,404,235"/>
+<area shape="rect" id="node9" href="$classkaa_1_1CommonValue.html" title="kaa::CommonValue\&lt; T, CVT \&gt;" alt="" coords="244,258,441,286"/>
+<area shape="rect" id="node11" href="$classkaa_1_1ICommonArrayBase.html" title="kaa::ICommonArrayBase\&lt; Container \&gt;" alt="" coords="221,106,464,134"/>
+<area shape="rect" id="node15" href="$classkaa_1_1ICommonRecordBase.html" title="kaa::ICommonRecordBase\&lt; Container \&gt;" alt="" coords="216,157,469,185"/>
+<area shape="rect" id="node13" href="$classkaa_1_1CommonArray.html" title="kaa::CommonArray" alt="" coords="524,106,655,134"/>
+<area shape="rect" id="node17" href="$classkaa_1_1CommonRecord.html" title="kaa::CommonRecord" alt="" coords="519,157,660,185"/>
+<area shape="rect" id="node18" href="$classkaa_1_1ISchemaDependent.html" title="kaa::ISchemaDependent" alt="" coords="5,69,168,97"/>
+</map>

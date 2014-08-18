@@ -1,0 +1,17 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$IConfigurationPersistanceManager_8hpp.html" title="kaa/configuration/storage/IConfigurationPersistanceManager.hpp" alt="" coords="1107,83,1499,111"/>
+<area shape="rect" id="node58" href="$IConfigurationProcessor_8hpp.html" title="kaa/configuration/IConfigurationProcessor.hpp" alt="" coords="1613,83,1899,111"/>
+<area shape="rect" id="node7" href="$IConfigurationStorage_8hpp.html" title="kaa/configuration/storage/IConfigurationStorage.hpp" alt="" coords="965,161,1283,189"/>
+<area shape="rect" id="node13" href="$IConfigurationReceiver_8hpp.html" title="kaa/configuration/manager/IConfigurationReceiver.hpp" alt="" coords="275,161,605,189"/>
+<area shape="rect" id="node35" href="$ISchemaUpdatesReceiver_8hpp.html" title="kaa/schema/ISchemaUpdatesReceiver.hpp" alt="" coords="1533,161,1805,189"/>
+<area shape="rect" id="node41" href="$IConfigurationHashContainer_8hpp.html" title="kaa/configuration/IConfigurationHashContainer.hpp" alt="" coords="629,161,941,189"/>
+<area shape="rect" id="node17" href="$ICommonRecord_8hpp.html" title="kaa/common/types/ICommonRecord.hpp" alt="" coords="241,238,497,266"/>
+<area shape="rect" id="node19" href="$ISchemaDependent_8hpp.html" title="kaa/common/types/ISchemaDependent.hpp" alt="" coords="232,315,507,343"/>
+<area shape="rect" id="node23" href="$ICommonValue_8hpp.html" title="kaa/common/types/ICommonValue.hpp" alt="" coords="531,315,779,343"/>
+<area shape="rect" id="node29" href="$CommonValueTypes_8hpp.html" title="kaa/common/types/CommonValueTypes.hpp" alt="" coords="483,393,763,421"/>
+<area shape="rect" id="node45" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObjectHash.hpp" alt="" coords="773,238,1016,266"/>
+<area shape="rect" id="node62" href="$IConfigurationProcessedObservable_8hpp.html" title="kaa/configuration/IConfigurationProcessedObservable.hpp" alt="" coords="2203,161,2557,189"/>
+<area shape="rect" id="node67" href="$IDecodedDeltaObservable_8hpp.html" title="kaa/configuration/IDecodedDeltaObservable.hpp" alt="" coords="1880,161,2179,189"/>
+<area shape="rect" id="node64" href="$IConfigurationProcessedObserver_8hpp.html" title="kaa/configuration/IConfigurationProcessedObserver.hpp" alt="" coords="2195,238,2536,266"/>
+<area shape="rect" id="node69" href="$IGenericDeltaReceiver_8hpp.html" title="kaa/configuration/IGenericDeltaReceiver.hpp" alt="" coords="1880,238,2157,266"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node5" href="$ICommonValue_8hpp.html" title="kaa/common/types/ICommonValue.hpp" alt="" coords="241,238,489,266"/>
+<area shape="rect" id="node13" href="$ICommonArray_8hpp.html" title="kaa/common/types/ICommonArray.hpp" alt="" coords="171,161,416,189"/>
+<area shape="rect" id="node22" href="$CommonRecord_8hpp.html" title="kaa/common/types/CommonRecord.hpp" alt="" coords="593,83,847,111"/>
+<area shape="rect" id="node36" href="$CommonFixed_8hpp.html" title="kaa/common/types/CommonFixed.hpp" alt="" coords="983,83,1225,111"/>
+<area shape="rect" id="node49" href="$KaaException_8hpp.html" title="kaa/common/exception/KaaException.hpp" alt="" coords="1432,83,1693,111"/>
+<area shape="rect" id="node11" href="$CommonValueTypes_8hpp.html" title="kaa/common/types/CommonValueTypes.hpp" alt="" coords="5,315,285,343"/>
+<area shape="rect" id="node15" href="$ISchemaDependent_8hpp.html" title="kaa/common/types/ISchemaDependent.hpp" alt="" coords="583,238,857,266"/>
+<area shape="rect" id="node24" href="$ICommonRecord_8hpp.html" title="kaa/common/types/ICommonRecord.hpp" alt="" coords="592,161,848,189"/>
+</map>

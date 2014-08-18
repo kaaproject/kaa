@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classkaa_1_1EmptyDeltaType.html" title="kaa::EmptyDeltaType" alt="" coords="167,106,308,134"/>
+<area shape="rect" id="node5" href="$classkaa_1_1AddedItemsDeltaType.html" title="kaa::AddedItemsDeltaType" alt="" coords="367,5,543,33"/>
+<area shape="rect" id="node7" href="$classkaa_1_1DefaultDeltaType.html" title="kaa::DefaultDeltaType" alt="" coords="381,55,528,83"/>
+<area shape="rect" id="node9" href="$classkaa_1_1RemovedItemsDeltaType.html" title="kaa::RemovedItemsDeltaType" alt="" coords="357,106,552,134"/>
+<area shape="rect" id="node11" href="$classkaa_1_1ResetDeltaType.html" title="kaa::ResetDeltaType" alt="" coords="384,157,525,185"/>
+<area shape="rect" id="node13" href="$classkaa_1_1ValueDeltaType.html" title="kaa::ValueDeltaType" alt="" coords="385,207,524,235"/>
+</map>

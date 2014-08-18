@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node9" href="$TransportType_8hpp.html" title="kaa/common/TransportType.hpp" alt="" coords="75,161,283,189"/>
+<area shape="rect" id="node11" href="$ChannelDirection_8hpp.html" title="kaa/channel/ChannelDirection.hpp" alt="" coords="389,161,608,189"/>
+<area shape="rect" id="node13" href="$IKaaDataMultiplexer_8hpp.html" title="kaa/channel/IKaaDataMultiplexer.hpp" alt="" coords="196,83,431,111"/>
+<area shape="rect" id="node21" href="$IKaaDataDemultiplexer_8hpp.html" title="kaa/channel/IKaaDataDemultiplexer.hpp" alt="" coords="505,83,756,111"/>
+<area shape="rect" id="node27" href="$IServerInfo_8hpp.html" title="kaa/channel/server/IServerInfo.hpp" alt="" coords="881,83,1105,111"/>
+</map>

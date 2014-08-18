@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$LogRecord_8hpp.html" title="kaa/log/LogRecord.hpp" alt="" coords="479,161,633,189"/>
+<area shape="rect" id="node50" href="$ILogStorage_8hpp.html" title="kaa/log/ILogStorage.hpp" alt="" coords="732,83,895,111"/>
+<area shape="rect" id="node57" href="$ILogStorageStatus_8hpp.html" title="kaa/log/ILogStorageStatus.hpp" alt="" coords="996,161,1196,189"/>
+<area shape="rect" id="node59" href="$ILogUploadConfiguration_8hpp.html" title="kaa/log/ILogUploadConfiguration.hpp" alt="" coords="1220,161,1455,189"/>
+<area shape="rect" id="node61" href="$ILogUploadStrategy_8hpp.html" title="kaa/log/ILogUploadStrategy.hpp" alt="" coords="993,83,1199,111"/>
+<area shape="rect" id="node9" href="$AvroByteArrayConverter_8hpp.html" title="kaa/common/AvroByteArrayConverter.hpp" alt="" coords="424,238,688,266"/>
+<area shape="rect" id="node28" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObjectHash.hpp" alt="" coords="1048,315,1291,343"/>
+<area shape="rect" id="node39" href="$KaaException_8hpp.html" title="kaa/common/exception/KaaException.hpp" alt="" coords="1365,315,1627,343"/>
+</map>

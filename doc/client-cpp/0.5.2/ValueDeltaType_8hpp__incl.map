@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node9" href="$EmptyDeltaType_8hpp.html" title="kaa/configuration/delta/EmptyDeltaType.hpp" alt="" coords="399,83,673,111"/>
+<area shape="rect" id="node40" href="$IConfigurationDelta_8hpp.html" title="kaa/configuration/delta/IConfigurationDelta.hpp" alt="" coords="703,83,991,111"/>
+<area shape="rect" id="node15" href="$IDeltaType_8hpp.html" title="kaa/configuration/delta/IDeltaType.hpp" alt="" coords="567,161,809,189"/>
+<area shape="rect" id="node20" href="$DeltaHandlerId_8hpp.html" title="kaa/configuration/delta/DeltaHandlerId.hpp" alt="" coords="711,238,977,266"/>
+<area shape="rect" id="node24" href="$ICommonRecord_8hpp.html" title="kaa/common/types/ICommonRecord.hpp" alt="" coords="713,315,969,343"/>
+<area shape="rect" id="node26" href="$ISchemaDependent_8hpp.html" title="kaa/common/types/ISchemaDependent.hpp" alt="" coords="1155,393,1429,421"/>
+<area shape="rect" id="node30" href="$ICommonValue_8hpp.html" title="kaa/common/types/ICommonValue.hpp" alt="" coords="883,393,1131,421"/>
+<area shape="rect" id="node34" href="$CommonValueTypes_8hpp.html" title="kaa/common/types/CommonValueTypes.hpp" alt="" coords="867,470,1147,498"/>
+</map>

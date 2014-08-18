@@ -1,0 +1,16 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$AbstractKaaTransport_8hpp.html" title="kaa/channel/transport/AbstractKaaTransport.hpp" alt="" coords="1580,83,1881,111"/>
+<area shape="rect" id="node77" href="$IUserTransport_8hpp.html" title="kaa/channel/transport/IUserTransport.hpp" alt="" coords="1671,238,1932,266"/>
+<area shape="rect" id="node81" href="$IRegistrationProcessor_8hpp.html" title="kaa/event/registration/IRegistrationProcessor.hpp" alt="" coords="849,238,1156,266"/>
+<area shape="rect" id="node5" href="$IKaaTransport_8hpp.html" title="kaa/channel/transport/IKaaTransport.hpp" alt="" coords="1603,161,1859,189"/>
+<area shape="rect" id="node7" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="1956,238,2161,266"/>
+<area shape="rect" id="node27" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="635,161,877,189"/>
+<area shape="rect" id="node66" href="$KaaException_8hpp.html" title="kaa/common/exception/KaaException.hpp" alt="" coords="1244,161,1505,189"/>
+<area shape="rect" id="node15" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObjectHash.hpp" alt="" coords="1967,315,2209,343"/>
+<area shape="rect" id="node33" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="465,238,663,266"/>
+<area shape="rect" id="node56" href="$IServerInfo_8hpp.html" title="kaa/channel/server/IServerInfo.hpp" alt="" coords="1079,315,1303,343"/>
+<area shape="rect" id="node40" href="$TransportType_8hpp.html" title="kaa/common/TransportType.hpp" alt="" coords="317,393,525,421"/>
+<area shape="rect" id="node42" href="$ChannelDirection_8hpp.html" title="kaa/channel/ChannelDirection.hpp" alt="" coords="5,393,224,421"/>
+<area shape="rect" id="node44" href="$IKaaDataMultiplexer_8hpp.html" title="kaa/channel/IKaaDataMultiplexer.hpp" alt="" coords="292,315,527,343"/>
+<area shape="rect" id="node51" href="$IKaaDataDemultiplexer_8hpp.html" title="kaa/channel/IKaaDataDemultiplexer.hpp" alt="" coords="652,315,903,343"/>
+</map>

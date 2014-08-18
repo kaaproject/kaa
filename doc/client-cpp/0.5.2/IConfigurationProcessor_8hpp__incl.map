@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node7" href="$IConfigurationProcessedObservable_8hpp.html" title="kaa/configuration/IConfigurationProcessedObservable.hpp" alt="" coords="5,83,360,111"/>
+<area shape="rect" id="node13" href="$IDecodedDeltaObservable_8hpp.html" title="kaa/configuration/IDecodedDeltaObservable.hpp" alt="" coords="957,83,1256,111"/>
+<area shape="rect" id="node20" href="$ISchemaUpdatesReceiver_8hpp.html" title="kaa/schema/ISchemaUpdatesReceiver.hpp" alt="" coords="661,83,933,111"/>
+<area shape="rect" id="node9" href="$IConfigurationProcessedObserver_8hpp.html" title="kaa/configuration/IConfigurationProcessedObserver.hpp" alt="" coords="111,161,452,189"/>
+<area shape="rect" id="node15" href="$IGenericDeltaReceiver_8hpp.html" title="kaa/configuration/IGenericDeltaReceiver.hpp" alt="" coords="963,161,1240,189"/>
+</map>

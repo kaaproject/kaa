@@ -1,0 +1,9 @@
+<map id="G" name="G">
+<area shape="rect" id="node5" href="$ILogStorage_8hpp.html" title="kaa/log/ILogStorage.hpp" alt="" coords="1104,83,1267,111"/>
+<area shape="rect" id="node57" href="$ILogStorageStatus_8hpp.html" title="kaa/log/ILogStorageStatus.hpp" alt="" coords="1291,83,1491,111"/>
+<area shape="rect" id="node59" href="$UuidGenerator_8hpp.html" title="kaa/common/UuidGenerator.hpp" alt="" coords="1785,238,1993,266"/>
+<area shape="rect" id="node7" href="$LogRecord_8hpp.html" title="kaa/log/LogRecord.hpp" alt="" coords="1108,161,1263,189"/>
+<area shape="rect" id="node13" href="$AvroByteArrayConverter_8hpp.html" title="kaa/common/AvroByteArrayConverter.hpp" alt="" coords="816,238,1080,266"/>
+<area shape="rect" id="node32" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObjectHash.hpp" alt="" coords="292,315,535,343"/>
+<area shape="rect" id="node43" href="$KaaException_8hpp.html" title="kaa/common/exception/KaaException.hpp" alt="" coords="559,315,820,343"/>
+</map>

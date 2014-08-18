@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node2" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; TransportType::NOTIFICATION \&gt;" alt="" coords="333,30,715,58"/>
+<area shape="rect" id="node4" href="$classkaa_1_1IKaaTransport.html" title="kaa::IKaaTransport" alt="" coords="27,5,157,33"/>
+<area shape="rect" id="node6" href="$classkaa_1_1IKaaChannelManager.html" title="kaa::IKaaChannelManager" alt="" coords="5,55,179,83"/>
+<area shape="rect" id="node8" href="$classkaa_1_1INotificationTransport.html" title="kaa::INotificationTransport" alt="" coords="437,81,611,109"/>
+</map>

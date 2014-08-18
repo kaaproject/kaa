@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classkaa_1_1ConnectMessage.html" title="kaa::ConnectMessage" alt="" coords="5,83,155,111"/>
+<area shape="rect" id="node5" href="$classkaa_1_1DisconnectMessage.html" title="kaa::DisconnectMessage" alt="" coords="179,83,344,111"/>
+<area shape="rect" id="node7" href="$classkaa_1_1KaaSyncRequest.html" title="kaa::KaaSyncRequest" alt="" coords="368,83,517,111"/>
+<area shape="rect" id="node9" href="$classkaa_1_1PingRequest.html" title="kaa::PingRequest" alt="" coords="541,83,664,111"/>
+</map>

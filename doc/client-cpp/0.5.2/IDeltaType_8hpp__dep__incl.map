@@ -1,0 +1,17 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$EmptyDeltaType_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/EmptyDeltaType.hpp" alt="" coords="1853,83,2536,111"/>
+<area shape="rect" id="node15" href="$DefaultConfigurationDelta_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/DefaultConfigurationDelta.hpp" alt="" coords="3629,161,4365,189"/>
+<area shape="rect" id="node17" href="$IConfigurationDelta_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/IConfigurationDelta.hpp" alt="" coords="4316,83,5015,111"/>
+<area shape="rect" id="node20" href="$DefaultConfigurationDeltaFactory_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/DefaultConfigurationDeltaFactory.hpp" alt="" coords="4616,238,5395,266"/>
+<area shape="rect" id="node5" href="$AddedItemsDeltaType_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/AddedItemsDeltaType.hpp" alt="" coords="1472,161,2189,189"/>
+<area shape="rect" id="node7" href="$DefaultDeltaType_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/DefaultDeltaType.hpp" alt="" coords="2213,161,2901,189"/>
+<area shape="rect" id="node9" href="$RemovedItemsDeltaType_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/RemovedItemsDeltaType.hpp" alt="" coords="5,161,741,189"/>
+<area shape="rect" id="node11" href="$ResetDeltaType_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/ResetDeltaType.hpp" alt="" coords="765,161,1448,189"/>
+<area shape="rect" id="node13" href="$ValueDeltaType_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/ValueDeltaType.hpp" alt="" coords="2925,161,3605,189"/>
+<area shape="rect" id="node28" href="$IConfigurationDeltaFactory_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/IConfigurationDeltaFactory.hpp" alt="" coords="4389,161,5131,189"/>
+<area shape="rect" id="node31" href="$IDeltaReceiver_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/manager/IDeltaReceiver.hpp" alt="" coords="5419,161,6147,189"/>
+<area shape="rect" id="node22" href="$DefaultDeltaManager_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/manager/DefaultDeltaManager.hpp" alt="" coords="5400,315,6165,343"/>
+<area shape="rect" id="node24" href="$KaaClient_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/KaaClient.hpp" alt="" coords="5515,393,6051,421"/>
+<area shape="rect" id="node26" href="$Kaa_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/Kaa.hpp" alt="" coords="5531,470,6035,498"/>
+<area shape="rect" id="node34" href="$IDeltaManager_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/delta/manager/IDeltaManager.hpp" alt="" coords="5419,238,6147,266"/>
+</map>

@@ -1,0 +1,19 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$BootstrapTransport_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/bootstrap/BootstrapTransport.hpp" alt="" coords="5,83,656,111"/>
+<area shape="rect" id="node7" href="$MetaDataTransport_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/channel/MetaDataTransport.hpp" alt="" coords="680,83,1320,111"/>
+<area shape="rect" id="node9" href="$ConfigurationTransport_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/configuration/ConfigurationTransport.hpp" alt="" coords="1344,83,2032,111"/>
+<area shape="rect" id="node11" href="$EventTransport_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/event/EventTransport.hpp" alt="" coords="2056,83,2661,111"/>
+<area shape="rect" id="node19" href="$UserTransport_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/event/registration/UserTransport.hpp" alt="" coords="2036,161,2703,189"/>
+<area shape="rect" id="node24" href="$ProfileTransport_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/profile/ProfileTransport.hpp" alt="" coords="2736,83,3347,111"/>
+<area shape="rect" id="node31" href="$NotificationTransport_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/notification/NotificationTransport.hpp" alt="" coords="3367,161,4033,189"/>
+<area shape="rect" id="node36" href="$LoggingTransport_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/log/LoggingTransport.hpp" alt="" coords="4057,161,4660,189"/>
+<area shape="rect" id="node5" href="$BootstrapManager_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/bootstrap/BootstrapManager.hpp" alt="" coords="8,161,653,189"/>
+<area shape="rect" id="node13" href="$EventManager_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/event/EventManager.hpp" alt="" coords="1355,238,1955,266"/>
+<area shape="rect" id="node15" href="$KaaClient_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/KaaClient.hpp" alt="" coords="2792,315,3328,343"/>
+<area shape="rect" id="node17" href="$Kaa_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/Kaa.hpp" alt="" coords="2808,393,3312,421"/>
+<area shape="rect" id="node21" href="$EndpointRegistrationManager_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/event/registration/EndpointRegistrationManager.hpp" alt="" coords="1979,238,2733,266"/>
+<area shape="rect" id="node26" href="$ProfileListener_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/profile/ProfileListener.hpp" alt="" coords="2740,161,3343,189"/>
+<area shape="rect" id="node28" href="$ProfileManager_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/profile/ProfileManager.hpp" alt="" coords="2757,238,3363,266"/>
+<area shape="rect" id="node33" href="$NotificationManager_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/notification/NotificationManager.hpp" alt="" coords="3387,238,4048,266"/>
+<area shape="rect" id="node38" href="$LogCollector_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/log/LogCollector.hpp" alt="" coords="4072,238,4645,266"/>
+</map>

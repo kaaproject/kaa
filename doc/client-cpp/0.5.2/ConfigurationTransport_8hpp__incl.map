@@ -1,0 +1,30 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$AbstractKaaTransport_8hpp.html" title="kaa/channel/transport/AbstractKaaTransport.hpp" alt="" coords="921,83,1223,111"/>
+<area shape="rect" id="node77" href="$IConfigurationTransport_8hpp.html" title="kaa/channel/transport/IConfigurationTransport.hpp" alt="" coords="303,238,612,266"/>
+<area shape="rect" id="node81" href="$IConfigurationProcessor_8hpp.html" title="kaa/configuration/IConfigurationProcessor.hpp" alt="" coords="2443,161,2728,189"/>
+<area shape="rect" id="node105" href="$IConfigurationPersistanceManager_8hpp.html" title="kaa/configuration/storage/IConfigurationPersistanceManager.hpp" alt="" coords="2027,161,2419,189"/>
+<area shape="rect" id="node128" href="$ISchemaProcessor_8hpp.html" title="kaa/schema/ISchemaProcessor.hpp" alt="" coords="2752,161,2984,189"/>
+<area shape="rect" id="node5" href="$IKaaTransport_8hpp.html" title="kaa/channel/transport/IKaaTransport.hpp" alt="" coords="779,161,1035,189"/>
+<area shape="rect" id="node7" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="908,238,1113,266"/>
+<area shape="rect" id="node27" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="139,161,381,189"/>
+<area shape="rect" id="node66" href="$KaaException_8hpp.html" title="kaa/common/exception/KaaException.hpp" alt="" coords="1169,161,1431,189"/>
+<area shape="rect" id="node15" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObjectHash.hpp" alt="" coords="2068,315,2311,343"/>
+<area shape="rect" id="node33" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="687,238,884,266"/>
+<area shape="rect" id="node56" href="$IServerInfo_8hpp.html" title="kaa/channel/server/IServerInfo.hpp" alt="" coords="143,315,367,343"/>
+<area shape="rect" id="node40" href="$TransportType_8hpp.html" title="kaa/common/TransportType.hpp" alt="" coords="955,393,1163,421"/>
+<area shape="rect" id="node42" href="$ChannelDirection_8hpp.html" title="kaa/channel/ChannelDirection.hpp" alt="" coords="712,393,931,421"/>
+<area shape="rect" id="node44" href="$IKaaDataMultiplexer_8hpp.html" title="kaa/channel/IKaaDataMultiplexer.hpp" alt="" coords="940,315,1175,343"/>
+<area shape="rect" id="node51" href="$IKaaDataDemultiplexer_8hpp.html" title="kaa/channel/IKaaDataDemultiplexer.hpp" alt="" coords="1300,315,1551,343"/>
+<area shape="rect" id="node86" href="$IConfigurationProcessedObservable_8hpp.html" title="kaa/configuration/IConfigurationProcessedObservable.hpp" alt="" coords="3023,238,3377,266"/>
+<area shape="rect" id="node92" href="$IDecodedDeltaObservable_8hpp.html" title="kaa/configuration/IDecodedDeltaObservable.hpp" alt="" coords="2700,238,2999,266"/>
+<area shape="rect" id="node99" href="$ISchemaUpdatesReceiver_8hpp.html" title="kaa/schema/ISchemaUpdatesReceiver.hpp" alt="" coords="3395,315,3667,343"/>
+<area shape="rect" id="node88" href="$IConfigurationProcessedObserver_8hpp.html" title="kaa/configuration/IConfigurationProcessedObserver.hpp" alt="" coords="3029,315,3371,343"/>
+<area shape="rect" id="node94" href="$IGenericDeltaReceiver_8hpp.html" title="kaa/configuration/IGenericDeltaReceiver.hpp" alt="" coords="2677,315,2955,343"/>
+<area shape="rect" id="node108" href="$IConfigurationStorage_8hpp.html" title="kaa/configuration/storage/IConfigurationStorage.hpp" alt="" coords="1575,315,1892,343"/>
+<area shape="rect" id="node112" href="$IConfigurationReceiver_8hpp.html" title="kaa/configuration/manager/IConfigurationReceiver.hpp" alt="" coords="2068,238,2399,266"/>
+<area shape="rect" id="node124" href="$IConfigurationHashContainer_8hpp.html" title="kaa/configuration/IConfigurationHashContainer.hpp" alt="" coords="1580,238,1892,266"/>
+<area shape="rect" id="node115" href="$ICommonRecord_8hpp.html" title="kaa/common/types/ICommonRecord.hpp" alt="" coords="2353,315,2609,343"/>
+<area shape="rect" id="node117" href="$ISchemaDependent_8hpp.html" title="kaa/common/types/ISchemaDependent.hpp" alt="" coords="2639,393,2913,421"/>
+<area shape="rect" id="node119" href="$ICommonValue_8hpp.html" title="kaa/common/types/ICommonValue.hpp" alt="" coords="2367,393,2615,421"/>
+<area shape="rect" id="node133" href="$ISchemaObservable_8hpp.html" title="kaa/schema/ISchemaObservable.hpp" alt="" coords="3452,238,3689,266"/>
+</map>

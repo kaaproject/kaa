@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classkaa_1_1IConfigurationProcessedObserver.html" title="kaa::IConfigurationProcessedObserver" alt="" coords="5,5,248,33"/>
+<area shape="rect" id="node3" href="$classkaa_1_1IConfigurationManager.html" title="kaa::IConfigurationManager" alt="" coords="296,30,475,58"/>
+<area shape="rect" id="node5" href="$classkaa_1_1ConfigurationManager.html" title="kaa::ConfigurationManager" alt="" coords="524,30,697,58"/>
+<area shape="rect" id="node6" href="$classkaa_1_1IDeltaManager.html" title="kaa::IDeltaManager" alt="" coords="60,106,193,134"/>
+<area shape="rect" id="node8" href="$classkaa_1_1DefaultDeltaManager.html" title="kaa::DefaultDeltaManager" alt="" coords="300,93,471,121"/>
+<area shape="rect" id="node9" href="$classkaa_1_1IGenericDeltaReceiver.html" title="kaa::IGenericDeltaReceiver" alt="" coords="37,55,216,83"/>
+</map>

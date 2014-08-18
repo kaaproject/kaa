@@ -1,0 +1,23 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$ILogCollector_8hpp.html" title="kaa/log/ILogCollector.hpp" alt="" coords="1704,83,1872,111"/>
+<area shape="rect" id="node72" href="$MemoryLogStorage_8hpp.html" title="kaa/log/MemoryLogStorage.hpp" alt="" coords="1367,83,1572,111"/>
+<area shape="rect" id="node89" href="$SizeUploadStrategy_8hpp.html" title="kaa/log/SizeUploadStrategy.hpp" alt="" coords="1896,83,2101,111"/>
+<area shape="rect" id="node92" href="$DefaultLogUploadConfiguration_8hpp.html" title="kaa/log/DefaultLogUploadConfiguration.hpp" alt="" coords="2156,161,2425,189"/>
+<area shape="rect" id="node95" href="$LoggingTransport_8hpp.html" title="kaa/log/LoggingTransport.hpp" alt="" coords="651,83,843,111"/>
+<area shape="rect" id="node5" href="$LogRecord_8hpp.html" title="kaa/log/LogRecord.hpp" alt="" coords="1548,238,1703,266"/>
+<area shape="rect" id="node50" href="$ILogStorage_8hpp.html" title="kaa/log/ILogStorage.hpp" alt="" coords="1388,161,1551,189"/>
+<area shape="rect" id="node57" href="$ILogStorageStatus_8hpp.html" title="kaa/log/ILogStorageStatus.hpp" alt="" coords="1727,238,1927,266"/>
+<area shape="rect" id="node59" href="$ILogUploadConfiguration_8hpp.html" title="kaa/log/ILogUploadConfiguration.hpp" alt="" coords="2001,238,2236,266"/>
+<area shape="rect" id="node61" href="$ILogUploadStrategy_8hpp.html" title="kaa/log/ILogUploadStrategy.hpp" alt="" coords="1927,161,2132,189"/>
+<area shape="rect" id="node11" href="$AvroByteArrayConverter_8hpp.html" title="kaa/common/AvroByteArrayConverter.hpp" alt="" coords="1544,315,1808,343"/>
+<area shape="rect" id="node30" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObjectHash.hpp" alt="" coords="1144,393,1387,421"/>
+<area shape="rect" id="node39" href="$KaaException_8hpp.html" title="kaa/common/exception/KaaException.hpp" alt="" coords="2525,393,2787,421"/>
+<area shape="rect" id="node77" href="$UuidGenerator_8hpp.html" title="kaa/common/UuidGenerator.hpp" alt="" coords="1461,393,1669,421"/>
+<area shape="rect" id="node97" href="$AbstractKaaTransport_8hpp.html" title="kaa/channel/transport/AbstractKaaTransport.hpp" alt="" coords="596,161,897,189"/>
+<area shape="rect" id="node128" href="$ILoggingTransport_8hpp.html" title="kaa/channel/transport/ILoggingTransport.hpp" alt="" coords="5,315,285,343"/>
+<area shape="rect" id="node99" href="$IKaaTransport_8hpp.html" title="kaa/channel/transport/IKaaTransport.hpp" alt="" coords="373,238,629,266"/>
+<area shape="rect" id="node101" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="411,315,616,343"/>
+<area shape="rect" id="node109" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="704,238,947,266"/>
+<area shape="rect" id="node114" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="691,315,888,343"/>
+<area shape="rect" id="node119" href="$IServerInfo_8hpp.html" title="kaa/channel/server/IServerInfo.hpp" alt="" coords="712,393,936,421"/>
+</map>

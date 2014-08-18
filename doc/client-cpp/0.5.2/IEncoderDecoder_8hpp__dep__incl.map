@@ -1,0 +1,11 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$RsaEncoderDecoder_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/security/RsaEncoderDecoder.hpp" alt="" coords="432,83,1080,111"/>
+<area shape="rect" id="node5" href="$AbstractHttpChannel_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/AbstractHttpChannel.hpp" alt="" coords="17,238,695,266"/>
+<area shape="rect" id="node16" href="$HttpDataProcessor_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/transport/HttpDataProcessor.hpp" alt="" coords="433,161,1079,189"/>
+<area shape="rect" id="node21" href="$DefaultOperationTcpChannel_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/DefaultOperationTcpChannel.hpp" alt="" coords="1156,161,1879,189"/>
+<area shape="rect" id="node8" href="$DefaultBootstrapChannel_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/DefaultBootstrapChannel.hpp" alt="" coords="5,315,707,343"/>
+<area shape="rect" id="node14" href="$DefaultOperationHttpChannel_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/DefaultOperationHttpChannel.hpp" alt="" coords="731,315,1456,343"/>
+<area shape="rect" id="node10" href="$KaaClient_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/KaaClient.hpp" alt="" coords="676,393,1212,421"/>
+<area shape="rect" id="node12" href="$Kaa_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/Kaa.hpp" alt="" coords="692,470,1196,498"/>
+<area shape="rect" id="node19" href="$DefaultOperationLongPollChannel_8hpp.html" title="/data/home/jenkins/workspace/kaa_github/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/DefaultOperationLongPollChannel.hpp" alt="" coords="743,238,1495,266"/>
+</map>

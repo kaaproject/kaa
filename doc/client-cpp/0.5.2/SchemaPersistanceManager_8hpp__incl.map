@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$ISchemaPersistanceManager_8hpp.html" title="kaa/schema/storage/ISchemaPersistanceManager.hpp" alt="" coords="137,83,476,111"/>
+<area shape="rect" id="node20" href="$ISchemaProcessor_8hpp.html" title="kaa/schema/ISchemaProcessor.hpp" alt="" coords="500,83,732,111"/>
+<area shape="rect" id="node7" href="$ISchemaStorage_8hpp.html" title="kaa/schema/storage/ISchemaStorage.hpp" alt="" coords="5,161,269,189"/>
+<area shape="rect" id="node13" href="$ISchemaUpdatesReceiver_8hpp.html" title="kaa/schema/ISchemaUpdatesReceiver.hpp" alt="" coords="616,238,888,266"/>
+<area shape="rect" id="node25" href="$ISchemaObservable_8hpp.html" title="kaa/schema/ISchemaObservable.hpp" alt="" coords="625,161,863,189"/>
+</map>

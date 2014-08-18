@@ -1,0 +1,17 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$IBootstrapManager_8hpp.html" title="kaa/bootstrap/IBootstrapManager.hpp" alt="" coords="1536,393,1773,421"/>
+<area shape="rect" id="node11" href="$BootstrapTransport_8hpp.html" title="kaa/bootstrap/BootstrapTransport.hpp" alt="" coords="931,83,1171,111"/>
+<area shape="rect" id="node13" href="$AbstractKaaTransport_8hpp.html" title="kaa/channel/transport/AbstractKaaTransport.hpp" alt="" coords="884,161,1185,189"/>
+<area shape="rect" id="node84" href="$IBootstrapTransport_8hpp.html" title="kaa/channel/transport/IBootstrapTransport.hpp" alt="" coords="720,393,1011,421"/>
+<area shape="rect" id="node15" href="$IKaaTransport_8hpp.html" title="kaa/channel/transport/IKaaTransport.hpp" alt="" coords="483,238,739,266"/>
+<area shape="rect" id="node17" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="508,315,713,343"/>
+<area shape="rect" id="node37" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="1085,238,1328,266"/>
+<area shape="rect" id="node73" href="$KaaException_8hpp.html" title="kaa/common/exception/KaaException.hpp" alt="" coords="2048,238,2309,266"/>
+<area shape="rect" id="node25" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObjectHash.hpp" alt="" coords="157,393,400,421"/>
+<area shape="rect" id="node42" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="1824,315,2021,343"/>
+<area shape="rect" id="node64" href="$IServerInfo_8hpp.html" title="kaa/channel/server/IServerInfo.hpp" alt="" coords="1237,393,1461,421"/>
+<area shape="rect" id="node48" href="$TransportType_8hpp.html" title="kaa/common/TransportType.hpp" alt="" coords="2253,470,2461,498"/>
+<area shape="rect" id="node50" href="$ChannelDirection_8hpp.html" title="kaa/channel/ChannelDirection.hpp" alt="" coords="2485,470,2704,498"/>
+<area shape="rect" id="node52" href="$IKaaDataMultiplexer_8hpp.html" title="kaa/channel/IKaaDataMultiplexer.hpp" alt="" coords="2123,393,2357,421"/>
+<area shape="rect" id="node59" href="$IKaaDataDemultiplexer_8hpp.html" title="kaa/channel/IKaaDataDemultiplexer.hpp" alt="" coords="1797,393,2048,421"/>
+</map>

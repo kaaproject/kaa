@@ -1,0 +1,25 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classkaa_1_1IBootstrapTransport.html" title="kaa::IBootstrapTransport" alt="" coords="303,55,465,83"/>
+<area shape="rect" id="node3" href="$classkaa_1_1BootstrapTransport.html" title="kaa::BootstrapTransport" alt="" coords="641,30,801,58"/>
+<area shape="rect" id="node4" href="$classkaa_1_1IConfigurationTrasnport.html" title="kaa::IConfigurationTrasnport" alt="" coords="293,157,475,185"/>
+<area shape="rect" id="node6" href="$classkaa_1_1ConfigurationTransport.html" title="kaa::ConfigurationTransport" alt="" coords="632,131,811,159"/>
+<area shape="rect" id="node7" href="$classkaa_1_1IEventTransport.html" title="kaa::IEventTransport" alt="" coords="313,207,455,235"/>
+<area shape="rect" id="node9" href="$classkaa_1_1EventTransport.html" title="kaa::EventTransport" alt="" coords="653,233,789,261"/>
+<area shape="rect" id="node10" href="$classkaa_1_1IKaaTransport.html" title="kaa::IKaaTransport" alt="" coords="5,334,136,362"/>
+<area shape="rect" id="node12" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; TransportType::BOOTSTRAP \&gt;" alt="" coords="200,5,568,33"/>
+<area shape="rect" id="node15" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; TransportType::CONFIGURATION \&gt;" alt="" coords="185,106,583,134"/>
+<area shape="rect" id="node18" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; TransportType::EVENT \&gt;" alt="" coords="219,258,549,286"/>
+<area shape="rect" id="node21" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; TransportType::LOGGING \&gt;" alt="" coords="209,309,559,337"/>
+<area shape="rect" id="node25" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; TransportType::NOTIFICATION \&gt;" alt="" coords="193,511,575,539"/>
+<area shape="rect" id="node29" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; TransportType::PROFILE \&gt;" alt="" coords="213,562,555,590"/>
+<area shape="rect" id="node33" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; TransportType::USER \&gt;" alt="" coords="223,714,545,742"/>
+<area shape="rect" id="node37" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\&lt; Type \&gt;" alt="" coords="271,359,497,387"/>
+<area shape="rect" id="node23" href="$classkaa_1_1LoggingTransport.html" title="kaa::LoggingTransport" alt="" coords="647,359,796,387"/>
+<area shape="rect" id="node27" href="$classkaa_1_1NotificationTransport.html" title="kaa::NotificationTransport" alt="" coords="637,486,805,514"/>
+<area shape="rect" id="node31" href="$classkaa_1_1ProfileTransport.html" title="kaa::ProfileTransport" alt="" coords="652,587,791,615"/>
+<area shape="rect" id="node35" href="$classkaa_1_1UserTransport.html" title="kaa::UserTransport" alt="" coords="656,689,787,717"/>
+<area shape="rect" id="node38" href="$classkaa_1_1ILoggingTransport.html" title="kaa::ILoggingTransport" alt="" coords="307,410,461,438"/>
+<area shape="rect" id="node40" href="$classkaa_1_1INotificationTransport.html" title="kaa::INotificationTransport" alt="" coords="297,461,471,489"/>
+<area shape="rect" id="node42" href="$classkaa_1_1IProfileTransport.html" title="kaa::IProfileTransport" alt="" coords="312,613,456,641"/>
+<area shape="rect" id="node44" href="$classkaa_1_1IUserTransport.html" title="kaa::IUserTransport" alt="" coords="316,663,452,691"/>
+</map>
