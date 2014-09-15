@@ -302,7 +302,7 @@ class BucketWriter {
    * mechanism will never roll an empty file. This also ensures that the file
    * creation time reflects when the first event was written.
    */
-  public synchronized void append(Event event) throws IOException, InterruptedException {
+  public synchronized void append(KaaRecordEvent event) throws IOException, InterruptedException {
     if (!isOpen) {
       open(generateSerial(event));
     }
@@ -340,7 +340,7 @@ class BucketWriter {
     }
   }
 
-  public synchronized void appendBatch(List<Event> events) throws IOException, InterruptedException {
+  public synchronized void appendBatch(List<KaaRecordEvent> events) throws IOException, InterruptedException {
 	if (events.isEmpty()) {
 		return;
 	}

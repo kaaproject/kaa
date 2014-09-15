@@ -53,7 +53,6 @@ public class OperationsServerListService {
 
     /**
      * Default constructor.
-     * @param config BootstrapConfig
      */
     public OperationsServerListService() {
         serverList = new LinkedList<OperationsServer>();

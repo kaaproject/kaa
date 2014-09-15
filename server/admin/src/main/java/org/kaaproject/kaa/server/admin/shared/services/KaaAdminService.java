@@ -29,6 +29,7 @@ import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -203,5 +204,7 @@ public interface KaaAdminService extends RemoteService {
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException;
 
     public List<SchemaDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException;
+
+    public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
 
 }

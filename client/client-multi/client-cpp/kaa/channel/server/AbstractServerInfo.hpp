@@ -36,12 +36,12 @@ namespace kaa {
 template<ChannelType Type>
 class AbstractServerInfo : public IServerInfo {
 public:
-    AbstractServerInfo(const std::string& host, const boost::int32_t& port
+    AbstractServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
             , const std::string& encodedPublicKey);
 
-    AbstractServerInfo(const std::string& hostPort, const std::string& encodedPublicKey);
+    AbstractServerInfo(ServerType type, const std::string& hostPort, const std::string& encodedPublicKey);
 
-    AbstractServerInfo(const std::string& host, const boost::int32_t& port
+    AbstractServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
             , const Botan::MemoryVector<boost::uint8_t>& publicKey);
 
     virtual const std::string& getHost() const {
@@ -62,8 +62,12 @@ public:
         return HttpUrl(ss.str());
     }
 
-    virtual ChannelType getType() const {
-        return type_;
+    virtual ChannelType getChannelType() const {
+        return channelType_;
+    }
+
+    virtual ServerType getServerType() const {
+        return serverType_;
     }
 
     virtual ~AbstractServerInfo() {}
@@ -79,7 +83,8 @@ private:
                     , const Botan::MemoryVector<boost::uint8_t>& decodedPublicKey);
 
 private:
-    const ChannelType type_;
+    const ChannelType channelType_;
+    const ServerType  serverType_;
 
     std::string        host_;
     boost::uint16_t    port_;
@@ -88,16 +93,16 @@ private:
 };
 
 template<ChannelType Type>
-AbstractServerInfo<Type>::AbstractServerInfo(const std::string& host, const boost::int32_t& port
-        , const std::string& encodedPublicKey) : type_(Type)
+AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
+        , const std::string& encodedPublicKey) : channelType_(Type), serverType_(type)
 {
     verify(host, port, encodedPublicKey);
     assign(host, port, encodedPublicKey);
 }
 
 template<ChannelType Type>
-AbstractServerInfo<Type>::AbstractServerInfo(const std::string& hostPort, const std::string& encodedPublicKey)
-    : type_(Type)
+AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string& hostPort, const std::string& encodedPublicKey)
+    : channelType_(Type), serverType_(type)
 {
     if (!hostPort.empty()) {
         std::size_t delimPos = hostPort.find(':');
@@ -121,8 +126,8 @@ AbstractServerInfo<Type>::AbstractServerInfo(const std::string& hostPort, const 
 }
 
 template<ChannelType Type>
-AbstractServerInfo<Type>::AbstractServerInfo(const std::string& host, const boost::int32_t& port
-        , const Botan::MemoryVector<boost::uint8_t>& publicKey) : type_(Type)
+AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
+        , const Botan::MemoryVector<boost::uint8_t>& publicKey) : channelType_(Type), serverType_(type)
 {
     verify(host, port, publicKey);
     assign(host, port, publicKey);

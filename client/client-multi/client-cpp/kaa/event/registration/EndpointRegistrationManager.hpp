@@ -23,7 +23,7 @@
 
 #include <boost/signals2.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 #include "kaa/IKaaClientStateStorage.hpp"
 
@@ -107,21 +107,25 @@ private:
 
 
 private:
+    typedef boost::recursive_mutex              mutex_type;
+    typedef boost::unique_lock<mutex_type>      lock_type;
+
     IKaaClientStateStoragePtr     status_;
 
     std::string endpointAccessToken_;
+    std::string endpointKeyHash_;
 
     UserAttachRequestPtr userAttachRequest_;
 
     std::map<std::string/*requestId*/, EndpointOperationInfo>  attachingEndpoints_;
     std::map<std::string/*requestId*/, EndpointOperationInfo>  detachingEndpoints_;
     std::map<std::string/*epToken*/, std::string/*epHash*/>    attachedEndpoints_;
-    boost::mutex                                               endpointsGuard_;
+    mutex_type                                                 endpointsGuard_;
 
     UserTransport *                                            userTransport_;
 
     boost::signals2::signal<void (const AttachedEndpoints&)>   attachedEPListListeners;
-    boost::mutex                                               listenerGuard_;
+    mutex_type                                                 listenerGuard_;
 
     IEndpointAttachStatusListener*                             attachStatusListener_;
 };

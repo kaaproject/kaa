@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.services.cache;
 
+import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 
 public interface CacheService {
@@ -27,5 +29,9 @@ public interface CacheService {
     byte[] uploadedFile(String key, byte[] data);
 
     void removeUploadedFile(String key);
+
+    FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException;
+
+    FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException;
 
 }

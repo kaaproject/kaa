@@ -50,11 +50,11 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        Sdk sdk = client.generateSdk(SdkPlatform.JAVA, 
-                application.getId(), 
-                profileSchema.getMajorVersion(), 
-                configSchema.getMajorVersion(), 
-                notificationSchema.getMajorVersion(), 
+        Sdk sdk = client.generateSdk(SdkPlatform.JAVA,
+                application.getId(),
+                profileSchema.getMajorVersion(),
+                configSchema.getMajorVersion(),
+                notificationSchema.getMajorVersion(),
                 null, logSchema.getMajorVersion());
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -108,14 +108,14 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
 
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
-        
-        Sdk sdk = client.generateSdk(SdkPlatform.ANDROID, 
-                application.getId(), 
-                profileSchema.getMajorVersion(), 
-                configSchema.getMajorVersion(), 
-                notificationSchema.getMajorVersion(), 
+
+        Sdk sdk = client.generateSdk(SdkPlatform.ANDROID,
+                application.getId(),
+                profileSchema.getMajorVersion(),
+                configSchema.getMajorVersion(),
+                notificationSchema.getMajorVersion(),
                 aefMapIds, logSchema.getMajorVersion());
-        
+
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getData());
@@ -136,10 +136,10 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        Sdk sdk = client.generateSdk(SdkPlatform.CPP, application.getId(), 
-                profileSchema.getMajorVersion(), 
+        Sdk sdk = client.generateSdk(SdkPlatform.CPP, application.getId(),
+                profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
-                notificationSchema.getMajorVersion(), 
+                notificationSchema.getMajorVersion(),
                 null, logSchema.getMajorVersion());
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -165,6 +165,61 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
         Sdk sdk = client.generateSdk(SdkPlatform.CPP,
+                application.getId(),
+                profileSchema.getMajorVersion(),
+                configSchema.getMajorVersion(),
+                notificationSchema.getMajorVersion(),
+                aefMapIds, logSchema.getMajorVersion());
+
+        Assert.assertNotNull(sdk);
+        Assert.assertFalse(strIsEmpty(sdk.getFileName()));
+        Assert.assertNotNull(sdk.getData());
+    }
+
+    /**
+     * Test generate C SDK.
+     *
+     * @throws TException
+     *             the t exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Test
+    public void testGenerateCSdk() throws TException, IOException {
+        ApplicationDto application = createApplication();
+        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
+        LogSchemaDto logSchema = createLogSchema(application.getId());
+
+        Sdk sdk = client.generateSdk(SdkPlatform.C, application.getId(),
+                profileSchema.getMajorVersion(),
+                configSchema.getMajorVersion(),
+                notificationSchema.getMajorVersion(),
+                null, logSchema.getMajorVersion());
+        Assert.assertNotNull(sdk);
+        Assert.assertFalse(strIsEmpty(sdk.getFileName()));
+        Assert.assertNotNull(sdk.getData());
+    }
+
+    /**
+     * Test generate C SDK with event support.
+     *
+     * @throws TException
+     *             the t exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Test
+    public void testGenerateCSdkWithEventSupport() throws TException, IOException {
+        ApplicationDto application = createApplication();
+        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
+        LogSchemaDto logSchema = createLogSchema(application.getId());
+
+        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
+        List<String> aefMapIds = Collections.singletonList(aefMap.getId());
+
+        Sdk sdk = client.generateSdk(SdkPlatform.C,
                 application.getId(),
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),

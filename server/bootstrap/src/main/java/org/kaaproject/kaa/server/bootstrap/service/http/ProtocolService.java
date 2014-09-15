@@ -16,8 +16,18 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.http;
 
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
+import org.kaaproject.kaa.server.bootstrap.service.initialization.ServiceChannel;
 import org.kaaproject.kaa.server.common.server.http.DefaultHttpServerInitializer;
 import org.kaaproject.kaa.server.common.server.http.NettyHttpServer;
+import org.kaaproject.kaa.server.common.zk.ZkChannelException;
+import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Andrey Panasenko
  */
-public class ProtocolService {
+public class ProtocolService  implements ServiceChannel { 
 
     /** The Constant logger */
     private static final Logger LOG = LoggerFactory
@@ -36,6 +46,14 @@ public class ProtocolService {
     /** Netty server instance */
     private NettyHttpServer netty;
     private final BootstrapConfig config;
+
+    private Integer processedRequestCount = new Integer(0);
+
+    private Integer registeredUsersCount = new Integer(0);;
+
+    private Integer deltaCalculationCount = new Integer(0);;
+
+    private Long timeStarted = System.currentTimeMillis();
 
     /**
      * ProtocolService constructor
@@ -46,8 +64,9 @@ public class ProtocolService {
         this.netty = new NettyHttpServer(this.config, serverInitializer);
     }
 
-    /**
-     * Start.
+    /*
+     * (non-Javadoc)
+     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.ServiceChannel#start()
      */
     public void start() {
         LOG.trace("Bootstrap protocol service: starting Netty...");
@@ -55,8 +74,9 @@ public class ProtocolService {
         netty.start();
     }
 
-    /**
-     * Stop.
+    /*
+     * (non-Javadoc)
+     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.ServiceChannel#stop()
      */
     public void stop() {
         LOG.trace("Bootstrap protocol service, stopping Netty...");
@@ -78,5 +98,47 @@ public class ProtocolService {
      */
     public void setNetty(NettyHttpServer netty) {
         this.netty = netty;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.ServiceChannel#getChannelType()
+     */
+    @Override
+    public ChannelType getChannelType() {
+        return ChannelType.HTTP;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.ServiceChannel#getZkSupportedChannel()
+     */
+    @Override
+    public SupportedChannel getZkSupportedChannel() throws ZkChannelException {
+        
+        ZkSupportedChannel ZkChannel = new ZkSupportedChannel(
+                ZkChannelType.HTTP, 
+                false, 
+                (Object) getZkCommunicationParameters(), 
+                (Object) getChannelStatistics());
+        return new SupportedChannel(ZkChannel );
+    }
+
+    /**
+     * Return HTTP bootstrap channel load statistics
+     * @return ZkHttpStatistics - statistics of HTTP bootstrap channel
+     */
+    private ZkHttpStatistics getChannelStatistics() {
+        return new ZkHttpStatistics(new BaseStatistics(
+                processedRequestCount, 
+                registeredUsersCount, 
+                deltaCalculationCount, 
+                timeStarted));
+    }
+
+    /**
+     * Return HTTP bootstrap channel communications parameters
+     * @return ZkHttpComunicationParameters communications parameters
+     */
+    private ZkHttpComunicationParameters getZkCommunicationParameters() {
+        return new ZkHttpComunicationParameters(new IpComunicationParameters(config.getBindInterface(), config.getPort()));
     }
 }

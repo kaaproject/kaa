@@ -74,16 +74,16 @@ public class LogAppenderServiceImpl implements LogAppendersService {
         return getDto(logAppenderDao.unregisterLogAppenderById(logAppenderId));
     }
 
-	@Override
-	public LogAppenderDto saveLogAppender(LogAppenderDto logAppenderDto) {
-		LOG.debug("Save log appender [{}]", logAppenderDto);
-		LogAppenderDto saved = null;
-		if (logAppenderDto != null) {
-			logAppenderDto.setCreatedTime(System.currentTimeMillis());
-			saved = getDto(logAppenderDao.save(new LogAppender(logAppenderDto)));
-		}
-		return saved;
-	}
+    @Override
+    public LogAppenderDto saveLogAppender(LogAppenderDto logAppenderDto) {
+        LOG.debug("Save log appender [{}]", logAppenderDto);
+        LogAppenderDto saved = null;
+        if (logAppenderDto != null) {
+            logAppenderDto.setCreatedTime(System.currentTimeMillis());
+            saved = getDto(logAppenderDao.save(new LogAppender(logAppenderDto)));
+        }
+        return saved;
+    }
 
     @Override
     public LogAppenderDto findLogAppenderById(String id) {

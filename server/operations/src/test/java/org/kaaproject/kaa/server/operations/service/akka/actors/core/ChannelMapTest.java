@@ -38,7 +38,7 @@ public class ChannelMapTest {
         ChannelMap map = new ChannelMap("endpointKey", "actorKey");
         Assert.assertNull(map.getByRequestId(UUID.randomUUID()));
         ChannelHandlerContext ctxMock = Mockito.mock(ChannelHandlerContext.class);
-        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), ctxMock, ChannelType.HTTP, null, null, "applicationToken", 0);
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), ctxMock, ChannelType.HTTP, null, null, "applicationToken", 0, true);
         SyncRequestMessage message = new SyncRequestMessage(session, null, null, null);
         map.addChannel(new ChannelMetaData(message));
         Assert.assertNotNull(map.getByRequestId(message.getChannelUuid()));
@@ -51,7 +51,7 @@ public class ChannelMapTest {
         request.setSyncRequestMetaData(new SyncRequestMetaData());
         UUID sameUid = UUID.randomUUID();
         ChannelHandlerContext ctxMock = Mockito.mock(ChannelHandlerContext.class);
-        NettySessionInfo session = new NettySessionInfo(sameUid, ctxMock, ChannelType.HTTP, null, null, "applicationToken", 0);
+        NettySessionInfo session = new NettySessionInfo(sameUid, ctxMock, ChannelType.HTTP, null, null, "applicationToken", 0, true);
         SyncRequestMessage message = new SyncRequestMessage(session, request, null, null);
         ChannelMetaData md1 = new ChannelMetaData(message);
         SyncRequestMessage message2 = new SyncRequestMessage(session, request, null, null);

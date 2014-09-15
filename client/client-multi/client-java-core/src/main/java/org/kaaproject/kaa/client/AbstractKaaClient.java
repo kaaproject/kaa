@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
-import org.kaaproject.kaa.client.channel.BootstrapServerInfo;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.ConfigurationTransport;
 import org.kaaproject.kaa.client.channel.EventTransport;
@@ -42,7 +41,9 @@ import org.kaaproject.kaa.client.channel.MetaDataTransport;
 import org.kaaproject.kaa.client.channel.NotificationTransport;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.RedirectionTransport;
+import org.kaaproject.kaa.client.channel.ServerInfo;
 import org.kaaproject.kaa.client.channel.UserTransport;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
@@ -85,6 +86,7 @@ import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +130,6 @@ public abstract class AbstractKaaClient implements KaaClient {
     private final DefaultProfileManager profileManager;
 
     private final KaaClientProperties properties;
-    private final List<BootstrapServerInfo> bootstrapServers;
     private final KaaClientState kaaClientState;
     private final BootstrapManager bootstrapManager;
     private final EventManager eventManager;
@@ -151,13 +152,13 @@ public abstract class AbstractKaaClient implements KaaClient {
     AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         properties = new KaaClientProperties();
 
-        bootstrapServers = properties.getBootstrapServers();
+        Map<ChannelType, List<ServerInfo>> bootstrapServers = properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
             throw new RuntimeException("Unable to obtain list of bootstrap servers."); //NOSONAR
         }
 
-        if (bootstrapServers.size() > 1) {
-            Collections.shuffle(bootstrapServers);
+        for (Map.Entry<ChannelType, List<ServerInfo>> cursor : bootstrapServers.entrySet()) {
+            Collections.shuffle(cursor.getValue());
         }
 
         kaaClientState = new KaaClientPropertiesState(createPersistentStorage(), properties);
@@ -234,6 +235,8 @@ public abstract class AbstractKaaClient implements KaaClient {
             transport.setChannelManager(channelManager);
             transport.setClientState(kaaClientState);
         }
+
+        channelManager.setConnectivityChecker(createConnectivityChecker());
     }
 
     private void initKaaConfiguration() {
@@ -273,6 +276,8 @@ public abstract class AbstractKaaClient implements KaaClient {
             PublicKey publicKey, PublicKey remotePublicKey);
 
     protected abstract PersistentStorage createPersistentStorage();
+
+    protected abstract ConnectivityChecker createConnectivityChecker();
 
     void start() throws IOException, TransportException {
         if (!isInitialized) {

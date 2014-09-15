@@ -65,6 +65,7 @@ import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
@@ -671,6 +672,7 @@ public class AbstractTest {
         logAppender.setSchema(new SchemaDto(schemaId, schema.getMajorVersion(), schema.getMinorVersion()));
         logAppender.setTenantId(app.getTenantId());
         logAppender.setStatus(status != null ? status : LogAppenderStatusDto.REGISTERED);
+        logAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
         logAppender.setType(type != null ? type : LogAppenderTypeDto.FILE);
 
         LogAppenderParametersDto parameters = new LogAppenderParametersDto();
@@ -678,7 +680,7 @@ public class AbstractTest {
 
         switch(logAppender.getType()) {
             case FILE:
-                parameters.setParameters(new FileAppenderParametersDto("testPath"));
+                parameters.setParameters(new FileAppenderParametersDto("testPath", "testUsername", "testSshKey"));
                 break;
             case FLUME:
                 FlumeAppenderParametersDto flumeProp = new FlumeAppenderParametersDto();

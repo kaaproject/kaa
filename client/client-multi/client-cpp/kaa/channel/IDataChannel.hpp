@@ -22,14 +22,20 @@
 #include <vector>
 #include <map>
 
+#include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/common/TransportType.hpp"
 #include "kaa/channel/ChannelDirection.hpp"
+#include "kaa/channel/server/IServerInfo.hpp"
 #include "kaa/channel/IKaaDataMultiplexer.hpp"
 #include "kaa/channel/IKaaDataDemultiplexer.hpp"
 #include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/channel/server/IServerInfo.hpp"
+#include "kaa/channel/ServerType.hpp"
+#include "kaa/channel/connectivity/IConnectivityChecker.hpp"
 
 namespace kaa {
+
+class IPingServerStorage;
 
 /**
  * Channel is responsible for sending/receiving data to/from the endpoint server.
@@ -72,7 +78,16 @@ public:
      * @see ChannelType
      *
      */
-    virtual ChannelType getType() const  = 0;
+    virtual ChannelType getChannelType() const  = 0;
+
+    /**
+     * Retrieves the channel's server type (i.e. BOOTSTRAP or OPERATIONS).
+     *
+     * @return the channel's type.
+     * @see ServerType
+     *
+     */
+    virtual ServerType getServerType() const  = 0;
 
     /**
      * Sets the response demultiplexer for this channel.
@@ -110,6 +125,15 @@ public:
      *
      */
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const = 0;
+
+    /**
+     * Sets connectivity checker to the current channel.
+     *
+     * @param checker platform-dependent connectivity checker.
+     * @see IConnectivityChecker
+     *
+     */
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) = 0;
 
     virtual ~IDataChannel() {}
 

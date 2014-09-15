@@ -15,6 +15,7 @@
  */
 
 #include "kaa/kaatcp/KaaSyncResponse.hpp"
+#include <arpa/inet.h>
 
 namespace kaa {
 
@@ -27,7 +28,7 @@ KaaSyncResponse::KaaSyncResponse(const char * payload, boost::uint32_t size) : i
 void KaaSyncResponse::parseMessage(const char * payload, boost::uint32_t size)
 {
     payload += 9;
-    messageId_ = (((boost::uint8_t) *payload) << 8) | (boost::uint8_t) *(payload + 1);
+    messageId_ = ntohs(*(boost::uint16_t *)payload);
     payload += 2;
     isZipped_ = (*payload) & KaaTcpCommon::KAA_SYNC_ZIPPED_BIT;
     isEncrypted_ = (*payload) & KaaTcpCommon::KAA_SYNC_ENCRYPTED_BIT;

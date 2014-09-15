@@ -27,7 +27,7 @@ public interface KaaAuthService extends RemoteService {
 
     public AuthResultDto checkAuth() throws Exception;
 
-    public void createKaaAdmin(String username, String password) throws Exception;
+    public void createKaaAdmin(String username, String password) throws KaaAdminServiceException;
 
     ResultCode changePassword(String username, String oldPassword, String newPassword) throws Exception;
 

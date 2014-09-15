@@ -24,9 +24,9 @@
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 #include "kaa/common/exception/KaaException.hpp"
-#include "kaa/channel/server/OperationServerHttpInfo.hpp"
-#include "kaa/channel/server/OperationServerLongPollInfo.hpp"
-#include "kaa/channel/server/OperationServerKaaTcpInfo.hpp"
+#include "kaa/channel/server/HttpServerInfo.hpp"
+#include "kaa/channel/server/HttpLPServerInfo.hpp"
+#include "kaa/channel/server/KaaTcpServerInfo.hpp"
 
 namespace kaa {
 
@@ -55,7 +55,7 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
             Botan::MemoryVector<boost::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
             KAA_LOG_DEBUG(boost::format("Server name: %1%, Parameters: %2%:%3%")
                      % server.name % params.hostName % params.port);
-            IServerInfoPtr info(new OperationServerHttpInfo(params.hostName, params.port, pubKey));
+            IServerInfoPtr info(new HttpServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
             return info;
         }
         case ChannelType::HTTP_LP: {
@@ -63,13 +63,13 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
             Botan::MemoryVector<boost::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
             KAA_LOG_DEBUG(boost::format("Server name: %1%, Parameters: %2%:%3%")
                      % server.name % params.hostName % params.port);
-            IServerInfoPtr info(new OperationServerLongPollInfo(params.hostName, params.port, pubKey));
+            IServerInfoPtr info(new HttpLPServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
             return info;
         }
         case ChannelType::KAATCP: {
             KaaTCPComunicationParameters params = channel.communicationParameters.get_KaaTCPComunicationParameters();
             Botan::MemoryVector<boost::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
-            IServerInfoPtr info(new OperationServerKaaTcpInfo(params.hostName, params.port, pubKey));
+            IServerInfoPtr info(new KaaTcpServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
             return info;
         }
         default:

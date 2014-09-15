@@ -14,7 +14,8 @@ import org.apache.thrift.TEnum;
 public enum SdkPlatform implements org.apache.thrift.TEnum {
   JAVA(1),
   ANDROID(2),
-  CPP(3);
+  CPP(3),
+  C(4);
 
   private final int value;
 
@@ -41,6 +42,8 @@ public enum SdkPlatform implements org.apache.thrift.TEnum {
         return ANDROID;
       case 3:
         return CPP;
+      case 4:
+        return C;
       default:
         return null;
     }

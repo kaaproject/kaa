@@ -24,7 +24,7 @@
 #include <botan/base64.h>
 #include <boost/cstdint.hpp>
 
-#include "kaa/channel/server/BootstrapServerInfo.hpp"
+#include "kaa/channel/server/IServerInfo.hpp"
 
 namespace kaa {
 
@@ -52,7 +52,7 @@ extern const char * const CLIENT_PRIV_KEY_LOCATION;
 
 extern const char * const CLIENT_STATUS_FILE_LOCATION;
 
-typedef std::vector<BootstrapServerInfo> BootstrapServers;
+typedef std::vector<IServerInfoPtr> BootstrapServers;
 const BootstrapServers& getServerInfoList();
 
 const Botan::SecureVector<boost::uint8_t>& getDefaultConfigData();

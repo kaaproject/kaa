@@ -23,11 +23,13 @@ public abstract class AbstractServerInfo implements ServerInfo {
     private final String host;
     private final int port;
     private final PublicKey publicKey;
+    private final ServerType serverType;
 
-    AbstractServerInfo(String host, int port, PublicKey publicKey) {
+    AbstractServerInfo(ServerType type, String host, int port, PublicKey publicKey) {
         this.host = host;
         this.port = port;
         this.publicKey = publicKey;
+        this.serverType = type;
     }
 
     public String getHost() {
@@ -49,5 +51,10 @@ public abstract class AbstractServerInfo implements ServerInfo {
     @Override
     public String toString() {
         return "AbstractServerInfo [host=" + host + ", port=" + port + "]";
+    }
+
+    @Override
+    public ServerType getServerType() {
+        return serverType;
     }
 }

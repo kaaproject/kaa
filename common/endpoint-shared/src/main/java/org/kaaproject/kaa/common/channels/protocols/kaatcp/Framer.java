@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MessageFactory;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MessageType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingRequest;
@@ -32,6 +33,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Kaatcp Framer Class.
+ * Used to cut incoming byte stream into MQTT frames, and deliver frames to {@link MqttFramelistener}.
+ * Framer Class typically used from {@link MessageFactory} Class.
  *
  * @author Andrey Panasenko
  *
@@ -41,21 +44,37 @@ public class Framer {
     public static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(Framer.class);
 
+    /** Mqtt frame listeners list */
     private final List<MqttFramelistener> listeners;
 
+    /** Current processing frame */
     private MqttFrame currentFrame;
+    
     /**
-     *
+     * Default constructor.
      */
     public Framer() {
         listeners = new ArrayList<>();
 
     }
 
+    /**
+     * Register Mqtt frame listener.
+     * @param listener MqttFramelistener 
+     */
     public void registerFrameListener(MqttFramelistener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Process incoming bytes stream.
+     * Assumes that bytes is unprocessed bytes.
+     * In case of previous  pushBytes() eaten not all bytes on next iterations
+     *  bytes array should starts from unprocessed bytes.
+     * @param bytes byte[] to push
+     * @return number of bytes processed from this array.
+     * @throws KaaTcpProtocolException throws in case of protocol errors.
+     */
     public int pushBytes(byte[] bytes) throws KaaTcpProtocolException {
         if(LOG.isTraceEnabled()){
             if(bytes != null){
@@ -76,7 +95,7 @@ public class Framer {
             }
             used += currentFrame.push(bytes, used);
             if(currentFrame.decodeComplete()) {
-                callListeners(currentFrame);
+                callListeners(currentFrame.upgradeFrame());
                 currentFrame = null;
             }
         }
@@ -120,6 +139,9 @@ public class Framer {
         return frame;
     }
 
+    /**
+     * Reset Framer state by dropping currentFrame.
+     */
     public void flush() {
         currentFrame = null;
     }

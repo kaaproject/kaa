@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.5.2</version>
+        <version>0.6.0</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-cpp</artifactId>
@@ -75,6 +75,7 @@
                         <exclude>**/build/**</exclude>
                         <exclude>**/gcovr</exclude>
                         <exclude>**/*.json</exclude>
+                        <exclude>**/.cproject</exclude>
                     </excludes>
                 </configuration>
             </plugin>

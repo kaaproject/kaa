@@ -16,8 +16,23 @@
 
 set -e
 
-if [ -d /usr/lib/kaa-flume ]; then
-    rm -rf /usr/lib/kaa-flume
+if [ "$1" = "1" ]; then
+  if [ -d /usr/lib/kaa-flume ]; then
+      rm -rf /usr/lib/kaa-flume
+  fi
+elif [ "$1" = "2" ]; then
+      echo "!Upgrade"
+      for f in /etc/init.d/kaa-flume-*
+      do
+        if [ -x $f ]; then
+           service_name=$(basename "$f")
+           if ! service_loc="$(type -p "service")" || [ -z "$service_loc" ]; then
+	     invoke-rc.d ${service_name} stop || exit $?
+           else
+	     service ${service_name} stop || exit $?
+           fi
+        fi
+      done
 fi
 
 getent group  kaa &>/dev/null || groupadd -r kaa || :

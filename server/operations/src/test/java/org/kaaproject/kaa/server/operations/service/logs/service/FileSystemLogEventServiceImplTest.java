@@ -33,15 +33,12 @@ import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggingEvent;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogEventService;
 import org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogEventServiceImpl;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import scala.collection.mutable.StringBuilder;
 
@@ -53,10 +50,7 @@ public class FileSystemLogEventServiceImplTest {
     private static final String TEST_FILE = "/test";
     private static final String TEST_TEXT = "test text";
 
-    private static final String TEST_ID =  "test id";
-
-    private static final String TEST_ENDPOINT_KEY = "endpointkey";
-    private static final long TEST_DATE_CREATED = System.currentTimeMillis();
+    private static final String TEST_HEADER = "test header";
     private static final String TEST_EVENT = "event";
 
     private FileSystemLogEventService fileSystemLogEventService = new FileSystemLogEventServiceImpl();
@@ -67,7 +61,7 @@ public class FileSystemLogEventServiceImplTest {
         WriterAppender appenderMock = Mockito.mock(WriterAppender.class);
         org.apache.log4j.Logger loggerMock = Mockito.mock(org.apache.log4j.Logger.class);
 
-        LogEventDto logEventDto = new LogEventDto("endpointkey", System.currentTimeMillis(), "event");
+        LogEventDto logEventDto = new LogEventDto("header", "event");
         logEventService.save(Collections.singletonList(logEventDto), loggerMock, appenderMock);
 
         Mockito.verify(appenderMock).doAppend(Mockito.any(LoggingEvent.class));
@@ -142,12 +136,10 @@ public class FileSystemLogEventServiceImplTest {
 
             org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("test" + System.currentTimeMillis());
 
-            LogEventDto logEventDto = new LogEventDto(TEST_ENDPOINT_KEY, TEST_DATE_CREATED, TEST_EVENT);
+            LogEventDto logEventDto = new LogEventDto(TEST_HEADER, TEST_EVENT);
 
-            String realEvent = new StringBuilder("{\"Date created\": \"")
-                    .append(TEST_DATE_CREATED)
-                    .append("\", \"Endpoint key\": \"")
-                    .append(TEST_ENDPOINT_KEY)
+            String realEvent = new StringBuilder("{\"Log Header\": \"")
+                    .append(TEST_HEADER)
                     .append("\", \"Event\": ")
                     .append(TEST_EVENT)
                     .append("}")

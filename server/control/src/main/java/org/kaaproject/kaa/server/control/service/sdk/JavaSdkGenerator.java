@@ -43,7 +43,12 @@ import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
+import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompiler;
 import org.kaaproject.kaa.server.control.service.sdk.compress.ZipEntryData;
@@ -73,13 +78,13 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant ANDROID_SDK_DIR. */
     private static final String ANDROID_SDK_DIR = "sdk/android";
-    
+
     /** The Constant ANDROID_SDK_PREFIX. */
     private static final String ANDROID_SDK_PREFIX = "kaa-client-sdk-android-";
-    
+
     /** The Constant ANDROID_SDK_NAME_PATTERN. */
     private static final String ANDROID_SDK_NAME_PATTERN = ANDROID_SDK_PREFIX + "p{}-c{}-n{}-l{}.jar";
-    
+
     /** The Constant CLIENT_PROPERTIES. */
     private static final String CLIENT_PROPERTIES = "client.properties";
 
@@ -118,7 +123,7 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant LOG_RECORD_SOURCE_TEMPLATE. */
     private static final String LOG_RECORD_SOURCE_TEMPLATE = "sdk/java/log/LogRecord.java.template";
-    
+
     /** The Constant LOG_COLLECTOR_INTERFACE_TEMPLATE. */
     private static final String LOG_COLLECTOR_INTERFACE_TEMPLATE = "sdk/java/log/LogCollector.java.template";
 
@@ -160,9 +165,9 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant random. */
     private static final SecureRandom RANDOM = new SecureRandom();
-    
-    private SdkPlatform sdkPlatform;
-    
+
+    private final SdkPlatform sdkPlatform;
+
     public JavaSdkGenerator(SdkPlatform sdkPlatform) {
         this.sdkPlatform = sdkPlatform;
     }
@@ -181,7 +186,7 @@ public class JavaSdkGenerator extends SdkGenerator {
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
             String logSchemaBody) throws Exception {
-        
+
         String sdkTemplateLocation;
         if (sdkPlatform==SdkPlatform.JAVA) {
             sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + JAVA_SDK_DIR + "/" + JAVA_SDK_PREFIX + buildVersion + ".jar";
@@ -190,7 +195,7 @@ public class JavaSdkGenerator extends SdkGenerator {
             sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + ANDROID_SDK_DIR + "/" + ANDROID_SDK_PREFIX + buildVersion + ".jar";
             LOG.debug("Lookup Android SDK template: {}", sdkTemplateLocation);
         }
-        
+
         File sdkTemplateFile = new File(sdkTemplateLocation);
         ZipFile templateArhive = new ZipFile(sdkTemplateFile);
 
@@ -228,7 +233,7 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         JavaDynamicBean notificationListenerClassBean = new JavaDynamicBean(ABSTRACT_NOTIFICATION_LISTENER, notificationListenerSource);
         javaSources.add(notificationListenerClassBean);
-        
+
         Schema logSchema = new Schema.Parser().parse(logSchemaBody);
         javaSources.addAll(generateSchemaSources(logSchema));
         String logRecordTemplate = readResource(LOG_RECORD_SOURCE_TEMPLATE);
@@ -292,9 +297,9 @@ public class JavaSdkGenerator extends SdkGenerator {
         sdkFile.close();
 
         String sdkFileName = MessageFormatter.arrayFormat(sdkPlatform==SdkPlatform.JAVA ? JAVA_SDK_NAME_PATTERN
-                                                                                        : ANDROID_SDK_NAME_PATTERN, 
-                new Object[]{profileSchemaVersion, 
-                configurationSchemaVersion, 
+                                                                                        : ANDROID_SDK_NAME_PATTERN,
+                new Object[]{profileSchemaVersion,
+                configurationSchemaVersion,
                 notificationSchemaVersion,
                 logSchemaVersion}).getMessage();
 
@@ -313,7 +318,7 @@ public class JavaSdkGenerator extends SdkGenerator {
      * @return the list
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private List<JavaDynamicBean> generateSchemaSources(Schema schema) throws IOException {
+    public static List<JavaDynamicBean> generateSchemaSources(Schema schema) throws IOException {
         SpecificCompiler compiler = new SpecificCompiler(schema);
         compiler.setStringType(StringType.String);
         compiler.setFieldVisibility(FieldVisibility.PRIVATE);
@@ -367,7 +372,7 @@ public class JavaSdkGenerator extends SdkGenerator {
      * @return the java sources
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private List<JavaDynamicBean> getJavaSources(File srcDir) throws IOException {
+    private static List<JavaDynamicBean> getJavaSources(File srcDir) throws IOException {
         List<JavaDynamicBean> result = new ArrayList<JavaDynamicBean>();
         File[] files = srcDir.listFiles();
         for (File f : files) {
@@ -417,13 +422,47 @@ public class JavaSdkGenerator extends SdkGenerator {
         String bootstrapServers = "";
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
-        for (int i=0;i<bootstrapNodes.size();i++) {
-            if (i>0) {
+        for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
+            if (nodeIndex > 0) {
                 bootstrapServers += ";";
             }
-            ConnectionInfo bootstrapConnection = bootstrapNodes.get(i).getConnectionInfo();
-            String publicKeyBase64 = Base64.encodeBase64String(bootstrapConnection.getPublicKey().array());
-            bootstrapServers += bootstrapNodes.get(i).getBootstrapHostName() + ":" + bootstrapNodes.get(i).getBootstrapPort() + ":" + publicKeyBase64;
+
+            BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
+            List<BootstrapSupportedChannel> supportedChannels = node.getSupportedChannelsArray();
+
+            for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
+                ZkSupportedChannel channel = supportedChannels.get(chIndex).getZkChannel();
+
+                bootstrapServers += channel.getChannelType().ordinal();
+                bootstrapServers += ":";
+
+                if (channel.getChannelType() == ZkChannelType.HTTP) {
+                    ZkHttpComunicationParameters params =
+                            (ZkHttpComunicationParameters)channel.getCommunicationParameters();
+
+                    bootstrapServers += params.getZkComunicationParameters().getHostName();
+                    bootstrapServers += ":";
+                    bootstrapServers += params.getZkComunicationParameters().getPort();
+                } else if (channel.getChannelType() == ZkChannelType.HTTP_LP) {
+                    ZkHttpLpComunicationParameters params =
+                            (ZkHttpLpComunicationParameters)channel.getCommunicationParameters();
+
+                    bootstrapServers += params.getZkComunicationParameters().getHostName();
+                    bootstrapServers += ":";
+                    bootstrapServers += params.getZkComunicationParameters().getPort();
+                } else if (channel.getChannelType() == ZkChannelType.KAATCP) {
+                    ZkKaaTcpComunicationParameters params =
+                            (ZkKaaTcpComunicationParameters)channel.getCommunicationParameters();
+
+                    bootstrapServers += params.getZkComunicationParameters().getHostName();
+                    bootstrapServers += ":";
+                    bootstrapServers += params.getZkComunicationParameters().getPort();
+                }
+
+                bootstrapServers += "|";
+            }
+
+            bootstrapServers += Base64.encodeBase64String(node.getConnectionInfo().getPublicKey().array());
         }
 
         String ecfs = "";

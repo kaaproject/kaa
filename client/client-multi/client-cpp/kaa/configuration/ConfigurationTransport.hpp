@@ -20,7 +20,7 @@
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IConfigurationTransport.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
-#include "kaa/configuration/storage/IConfigurationPersistanceManager.hpp"
+#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 #include "kaa/schema/ISchemaProcessor.hpp"
 
 namespace kaa {

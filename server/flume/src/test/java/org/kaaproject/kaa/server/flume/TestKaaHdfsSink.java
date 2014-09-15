@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.FileReader;
 import org.apache.avro.file.SeekableInput;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.EncoderFactory;
@@ -55,7 +57,9 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kaaproject.kaa.server.common.flume.shared.avro.gen.LogData;
+import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.kaaproject.kaa.server.flume.channel.KaaLoadChannelSelector;
 import org.kaaproject.kaa.server.flume.sink.hdfs.KaaHdfsSink;
 import org.slf4j.Logger;
@@ -74,6 +78,7 @@ public class TestKaaHdfsSink {
     private static FileSystem fileSystem = null;
 
     private static String applicationToken = "42342342";
+    private static byte[] endpointKeyHash = new byte[]{6,3,8,4,7,5,3,6};
     private static int logSchemaVersion = 1;
     private static File logSchemasRootDir;
 
@@ -149,7 +154,13 @@ public class TestKaaHdfsSink {
         sinkRunner.start();
         source.start();
 
-        List<TestLogData> testLogs = generateAndSendRecords();
+        RecordHeader header = new RecordHeader();
+        header.setApplicationToken(applicationToken);
+        header.setEndpointKeyHash(new String(endpointKeyHash));
+        header.setHeaderVersion(1);
+        header.setTimestamp(System.currentTimeMillis());
+
+        List<TestLogData> testLogs = generateAndSendRecords(header);
 
         logger.info("Sent records count: " + testLogs.size());
         logger.info("Waiting for sink...");
@@ -169,17 +180,17 @@ public class TestKaaHdfsSink {
         source.stop();
         sinkRunner.stop();
 
-        List<TestLogData> resultTestLogs = readResultFromHdfs();
-
-        Assert.assertEquals(testLogs, resultTestLogs);
+        readAndCheckResultsFromHdfs(header, testLogs);
     }
 
-    private List<TestLogData> generateAndSendRecords() throws IOException {
+    private List<TestLogData> generateAndSendRecords(RecordHeader header) throws IOException {
         int count = 100;
 
         List<TestLogData> testLogs = new ArrayList<>();
 
-        LogData logData = new LogData();
+        RecordData logData = new RecordData();
+
+        logData.setRecordHeader(header);
         logData.setApplicationToken(applicationToken);
         logData.setSchemaVersion(logSchemaVersion);
         List<ByteBuffer> events = new ArrayList<>();
@@ -201,9 +212,9 @@ public class TestKaaHdfsSink {
             testLogs.add(testLogData);
         }
 
-        logData.setLogEvents(events);
+        logData.setEventRecords(events);
 
-        SpecificDatumWriter<LogData> logDataAvroWriter = new SpecificDatumWriter<>(LogData.class);
+        SpecificDatumWriter<RecordData> logDataAvroWriter = new SpecificDatumWriter<>(RecordData.class);
         baos = new ByteArrayOutputStream();
         encoder = EncoderFactory.get().binaryEncoder(baos, encoder);
         logDataAvroWriter.write(logData, encoder);
@@ -219,25 +230,29 @@ public class TestKaaHdfsSink {
         return testLogs;
     }
 
-    private List<TestLogData> readResultFromHdfs () throws IOException {
+    private void readAndCheckResultsFromHdfs (RecordHeader header, List<TestLogData> testLogs) throws IOException {
         Path logsPath = new Path("/logs" + Path.SEPARATOR + applicationToken + Path.SEPARATOR + logSchemaVersion + Path.SEPARATOR + "data*");
         FileStatus[] statuses = fileSystem.globStatus(logsPath);
-        List<TestLogData> result = new ArrayList<>();
+        List<TestLogData> resultTestLogs = new ArrayList<>();
+        Schema wrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(TestLogData.getClassSchema().toString());
         for (FileStatus status : statuses) {
-            FileReader<TestLogData> fileReader = null;
+            FileReader<GenericRecord> fileReader = null;
             try {
                 SeekableInput input = new FsInput(status.getPath(), fileSystem.getConf());
-                DatumReader<TestLogData> datumReader = new SpecificDatumReader<>(TestLogData.class);
+                DatumReader<GenericRecord> datumReader = new SpecificDatumReader<>(wrapperSchema);
                 fileReader = DataFileReader.openReader(input, datumReader);
-                for (TestLogData testLogData : fileReader) {
-                    result.add(testLogData);
+                for (GenericRecord record : fileReader) {
+                    RecordHeader recordHeader = (RecordHeader)record.get(RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD);
+                    Assert.assertEquals(header, recordHeader);
+                    TestLogData recordData = (TestLogData)record.get(RecordWrapperSchemaGenerator.RECORD_DATA_FIELD);
+                    resultTestLogs.add(recordData);
                 }
             }
             finally {
                 IOUtils.closeQuietly(fileReader);
             }
         }
-        return result;
+        Assert.assertEquals(testLogs, resultTestLogs);
     }
 
     private Context prepareContext() throws IOException {

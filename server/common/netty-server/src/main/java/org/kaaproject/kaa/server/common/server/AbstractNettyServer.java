@@ -80,7 +80,7 @@ public abstract class AbstractNettyServer extends Thread {
 
     protected abstract ChannelInitializer<SocketChannel> configureInitializer() throws Exception;
 
-    protected EventExecutorGroup getEventExecutorGroup() {
+    public EventExecutorGroup getEventExecutorGroup() {
         return executor;
     }
 

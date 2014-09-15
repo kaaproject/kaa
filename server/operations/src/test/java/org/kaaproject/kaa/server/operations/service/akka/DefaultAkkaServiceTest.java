@@ -39,7 +39,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
@@ -315,6 +314,11 @@ public class DefaultAkkaServiceTest {
             public int getKeepAlive() {
                 return 100;
             }
+
+            @Override
+            public boolean isEncrypted() {
+                return true;
+            }
         };
     }
 
@@ -332,6 +336,7 @@ public class DefaultAkkaServiceTest {
         Mockito.when(message.getEncodedRequestData()).thenReturn("dummy".getBytes());
         Mockito.when(message.getEncodedSessionKey()).thenReturn("dummy".getBytes());
         Mockito.when(message.getSessionKeySignature()).thenReturn("dummy".getBytes());
+        Mockito.when(message.isEncrypted()).thenReturn(true);
         akkaService.process(message);
         Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).build(Mockito.any(Exception.class));
     }
@@ -341,11 +346,12 @@ public class DefaultAkkaServiceTest {
         SessionAwareRequest message = Mockito.mock(SessionAwareRequest.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
         NettySessionInfo sessionInfo = new NettySessionInfo(UUID.randomUUID(), Mockito.mock(ChannelHandlerContext.class), ChannelType.TCP, Mockito.mock(SecretKey.class),
-                EndpointObjectHash.fromSHA1("test"), "applicationToken", 100);
+                EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
         Mockito.when(message.getChannelContext()).thenReturn(Mockito.mock(ChannelHandlerContext.class));
         Mockito.when(message.getErrorBuilder()).thenReturn(errorBuilder);
         Mockito.when(message.getSessionInfo()).thenReturn(sessionInfo);
         Mockito.when(message.getEncodedRequestData()).thenReturn("dummy".getBytes());
+        Mockito.when(message.isEncrypted()).thenReturn(true);
         akkaService.process(message);
         Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).build(Mockito.any(Exception.class));
     }
@@ -378,7 +384,7 @@ public class DefaultAkkaServiceTest {
         akkaService.process(message);
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).sync(request);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -407,7 +413,7 @@ public class DefaultAkkaServiceTest {
         akkaService.process(message);
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(request);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -433,7 +439,7 @@ public class DefaultAkkaServiceTest {
         akkaService.process(message);
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(request);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -462,7 +468,7 @@ public class DefaultAkkaServiceTest {
         akkaService.process(message2);
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeast(2)).sync(request);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeast(2)).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeast(2)).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -487,7 +493,7 @@ public class DefaultAkkaServiceTest {
         akkaService.process(message);
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(request);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -523,7 +529,7 @@ public class DefaultAkkaServiceTest {
         thriftNotification.setAppId(APP_ID);
         akkaService.onNotification(thriftNotification);
 
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -563,7 +569,7 @@ public class DefaultAkkaServiceTest {
 
         Mockito.verify(operationsService, Mockito.timeout(10 * TIMEOUT / 2).atLeastOnce()).updateSyncResponse(noDeltaResponse.getResponse(),
                 new ArrayList<NotificationDto>(), UNICAST_NOTIFICATION_ID);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
 
     }
 
@@ -605,7 +611,7 @@ public class DefaultAkkaServiceTest {
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).sync(request);
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).updateSyncResponse(noDeltaResponseWithTopicState.getResponse(),
                 Collections.singletonList(topicNotification), null);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -647,7 +653,7 @@ public class DefaultAkkaServiceTest {
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).sync(request);
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).updateSyncResponse(noDeltaResponseWithTopicState.getResponse(),
                 Collections.singletonList(topicNotification), null);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -681,7 +687,7 @@ public class DefaultAkkaServiceTest {
 
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] encodedData = crypt.encodeData(responseConverter.toByteArray(response));
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
 
     @Test
@@ -704,10 +710,11 @@ public class DefaultAkkaServiceTest {
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
         AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
-        KaaSync kaaSync = new KaaSync(true, crypt.encodeData(requestConverter.toByteArray(request)), false, false);
-
+        org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest kaaSync =
+                new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest(
+                        crypt.encodeData(requestConverter.toByteArray(request)), false, true);
         NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), channelContextMock, ChannelType.TCP,
-                crypt.getDecodedSessionKey(), EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN, 100);
+                crypt.getDecodedSessionKey(), EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN, 100, true);
 
         SessionAwareRequest message = new NettyTcpSyncMessage(kaaSync, session, responseBuilder, errorBuilder, null);
         akkaService.process(message);
@@ -721,7 +728,7 @@ public class DefaultAkkaServiceTest {
 
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] encodedData = crypt.encodeData(responseConverter.toByteArray(response));
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
 
     @Test
@@ -844,7 +851,7 @@ public class DefaultAkkaServiceTest {
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] response = responseConverter.toByteArray(eventResponse);
         byte[] encodedData = targetCrypt.encodeData(response);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
 
     @Test
@@ -911,7 +918,7 @@ public class DefaultAkkaServiceTest {
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] response = responseConverter.toByteArray(eventResponse);
         byte[] encodedData = targetCrypt.encodeData(response);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
 
     @Test
@@ -1005,7 +1012,7 @@ public class DefaultAkkaServiceTest {
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(request);
         Mockito.verify(logAppenderService, Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
         Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class));
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
 
     @Test
@@ -1190,7 +1197,7 @@ public class DefaultAkkaServiceTest {
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] response = responseConverter.toByteArray(targetSyncResponse);
         byte[] encodedData = targetCrypt.encodeData(response);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
 
     @Test
@@ -1288,7 +1295,7 @@ public class DefaultAkkaServiceTest {
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] response = responseConverter.toByteArray(targetSyncResponse);
         byte[] encodedData = targetCrypt.encodeData(response);
-        Mockito.verify(targetResponseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData);
+        Mockito.verify(targetResponseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
 
 }

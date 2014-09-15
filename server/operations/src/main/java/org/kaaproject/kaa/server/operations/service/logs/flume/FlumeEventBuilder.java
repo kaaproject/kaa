@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.flume.Event;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
 import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
 import org.kaaproject.kaa.server.operations.service.logs.LogSchema;
@@ -42,7 +43,7 @@ public abstract class FlumeEventBuilder {
     @Autowired
     private ApplicationService applicationService;
 
-    public abstract Event generateEvent(String appToken, int schemaVersion, List<LogEvent> logEvents);
+    public abstract Event generateEvent(String appToken, int schemaVersion, List<LogEvent> logEvents, RecordHeader header);
 
     /**
      * This method generate flume event from own data structure <code>LogEventPack</code>
@@ -50,26 +51,22 @@ public abstract class FlumeEventBuilder {
      * @param eventPack the event pack
      * @return the build flume event
      */
-    public Event generateEvent(LogEventPack eventPack) {
+    public Event generateEvent(LogEventPack eventPack, RecordHeader header) {
         LOG.debug("Build flume event object from LogEventPack object {}", eventPack);
         Event event = null;
-        if (eventPack != null) {
-            LogSchema schema = eventPack.getLogSchema();
-            if (schema != null) {
-                List<LogEvent> events = eventPack.getEvents();
-                if (events != null && !events.isEmpty()) {
-                    String appId = schema.getApplicationId();
-                    String token = getAppToken(appId);
-                    LOG.debug("Fetched application token {} for application id {}", token, appId);
-                    event = generateEvent(token, schema.getVersion(), eventPack.getEvents());
-                } else {
-                    LOG.warn("Can't build flume event. Empty Log events.");
-                }
+        LogSchema schema = eventPack.getLogSchema();
+        if (schema != null) {
+            List<LogEvent> events = eventPack.getEvents();
+            if (events != null && !events.isEmpty()) {
+                String appId = schema.getApplicationId();
+                String token = getAppToken(appId);
+                LOG.debug("Fetched application token {} for application id {}", token, appId);
+                event = generateEvent(token, schema.getVersion(), events, header);
             } else {
-                LOG.warn("Can't build flume event. LogSchema object is null.");
+                LOG.warn("Can't build flume event. Empty Log events.");
             }
         } else {
-            LOG.warn("Can't build flume event. LogEventPack object is null.");
+            LOG.warn("Can't build flume event. LogSchema object is null.");
         }
         return event;
     }

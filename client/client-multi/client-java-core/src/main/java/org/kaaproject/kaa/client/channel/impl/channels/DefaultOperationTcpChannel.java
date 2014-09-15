@@ -23,7 +23,6 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -38,24 +37,27 @@ import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
 import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
 import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolException;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.ConnAckListener;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.DisconnectListener;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.KaaSyncListener;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.PingResponseListener;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.SyncResponseListener;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck.ReturnCode;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.DisconnectReason;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MessageFactory;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingRequest;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +98,17 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final KaaChannelManager channelManager;
 
+    private final int RECONNECT_TIMEOUT = 5; // in sec
+    private ConnectivityChecker connectivityChecker;
+
     private final List<TransportType> ackTypes = new ArrayList<TransportType>();
+
+    private final Runnable openConnectionTask = new Runnable() {
+        @Override
+        public void run() {
+            openConnection();
+        }
+    };
 
     private final ConnAckListener connAckListener = new ConnAckListener() {
 
@@ -120,10 +132,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     };
 
-    private final KaaSyncListener kaaSyncListener = new KaaSyncListener() {
+    private final SyncResponseListener kaaSyncResponseListener = new SyncResponseListener() {
 
         @Override
-        public void onMessage(KaaSync message) {
+        public void onMessage(SyncResponse message) {
             LOG.info("KaaSync message (zipped={}, encrypted={}) received for channel [{}]", message.isZipped(), message.isEncrypted(), getId());
             byte [] resultBody = null;
             if (message.isEncrypted()) {
@@ -243,7 +255,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         this.state = state;
         this.channelManager = channelManager;
         messageFactory.registerMessageListener(connAckListener);
-        messageFactory.registerMessageListener(kaaSyncListener);
+        messageFactory.registerMessageListener(kaaSyncResponseListener);
         messageFactory.registerMessageListener(pingResponseListener);
         messageFactory.registerMessageListener(disconnectListener);
     }
@@ -266,11 +278,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         sendFrame(new Disconnect(DisconnectReason.NONE));
     }
 
-    private void sendKaaSync(Map<TransportType, ChannelDirection> types) throws Exception {
+    private void sendKaaSyncRequest(Map<TransportType, ChannelDirection> types) throws Exception {
         LOG.debug("Sending KaaSync from channel [{}]", getId());
         byte [] body = multiplexer.compileRequest(types);
         byte[] requestBodyEncoded = encDec.encodeData(body);
-        sendFrame( new KaaSync(true, requestBodyEncoded, false, true));
+        sendFrame( new SyncRequest(requestBodyEncoded, false, true));
     }
 
     private void sendConnect() throws Exception {
@@ -324,13 +336,19 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         } catch (Exception e) {
             LOG.error("Failed to create a socket for server {}:{}", currentServer.getHost(), currentServer.getPort());
             LOG.error("Stack trace: ", e);
-            closeConnection();
+            onServerFailed();
             socket = null;
         }
     }
 
     private void onServerFailed() {
         closeConnection();
+        if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
+            LOG.warn("Loss of connectivity. Attempt to reconnect will be made in {} sec", RECONNECT_TIMEOUT);
+            executor.schedule(openConnectionTask, RECONNECT_TIMEOUT, TimeUnit.SECONDS);
+            return;
+        }
+
         channelManager.onServerFailed(currentServer);
     }
 
@@ -370,7 +388,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         }
                     }
                     try {
-                        sendKaaSync(typeMap);
+                        sendKaaSyncRequest(typeMap);
                     } catch (Exception e) {
                         LOG.error("Failed to sync channel [{}]", getId());
                         LOG.error("Stack trace: ", e);
@@ -400,7 +418,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null && socket != null) {
                 try {
-                    sendKaaSync(SUPPORTED_TYPES);
+                    sendKaaSyncRequest(SUPPORTED_TYPES);
                 } catch (Exception e) {
                     LOG.error("Failed to sync channel [{}]: {}", getId(), e);
                     onServerFailed();
@@ -445,14 +463,13 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             this.currentServer = (KaaTcpServerInfo) server;
             this.encDec = new MessageEncoderDecoder(state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
 
-            executor.submit(new Runnable() {
-
-                @Override
-                public void run() {
-                    openConnection();
-                }
-            });
+            executor.submit(openConnectionTask);
         }
+    }
+
+    @Override
+    public void setConnectivityChecker(ConnectivityChecker checker) {
+        connectivityChecker = checker;
     }
 
     public void shutdown() {
@@ -474,10 +491,12 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     @Override
+    public ServerType getServerType() {
+        return ServerType.OPERATIONS;
+    }
+
+    @Override
     public Map<TransportType, ChannelDirection> getSupportedTransportTypes() {
         return SUPPORTED_TYPES;
     }
-
-
-
 }

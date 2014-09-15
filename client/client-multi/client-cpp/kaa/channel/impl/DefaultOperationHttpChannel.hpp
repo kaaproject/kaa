@@ -43,6 +43,10 @@ private:
         return getHttpDataProcessor()->retrieveOperationResponse(response);
     }
 
+    virtual ServerType getServerType() const {
+        return ServerType::OPERATIONS;
+    }
+
 private:
     static const std::string CHANNEL_ID;
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;

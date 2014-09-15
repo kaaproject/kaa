@@ -16,6 +16,14 @@
 
 #include "kaa/KaaDefaults.hpp"
 
+#include <algorithm>
+
+#include <boost/cstdint.hpp>
+
+#include "kaa/channel/server/HttpServerInfo.hpp"
+#include "kaa/channel/server/HttpLPServerInfo.hpp"
+#include "kaa/channel/server/KaaTcpServerInfo.hpp"
+
 namespace kaa {
 
 const char * const APPLICATION_TOKEN = "%{application.token}";
@@ -38,8 +46,37 @@ const boost::uint32_t USER_NF_VERSION = %{user_notification_version};
 
 const boost::uint32_t LOG_SCHEMA_VERSION = %{log_schema_version};
 
+static IServerInfoPtr createServerInfo(const int& channelType
+                                     , const std::string& host
+                                     , const boost::uint16_t& port
+                                     , const std::string& encodedPublicKey)
+{
+    IServerInfoPtr serverInfo;
+
+    switch (channelType) {
+    case 0: // HTTTP
+        serverInfo.reset(new HttpServerInfo(
+                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
+        break;
+    case 1: // HTTTP LP
+        serverInfo.reset(new HttpLPServerInfo(
+                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
+        break;
+    case 2: // Kaa TCP
+        serverInfo.reset(new KaaTcpServerInfo(
+                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
+        break;
+    default:
+        break;
+    }
+
+    return serverInfo;
+}
+
 const BootstrapServers& getServerInfoList() {
-    static const BootstrapServers listOfServers = %{bootstrap_servers_info};/* = { {"test.com", {"public", 6}}, {"hello.ua", {"key", 3}} };*/
+    /* Default value for unit test */
+    static BootstrapServers listOfServers = { %{bootstrap_servers_info} };
+    std::random_shuffle(listOfServers.begin(), listOfServers.end());
     return listOfServers;
 }
 

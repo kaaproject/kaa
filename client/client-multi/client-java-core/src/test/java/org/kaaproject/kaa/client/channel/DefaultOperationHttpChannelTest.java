@@ -104,7 +104,8 @@ public class DefaultOperationHttpChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultOperationHttpChannelFake channel = new DefaultOperationHttpChannelFake(client, state, 2);
 
-        HttpServerInfo server = new HttpServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        HttpServerInfo server = new HttpServerInfo(
+                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.setServer(server);
 
@@ -146,7 +147,8 @@ public class DefaultOperationHttpChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultOperationHttpChannelFake channel = new DefaultOperationHttpChannelFake(client, state, 1);
 
-        HttpServerInfo server = new HttpServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        HttpServerInfo server = new HttpServerInfo(
+                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.sync(TransportType.EVENT);
         channel.setDemultiplexer(demultiplexer);
@@ -187,7 +189,8 @@ public class DefaultOperationHttpChannelTest {
         channel.setMultiplexer(multiplexer);
         channel.shutdown();
 
-        HttpServerInfo server = new HttpServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        HttpServerInfo server = new HttpServerInfo(
+                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
         channel.sync(TransportType.EVENT);

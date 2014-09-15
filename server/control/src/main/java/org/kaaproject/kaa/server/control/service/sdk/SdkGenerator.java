@@ -68,7 +68,7 @@ public abstract class SdkGenerator {
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    protected String readFile(File file) throws IOException{
+    static String readFile(File file) throws IOException{
         String result = null;
         try {
             StringBuffer fileData = new StringBuffer();

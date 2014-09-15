@@ -1,0 +1,110 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef KAA_DEFAULTS_H_
+\#define KAA_DEFAULTS_H_
+
+#ifdef __cplusplus
+extern "C" {
+\#define CLOSE_EXTERN }
+\#else
+\#define CLOSE_EXTERN
+# endif
+
+\#define APPLICATION_TOKEN               "${app_token}"
+
+\#define CONFIG_SCHEMA_VERSION           ${config_version}
+\#define PROFILE_SCHEMA_VERSION          ${profile_version}
+\#define SYSTEM_NF_SCHEMA_VERSION        ${system_nf_version}
+\#define USER_NF_SCHEMA_VERSION          ${user_nf_version}
+\#define LOG_SCHEMA_VERSION              ${log_version}
+
+\#include "kaa_common.h"
+
+typedef struct kaa_events_schema_version_ {
+    const char *    name;
+    KAA_INT32T      version;
+} kaa_events_schema_version;
+
+#if ($eventFamilies)
+#set ($familyCounter = $eventFamilies.size())
+\#define KAA_EVENT_SCHEMA_VERSIONS_SIZE    $familyCounter
+
+static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
+#foreach ($family in $eventFamilies)
+#set ($familyCounter = $familyCounter - 1)
+    {
+          /* .name = */   "${family.getEcfName()}"
+        , /* .version = */${family.getVersion()}
+    }#if ($familyCounter > 0),
+#end
+#end
+};
+#else
+\#define KAA_EVENT_SCHEMA_VERSIONS_SIZE    0
+
+static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {};
+#end
+
+typedef struct kaa_channel_info_t {
+    char*              host;
+    uint16_t           port;
+} kaa_channel_info_t;
+
+typedef struct
+ {
+    const char *   encoded_public_key; /* Base 64 encoded */
+    uint16_t       encoded_public_key_len;
+    kaa_channel_info_t channels[KAA_CHANNEL_TYPE_COUNT];
+} kaa_bootstrap_server_info_t;
+
+#set ($bootstrapCounter = $bootstrapNodes.size())
+\#define KAA_BOOTSTRAP_SERVER_COUNT    $bootstrapCounter
+
+static const kaa_bootstrap_server_info_t KAA_BOOTSTRAP_SERVERS[KAA_BOOTSTRAP_SERVER_COUNT] = {
+#foreach ($node in $bootstrapNodes)
+#set ($bootstrapCounter = $bootstrapCounter - 1)
+#set ($publicKey = $Base64.encodeBase64String(${node.getConnectionInfo().getPublicKey().array()}))
+{
+      /* .encoded_public_key = */    "${publicKey}"
+    , /* .encoded_public_key_len = */${publicKey.length()}
+    , /* .channels = */              {
+#set ($channelTypes = [0, 1, 2])
+#foreach ($type in $channelTypes)
+#set ($isFound = 0)
+#foreach ($channel in ${node.getSupportedChannelsArray()})
+#if (${channel.getZkChannel().getChannelType().ordinal()} == $type)
+#set ($isFound = 1)
+#set ($params = $Utils.getIPParameters(${channel.getZkChannel()}))
+                                        { "${params.getHostName()}", ${params.getPort()} }
+#break()
+#end
+#end
+#if ($isFound == 0)
+                                        { NULL, 0 }
+#end
+#if(${type} < 2)
+                                    ,
+#end
+#end
+                                     }
+}#if($bootstrapCounter > 0),
+#end
+#end
+};
+
+CLOSE_EXTERN
+# endif /* KAA_DEFAULTS_H_ */

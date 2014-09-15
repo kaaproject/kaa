@@ -7,7 +7,7 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SyncRequestMetaData\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"applicationToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointPublicKeyHash\",\"type\":\"bytes\"},{\"name\":\"profileHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"timeout\",\"type\":\"long\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SyncRequestMetaData\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"applicationToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointPublicKeyHash\",\"type\":\"bytes\"},{\"name\":\"profileHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"timeout\",\"type\":\"long\"}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String applicationToken;
    private java.nio.ByteBuffer endpointPublicKeyHash;

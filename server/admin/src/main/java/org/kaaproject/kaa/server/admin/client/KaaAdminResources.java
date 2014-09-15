@@ -60,4 +60,8 @@ public interface KaaAdminResources extends ClientBundle {
     @Source("images/circles_ie6.png")
     ImageResource circles_ie6();
 
+    @ImageOptions(width = 14, height = 14)
+    @Source("images/download_icon_grey.png")
+    ImageResource download();
+
 }

@@ -19,5 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.event.grid;
 public enum RowAction {
     CLICK,
     DELETE,
-    SEND_NOTIFICATION;
+    SEND_NOTIFICATION,
+    DOWNLOAD_SCHEMA,
+    DOWNLOAD_LIBRARY;
 }

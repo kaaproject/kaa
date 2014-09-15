@@ -29,8 +29,12 @@ public:
         return id;
     }
 
-    virtual ChannelType getType() const {
+    virtual ChannelType getChannelType() const {
         return HTTP;
+    }
+
+    virtual ServerType getServerType() const {
+        return ServerType::OPERATIONS;
     }
 
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer) {}
@@ -51,6 +55,8 @@ public:
                 };
         return types;
     }
+
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 };
 
 } /* namespace kaa */

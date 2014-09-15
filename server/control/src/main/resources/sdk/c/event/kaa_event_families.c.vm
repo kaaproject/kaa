@@ -1,0 +1,67 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+# include "kaa_${event_family_name}.h"
+
+# include "avro_src/avro/io.h"
+
+# include "kaa.h"
+# include "kaa_mem.h"
+
+typedef struct kaa_${event_family_name}_ {
+#foreach ($event in $incomingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+    on_${prefix}_${e_name} ${e_name}_listener;
+#end
+} kaa_${event_family_name};
+
+static kaa_${event_family_name} listeners;
+
+#foreach ($event in $incomingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+static void kaa_event_manager_${e_name}_listener(const char * event_fqn, const char *data, size_t size)
+{
+    (void)event_fqn;
+    avro_reader_t reader = avro_reader_memory(data, size);
+    ${prefix}_${e_name}_t * event = ${prefix}_deserialize_${e_name}(reader);
+    avro_reader_free(reader);
+    listeners.${e_name}_listener(event);
+}
+
+void set_${prefix}_${e_name}_listener(on_${prefix}_${e_name} listener)
+{
+    if (listener != NULL) {
+        listeners.${e_name}_listener = listener;
+        kaa_register_event_listener("${event}", ${event.length()}, kaa_event_manager_${e_name}_listener);
+    }
+}
+
+#end
+
+#foreach ($event in $outgoingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+void kaa_send_${prefix}_${e_name}(${prefix}_${e_name}_t *event, const char *target, size_t target_len)
+{
+    size_t event_size = event->get_size(event);
+    char *buffer = KAA_CALLOC(event_size, sizeof(char));
+    avro_writer_t writer = avro_writer_memory(buffer, event_size);
+    event->serialize(writer, event);
+    kaa_send_event("${event}", ${event.length()}, writer->buf, writer->written, target, target_len);
+    avro_writer_free(writer);
+    KAA_FREE(buffer);
+}
+
+#end

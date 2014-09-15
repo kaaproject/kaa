@@ -68,10 +68,7 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
 
     /**
      * Thrift method to receive new list of Operations servers
-     * Map represent:
-     *  key (String) - DNS name of Operations server in format host:port
-     *  value (operationsServer) - Operations server parameters, priority and Public RSA Key
-     * @param Map<String, operationsServer> operationsMap
+     * @param operationsServersList List<ThriftOperationsServer>
      */
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService.Iface#onOperationsServerListUpdate(java.util.List)

@@ -1,5 +1,4 @@
 {
-
     "name":"LogAppenderParameters",
     "type":"record",
     "namespace":"org.kaaproject.kaa.server.common.dao.model.sql.avro.gen",
@@ -22,8 +21,31 @@
                     "type":"record",
                     "fields":[
                         {
-                            "name":"filePath",
-                            "type":"string"
+                            "name":"logDirectoryPath",
+                            "type":[
+                                {
+                                    "type":"string"
+                                },
+                                "null"
+                            ]
+                        },
+                        {
+                            "name":"username",
+                            "type":[
+                                {
+                                    "type":"string"
+                                },
+                                "null"
+                            ]
+                        },
+                        {
+                            "name":"sshKey",
+                            "type":[
+                                {
+                                    "type":"string"
+                                },
+                                "null"
+                            ]
                         }
                     ]
                 },
@@ -60,21 +82,20 @@
                             }
                         },
                         {
-                        "name": "balancingType",
-                        "type": {
-                            "type": "enum",
-                            "name": "FlumeBalancingType",
-                            "symbols": [
-                                "PRIORITIZED",
-                                "ROUND_ROBIN"
-                            ]
+                            "name":"balancingType",
+                            "type":{
+                                "type":"enum",
+                                "name":"FlumeBalancingType",
+                                "symbols":[
+                                    "PRIORITIZED",
+                                    "ROUND_ROBIN"
+                                ]
+                            }
                         }
-                    }
                     ]
                 },
                 "null"
             ]
         }
     ]
-
 }

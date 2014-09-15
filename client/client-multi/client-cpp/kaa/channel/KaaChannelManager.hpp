@@ -19,23 +19,21 @@
 
 #include <map>
 #include <set>
+#include <list>
 
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/common/TransportType.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
+#include "kaa/channel/connectivity/IPingServerStorage.hpp"
 
 namespace kaa {
 
 class IBootstrapManager;
 
-class KaaChannelManager: public IKaaChannelManager {
+class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage {
 public:
-    KaaChannelManager(IBootstrapManager& manager)
-        : bootstrapManager_(manager), bootstrapServers_(getServerInfoList())
-    {
-        bootstrapServerIt_ = bootstrapServers_.begin();
-    }
+    KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers);
 
     virtual void addChannel(IDataChannelPtr channel);
     virtual void removeChannel(IDataChannelPtr channel);
@@ -51,20 +49,32 @@ public:
 
     virtual void clearChannelList();
 
+    virtual IServerInfoPtr getPingServer() {
+        //FIXME: propose more proper way to get current ping-able server
+        return (*lastServers_.begin()).second;
+    }
+
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker);
+
 private:
     void useNewChannel(IDataChannelPtr channel);
     void useNewChannelForType(TransportType type);
 
+    IServerInfoPtr getCurrentBootstrapServer(ChannelType type);
+    IServerInfoPtr getNextBootstrapServer(IServerInfoPtr currentServer);
+
 private:
     IBootstrapManager&   bootstrapManager_;
 
-    const BootstrapServers&             bootstrapServers_;
-    BootstrapServers::const_iterator    bootstrapServerIt_;
+    std::map<ChannelType, std::list<IServerInfoPtr>> bootstrapServers_;
 
     std::map<ChannelType, IServerInfoPtr>    lastServers_;
+    std::map<ChannelType, IServerInfoPtr>    lastBSServers_;
 
-    std::set<IDataChannelPtr>                    channels_;
+    std::set<IDataChannelPtr>                   channels_;
     std::map<TransportType, IDataChannelPtr>    mappedChannels_;
+
+    ConnectivityCheckerPtr connectivityChecker_;
 };
 
 } /* namespace kaa */

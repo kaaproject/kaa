@@ -19,7 +19,7 @@
         xmlns:gwt="urn:import:com.google.gwt.user.client.ui"
         xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client">
 
-        <gwt:DockLayoutPanel unit="PX">
+        <gwt:DockLayoutPanel unit="PX" ui:field="dockPanel">
                 <gwt:north size="175">
                     <gwt:VerticalPanel width="100%">
                         <gwt:cell>
@@ -83,6 +83,9 @@
                         </gwt:FlowPanel>
                     </gwt:ScrollPanel>
                 </gwt:center>
+                <gwt:south size="70">
+                    <gwt:FlowPanel />
+                </gwt:south>
         </gwt:DockLayoutPanel>
 
 </ui:UiBinder>

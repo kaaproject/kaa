@@ -22,6 +22,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.connectivity.AndroidConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.AndroidInternalPersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
@@ -45,4 +47,8 @@ public class AndroidKaaClient extends AbstractKaaClient {
         return new AndroidInternalPersistentStorage(KaaAndroid.getContext());
     }
 
+    @Override
+    protected ConnectivityChecker createConnectivityChecker() {
+        return new AndroidConnectivityChecker(KaaAndroid.getContext());
+    }
 }

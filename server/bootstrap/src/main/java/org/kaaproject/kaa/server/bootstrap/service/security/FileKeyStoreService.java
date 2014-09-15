@@ -122,7 +122,7 @@ public class FileKeyStoreService implements KeyStoreService {
 
     /**
      * PrivateKeyLocation setter.
-     * @param String privateKeyLocation the privateKeyLocation to set
+     * @param privateKeyLocation String the privateKeyLocation to set
      */
     public void setPrivateKeyLocation(String privateKeyLocation) {
         this.privateKeyLocation = privateKeyLocation;
@@ -138,7 +138,7 @@ public class FileKeyStoreService implements KeyStoreService {
 
     /**
      * PublicKeyLocation setter.
-     * @param String publicKeyLocation the publicKeyLocation to set
+     * @param publicKeyLocation String the publicKeyLocation to set
      */
     public void setPublicKeyLocation(String publicKeyLocation) {
         this.publicKeyLocation = publicKeyLocation;

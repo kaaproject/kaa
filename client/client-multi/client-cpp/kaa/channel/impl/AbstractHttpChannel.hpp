@@ -51,7 +51,9 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(IServerInfoPtr server);
 
-    virtual ChannelType getType() const  { return Type; }
+    virtual ChannelType getChannelType() const  { return Type; }
+
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
 protected:
     typedef boost::shared_ptr<AbstractServerInfo<Type> > AbstractServerInfoPtr;
@@ -193,7 +195,7 @@ void AbstractHttpChannel<Type>::setDemultiplexer(IKaaDataDemultiplexer *demultip
 template <ChannelType Type>
 void AbstractHttpChannel<Type>::setServer(IServerInfoPtr server)
 {
-    if (server->getType() == getType()) {
+    if (server->getChannelType() == getChannelType()) {
         KAA_MUTEX_LOCKING("channelGuard_");
         boost::unique_lock<boost::mutex> lock(channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");

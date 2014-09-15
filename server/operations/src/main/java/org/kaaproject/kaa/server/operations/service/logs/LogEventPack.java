@@ -80,4 +80,11 @@ public class LogEventPack {
     public void setEvents(List<LogEvent> events) {
         this.events = events;
     }
+
+    @Override
+    public String toString() {
+        return "LogEventPack [endpointKey=" + endpointKey + ", dateCreated=" + dateCreated + ", logSchemaVersion=" + logSchemaVersion + ", logSchema="
+                + logSchema + ", events=" + events + "]";
+    }
+
 }

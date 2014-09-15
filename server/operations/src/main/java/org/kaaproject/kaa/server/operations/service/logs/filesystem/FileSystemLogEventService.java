@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.WriterAppender;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 
 /**
@@ -41,7 +42,7 @@ public interface FileSystemLogEventService {
      * @param applicationId the application id
      * @param path the path to logs directory
      */
-    public void createUserAndGroup(String applicationId, String path);
+    public void createUserAndGroup(LogAppenderDto appender, String path);
 
     /**
      * Save LogEventPacks.

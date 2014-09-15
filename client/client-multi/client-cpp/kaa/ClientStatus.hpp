@@ -31,7 +31,7 @@ namespace kaa {
 
 /* Fwd declarations */
 enum class ClientParameterT;
-class IPersistantParameter;
+class IPersistentParameter;
 
 typedef boost::bimaps::bimap<
           boost::bimaps::set_of<ClientParameterT>   /* Client parameter type */
@@ -68,11 +68,14 @@ public:
     AttachedEndpoints getAttachedEndpoints() const;
     void setAttachedEndpoints(const AttachedEndpoints& endpoints);
 
-    const std::string& getEndpointAccessToken() const;
+    std::string getEndpointAccessToken() const;
     void setEndpointAccessToken(const std::string& token);
 
     bool getEndpointAttachStatus() const;
     void setEndpointAttachStatus(bool isAttached);
+
+    std::string getEndpointKeyHash() const;
+    void setEndpointKeyHash(const std::string& keyHash);
 
     void read();
     void save();
@@ -82,7 +85,7 @@ private:
     typedef boost::unique_lock<mutex_type>          lock_type;
 
     std::string filename_;
-    std::map<ClientParameterT, boost::shared_ptr<IPersistantParameter> > parameters_;
+    std::map<ClientParameterT, boost::shared_ptr<IPersistentParameter> > parameters_;
 
     mutable mutex_type                      sequenceNumberGuard_;
 
@@ -94,6 +97,7 @@ private:
     static const AttachedEndpoints          attachedEndpoints_;
     static const std::string                endpointAccessToken_;
     static const bool                       endpointDefaultAttachStatus_;
+    static const std::string                endpointKeyHashDefault_;
 };
 
 }

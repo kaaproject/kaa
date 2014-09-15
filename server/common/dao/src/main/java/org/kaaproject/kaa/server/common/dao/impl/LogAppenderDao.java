@@ -18,15 +18,13 @@ package org.kaaproject.kaa.server.common.dao.impl;
 
 import java.util.List;
 
-import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
-
 public interface LogAppenderDao<T> extends Dao<T> {
 
     List<T> findByAppId(String appId);
 
-    List<LogAppender> findAllLogAppendersByAppId(String appId);
+    List<T> findAllLogAppendersByAppId(String appId);
 
-    LogAppender registerLogAppenderById(String logAppenderId);
+    T registerLogAppenderById(String logAppenderId);
 
-    LogAppender unregisterLogAppenderById(String logAppenderId);
+    T unregisterLogAppenderById(String logAppenderId);
 }

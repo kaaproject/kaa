@@ -23,13 +23,21 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.utils.Charsets;
-import org.kaaproject.kaa.client.channel.BootstrapServerInfo;
+import org.kaaproject.kaa.client.channel.HttpLongPollServerInfo;
+import org.kaaproject.kaa.client.channel.HttpServerInfo;
+import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
+import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 
@@ -108,7 +116,7 @@ public class KaaClientProperties extends Properties {
                 getSupportedSystemNTVersion(), getSupportedUserNTVersion(), getEventFamilyVersions(), getLogSchemaVersion());
     }
 
-    public List<BootstrapServerInfo> getBootstrapServers() throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public Map<ChannelType, List<ServerInfo>> getBootstrapServers() throws InvalidKeySpecException, NoSuchAlgorithmException {
         return parseBootstrapServers(getProperty(KaaClientProperties.BOOTSTRAP_SERVERS));
     }
 
@@ -132,23 +140,57 @@ public class KaaClientProperties extends Properties {
         return parseEventClassFamilyVersions(getProperty(KaaClientProperties.EVENT_CLASS_FAMILY_VERSION));
     }
 
-    private List<BootstrapServerInfo> parseBootstrapServers(String servers) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        String[] serversSplit = servers.split(";");
-        List<BootstrapServerInfo> result = new ArrayList<BootstrapServerInfo>();
+    private Map<ChannelType, List<ServerInfo>> parseBootstrapServers(String serversStr) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        Map<ChannelType, List<ServerInfo>> servers = new HashMap<>();
+        String[] serversSplit = serversStr.split(";");
+
         for (String server : serversSplit) {
             if (server != null && !server.trim().isEmpty()) {
-                String[] serverInfoSplit = server.split(":");
-                if (serverInfoSplit.length==3) {
-                    String host = serverInfoSplit[0];
-                    int port = Integer.parseInt(serverInfoSplit[1]);
-                    String publicKeyBase64 = serverInfoSplit[2];
-                    PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(Base64.decodeBase64(publicKeyBase64.getBytes(Charsets.UTF_8))));
-                    BootstrapServerInfo serverInfo = new BootstrapServerInfo(host, port, publicKey);
-                    result.add(serverInfo);
+                String[] communicationParams = server.split("\\|");
+
+                PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(
+                        new X509EncodedKeySpec(Base64.decodeBase64(
+                                communicationParams[communicationParams.length - 1].getBytes(Charsets.UTF_8))));
+
+                for (int i = 0; i < (communicationParams.length - 1); ++i) {
+                    String[] serverInfoSplit = communicationParams[i].split(":");
+                    if (serverInfoSplit.length == 3) {
+                        ServerInfo si = null;
+                        ChannelType type = null;
+                        String host = serverInfoSplit[1];
+                        int port = Integer.parseInt(serverInfoSplit[2]);
+
+                        switch (Integer.parseInt(serverInfoSplit[0])) {
+                        case 0:
+                            type = ChannelType.HTTP;
+                            si = new HttpServerInfo(ServerType.BOOTSTRAP, host, port, publicKey);
+                            break;
+                        case 1:
+                            type = ChannelType.HTTP_LP;
+                            si = new HttpLongPollServerInfo(ServerType.BOOTSTRAP, host, port, publicKey);
+                            break;
+                        case 2:
+                            type = ChannelType.KAATCP;
+                            si = new KaaTcpServerInfo(ServerType.BOOTSTRAP, host, port, publicKey);
+                            break;
+                        default:
+                            //TODO
+                            break;
+                        }
+
+                        List<ServerInfo> serverList = servers.get(type);
+
+                        if (serverList == null) {
+                            serverList = new LinkedList<>();
+                            servers.put(type, serverList);
+                        }
+
+                        serverList.add(si);
+                    }
                 }
             }
         }
-        return result;
+        return servers;
     }
 
     private List<EventClassFamilyVersionInfo> parseEventClassFamilyVersions(String eventFamiliesInfo) {

@@ -87,7 +87,7 @@ public class Disconnect extends MqttFrame {
 
     /**
      * Set Disconnect reason
-     * @param byte reason
+     * @param reason DisconnectReason
      */
     public void setReason(DisconnectReason reason) {
         this.reason = reason;
@@ -115,6 +115,14 @@ public class Disconnect extends MqttFrame {
         } else if(code == DisconnectReason.INTERNAL_ERROR.getReason()) {
             reason = DisconnectReason.INTERNAL_ERROR;
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+     */
+    @Override
+    public boolean isNeedCloseConnection() {
+        return true;
     }
 
 }

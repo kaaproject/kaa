@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import java.util.List;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -29,11 +30,11 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
-import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,6 +115,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
         LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
         Assert.assertNotNull(found);
         Assert.assertEquals(appender, found);
+        Assert.assertArrayEquals(LogHeaderStructureDto.values(), found.getHeaderStructure().toArray(new LogHeaderStructureDto[]{}));
     }
 
     @Test

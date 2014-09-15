@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.bootstrap;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.PublicKey;
@@ -51,6 +52,9 @@ import org.kaaproject.kaa.server.common.thrift.util.ThriftClient;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,6 +96,15 @@ public class BootstrapStartIT {
     /** The thrift port. */
     @Value("#{properties[netty_port]}")
     private int nettyPort;
+
+
+    /** The thrift host. */
+    @Value("#{properties[channel_kaa_tcp_host]}")
+    private String kaaTcpHost;
+
+    /** The thrift port. */
+    @Value("#{properties[channel_kaa_tcp_port]}")
+    private int kaaTcpPort;
 
     /** Random generator*/
     private static Random rnd = new Random();
@@ -185,7 +198,7 @@ public class BootstrapStartIT {
          */
         @Override
         public void onNodeAdded(BootstrapNodeInfo nodeInfo) {
-            logger.info("Bootstrap node added "+nodeInfo.getConnectionInfo().toString());
+            logger.info("Bootstrap node added [{}, {}]", nodeInfo.getConnectionInfo().getThriftHost(), nodeInfo.getConnectionInfo().getThriftPort());
             synchronized (sync) {
                 nodeInfos.add(nodeInfo);
                 sync.notify();
@@ -205,7 +218,7 @@ public class BootstrapStartIT {
          */
         @Override
         public void onNodeRemoved(BootstrapNodeInfo nodeInfo) {
-            logger.info("Bootstrap node removed "+nodeInfo.getConnectionInfo().toString());
+            logger.info("Bootstrap node removed [{}, {}]", nodeInfo.getConnectionInfo().getThriftHost(), nodeInfo.getConnectionInfo().getThriftPort());
             synchronized (sync) {
                 nodeInfos.remove(nodeInfo);
                 sync.notify();
@@ -273,6 +286,35 @@ public class BootstrapStartIT {
 
         assertEquals(1, nodes.size());
 
+        assertNotNull("Bootstrap failed to Initialize, supported  channels not initialized",nodes.get(0).getSupportedChannelsArray());
+
+        assertEquals(2, nodes.get(0).getSupportedChannelsArray().size());
+
+        assertNotNull(nodes.get(0).getSupportedChannelsArray().get(0).getZkChannel());
+
+        assertNotNull(nodes.get(0).getSupportedChannelsArray().get(0).getZkChannel().getCommunicationParameters());
+
+        assertNotNull(nodes.get(0).getSupportedChannelsArray().get(0).getZkChannel().getChannelType());
+
+        assertNotNull(nodes.get(0).getSupportedChannelsArray().get(1).getZkChannel());
+
+        assertNotNull(nodes.get(0).getSupportedChannelsArray().get(1).getZkChannel().getCommunicationParameters());
+
+        assertNotNull(nodes.get(0).getSupportedChannelsArray().get(1).getZkChannel().getChannelType());
+
+        if (nodes.get(0).getSupportedChannelsArray().get(0).getZkChannel().getChannelType() == ZkChannelType.HTTP) {
+            ZkHttpComunicationParameters httpParams = (ZkHttpComunicationParameters) nodes.get(0).getSupportedChannelsArray().get(0).getZkChannel().getCommunicationParameters();
+            assertNotNull(httpParams.getZkComunicationParameters());
+            assertNotNull(httpParams.getZkComunicationParameters().getHostName());
+            assertEquals(nettyHost,httpParams.getZkComunicationParameters().getHostName().toString());
+            assertEquals(Integer.valueOf(nettyPort),httpParams.getZkComunicationParameters().getPort());
+        } else if (nodes.get(0).getSupportedChannelsArray().get(1).getZkChannel().getChannelType() == ZkChannelType.KAATCP) {
+            ZkKaaTcpComunicationParameters kaaTcpParams = (ZkKaaTcpComunicationParameters) nodes.get(0).getSupportedChannelsArray().get(1).getZkChannel().getCommunicationParameters();
+            assertNotNull(kaaTcpParams.getZkComunicationParameters());
+            assertNotNull(kaaTcpParams.getZkComunicationParameters().getHostName());
+            assertEquals(kaaTcpHost,kaaTcpParams.getZkComunicationParameters().getHostName().toString());
+            assertEquals(Integer.valueOf(kaaTcpPort),kaaTcpParams.getZkComunicationParameters().getPort());
+        }
     }
 
     @After
@@ -299,9 +341,9 @@ public class BootstrapStartIT {
 
         BootstrapNodeInfo info = nodes.get(0);
 
-        assertEquals(nettyHost, info.getBootstrapHostName().toString());
-
-        assertEquals((long)nettyPort, (long)info.getBootstrapPort());
+//        assertEquals(nettyHost, info.getBootstrapHostName().toString());
+//
+//        assertEquals((long)nettyPort, (long)info.getBootstrapPort());
 
         assertEquals(thriftHost, info.getConnectionInfo().getThriftHost().toString());
 
@@ -350,7 +392,7 @@ public class BootstrapStartIT {
         PublicKey serverPublicKey = bootstrap.getBootstrapInitializationService().getKeyStoreService().getPublicKey();
 
         final Object httpSync = new Object();
-
+        testFailed = true;
         TestClient client;
         try {
             client = new TestClient(nettyHost, nettyPort, serverPublicKey, new HttpActivity() {
@@ -360,7 +402,6 @@ public class BootstrapStartIT {
                         OperationsServerList response) {
 
                     if (e != null) {
-                        testFailed = true;
                         fail(e.toString());
                     }
 
@@ -378,7 +419,7 @@ public class BootstrapStartIT {
                                 assertEquals(sendServ.priority, server.getPriority().intValue());
 
                                 assertEquals(sendServ.publicKey, server.getPublicKey());
-
+                                testFailed = false;
                             } else {
                                 fail("Test failed, received Operations Server list don't have "+host+" but must");
                             }
@@ -403,7 +444,70 @@ public class BootstrapStartIT {
         }
 
         if (testFailed) {
-            fail("Test failed");
+            fail("Test HTTP Resolve failed");
+        }
+
+        testFailed = true;
+        KaaTcpTestClient tcpClient = null;
+        try {
+            tcpClient = new KaaTcpTestClient(kaaTcpHost, kaaTcpPort, "asdcasdcasdc", new HttpActivity() {
+
+                @Override
+                public void httpRequestComplete(Exception e, int id, OperationsServerList response) {
+                    if (e != null) {
+                        fail(e.toString());
+                    }
+
+                    synchronized (httpSync) {
+                        List<OperationsServer> respList = response.getOperationsServerArray();
+
+                        assertEquals(update.size(), respList.size());
+
+                        for(OperationsServer server : respList) {
+                            String host = server.getName();
+                            logger.info("Server Name {} 2",host);
+                            ThriftOperationsServer sendServ = getThriftOperationsServerByName(host,update);
+                            if (sendServ != null) {
+
+                                assertEquals(sendServ.priority, server.getPriority().intValue());
+
+                                assertEquals(sendServ.publicKey, server.getPublicKey());
+
+                                testFailed = false;
+                            } else {
+                                fail("Test failed, received Operations Server list don't have "+host+" but must");
+                            }
+                        }
+                        httpSync.notify();
+                    }
+
+                }
+            });
+            executor.execute(tcpClient);
+        } catch (UnknownHostException e) {
+            logger.error(e.toString(), e);
+            testFailed = true;
+        } catch (IOException e) {
+            logger.error(e.toString(), e);
+            testFailed = true;
+        }
+
+        synchronized (httpSync) {
+            try {
+                httpSync.wait(10000);
+                if (tcpClient != null) {
+                    if (tcpClient.isConnected()) {
+                        fail("KaaTcp Connection don't closed after Bootstrapresponse.");
+                    }
+                }
+                logger.info("Going to test Operations Server List using KaaTcp update..... complete.");
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        if (testFailed) {
+            fail("Test KaaTcp failed");
         }
 
     }

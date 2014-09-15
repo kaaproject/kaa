@@ -176,6 +176,7 @@ BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
 {
     MockChannelManager channelManager;
     IKaaClientStateStoragePtr status(new ClientStatus("fake.txt"));
+    status->setEndpointKeyHash("myKeyHash");
     EndpointRegistrationManager registrationManager(status);
     UserTransport transport(registrationManager, channelManager);
     TestEndpointAttachStatusListener statusListener;
@@ -231,6 +232,26 @@ BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
     transport.onUserResponse(syncResp3);
 
     BOOST_CHECK(registrationManager.isCurrentEndpointAttached());
+
+    registrationManager.detachEndpoint(status->getEndpointKeyHash(), &statusListener);
+
+    std::string req_id = registrationManager.getEndpointsToDetach().begin()->first;
+
+    EndpointDetachResponse detachResponse;
+    detachResponse.requestId = req_id;
+    detachResponse.result = SyncResponseResultType::SUCCESS;
+    std::vector<EndpointDetachResponse> detachResponses = {detachResponse};
+    UserSyncResponse syncResp4;
+    syncResp4.userAttachNotification.set_null();
+    syncResp4.userAttachResponse.set_null();
+    syncResp4.endpointAttachResponses.set_null();
+    syncResp4.endpointDetachResponses.set_array(detachResponses);
+    syncResp4.userDetachNotification.set_null();
+
+    transport.onUserResponse(syncResp4);
+
+    BOOST_CHECK_EQUAL(status->getEndpointAttachStatus(), false);
+    BOOST_CHECK_EQUAL(registrationManager.isCurrentEndpointAttached(), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

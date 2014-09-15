@@ -21,6 +21,7 @@
 #include "kaa/kaatcp/IKaaTcpRequest.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 #include <botan/botan.h>
+#include <arpa/inet.h>
 
 namespace kaa {
 
@@ -46,8 +47,9 @@ public:
 
         auto messageIt = message_.begin() + size;
 
-        *(messageIt++) = (boost::uint8_t) (KaaTcpCommon::KAA_TCP_NAME_LENGTH >> 8);
-        *(messageIt++) = (boost::uint8_t) (KaaTcpCommon::KAA_TCP_NAME_LENGTH & 0xFF);
+        boost::uint16_t nameLengthNetworkOrder = htons(KaaTcpCommon::KAA_TCP_NAME_LENGTH);
+        std::copy(reinterpret_cast<boost::uint8_t *>(&nameLengthNetworkOrder), reinterpret_cast<boost::uint8_t *>(&nameLengthNetworkOrder) + 2, messageIt);
+        messageIt += 2;
 
         std::copy((const boost::uint8_t * const ) KaaTcpCommon::KAA_TCP_NAME,
                 (const boost::uint8_t * const ) (KaaTcpCommon::KAA_TCP_NAME + KaaTcpCommon::KAA_TCP_NAME_LENGTH), messageIt);
@@ -57,8 +59,10 @@ public:
         *(messageIt++) = 0x02;
         *(messageIt++) = sessionKey.size() > 0 ? KaaTcpCommon::KAA_CONNECT_SESSION_KEY_FLAGS : 0;
         *(messageIt++) = signature.size() > 0 ? KaaTcpCommon::KAA_CONNECT_SIGNATURE_FLAGS : 0;
-        *(messageIt++) = (boost::uint8_t) (timer >> 8);
-        *(messageIt++) = (boost::uint8_t) (timer & 0xFF);
+
+        boost::uint16_t timerNetworkOrder = htons(timer);
+        std::copy(reinterpret_cast<boost::uint8_t *>(&timerNetworkOrder), reinterpret_cast<boost::uint8_t *>(&timerNetworkOrder) + 2, messageIt);
+        messageIt += 2;
 
         std::copy(sessionKey.begin(), sessionKey.end(), messageIt);
         messageIt += sessionKey.size();

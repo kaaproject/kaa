@@ -20,19 +20,20 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 
 public class HttpLongPollServerInfo extends AbstractServerInfo {
 
-    public HttpLongPollServerInfo(String hostName, int port, byte[] publicKey)
+    public HttpLongPollServerInfo(ServerType type, String hostName, int port, byte[] publicKey)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
-        super(hostName, port, KeyUtil.getPublic(publicKey));
+        super(type, hostName, port, KeyUtil.getPublic(publicKey));
     }
 
-    public HttpLongPollServerInfo(String hostName, int port, PublicKey publicKey)
+    public HttpLongPollServerInfo(ServerType type, String hostName, int port, PublicKey publicKey)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
-        super(hostName, port, publicKey);
+        super(type, hostName, port, publicKey);
     }
 
     @Override
@@ -40,4 +41,8 @@ public class HttpLongPollServerInfo extends AbstractServerInfo {
         return "http://" + getHost() + ":" + getPort() + CommonEPConstans.LONG_SYNC_URI;
     }
 
+    @Override
+    public ChannelType getChannelType() {
+        return ChannelType.HTTP_LP;
+    }
 }

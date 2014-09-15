@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.channel;
 
 import java.util.List;
 
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
@@ -124,8 +125,7 @@ public interface KaaChannelManager {
     List<KaaDataChannel> getChannels();
 
     /**
-     * Retrieves the list of channels by the specific type (HTTP, HTTP_LP,
-     * BOOTSTRAP and etc.).
+     * Retrieves the list of channels by the specific type (HTTP, HTTP_LP etc.).
      *
      * @param type type of the channel.
      * @return the channels' list.
@@ -181,4 +181,13 @@ public interface KaaChannelManager {
      * Clears the list of channels.
      */
     void clearChannelList();
+
+    /**
+     * Sets connectivity checker to the existing channels.
+     *
+     * @param checker platform-dependent connectivity checker.
+     * @see ConnectivityChecker
+     *
+     */
+    void setConnectivityChecker(ConnectivityChecker checker);
 }

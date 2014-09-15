@@ -22,7 +22,6 @@ import static org.apache.flume.serialization.AvroEventSerializerConfigurationCon
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,13 +29,20 @@ import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
 import org.apache.avro.file.CodecFactory;
 import org.apache.avro.file.DataFileWriter;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.BinaryDecoder;
+import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DatumWriter;
+import org.apache.avro.io.DecoderFactory;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.FlumeException;
 import org.apache.flume.conf.Configurable;
 import org.apache.flume.serialization.EventSerializer;
+import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +53,13 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
             .getLogger(AvroKaaEventSerializer.class);
 
     private final OutputStream out;
+    
+    private DatumReader<GenericRecord> datumReader;
+    private BinaryDecoder binaryDecoder;
+    
     private DatumWriter<Object> writer = null;
     private DataFileWriter<Object> dataFileWriter = null;
+    private GenericRecord wrapperRecord;
 
     private int syncIntervalBytes;
     private String compressionCodec;
@@ -87,11 +98,23 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
         if (dataFileWriter == null) {
             initialize(event);
         }
-        dataFileWriter.appendEncoded(ByteBuffer.wrap(event.getBody()));
+        if (!(event instanceof KaaRecordEvent)) {
+            throw new IOException("Not instance of KaaRecordEvent!");
+        }
+        KaaRecordEvent kaaRecordEvent = (KaaRecordEvent)event;
+        
+        binaryDecoder = DecoderFactory.get().binaryDecoder(kaaRecordEvent.getBody(), binaryDecoder);
+        GenericRecord recordData = datumReader.read(null, binaryDecoder);
+        
+        wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD, kaaRecordEvent.getRecordHeader());
+        wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_DATA_FIELD, recordData);
+        
+        dataFileWriter.append(wrapperRecord);
     }
 
     private void initialize(Event event) throws IOException {
         Schema schema = null;
+        Schema wrapperSchema = null;
         KaaSinkKey key = new KaaSinkKey(event.getHeaders());
         schema = schemaCache.get(key);
         if (schema == null) {
@@ -115,8 +138,12 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
             }
             schema = new Schema.Parser().parse(schemaString);
         }
+        
+        datumReader = new GenericDatumReader<GenericRecord>(schema);
+        
+        wrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schema.toString());
 
-        writer = new GenericDatumWriter<Object>(schema);
+        writer = new GenericDatumWriter<Object>(wrapperSchema);
         dataFileWriter = new DataFileWriter<Object>(writer);
 
         dataFileWriter.setSyncInterval(syncIntervalBytes);
@@ -131,7 +158,8 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
                     + "). Compression disabled. Exception follows.", e);
         }
 
-        dataFileWriter.create(schema, out);
+        dataFileWriter.create(wrapperSchema, out);
+        wrapperRecord = new GenericData.Record(wrapperSchema);
     }
 
     @Override

@@ -28,6 +28,9 @@
 
 namespace kaa {
 
+const boost::uint16_t DefaultOperationTcpChannel::PING_TIMEOUT = 200;
+const boost::uint16_t DefaultOperationTcpChannel::RECONNECT_TIMEOUT = 5; //sec
+
 const std::string DefaultOperationTcpChannel::CHANNEL_ID = "default_operation_kaa_tcp_channel";
 const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPPORTED_TYPES =
         {
@@ -41,7 +44,7 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
 
 
 DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
-    : clientKeys_(clientKeys), work_(io_), sock_(io_), pingTimer_(io_)
+    : clientKeys_(clientKeys), work_(io_), sock_(io_), pingTimer_(io_), reconnectTimer_(io_)
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
     , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
 {
@@ -186,6 +189,14 @@ void DefaultOperationTcpChannel::closeConnection()
 void DefaultOperationTcpChannel::onServerFailed()
 {
     closeConnection();
+
+    if (connectivityChecker_ && !connectivityChecker_->checkConnectivity()) {
+        KAA_LOG_TRACE(boost::format("Loss of connectivity. Attempt to reconnect will be made in {} sec") % RECONNECT_TIMEOUT);
+        reconnectTimer_.expires_from_now(boost::posix_time::seconds(RECONNECT_TIMEOUT));
+        reconnectTimer_.async_wait(boost::bind(&DefaultOperationTcpChannel::openConnection, this));
+        return;
+    }
+
     channelManager_->onServerFailed(currentServer_);
 }
 
@@ -333,7 +344,7 @@ void DefaultOperationTcpChannel::setDemultiplexer(IKaaDataDemultiplexer *demulti
 
 void DefaultOperationTcpChannel::setServer(IServerInfoPtr server)
 {
-    if (server->getType() == ChannelType::KAATCP) {
+    if (server->getChannelType() == ChannelType::KAATCP) {
         closeConnection();
 
         KAA_MUTEX_LOCKING("channelGuard_");
@@ -344,13 +355,12 @@ void DefaultOperationTcpChannel::setServer(IServerInfoPtr server)
             createThreads();
             firstStart_ = false;
         }
-        currentServer_ = boost::dynamic_pointer_cast<OperationServerKaaTcpInfo, IServerInfo>(server);
+        currentServer_ = boost::dynamic_pointer_cast<KaaTcpServerInfo, IServerInfo>(server);
         encDec_.reset(new RsaEncoderDecoder(clientKeys_.first, clientKeys_.second, currentServer_->getPublicKey()));
 
         KAA_MUTEX_UNLOCKING("channelGuard_");
         lock.unlock();
         KAA_MUTEX_UNLOCKED("channelGuard_");
-
         io_.post(boost::bind(&DefaultOperationTcpChannel::openConnection, this));
     } else {
         KAA_LOG_ERROR(boost::format("Invalid server info for channel %1%") % getId());

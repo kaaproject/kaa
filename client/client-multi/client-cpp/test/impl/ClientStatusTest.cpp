@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
     cleanfile();
     ClientStatus cs(filename);
-    cs.setAppSeqNumber({1,2,{}});
+    cs.setAppSeqNumber({1,2,3});
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 1);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 2);
     cs.setRegistered(true);
@@ -126,6 +126,9 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     bool isAttached = true;
     cs.setEndpointAttachStatus(isAttached);
 
+    std::string endpointKeyHash = "thisEndpointKeyHash";
+    cs.setEndpointKeyHash(endpointKeyHash);
+
     cs.save();
     ClientStatus cs_restored(filename);
 
@@ -149,6 +152,7 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     BOOST_CHECK_EQUAL(cs_restored.getEndpointAccessToken(), endpointAccessToken);
 
     BOOST_CHECK_EQUAL(cs_restored.getEndpointAttachStatus(), isAttached);
+    BOOST_CHECK_EQUAL(cs_restored.getEndpointKeyHash(), endpointKeyHash);
 }
 
 }  // namespace kaa

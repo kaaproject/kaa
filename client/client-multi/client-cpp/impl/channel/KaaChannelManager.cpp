@@ -27,24 +27,25 @@
 
 namespace kaa {
 
+KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers)
+    : bootstrapManager_(manager)
+{
+    for (const auto& si : servers) {
+        auto& list = bootstrapServers_[si->getChannelType()];
+        list.push_back(si);
+    }
+}
+
 void KaaChannelManager::onServerFailed(IServerInfoPtr server) {
     if (!server) {
         KAA_LOG_WARN("Failed to process server failure: bad input data")
         throw KaaException("empty server pointer");
     }
 
-    if (server->getType() == ChannelType::BOOTSTRAP) {
-        ++bootstrapServerIt_;
-
-        if (bootstrapServerIt_ == bootstrapServers_.end()) {
-            bootstrapServerIt_ = bootstrapServers_.begin();
-        }
-
-        IServerInfoPtr newServer(new BootstrapServerInfo(
-                bootstrapServerIt_->getHost(), bootstrapServerIt_->getPort(), bootstrapServerIt_->getPublicKey()));
-        onServerUpdated(newServer);
+    if (server->getServerType() == ServerType::BOOTSTRAP) {
+        onServerUpdated(getNextBootstrapServer(server));
     } else {
-        bootstrapManager_.useNextOperationsServer(server->getType());
+        bootstrapManager_.useNextOperationsServer(server->getChannelType());
     }
 }
 
@@ -54,13 +55,15 @@ void KaaChannelManager::onServerUpdated(IServerInfoPtr server) {
         throw KaaException("empty server pointer");
     }
 
-    ChannelType type = server->getType();
-    lastServers_[type] = server;
+    ChannelType type = server->getChannelType();
+    if (server->getServerType() == ServerType::OPERATIONS) {
+        lastServers_[type] = server;
+    }
 
     for (auto& channel : channels_) {
-        if (channel->getType() == type) {
+        if (channel->getServerType() == server->getServerType() && channel->getChannelType() == type) {
             KAA_LOG_DEBUG(boost::format("Setting a new server for channel \"%1%\" type %2%")
-                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getType()));
+                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getChannelType()));
             channel->setServer(server);
         }
     }
@@ -76,13 +79,14 @@ void KaaChannelManager::addChannel(IDataChannelPtr channel)
     auto res = channels_.insert(channel);
 
     if (res.second) {
+        (*res.first)->setConnectivityChecker(connectivityChecker_);
+
         IServerInfoPtr server;
 
-        if (channel->getType() == ChannelType::BOOTSTRAP) {
-            server.reset(new BootstrapServerInfo(bootstrapServerIt_->getHost()
-                    , bootstrapServerIt_->getPort(), bootstrapServerIt_->getPublicKey()));
+        if (channel->getServerType() == ServerType::BOOTSTRAP) {
+            server = getCurrentBootstrapServer(channel->getChannelType());
         } else {
-            auto it = lastServers_.find(channel->getType());
+            auto it = lastServers_.find(channel->getChannelType());
             if (it != lastServers_.end()) {
                 server = it->second;
             }
@@ -90,11 +94,11 @@ void KaaChannelManager::addChannel(IDataChannelPtr channel)
 
         if (server) {
             KAA_LOG_DEBUG(boost::format("Setting a new server for channel \"%1%\" type %2%")
-                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getType()));
+                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getChannelType()));
             channel->setServer(server);
         } else {
             KAA_LOG_WARN(boost::format("Failed to find server for channel \"%1%\" type %2%")
-                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getType()))
+                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getChannelType()))
         }
 
         useNewChannel(channel);
@@ -159,7 +163,7 @@ std::list<IDataChannelPtr> KaaChannelManager::getChannelsByType(ChannelType type
     std::list<IDataChannelPtr> channels;
 
     for (auto& channel : channels_) {
-        if (channel->getType() == type) {
+        if (channel->getChannelType() == type) {
             channels.push_back(channel);
         }
     }
@@ -196,6 +200,51 @@ void KaaChannelManager::clearChannelList()
 {
     channels_.clear();
     mappedChannels_.clear();
+}
+
+IServerInfoPtr KaaChannelManager::getCurrentBootstrapServer(ChannelType type)
+{
+    IServerInfoPtr si;
+    auto it = lastBSServers_.find(type);
+    if (it == lastBSServers_.end()) {
+        auto serverTypeIt = bootstrapServers_.find(type);
+        if (serverTypeIt != bootstrapServers_.end()) {
+            si = (*serverTypeIt).second.front();
+            lastBSServers_[type] = si;
+        }
+    } else {
+        si = (*it).second;
+    }
+
+    return si;
+}
+
+IServerInfoPtr KaaChannelManager::getNextBootstrapServer(IServerInfoPtr currentServer)
+{
+    IServerInfoPtr si;
+
+    auto serverTypeIt = bootstrapServers_.find(currentServer->getChannelType());
+    if (serverTypeIt != bootstrapServers_.end()) {
+        const auto& list = (*serverTypeIt).second;
+        auto serverIt = std::find(list.begin(), list.end(), currentServer);
+
+        if (serverIt != list.end()) {
+            if (++serverIt != list.end()) {
+                si = (*serverIt);
+            } else {
+                si = list.front();
+            }
+        }
+    }
+
+    return si;
+}
+
+void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker) {
+    connectivityChecker_ = checker;
+    for (auto& channel : channels_) {
+        channel->setConnectivityChecker(connectivityChecker_);
+    }
 }
 
 } /* namespace kaa */

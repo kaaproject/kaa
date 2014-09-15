@@ -23,7 +23,7 @@
 namespace kaa {
 
 /**
- * Interface which is used by @link IConfigurationPersistanceManager @endlink
+ * Interface which is used by @link IConfigurationPersistenceManager @endlink
  * to use user-defined routines for persisting/loading binary configuration data.
  *
  * Should be defined by user.

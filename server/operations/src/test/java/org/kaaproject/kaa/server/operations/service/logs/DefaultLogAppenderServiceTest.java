@@ -76,11 +76,9 @@ public class DefaultLogAppenderServiceTest {
         logEventService = mock(LogEventService.class);
         logAppendersService = mock(LogAppendersService.class);
 
-        ReflectionTestUtils.setField(logAppenderService, "applicationService", applicationService);
         ReflectionTestUtils.setField(logAppenderService, "logSchemaService", logSchemaService);
         ReflectionTestUtils.setField(logAppenderService, "logAppenderResolver", logAppenderResolver);
 
-        ReflectionTestUtils.setField(mongoDBLogAppender, "applicationService", applicationService);
         ReflectionTestUtils.setField(mongoDBLogAppender, "logEventService", logEventService);
 
         ReflectionTestUtils.setField(logAppenderService, "logAppendersService", logAppendersService);
@@ -107,8 +105,6 @@ public class DefaultLogAppenderServiceTest {
         dto.setTenantId(TENANT_ID);
         dto.setLogAppendersNames(APPENDER_NAME);
 
-        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(dto);
-        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(dto);
         when(logAppendersService.findRegisteredLogAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
 
@@ -132,8 +128,6 @@ public class DefaultLogAppenderServiceTest {
         dto.setTenantId(TENANT_ID);
         dto.setLogAppendersNames(APPENDER_NAME);
 
-        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(dto);
-        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(dto);
         when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
 

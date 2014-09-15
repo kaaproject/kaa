@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.common.server.kaatcp;
 
 import java.util.Arrays;
 
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
@@ -44,7 +46,10 @@ public class KaaTcpEncoder extends ChannelOutboundHandlerAdapter {
             MqttFrame frame = (MqttFrame) msg;
             byte[] data = frame.getFrame().array();
             LOG.trace("Sending {} data for frame {}", Arrays.toString(data), frame);
-            ctx.writeAndFlush(data, promise);
+            ChannelFuture future = ctx.writeAndFlush(data, promise);
+            if (frame.isNeedCloseConnection()) {
+                future.addListener(ChannelFutureListener.CLOSE);
+            }
         }
     }
 }

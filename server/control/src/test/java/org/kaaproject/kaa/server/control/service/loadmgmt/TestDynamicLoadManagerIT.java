@@ -21,10 +21,10 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.awt.SystemColor;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,6 +46,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftServ
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
@@ -241,7 +242,7 @@ public class TestDynamicLoadManagerIT {
                 thriftHost,
                 thriftPort,
                 ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = new BootstrapNodeInfo(bsConnectionInfo , "localhost", 9897, 0);
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo , "localhost", 9897, 0);
         dm.onNodeAdded(bsNode);
 
         checkBSNode();
@@ -260,7 +261,7 @@ public class TestDynamicLoadManagerIT {
                 thriftHost,
                 thriftPort+1,
                 ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsErrNode = new BootstrapNodeInfo(bsErrConnectionInfo ,"localhost", 9898, 0);
+        BootstrapNodeInfo bsErrNode = getBootstrapNodeInfo(bsErrConnectionInfo ,"localhost", 9898, 0);
 
         dm.onNodeAdded(bsErrNode);
 
@@ -274,7 +275,7 @@ public class TestDynamicLoadManagerIT {
                 thriftHost,
                 thriftPort,
                 ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = new BootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
 
         dm.onNodeUpdated(bsNode);
 
@@ -297,7 +298,7 @@ public class TestDynamicLoadManagerIT {
                 thriftHost,
                 thriftPort+1,
                 ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsErrNode = new BootstrapNodeInfo(bsErrConnectionInfo ,"localhost", 9897, 0);
+        BootstrapNodeInfo bsErrNode = getBootstrapNodeInfo(bsErrConnectionInfo ,"localhost", 9897, 0);
 
         dm.onNodeAdded(bsErrNode);
 
@@ -305,7 +306,7 @@ public class TestDynamicLoadManagerIT {
                 thriftHost,
                 thriftPort,
                 ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = new BootstrapNodeInfo(bsConnectionInfo , "localhost", 9898, 0);
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo , "localhost", 9898, 0);
 
         dm.onNodeAdded(bsNode);
 
@@ -349,7 +350,7 @@ public class TestDynamicLoadManagerIT {
                 thriftHost,
                 thriftPort,
                 ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = new BootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
 
         dm.onNodeAdded(bsNode);
 
@@ -385,7 +386,7 @@ public class TestDynamicLoadManagerIT {
                 thriftHost,
                 thriftPort,
                 ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = new BootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
 
         dm.onNodeAdded(bsNode);
 
@@ -438,7 +439,7 @@ public class TestDynamicLoadManagerIT {
                 thriftHost,
                 thriftPort,
                 ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = new BootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
 
         dm.onNodeAdded(bsNode);
 
@@ -514,6 +515,22 @@ public class TestDynamicLoadManagerIT {
         nodeInfo.setSupportedChannelsArray(supportedChannels );
         nodeInfo.setConnectionInfo(new ConnectionInfo(thriftHost, thriftPort, publicKey));
         return nodeInfo;
+    }
+    
+    private BootstrapNodeInfo getBootstrapNodeInfo(ConnectionInfo bsConnectionInfo, String host, int port, int stat) {
+        List<BootstrapSupportedChannel> chList = new LinkedList<>();
+        ZkHttpComunicationParameters CommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(host, port));
+        ZkHttpStatistics ChannelStatistics = new ZkHttpStatistics(new BaseStatistics(
+                Integer.valueOf(0), 
+                Integer.valueOf(0), 
+                Integer.valueOf(0), 
+                Long.valueOf(0)));
+        chList.add(new BootstrapSupportedChannel(new ZkSupportedChannel(
+                ZkChannelType.HTTP, 
+                true, 
+                CommunicationParameters, 
+                ChannelStatistics)));
+        return new BootstrapNodeInfo(bsConnectionInfo, chList );
     }
 }
 

@@ -25,12 +25,12 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggingEvent;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
+import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,9 +43,6 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
 
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLogEventServiceImpl.class);
     private static final String DEFAULT_SYSTEM_USER = "kaa";
-
-    @Autowired
-    private ApplicationService applicationService;
 
     @Value("#{properties[tmp_keys]}")
     private String tmpKeys;
@@ -63,33 +60,39 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
     }
 
     @Override
-    public void createUserAndGroup(String applicationId, String path) {
-        LOG.debug("Starting create user and group for application with id: {}", applicationId);
-        ApplicationDto dto = applicationService.findAppById(applicationId);
-        String userName = "kaa_log_user_" + dto.getApplicationToken();
-        String groupName = "kaa_log_group_" + dto.getApplicationToken();
-        String publicKey = dto.getPublicKey();
+    public void createUserAndGroup(LogAppenderDto appender, String path) {
+        LogAppenderParametersDto propertiesDto = appender.getProperties();
+        if (propertiesDto != null) {
+            FileAppenderParametersDto parametersDto = (FileAppenderParametersDto) propertiesDto.getParameters();
+            if (parametersDto != null) {
+                String applicationId = appender.getApplicationId();
+                LOG.debug("Starting create user and group for application with id: {}", applicationId);
+                String userName = "kaa_log_user_" + appender.getApplicationToken();
+                String groupName = "kaa_log_group_" + appender.getApplicationToken();
+                String publicKey = parametersDto.getSshKey();
 
-        File tmpKeyFile = null;
-        try {
-            createDirectory(tmpKeys);
-            tmpKeyFile = new File(tmpKeys + "/" +applicationId+"_pub.key");
-            PrintWriter out = new PrintWriter(tmpKeyFile);
-            out.write(publicKey);
-            out.close();
-            String command = new StringBuilder("sudo /usr/lib/kaa-operations/bin/kaa-operations create_user ")
-                    .append(userName).append(" ")
-                    .append(groupName).append(" ")
-                    .append(path).append(" ")
-                    .append(tmpKeyFile.getAbsolutePath()).append(" ").toString();
-            LOG.info("Executing system command: {}", command);
-            Process process = Runtime.getRuntime().exec(command);
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            LOG.error("Unexpected exception occurred while executing create_user script", e);
-        } finally {
-            if(tmpKeyFile != null){
-                tmpKeyFile.delete();
+                File tmpKeyFile = null;
+                try {
+                    createDirectory(tmpKeys);
+                    tmpKeyFile = new File(tmpKeys + "/" + applicationId + "_pub.key");
+                    PrintWriter out = new PrintWriter(tmpKeyFile);
+                    out.write(publicKey);
+                    out.close();
+                    String command = new StringBuilder("sudo /usr/lib/kaa-operations/bin/kaa-operations create_user ")
+                                    .append(userName).append(" ")
+                                    .append(groupName).append(" ")
+                                    .append(path).append(" ")
+                                    .append(tmpKeyFile.getAbsolutePath()).append(" ").toString();
+                    LOG.info("Executing system command: {}", command);
+                    Process process = Runtime.getRuntime().exec(command);
+                    process.waitFor();
+                } catch (IOException | InterruptedException e) {
+                    LOG.error("Unexpected exception occurred while executing create_user script", e);
+                } finally {
+                    if (tmpKeyFile != null) {
+                        tmpKeyFile.delete();
+                    }
+                }
             }
         }
     }
@@ -115,10 +118,8 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
         LOG.debug("Starting saving {} logs", logEventPackDtos.size());
         List<String> events = new ArrayList<>();
         for (LogEventDto logEventDto : logEventPackDtos) {
-            String event = new StringBuilder("{\"Date created\": \"")
-                    .append(logEventDto.getDateCreated())
-                    .append("\", \"Endpoint key\": \"")
-                    .append(logEventDto.getEndpointKey())
+            String event = new StringBuilder("{\"Log Header\": \"")
+                    .append(logEventDto.getHeader())
                     .append("\", \"Event\": ")
                     .append(logEventDto.getEvent())
                     .append("}").toString();

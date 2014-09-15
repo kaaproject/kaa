@@ -33,6 +33,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.D
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingRequest;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.server.kaatcp.AbstractKaaTcpCommandProcessor;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -56,7 +57,7 @@ public class AkkaKaaTcpHandlerTest {
 
         @Override
         public void process(SessionInitRequest message) {
-            Object[] response = message.getResponseBuilder().build("response".getBytes());
+            Object[] response = message.getResponseBuilder().build("response".getBytes(), false);
             Assert.assertEquals(2, response.length);
             Assert.assertTrue(response[0] instanceof ConnAck);
             Assert.assertTrue(response[1] instanceof KaaSync);
@@ -140,7 +141,7 @@ public class AkkaKaaTcpHandlerTest {
         UUID uuid = UUID.randomUUID();
         AkkaService akkaService = Mockito.mock(AkkaService.class);
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
-        Mockito.when(msg.getRequest()).thenReturn(new KaaSync());
+        Mockito.when(msg.getRequest()).thenReturn(new SyncRequest());
         AkkaKaaTcpHandler handler = new AkkaKaaTcpHandler(uuid, akkaService);
         handler.channelRead0(null, msg);
         Mockito.verify(akkaService, Mockito.never()).process(Mockito.any(NettyTcpConnectMessage.class));
@@ -151,7 +152,7 @@ public class AkkaKaaTcpHandlerTest {
         UUID uuid = UUID.randomUUID();
         AkkaService akkaService = Mockito.mock(AkkaService.class);
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
-        Mockito.when(msg.getRequest()).thenReturn(new KaaSync());
+        Mockito.when(msg.getRequest()).thenReturn(new SyncRequest());
         AkkaKaaTcpHandler handler = new AkkaKaaTcpHandler(uuid, akkaService);
         handler.onSessionCreated(buildSessionInfo(uuid));
         handler.channelRead0(null, msg);
@@ -163,7 +164,7 @@ public class AkkaKaaTcpHandlerTest {
         UUID uuid = UUID.randomUUID();
 
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
-        Mockito.when(msg.getRequest()).thenReturn(new KaaSync());
+        Mockito.when(msg.getRequest()).thenReturn(new SyncRequest());
         AkkaKaaTcpHandler handler = new AkkaKaaTcpHandler(uuid, akkaService);
         handler.onSessionCreated(buildSessionInfo(uuid));
         handler.channelRead0(null, msg);
@@ -208,6 +209,6 @@ public class AkkaKaaTcpHandlerTest {
 
     protected NettySessionInfo buildSessionInfo(UUID uuid) {
         return new NettySessionInfo(uuid, Mockito.mock(ChannelHandlerContext.class), ChannelType.TCP, Mockito.mock(SecretKey.class),
-                EndpointObjectHash.fromSHA1("test"), "applicationToken", 100);
+                EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
     }
 }

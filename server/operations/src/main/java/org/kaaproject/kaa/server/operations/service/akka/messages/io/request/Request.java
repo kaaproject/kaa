@@ -22,5 +22,6 @@ public interface Request extends ChannelAware{
     ResponseBuilder getResponseBuilder();
     ErrorBuilder getErrorBuilder();
     SyncStatistics getSyncStatistics();
+    boolean isEncrypted();
 
 }

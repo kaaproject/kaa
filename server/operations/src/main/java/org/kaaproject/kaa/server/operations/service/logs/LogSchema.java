@@ -45,4 +45,10 @@ public class LogSchema {
     public int getVersion() {
         return logSchemaDto.getMajorVersion();
     }
+
+    @Override
+    public String toString() {
+        return "LogSchema [logSchemaDto=" + logSchemaDto + "]";
+    }
+
 }

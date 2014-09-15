@@ -16,7 +16,11 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include "kaa/KaaDefaults.hpp"
 #include "kaa/channel/KaaChannelManager.hpp"
+#include "kaa/channel/server/HttpServerInfo.hpp"
+#include "kaa/channel/server/KaaTcpServerInfo.hpp"
+#include "kaa/common/exception/KaaException.hpp"
 
 #include "headers/channel/MockDataChannel.hpp"
 #include "headers/bootstrap/MockBootstrapManager.hpp"
@@ -29,8 +33,12 @@ public:
         return id_;
     }
 
-    virtual ChannelType getType() const {
+    virtual ChannelType getChannelType() const {
         return channelType_;
+    }
+
+    virtual ServerType getServerType() const {
+        return serverType_;
     }
 
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
@@ -50,9 +58,21 @@ public:
 public:
     std::string       id_;
     ChannelType       channelType_;
-    TransportType    transportType_;
+    TransportType     transportType_;
+    ServerType        serverType_;
 
     IServerInfoPtr    server_;
+};
+
+class UserServerInfo : public IServerInfo {
+public:
+    virtual ChannelType getChannelType() const {
+        return ChannelType::HTTP_LP;
+    }
+
+    virtual ServerType getServerType() const {
+        return ServerType::OPERATIONS;
+    }
 };
 
 BOOST_AUTO_TEST_SUITE(ChannelManagerTestSuite)
@@ -60,7 +80,7 @@ BOOST_AUTO_TEST_SUITE(ChannelManagerTestSuite)
 BOOST_AUTO_TEST_CASE(AddChannelTest)
 {
     MockBootstrapManager BootstrapManager;
-    KaaChannelManager channelManager(BootstrapManager);
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
 
     IDataChannelPtr fakeChannel(nullptr);
     BOOST_CHECK_THROW(channelManager.addChannel(fakeChannel), KaaException);
@@ -69,12 +89,14 @@ BOOST_AUTO_TEST_CASE(AddChannelTest)
     UserDataChannel* tmp = new UserDataChannel;
     tmp->id_ = ch1Id;
     tmp->channelType_ = ChannelType::HTTP;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch1(tmp);
 
     const std::string ch2Id("id2");
     tmp = new UserDataChannel;
     tmp->id_ = ch2Id;
     tmp->channelType_ = ChannelType::HTTP_LP;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch2(tmp);
 
     std::list<IDataChannelPtr> expectedList = {ch1, ch2};
@@ -101,7 +123,7 @@ BOOST_AUTO_TEST_CASE(AddChannelTest)
 BOOST_AUTO_TEST_CASE(RemoveChannelTest)
 {
     MockBootstrapManager BootstrapManager;
-    KaaChannelManager channelManager(BootstrapManager);
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
 
     IDataChannelPtr fakeChannel(nullptr);
     BOOST_CHECK_THROW(channelManager.removeChannel(fakeChannel), KaaException);
@@ -110,12 +132,14 @@ BOOST_AUTO_TEST_CASE(RemoveChannelTest)
     UserDataChannel* tmp = new UserDataChannel;
     tmp->id_ = ch1Id;
     tmp->channelType_ = ChannelType::HTTP;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch1(tmp);
 
     const std::string ch2Id("id2");
     tmp = new UserDataChannel;
     tmp->id_ = ch2Id;
     tmp->channelType_ = ChannelType::HTTP_LP;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch2(tmp);
 
     channelManager.addChannel(ch1);
@@ -124,13 +148,13 @@ BOOST_AUTO_TEST_CASE(RemoveChannelTest)
     channelManager.removeChannel(ch2);
 
     BOOST_CHECK(channelManager.getChannels().size() == 1);
-    BOOST_CHECK(channelManager.getChannels().front()->getType() == ch1->getType());
+    BOOST_CHECK(channelManager.getChannels().front()->getChannelType() == ch1->getChannelType());
 }
 
 BOOST_AUTO_TEST_CASE(GetChannelBySomeCriteriaTest)
 {
     MockBootstrapManager BootstrapManager;
-    KaaChannelManager channelManager(BootstrapManager);
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
 
     auto bootstrapCh = channelManager.getChannelsByType(ChannelType::BOOTSTRAP);
     BOOST_CHECK(bootstrapCh.empty());
@@ -146,6 +170,7 @@ BOOST_AUTO_TEST_CASE(GetChannelBySomeCriteriaTest)
     tmp->id_ = ch1Id;
     tmp->channelType_ = ChannelType::HTTP;
     tmp->transportType_ = TransportType::LOGGING;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch1(tmp);
 
     const std::string ch2Id("id2");
@@ -153,13 +178,15 @@ BOOST_AUTO_TEST_CASE(GetChannelBySomeCriteriaTest)
     tmp->id_ = ch2Id;
     tmp->channelType_ = ChannelType::HTTP_LP;
     tmp->transportType_ = TransportType::NOTIFICATION;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch2(tmp);
 
     const std::string ch3Id("id3");
     tmp = new UserDataChannel;
     tmp->id_ = ch3Id;
-    tmp->channelType_ = ChannelType::BOOTSTRAP;
-    tmp->transportType_ = TransportType::LOGGING;
+    tmp->channelType_ = ChannelType::HTTP;
+    tmp->transportType_ = TransportType::BOOTSTRAP;
+    tmp->serverType_ = ServerType::BOOTSTRAP;
     IDataChannelPtr ch3(tmp);
 
     const std::string ch4Id("id4");
@@ -167,6 +194,7 @@ BOOST_AUTO_TEST_CASE(GetChannelBySomeCriteriaTest)
     tmp->id_ = ch4Id;
     tmp->channelType_ = ChannelType::HTTP_LP;
     tmp->transportType_ = TransportType::EVENT;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch4(tmp);
 
     channelManager.addChannel(ch3);
@@ -175,7 +203,7 @@ BOOST_AUTO_TEST_CASE(GetChannelBySomeCriteriaTest)
     channelManager.addChannel(ch4);
 
     auto idCh = channelManager.getChannel(ch3->getId());
-    BOOST_CHECK(idCh->getType() == ch3->getType());
+    BOOST_CHECK(idCh->getChannelType() == ch3->getChannelType());
 
     auto transportTypeCh = channelManager.getChannelByTransportType(TransportType::NOTIFICATION);
     BOOST_CHECK(transportTypeCh->getId() == ch2->getId());
@@ -199,18 +227,20 @@ BOOST_AUTO_TEST_CASE(GetChannelBySomeCriteriaTest)
 BOOST_AUTO_TEST_CASE(ClearChannelsTest)
 {
     MockBootstrapManager BootstrapManager;
-    KaaChannelManager channelManager(BootstrapManager);
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
 
     const std::string ch1Id("id1");
     UserDataChannel* tmp = new UserDataChannel;
     tmp->id_ = ch1Id;
     tmp->channelType_ = ChannelType::HTTP;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch1(tmp);
 
     const std::string ch2Id("id2");
     tmp = new UserDataChannel;
     tmp->id_ = ch2Id;
     tmp->channelType_ = ChannelType::HTTP_LP;
+    tmp->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch2(tmp);
 
     channelManager.addChannel(ch1);
@@ -224,7 +254,7 @@ BOOST_AUTO_TEST_CASE(ClearChannelsTest)
 BOOST_AUTO_TEST_CASE(ServerUpdateTest)
 {
     MockBootstrapManager BootstrapManager;
-    KaaChannelManager channelManager(BootstrapManager);
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
 
     IServerInfoPtr fakeServer;
     BOOST_CHECK_THROW(channelManager.onServerUpdated(fakeServer), KaaException);
@@ -232,8 +262,9 @@ BOOST_AUTO_TEST_CASE(ServerUpdateTest)
     const std::string ch1Id("id1");
     UserDataChannel* userCh1 = new UserDataChannel;
     userCh1->id_ = ch1Id;
-    userCh1->channelType_ = ChannelType::BOOTSTRAP;
+    userCh1->channelType_ = ChannelType::HTTP;
     userCh1->transportType_ = TransportType::BOOTSTRAP;
+    userCh1->serverType_ = ServerType::BOOTSTRAP;
     IDataChannelPtr ch1(userCh1);
 
     const std::string ch2Id("id2");
@@ -241,32 +272,30 @@ BOOST_AUTO_TEST_CASE(ServerUpdateTest)
     userCh2->id_ = ch2Id;
     userCh2->channelType_ = ChannelType::HTTP;
     userCh2->transportType_ = TransportType::CONFIGURATION;
+    userCh2->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch2(userCh2);
 
     channelManager.addChannel(ch1);
     channelManager.addChannel(ch2);
 
-    IServerInfoPtr serverInfo(new BootstrapServerInfo("localhost:80", "key"));
+    IServerInfoPtr serverInfo(new HttpServerInfo(ServerType::BOOTSTRAP, "localhost:80", "key"));
 
     channelManager.onServerUpdated(serverInfo);
 
     BOOST_CHECK(userCh1->server_);
-    BOOST_CHECK(static_cast<BootstrapServerInfo*>(userCh1->server_.get())->getPort() == 80);
+    BOOST_CHECK(static_cast<HttpServerInfo*>(userCh1->server_.get())->getPort() == 80);
 
     BOOST_CHECK(!userCh2->server_);
 }
 
-class UserServerInfo : public IServerInfo {
-public:
-    virtual ChannelType getType() const {
-        return ChannelType::HTTP_LP;
-    }
-};
-
 BOOST_AUTO_TEST_CASE(ServerFailedTest)
 {
+
+    BootstrapServers servers = { IServerInfoPtr(new KaaTcpServerInfo(ServerType::BOOTSTRAP, "test", 80, "key"))
+                               , IServerInfoPtr(new KaaTcpServerInfo(ServerType::BOOTSTRAP, "test", 54, "key"))
+                               , IServerInfoPtr(new KaaTcpServerInfo(ServerType::BOOTSTRAP, "test", 443, "key"))};
     MockBootstrapManager BootstrapManager;
-    KaaChannelManager channelManager(BootstrapManager);
+    KaaChannelManager channelManager(BootstrapManager, servers);
 
     IServerInfoPtr fakeServer;
     BOOST_CHECK_THROW(channelManager.onServerFailed(fakeServer), KaaException);
@@ -274,8 +303,9 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
     const std::string ch1Id("id1");
     UserDataChannel* userCh1 = new UserDataChannel;
     userCh1->id_ = ch1Id;
-    userCh1->channelType_ = ChannelType::BOOTSTRAP;
+    userCh1->channelType_ = ChannelType::KAATCP;
     userCh1->transportType_ = TransportType::BOOTSTRAP;
+    userCh1->serverType_ = ServerType::BOOTSTRAP;
     IDataChannelPtr ch1(userCh1);
 
     const std::string ch2Id("id2");
@@ -283,6 +313,7 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
     userCh2->id_ = ch2Id;
     userCh2->channelType_ = ChannelType::HTTP;
     userCh2->transportType_ = TransportType::CONFIGURATION;
+    userCh2->serverType_ = ServerType::OPERATIONS;
     IDataChannelPtr ch2(userCh2);
 
     channelManager.addChannel(ch1);
@@ -290,21 +321,16 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
 
     BOOST_CHECK_THROW(channelManager.addChannel(ch2), KaaException);
 
-//    IServerInfoPtr userServer(new UserServerInfo);
-//    channelManager.onServerFailed(userServer);
-//    BOOST_CHECK(userCh1->server_);
-//    BOOST_CHECK(userCh2->server_);
-
-    IServerInfoPtr serverInfo(new BootstrapServerInfo("localhost:80", "key"));
-    channelManager.onServerFailed(serverInfo);
-
     BOOST_CHECK(userCh1->server_);
-    /* Port 54 is hardcoded in KaaDefaults.cpp*/
-    BOOST_CHECK(static_cast<BootstrapServerInfo*>(userCh1->server_.get())->getPort() == 54);
+    channelManager.onServerFailed(servers[0]);
+    BOOST_CHECK(userCh1->server_);
+    BOOST_CHECK(static_cast<HttpServerInfo*>(userCh1->server_.get())->getPort() == 54);
 
-    channelManager.onServerFailed(serverInfo);
-    /* Port 443 is hardcoded in KaaDefaults.cpp*/
-    BOOST_CHECK(static_cast<BootstrapServerInfo*>(userCh1->server_.get())->getPort() == 443);
+    channelManager.onServerFailed(servers[1]);
+    BOOST_CHECK(static_cast<HttpServerInfo*>(userCh1->server_.get())->getPort() == 443);
+
+    channelManager.onServerFailed(servers[2]);
+    BOOST_CHECK(static_cast<HttpServerInfo*>(userCh1->server_.get())->getPort() == 80);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

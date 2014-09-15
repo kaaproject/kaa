@@ -70,4 +70,12 @@ public class NettyHttpSyncMessage extends AbstractRequestMessage implements Sess
     public int getKeepAlive() {
         return 0;
     }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request#isEncrypted()
+     */
+    @Override
+    public boolean isEncrypted() {
+        return true;
+    }
 }

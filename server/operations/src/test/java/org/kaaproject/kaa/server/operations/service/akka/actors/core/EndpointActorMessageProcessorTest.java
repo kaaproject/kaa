@@ -119,7 +119,7 @@ public class EndpointActorMessageProcessorTest {
         Mockito.when(message.getChannelType()).thenReturn(ChannelType.TCP);
         Mockito.when(message.getChannelUuid()).thenReturn(channelId);
         Mockito.when(message.getChannelContext()).thenReturn(channelCtx);
-        Mockito.when(message.getSession()).thenReturn(new NettySessionInfo(channelId, channelCtx, ChannelType.TCP, null, EndpointObjectHash.fromSHA1("key"), "APP_TOKEN", 1000));
+        Mockito.when(message.getSession()).thenReturn(new NettySessionInfo(channelId, channelCtx, ChannelType.TCP, null, EndpointObjectHash.fromSHA1("key"), "APP_TOKEN", 1000, true));
         Mockito.when(message.getCommand()).thenReturn(Mockito.mock(Request.class));
         Mockito.when(message.getOriginator()).thenReturn(Mockito.mock(ActorRef.class));
 

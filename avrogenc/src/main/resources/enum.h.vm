@@ -1,0 +1,43 @@
+##
+## Copyright 2014 CyberVision, Inc.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
+
+#set ($ENUMNAME = $StyleUtils.toUpperUnderScore($schema.getName()))
+#set ($enumName = $StyleUtils.toLowerUnderScore($schema.getName()))
+
+#set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
+#set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
+typedef enum ${prefix}_${enumName}_t_ {
+#foreach ($symbol in $schema.getEnumSymbols())
+    ENUM_${ENUMNAME}_$symbol,
+#end
+} ${prefix}_${enumName}_t;
+
+#ifdef GENC_ENUM_DEFINE_ALIASES
+#foreach ($symbol in $schema.getEnumSymbols())
+\#define $symbol ENUM_${ENUMNAME}_$symbol
+#end
+# endif // GENC_ENUM_DEFINE_ALIASES
+
+#ifdef GENC_ENUM_STRING_LITERALS
+#set($symCount = $schema.getEnumSymbols().size())
+const char* ${PREFIX}_${ENUMNAME}_SYMBOLS[$symCount] = {
+#foreach ($symbol in $schema.getEnumSymbols())
+    "${symbol}"#set($symCount = $symCount - 1)#if ($symCount > 0),
+#end
+#end
+};
+# endif // GENC_ENUM_STRING_LITERALS
+

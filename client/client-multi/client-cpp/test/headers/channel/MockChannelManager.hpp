@@ -53,6 +53,8 @@ public:
 
     virtual void clearChannelList() {}
 
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
+
     virtual ~MockChannelManager() {}
 };
 

@@ -85,8 +85,8 @@ public class AkkaHttpHandler extends DefaultHandler implements ResponseBuilder, 
     }
 
     @Override
-    public Object[] build(byte[] encriptedResponseData) {
-        command.setResponseBody(encriptedResponseData);
+    public Object[] build(byte[] responseData, boolean isEncrypted) {
+        command.setResponseBody(responseData);
         return new Object[]{command};
     }
 }

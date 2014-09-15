@@ -24,7 +24,7 @@ import javax.crypto.SecretKey;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpConnectMessage;
@@ -50,7 +50,7 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive);
+        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive, true);
 
         Connect command = new Connect(keepAlive, "aesSessionKey".getBytes(), "syncRequest".getBytes(), "signature".getBytes());
         SessionCreateListener listener = Mockito.mock(SessionCreateListener.class);
@@ -86,9 +86,9 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive);
+        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive, true);
 
-        KaaSync command = new KaaSync(false, "avroObject".getBytes(), false, false);
+        SyncRequest command = new SyncRequest("avroObject".getBytes(), false, false);
 
         NettyTcpSyncMessage message = new NettyTcpSyncMessage(command, session, null, null, null);
 
@@ -107,7 +107,7 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive);
+        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive, true);
 
         NettyTcpDisconnectMessage message = new NettyTcpDisconnectMessage(session);
 
@@ -127,7 +127,7 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive);
+        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive, true);
 
         NettyTcpPingMessage message = new NettyTcpPingMessage(session);
 

@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.5.2</version>
+        <version>0.6.0</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -44,7 +44,7 @@
         <module>dto</module>
         <module>utils</module>
         <module>netty-server</module>
-        <module>flume-shared</module>
+        <module>log-shared</module>
         <module>admin-rest-client</module>
     </modules>
 

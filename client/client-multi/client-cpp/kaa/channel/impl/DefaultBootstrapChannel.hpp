@@ -17,12 +17,11 @@
 #ifndef DEFAULTBOOTSTRAPCHANNEL_HPP_
 #define DEFAULTBOOTSTRAPCHANNEL_HPP_
 
-
 #include "kaa/channel/impl/AbstractHttpChannel.hpp"
 
 namespace kaa {
 
-class DefaultBootstrapChannel : public AbstractHttpChannel<ChannelType::BOOTSTRAP> {
+class DefaultBootstrapChannel : public AbstractHttpChannel<ChannelType::HTTP> {
 public:
     DefaultBootstrapChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys) : AbstractHttpChannel(channelManager, clientKeys) { }
     virtual ~DefaultBootstrapChannel() { }
@@ -41,6 +40,10 @@ private:
     virtual std::string retrieveResponse(const IHttpResponse& response)
     {
         return getHttpDataProcessor()->retrieveBootstrapResponse(response);
+    }
+
+    virtual ServerType getServerType() const {
+        return ServerType::BOOTSTRAP;
     }
 
 private:

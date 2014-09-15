@@ -22,6 +22,7 @@
 #include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/channel/IDataChannel.hpp"
 #include "kaa/channel/server/IServerInfo.hpp"
+#include "kaa/channel/connectivity/IConnectivityChecker.hpp"
 
 namespace kaa {
 
@@ -118,6 +119,15 @@ public:
      * Clears the list of channels.
      */
     virtual void clearChannelList() = 0;
+
+    /**
+     * Sets connectivity checker to the current channel.
+     *
+     * @param checker platform-dependent connectivity checker.
+     * @see IConnectivityChecker
+     *
+     */
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) = 0;
 
     virtual ~IKaaChannelManager() {}
 };

@@ -21,6 +21,7 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.curator.RetryPolicy;
@@ -31,6 +32,7 @@ import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
@@ -160,9 +162,22 @@ public class TestCluster {
                 keys.getPublic().getEncoded());
         ByteBuffer testKeyData = ByteBuffer.wrap(x509EncodedKeySpec.getEncoded());
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
-        nodeInfo.setBootstrapHostName(BOOTSTRAP_NODE_HOST);
-        nodeInfo.setBootstrapPort(1001);
-        nodeInfo.setProcessedRequestCount(1);
+        
+        
+        List<BootstrapSupportedChannel> chList = new LinkedList<>();
+        ZkHttpComunicationParameters CommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(BOOTSTRAP_NODE_HOST, 1001));
+        ZkHttpStatistics ChannelStatistics = new ZkHttpStatistics(new BaseStatistics(
+                Integer.valueOf(1), 
+                Integer.valueOf(1), 
+                Integer.valueOf(1), 
+                Long.valueOf(1)));
+        chList.add(new BootstrapSupportedChannel(new ZkSupportedChannel(
+                ZkChannelType.HTTP, 
+                true, 
+                CommunicationParameters, 
+                ChannelStatistics)));
+        nodeInfo.setSupportedChannelsArray(chList);
+        
         return nodeInfo;
     }
 

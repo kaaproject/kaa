@@ -23,7 +23,7 @@ public interface ApplicationView extends BaseDetailsView {
 
     HasValue<String> getApplicationName();
 
-    HasValue<String> getApplicationKey();
+//    HasValue<String> getApplicationKey();
 
     HasValue<String> getApplicationToken();
 

@@ -57,6 +57,11 @@ public class NettyTcpConnectMessage extends AbstractRequestMessage implements Se
     }
 
     @Override
+    public boolean isEncrypted() {
+        return command.isEncrypted();
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("NettyTcpConnectMessage [command=");

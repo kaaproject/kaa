@@ -18,8 +18,8 @@ set -e
 
 TARGET="/usr/lib/kaa-admin"
 HPORT=8080
-CPORT=8005
-CWORD="SHUTDOWN"
+#CPORT=8005
+#CWORD="SHUTDOWN"
 warned=0
 warnlowport=0
 
@@ -49,15 +49,23 @@ checkport() {
   fi
 
   # Warn if port appears to be in use
-  if nc localhost "${port}" -z > /dev/null; then
-	echo "Warning: ${type} port ${port} appears to be in use."
-	warned=1
+  if hash nmap 2>/dev/null; then
+        if nmap -Pn -p"${port}" localhost | awk "\$1 ~ /"${port}"/ {print \$2}" | grep open > /dev/null; then 
+            echo "Warning: ${type} port ${port} appears to be in use."
+            warned=1
+        fi
+  else
+        if nc localhost "${port}" -z > /dev/null; then
+            echo "Warning: ${type} port ${port} appears to be in use."
+            warned=1
+        fi
   fi
+
 }
 
 # Check ports
 checkport HTTP "${HPORT}"
-checkport Control "${CPORT}"
+#checkport Control "${CPORT}"
 
 # Ask for confirmation if warnings were printed out
 if [ ${warned} -eq 1 ]; then 
@@ -95,10 +103,7 @@ if [ ! -d "${TARGET}/db" ]; then
    mkdir "${TARGET}/db"
 fi
 
-cp -r /usr/share/tomcat7/skel/* "${TARGET}"
-
-sed -i -e "s/Connector port=\"8080\"/Connector port=\"${HPORT}\"/;s/Server port=\"8005\" shutdown=\"SHUTDOWN\"/Server port=\"${CPORT}\" shutdown=\"${CWORD}\"/" "${TARGET}/conf/server.xml"
-sed -i '/^common.loader=/ s/$/,\${catalina.base}\/conf/' "${TARGET}/conf/catalina.properties"
+sed -i -e "s/jetty.port=8080/jetty.port=${HPORT}/" "${TARGET}/start.d/http.ini"
 
 if [ -h /usr/bin/kaa-admin ]; then
     rm -f /usr/bin/kaa-admin
@@ -116,11 +121,7 @@ if [ ! -d /var/log/kaa ]; then
     mkdir -p /var/log/kaa
 fi
 
-chown -R kaa:kaa "${TARGET}/logs"
-chown -R kaa:kaa "${TARGET}/webapps"
-chown -R kaa:kaa "${TARGET}/work"
-chown -R kaa:kaa "${TARGET}/temp"
-chown -R kaa:kaa "${TARGET}/db"
+chown -R kaa:kaa "${TARGET}"
 
 chown -R kaa:kaa /var/log/kaa
 chmod 755 /var/log/kaa

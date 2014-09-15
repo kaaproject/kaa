@@ -40,16 +40,6 @@ boost::uint8_t KaaTcpCommon::createBasicHeader(boost::uint8_t messageType, boost
     return 0;
 }
 
-boost::uint32_t KaaTcpCommon::getMultiplier(boost::uint32_t length)
-{
-    boost::uint32_t multiplier = 1;
-    while (length) {
-        multiplier *= FIRST_BIT;
-        length >>= 7;
-    }
-    return multiplier;
-}
-
 }
 
 

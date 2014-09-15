@@ -72,12 +72,12 @@ set ( KAA_TEST_SOURCES
         ../impl/configuration/ConfigurationTransport.cpp
         ../impl/configuration/manager/ConfigurationManager.cpp
         ../impl/configuration/manager/Strategies.cpp
-        ../impl/configuration/storage/ConfigurationPersistanceManager.cpp
+        ../impl/configuration/storage/ConfigurationPersistenceManager.cpp
         ../impl/configuration/delta/DeltaHandlerId.cpp
         ../impl/configuration/delta/DefaultDeltaManager.cpp
         ../impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
         ../impl/schema/SchemaProcessor.cpp
-        ../impl/schema/storage/SchemaPersistanceManager.cpp
+        ../impl/schema/storage/SchemaPersistenceManager.cpp
         ../impl/event/registration/EndpointRegistrationManager.cpp
         ../impl/event/registration/UserTransport.cpp
         ../impl/event/EventManager.cpp
@@ -102,6 +102,7 @@ set ( KAA_TEST_SOURCES
         ../impl/kaatcp/ConnackMessage.cpp
         ../impl/kaatcp/KaaSyncResponse.cpp
         ../impl/kaatcp/KaaTcpResponseProcessor.cpp
+        ../impl/channel/connectivity/PingConnectivityChecker.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
@@ -110,9 +111,9 @@ set ( KAA_TEST_SOURCES
 ##        impl/profile/UpdateProfileTest.cpp
 ##        impl/update/EndpointCommandsTest.cpp
         impl/schema/SchemaProcessorTest.cpp
-        impl/schema/SchemaPersistanceTest.cpp
+        impl/schema/SchemaPersistenceTest.cpp
         impl/configuration/ConfigurationTests.cpp
-        impl/configuration/ConfigurationPersistanceTest.cpp
+        impl/configuration/ConfigurationPersistenceTest.cpp
         impl/configuration/ConfigurationProcessorTest.cpp
         impl/configuration/ProcessConfigurationTest.cpp
         impl/configuration/delta/DeltaHandlerIdTest.cpp
@@ -124,6 +125,7 @@ set ( KAA_TEST_SOURCES
         impl/ClientStatusTest.cpp
         impl/event/EndpointRegistrationManagerTest.cpp
         impl/bootstrap/ServerInfoTest.cpp
+        impl/channel/HttpServerInfoTest.cpp
 ##        impl/bootstrap/BootstrapManagerTest.cpp
         impl/security/KeyUtilsTest.cpp
 ##        impl/event/EventFamilyFactoryTest.cpp
@@ -134,6 +136,7 @@ set ( KAA_TEST_SOURCES
         impl/notification/NotificationTransportTest.cpp
         impl/notification/NotificationManagerTest.cpp
         impl/kaatcp/KaaTcpTest.cpp
+        impl/channel/PingConnectivityCheckerTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

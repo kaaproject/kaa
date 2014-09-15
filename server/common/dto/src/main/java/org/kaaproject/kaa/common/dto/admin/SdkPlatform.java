@@ -20,7 +20,8 @@ public enum SdkPlatform {
 
     JAVA("java", "application/java-archive"),
     ANDROID("android", "application/java-archive"),
-    CPP("cpp", "application/x-compressed");
+    CPP("cpp", "application/x-compressed"),
+    C("c", "application/x-compressed");
 
     String key;
     String contentType;

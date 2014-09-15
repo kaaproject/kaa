@@ -77,6 +77,12 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("You do not have permission to perform this operation!")
     String permission_denied();
 
+    @DefaultStringValue("Provided arguments are invalid for requested operation!")
+    String invalid_arguments();
+
+    @DefaultStringValue("Requested item not found!")
+    String item_not_found();
+
     @DefaultStringValue("Schema validation error: ")
     String invalid_schema();
 
@@ -121,6 +127,9 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
 
     @DefaultStringValue("C++")
     String cpp();
+
+    @DefaultStringValue("C")
+    String c();
 
     @DefaultStringValue("Notification schema")
     String notificationSchema();
@@ -554,12 +563,15 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Log Appender Status")
     String logAppenderStatus();
 
+    @DefaultStringValue("Log Metadata")
+    String logMetada();
+
     @DefaultStringValue("Hosts balancing")
     String logAppenderHostsBalancing();
 
     @DefaultStringValue("Add host")
     String addHost();
-    
+
     @DefaultStringValue("Remove host")
     String remHost();
 
@@ -571,4 +583,10 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
 
     @DefaultStringValue("Priority")
     String priority();
+
+    @DefaultStringValue("Library")
+    String downloadRecordLibrary();
+
+    @DefaultStringValue("Schema")
+    String downloadRecordSchema();
 }

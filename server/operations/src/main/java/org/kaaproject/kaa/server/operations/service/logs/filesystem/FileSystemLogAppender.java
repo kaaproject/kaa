@@ -16,21 +16,15 @@
 
 package org.kaaproject.kaa.server.operations.service.logs.filesystem;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.avro.generic.GenericRecord;
 import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.WriterAppender;
-import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppender;
-import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
 import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,20 +36,15 @@ import org.springframework.stereotype.Component;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
-public class FileSystemLogAppender implements LogAppender{
+public class FileSystemLogAppender extends LogAppender{
 
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLogAppender.class);
-
-    Map<String, ThreadLocal<GenericAvroConverter<GenericRecord>>> converters = new HashMap<>();
 
     @Autowired
     private FileSystemLogEventService fileSystemLogEventService;
 
     private org.apache.log4j.Logger logger;
     private WriterAppender fileAppender;
-
-    private String appenderId;
-    private String name;
 
     @Value("#{properties[date_pattern]}")
     private String datePattern;
@@ -73,36 +62,7 @@ public class FileSystemLogAppender implements LogAppender{
     }
 
     public FileSystemLogAppender(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getAppenderId() {
-        return appenderId;
-    }
-
-    public void setAppenderId(String appenderId) {
-        this.appenderId = appenderId;
-    }
-
-    public void setTenantId(String tenantId) {
-        tenantDirName = "tenant_" + tenantId;
-        fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName);
-    }
-
-    public void setApplicationId(String applicationId) {
-        applicationDirName = "application_" + applicationId;
-        fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName + "/" + applicationDirName);
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getName() {
-        return name;
+        setName(name);
     }
 
     @Override
@@ -113,41 +73,41 @@ public class FileSystemLogAppender implements LogAppender{
         }
     }
 
-    private GenericAvroConverter<GenericRecord> getConverter(String schema) {
-        if (!converters.containsKey(schema)) {
-            ThreadLocal<GenericAvroConverter<GenericRecord>> converter = new ThreadLocal<GenericAvroConverter<GenericRecord>>();
-            converter.set(new GenericAvroConverter<GenericRecord>(schema));
-            converters.put(schema, converter);
-        }
-        return converters.get(schema).get();
-    }
-
     @Override
-    public void doAppend(LogEventPack logEventPack) {
+    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
         if (!closed) {
-            // TODO Auto-generated method stub
             String path = logsRootPath + "/" + tenantDirName + "/" + applicationDirName;
             LOG.debug("[{}] appending {} logs to directory", path, logEventPack.getEvents().size());
-            List<LogEventDto> dtos = new ArrayList<>(logEventPack.getEvents().size());
-            GenericAvroConverter<GenericRecord> converter = getConverter(logEventPack.getLogSchema().getSchema());
-            try {
-                for (LogEvent logEvent : logEventPack.getEvents()) {
-                    GenericRecord decodedLog = converter.decodeBinary(logEvent.getLogData());
-                    String encodedJsonLog = converter.endcodeToJson(decodedLog);
-                    dtos.add(new LogEventDto(
-                            logEventPack.getEndpointKey(),
-                            logEventPack.getDateCreated(),
-                            encodedJsonLog));
-                }
-            } catch (IOException e) {
-                LOG.error("Unexpected IOException while decoding LogEvents", e);
-            }
+            List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
+
             LOG.debug("[{}] saving {} objects", path, dtos.size());
             fileSystemLogEventService.save(dtos, logger, fileAppender);
             LOG.debug("[{}] appended {} logs to directory", path, logEventPack.getEvents().size());
         } else {
-            LOG.info("Attempted to append to closed appender named [{}].", name);
+            LOG.info("Attempted to append to closed appender named [{}].", getName());
         }
+    }
+
+    @Override
+    public void initLogAppender(LogAppenderDto appender) {
+        LOG.debug("Starting initialize new instance of file system log appender");
+        setName(appender.getName());
+        initLogDirectories(appender);
+
+        String appLogDir = logsRootPath + "/" + tenantDirName + "/" + applicationDirName;
+        fileAppender = initAppender(appLogDir + "/application.log");
+        logger = org.apache.log4j.Logger.getLogger(applicationDirName);
+        fileSystemLogEventService.createUserAndGroup(appender, appLogDir);
+    }
+
+    private void createTenantLogDirectory(String tenantId) {
+        tenantDirName = "tenant_" + tenantId;
+        fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName);
+    }
+
+    private void createApplicationLogDirectory(String applicationId) {
+        applicationDirName = "application_" + applicationId;
+        fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName + "/" + applicationDirName);
     }
 
     private WriterAppender initAppender(String path) {
@@ -161,25 +121,10 @@ public class FileSystemLogAppender implements LogAppender{
         return fileAppender;
     }
 
-    private org.apache.log4j.Logger initLogger(String name) {
-        org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(name);
-        return logger;
-    }
-
-    @Override
-    public void init(LogAppenderDto appender) {
-        LOG.debug("Starting initialize new instance of file system log appender");
-        String appId = appender.getApplicationId();
-
-        setName(appender.getName());
+    private void initLogDirectories(LogAppenderDto appender) {
         fileSystemLogEventService.createRootLogDirCommand(logsRootPath);
-
-        setTenantId(appender.getTenantId());
-        setApplicationId(appId);
-        fileAppender = initAppender(logsRootPath + "/" + tenantDirName + "/" + applicationDirName + "/application.log");
-        logger = initLogger(applicationDirName);
-        fileSystemLogEventService.createUserAndGroup(appId,
-                logsRootPath + "/" + tenantDirName + "/" + applicationDirName);
+        createTenantLogDirectory(appender.getTenantId());
+        createApplicationLogDirectory(appender.getApplicationId());
     }
 
 }

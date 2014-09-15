@@ -25,12 +25,13 @@ function start()
 	    SERVER_LOG_DIR=/var/log/kaa
 	fi
 	
-	export JAVA_OPTS="$JAVA_OPTIONS -Djava.awt.headless=true -Dserver_log_dir=$SERVER_LOG_DIR -Dserver_home_dir=$SERVER_HOME"
-	export CATALINA_BASE="${SERVER_HOME}"
+	export JAVA_OPTIONS="$JAVA_OPTIONS -Djava.awt.headless=true -Dserver_log_dir=$SERVER_LOG_DIR -Dserver_home_dir=$SERVER_HOME"
+	export JETTY_HOME="${SERVER_HOME}"
+    	export JETTY_RUN="${SERVER_HOME}"
         
 	echo "Starting $SERVER_NAME..."
 
-	/usr/share/tomcat7/bin/startup.sh
+	${JETTY_HOME}/bin/jetty.sh start
 	echo "$SERVER_NAME started"
 }
 

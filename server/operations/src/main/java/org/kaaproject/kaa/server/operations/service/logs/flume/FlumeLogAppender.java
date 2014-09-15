@@ -18,6 +18,7 @@ import org.apache.flume.EventDeliveryException;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppender;
 import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
 import org.kaaproject.kaa.server.operations.service.logs.flume.client.FlumeClientManager;
@@ -30,26 +31,13 @@ import org.springframework.stereotype.Component;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
-public class FlumeLogAppender implements LogAppender {
+public class FlumeLogAppender extends LogAppender {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlumeLogAppender.class);
-
-    private String appenderId;
-    private String name;
 
     @Autowired
     private FlumeEventBuilder flumeEventBuilder;
     private FlumeClientManager flumeClientManger;
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
 
     @Override
     public void close() {
@@ -57,17 +45,8 @@ public class FlumeLogAppender implements LogAppender {
     }
 
     @Override
-    public String getAppenderId() {
-        return appenderId;
-    }
-
-    public void setAppenderId(String appenderId) {
-        this.appenderId = appenderId;
-    }
-
-    @Override
-    public void doAppend(LogEventPack logEventPack) {
-        Event event = flumeEventBuilder.generateEvent(logEventPack);
+    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
+        Event event = flumeEventBuilder.generateEvent(logEventPack, header);
         try {
             if (flumeClientManger != null) {
                 flumeClientManger.sendEventToFlume(event);
@@ -80,7 +59,7 @@ public class FlumeLogAppender implements LogAppender {
     }
 
     @Override
-    public void init(LogAppenderDto appender) {
+    public void initLogAppender(LogAppenderDto appender) {
         LogAppenderParametersDto parameters = appender.getProperties();
         FlumeAppenderParametersDto flumeParameters = (FlumeAppenderParametersDto) parameters.getParameters();
         flumeClientManger = FlumeClientManager.getInstance(flumeParameters);

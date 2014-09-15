@@ -23,6 +23,7 @@ import org.apache.flume.Context;
 import org.apache.flume.conf.Configurable;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
+import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.flume.ConfigurationConstants;
 
 import com.google.common.base.Preconditions;

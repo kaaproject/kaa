@@ -72,19 +72,10 @@ public class FlumeAvroEventBuilderTest {
         eventBuilder = new FlumeBytesEventBuilder();
         ReflectionTestUtils.setField(eventBuilder, "applicationService", applicationService);
         Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(app);
-        Event event = eventBuilder.generateEvent(eventPack);
+        Event event = eventBuilder.generateEvent(eventPack, null);
         Assert.assertEquals(FlumeBytesEventBuilder.METADATA_SIZE_IN_BYTES + COUNT * 8, event.getBody().length);
-        eventBuilder.generateEvent(eventPack);
+        eventBuilder.generateEvent(eventPack, null);
         Mockito.verify(applicationService, Mockito.times(1)).findAppById(APP_ID);
-    }
-
-    @Test
-    public void generateFromAvroEventWithEmptyEventPackTest() {
-        eventBuilder = new FlumeAvroEventBuilder();
-        ReflectionTestUtils.setField(eventBuilder, "applicationService", applicationService);
-        Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(app);
-        Event event = eventBuilder.generateEvent(null);
-        Assert.assertNull(event);
     }
 
     @Test
@@ -93,7 +84,7 @@ public class FlumeAvroEventBuilderTest {
         ReflectionTestUtils.setField(eventBuilder, "applicationService", applicationService);
         Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(app);
         eventPack.setLogSchema(null);
-        Event event = eventBuilder.generateEvent(eventPack);
+        Event event = eventBuilder.generateEvent(eventPack, null);
         Assert.assertNull(event);
     }
 
@@ -103,7 +94,7 @@ public class FlumeAvroEventBuilderTest {
         ReflectionTestUtils.setField(eventBuilder, "applicationService", applicationService);
         Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(app);
         eventPack.setEvents(new ArrayList<LogEvent>());
-        Event event = eventBuilder.generateEvent(eventPack);
+        Event event = eventBuilder.generateEvent(eventPack, null);
         Assert.assertNull(event);
     }
 
@@ -112,7 +103,7 @@ public class FlumeAvroEventBuilderTest {
         eventBuilder = new FlumeAvroEventBuilder();
         ReflectionTestUtils.setField(eventBuilder, "applicationService", applicationService);
         Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(app);
-        Event event = eventBuilder.generateEvent(eventPack);
+        Event event = eventBuilder.generateEvent(eventPack, null);
         Assert.assertNotNull(event);
     }
 

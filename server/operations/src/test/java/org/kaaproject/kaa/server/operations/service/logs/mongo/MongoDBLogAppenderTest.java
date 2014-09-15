@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.LogEventService;
@@ -63,20 +65,17 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ContextConfiguration(locations = "/common-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class MongoDBLogAppenderTest extends AbstractTest{
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
 
-    private static final String APPENDER_NAME = "mongoDBLogAppender";
-    private static final String APPENDER_ID = "appender_id";
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final String APPLICATION_ID = "application_id";
     private static final String APPLICATION_TOKEN = "application_token";
     private static final String TENANT_ID = "tenant_id";
-
     private static final String CUSTOMER_ID = "customer id";
     private static final String APPLICATION_NAME = "application name";
     private static final String NEW_APPENDER_NAME = "new name";
     private static final String ENDPOINT_KEY = "endpoint key";
-    private static final long DATE_CREATED = System.currentTimeMillis();
     private static final String LOG_DATA = "null";
+    private static final long DATE_CREATED = System.currentTimeMillis();
 
     private ApplicationDto applicationDto;
     private TenantDto customer;
@@ -136,6 +135,7 @@ public class MongoDBLogAppenderTest extends AbstractTest{
         appenderDto.setApplicationToken(APPLICATION_TOKEN);
         appenderDto.setTenantId(TENANT_ID);
         appenderDto.setType(LogAppenderTypeDto.MONGO);
+        appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
 
         logAppender.init(appenderDto);
     }
@@ -183,25 +183,13 @@ public class MongoDBLogAppenderTest extends AbstractTest{
         field.set(null, testLogger);
 
         logAppender.close();
-        logAppender.doAppend(null);
+        logAppender.doAppend(new LogEventPack());
 
         Mockito.verify(testLogger).info(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
-    public void doAppendCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        Logger testLogger = Mockito.mock(Logger.class);
-
-        Field field = logAppender.getClass().getDeclaredField("LOG");
-
-        field.setAccessible(true);
-
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-        field.set(null, testLogger);
-
+    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         List<LogEvent> events = new ArrayList<>();
         LogEvent event1 = new LogEvent();
         event1.setLogData(LOG_DATA.getBytes(UTF_8));
@@ -222,7 +210,7 @@ public class MongoDBLogAppenderTest extends AbstractTest{
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
         logEventPack.setLogSchemaVersion(version);
 
-        Map<String, ThreadLocal<GenericAvroConverter<GenericRecord>>> converters = new HashMap<>();
+        Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
 
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(dto.getSchema()) {
 
@@ -237,12 +225,15 @@ public class MongoDBLogAppenderTest extends AbstractTest{
             }
         };
 
-        ThreadLocal<GenericAvroConverter<GenericRecord>> threadLocal = new ThreadLocal<GenericAvroConverter<GenericRecord>>();
-        threadLocal.set(converter);
-        converters.put(dto.getSchema(), threadLocal);
+        converters.put(dto.getSchema(), converter);
         ReflectionTestUtils.setField(logAppender, "converters", converters);
+        LogEventService logEventService = Mockito.mock(LogEventService.class);
+
+        LogEventService eventService = (LogEventService) ReflectionTestUtils.getField(logAppender, "logEventService");
+        ReflectionTestUtils.setField(logAppender, "logEventService", logEventService);
         logAppender.doAppend(logEventPack);
-        Mockito.verify(testLogger).error(Mockito.anyString(), Mockito.any(IOException.class));
+        Mockito.verify(logEventService, Mockito.never()).save(Mockito.anyList(), Mockito.anyString());
+        ReflectionTestUtils.setField(logAppender, "logEventService", eventService);
     }
 
     @Test
@@ -251,9 +242,9 @@ public class MongoDBLogAppenderTest extends AbstractTest{
         LogEvent event1 = new LogEvent();
         event1.setLogData(LOG_DATA.getBytes(UTF_8));
         LogEvent event2 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event2.setLogData(LOG_DATA.getBytes(UTF_8));
         LogEvent event3 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event3.setLogData(LOG_DATA.getBytes(UTF_8));
         events.add(event1);
         events.add(event2);
         events.add(event3);
@@ -266,7 +257,7 @@ public class MongoDBLogAppenderTest extends AbstractTest{
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
         logEventPack.setLogSchemaVersion(version);
 
-        Map<String, ThreadLocal<GenericAvroConverter<GenericRecord>>> converters = new HashMap<>();
+        Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(dto.getSchema()) {
 
             @Override
@@ -280,9 +271,7 @@ public class MongoDBLogAppenderTest extends AbstractTest{
             }
         };
 
-        ThreadLocal<GenericAvroConverter<GenericRecord>> threadLocal = new ThreadLocal<GenericAvroConverter<GenericRecord>>();
-        threadLocal.set(converter);
-        converters.put(dto.getSchema(), threadLocal);
+        converters.put(dto.getSchema(), converter);
         ReflectionTestUtils.setField(logAppender, "converters", converters);
 
 

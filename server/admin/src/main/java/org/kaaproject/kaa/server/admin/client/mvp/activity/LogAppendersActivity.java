@@ -18,21 +18,26 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.AppendersDataProvider;
+import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
+import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppendersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ImageTextButton;
+import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.MultiSelectionModel;
 
-public class LogAppendersActivity  extends AbstractListActivity<LogAppenderDto, LogAppendersPlace> {
+public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, LogAppendersPlace> {
 
     private String applicationId;
     private LoadDataHandler handler;
@@ -45,13 +50,13 @@ public class LogAppendersActivity  extends AbstractListActivity<LogAppenderDto, 
 
     @Override
     protected BaseListView<LogAppenderDto> getView() {
-    	return clientFactory.getAppendersView();
+        return clientFactory.getAppendersView();
     }
 
     @Override
     protected AbstractDataProvider<LogAppenderDto> getDataProvider(MultiSelectionModel<LogAppenderDto> selectionModel,
             AsyncCallback<List<LogAppenderDto>> asyncCallback) {
-    	return new AppendersDataProvider(selectionModel, asyncCallback, applicationId, handler);
+        return new AppendersDataProvider(selectionModel, asyncCallback, applicationId, handler);
     }
 
     @Override
@@ -69,19 +74,46 @@ public class LogAppendersActivity  extends AbstractListActivity<LogAppenderDto, 
         KaaAdmin.getDataSource().removeLogAppender(id, callback);
     }
 
-	public class LoadDataHandler {
+    protected void onCustomRowAction(RowActionEvent<String> event) {
+        Integer logSchemaVersion = Integer.valueOf(event.getClickedId());
+        final RowAction action = event.getAction();
 
-		public void onLoad(List<LogAppenderDto> result) {
-			if (result != null && !result.isEmpty()) {
-				((ImageTextButton) listView.getAddButton()).setEnabled(false);
-				return;
-			}
-			((ImageTextButton) listView.getAddButton()).setEnabled(true);
-		}
+        AsyncCallback<String> callback = new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                listView.setErrorMessage(Utils.getErrorMessage(caught));
+            }
+            @Override
+            public void onSuccess(String key) {
+                ServletHelper.downloadRecordLibrary(key);
+            }
+        };
 
-		public void onError() {
-			((ImageTextButton) listView.getAddButton()).setEnabled(true);
-		}
-	}
-    
+        switch (action) {
+            case DOWNLOAD_LIBRARY:
+                KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.LIBRARY, callback);
+                break;
+            case DOWNLOAD_SCHEMA:
+                KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.SCHEMA, callback);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public class LoadDataHandler {
+
+        public void onLoad(List<LogAppenderDto> result) {
+            if (result != null && !result.isEmpty()) {
+                ((ImageTextButton) listView.getAddButton()).setEnabled(false);
+                return;
+            }
+            ((ImageTextButton) listView.getAddButton()).setEnabled(true);
+        }
+
+        public void onError() {
+            ((ImageTextButton) listView.getAddButton()).setEnabled(true);
+        }
+    }
+
 }

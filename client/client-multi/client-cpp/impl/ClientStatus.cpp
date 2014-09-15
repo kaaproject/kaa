@@ -32,12 +32,13 @@ enum class ClientParameterT {
     TOPICLIST,
     ATTACHED_ENDPOINTS,
     EP_ACCESS_TOKEN,
-    EP_ATTACH_STATUS
+    EP_ATTACH_STATUS,
+    EP_KEY_HASH
 };
 
-class IPersistantParameter {
+class IPersistentParameter {
 public:
-    virtual ~IPersistantParameter() {}
+    virtual ~IPersistentParameter() {}
     virtual void save(std::ostream &os) = 0;
     virtual void read(const std::string &strValue) = 0;
     virtual boost::any getValue() const = 0;
@@ -54,6 +55,7 @@ static bimap create_bimap()
     bi.left.insert(bimap::left_value_type(ClientParameterT::ATTACHED_ENDPOINTS, "attached_endpoints"));
     bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ACCESS_TOKEN,    "access_token"));
     bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ATTACH_STATUS,   "ep_attach_status"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_KEY_HASH,        "ep_key_hash"));
     return bi;
 }
 
@@ -65,6 +67,7 @@ const DetailedTopicStates   ClientStatus::topicStatesDefault_;
 const AttachedEndpoints     ClientStatus::attachedEndpoints_;
 const std::string           ClientStatus::endpointAccessToken_;
 const bool                  ClientStatus::endpointDefaultAttachStatus_ = false;
+const std::string           ClientStatus::endpointKeyHashDefault_;
 
 static std::string convertToByteArrayString(const std::string & str)
 {
@@ -95,7 +98,7 @@ static std::string convertFromByteArrayString(const std::string & str)
 }
 
 template <typename T>
-class ClientParameter : public IPersistantParameter {
+class ClientParameter : public IPersistentParameter {
 public:
     ClientParameter(const std::string& name, const T& v) : attributeName_(name) {
         value_ = v;
@@ -324,45 +327,51 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistantParameter> appSeqNumber(
+        boost::shared_ptr<IPersistentParameter> appSeqNumber(
                 new ClientParameter<SequenceNumber>(appseqntoken->second, appSeqNumberDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::APPSEQUENCENUMBER, appSeqNumber));
     }
     auto isregisteredtoken = parameterToToken_.left.find(ClientParameterT::ISREGISTERED);
     if (isregisteredtoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistantParameter> isRegistered(new ClientParameter<bool>(
+        boost::shared_ptr<IPersistentParameter> isRegistered(new ClientParameter<bool>(
                 isregisteredtoken->second, isRegisteredDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::ISREGISTERED, isRegistered));
     }
     auto topicstatestoken = parameterToToken_.left.find(ClientParameterT::TOPICLIST);
     if (topicstatestoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistantParameter> topicStates(new ClientParameter<DetailedTopicStates>(
+        boost::shared_ptr<IPersistentParameter> topicStates(new ClientParameter<DetailedTopicStates>(
                 topicstatestoken->second, topicStatesDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::TOPICLIST, topicStates));
     }
     auto endpointhashtoken = parameterToToken_.left.find(ClientParameterT::PROFILEHASH);
     if (endpointhashtoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistantParameter> endpointHash(new ClientParameter<SharedDataBuffer>(
+        boost::shared_ptr<IPersistentParameter> endpointHash(new ClientParameter<SharedDataBuffer>(
                 endpointhashtoken->second, endpointHashDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::PROFILEHASH, endpointHash));
     }
     auto attachedendpoints = parameterToToken_.left.find(ClientParameterT::ATTACHED_ENDPOINTS);
     if (attachedendpoints != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistantParameter> attachedEndpoints(new ClientParameter<AttachedEndpoints>(
+        boost::shared_ptr<IPersistentParameter> attachedEndpoints(new ClientParameter<AttachedEndpoints>(
                 attachedendpoints->second, attachedEndpoints_));
         parameters_.insert(std::make_pair(ClientParameterT::ATTACHED_ENDPOINTS, attachedEndpoints));
     }
     auto endpointaccesstoken = parameterToToken_.left.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (endpointaccesstoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistantParameter> endpointAccessToken(new ClientParameter<std::string>(
+        boost::shared_ptr<IPersistentParameter> endpointAccessToken(new ClientParameter<std::string>(
                 endpointaccesstoken->second, endpointAccessToken_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_ACCESS_TOKEN, endpointAccessToken));
     }
     auto endpointattachstatus = parameterToToken_.left.find(ClientParameterT::EP_ATTACH_STATUS);
     if (endpointattachstatus != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistantParameter> isEndpointAttached(new ClientParameter<bool>(
+        boost::shared_ptr<IPersistentParameter> isEndpointAttached(new ClientParameter<bool>(
                 endpointattachstatus->second, endpointDefaultAttachStatus_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_ATTACH_STATUS, isEndpointAttached));
+    }
+    auto endpointkeyhash = parameterToToken_.left.find(ClientParameterT::EP_KEY_HASH);
+    if (endpointkeyhash != parameterToToken_.left.end()) {
+        boost::shared_ptr<IPersistentParameter> endpointKeyHash(new ClientParameter<std::string>(
+                endpointkeyhash->second, endpointKeyHashDefault_));
+        parameters_.insert(std::make_pair(ClientParameterT::EP_KEY_HASH, endpointKeyHash));
     }
 
     this->read();
@@ -404,7 +413,7 @@ void ClientStatus::setRegistered(bool isRegisteredP)
     }
 }
 
-const std::string& ClientStatus::getEndpointAccessToken() const
+std::string ClientStatus::getEndpointAccessToken() const
 {
     auto parameter_it = parameters_.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (parameter_it != parameters_.end()) {
@@ -562,6 +571,23 @@ void ClientStatus::setNotificationSequenceNumber(boost::int32_t sequenceNumber)
     SequenceNumber sn = getAppSeqNumber();
     sn.notificationSequenceNumber = sequenceNumber;
     setAppSeqNumber(sn);
+}
+
+std::string ClientStatus::getEndpointKeyHash() const
+{
+    auto parameter_it = parameters_.find(ClientParameterT::EP_KEY_HASH);
+    if (parameter_it != parameters_.end()) {
+        return boost::any_cast<std::string>(parameter_it->second->getValue());
+    }
+    return endpointKeyHashDefault_;
+}
+
+void ClientStatus::setEndpointKeyHash(const std::string& keyHash)
+{
+    auto parameter_it = parameters_.find(ClientParameterT::EP_KEY_HASH);
+    if (parameter_it != parameters_.end()) {
+        parameter_it->second->setValue(keyHash);
+    }
 }
 
 }

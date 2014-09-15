@@ -15,7 +15,8 @@
  */
 package org.kaaproject.kaa.client.channel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,13 +28,14 @@ import java.net.UnknownHostException;
 import java.security.KeyPair;
 
 import org.junit.Test;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.DisconnectReason;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
@@ -105,7 +107,8 @@ public class DefaultOperationTcpChannelTest {
         tcpChannel.setDemultiplexer(demultiplexer);
         tcpChannel.sync(TransportType.USER);        // will cause call to KaaDataMultiplexer.compileRequest(...) after "CONNECT" messsage
         tcpChannel.sync(TransportType.PROFILE);
-        KaaTcpServerInfo serverInfo = new KaaTcpServerInfo("localhost", 9009, KeyUtil.generateKeyPair().getPublic());
+        KaaTcpServerInfo serverInfo = new KaaTcpServerInfo(
+                ServerType.OPERATIONS, "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
 
         tcpChannel.setServer(serverInfo); // causes call to KaaDataMultiplexer.compileRequest(...) for "CONNECT" messsage
         byte [] rawConnack = new byte[] { 0x20, 0x02, 0x00, 0x01 };
@@ -113,8 +116,7 @@ public class DefaultOperationTcpChannelTest {
 
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
-        tcpChannel.os.write(new KaaSync(false, responseCreator.toByteArray(response), false, false).getFrame().array());
-
+        tcpChannel.os.write(new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(responseCreator.toByteArray(response), false, false).getFrame().array());
         tcpChannel.sync(TransportType.USER); // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
 
         Mockito.verify(multiplexer, Mockito.times(3)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
@@ -134,5 +136,27 @@ public class DefaultOperationTcpChannelTest {
         tcpChannel.syncAll();
         Mockito.verify(multiplexer, Mockito.times(1)).compileRequest(tcpChannel.getSupportedTransportTypes());
         tcpChannel.shutdown();
+    }
+
+    @Test
+    public void testConnectivity() {
+        KaaClientState clientState = Mockito.mock(KaaClientState.class);
+        Mockito.when(clientState.getPrivateKey()).thenReturn(clientKeys.getPrivate());
+        Mockito.when(clientState.getPublicKey()).thenReturn(clientKeys.getPublic());
+
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        DefaultOperationTcpChannel channel = new DefaultOperationTcpChannel(clientState, channelManager);
+
+        KaaTcpServerInfo si = Mockito.mock(KaaTcpServerInfo.class);
+        Mockito.when(si.getHost()).thenReturn("www.test.fake");
+        Mockito.when(si.getPort()).thenReturn(999);
+
+        ConnectivityChecker checker = Mockito.mock(ConnectivityChecker.class);
+        Mockito.when(checker.checkConnectivity()).thenReturn(false);
+
+        channel.setConnectivityChecker(checker);
+        channel.setServer(si);
+
+        Mockito.verify(channelManager, Mockito.times(0)).onServerFailed(Mockito.any(KaaTcpServerInfo.class));
     }
 }

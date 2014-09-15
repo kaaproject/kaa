@@ -32,6 +32,8 @@ import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
 import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableCommandRunnable;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableRunnable;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableScheduledFuture;
@@ -269,6 +271,11 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
+    public ServerType getServerType() {
+        return ServerType.OPERATIONS;
+    }
+
+    @Override
     public synchronized void setDemultiplexer(KaaDataDemultiplexer demultiplexer) {
         if (demultiplexer != null) {
             this.demultiplexer = demultiplexer;
@@ -302,6 +309,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             startPoll();
         }
     }
+
+    @Override
+    public void setConnectivityChecker(ConnectivityChecker checker) {}
 
     public void shutdown() {
         isShutdown = true;

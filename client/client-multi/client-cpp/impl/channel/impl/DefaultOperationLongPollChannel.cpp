@@ -215,12 +215,12 @@ void DefaultOperationLongPollChannel::setDemultiplexer(IKaaDataDemultiplexer *de
 
 void DefaultOperationLongPollChannel::setServer(IServerInfoPtr server)
 {
-    if (server->getType() == ChannelType::HTTP_LP) {
+    if (server->getChannelType() == ChannelType::HTTP_LP) {
         stopPoll();
         KAA_MUTEX_LOCKING("channelGuard_");
         boost::unique_lock<boost::mutex> lock(channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
-        currentServer_ = boost::dynamic_pointer_cast<OperationServerLongPollInfo, IServerInfo>(server);
+        currentServer_ = boost::dynamic_pointer_cast<HttpLPServerInfo, IServerInfo>(server);
         boost::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.first, clientKeys_.second, currentServer_->getPublicKey()));
         httpDataProcessor_.setEncoderDecoder(encDec);
         KAA_MUTEX_UNLOCKING("channelGuard_");

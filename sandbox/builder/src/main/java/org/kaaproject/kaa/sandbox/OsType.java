@@ -17,9 +17,13 @@ package org.kaaproject.kaa.sandbox;
 
 public enum OsType {
     
-    UBUNTU("dpkg -i ${distro_path}/${package_name}.deb",
+    DEBIAN("dpkg -i ${distro_path}/${package_name}.deb",
            "service ${service_name} start",
-           "service ${service_name} stop");
+           "service ${service_name} stop"),
+    
+    REDHAT("rpm -Uvh --replacepkgs ${distro_path}/${package_name}.rpm",
+            "service ${service_name} start",
+            "service ${service_name} stop");
     
     String installPackageTemplate;
     String startServiceTemplate;

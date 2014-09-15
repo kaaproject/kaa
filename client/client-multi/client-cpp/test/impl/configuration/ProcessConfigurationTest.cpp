@@ -21,7 +21,7 @@
 #include <kaa/configuration/ConfigurationProcessor.hpp>
 #include <kaa/configuration/manager/ConfigurationManager.hpp>
 #include <kaa/configuration/manager/IConfigurationReceiver.hpp>
-#include <kaa/configuration/storage/ConfigurationPersistanceManager.hpp>
+#include <kaa/configuration/storage/ConfigurationPersistenceManager.hpp>
 
 #include "headers/configuration/ConfigurationTests.hpp"
 
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(checkRootConfigurationLoad)
 
     avro::compileJsonSchema(is, *schema);
     ConfigurationProcessor processor(schema);
-    ConfigurationPersistanceManager cpm;
+    ConfigurationPersistenceManager cpm;
     cpm.onSchemaUpdated(schema);
     manager.subscribeForConfigurationChanges(cpm);
 
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(checkOverrideByUuid)
 
     avro::compileJsonSchema(is, *schema);
     ConfigurationProcessor processor(schema);
-    ConfigurationPersistanceManager cpm;
+    ConfigurationPersistenceManager cpm;
     cpm.onSchemaUpdated(schema);
     manager.subscribeForConfigurationChanges(cpm);
 
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(removeTwoArrayItemsAndAddNewItemsToArray)
 
     avro::compileJsonSchema(is, *schema);
     ConfigurationProcessor processor(schema);
-    ConfigurationPersistanceManager cpm;
+    ConfigurationPersistenceManager cpm;
     cpm.onSchemaUpdated(schema);
     manager.subscribeForConfigurationChanges(cpm);
 
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(resetArrayAddMoreItemsOfDiffTypeToArray)
 
     avro::compileJsonSchema(is, *schema);
     ConfigurationProcessor processor(schema);
-    ConfigurationPersistanceManager cpm;
+    ConfigurationPersistenceManager cpm;
     cpm.onSchemaUpdated(schema);
     manager.subscribeForConfigurationChanges(cpm);
 
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(resetArrayOfDiff)
 
     avro::compileJsonSchema(is, *schema);
     ConfigurationProcessor processor(schema);
-    ConfigurationPersistanceManager cpm;
+    ConfigurationPersistenceManager cpm;
     cpm.onSchemaUpdated(schema);
     manager.subscribeForConfigurationChanges(cpm);
 

@@ -53,12 +53,12 @@ public class EncDecActor extends UntypedActor {
     /**
      * Instantiates a new enc dec actor.
      *
-     * @param epsActor
-     *            the eps actor
+     * @param epsActor the eps actor
+     * @param supportUnencryptedConnection
      */
-    public EncDecActor(ActorRef epsActor, CacheService cacheService, KeyPair serverKeys) {
+    public EncDecActor(ActorRef epsActor, CacheService cacheService, KeyPair serverKeys, Boolean supportUnencryptedConnection) {
         super();
-        this.messageProcessor = new EncDecActorMessageProcessor(epsActor, cacheService, serverKeys);
+        this.messageProcessor = new EncDecActorMessageProcessor(epsActor, cacheService, serverKeys, supportUnencryptedConnection);
         this.redirectionRules = new HashMap<>();
         this.random = new Random();
     }
@@ -98,17 +98,20 @@ public class EncDecActor extends UntypedActor {
 
         private final KeyPair serverKeys;
 
+        private final Boolean supportUnencryptedConnection;
+
         /**
          * Instantiates a new actor creator.
          *
          * @param epsActor
          *            the eps actor
          */
-        public ActorCreator(ActorRef epsActor, CacheService cacheService, KeyPair serverKeys) {
+        public ActorCreator(ActorRef epsActor, CacheService cacheService, KeyPair serverKeys, Boolean supportUnencryptedConnection) {
             super();
             this.epsActor = epsActor;
             this.cacheService = cacheService;
             this.serverKeys = serverKeys;
+            this.supportUnencryptedConnection = supportUnencryptedConnection;
         }
 
         /*
@@ -118,7 +121,7 @@ public class EncDecActor extends UntypedActor {
          */
         @Override
         public EncDecActor create() throws Exception {
-            return new EncDecActor(epsActor, cacheService, serverKeys);
+            return new EncDecActor(epsActor, cacheService, serverKeys, supportUnencryptedConnection);
         }
     }
 

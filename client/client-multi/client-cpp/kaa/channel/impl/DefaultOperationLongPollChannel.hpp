@@ -18,7 +18,7 @@
 #define DEFAULTOPERATIONLONGPOLLCHANNEL_HPP_
 
 #include "kaa/channel/IDataChannel.hpp"
-#include "kaa/channel/server/OperationServerLongPollInfo.hpp"
+#include "kaa/channel/server/HttpLPServerInfo.hpp"
 #include "kaa/http/HttpClient.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/asio.hpp>
@@ -38,13 +38,16 @@ public:
     virtual void syncAll();
     virtual void syncAck(TransportType type);
     virtual const std::string& getId() const { return CHANNEL_ID; }
-    virtual ChannelType getType() const { return ChannelType::HTTP_LP; }
+    virtual ChannelType getChannelType() const { return ChannelType::HTTP_LP; }
+    virtual ServerType getServerType() const { return ServerType::OPERATIONS; }
 
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer);
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(IServerInfoPtr server);
 
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
+
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
     void executeTask();
 

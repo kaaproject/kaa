@@ -36,9 +36,11 @@ public class SdkGeneratorFactory {
             return new JavaSdkGenerator(sdkPlatform);
         case CPP:
             return new CppSdkGenerator();
+        case C:
+            return new CSdkGenerator();
         default:
             return null;
         }
     }
-    
+
 }

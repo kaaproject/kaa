@@ -22,6 +22,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
+import org.kaaproject.kaa.client.connectivity.PingConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
@@ -45,4 +48,8 @@ public class DesktopKaaClient extends AbstractKaaClient {
         return new FilePersistentStorage();
     }
 
+    @Override
+    protected ConnectivityChecker createConnectivityChecker() {
+        return new PingConnectivityChecker((DefaultChannelManager)getChannelMananager());
+    }
 }

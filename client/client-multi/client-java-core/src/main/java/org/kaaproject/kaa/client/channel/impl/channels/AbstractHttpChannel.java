@@ -28,6 +28,7 @@ import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
 import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
@@ -148,6 +149,9 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             }
         }
     }
+
+    @Override
+    public void setConnectivityChecker(ConnectivityChecker checker) {}
 
     public void shutdown() {
         isShutdown = true;

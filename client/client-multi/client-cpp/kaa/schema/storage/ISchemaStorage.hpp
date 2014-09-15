@@ -23,7 +23,7 @@
 namespace kaa {
 
 /**
- * Interface which is used by \c SchemaPersistanceManager
+ * Interface which is used by \c SchemaPersistenceManager
  * to use user-defined routines for persisting/loading binary data schema.
  *
  * Should be defined by user.

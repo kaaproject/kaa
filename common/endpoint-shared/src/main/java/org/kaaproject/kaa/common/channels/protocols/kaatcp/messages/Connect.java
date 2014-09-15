@@ -86,11 +86,15 @@ public class Connect extends MqttFrame {
     /** SyncRequest in Connect message */
     private byte[] syncRequest;
 
+    private boolean hasSignature = false;
+
+    private boolean hasAesSessionKey = false;
+
     /**
      * Default Constructor
      * @param keepAlive - in seconds, max value 65535 seconds.
      * @param aesSessionKey - byte[] of AES session key, length 16 byte.
-     * @param endpointPublicKeyHash - byte[] of Endpoint Public Key Hash, length 32 byte.
+     * @param syncRequest - byte[] of Avro SyncRequest object
      * @param signature - byte[] of Signature of aesSessionKey and endpointPublicKeyHash, length 32 byte.
      */
     public Connect(int keepAlive, byte[] aesSessionKey, byte[] syncRequest, byte[] signature) {
@@ -176,7 +180,7 @@ public class Connect extends MqttFrame {
 
     /**
      * KeepAlive setter.
-     * @param int keepAlive
+     * @param keepAlive int
      */
     public void setKeepAlive(int keepAlive) {
         this.keepAlive = keepAlive;
@@ -192,10 +196,13 @@ public class Connect extends MqttFrame {
 
     /**
      * AES Session Key setter.
-     * @param byte[] aesSessionKey
+     * @param aesSessionKey byte[]
      */
     public void setAesSessionKey(byte[] aesSessionKey) {
         this.aesSessionKey = aesSessionKey;
+        if(aesSessionKey != null) {
+            this.hasAesSessionKey = true;
+        }
     }
 
     /**
@@ -208,10 +215,13 @@ public class Connect extends MqttFrame {
 
     /**
      * Signature setter.
-     * @param byte[] signature
+     * @param signature byte[]
      */
     public void setSignature(byte[] signature) {
         this.signature = signature;
+        if(signature != null) {
+            this.hasSignature = true;
+        }
     }
 
 
@@ -239,10 +249,10 @@ public class Connect extends MqttFrame {
     @Override
     protected void decode() throws KaaTcpProtocolException {
         decodeVariableHeader();
-        boolean hasKey = buffer.get() != 0;
-        boolean hasSignature = buffer.get() != 0;
+        hasAesSessionKey = buffer.get() != 0;
+        hasSignature = buffer.get() != 0;
         decodeKeepAlive();
-        if (hasKey) {
+        if (hasAesSessionKey) {
             decodeSessionKey();
         }
         if (hasSignature) {
@@ -299,4 +309,22 @@ public class Connect extends MqttFrame {
         int lsb = (buffer.get() & 0xFF);
         keepAlive = (msb | lsb);
     }
+
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+     */
+    @Override
+    public boolean isNeedCloseConnection() {
+        return false;
+    }
+
+    public boolean hasSignature() {
+        return hasSignature;
+    }
+
+    public boolean isEncrypted() {
+        return hasAesSessionKey;
+    }
+
 }

@@ -26,6 +26,7 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
 import org.junit.Test;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
@@ -133,6 +134,11 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     protected PersistentStorage createPersistentStorage() {
         PersistentStorage storage = new FilePersistentStorage();
         return storage;
+    }
+
+    @Override
+    protected ConnectivityChecker createConnectivityChecker() {
+        return mock(ConnectivityChecker.class);
     }
 
     @Test

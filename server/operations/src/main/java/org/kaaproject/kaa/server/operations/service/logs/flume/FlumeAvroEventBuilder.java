@@ -27,7 +27,8 @@ import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.flume.Event;
 import org.apache.flume.event.EventBuilder;
-import org.kaaproject.kaa.server.common.flume.shared.avro.gen.LogData;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +40,13 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(FlumeAvroEventBuilder.class);
 
     @Override
-    public Event generateEvent(String appToken, int schemaVersion, List<LogEvent> logEvents) {
-        LOG.debug("Build flume event with appToken [{}], schema version [{}] and events [{}].", appToken, schemaVersion, logEvents);
-
+    public Event generateEvent(String appToken, int schemaVersion, List<LogEvent> logEvents, RecordHeader header) {
+        LOG.debug("Build flume event with appToken [{}], schema version [{}], events: [{}] and header [{}].", appToken, schemaVersion, logEvents, header);
         Event event = null;
-        LogData logData = new LogData();
+        RecordData logData = new RecordData();
         logData.setSchemaVersion(schemaVersion);
         logData.setApplicationToken(appToken);
+        logData.setRecordHeader(header);
 
         List<ByteBuffer> bytes = new ArrayList<>(logEvents.size());
 
@@ -53,10 +54,10 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
             bytes.add(ByteBuffer.wrap(logEvent.getLogData()));
         }
 
-        logData.setLogEvents(bytes);
+        logData.setEventRecords(bytes);
         EncoderFactory factory = EncoderFactory.get();
 
-        GenericDatumWriter<LogData> writer = new GenericDatumWriter<>(logData.getSchema());
+        GenericDatumWriter<RecordData> writer = new GenericDatumWriter<>(logData.getSchema());
         LOG.debug("Convert load data [{}] to bytes.", logData);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

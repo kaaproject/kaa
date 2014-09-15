@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.flume.Event;
 import org.apache.flume.event.EventBuilder;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class FlumeBytesEventBuilder extends FlumeEventBuilder {
     public static final int EMPTY_HEADER = 0;
 
     @Override
-    public Event generateEvent(String appToken, int schemaVersion, List<LogEvent> logEvents) {
+    public Event generateEvent(String appToken, int schemaVersion, List<LogEvent> logEvents, RecordHeader header) {
         int payloadSize = 0;
         List<ByteBuffer> bytes = new ArrayList<>();
 

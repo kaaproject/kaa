@@ -28,9 +28,9 @@ class INotificationManager;
 class IConfigurationManager;
 class IEventListenersResolver;
 class IExternalTransportManager;
-class ISchemaPersistanceManager;
+class ISchemaPersistenceManager;
 class IEndpointRegistrationManager;
-class IConfigurationPersistanceManager;
+class IConfigurationPersistenceManager;
 class IKaaChannelManager;
 class ILogCollector;
 
@@ -91,7 +91,7 @@ public:
      * @return @link ISchemaPersistenceManager @endlink object.
      *
      */
-    virtual ISchemaPersistanceManager&        getSchemaPersistanceManager() = 0;
+    virtual ISchemaPersistenceManager&        getSchemaPersistenceManager() = 0;
 
     /**
      * Retrieves Kaa configuration persistence manager.
@@ -99,7 +99,7 @@ public:
      * @return @link IConfigurationPersistenceManager @endlink object.
      *
      */
-    virtual IConfigurationPersistanceManager& getConfigurationPersistanceManager() = 0;
+    virtual IConfigurationPersistenceManager& getConfigurationPersistenceManager() = 0;
 
     /**
      * Retrieves Kaa endpoint registration manager

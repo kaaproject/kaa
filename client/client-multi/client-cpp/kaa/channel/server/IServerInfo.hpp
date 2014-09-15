@@ -23,7 +23,9 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
+
 #include "kaa/gen/BootstrapGen.hpp"
+#include "kaa/channel/ServerType.hpp"
 
 namespace kaa {
 
@@ -38,7 +40,14 @@ public:
      *
      * @see ChannelType
      */
-    virtual ChannelType getType() const = 0;
+    virtual ChannelType getChannelType() const = 0;
+
+    /**
+     * Retrieves server type
+     *
+     * @see ServerType
+     */
+    virtual ServerType getServerType() const = 0;
 
     virtual ~IServerInfo() {}
 };

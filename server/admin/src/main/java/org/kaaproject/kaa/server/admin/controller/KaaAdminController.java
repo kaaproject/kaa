@@ -37,6 +37,7 @@ import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
+import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
@@ -53,13 +54,13 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
-import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.servlet.ServletUtils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,13 +68,16 @@ import org.spring4gwt.server.SpringGwtRemoteServiceServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -111,6 +115,36 @@ public class KaaAdminController {
     @Autowired
     private CacheService cacheService;
 
+    @ExceptionHandler(KaaAdminServiceException.class)
+    public ResponseEntity<String> handleKaaAdminServiceException(KaaAdminServiceException ex) {
+        ResponseEntity<String> entity = null;
+        ServiceErrorCode errorCode = ex.getErrorCode();
+        switch (errorCode) {
+        case NOT_AUTHORIZED:
+            entity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            break;
+        case PERMISSION_DENIED:
+            entity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            break;
+        case INVALID_ARGUMENTS:
+            entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            break;
+        case INVALID_SCHEMA:
+            entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            break;
+        case FILE_NOT_FOUND:
+            entity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            break;
+        case ITEM_NOT_FOUND:
+            entity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            break;
+        case GENERAL_ERROR:
+            entity = new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            break;
+        }
+        return entity;
+    }
+
     /**
      * Check auth of kaa admin.
      *
@@ -134,11 +168,11 @@ public class KaaAdminController {
     @RequestMapping(value="auth/createKaaAdmin", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public void createKaaAdmin(@RequestParam(value="username") String username,
-                               @RequestParam(value="password") String password) throws Exception {
+                               @RequestParam(value="password") String password) throws KaaAdminServiceException {
         if (!userFacade.isAuthorityExists(KaaAuthorityDto.KAA_ADMIN.name())) {
             kaaAuthService.createKaaAdmin(username, password);
         } else {
-            throw new KaaAdminServiceException("Kaa admin already exists. Can't create more than one kaa admin users.", ServiceErrorCode.GENERAL_ERROR);
+            throw new KaaAdminServiceException("Kaa admin already exists. Can't create more than one kaa admin users.", ServiceErrorCode.PERMISSION_DENIED);
         }
     }
 
@@ -375,10 +409,10 @@ public class KaaAdminController {
      * Edits profile schema to the list of all profile schemas.
      *
      */
-    @RequestMapping(value="profileSchema", method=RequestMethod.POST)
+    @RequestMapping(value="profileSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
-    public ProfileSchemaDto editProfileSchema(@RequestBody ProfileSchemaDto profileSchema,
-            @RequestParam("file") MultipartFile file) throws KaaAdminServiceException {
+    public ProfileSchemaDto editProfileSchema(@RequestPart("profileSchema") ProfileSchemaDto profileSchema,
+            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         return kaaAdminService.editProfileSchema(profileSchema, data);
     }
@@ -407,10 +441,10 @@ public class KaaAdminController {
      * Edits configuration schema to the list of all configuration schemas.
      *
      */
-    @RequestMapping(value="configurationSchema", method=RequestMethod.POST)
+    @RequestMapping(value="configurationSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
-    public ConfigurationSchemaDto editConfigurationSchema(@RequestBody ConfigurationSchemaDto configurationSchema,
-            @RequestParam("file") MultipartFile file) throws KaaAdminServiceException {
+    public ConfigurationSchemaDto editConfigurationSchema(@RequestPart("configurationSchema") ConfigurationSchemaDto configurationSchema,
+            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         return kaaAdminService.editConfigurationSchema(configurationSchema, data);
     }
@@ -449,10 +483,10 @@ public class KaaAdminController {
      * Edits notification schema to the list of all notification schemas.
      *
      */
-    @RequestMapping(value="notificationSchema", method=RequestMethod.POST)
+    @RequestMapping(value="notificationSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
-    public NotificationSchemaDto editNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema,
-            @RequestParam("file") MultipartFile file) throws KaaAdminServiceException {
+    public NotificationSchemaDto editNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema,
+            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         return kaaAdminService.editNotificationSchema(notificationSchema, data);
     }
@@ -492,10 +526,10 @@ public class KaaAdminController {
      * Edits log schema to the list of all log schemas.
      *
      */
-    @RequestMapping(value="logSchema", method=RequestMethod.POST)
+    @RequestMapping(value="logSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
-    public LogSchemaDto editLogSchema(@RequestBody LogSchemaDto logSchema,
-            @RequestParam("file") MultipartFile file) throws KaaAdminServiceException {
+    public LogSchemaDto editLogSchema(@RequestPart("logSchema") LogSchemaDto logSchema,
+            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         return kaaAdminService.editLogSchema(logSchema, data);
     }
@@ -538,6 +572,50 @@ public class KaaAdminController {
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteLogAppender(@RequestParam(value="logAppenderId") String logAppenderId) throws KaaAdminServiceException {
         kaaAdminService.deleteLogAppender(logAppenderId);
+    }
+
+    /**
+     * Generate log library by record key.
+     *
+     */
+    @RequestMapping(value = "logLibrary", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void getRecordLibrary(@RequestBody RecordKey key,
+            HttpServletRequest request,
+            HttpServletResponse response) throws KaaAdminServiceException {
+        try {
+            FileData file = cacheService.getRecordLibrary(key);
+            response.setContentType("application/java-archive");
+            ServletUtils.prepareDisposition(request, response, file.getFileName());
+            response.setContentLength(file.getData().length);
+            response.setBufferSize(BUFFER);
+            response.getOutputStream().write(file.getData());
+            response.flushBuffer();
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    /**
+     * Get log record schema with header and log schema inside by record key.
+     *
+     */
+    @RequestMapping(value = "logRecordSchema", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void getRecordSchema(@RequestBody RecordKey key,
+            HttpServletRequest request,
+            HttpServletResponse response) throws KaaAdminServiceException {
+        try {
+            FileData file = cacheService.getRecordSchema(key);
+            response.setContentType("text/plain");
+            ServletUtils.prepareDisposition(request, response, file.getFileName());
+            response.setContentLength(file.getData().length);
+            response.setBufferSize(BUFFER);
+            response.getOutputStream().write(file.getData());
+            response.flushBuffer();
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
     }
 
     /**
@@ -823,11 +901,11 @@ public class KaaAdminController {
      * Send notification, with information from specific file, to the client.
      *
      */
-    @RequestMapping(value="sendNotification", method=RequestMethod.POST)
+    @RequestMapping(value="sendNotification", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseStatus(value = HttpStatus.OK)
     public void sendNotification(
-            @RequestBody NotificationDto notification,
-            @RequestParam("file") MultipartFile file) throws KaaAdminServiceException {
+            @RequestPart("notification") NotificationDto notification,
+            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         kaaAdminService.sendNotification(notification, data);
     }
@@ -867,11 +945,11 @@ public class KaaAdminController {
      * Current user will be marked as creator of schema.
      *
      */
-    @RequestMapping(value="addEventClassFamilySchema", method=RequestMethod.POST)
+    @RequestMapping(value="addEventClassFamilySchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseStatus(value = HttpStatus.OK)
     public void addEventClassFamilySchema(
-            @RequestParam(value="eventClassFamilyId") String eventClassFamilyId,
-            @RequestParam("file") MultipartFile file) throws KaaAdminServiceException {
+            @RequestPart(value="eventClassFamilyId") String eventClassFamilyId,
+            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         kaaAdminService.addEventClassFamilySchema(eventClassFamilyId, data);
     }

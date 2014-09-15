@@ -23,9 +23,9 @@
 
 #include "kaa/configuration/ConfigurationProcessor.hpp"
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
-#include "kaa/configuration/storage/ConfigurationPersistanceManager.hpp"
+#include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
 #include "kaa/schema/SchemaProcessor.hpp"
-#include "kaa/schema/storage/SchemaPersistanceManager.hpp"
+#include "kaa/schema/storage/SchemaPersistenceManager.hpp"
 
 #include "kaa/bootstrap/BootstrapTransport.hpp"
 #include "kaa/channel/MetaDataTransport.hpp"
@@ -38,6 +38,8 @@
 #include "kaa/channel/RedirectionTransport.hpp"
 
 #include "kaa/channel/KaaChannelManager.hpp"
+
+#include "kaa/channel/connectivity/PingConnectivityChecker.hpp"
 
 #include "kaa/logging/Log.hpp"
 
@@ -53,13 +55,15 @@ KaaClient::KaaClient()
 void KaaClient::init(int options)
 {
     options_ = options;
+    initClientKeys();
+
     schemaProcessor_.reset(new SchemaProcessor);
     configurationProcessor_.reset(new ConfigurationProcessor);
     deltaManager_.reset(new DefaultDeltaManager);
     configurationManager_.reset(new ConfigurationManager);
 
     bootstrapManager_.reset(new BootstrapManager);
-    channelManager_.reset(new KaaChannelManager(*bootstrapManager_));
+    channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getServerInfoList()));
     registrationManager_.reset(new EndpointRegistrationManager(status_));
 
     notificationManager_.reset(new NotificationManager(status_));
@@ -70,13 +74,12 @@ void KaaClient::init(int options)
     logCollector_.reset(new LogCollector());
 
     initKaaConfiguration();
-    initClientKeys();
     initKaaTransport();
 }
 
 void KaaClient::start()
 {
-    auto configHash = configurationPersistanceManager_->getConfigurationHash().getHash();
+    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHash();
     if (!configHash.first || !configHash.second || !schemaProcessor_->getSchema()) {
         SequenceNumber sn = { 0, 0, 1 };
         status_->setAppSeqNumber(sn);
@@ -91,21 +94,21 @@ void KaaClient::stop()
 
 void KaaClient::initKaaConfiguration()
 {
-    ConfigurationPersistanceManager *cpm = new ConfigurationPersistanceManager;
+    ConfigurationPersistenceManager *cpm = new ConfigurationPersistenceManager;
     cpm->setConfigurationProcessor(configurationProcessor_.get());
-    configurationPersistanceManager_.reset(cpm);
+    configurationPersistenceManager_.reset(cpm);
 
-    SchemaPersistanceManager *spm = new SchemaPersistanceManager;
+    SchemaPersistenceManager *spm = new SchemaPersistenceManager;
     spm->setSchemaProcessor(schemaProcessor_.get());
-    schemaPresistanceManager_.reset(spm);
+    schemaPersistenceManager_.reset(spm);
 
     schemaProcessor_->subscribeForSchemaUpdates(*configurationProcessor_);
-    schemaProcessor_->subscribeForSchemaUpdates(*configurationPersistanceManager_);
-    schemaProcessor_->subscribeForSchemaUpdates(*schemaPresistanceManager_);
+    schemaProcessor_->subscribeForSchemaUpdates(*configurationPersistenceManager_);
+    schemaProcessor_->subscribeForSchemaUpdates(*schemaPersistenceManager_);
     configurationProcessor_->addOnProcessedObserver(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*deltaManager_);
-    configurationManager_->subscribeForConfigurationChanges(*configurationPersistanceManager_);
+    configurationManager_->subscribeForConfigurationChanges(*configurationPersistenceManager_);
 }
 
 void KaaClient::initKaaTransport()
@@ -123,7 +126,7 @@ void KaaClient::initKaaTransport()
             *channelManager_
             , configurationProcessor_.get()
             , schemaProcessor_.get()
-            , configurationPersistanceManager_.get()
+            , configurationPersistenceManager_.get()
             , status_));
     INotificationTransportPtr notificationTransport(new NotificationTransport(status_, *channelManager_));
     IUserTransportPtr userTransport(new UserTransport(*registrationManager_, *channelManager_));
@@ -166,6 +169,10 @@ void KaaClient::initKaaTransport()
     channelManager_->addChannel(bootstrapChannel_.get());
     KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
     channelManager_->addChannel(opsTcpChannel_.get());
+
+    ConnectivityCheckerPtr connectivityChecker(new PingConnectivityChecker(
+            *static_cast<KaaChannelManager*>(channelManager_.get())));
+    channelManager_->setConnectivityChecker(connectivityChecker);
 }
 
 void KaaClient::initClientKeys()
@@ -179,6 +186,13 @@ void KaaClient::initClientKeys()
         clientKeys_ = KeyUtils().generateKeyPair(2048);
         KeyUtils::saveKeyPair(clientKeys_, CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION);
     }
+
+    EndpointObjectHash publicKeyHash(clientKeys_.first.begin(), clientKeys_.first.size());
+    publicKeyHash_ = Botan::base64_encode(publicKeyHash.getHash().first.get(), publicKeyHash.getHash().second);
+
+    status_->setEndpointKeyHash(publicKeyHash_);
+    status_->save();
+
 }
 
 void KaaClient::setDefaultConfiguration()

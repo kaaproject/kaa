@@ -139,9 +139,18 @@
  "name": "BootstrapNodeInfo",
  "fields": [
      {"name": "connectionInfo", "type": "org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo"},
-     {"name": "BootstrapHostName", "type": "string"},
-     {"name": "BootstrapPort", "type": "int"}, 
-     {"name": "processedRequestCount",  "type": "int"}
+     {"name": "SupportedChannelsArray",
+        "type":{
+            "type": "array",
+            "items": {
+                "type": "record",
+                "name": "BootstrapSupportedChannel",
+                "fields": [
+                    { "name": "ZkChannel", "type": "org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel"}
+                ]
+            }
+        }
+     }
  ]
 }
 ]

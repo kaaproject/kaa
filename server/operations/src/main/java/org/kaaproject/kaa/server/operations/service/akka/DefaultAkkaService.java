@@ -39,6 +39,7 @@ import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import akka.actor.ActorRef;
@@ -100,6 +101,9 @@ public class DefaultAkkaService implements AkkaService {
 
     private AkkaEventServiceListener listener;
 
+    @Value("#{properties[support_unencrypted_connection]}")
+    private Boolean supportUnencryptedConnection;
+
     /**
      * Inits the actor system.
      */
@@ -112,7 +116,7 @@ public class DefaultAkkaService implements AkkaService {
                 applicationService, logAppenderService)), EPS);
         LOG.info("Initializing Akka io router...");
         ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor, cacheService, new KeyPair(
-                keyStoreService.getPublicKey(), keyStoreService.getPrivateKey())))), "ioRouter");
+                keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()), supportUnencryptedConnection))), "ioRouter");
         LOG.info("Initializing Akka event service listener...");
         listener = new AkkaEventServiceListener(opsActor);
         eventService.addListener(listener);

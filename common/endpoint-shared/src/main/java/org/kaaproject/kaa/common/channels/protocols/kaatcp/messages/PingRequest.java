@@ -51,4 +51,12 @@ public class PingRequest extends MqttFrame {
 
     }
 
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+     */
+    @Override
+    public boolean isNeedCloseConnection() {
+        return false;
+    }
+
 }

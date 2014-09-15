@@ -141,7 +141,8 @@ public class DefaultOperationsChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultOperationsChannelFake channel = new DefaultOperationsChannelFake(client, state, 3);
 
-        HttpLongPollServerInfo server = new HttpLongPollServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        HttpLongPollServerInfo server = new HttpLongPollServerInfo(
+                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setDemultiplexer(null);
         channel.setDemultiplexer(demultiplexer);
         channel.setMultiplexer(null);
@@ -182,7 +183,8 @@ public class DefaultOperationsChannelTest {
         channel.setDemultiplexer(demultiplexer);
         channel.setMultiplexer(multiplexer);
 
-        HttpLongPollServerInfo server = new HttpLongPollServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        HttpLongPollServerInfo server = new HttpLongPollServerInfo(
+                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
         Mockito.verify(manager, Mockito.times(1)).onServerFailed(server);
@@ -214,7 +216,8 @@ public class DefaultOperationsChannelTest {
         channel.setMultiplexer(multiplexer);
         channel.shutdown();
 
-        HttpLongPollServerInfo server = new HttpLongPollServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        HttpLongPollServerInfo server = new HttpLongPollServerInfo(
+                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
         channel.sync(TransportType.EVENT);

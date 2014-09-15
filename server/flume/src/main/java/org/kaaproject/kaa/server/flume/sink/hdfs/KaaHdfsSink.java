@@ -226,7 +226,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
                 //  cacheCleanupStartInterval = System.currentTimeMillis();
                 //}
                 
-                Map<KaaSinkKey, List<Event>> incomingEventsMap = eventFactory.processIncomingFlumeEvent(event);
+                Map<KaaSinkKey, List<KaaRecordEvent>> incomingEventsMap = eventFactory.processIncomingFlumeEvent(event);
                 if (incomingEventsMap == null || incomingEventsMap.isEmpty()) {
                       if (logger.isWarnEnabled()) {
                           logger.warn("Unable to parse incoming event: " + event);
@@ -240,7 +240,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
                       bucketWriter = writerCache.get(hdfsSinkKey);
                       writerFlushMap.put(hdfsSinkKey, bucketWriter);
                       // Write the data to HDFS
-                      List<Event> events = incomingEventsMap.get(key);
+                      List<KaaRecordEvent> events = incomingEventsMap.get(key);
                       sinkEventCount += events.size();
                       appendBatch(bucketWriter, events);
                   }
@@ -616,7 +616,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
           /**
            * Append to bucket writer with timeout enforced
            */
-          private void appendBatch(final BucketWriter bucketWriter, final List<Event> events)
+          private void appendBatch(final BucketWriter bucketWriter, final List<KaaRecordEvent> events)
                   throws IOException, InterruptedException {
                 // Write the data to HDFS
                 callWithTimeout(new Callable<Void>() {

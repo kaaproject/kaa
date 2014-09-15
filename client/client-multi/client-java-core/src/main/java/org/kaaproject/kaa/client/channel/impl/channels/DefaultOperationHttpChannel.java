@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
@@ -83,6 +84,11 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
     @Override
     public ChannelType getType() {
         return ChannelType.HTTP;
+    }
+
+    @Override
+    public ServerType getServerType() {
+        return ServerType.OPERATIONS;
     }
 
     @Override

@@ -28,25 +28,20 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class LogEventTest {
-    
-    private static final String TEST_ENDPOINT_KEY = "test endpoint key";
-    private static final long TEST_DATE_CREATED = System.currentTimeMillis();
+
+    private static final DBObject TEST_LOG_HEADER =  new BasicDBObject();
     private static final DBObject TEST_EVENT = new BasicDBObject();
-    
+
     @Test
     public void basicLogEventTest() {
         LogEvent logEvent = new LogEvent();
-        
-        Assert.assertNull(logEvent.getEndpointKey());
-        Assert.assertEquals(0, logEvent.getDateCreated());
+
         Assert.assertNull(logEvent.getEvent());
-        
-        logEvent.setEndpointKey(TEST_ENDPOINT_KEY);
-        logEvent.setDateCreated(TEST_DATE_CREATED);
+
+        logEvent.setHeader(TEST_LOG_HEADER);
         logEvent.setEvent(TEST_EVENT);
-        
-        Assert.assertEquals(TEST_ENDPOINT_KEY, logEvent.getEndpointKey());
-        Assert.assertEquals(TEST_DATE_CREATED, logEvent.getDateCreated());
+
+        Assert.assertEquals(TEST_LOG_HEADER, logEvent.getHeader());
         Assert.assertEquals(TEST_EVENT, logEvent.getEvent());
     }
 
@@ -54,5 +49,5 @@ public class LogEventTest {
     public void hashCodeEqualsTest() {
         EqualsVerifier.forClass(LogEvent.class).suppress(Warning.NONFINAL_FIELDS).verify();
     }
-    
+
 }

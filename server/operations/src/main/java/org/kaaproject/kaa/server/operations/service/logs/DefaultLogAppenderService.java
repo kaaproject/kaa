@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.slf4j.Logger;
@@ -34,9 +33,6 @@ public class DefaultLogAppenderService implements LogAppenderService {
 
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogAppenderService.class);
-
-    @Autowired
-    private ApplicationService applicationService;
 
     @Autowired
     private LogSchemaService logSchemaService;

@@ -3,6 +3,7 @@ package org.kaaproject.kaa.server.operations.service.logs.filesystem;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
@@ -34,6 +36,7 @@ public class FileSystemLogAppenderTest {
         FileSystemLogAppender appender = new FileSystemLogAppender("test");
         FileSystemLogEventService service = Mockito.mock(FileSystemLogEventService.class);
         ReflectionTestUtils.setField(appender, "fileSystemLogEventService", service);
+        ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
         GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
         BasicEndpointProfile theLog = new BasicEndpointProfile("test");
 

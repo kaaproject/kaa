@@ -31,6 +31,7 @@ import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.services.entity.Authority;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
+import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
@@ -61,6 +62,7 @@ public class UserFacade {
         else {
             user = findById(Long.valueOf(userDto.getExternalUid()));
         }
+        Utils.checkNotNull(user);
 
         user.setUsername(userDto.getUsername());
         user.setFirstName(userDto.getFirstName());

@@ -3,7 +3,6 @@ Version: [[version]]
 Section: misc
 Priority: optional
 Architecture: all
-Depends: tomcat7-common (>= 7.0.26-1ubuntu1.2), tomcat7-user (>= 7.0.26-1ubuntu1.2) 
 Maintainer: kaaproject
 Description: Kaa Admin Web Server
 Distribution: development

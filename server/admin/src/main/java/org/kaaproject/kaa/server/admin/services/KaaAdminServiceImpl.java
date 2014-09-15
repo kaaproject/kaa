@@ -50,6 +50,7 @@ import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
@@ -131,6 +132,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.KAA_ADMIN);
         try {
             UserDto user = toDto(clientProvider.getClient().getUser(userId));
+            Utils.checkNotNull(user);
             TenantAdminDto tenantAdmin = toDto(clientProvider.getClient().getTenantAdmin(user.getTenantId()));
             return toTenantUser(tenantAdmin);
         } catch (Exception e) {
@@ -166,7 +168,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.KAA_ADMIN);
         try {
             UserDto user = toDto(clientProvider.getClient().getUser(userId));
+            Utils.checkNotNull(user);
             TenantAdminDto tenantAdmin = toDto(clientProvider.getClient().getTenantAdmin(user.getTenantId()));
+            Utils.checkNotNull(tenantAdmin);
             userFacade.deleteUser(Long.valueOf(tenantAdmin.getExternalUid()));
             clientProvider.getClient().deleteTenantAdmin(user.getTenantId());
         } catch (Exception e) {
@@ -198,6 +202,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             UserDto user = toDto(clientProvider.getClient().getUser(userId));
+            Utils.checkNotNull(user);
             checkTenantId(user.getTenantId());
             return toUser(user);
         } catch (Exception e) {
@@ -210,6 +215,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         try {
             User user = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
+            Utils.checkNotNull(user);
             org.kaaproject.kaa.common.dto.admin.UserDto result =
                     new org.kaaproject.kaa.common.dto.admin.UserDto(user.getId().toString(),
                     user.getUsername(),
@@ -251,6 +257,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         try {
             if (!isEmpty(user.getId())) {
                 UserDto storedUser = toDto(clientProvider.getClient().getUser(user.getId()));
+                Utils.checkNotNull(storedUser);
                 checkTenantId(storedUser.getTenantId());
             }
             Long userId = saveUser(user);
@@ -273,6 +280,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             UserDto user = toDto(clientProvider.getClient().getUser(userId));
+            Utils.checkNotNull(user);
             checkTenantId(user.getTenantId());
             userFacade.deleteUser(Long.valueOf(user.getExternalUid()));
             clientProvider.getClient().deleteUser(user.getId());
@@ -296,9 +304,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public ApplicationDto getApplication(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto application = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(application.getTenantId());
-            return application;
+            return checkApplicationId(applicationId);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -309,8 +315,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             if (!isEmpty(application.getId())) {
-                ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(application.getId()));
-                checkTenantId(storedApplication.getTenantId());
+                checkApplicationId(application.getId());
             }
             application.setTenantId(getTenantId());
             return toDto(clientProvider.getClient().editApplication(toDataStruct(application)));
@@ -323,8 +328,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public void deleteApplication(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
-            ApplicationDto application = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(application.getTenantId());
+            checkApplicationId(applicationId);
             clientProvider.getClient().deleteApplication(applicationId);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -337,8 +341,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
 
             SchemaVersions schemaVersions = new SchemaVersions();
 
@@ -366,8 +369,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             SdkPlatform targetPlatform, List<String> aefMapIds, Integer logSchemaVersion) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             SdkKey sdkKey = new SdkKey(applicationId, configurationSchemaVersion, profileSchemaVersion, notificationSchemaVersion, logSchemaVersion, targetPlatform, aefMapIds);
             return Base64.encodeObject(sdkKey, Base64.URL_SAFE);
         } catch (Exception e) {
@@ -380,8 +382,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().getProfileSchemasByApplicationId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -392,7 +393,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toDto(clientProvider.getClient().getProfileSchema(profileSchemaId));
+            ProfileSchemaDto profileSchema = toDto(clientProvider.getClient().getProfileSchema(profileSchemaId));
+            Utils.checkNotNull(profileSchema);
+            checkApplicationId(profileSchema.getApplicationId());
+            return profileSchema;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -402,9 +406,16 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema, String fileItemName) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            setSchema(profileSchema, fileItemName);
             if (isEmpty(profileSchema.getId())) {
                 profileSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(profileSchema.getApplicationId());
+                setSchema(profileSchema, fileItemName);
+            }
+            else {
+                ProfileSchemaDto storedProfileSchema = toDto(clientProvider.getClient().getProfileSchema(profileSchema.getId()));
+                Utils.checkNotNull(storedProfileSchema);
+                checkApplicationId(storedProfileSchema.getApplicationId());
+                profileSchema.setSchema(storedProfileSchema.getSchema());
             }
             return toDto(clientProvider.getClient().editProfileSchema(toDataStruct(profileSchema)));
         } catch (Exception e) {
@@ -417,9 +428,16 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             byte[] schema) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            setSchema(profileSchema, schema);
             if (isEmpty(profileSchema.getId())) {
                 profileSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(profileSchema.getApplicationId());
+                setSchema(profileSchema, schema);
+            }
+            else {
+                ProfileSchemaDto storedProfileSchema = toDto(clientProvider.getClient().getProfileSchema(profileSchema.getId()));
+                Utils.checkNotNull(storedProfileSchema);
+                checkApplicationId(storedProfileSchema.getApplicationId());
+                profileSchema.setSchema(storedProfileSchema.getSchema());
             }
             return toDto(clientProvider.getClient().editProfileSchema(toDataStruct(profileSchema)));
         } catch (Exception e) {
@@ -432,8 +450,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().getConfigurationSchemasByApplicationId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -445,7 +462,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String configurationSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toDto(clientProvider.getClient().getConfigurationSchema(configurationSchemaId));
+            ConfigurationSchemaDto configurationSchema = toDto(clientProvider.getClient().getConfigurationSchema(configurationSchemaId));
+            Utils.checkNotNull(configurationSchema);
+            checkApplicationId(configurationSchema.getApplicationId());
+            return configurationSchema;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -456,9 +476,16 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             ConfigurationSchemaDto configurationSchema, String fileItemName) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            setSchema(configurationSchema, fileItemName);
             if (isEmpty(configurationSchema.getId())) {
                 configurationSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(configurationSchema.getApplicationId());
+                setSchema(configurationSchema, fileItemName);
+            }
+            else {
+                ConfigurationSchemaDto storedConfigurationSchema = toDto(clientProvider.getClient().getConfigurationSchema(configurationSchema.getId()));
+                Utils.checkNotNull(storedConfigurationSchema);
+                checkApplicationId(storedConfigurationSchema.getApplicationId());
+                configurationSchema.setSchema(storedConfigurationSchema.getSchema());
             }
             return toDto(clientProvider.getClient().editConfigurationSchema(toDataStruct(configurationSchema)));
         } catch (Exception e) {
@@ -472,9 +499,16 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            setSchema(configurationSchema, schema);
             if (isEmpty(configurationSchema.getId())) {
                 configurationSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(configurationSchema.getApplicationId());
+                setSchema(configurationSchema, schema);
+            }
+            else {
+                ConfigurationSchemaDto storedConfigurationSchema = toDto(clientProvider.getClient().getConfigurationSchema(configurationSchema.getId()));
+                Utils.checkNotNull(storedConfigurationSchema);
+                checkApplicationId(storedConfigurationSchema.getApplicationId());
+                configurationSchema.setSchema(storedConfigurationSchema.getSchema());
             }
             return toDto(clientProvider.getClient().editConfigurationSchema(toDataStruct(configurationSchema)));
         } catch (Exception e) {
@@ -487,8 +521,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().findNotificationSchemasByAppIdAndType(applicationId,
                     toGenericDataStruct(NotificationTypeDto.USER)));
         } catch (Exception e) {
@@ -501,8 +534,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().getUserNotificationSchemasByAppId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -514,7 +546,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toDto(clientProvider.getClient().getNotificationSchema(notificationSchemaId));
+            NotificationSchemaDto notificationSchema = toDto(clientProvider.getClient().getNotificationSchema(notificationSchemaId));
+            Utils.checkNotNull(notificationSchema);
+            checkApplicationId(notificationSchema.getApplicationId());
+            return notificationSchema;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -526,9 +561,16 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            setSchema(notificationSchema, fileItemName);
             if (isEmpty(notificationSchema.getId())) {
                 notificationSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(notificationSchema.getApplicationId());
+                setSchema(notificationSchema, fileItemName);
+            }
+            else {
+                NotificationSchemaDto storedNotificationSchema = toDto(clientProvider.getClient().getNotificationSchema(notificationSchema.getId()));
+                Utils.checkNotNull(storedNotificationSchema);
+                checkApplicationId(storedNotificationSchema.getApplicationId());
+                notificationSchema.setSchema(storedNotificationSchema.getSchema());
             }
             notificationSchema.setType(NotificationTypeDto.USER);
             return toDto(clientProvider.getClient().editNotificationSchema(toDataStruct(notificationSchema)));
@@ -543,9 +585,16 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            setSchema(notificationSchema, schema);
             if (isEmpty(notificationSchema.getId())) {
                 notificationSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(notificationSchema.getApplicationId());
+                setSchema(notificationSchema, schema);
+            }
+            else {
+                NotificationSchemaDto storedNotificationSchema = toDto(clientProvider.getClient().getNotificationSchema(notificationSchema.getId()));
+                Utils.checkNotNull(storedNotificationSchema);
+                checkApplicationId(storedNotificationSchema.getApplicationId());
+                notificationSchema.setSchema(storedNotificationSchema.getSchema());
             }
             notificationSchema.setType(NotificationTypeDto.USER);
             return toDto(clientProvider.getClient().editNotificationSchema(toDataStruct(notificationSchema)));
@@ -559,8 +608,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().getLogSchemasByApplicationId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -571,7 +619,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public LogSchemaDto getLogSchema(String logSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toDto(clientProvider.getClient().getLogSchema(logSchemaId));
+            LogSchemaDto logSchema = toDto(clientProvider.getClient().getLogSchema(logSchemaId));
+            Utils.checkNotNull(logSchema);
+            checkApplicationId(logSchema.getApplicationId());
+            return logSchema;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -583,8 +634,11 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplicationByApplicationToken(applicationToken));
+            Utils.checkNotNull(storedApplication);
             checkTenantId(storedApplication.getTenantId());
-            return toDto(clientProvider.getClient().getLogSchemaByApplicationIdAndVersion(storedApplication.getId(), version));
+            LogSchemaDto logSchema = toDto(clientProvider.getClient().getLogSchemaByApplicationIdAndVersion(storedApplication.getId(), version));
+            Utils.checkNotNull(logSchema);
+            return logSchema;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -595,6 +649,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         List<SchemaDto> logSchemaVersions = Collections.emptyList();
         try {
+            checkApplicationId(applicationId);
             logSchemaVersions = toDtoList(clientProvider.getClient().getLogSchemaVersionsByApplicationId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -606,9 +661,16 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public LogSchemaDto editLogSchema(LogSchemaDto logSchema, String fileItemName) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            setSchema(logSchema, fileItemName);
             if (isEmpty(logSchema.getId())) {
                 logSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(logSchema.getApplicationId());
+                setSchema(logSchema, fileItemName);
+            }
+            else {
+                LogSchemaDto storedLogSchema = toDto(clientProvider.getClient().getLogSchema(logSchema.getId()));
+                Utils.checkNotNull(storedLogSchema);
+                checkApplicationId(storedLogSchema.getApplicationId());
+                logSchema.setSchema(storedLogSchema.getSchema());
             }
             return toDto(clientProvider.getClient().editLogSchema(toDataStruct(logSchema)));
         } catch (Exception e) {
@@ -621,9 +683,16 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             byte[] schema) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            setSchema(logSchema, schema);
             if (isEmpty(logSchema.getId())) {
                 logSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(logSchema.getApplicationId());
+                setSchema(logSchema, schema);
+            }
+            else {
+                LogSchemaDto storedLogSchema = toDto(clientProvider.getClient().getLogSchema(logSchema.getId()));
+                Utils.checkNotNull(storedLogSchema);
+                checkApplicationId(storedLogSchema.getApplicationId());
+                logSchema.setSchema(storedLogSchema.getSchema());
             }
             return toDto(clientProvider.getClient().editLogSchema(toDataStruct(logSchema)));
         } catch (Exception e) {
@@ -636,8 +705,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().getEndpointGroupsByApplicationId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -648,7 +716,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public EndpointGroupDto getEndpointGroup(String endpointGroupId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toDto(clientProvider.getClient().getEndpointGroup(endpointGroupId));
+            return checkEndpointGroupId(endpointGroupId);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -660,6 +728,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         try {
             if (isEmpty(endpointGroup.getId())) {
                 endpointGroup.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(endpointGroup.getApplicationId());
+            }
+            else {
+                checkEndpointGroupId(endpointGroup.getId());
             }
             return toDto(clientProvider.getClient().editEndpointGroup(toDataStruct(endpointGroup)));
         } catch (Exception e) {
@@ -671,6 +743,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public void deleteEndpointGroup(String endpointGroupId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
             clientProvider.getClient().deleteEndpointGroup(endpointGroupId);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -682,6 +755,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String endpointGroupId, boolean includeDeprecated) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
             return toGenericDtoList(clientProvider.getClient().getProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -694,7 +768,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toGenericDto(clientProvider.getClient().getProfileFilterRecord(schemaId, endpointGroupId));
+            checkEndpointGroupId(endpointGroupId);
+            StructureRecordDto<ProfileFilterDto> record = toGenericDto(clientProvider.getClient().getProfileFilterRecord(schemaId, endpointGroupId));
+            Utils.checkNotNull(record);
+            return record;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -705,6 +782,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String endpointGroupId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
             return toDtoList(clientProvider.getClient().getVacantProfileSchemasByEndpointGroupId(endpointGroupId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -719,9 +797,13 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String username = this.getCurrentUser().getUsername();
             if (isEmpty(profileFilter.getId())) {
                 profileFilter.setCreatedUsername(username);
+                checkEndpointGroupId(profileFilter.getEndpointGroupId());
             }
             else {
                 profileFilter.setModifiedUsername(username);
+                ProfileFilterDto storedProfileFilter = toDto(clientProvider.getClient().getProfileFilter(profileFilter.getId()));
+                Utils.checkNotNull(storedProfileFilter);
+                checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
             }
             return toDto(clientProvider.getClient().editProfileFilter(toDataStruct(profileFilter)));
         } catch (Exception e) {
@@ -734,6 +816,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            ProfileFilterDto storedProfileFilter = toDto(clientProvider.getClient().getProfileFilter(profileFilterId));
+            Utils.checkNotNull(storedProfileFilter);
+            checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
             String username = this.getCurrentUser().getUsername();
             return toDto(clientProvider.getClient().activateProfileFilter(profileFilterId, username));
         } catch (Exception e) {
@@ -746,6 +831,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            ProfileFilterDto storedProfileFilter = toDto(clientProvider.getClient().getProfileFilter(profileFilterId));
+            Utils.checkNotNull(storedProfileFilter);
+            checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
             String username = this.getCurrentUser().getUsername();
             return toDto(clientProvider.getClient().deactivateProfileFilter(profileFilterId, username));
         } catch (Exception e) {
@@ -758,6 +846,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            StructureRecordDto<ProfileFilterDto> record = toGenericDto(clientProvider.getClient().getProfileFilterRecord(schemaId, endpointGroupId));
+            Utils.checkNotNull(record);
+            checkEndpointGroupId(record.getEndpointGroupId());
             String username = this.getCurrentUser().getUsername();
             clientProvider.getClient().deleteProfileFilterRecord(schemaId, endpointGroupId, username);
         } catch (Exception e) {
@@ -770,6 +861,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String endpointGroupId, boolean includeDeprecated) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
             return toGenericDtoList(clientProvider.getClient().getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -782,7 +874,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toGenericDto(clientProvider.getClient().getConfigurationRecord(schemaId, endpointGroupId));
+            checkEndpointGroupId(endpointGroupId);
+            StructureRecordDto<ConfigurationDto> record = toGenericDto(clientProvider.getClient().getConfigurationRecord(schemaId, endpointGroupId));
+            Utils.checkNotNull(record);
+            return record;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -793,6 +888,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String endpointGroupId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
             return toDtoList(clientProvider.getClient().getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -807,9 +903,13 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String username = this.getCurrentUser().getUsername();
             if (isEmpty(configuration.getId())) {
                 configuration.setCreatedUsername(username);
+                checkEndpointGroupId(configuration.getEndpointGroupId());
             }
             else {
                 configuration.setModifiedUsername(username);
+                ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configuration.getId()));
+                Utils.checkNotNull(storedConfiguration);
+                checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
             }
             return toDto(clientProvider.getClient().editConfiguration(toDataStruct(configuration)));
         } catch (Exception e) {
@@ -822,6 +922,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configurationId));
+            Utils.checkNotNull(storedConfiguration);
+            checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
             String username = this.getCurrentUser().getUsername();
             return toDto(clientProvider.getClient().activateConfiguration(configurationId, username));
         } catch (Exception e) {
@@ -834,6 +937,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configurationId));
+            Utils.checkNotNull(storedConfiguration);
+            checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
             String username = this.getCurrentUser().getUsername();
             return toDto(clientProvider.getClient().deactivateConfiguration(configurationId, username));
         } catch (Exception e) {
@@ -846,6 +952,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            StructureRecordDto<ConfigurationDto> record = toGenericDto(clientProvider.getClient().getConfigurationRecord(schemaId, endpointGroupId));
+            Utils.checkNotNull(record);
+            checkEndpointGroupId(record.getEndpointGroupId());
             String username = this.getCurrentUser().getUsername();
             clientProvider.getClient().deleteConfigurationRecord(schemaId, endpointGroupId, username);
         } catch (Exception e) {
@@ -858,8 +967,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().getTopicByAppId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -871,6 +979,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
             return toDtoList(clientProvider.getClient().getTopicByEndpointGroupId(endpointGroupId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -882,6 +991,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
             return toDtoList(clientProvider.getClient().getVacantTopicByEndpointGroupId(endpointGroupId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -892,7 +1002,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public TopicDto getTopic(String topicId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toDto(clientProvider.getClient().getTopic(topicId));
+            TopicDto topic = toDto(clientProvider.getClient().getTopic(topicId));
+            Utils.checkNotNull(topic);
+            checkApplicationId(topic.getApplicationId());
+            return topic;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -904,6 +1017,12 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         try {
             if (isEmpty(topic.getId())) {
                 topic.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(topic.getApplicationId());
+            }
+            else {
+                TopicDto storedTopic = toDto(clientProvider.getClient().getTopic(topic.getId()));
+                Utils.checkNotNull(storedTopic);
+                checkApplicationId(storedTopic.getApplicationId());
             }
             return toDto(clientProvider.getClient().editTopic(toDataStruct(topic)));
         } catch (Exception e) {
@@ -915,6 +1034,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public void deleteTopic(String topicId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            TopicDto topic = toDto(clientProvider.getClient().getTopic(topicId));
+            Utils.checkNotNull(topic);
+            checkApplicationId(topic.getApplicationId());
             clientProvider.getClient().deleteTopicById(topicId);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -926,6 +1048,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkApplicationId(appId);
             return toDtoList(clientProvider.getClient().getLogAppendersByApplicationId(appId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -936,7 +1059,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toDto(clientProvider.getClient().getLogAppender(appenderId));
+            LogAppenderDto logAppender = toDto(clientProvider.getClient().getLogAppender(appenderId));
+            Utils.checkNotNull(logAppender);
+            checkApplicationId(logAppender.getApplicationId());
+            return logAppender;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -946,9 +1072,15 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-			if (isEmpty(appender.getId())) {
-				appender.setCreatedUsername(getCurrentUser().getUsername());
-			}
+            if (isEmpty(appender.getId())) {
+                appender.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(appender.getApplicationId());
+            }
+            else {
+                LogAppenderDto storedlLogAppender = toDto(clientProvider.getClient().getLogAppender(appender.getId()));
+                Utils.checkNotNull(storedlLogAppender);
+                checkApplicationId(storedlLogAppender.getApplicationId());
+            }
             return toDto(clientProvider.getClient().editLogAppender(toDataStruct(appender)));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -959,6 +1091,9 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            LogAppenderDto logAppender = toDto(clientProvider.getClient().getLogAppender(appenderId));
+            Utils.checkNotNull(logAppender);
+            checkApplicationId(logAppender.getApplicationId());
             clientProvider.getClient().deleteLogAppender(appenderId);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -970,6 +1105,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
+            TopicDto topic = toDto(clientProvider.getClient().getTopic(topicId));
+            Utils.checkNotNull(topic);
+            checkApplicationId(topic.getApplicationId());
             clientProvider.getClient().addTopicsToEndpointGroup(endpointGroupId, topicId);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -981,6 +1120,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupId(endpointGroupId);
+            TopicDto topic = toDto(clientProvider.getClient().getTopic(topicId));
+            Utils.checkNotNull(topic);
+            checkApplicationId(topic.getApplicationId());
             clientProvider.getClient().removeTopicsFromEndpointGroup(endpointGroupId, topicId);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -994,6 +1137,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         try {
             byte[] body = getFileContent(fileItemName);
             notification.setBody(body);
+            checkApplicationId(notification.getApplicationId());
+            TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
+            Utils.checkNotNull(topic);
+            checkApplicationId(topic.getApplicationId());
             clientProvider.getClient().editNotification(toDataStruct(notification));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1006,6 +1153,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             notification.setBody(body);
+            checkApplicationId(notification.getApplicationId());
+            TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
+            Utils.checkNotNull(topic);
+            checkApplicationId(topic.getApplicationId());
             clientProvider.getClient().editNotification(toDataStruct(notification));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1029,6 +1180,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             EventClassFamilyDto eventClassFamily = toDto(clientProvider.getClient().getEventClassFamily(eventClassFamilyId));
+            Utils.checkNotNull(eventClassFamily);
             checkTenantId(eventClassFamily.getTenantId());
             return eventClassFamily;
         } catch (Exception e) {
@@ -1043,6 +1195,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         try {
             if (!isEmpty(eventClassFamily.getId())) {
                 EventClassFamilyDto storedEventClassFamily = toDto(clientProvider.getClient().getEventClassFamily(eventClassFamily.getId()));
+                Utils.checkNotNull(storedEventClassFamily);
                 checkTenantId(storedEventClassFamily.getTenantId());
             }
             else {
@@ -1064,6 +1217,11 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             byte[] data = getFileContent(fileItemName);
             String schema = new String(data);
             validateSchema(schema);
+
+            EventClassFamilyDto storedEventClassFamily = toDto(clientProvider.getClient().getEventClassFamily(eventClassFamilyId));
+            Utils.checkNotNull(storedEventClassFamily);
+            checkTenantId(storedEventClassFamily.getTenantId());
+
             String username = this.getCurrentUser().getUsername();
             clientProvider.getClient().addEventClassFamilySchema(eventClassFamilyId, schema, username);
         } catch (Exception e) {
@@ -1078,6 +1236,11 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         try {
             String schema = new String(data);
             validateSchema(schema);
+
+            EventClassFamilyDto storedEventClassFamily = toDto(clientProvider.getClient().getEventClassFamily(eventClassFamilyId));
+            Utils.checkNotNull(storedEventClassFamily);
+            checkTenantId(storedEventClassFamily.getTenantId());
+
             String username = this.getCurrentUser().getUsername();
             clientProvider.getClient().addEventClassFamilySchema(eventClassFamilyId, schema, username);
         } catch (Exception e) {
@@ -1090,6 +1253,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String eventClassFamilyId, int version, EventClassType type) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            EventClassFamilyDto storedEventClassFamily = toDto(clientProvider.getClient().getEventClassFamily(eventClassFamilyId));
+            Utils.checkNotNull(storedEventClassFamily);
+            checkTenantId(storedEventClassFamily.getTenantId());
+
             return toDtoList(clientProvider.getClient().getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, toGenericDataStruct(type)));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1101,8 +1268,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ApplicationDto storedApplication = toDto(clientProvider.getClient().getApplication(applicationId));
-            checkTenantId(storedApplication.getTenantId());
+            checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().getApplicationEventFamilyMapsByApplicationId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1114,7 +1280,10 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationEventFamilyMapId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return toDto(clientProvider.getClient().getApplicationEventFamilyMap(applicationEventFamilyMapId));
+            ApplicationEventFamilyMapDto aefMap = toDto(clientProvider.getClient().getApplicationEventFamilyMap(applicationEventFamilyMapId));
+            Utils.checkNotNull(aefMap);
+            checkApplicationId(aefMap.getApplicationId());
+            return aefMap;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1129,6 +1298,12 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             if (isEmpty(applicationEventFamilyMap.getId())) {
                 String username = this.getCurrentUser().getUsername();
                 applicationEventFamilyMap.setCreatedUsername(username);
+                checkApplicationId(applicationEventFamilyMap.getApplicationId());
+            }
+            else {
+                ApplicationEventFamilyMapDto storedApplicationEventFamilyMap = toDto(clientProvider.getClient().getApplicationEventFamilyMap(applicationEventFamilyMap.getId()));
+                Utils.checkNotNull(storedApplicationEventFamilyMap);
+                checkApplicationId(storedApplicationEventFamilyMap.getApplicationId());
             }
             return toDto(clientProvider.getClient().editApplicationEventFamilyMap(toDataStruct(applicationEventFamilyMap)));
         } catch (Exception e) {
@@ -1141,6 +1316,7 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkApplicationId(applicationId);
             return toGenericDtoList(clientProvider.getClient().getVacantEventClassFamiliesByApplicationId(applicationId));
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1152,7 +1328,20 @@ public class KaaAdminServiceImpl implements KaaAdminService {
             String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkApplicationId(applicationId);
             return toGenericDtoList(clientProvider.getClient().getEventClassFamiliesByApplicationId(applicationId));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(applicationId);
+            RecordKey sdkKey = new RecordKey(applicationId, logSchemaVersion, file);
+            return Base64.encodeObject(sdkKey, Base64.URL_SAFE);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1259,6 +1448,34 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         AuthUserDto authUser = getCurrentUser();
         if (authUser.getTenantId() == null || !authUser.getTenantId().equals(tenantId)) {
             throw new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED);
+        }
+    }
+
+    private ApplicationDto checkApplicationId(String applicationId) throws KaaAdminServiceException {
+        try {
+            if (isEmpty(applicationId)) {
+                throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
+            }
+            ApplicationDto application = toDto(clientProvider.getClient().getApplication(applicationId));
+            Utils.checkNotNull(application);
+            checkTenantId(application.getTenantId());
+            return application;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    private EndpointGroupDto checkEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
+        try {
+            if (isEmpty(endpointGroupId)) {
+                throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
+            }
+            EndpointGroupDto endpointGroup = toDto(clientProvider.getClient().getEndpointGroup(endpointGroupId));
+            Utils.checkNotNull(endpointGroup);
+            checkApplicationId(endpointGroup.getApplicationId());
+            return endpointGroup;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
         }
     }
 

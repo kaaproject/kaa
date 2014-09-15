@@ -23,6 +23,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.curator.RetryPolicy;
@@ -33,9 +35,18 @@ import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
+import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 
 public class BootstrapNodeIT {
 
@@ -63,12 +74,15 @@ public class BootstrapNodeIT {
             verify(mockListener).onNodeAdded(bootstrapNodeInfo);
 
             int random = new Random().nextInt();
-            bootstrapNodeInfo.setProcessedRequestCount(random);
+
+            ZkHttpStatistics channelStats =  (ZkHttpStatistics)bootstrapNodeInfo.getSupportedChannelsArray().get(0).getZkChannel().getChannelStatistics();
+            channelStats.getZkStatistics().setProcessedRequestCount(random);;
             bootstrapNode.updateNodeData(bootstrapNodeInfo);
             timing.sleepABit();
             
             verify(mockListener).onNodeUpdated(bootstrapNodeInfo);
-            assertEquals(new Integer(random), controlNode.getCurrentBootstrapNodes().get(0).getProcessedRequestCount());
+            channelStats =  (ZkHttpStatistics)controlNode.getCurrentBootstrapNodes().get(0).getSupportedChannelsArray().get(0).getZkChannel().getChannelStatistics();            
+            assertEquals(new Integer(random), channelStats.getZkStatistics().getProcessedRequestCount());
             
             bootstrapNode.close();
             timing.sleepABit();
@@ -92,9 +106,24 @@ public class BootstrapNodeIT {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
-        nodeInfo.setBootstrapHostName(BOOTSTRAP_NODE_HOST);
-        nodeInfo.setBootstrapPort(1001);
-        nodeInfo.setProcessedRequestCount(1);
+        
+        List<BootstrapSupportedChannel> supportedChannels = new ArrayList<>();
+
+        ZkHttpComunicationParameters httpCommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(BOOTSTRAP_NODE_HOST, 1000));
+        BaseStatistics httpStatistics = new BaseStatistics(2, 3, 1, System.currentTimeMillis());
+        ZkHttpStatistics httpChannelStatistics = new ZkHttpStatistics(httpStatistics);
+        BootstrapSupportedChannel channelHttp = new BootstrapSupportedChannel(new ZkSupportedChannel(ZkChannelType.HTTP, true, httpCommunicationParameters, httpChannelStatistics));
+        supportedChannels.add(channelHttp);
+
+        ZkKaaTcpComunicationParameters tcpCommunicationParameters = new ZkKaaTcpComunicationParameters(new IpComunicationParameters(BOOTSTRAP_NODE_HOST, 1001));
+        BaseStatistics tcpStatistics = new BaseStatistics(2, 3, 1, System.currentTimeMillis());
+        ZkKaaTcpStatistics tcpChannelStatistics = new ZkKaaTcpStatistics(tcpStatistics);
+        BootstrapSupportedChannel channelTcp = new BootstrapSupportedChannel(new ZkSupportedChannel(ZkChannelType.KAATCP, true, tcpCommunicationParameters, tcpChannelStatistics));
+        supportedChannels.add(channelTcp);
+
+        nodeInfo.setSupportedChannelsArray(supportedChannels);
+        
+        
         return nodeInfo;
     }
 

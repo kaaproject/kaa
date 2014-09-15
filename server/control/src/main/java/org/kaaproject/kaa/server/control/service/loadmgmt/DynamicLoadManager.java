@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService.Client;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftChannelType;
@@ -39,7 +40,9 @@ import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
+import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
@@ -394,9 +397,38 @@ public class DynamicLoadManager implements OperationsNodeListener,
      */
     private String getBootstrapNameFromNodeInfo(BootstrapNodeInfo nodeInfo) {
         StringBuffer name = new StringBuffer();
-        name.append(nodeInfo.getBootstrapHostName());
+        String intName = "";
+        String ports = "";
+        
+        for( BootstrapSupportedChannel ch: nodeInfo.getSupportedChannelsArray()) {
+            IpComunicationParameters params;
+            if (ch.getZkChannel().getChannelType() == ZkChannelType.HTTP) {
+                ZkHttpComunicationParameters httpParams = (ZkHttpComunicationParameters)ch.getZkChannel().getCommunicationParameters();
+                params = httpParams.getZkComunicationParameters();
+            } else if (ch.getZkChannel().getChannelType() == ZkChannelType.HTTP_LP) {
+                ZkHttpLpComunicationParameters httpParams = (ZkHttpLpComunicationParameters)ch.getZkChannel().getCommunicationParameters();
+                params = httpParams.getZkComunicationParameters();
+            } else if (ch.getZkChannel().getChannelType() == ZkChannelType.KAATCP) {
+                ZkKaaTcpComunicationParameters httpParams = (ZkKaaTcpComunicationParameters)ch.getZkChannel().getCommunicationParameters();
+                params = httpParams.getZkComunicationParameters();
+            } else {
+                continue;
+            }
+            
+            if (!params.getHostName().equals(intName)) {
+                if (!"".equals(intName)) {
+                    intName += "-";
+                }
+                intName += params.getHostName();
+            }
+            if (!"".equals(ports)) {
+                ports += ".";
+            }
+            ports += params.getPort();
+        }
+        name.append(intName);
         name.append(HOST_PORT_DELIMITER);
-        name.append(nodeInfo.getBootstrapPort());
+        name.append(ports);
         return name.toString();
     }
 

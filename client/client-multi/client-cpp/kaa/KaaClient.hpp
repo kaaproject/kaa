@@ -28,12 +28,12 @@
 #include "kaa/profile/ProfileManager.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
 #include "kaa/notification/NotificationManager.hpp"
-#include "kaa/schema/storage/ISchemaPersistanceManager.hpp"
+#include "kaa/schema/storage/ISchemaPersistenceManager.hpp"
 #include "kaa/configuration/manager/IConfigurationManager.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
 #include "kaa/configuration/delta/manager/DefaultDeltaManager.hpp"
 #include "kaa/ClientStatus.hpp"
-#include "kaa/configuration/storage/IConfigurationPersistanceManager.hpp"
+#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/BootstrapDataProcessor.hpp"
 #include "kaa/channel/OperationsDataProcessor.hpp"
@@ -60,8 +60,8 @@ public:
     void stop();
 
     virtual IProfileManager&                    getProfileManager() { return *profileManager_; }
-    virtual ISchemaPersistanceManager&          getSchemaPersistanceManager() { return *schemaPresistanceManager_; }
-    virtual IConfigurationPersistanceManager&   getConfigurationPersistanceManager() { return *configurationPersistanceManager_; }
+    virtual ISchemaPersistenceManager&          getSchemaPersistenceManager() { return *schemaPersistenceManager_; }
+    virtual IConfigurationPersistenceManager&   getConfigurationPersistenceManager() { return *configurationPersistenceManager_; }
     virtual IDeltaManager&                      getDeltaManager() { return *deltaManager_; }
     virtual IConfigurationManager&              getConfigurationManager() { return *configurationManager_; }
     virtual INotificationManager&               getNotificationManager() { return *notificationManager_; }
@@ -85,14 +85,15 @@ private:
     boost::scoped_ptr<NotificationManager>          notificationManager_;
     boost::scoped_ptr<EndpointRegistrationManager>  registrationManager_;
 
-    KeyPair clientKeys_;
+    KeyPair         clientKeys_;
+    std::string     publicKeyHash_;
 
     ISchemaProcessorPtr                   schemaProcessor_;
     DefaultDeltaManagerPtr                deltaManager_;
     IConfigurationManagerPtr              configurationManager_;
     IConfigurationProcessorPtr            configurationProcessor_;
-    ISchemaPersistanceManagerPtr          schemaPresistanceManager_;
-    IConfigurationPersistanceManagerPtr   configurationPersistanceManager_;
+    ISchemaPersistenceManagerPtr          schemaPersistenceManager_;
+    IConfigurationPersistenceManagerPtr   configurationPersistenceManager_;
     boost::scoped_ptr<EventManager>       eventManager_;
     boost::scoped_ptr<EventFamilyFactory> eventFamilyFactory_;
     boost::scoped_ptr<IKaaChannelManager> channelManager_;

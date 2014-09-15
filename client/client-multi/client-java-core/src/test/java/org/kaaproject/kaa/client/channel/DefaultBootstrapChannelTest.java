@@ -65,7 +65,7 @@ public class DefaultBootstrapChannelTest {
         KaaDataChannel channel = new DefaultBootstrapChannel(client, state);
 
         Assert.assertEquals(ChannelDirection.BIDIRECTIONAL, channel.getSupportedTransportTypes().get(TransportType.BOOTSTRAP));
-        Assert.assertEquals(ChannelType.BOOTSTRAP, channel.getType());
+        Assert.assertEquals(ChannelType.HTTP, channel.getType());
         Assert.assertEquals("default_bootstrap_channel", channel.getId());
     }
 
@@ -92,7 +92,8 @@ public class DefaultBootstrapChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, 2);
 
-        BootstrapServerInfo server = new BootstrapServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo server = new HttpServerInfo(ServerType.BOOTSTRAP
+                , "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.setServer(server);
 
@@ -132,7 +133,8 @@ public class DefaultBootstrapChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, 1);
 
-        BootstrapServerInfo server = new BootstrapServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo server = new HttpServerInfo(ServerType.BOOTSTRAP
+                , "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.sync(TransportType.BOOTSTRAP);
         channel.setDemultiplexer(demultiplexer);
@@ -172,7 +174,8 @@ public class DefaultBootstrapChannelTest {
         channel.setMultiplexer(multiplexer);
         channel.shutdown();
 
-        BootstrapServerInfo server = new BootstrapServerInfo("localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo server = new HttpServerInfo(ServerType.BOOTSTRAP
+                , "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
         channel.sync(TransportType.BOOTSTRAP);

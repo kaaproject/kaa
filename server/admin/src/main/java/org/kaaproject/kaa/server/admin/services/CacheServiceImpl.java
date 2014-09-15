@@ -17,11 +17,13 @@
 package org.kaaproject.kaa.server.admin.services;
 
 import org.apache.thrift.TException;
+import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,26 @@ public class CacheServiceImpl implements CacheService {
         }
     }
 
+    @Override
+    @Cacheable("recordLibraryCache")
+    public FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException {
+        try {
+            return clientProvider.getClient().generateRecordStructureLibrary(key.getApplicationId(), key.getLogSchemaVersion());
+        } catch (TException e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    @Cacheable("recordSchemaCache")
+    public FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException {
+        try {
+            return clientProvider.getClient().getRecordStructureSchema(key.getApplicationId(), key.getLogSchemaVersion());
+        } catch (TException e) {
+            throw Utils.handleException(e);
+        }
+    }
+
     private SdkPlatform toSdkPlatform(org.kaaproject.kaa.common.dto.admin.SdkPlatform sdkPlatform) {
         switch (sdkPlatform) {
         case JAVA:
@@ -57,8 +79,10 @@ public class CacheServiceImpl implements CacheService {
             return SdkPlatform.ANDROID;
         case CPP:
             return SdkPlatform.CPP;
-            default:
-                return null;
+        case C:
+            return SdkPlatform.C;
+        default:
+            return null;
         }
     }
 

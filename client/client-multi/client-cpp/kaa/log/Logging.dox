@@ -16,4 +16,66 @@
 
 /*!
     \page logging_page Logging
+    
+    Log subsystem is based on auto-generated classes according to the log schema
+    used during SDK generation.<br>
+    <br>
+    
+    
+    
+    \section usage Usage
+    \subsection default_impl Using default implementations
+    Kaa library contains default implementation of:
+    - log storage;
+    - log upload strategy;
+    - log upload configuration.
+
+    Log storage default implementation persists log records in memory until records aren't uplaoded or application restarts.<br>
+    
+    For example if we have log schema alike:
+    <pre><code>
+        {
+            "name": "ExampleLogRecord",
+            "namespace": "org.kaaproject.kaa.client.example",
+            "type": "record",
+            "fields": [
+                {
+                    "name": "data",
+                    "type": "string"
+                }
+            ]
+        }
+    </code></pre>
+    Which will be converted into:
+    <pre><code>
+        struct ExampleLogRecord {
+            std::string data;
+        };
+    </code></pre>
+    To create a log record of "ExampleLogRecord" (assuming Kaa client is initialized and started) use:
+    <pre><code>
+        ExampleLogRecord record;
+        record.data = "Simple log entry";
+        kaa::Kaa::getKaaClient().getLogCollector().addLogRecord(record);
+    </code></pre>
+    After this record will be added to the storage and LogCollector automatically will
+    check if after adding this record it should start log uploading.<br>
+    Log upload will start if call to implementation of 
+    @link kaa::ILogUploadStrategy::isUploadNeeded(const kaa::ILogUploadConfiguration* configuration, const kaa::ILogStorageStatus* status) @endlink will return 
+    @link kaa::LogUploadStrategyDecision::UPLOAD @endlink decision.<br>
+    In order to define custom log upload strategy see \ref custom_strategy<br>
+    <br>
+
+    \subsection custom_storage  Creating custom log storage
+    \subsection custom_strategy Creating custom log upload strategy
+    \subsection custom_configuration Creating custom log collector configuration holder
+    
+    
+    
+    \section references See also
+    - @link kaa::ILogCollector @endlink
+    - @link kaa::MemoryLogStorage @endlink
+    - @link kaa::DefaultLogUploadConfiguration @endlink
+    - @link kaa::SizeUploadStrategy @endlink
+    
 */

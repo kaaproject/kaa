@@ -36,6 +36,8 @@
   <inherits name="com.google.gwt.activity.Activity"/>
   <inherits name="com.google.gwt.place.Place"/>
 
+  <inherits name="com.watopi.chosen.Chosen"/>
+
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
 
   <!--  inherits name='com.google.gwt.visualization.Visualization'/-->

@@ -7,7 +7,7 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class ProfileSyncResponse extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProfileSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"responseStatus\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseStatus\",\"symbols\":[\"NO_DELTA\",\"DELTA\",\"RESYNC\"]}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProfileSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"responseStatus\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseStatus\",\"symbols\":[\"NO_DELTA\",\"DELTA\",\"RESYNC\"]}}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus responseStatus;
 

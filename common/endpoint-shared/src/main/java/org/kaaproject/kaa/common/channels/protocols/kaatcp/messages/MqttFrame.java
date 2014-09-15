@@ -44,6 +44,10 @@ abstract public class MqttFrame {
         PROCESSING_PAYLOAD,
     }
 
+    /*
+     * If adding any filed, don't forget to update MqttFrame(MqttFrame old) 
+     * to clone all fileds.
+     */
     private MessageType messageType;
     protected ByteBuffer buffer;
     protected boolean frameDecodeComplete = false;
@@ -73,6 +77,17 @@ abstract public class MqttFrame {
 
 
     /**
+     * @param old
+     */
+    protected MqttFrame(MqttFrame old) {
+        this.messageType = old.getMessageType();
+        this.buffer = old.getBuffer();
+        this.frameDecodeComplete = old.frameDecodeComplete;
+        this.remainingLength = old.remainingLength;
+        this.multiplier = old.multiplier;
+        this.currentState = old.currentState;
+    }
+    /**
      * Return mqtt Frame.
      * @return ByteBuffer mqtt frame
      */
@@ -93,8 +108,6 @@ abstract public class MqttFrame {
 
     /**
      * Pack message into mqtt frame
-     * @param position - start position for packing
-     * @return - number of bytes packed.
      */
     abstract protected void pack();
 
@@ -111,6 +124,12 @@ abstract public class MqttFrame {
      * @throws KaaTcpProtocolException
      */
     abstract protected void decode() throws KaaTcpProtocolException;
+    
+    /**
+     * Check if this Mqtt frame should be last frame on connection and connection should be closed.
+     * @return boolean 'true' if connection should be closed after frame transmition.
+     */
+    abstract public boolean isNeedCloseConnection();
 
     /**
      * Fill mqtt frame fixed header
@@ -198,12 +217,28 @@ abstract public class MqttFrame {
     }
 
     /**
-     * @return
+     * Test if Mqtt frame decode complete
+     * @return boolean 'true' if decode complete
      */
     public boolean decodeComplete() {
         return frameDecodeComplete;
     }
+    
+    /**
+     * Used in case if Frame Class should be changed during frame decode,
+     * Used for migrate from KaaSync() general frame to specific classes like Sync, Bootstrap.
+     * Default implementation is to return this. 
+     * @return new MqttFrame as specific class.
+     * @throws KaatcpProtocolException 
+     */
+    public MqttFrame upgradeFrame() throws KaaTcpProtocolException {
+        return this;
+    }
 
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

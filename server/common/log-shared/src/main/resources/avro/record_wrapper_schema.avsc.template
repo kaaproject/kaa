@@ -1,0 +1,21 @@
+{
+    "type":"record",
+    "name":"RecordWrapper",
+    "namespace":"org.kaaproject.kaa.log",
+    "fields":[
+        {
+            "name":"recordHeader",
+            "type":[
+                ${record_header_schema},
+                "null"
+            ]
+        },
+        {
+            "name":"recordData",
+            "type":[
+                ${record_data_schema},
+                "null"
+            ]
+        }
+    ]
+}

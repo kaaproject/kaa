@@ -548,7 +548,9 @@ public class EndpointActorMessageProcessor {
 
                 LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
                 sendReply(context, pendingRequest, pendingResponse);
-                if (!channel.getType().isAsync()) {
+                if (channel.getType().isAsync()) {
+                    sync(context, channel.getRequest());
+                } else {
                     channelMap.removeChannel(channel);
                 }
             }

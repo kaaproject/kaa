@@ -51,7 +51,7 @@ public class DaoAvroUtil {
                 Object parameters = logParameters.getAppenderParameters();
                 if (parameters instanceof FlumeAppenderParameters) {
                     FlumeAppenderParametersDto flumeParameters = new FlumeAppenderParametersDto();
-                    FlumeAppenderParameters avroParameters = (FlumeAppenderParameters) parameters; 
+                    FlumeAppenderParameters avroParameters = (FlumeAppenderParameters) parameters;
                     List<Object> hosts = avroParameters.getHostsInfo();
                     if (hosts != null && !hosts.isEmpty()) {
                         List<HostInfoDto> hostInfoList = new ArrayList<>(hosts.size());
@@ -70,7 +70,11 @@ public class DaoAvroUtil {
                 } else if (parameters instanceof FileAppenderParameters) {
 
                     FileAppenderParameters fileParameters = (FileAppenderParameters) parameters;
-                    dto.setParameters(new FileAppenderParametersDto(fileParameters.getFilePath()));
+                    FileAppenderParametersDto fileDto = new FileAppenderParametersDto();
+                    fileDto.setLogDirectoryPath(fileParameters.getLogDirectoryPath());
+                    fileDto.setUsername(fileParameters.getUsername());
+                    fileDto.setSshKey(fileParameters.getSshKey());
+                    dto.setParameters(fileDto);
                 }
             }
 
@@ -103,7 +107,7 @@ public class DaoAvroUtil {
                 avroParameters.setAppenderParameters(new MongoAppenderParameters(mongoDto.getCollectionName()));
             } else if (params instanceof FileAppenderParametersDto) {
                 FileAppenderParametersDto fileDto = (FileAppenderParametersDto) params;
-                avroParameters.setAppenderParameters(new FileAppenderParameters(fileDto.getFilePath()));
+                avroParameters.setAppenderParameters(new FileAppenderParameters(fileDto.getLogDirectoryPath(), fileDto.getUsername(), fileDto.getSshKey()));
             }
             AvroByteArrayConverter<LogAppenderParameters> converter = new AvroByteArrayConverter<LogAppenderParameters>(LogAppenderParameters.class);
             try {
@@ -114,24 +118,24 @@ public class DaoAvroUtil {
         }
         return bytes;
     }
-    
-	private static FlumeBalancingType balancingTypeToAvro(FlumeBalancingTypeDto type) {
-		FlumeBalancingType converted = null;
-		for (FlumeBalancingType current : FlumeBalancingType.values()) {
-			if (current.name().equalsIgnoreCase(type.name())) {
-				converted = current;
-			}
-		}
-		return converted;
-	}
-	
-	private static FlumeBalancingTypeDto balancingTypeFromAvro(FlumeBalancingType type) {
-		FlumeBalancingTypeDto converted = null;
-		for (FlumeBalancingTypeDto current : FlumeBalancingTypeDto.values()) {
-			if (current.name().equalsIgnoreCase(type.name())) {
-				converted = current;
-			}
-		}
-		return converted;
-	}
+
+    private static FlumeBalancingType balancingTypeToAvro(FlumeBalancingTypeDto type) {
+        FlumeBalancingType converted = null;
+        for (FlumeBalancingType current : FlumeBalancingType.values()) {
+            if (current.name().equalsIgnoreCase(type.name())) {
+                converted = current;
+            }
+        }
+        return converted;
+    }
+
+    private static FlumeBalancingTypeDto balancingTypeFromAvro(FlumeBalancingType type) {
+        FlumeBalancingTypeDto converted = null;
+        for (FlumeBalancingTypeDto current : FlumeBalancingTypeDto.values()) {
+            if (current.name().equalsIgnoreCase(type.name())) {
+                converted = current;
+            }
+        }
+        return converted;
+    }
 }

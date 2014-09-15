@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.5.2</version>
+        <version>0.6.0</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -39,7 +39,7 @@
     <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>flume-shared</artifactId>
+            <artifactId>log-shared</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -238,9 +238,11 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>src/test/java/org/kaaproject/kaa/server/flume//Level.java</exclude>
+                        <exclude>src/test/java/org/kaaproject/kaa/server/flume/Level.java</exclude>
                         <exclude>src/test/java/org/kaaproject/kaa/server/flume/TestLogData.java</exclude>
                         <exclude>src/deb/**</exclude>
+                        <exclude>build/**</exclude>
+                        <exclude>schemas/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -323,7 +325,7 @@
                                 <fileEncoding>utf-8</fileEncoding>
                             </postinstallScriptlet>
                             <preremoveScriptlet>
-                                <scriptFile>src/deb/control/prerm</scriptFile>
+                                <scriptFile>src/rpm/control/prerm</scriptFile>
                                 <fileEncoding>utf-8</fileEncoding>
                             </preremoveScriptlet>
                             <postremoveScriptlet>

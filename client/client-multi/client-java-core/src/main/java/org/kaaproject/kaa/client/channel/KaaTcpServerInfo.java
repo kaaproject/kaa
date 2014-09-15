@@ -20,18 +20,19 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 
 public class KaaTcpServerInfo extends AbstractServerInfo {
 
-    public KaaTcpServerInfo(String hostName, int port, byte[] publicKey)
+    public KaaTcpServerInfo(ServerType type, String hostName, int port, byte[] publicKey)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
-        super(hostName, port, KeyUtil.getPublic(publicKey));
+        super(type, hostName, port, KeyUtil.getPublic(publicKey));
     }
 
-    public KaaTcpServerInfo(String hostName, int port, PublicKey publicKey)
+    public KaaTcpServerInfo(ServerType type, String hostName, int port, PublicKey publicKey)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
-        super(hostName, port, publicKey);
+        super(type, hostName, port, publicKey);
     }
 
     @Override
@@ -39,4 +40,8 @@ public class KaaTcpServerInfo extends AbstractServerInfo {
         return "";
     }
 
+    @Override
+    public ChannelType getChannelType() {
+        return ChannelType.KAATCP;
+    }
 }

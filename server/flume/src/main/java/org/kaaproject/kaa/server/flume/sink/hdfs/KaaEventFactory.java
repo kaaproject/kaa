@@ -27,27 +27,27 @@ import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.flume.Event;
 import org.apache.flume.event.EventBuilder;
-import org.kaaproject.kaa.server.common.flume.shared.avro.gen.LogData;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData;
 
 import com.google.common.collect.Lists;
 
 public class KaaEventFactory {
 
-    private SpecificDatumReader<LogData> avroReader;
+    private SpecificDatumReader<RecordData> avroReader;
     private BinaryDecoder decoder;
     private Map<KaaSinkKey, Map<String,String>> headersMap = new HashMap<>();
     
     public KaaEventFactory() {
-        avroReader = new SpecificDatumReader<>(LogData.class);
+        avroReader = new SpecificDatumReader<>(RecordData.class);
     }
     
-    public Map<KaaSinkKey, List<Event>> processIncomingFlumeEvent(Event event) throws IOException {
-        Map<KaaSinkKey, List<Event>> eventsMap = new LinkedHashMap<KaaSinkKey, List<Event>>(); 
+    public Map<KaaSinkKey, List<KaaRecordEvent>> processIncomingFlumeEvent(Event event) throws IOException {
+        Map<KaaSinkKey, List<KaaRecordEvent>> eventsMap = new LinkedHashMap<KaaSinkKey, List<KaaRecordEvent>>(); 
         
         byte[] body = event.getBody();
         decoder = DecoderFactory.get().binaryDecoder(body, decoder);
         
-        LogData data = avroReader.read(null, decoder);
+        RecordData data = avroReader.read(null, decoder);
         KaaSinkKey sinkKey = new KaaSinkKey(data.getApplicationToken(), data.getSchemaVersion());
         Map<String,String> headers = headersMap.get(sinkKey);
         if (headers == null) {
@@ -55,10 +55,10 @@ public class KaaEventFactory {
             sinkKey.updateHeaders(headers);
             headersMap.put(sinkKey, headers);
         }
-        List<Event> events = Lists.newArrayList();
-        for (ByteBuffer eventData : data.getLogEvents()) {
-            Event logEvent = EventBuilder.withBody(eventData.array(), headers);
-            events.add(logEvent);
+        List<KaaRecordEvent> events = Lists.newArrayList();
+        for (ByteBuffer eventData : data.getEventRecords()) {
+            KaaRecordEvent kaaRecordEvent = new KaaRecordEvent(data.getRecordHeader(), headers, eventData.array());
+            events.add(kaaRecordEvent);
         }
         eventsMap.put(sinkKey, events);
         return eventsMap;

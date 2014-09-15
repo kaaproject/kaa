@@ -21,11 +21,12 @@ function stop()
 	    exit 1
 	fi
 	
-	export CATALINA_BASE="${SERVER_HOME}"
+	export JETTY_HOME="${SERVER_HOME}"
+	export JETTY_RUN="${SERVER_HOME}"	
 
 	echo "Stopping $SERVER_NAME..."
 
-	/usr/share/tomcat7/bin/shutdown.sh
+	$JETTY_HOME/bin/jetty.sh stop
 	echo "$SERVER_NAME stopped"
 }
 

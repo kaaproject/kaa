@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
@@ -45,10 +48,21 @@ public interface LogAppenderView extends BaseDetailsView {
 
     SizedTextBox getCreatedUsername();
 
-	void showFlumeCongurationFields(FlumeAppenderParametersDto flumeAppenderParametersDto);
+    void showFlumeCongurationFields(FlumeAppenderParametersDto flumeAppenderParametersDto);
 
-	FlumeBalancingTypeListBox getFlumeBalancingType();
+    FlumeBalancingTypeListBox getFlumeBalancingType();
 
-	FlexTable getHostTable();
+    FlexTable getHostTable();
 
+    void setMetadataListBox(List<LogHeaderStructureDto> header);
+
+    List<LogHeaderStructureDto> getHeader();
+
+    void showFileCongurationFields();
+
+    String getPublicKey();
+
+    void setPublicKey(String publicKey);
+
+    void hideFileCongurationFields();
 }

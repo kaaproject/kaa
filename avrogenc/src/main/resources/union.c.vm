@@ -1,0 +1,267 @@
+##
+## Copyright 2014 CyberVision, Inc.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
+
+#set ($unionNameUpper = $TypeConverter.generateUnionName($schema))
+#set ($unionNameLower = $TypeConverter.generateUnionName($schema).toLowerCase())
+
+#set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
+#set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
+
+# ifndef ${PREFIX}_${unionNameUpper}_C_
+# define ${PREFIX}_${unionNameUpper}_C_
+static void ${prefix}_destroy_${unionNameLower}(void *data)
+{
+    kaa_union_t *kaa_union = (kaa_union_t*)data;
+
+    switch (kaa_union->type) {
+#foreach ($branchSchema in $schema.getTypes())
+#if (!$TypeConverter.isNullType($branchSchema))
+    case ${PREFIX}_${unionNameUpper}_${StyleUtils.toUpperUnderScore($branchSchema.getName())}_BRANCH:
+    {
+#if ($TypeConverter.isPrimitiveType($branchSchema))
+        KAA_FREE(kaa_union->data);
+#elseif ($TypeConverter.isBytes($branchSchema))
+	    ${prefix}_destroy_bytes(kaa_union->data);
+	    KAA_FREE(kaa_union->data);
+#elseif ($TypeConverter.isRecordOrUnion($branchSchema))
+#if ($TypeConverter.isRecordType($branchSchema) && $TypeConverter.isRecordNeedDeallocator($branchSchema))
+#set ($recordName = $StyleUtils.toLowerUnderScore($branchSchema.getName()))
+        ${prefix}_${recordName}_t* record = (${prefix}_${recordName}_t*)kaa_union->data;
+        record->destruct(record);
+#elseif ($TypeConverter.isUnionType($branchSchema))
+#set ($unionName = $TypeConverter.generateUnionName($branchSchema).toLowerCase())
+        ${prefix}_${unionName}_t* kaa_sub_union = (${prefix}_${unionName}_t*)kaa_union->data;
+        kaa_sub_union->destruct(kaa_sub_union);
+#end
+        KAA_FREE(kaa_union->data);
+#elseif ($TypeConverter.isArrayType($branchSchema))
+#if ($TypeConverter.isPrimitiveType($branchSchema.getElementType()) || !$TypeConverter.isRecordNeedDeallocator($branchSchema.getElementType()))
+        kaa_list_destroy(kaa_union->data, NULL);
+#elseif ($TypeConverter.isUnionType($branchSchema.getElementType()))
+#set ($unionElementName = $TypeConverter.generateUnionName($branchSchema.getElementType()).toLowerCase())
+        kaa_list_destroy(kaa_union->data, ${prefix}_destroy_${unionElementName});
+#elseif ($TypeConverter.isBytes($branchSchema.getElementType()))
+        kaa_list_destroy(kaa_union->data, kaa_destroy_bytes);
+#else
+        #set ($elementName = $StyleUtils.toLowerUnderScore($branchSchema.getElementType().getName()))
+        kaa_list_destroy(kaa_union->data, ${prefix}_destroy_${elementName});
+#end
+#end
+        break;
+    }
+#end
+#end
+    default:
+        break;
+    }
+}
+#if ($generationContext.isTypeOut())
+
+static size_t ${prefix}_get_size_${unionNameLower}(void *data)
+{
+    kaa_union_t *kaa_union = (kaa_union_t*)data;
+    size_t union_len = size_long(kaa_union->type);
+
+    switch (kaa_union->type) {
+#foreach ($branchSchema in $schema.getTypes())
+#if (!$TypeConverter.isNullType($branchSchema))
+    case ${PREFIX}_${unionNameUpper}_${StyleUtils.toUpperUnderScore($branchSchema.getName())}_BRANCH:
+    {
+#if ($TypeConverter.isRecordType($branchSchema))
+        #set ($recordType = $TypeConverter.convertToCType($branchSchema, ${prefix}))
+        $recordType record = (${recordType})kaa_union->data;
+        union_len += record->get_size(record);
+#elseif ($TypeConverter.isUnionType($branchSchema))
+        kaa_union_t* kaa_union = (kaa_union_t*)kaa_union->data;
+        union_len += kaa_union->get_size(kaa_union);
+#elseif ($TypeConverter.isBytes($branchSchema))
+        union_len += kaa_get_size_bytes(kaa_union->data);
+#elseif ($TypeConverter.isStringType($branchSchema))
+        union_len += kaa_get_size_string(kaa_union->data);
+#elseif ($TypeConverter.isArrayType($branchSchema))
+    #if ($TypeConverter.isPrimitiveType($branchSchema.getElementType()))
+        //TODO: implement calculating size for array of primitives (bool, int, long, enum) 
+    #elseif ($TypeConverter.isBytes($branchSchema.getElementType()))
+        union_len += kaa_array_size(kaa_union->data, kaa_get_size_bytes);
+    #elseif ($TypeConverter.isRecordType($branchSchema.getElementType()))
+        #set ($recordElementName = $StyleUtils.toLowerUnderScore($branchSchema.getElementType().getName()))
+        union_len += kaa_array_size(kaa_union->data, ${prefix}_get_size_${recordElementName});
+    #elseif ($TypeConverter.isUnionType($branchSchema.getElementType()))
+        #set ($unionElementName = $TypeConverter.generateUnionName($branchSchema.getElementType()).toLowerCase())
+        union_len += kaa_array_size(kaa_union->data, ${prefix}_get_size_${unionElementName});
+    #end
+#else
+    #set ($type = $branchSchema.getType().toString().toLowerCase())
+    #if ($TypeConverter.isEnumType($branchSchema))
+        #set ($type = "long")
+    #end
+    union_len += size_long(*(($TypeConverter.convertToCType($branchSchema, $prefix) *)kaa_union->data));
+#end
+        break;
+    }
+#end
+#end
+    default:
+        break;
+    }
+    
+    return union_len;
+}
+
+static void ${prefix}_serialize_${unionNameLower}(avro_writer_t writer, void *data)
+{
+    kaa_union_t *kaa_union = (kaa_union_t*)data;
+
+    int64_t branch = kaa_union->type;
+    avro_binary_encoding.write_long(writer, branch);
+
+    switch (kaa_union->type) {
+#foreach ($branchSchema in $schema.getTypes())
+#if (!$TypeConverter.isNullType($branchSchema))
+    case ${PREFIX}_${unionNameUpper}_${StyleUtils.toUpperUnderScore($branchSchema.getName())}_BRANCH:
+    {
+#if ($TypeConverter.isRecordType($branchSchema))
+        #set ($recordType = $TypeConverter.convertToCType($branchSchema, $prefix))
+        $recordType record = (${recordType})kaa_union->data;
+        record->serialize(writer, record);
+#elseif ($TypeConverter.isUnionType($branchSchema))
+        kaa_union_t* kaa_union = (kaa_union_t*)kaa_union->data;
+        kaa_union->serialize(writer, kaa_union);
+#elseif ($TypeConverter.isBytes($branchSchema))
+        kaa_serialize_bytes(writer, kaa_union->data);
+#elseif ($TypeConverter.isStringType($branchSchema))
+        avro_binary_encoding.write_string(writer, (char *)kaa_union->data);
+#elseif ($TypeConverter.isArrayType($branchSchema))
+    #if ($TypeConverter.isPrimitiveType($branchSchema.getElementType()))
+        #set ($type = $branchSchema.getElementType().getType().toString().toLowerCase())
+        #if ($TypeConverter.isEnumType($branchSchema.getElementType()))
+        #set ($type = "long")
+        #end
+        kaa_serialize_array(writer, kaa_union->data, kaa_serialize_${type});
+    #elseif ($TypeConverter.isBytes($branchSchema.getElementType()))
+        kaa_serialize_array(writer, kaa_union->data, kaa_serialize_bytes);
+    #elseif ($TypeConverter.isRecordType($branchSchema.getElementType()))
+        #set ($recordElementName = $StyleUtils.toLowerUnderScore($branchSchema.getElementType().getName()))
+        kaa_serialize_array(writer, kaa_union->data, ${prefix}_serialize_${recordElementName});
+    #elseif ($TypeConverter.isUnionType($branchSchema.getElementType()))
+        #set ($unionElementName = $TypeConverter.generateUnionName($branchSchema.getElementType()).toLowerCase())
+        kaa_serialize_array(writer, kaa_union->data, ${prefix}_serialize_${unionElementName});
+    #end
+#else
+    #set ($type = $branchSchema.getType().toString().toLowerCase())
+    #if ($TypeConverter.isEnumType($branchSchema))
+        #set ($type = "long")
+    #end
+    avro_binary_encoding.write_${type}(writer, *(($TypeConverter.convertToCType($branchSchema, $prefix) *)kaa_union->data));
+#end
+        break;
+    }
+#end
+#end
+    default:
+        break;
+    }
+}
+#end
+static kaa_union_t* ${prefix}_create_${unionNameLower}()
+{
+    kaa_union_t* kaa_union = KAA_MALLOC(kaa_union_t);
+    kaa_union->data = NULL;
+#if ($generationContext.isTypeOut())
+    kaa_union->serialize = ${prefix}_serialize_${unionNameLower};
+    kaa_union->get_size = ${prefix}_get_size_${unionNameLower};
+#else
+    kaa_union->serialize = NULL;
+    kaa_union->get_size = NULL;
+#end
+    kaa_union->destruct = ${prefix}_destroy_${unionNameLower};
+
+    return kaa_union; 
+}
+#if ($generationContext.isTypeOut())
+#foreach ($branchSchema in $schema.getTypes())
+
+kaa_union_t* ${prefix}_create_${unionNameLower}_${StyleUtils.toLowerUnderScore($branchSchema.getName())}_branch()
+{
+    kaa_union_t *kaa_union = ${prefix}_create_${unionNameLower}();
+    kaa_union->type = ${PREFIX}_${unionNameUpper}_${StyleUtils.toUpperUnderScore($branchSchema.getName())}_BRANCH;
+    return kaa_union;
+}
+#end
+#end
+#if ($generationContext.isTypeIn())
+
+kaa_union_t* ${prefix}_deserialize_${unionNameLower}(avro_reader_t reader)
+{
+    kaa_union_t *kaa_union = ${prefix}_create_${unionNameLower}();
+
+    int64_t branch;
+    avro_binary_encoding.read_long(reader, &branch);
+    kaa_union->type = branch;
+
+    switch (kaa_union->type) {
+#foreach ($branchSchema in $schema.getTypes())
+#if (!$TypeConverter.isNullType($branchSchema))
+    case ${PREFIX}_${unionNameUpper}_${StyleUtils.toUpperUnderScore($branchSchema.getName())}_BRANCH:
+    {
+#if ($TypeConverter.isRecordType($branchSchema))
+#set ($recordName = $StyleUtils.toLowerUnderScore($branchSchema.getName()))
+        kaa_union->data = ${prefix}_deserialize_${recordName}(reader);
+#elseif ($TypeConverter.isUnionType($branchSchema))
+#set ($embeddedUnionName = $TypeConverter.generateUnionName($branchSchema).toLowerCase())
+        kaa_union->data = ${prefix}_deserialize_${embeddedUnionName}(reader);
+#elseif ($TypeConverter.isBytes($branchSchema))
+        kaa_union->data = kaa_deserialize_bytes(reader);
+#elseif ($TypeConverter.isStringType($branchSchema))
+        int64_t data_size;
+        avro_binary_encoding.read_string(reader, (char**)&kaa_union->data, &data_size);
+#elseif ($TypeConverter.isArrayType($branchSchema))
+#set ($elementSchema = $branchSchema.getElementType())
+    #if ($TypeConverter.isPrimitiveType($elementSchema))
+        #set ($type = $elementSchema.getType().toString().toLowerCase())
+        #if ($TypeConverter.isEnumType($elementSchema))
+            #set ($type = "long")
+        #end
+        kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_${type});
+    #elseif ($TypeConverter.isBytes($elementSchema))
+        kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_bytes);
+    #elseif ($TypeConverter.isRecordType($elementSchema))
+        #set ($recordElementName = $StyleUtils.toLowerUnderScore($elementSchema.getName()))
+        kaa_union->data = kaa_deserialize_array(reader, (deserialize)${prefix}_deserialize_${recordElementName});
+    #elseif ($TypeConverter.isUnionType($elementSchema))
+        #set ($unionElementName = $TypeConverter.generateUnionName($elementSchema).toLowerCase())
+        kaa_union->data = kaa_deserialize_array(reader, (deserialize)${prefix}_deserialize_${unionElementName});
+    #end
+#else
+    #set ($type = $branchSchema.getType().toString().toLowerCase())
+    #if ($TypeConverter.isEnumType($branchSchema))
+        #set ($type = "long")
+    #end
+    kaa_union->data = kaa_deserialize_${type}(reader);
+#end
+        break;
+    }
+#end
+#end
+    default:
+        break;
+    }
+
+    return kaa_union;
+}
+#end
+# endif // ${PREFIX}_${unionNameUpper}_C_
+

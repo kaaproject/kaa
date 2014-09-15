@@ -198,11 +198,6 @@
     </bean>
 
     <!-- Log Appenders -->
-
-    <bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender" />
-
-    <bean id="fileSystemLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogAppender" />
-
     <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderBuilder" />
 
 </beans>

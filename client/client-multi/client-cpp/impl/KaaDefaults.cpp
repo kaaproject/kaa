@@ -16,6 +16,14 @@
 
 #include "kaa/KaaDefaults.hpp"
 
+#include <algorithm>
+
+#include <boost/cstdint.hpp>
+
+#include "kaa/channel/server/HttpServerInfo.hpp"
+#include "kaa/channel/server/HttpLPServerInfo.hpp"
+#include "kaa/channel/server/KaaTcpServerInfo.hpp"
+
 namespace kaa {
 
 const char * const APPLICATION_TOKEN = "999739850901241";
@@ -38,9 +46,38 @@ const char * const CLIENT_PRIV_KEY_LOCATION = "key.private";
 
 const char * const CLIENT_STATUS_FILE_LOCATION = "kaa.status";
 
+static IServerInfoPtr createServerInfo(const int& channelType
+                                     , const std::string host
+                                     , const boost::uint16_t& port
+                                     , const std::string& encodedPublicKey)
+{
+    IServerInfoPtr serverInfo;
+
+    switch (channelType) {
+    case 0: // HTTTP
+        serverInfo.reset(new HttpServerInfo(
+                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
+        break;
+    case 1: // HTTTP LP
+        serverInfo.reset(new HttpLPServerInfo(
+                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
+        break;
+    case 2: // Kaa TCP
+        serverInfo.reset(new KaaTcpServerInfo(
+                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
+        break;
+    default:
+        break;
+    }
+
+    return serverInfo;
+}
+
 const BootstrapServers& getServerInfoList() {
     /* Default value for unit test */
-    static const BootstrapServers listOfServers = { {"test.com:443", {"public", 6}}, {"hello.ua:54", {"key", 3}} };
+    static BootstrapServers listOfServers = { createServerInfo(0, "test1.com", 80, "a2V5")
+                                            , createServerInfo(0, "test2.com", 443, "a2V5Mg==")};
+    std::random_shuffle(listOfServers.begin(), listOfServers.end());
     return listOfServers;
 }
 

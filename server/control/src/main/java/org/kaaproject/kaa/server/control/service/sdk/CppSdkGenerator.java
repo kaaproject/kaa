@@ -39,7 +39,12 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
+import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.kaaproject.kaa.server.control.service.sdk.event.CppEventSourcesGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -320,15 +325,58 @@ public class CppSdkGenerator extends SdkGenerator {
 
         String bootstrapServers = "";
 
-        for (int i=0;i<bootstrapNodes.size();i++) {
-            if (i>0) {
+        LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
+        for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
+            if (nodeIndex > 0) {
                 bootstrapServers += "\n                                          , ";
             }
-            ConnectionInfo bootstrapConnection = bootstrapNodes.get(i).getConnectionInfo();
-            String publicKeyBase64 = Base64.encodeBase64String(bootstrapConnection.getPublicKey().array());
-            bootstrapServers += "{\"" + bootstrapNodes.get(i).getBootstrapHostName() + ":" + bootstrapNodes.get(i).getBootstrapPort() + "\", {\"" + publicKeyBase64 + "\", " + publicKeyBase64.length() + "}}";
+
+            BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
+            List<BootstrapSupportedChannel> supportedChannels = node.getSupportedChannelsArray();
+            String encodedPublicKey = Base64.encodeBase64String(node.getConnectionInfo().getPublicKey().array());
+
+            for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
+                if (chIndex > 0) {
+                    bootstrapServers += "\n                                          , ";
+                }
+
+                String serverPattern = "createServerInfo(";
+                ZkSupportedChannel channel = supportedChannels.get(chIndex).getZkChannel();
+
+                serverPattern += channel.getChannelType().ordinal();
+                serverPattern += ", ";
+
+                if (channel.getChannelType() == ZkChannelType.HTTP) {
+                    ZkHttpComunicationParameters params =
+                            (ZkHttpComunicationParameters)channel.getCommunicationParameters();
+
+                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
+                    serverPattern += ", ";
+                    serverPattern += params.getZkComunicationParameters().getPort();
+                } else if (channel.getChannelType() == ZkChannelType.HTTP_LP) {
+                    ZkHttpLpComunicationParameters params =
+                            (ZkHttpLpComunicationParameters)channel.getCommunicationParameters();
+
+                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
+                    serverPattern += ", ";
+                    serverPattern += params.getZkComunicationParameters().getPort();
+                } else if (channel.getChannelType() == ZkChannelType.KAATCP) {
+                    ZkKaaTcpComunicationParameters params =
+                            (ZkKaaTcpComunicationParameters)channel.getCommunicationParameters();
+
+                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
+                    serverPattern += ", ";
+                    serverPattern += params.getZkComunicationParameters().getPort();
+                }
+
+                serverPattern += ", ";
+                serverPattern += "\"" + encodedPublicKey + "\"";
+                serverPattern += ")";
+
+                bootstrapServers += serverPattern;
+            }
         }
-        bootstrapServers = "{ " + bootstrapServers + " }";
+
         kaaDefaultsString = replaceVar(kaaDefaultsString, BOOTSTRAP_SERVERS_INFO_VAR, bootstrapServers);
 
         kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_SCHEMA_DEFAULT_VAR, configurationProtocolSchemaBody.replace("\"", "\\\""));

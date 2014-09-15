@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -46,8 +47,8 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class DataSource {
 
@@ -234,6 +235,17 @@ public class DataSource {
                     protected void onResult(String result) {
                     }
         });
+    }
+
+    public void getRecordLibrary(String applicationId,
+            Integer logSchemaVersion, RecordFiles fileType,
+            final AsyncCallback<String> callback) {
+        rpcService.getRecordLibraryByApplicationIdAndSchemaVersion(applicationId, logSchemaVersion, fileType,
+             new DataCallback<String>(callback) {
+                        @Override
+                        protected void onResult(String result) {
+                        }
+                    });
     }
 
     public void loadUsers(final AsyncCallback<List<UserDto>> callback) {

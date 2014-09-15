@@ -63,9 +63,9 @@ void KaaTcpParser::parseBuffer(const char *buffer, boost::uint32_t size)
     auto cursor = buffer;
     while (cursor != buffer + size) {
         if (state_ == KaaTcpParserState::PROCESSING_PAYLOAD) {
-            uint32_t remainingSize = messageLength_ - processedPayloadLength_;
-            uint32_t bufferRemainingSize = buffer + size - cursor;
-            uint32_t bytesToRead = (remainingSize > bufferRemainingSize) ? bufferRemainingSize : remainingSize;
+            boost::uint32_t remainingSize = messageLength_ - processedPayloadLength_;
+            boost::uint32_t bufferRemainingSize = buffer + size - cursor;
+            boost::uint32_t bytesToRead = (remainingSize > bufferRemainingSize) ? bufferRemainingSize : remainingSize;
             std::copy(cursor, cursor + bytesToRead, messagePayload_.get() + processedPayloadLength_);
             cursor += bytesToRead;
             processedPayloadLength_ += bytesToRead;

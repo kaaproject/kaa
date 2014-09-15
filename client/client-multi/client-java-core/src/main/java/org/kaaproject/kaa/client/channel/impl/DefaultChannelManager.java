@@ -17,26 +17,25 @@
 package org.kaaproject.kaa.client.channel.impl;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
-import org.kaaproject.kaa.client.channel.BootstrapServerInfo;
+import org.kaaproject.kaa.client.channel.AbstractServerInfo;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.HttpLongPollServerInfo;
-import org.kaaproject.kaa.client.channel.HttpServerInfo;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
 import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.connectivity.PingServerStorage;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultChannelManager implements KaaChannelManager {
+public class DefaultChannelManager implements KaaChannelManager, PingServerStorage {
 
     public static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(DefaultChannelManager.class);
@@ -45,19 +44,18 @@ public class DefaultChannelManager implements KaaChannelManager {
     private final Map<TransportType, KaaDataChannel> upChannels = new HashMap<TransportType, KaaDataChannel>();
     private final BootstrapManager bootstrapManager;
     private final Map<ChannelType, ServerInfo> lastServers = new HashMap<>();
-    private final List<BootstrapServerInfo> bootststrapServers;
-    private Iterator<BootstrapServerInfo> bootststrapServersIterator;
-    private BootstrapServerInfo lastBootstrapServer;
 
-    public DefaultChannelManager(BootstrapManager manager, List<BootstrapServerInfo> bootststrapServers) {
+    private final Map<ChannelType, List<ServerInfo>> bootststrapServers;
+    private final Map<ChannelType, ServerInfo> lastBSServers = new HashMap<>();
+
+    private ConnectivityChecker connectivityChecker;
+    
+    public DefaultChannelManager(BootstrapManager manager, Map<ChannelType, List<ServerInfo>> bootststrapServers) {
         if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
             throw new ChannelRuntimeException("Failed to create channel manager");
         }
         this.bootstrapManager = manager;
         this.bootststrapServers = bootststrapServers;
-        this.bootststrapServersIterator = bootststrapServers.iterator();
-        this.lastBootstrapServer = bootststrapServersIterator.next();
-        LOG.info("Initialized channel manager with bootstrap servers: {}", bootststrapServers);
     }
 
     private void useNewChannelForType(TransportType type) {
@@ -84,10 +82,11 @@ public class DefaultChannelManager implements KaaChannelManager {
     @Override
     public synchronized void addChannel(KaaDataChannel channel) {
         if (!channels.contains(channel)) {
+            channel.setConnectivityChecker(connectivityChecker);
             channels.add(channel);
             ServerInfo server;
-            if (channel.getType().equals(ChannelType.BOOTSTRAP)) {
-                server = lastBootstrapServer;
+            if (channel.getServerType() == ServerType.BOOTSTRAP) {
+                server = getCurrentBootstrapServer(channel.getType());
             } else {
                 server = lastServers.get(channel.getType());
             }
@@ -146,29 +145,18 @@ public class DefaultChannelManager implements KaaChannelManager {
         return null;
     }
 
-    private static ChannelType getTypeByServerInfo(ServerInfo info) {
-        if (info instanceof HttpLongPollServerInfo) {
-            return ChannelType.HTTP_LP;
-        }
-        if (info instanceof HttpServerInfo) {
-            return ChannelType.HTTP;
-        }
-        if (info instanceof BootstrapServerInfo) {
-            return ChannelType.BOOTSTRAP;
-        }
-        if (info instanceof KaaTcpServerInfo) {
-            return ChannelType.KAATCP;
-        }
-        return null;
-    }
-
     @Override
     public synchronized void onServerUpdated(ServerInfo newServer) {
-        ChannelType typeToVerify = getTypeByServerInfo(newServer);
-        lastServers.put(typeToVerify, newServer);
+        if (newServer.getServerType() == ServerType.OPERATIONS) {
+            lastServers.put(newServer.getChannelType(), newServer);
+        }
+
         for (KaaDataChannel channel : channels) {
-            if (channel.getType().equals(typeToVerify)) {
-                LOG.debug("Applying server {} for channel [{}] type {}", newServer, channel.getId(), channel.getType());
+            if (channel.getServerType() == newServer.getServerType()
+                    && channel.getType() == newServer.getChannelType())
+            {
+                LOG.debug("Applying server {} for channel [{}] type {}"
+                        , newServer, channel.getId(), channel.getType());
                 channel.setServer(newServer);
             }
         }
@@ -176,15 +164,10 @@ public class DefaultChannelManager implements KaaChannelManager {
 
     @Override
     public synchronized void onServerFailed(ServerInfo server) {
-        if (server instanceof BootstrapServerInfo) {
-            if (!bootststrapServersIterator.hasNext()) {
-                bootststrapServersIterator = bootststrapServers.iterator();
-            }
-            lastBootstrapServer = bootststrapServersIterator.next();
-            onServerUpdated(lastBootstrapServer);
+        if (server.getServerType() == ServerType.BOOTSTRAP) {
+            onServerUpdated(getNextBootstrapServer(server));
         } else {
-            ChannelType typeToVerify = getTypeByServerInfo(server);
-            bootstrapManager.useNextOperationsServer(typeToVerify);
+            bootstrapManager.useNextOperationsServer(server.getChannelType());
         }
     }
 
@@ -194,4 +177,48 @@ public class DefaultChannelManager implements KaaChannelManager {
         upChannels.clear();
     }
 
+    private ServerInfo getCurrentBootstrapServer(ChannelType type) {
+        ServerInfo bsi = lastBSServers.get(type);
+        if (bsi == null) {
+            List<ServerInfo> serverList = bootststrapServers.get(type);
+            if (serverList != null && !serverList.isEmpty()) {
+                bsi = serverList.get(0);
+                lastBSServers.put(type, bsi);
+            }
+        }
+
+        return bsi;
+    }
+
+    private ServerInfo getNextBootstrapServer(ServerInfo currentServer) {
+        ServerInfo bsi = null;
+
+        List<ServerInfo> serverList =
+                bootststrapServers.get(currentServer.getChannelType());
+        int serverIndex = serverList.indexOf(currentServer);
+
+        if (serverIndex >= 0) {
+            if (++serverIndex == serverList.size()) {
+                serverIndex = 0;
+            }
+            bsi = serverList.get(serverIndex);
+            lastBSServers.put(currentServer.getChannelType(), bsi);
+        }
+
+        return bsi;
+    }
+    
+    @Override
+    public void setConnectivityChecker(ConnectivityChecker checker) {
+        connectivityChecker = checker;
+        for (KaaDataChannel channel : channels) {
+            channel.setConnectivityChecker(connectivityChecker);
+        }
+    }
+
+    @Override
+    public AbstractServerInfo getCurrentPingServer() {
+        //TODO Modify algorithm for more extended
+        return (AbstractServerInfo)lastBSServers.values().iterator().next();
+    }
 }

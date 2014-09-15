@@ -118,7 +118,7 @@ public class KaaAuthServiceImpl implements KaaAuthService {
 
     @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
     public void createKaaAdmin(String username, String password)
-            throws Exception {
+            throws KaaAdminServiceException {
 
 
         org.kaaproject.kaa.server.admin.services.entity.User userEntity =

@@ -19,7 +19,7 @@
 
 #include "kaa/kaatcp/KaaTcpCommon.hpp"
 #include "kaa/kaatcp/IKaaTcpRequest.hpp"
-
+#include <arpa/inet.h>
 
 namespace kaa {
 
@@ -42,16 +42,19 @@ public:
 
         auto messageIt = message_.begin() + size;
 
-        *(messageIt++) = (boost::uint8_t) (KaaTcpCommon::KAA_TCP_NAME_LENGTH >> 8);
-        *(messageIt++) = (boost::uint8_t) (KaaTcpCommon::KAA_TCP_NAME_LENGTH & 0xFF);
+        boost::uint16_t nameLengthNetworkOrder = htons(KaaTcpCommon::KAA_TCP_NAME_LENGTH);
+        std::copy(reinterpret_cast<boost::uint8_t *>(&nameLengthNetworkOrder), reinterpret_cast<boost::uint8_t *>(&nameLengthNetworkOrder) + 2, messageIt);
+        messageIt += 2;
 
         std::copy((const boost::uint8_t * const ) KaaTcpCommon::KAA_TCP_NAME,
                 (const boost::uint8_t * const ) (KaaTcpCommon::KAA_TCP_NAME + KaaTcpCommon::KAA_TCP_NAME_LENGTH), messageIt);
         messageIt += KaaTcpCommon::KAA_TCP_NAME_LENGTH;
 
         *(messageIt++) = KaaTcpCommon::PROTOCOL_VERSION;
-        *(messageIt++) = (boost::uint8_t) (messageId >> 8);
-        *(messageIt++) = (boost::uint8_t) (messageId & 0xFF);
+
+        boost::uint16_t messageIdNetworkOrder = htons(messageId);
+        std::copy(reinterpret_cast<boost::uint8_t *>(&messageIdNetworkOrder), reinterpret_cast<boost::uint8_t *>(&messageIdNetworkOrder) + 2, messageIt);
+        messageIt += 2;
 
         *messageIt |= KaaTcpCommon::KAA_SYNC_REQUEST_BIT;
         if (zipped) {

@@ -16,20 +16,14 @@
 
 package org.kaaproject.kaa.server.operations.service.logs.mongo;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.avro.generic.GenericRecord;
-import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.LogEventService;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppender;
-import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
 import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +34,9 @@ import org.springframework.stereotype.Component;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
-public class MongoDBLogAppender implements LogAppender {
+public class MongoDBLogAppender extends LogAppender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLogAppender.class);
-
-    Map<String, ThreadLocal<GenericAvroConverter<GenericRecord>>> converters = new HashMap<>();
 
     @Autowired
     private ApplicationService applicationService;
@@ -52,27 +44,14 @@ public class MongoDBLogAppender implements LogAppender {
     @Autowired
     private LogEventService logEventService;
 
-    private String appenderId;
-    private String name;
     private String collectionName;
-
     private boolean closed = false;
 
     public MongoDBLogAppender() {
     }
 
     public MongoDBLogAppender(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getName() {
-        return name;
+        setName(name);
     }
 
     @Override
@@ -81,51 +60,22 @@ public class MongoDBLogAppender implements LogAppender {
     }
 
     @Override
-    public String getAppenderId() {
-        return appenderId;
-    }
-
-    public void setAppenderId(String appenderId) {
-        this.appenderId = appenderId;
-    }
-
-    private GenericAvroConverter<GenericRecord> getConverter(String schema) {
-        if (!converters.containsKey(schema)) {
-            ThreadLocal<GenericAvroConverter<GenericRecord>> converter = new ThreadLocal<GenericAvroConverter<GenericRecord>>();
-            converter.set(new GenericAvroConverter<GenericRecord>(schema));
-            converters.put(schema, converter);
-        }
-        return converters.get(schema).get();
-    }
-
-    @Override
-    public void doAppend(LogEventPack logEventPack) {
+    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
         if (!closed) {
             LOG.debug("[{}] appending {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
-            List<LogEventDto> dtos = new ArrayList<>(logEventPack.getEvents().size());
-            GenericAvroConverter<GenericRecord> converter = getConverter(logEventPack.getLogSchema().getSchema());
-            try {
-                for (LogEvent logEvent : logEventPack.getEvents()) {
-                    GenericRecord decodedLog = converter.decodeBinary(logEvent.getLogData());
-                    String encodedJsonLog = converter.endcodeToJson(decodedLog);
-                    dtos.add(new LogEventDto(
-                            logEventPack.getEndpointKey(),
-                            logEventPack.getDateCreated(),
-                            encodedJsonLog));
-                }
-            } catch (IOException e) {
-                LOG.error("Unexpected IOException while decoding LogEvents", e);
-            }
+            List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
             LOG.debug("[{}] saving {} objects", collectionName, dtos.size());
-            logEventService.save(dtos, collectionName);
-            LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
+            if (!dtos.isEmpty()) {
+                logEventService.save(dtos, collectionName);
+                LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
+            }
         } else {
-            LOG.info("Attempted to append to closed appender named [{}].", name);
+            LOG.info("Attempted to append to closed appender named [{}].", getName());
         }
     }
 
     @Override
-    public void init(LogAppenderDto appender) {
+    public void initLogAppender(LogAppenderDto appender) {
         createCollection(appender.getApplicationToken());
     }
 

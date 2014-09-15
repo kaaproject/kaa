@@ -101,7 +101,7 @@ public class ConnAck extends MqttFrame {
 
     /**
      * Set ConnAck return code
-     * @param byte returnCode
+     * @param returnCode - ReturnCode
      */
     public void setReturnCode(ReturnCode returnCode) {
         this.returnCode = returnCode;
@@ -128,6 +128,14 @@ public class ConnAck extends MqttFrame {
         } else {
             returnCode = ReturnCode.UNDEFINED;
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+     */
+    @Override
+    public boolean isNeedCloseConnection() {
+        return false;
     }
 
 }

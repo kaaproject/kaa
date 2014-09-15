@@ -18,10 +18,13 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
 import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
 import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
@@ -43,12 +46,16 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.watopi.chosen.client.event.ChosenChangeEvent;
+import com.watopi.chosen.client.event.ChosenChangeEvent.ChosenChangeHandler;
+import com.watopi.chosen.client.gwt.ChosenListBox;
 
-public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppenderView, ValueChangeHandler<LogAppenderTypeDto> {
+public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppenderView, ValueChangeHandler<LogAppenderTypeDto>, ChosenChangeHandler {
 
-    private static final int FULL_TABLE_SIZE = 8;
+    private static final int FULL_TABLE_SIZE = 9;
     private static final int DEFAULT_PRIORITIZED_TABLE_ROW_COUNT = 2;
     private static final int DEFAULT_ROUND_ROBIN_TABLE_ROW_COUNT = 3;
+    private static final String REQUIRED = "required";
 
     private SizedTextBox name;
     private CheckBox status;
@@ -62,10 +69,14 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     private Button addHost;
     private Button removeHost;
     private FlexTable hostTable;
+    private ChosenListBox metadatalistBox;
     private boolean hasPriority = true;
     private int defaultRowCountLimit = 2;
 
     private Label typeBalancingLabel;
+
+    private Label publicKeyLabel;
+    private SizedTextBox sshKey;
 
     private static final String FULL_WIDTH = "100%";
 
@@ -77,7 +88,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     protected void initDetailsTable() {
         Label authorLabel = new Label(Utils.constants.author());
         createdUsername = new SizedTextBox(-1, false);
-        createdUsername.setWidth("100%");
+        createdUsername.setWidth(FULL_WIDTH);
         detailsTable.setWidget(0, 0, authorLabel);
         detailsTable.setWidget(0, 1, createdUsername);
 
@@ -86,7 +97,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
 
         Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
         createdDateTime = new SizedTextBox(-1, false);
-        createdDateTime.setWidth("100%");
+        createdDateTime.setWidth(FULL_WIDTH);
         detailsTable.setWidget(1, 0, dateTimeCreatedLabel);
         detailsTable.setWidget(1, 1, createdDateTime);
 
@@ -94,16 +105,16 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         createdDateTime.setVisible(!create);
 
         name = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
-        name.setWidth("100%");
+        name.setWidth(FULL_WIDTH);
         Label nameLabel = new Label(Utils.constants.name());
-        nameLabel.addStyleName("required");
+        nameLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(2, 0, nameLabel);
         detailsTable.setWidget(2, 1, name);
         name.addInputHandler(this);
 
         Label statusLabel = new Label(Utils.constants.activate());
         status = new CheckBox();
-        status.setWidth("100%");
+        status.setWidth(FULL_WIDTH);
         status.setEnabled(false);
 
         statusLabel.setVisible(!create);
@@ -119,24 +130,30 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         detailsTable.setWidget(4, 0, schemaLabel);
         detailsTable.setWidget(4, 1, schema);
 
+        Label logMetadata = new Label(Utils.constants.logMetada());
+        generateMetadataListBox();
+
+        detailsTable.setWidget(5, 0, logMetadata);
+        detailsTable.setWidget(5, 1, metadatalistBox);
+
         description = new SizedTextArea(1024);
-        description.setWidth("100%");
+        description.setWidth(FULL_WIDTH);
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
-        detailsTable.setWidget(5, 0, descriptionLabel);
-        detailsTable.setWidget(5, 1, description);
-        detailsTable.getCellFormatter().setVerticalAlignment(5, 0, HasVerticalAlignment.ALIGN_TOP);
+        detailsTable.setWidget(6, 0, descriptionLabel);
+        detailsTable.setWidget(6, 1, description);
+        detailsTable.getCellFormatter().setVerticalAlignment(6, 0, HasVerticalAlignment.ALIGN_TOP);
         description.addInputHandler(this);
 
         Label typeLabel = new Label(Utils.constants.logAppenderType());
         type = new LogTypeListBox();
-        type.setValue(LogAppenderTypeDto.FILE);
+        type.setValue(LogAppenderTypeDto.FILE, true);
         type.setAcceptableValues(Arrays.asList(LogAppenderTypeDto.values()));
         type.setEnabled(create);
         type.addValueChangeHandler(this);
 
-        detailsTable.setWidget(6, 0, typeLabel);
-        detailsTable.setWidget(6, 1, type);
+        detailsTable.setWidget(7, 0, typeLabel);
+        detailsTable.setWidget(7, 1, type);
 
         addHost = new Button(Utils.constants.addHost());
         addHost.addClickHandler(new ClickHandler() {
@@ -165,6 +182,8 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
 
         getFooter().setStyleName("b-app-content-details-table");
         name.setFocus(true);
+
+        showFileCongurationFields();
     }
 
     @Override
@@ -189,13 +208,15 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         description.setValue("");
         createdUsername.setValue("");
         createdDateTime.setValue("");
+        if (metadatalistBox != null) {
+            generateMetadataListBox();
+        }
         if (type != null) {
-            type.setValue(LogAppenderTypeDto.FILE);
+            type.setValue(LogAppenderTypeDto.FILE, true);
         }
         getFooter().clear();
-        if (detailsTable.getRowCount() == FULL_TABLE_SIZE) {
-            // Remove flumeBalancingType from detail table
-            detailsTable.removeRow(FULL_TABLE_SIZE - 1);
+        if(sshKey != null) {
+            sshKey.setValue("");
         }
     }
 
@@ -210,6 +231,9 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
                     result &= isNotBlank(((SizedTextBox) hostTable.getWidget(i, 2)).getValue());
                 }
             }
+        }
+        if (sshKey != null && type != null && LogAppenderTypeDto.FILE.equals(type.getValue())) {
+            result &= isNotBlank(sshKey.getValue());
         }
         return result;
     }
@@ -254,19 +278,8 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         return activate;
     }
 
-    @Override
-    public void onValueChange(ValueChangeEvent<LogAppenderTypeDto> event) {
-        switch (event.getValue()) {
-            case FILE:
-            case MONGO:
-                hideFlumeCongurationFields();
-                fireChanged();
-                break;
-            case FLUME:
-                showFlumeCongurationFields();
-                fireChanged();
-                break;
-        }
+    public ChosenListBox getMetadatalistBox() {
+        return metadatalistBox;
     }
 
     @Override
@@ -277,6 +290,65 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     @Override
     public FlexTable getHostTable() {
         return hostTable;
+    }
+
+    @Override
+    public String getPublicKey() {
+        String key = "";
+        if(sshKey != null) {
+            key = sshKey.getValue();
+        }
+        return key;
+    }
+
+    @Override
+    public void setPublicKey(String publicKey) {
+        if(sshKey != null) {
+            sshKey.setValue(publicKey);
+        }
+    }
+
+    @Override
+    public void onValueChange(ValueChangeEvent<LogAppenderTypeDto> event) {
+        switch (event.getValue()) {
+            case FILE:
+                hideFlumeCongurationFields();
+                showFileCongurationFields();
+                fireChanged();
+                break;
+            case MONGO:
+                hideFlumeCongurationFields();
+                hideFileCongurationFields();
+                fireChanged();
+                break;
+            case FLUME:
+                hideFileCongurationFields();
+                showFlumeCongurationFields();
+                fireChanged();
+                break;
+        }
+    }
+
+    @Override
+    public void showFileCongurationFields() {
+        publicKeyLabel = new Label(Utils.constants.publicKey());
+        publicKeyLabel.addStyleName(REQUIRED);
+        sshKey = new SizedTextBox(1000);
+        sshKey.setWidth(FULL_WIDTH);
+        sshKey.addInputHandler(this);
+        sshKey.setEnabled(create);
+        detailsTable.setWidget(8, 0, publicKeyLabel);
+        detailsTable.setWidget(8, 1, sshKey);
+    }
+
+    @Override
+    public void hideFileCongurationFields() {
+        if (publicKeyLabel != null) {
+            detailsTable.remove(publicKeyLabel);
+        }
+        if (sshKey != null) {
+            detailsTable.remove(sshKey);
+        }
     }
 
     @Override
@@ -345,16 +417,16 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
             });
         }
         flumeBalancingType.setEnabled(isCreate);
-        detailsTable.setWidget(7, 0, typeBalancingLabel);
-        detailsTable.setWidget(7, 1, flumeBalancingType);
+        detailsTable.setWidget(8, 0, typeBalancingLabel);
+        detailsTable.setWidget(8, 1, flumeBalancingType);
     }
 
     private void hideFlumeCongurationFields() {
         if (typeBalancingLabel != null) {
-            typeBalancingLabel.setVisible(false);
+            detailsTable.remove(typeBalancingLabel);
         }
         if (flumeBalancingType != null) {
-            flumeBalancingType.setVisible(false);
+            detailsTable.remove(flumeBalancingType);
         }
         getFooter().clear();
     }
@@ -390,5 +462,52 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
             textBox.setValue(value);
         }
         return textBox;
+    }
+
+    private void generateMetadataListBox() {
+        if (metadatalistBox != null) {
+            metadatalistBox.clear();
+        } else {
+            metadatalistBox = new ChosenListBox(true);
+            metadatalistBox.addChosenChangeHandler(this);
+        }
+        metadatalistBox.setPixelSize(300, 30);
+        metadatalistBox.setPlaceholderText("Select metadata components");
+        metadatalistBox.addItem(LogHeaderStructureDto.KEYHASH.getValue());
+        metadatalistBox.addItem(LogHeaderStructureDto.TIMESTAMP.getValue());
+        metadatalistBox.addItem(LogHeaderStructureDto.TOKEN.getValue());
+        metadatalistBox.addItem(LogHeaderStructureDto.VERSION.getValue());
+    }
+
+    public void setMetadataListBox(List<LogHeaderStructureDto> header) {
+        if (header != null) {
+            for (LogHeaderStructureDto field : header) {
+                metadatalistBox.setSelectedValue(field.getValue());
+            }
+        }
+    }
+
+    public List<LogHeaderStructureDto> getHeader() {
+        List<LogHeaderStructureDto> header = Collections.emptyList();
+        if (metadatalistBox != null) {
+            String[] selected = metadatalistBox.getValues();
+            if (selected != null && selected.length != 0) {
+                header = new ArrayList<>();
+                for (String field : selected) {
+                    for (LogHeaderStructureDto value : LogHeaderStructureDto.values()) {
+                        if (value.getValue().equalsIgnoreCase(field)) {
+                            header.add(value);
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        return header;
+    }
+
+    @Override
+    public void onChange(ChosenChangeEvent event) {
+        fireChanged();
     }
 }

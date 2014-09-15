@@ -77,14 +77,14 @@ public class ApplicationActivity
             detailsView.getApplicationToken().setValue(entity.getApplicationToken());
         }
         detailsView.getApplicationName().setValue(entity.getName());
-        detailsView.getApplicationKey().setValue(entity.getPublicKey());
+//        detailsView.getApplicationKey().setValue(entity.getPublicKey());
 
     }
 
     @Override
     protected void onSave() {
         entity.setName(detailsView.getApplicationName().getValue());
-        entity.setPublicKey(detailsView.getApplicationKey().getValue());
+//        entity.setPublicKey(detailsView.getApplicationKey().getValue());
     }
 
     @Override

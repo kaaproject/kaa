@@ -33,47 +33,49 @@ BOOST_AUTO_TEST_SUITE(AbstractServerInfoTestSuite)
 BOOST_AUTO_TEST_CASE(BadServerInfoTest)
 {
     /* Bad host */
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>("", 55, "encoded_public_key"), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "", 55, "encoded_public_key"), KaaException);
 
     /* Bad port */
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>("host", -1, "encoded_public_key"), KaaException);
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>("host", USHRT_MAX + 1, "encoded_public_key"), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host", -1, "encoded_public_key"), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host", USHRT_MAX + 1, "encoded_public_key"), KaaException);
 
     /* Bad encoded public key */
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>("host", 443, ""), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host", 443, ""), KaaException);
 
     /* Bad host/port */
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>("host", ""), KaaException);
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>("host:dsfds", ""), KaaException);
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>("host:4546546", ""), KaaException);
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(":", ""), KaaException);
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(":55", ""), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host", ""), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host:dsfds", ""), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host:4546546", ""), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, ":", ""), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, ":55", ""), KaaException);
 
     Botan::MemoryVector<boost::uint8_t> emptyDecodedKey;
-    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>("host", 55, emptyDecodedKey), KaaException);
+    BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host", 55, emptyDecodedKey), KaaException);
 }
 
 BOOST_AUTO_TEST_CASE(CheckServerInfoTest)
 {
-    const ChannelType type = HTTP_LP;
+    const ChannelType channelType = HTTP_LP;
+    const ServerType serverType = ServerType::OPERATIONS;
     std::string host = "superhost.com";
     boost::int32_t port = 7955;
     std::string encodedPublicKey = "rfewjkvalcxkjczxjvjfdlsfa";
     auto decodedPubKey = Botan::base64_decode(encodedPublicKey);
 
-    AbstractServerInfo<type> info1(host, port, encodedPublicKey);
+    AbstractServerInfo<channelType> info1(serverType, host, port, encodedPublicKey);
 
-    BOOST_CHECK(info1.getType() == type);
+    BOOST_CHECK(info1.getChannelType() == channelType);
+    BOOST_CHECK(info1.getServerType() == serverType);
     BOOST_CHECK(info1.getHost() == host);
     BOOST_CHECK(info1.getPort() == port);
     BOOST_CHECK(info1.getPublicKey() == decodedPubKey);
 
-    AbstractServerInfo<type> info2(host, port, decodedPubKey);
+    AbstractServerInfo<channelType> info2(serverType, host, port, decodedPubKey);
     BOOST_CHECK(info2.getPublicKey() == decodedPubKey);
 
     std::ostringstream ss;
     ss << host << ":" << port;
-    AbstractServerInfo<type> info3(ss.str(), encodedPublicKey);
+    AbstractServerInfo<channelType> info3(serverType, ss.str(), encodedPublicKey);
 
     BOOST_CHECK(info3.getHost() == host);
     BOOST_CHECK(info3.getPort() == port);

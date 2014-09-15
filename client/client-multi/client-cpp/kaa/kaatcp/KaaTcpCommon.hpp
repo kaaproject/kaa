@@ -52,8 +52,6 @@ public:
     static const char * const KAA_TCP_NAME;
     static const boost::uint16_t KAA_TCP_NAME_LENGTH = 6;
 
-    static boost::uint32_t getMultiplier(boost::uint32_t length);
-
     static boost::uint8_t createBasicHeader(boost::uint8_t messageType, boost::uint32_t length, char *message);
 
 };

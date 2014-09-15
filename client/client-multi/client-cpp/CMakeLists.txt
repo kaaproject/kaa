@@ -68,12 +68,12 @@ set (KAA_SOURCE_FILES
         impl/configuration/ConfigurationTransport.cpp
         impl/configuration/manager/ConfigurationManager.cpp
         impl/configuration/manager/Strategies.cpp
-        impl/configuration/storage/ConfigurationPersistanceManager.cpp
+        impl/configuration/storage/ConfigurationPersistenceManager.cpp
         impl/configuration/delta/DeltaHandlerId.cpp
         impl/configuration/delta/DefaultDeltaManager.cpp
         impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
         impl/schema/SchemaProcessor.cpp
-        impl/schema/storage/SchemaPersistanceManager.cpp
+        impl/schema/storage/SchemaPersistenceManager.cpp
         impl/notification/NotificationManager.cpp
         impl/notification/NotificationTransport.cpp
         impl/event/registration/EndpointRegistrationManager.cpp
@@ -98,6 +98,7 @@ set (KAA_SOURCE_FILES
         impl/kaatcp/ConnackMessage.cpp
         impl/kaatcp/KaaSyncResponse.cpp
         impl/kaatcp/KaaTcpResponseProcessor.cpp
+        impl/channel/connectivity/PingConnectivityChecker.cpp
     )
 
 add_library(kaacpp_o OBJECT ${KAA_SOURCE_FILES})

@@ -32,9 +32,10 @@ public final class NettySessionInfo {
     private final EndpointObjectHash key;
     private final String applicationToken;
     private final int keepAlive;
+    private final boolean isEncrypted;
 
     public NettySessionInfo(UUID uuid, ChannelHandlerContext ctx, ChannelType channelType, SecretKey sessionKey, EndpointObjectHash key,
-            String applicationToken, int keepAlive) {
+            String applicationToken, int keepAlive, boolean isEncrypted) {
         super();
         this.uuid = uuid;
         this.ctx = ctx;
@@ -43,6 +44,7 @@ public final class NettySessionInfo {
         this.key = key;
         this.applicationToken = applicationToken;
         this.keepAlive = keepAlive;
+        this.isEncrypted = isEncrypted;
     }
 
     public UUID getUuid() {
@@ -71,6 +73,10 @@ public final class NettySessionInfo {
 
     public int getKeepAlive() {
         return keepAlive;
+    }
+
+    public boolean isEncrypted() {
+        return isEncrypted;
     }
 
     @Override

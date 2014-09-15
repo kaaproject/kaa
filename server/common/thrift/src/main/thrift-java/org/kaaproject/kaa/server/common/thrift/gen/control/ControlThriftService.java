@@ -323,6 +323,10 @@ public class ControlThriftService {
 
     public void deleteLogAppender(String logAppenderId) throws ControlThriftException, org.apache.thrift.TException;
 
+    public FileData generateRecordStructureLibrary(String applicationId, int logSchemaVersion) throws ControlThriftException, org.apache.thrift.TException;
+
+    public FileData getRecordStructureSchema(String applicationId, int logSchemaVersion) throws ControlThriftException, org.apache.thrift.TException;
+
   }
 
   public interface AsyncIface extends org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService .AsyncIface {
@@ -516,6 +520,10 @@ public class ControlThriftService {
     public void unregisterLogAppender(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void deleteLogAppender(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void generateRecordStructureLibrary(String applicationId, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void getRecordStructureSchema(String applicationId, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -2995,6 +3003,60 @@ public class ControlThriftService {
         throw result.ControlException;
       }
       return;
+    }
+
+    public FileData generateRecordStructureLibrary(String applicationId, int logSchemaVersion) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_generateRecordStructureLibrary(applicationId, logSchemaVersion);
+      return recv_generateRecordStructureLibrary();
+    }
+
+    public void send_generateRecordStructureLibrary(String applicationId, int logSchemaVersion) throws org.apache.thrift.TException
+    {
+      generateRecordStructureLibrary_args args = new generateRecordStructureLibrary_args();
+      args.setApplicationId(applicationId);
+      args.setLogSchemaVersion(logSchemaVersion);
+      sendBase("generateRecordStructureLibrary", args);
+    }
+
+    public FileData recv_generateRecordStructureLibrary() throws ControlThriftException, org.apache.thrift.TException
+    {
+      generateRecordStructureLibrary_result result = new generateRecordStructureLibrary_result();
+      receiveBase(result, "generateRecordStructureLibrary");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "generateRecordStructureLibrary failed: unknown result");
+    }
+
+    public FileData getRecordStructureSchema(String applicationId, int logSchemaVersion) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_getRecordStructureSchema(applicationId, logSchemaVersion);
+      return recv_getRecordStructureSchema();
+    }
+
+    public void send_getRecordStructureSchema(String applicationId, int logSchemaVersion) throws org.apache.thrift.TException
+    {
+      getRecordStructureSchema_args args = new getRecordStructureSchema_args();
+      args.setApplicationId(applicationId);
+      args.setLogSchemaVersion(logSchemaVersion);
+      sendBase("getRecordStructureSchema", args);
+    }
+
+    public FileData recv_getRecordStructureSchema() throws ControlThriftException, org.apache.thrift.TException
+    {
+      getRecordStructureSchema_result result = new getRecordStructureSchema_result();
+      receiveBase(result, "getRecordStructureSchema");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getRecordStructureSchema failed: unknown result");
     }
 
   }
@@ -6127,6 +6189,76 @@ public class ControlThriftService {
       }
     }
 
+    public void generateRecordStructureLibrary(String applicationId, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      generateRecordStructureLibrary_call method_call = new generateRecordStructureLibrary_call(applicationId, logSchemaVersion, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class generateRecordStructureLibrary_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String applicationId;
+      private int logSchemaVersion;
+      public generateRecordStructureLibrary_call(String applicationId, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.applicationId = applicationId;
+        this.logSchemaVersion = logSchemaVersion;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("generateRecordStructureLibrary", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        generateRecordStructureLibrary_args args = new generateRecordStructureLibrary_args();
+        args.setApplicationId(applicationId);
+        args.setLogSchemaVersion(logSchemaVersion);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public FileData getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_generateRecordStructureLibrary();
+      }
+    }
+
+    public void getRecordStructureSchema(String applicationId, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      getRecordStructureSchema_call method_call = new getRecordStructureSchema_call(applicationId, logSchemaVersion, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class getRecordStructureSchema_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String applicationId;
+      private int logSchemaVersion;
+      public getRecordStructureSchema_call(String applicationId, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.applicationId = applicationId;
+        this.logSchemaVersion = logSchemaVersion;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getRecordStructureSchema", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        getRecordStructureSchema_args args = new getRecordStructureSchema_args();
+        args.setApplicationId(applicationId);
+        args.setLogSchemaVersion(logSchemaVersion);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public FileData getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_getRecordStructureSchema();
+      }
+    }
+
   }
 
   public static class Processor<I extends Iface> extends org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService.Processor<I> implements org.apache.thrift.TProcessor {
@@ -6235,6 +6367,8 @@ public class ControlThriftService {
       processMap.put("registerLogAppender", new registerLogAppender());
       processMap.put("unregisterLogAppender", new unregisterLogAppender());
       processMap.put("deleteLogAppender", new deleteLogAppender());
+      processMap.put("generateRecordStructureLibrary", new generateRecordStructureLibrary());
+      processMap.put("getRecordStructureSchema", new getRecordStructureSchema());
       return processMap;
     }
 
@@ -8518,6 +8652,54 @@ public class ControlThriftService {
       }
     }
 
+    public static class generateRecordStructureLibrary<I extends Iface> extends org.apache.thrift.ProcessFunction<I, generateRecordStructureLibrary_args> {
+      public generateRecordStructureLibrary() {
+        super("generateRecordStructureLibrary");
+      }
+
+      public generateRecordStructureLibrary_args getEmptyArgsInstance() {
+        return new generateRecordStructureLibrary_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public generateRecordStructureLibrary_result getResult(I iface, generateRecordStructureLibrary_args args) throws org.apache.thrift.TException {
+        generateRecordStructureLibrary_result result = new generateRecordStructureLibrary_result();
+        try {
+          result.success = iface.generateRecordStructureLibrary(args.applicationId, args.logSchemaVersion);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
+    public static class getRecordStructureSchema<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getRecordStructureSchema_args> {
+      public getRecordStructureSchema() {
+        super("getRecordStructureSchema");
+      }
+
+      public getRecordStructureSchema_args getEmptyArgsInstance() {
+        return new getRecordStructureSchema_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public getRecordStructureSchema_result getResult(I iface, getRecordStructureSchema_args args) throws org.apache.thrift.TException {
+        getRecordStructureSchema_result result = new getRecordStructureSchema_result();
+        try {
+          result.success = iface.getRecordStructureSchema(args.applicationId, args.logSchemaVersion);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
   }
 
   public static class AsyncProcessor<I extends AsyncIface> extends org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService.AsyncProcessor<I> {
@@ -8626,6 +8808,8 @@ public class ControlThriftService {
       processMap.put("registerLogAppender", new registerLogAppender());
       processMap.put("unregisterLogAppender", new unregisterLogAppender());
       processMap.put("deleteLogAppender", new deleteLogAppender());
+      processMap.put("generateRecordStructureLibrary", new generateRecordStructureLibrary());
+      processMap.put("getRecordStructureSchema", new getRecordStructureSchema());
       return processMap;
     }
 
@@ -14029,6 +14213,120 @@ public class ControlThriftService {
 
       public void start(I iface, deleteLogAppender_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
         iface.deleteLogAppender(args.logAppenderId,resultHandler);
+      }
+    }
+
+    public static class generateRecordStructureLibrary<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, generateRecordStructureLibrary_args, FileData> {
+      public generateRecordStructureLibrary() {
+        super("generateRecordStructureLibrary");
+      }
+
+      public generateRecordStructureLibrary_args getEmptyArgsInstance() {
+        return new generateRecordStructureLibrary_args();
+      }
+
+      public AsyncMethodCallback<FileData> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<FileData>() { 
+          public void onComplete(FileData o) {
+            generateRecordStructureLibrary_result result = new generateRecordStructureLibrary_result();
+            result.success = o;
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            generateRecordStructureLibrary_result result = new generateRecordStructureLibrary_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, generateRecordStructureLibrary_args args, org.apache.thrift.async.AsyncMethodCallback<FileData> resultHandler) throws TException {
+        iface.generateRecordStructureLibrary(args.applicationId, args.logSchemaVersion,resultHandler);
+      }
+    }
+
+    public static class getRecordStructureSchema<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getRecordStructureSchema_args, FileData> {
+      public getRecordStructureSchema() {
+        super("getRecordStructureSchema");
+      }
+
+      public getRecordStructureSchema_args getEmptyArgsInstance() {
+        return new getRecordStructureSchema_args();
+      }
+
+      public AsyncMethodCallback<FileData> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<FileData>() { 
+          public void onComplete(FileData o) {
+            getRecordStructureSchema_result result = new getRecordStructureSchema_result();
+            result.success = o;
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            getRecordStructureSchema_result result = new getRecordStructureSchema_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, getRecordStructureSchema_args args, org.apache.thrift.async.AsyncMethodCallback<FileData> resultHandler) throws TException {
+        iface.getRecordStructureSchema(args.applicationId, args.logSchemaVersion,resultHandler);
       }
     }
 
@@ -95930,6 +96228,1880 @@ public class ControlThriftService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class generateRecordStructureLibrary_args implements org.apache.thrift.TBase<generateRecordStructureLibrary_args, generateRecordStructureLibrary_args._Fields>, java.io.Serializable, Cloneable, Comparable<generateRecordStructureLibrary_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("generateRecordStructureLibrary_args");
+
+    private static final org.apache.thrift.protocol.TField APPLICATION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("applicationId", org.apache.thrift.protocol.TType.STRING, (short)1);
+    private static final org.apache.thrift.protocol.TField LOG_SCHEMA_VERSION_FIELD_DESC = new org.apache.thrift.protocol.TField("logSchemaVersion", org.apache.thrift.protocol.TType.I32, (short)2);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new generateRecordStructureLibrary_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new generateRecordStructureLibrary_argsTupleSchemeFactory());
+    }
+
+    public String applicationId; // required
+    public int logSchemaVersion; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      APPLICATION_ID((short)1, "applicationId"),
+      LOG_SCHEMA_VERSION((short)2, "logSchemaVersion");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // APPLICATION_ID
+            return APPLICATION_ID;
+          case 2: // LOG_SCHEMA_VERSION
+            return LOG_SCHEMA_VERSION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __LOGSCHEMAVERSION_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.APPLICATION_ID, new org.apache.thrift.meta_data.FieldMetaData("applicationId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
+      tmpMap.put(_Fields.LOG_SCHEMA_VERSION, new org.apache.thrift.meta_data.FieldMetaData("logSchemaVersion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32          , "Integer")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(generateRecordStructureLibrary_args.class, metaDataMap);
+    }
+
+    public generateRecordStructureLibrary_args() {
+    }
+
+    public generateRecordStructureLibrary_args(
+      String applicationId,
+      int logSchemaVersion)
+    {
+      this();
+      this.applicationId = applicationId;
+      this.logSchemaVersion = logSchemaVersion;
+      setLogSchemaVersionIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public generateRecordStructureLibrary_args(generateRecordStructureLibrary_args other) {
+      __isset_bitfield = other.__isset_bitfield;
+      if (other.isSetApplicationId()) {
+        this.applicationId = other.applicationId;
+      }
+      this.logSchemaVersion = other.logSchemaVersion;
+    }
+
+    public generateRecordStructureLibrary_args deepCopy() {
+      return new generateRecordStructureLibrary_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.applicationId = null;
+      setLogSchemaVersionIsSet(false);
+      this.logSchemaVersion = 0;
+    }
+
+    public String getApplicationId() {
+      return this.applicationId;
+    }
+
+    public generateRecordStructureLibrary_args setApplicationId(String applicationId) {
+      this.applicationId = applicationId;
+      return this;
+    }
+
+    public void unsetApplicationId() {
+      this.applicationId = null;
+    }
+
+    /** Returns true if field applicationId is set (has been assigned a value) and false otherwise */
+    public boolean isSetApplicationId() {
+      return this.applicationId != null;
+    }
+
+    public void setApplicationIdIsSet(boolean value) {
+      if (!value) {
+        this.applicationId = null;
+      }
+    }
+
+    public int getLogSchemaVersion() {
+      return this.logSchemaVersion;
+    }
+
+    public generateRecordStructureLibrary_args setLogSchemaVersion(int logSchemaVersion) {
+      this.logSchemaVersion = logSchemaVersion;
+      setLogSchemaVersionIsSet(true);
+      return this;
+    }
+
+    public void unsetLogSchemaVersion() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LOGSCHEMAVERSION_ISSET_ID);
+    }
+
+    /** Returns true if field logSchemaVersion is set (has been assigned a value) and false otherwise */
+    public boolean isSetLogSchemaVersion() {
+      return EncodingUtils.testBit(__isset_bitfield, __LOGSCHEMAVERSION_ISSET_ID);
+    }
+
+    public void setLogSchemaVersionIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LOGSCHEMAVERSION_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case APPLICATION_ID:
+        if (value == null) {
+          unsetApplicationId();
+        } else {
+          setApplicationId((String)value);
+        }
+        break;
+
+      case LOG_SCHEMA_VERSION:
+        if (value == null) {
+          unsetLogSchemaVersion();
+        } else {
+          setLogSchemaVersion((Integer)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case APPLICATION_ID:
+        return getApplicationId();
+
+      case LOG_SCHEMA_VERSION:
+        return Integer.valueOf(getLogSchemaVersion());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case APPLICATION_ID:
+        return isSetApplicationId();
+      case LOG_SCHEMA_VERSION:
+        return isSetLogSchemaVersion();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof generateRecordStructureLibrary_args)
+        return this.equals((generateRecordStructureLibrary_args)that);
+      return false;
+    }
+
+    public boolean equals(generateRecordStructureLibrary_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_applicationId = true && this.isSetApplicationId();
+      boolean that_present_applicationId = true && that.isSetApplicationId();
+      if (this_present_applicationId || that_present_applicationId) {
+        if (!(this_present_applicationId && that_present_applicationId))
+          return false;
+        if (!this.applicationId.equals(that.applicationId))
+          return false;
+      }
+
+      boolean this_present_logSchemaVersion = true;
+      boolean that_present_logSchemaVersion = true;
+      if (this_present_logSchemaVersion || that_present_logSchemaVersion) {
+        if (!(this_present_logSchemaVersion && that_present_logSchemaVersion))
+          return false;
+        if (this.logSchemaVersion != that.logSchemaVersion)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_applicationId = true && (isSetApplicationId());
+      builder.append(present_applicationId);
+      if (present_applicationId)
+        builder.append(applicationId);
+
+      boolean present_logSchemaVersion = true;
+      builder.append(present_logSchemaVersion);
+      if (present_logSchemaVersion)
+        builder.append(logSchemaVersion);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(generateRecordStructureLibrary_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetApplicationId()).compareTo(other.isSetApplicationId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetApplicationId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.applicationId, other.applicationId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetLogSchemaVersion()).compareTo(other.isSetLogSchemaVersion());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetLogSchemaVersion()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.logSchemaVersion, other.logSchemaVersion);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("generateRecordStructureLibrary_args(");
+      boolean first = true;
+
+      sb.append("applicationId:");
+      if (this.applicationId == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.applicationId);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("logSchemaVersion:");
+      sb.append(this.logSchemaVersion);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class generateRecordStructureLibrary_argsStandardSchemeFactory implements SchemeFactory {
+      public generateRecordStructureLibrary_argsStandardScheme getScheme() {
+        return new generateRecordStructureLibrary_argsStandardScheme();
+      }
+    }
+
+    private static class generateRecordStructureLibrary_argsStandardScheme extends StandardScheme<generateRecordStructureLibrary_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, generateRecordStructureLibrary_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // APPLICATION_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.applicationId = iprot.readString();
+                struct.setApplicationIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // LOG_SCHEMA_VERSION
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.logSchemaVersion = iprot.readI32();
+                struct.setLogSchemaVersionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, generateRecordStructureLibrary_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.applicationId != null) {
+          oprot.writeFieldBegin(APPLICATION_ID_FIELD_DESC);
+          oprot.writeString(struct.applicationId);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldBegin(LOG_SCHEMA_VERSION_FIELD_DESC);
+        oprot.writeI32(struct.logSchemaVersion);
+        oprot.writeFieldEnd();
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class generateRecordStructureLibrary_argsTupleSchemeFactory implements SchemeFactory {
+      public generateRecordStructureLibrary_argsTupleScheme getScheme() {
+        return new generateRecordStructureLibrary_argsTupleScheme();
+      }
+    }
+
+    private static class generateRecordStructureLibrary_argsTupleScheme extends TupleScheme<generateRecordStructureLibrary_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, generateRecordStructureLibrary_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetApplicationId()) {
+          optionals.set(0);
+        }
+        if (struct.isSetLogSchemaVersion()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetApplicationId()) {
+          oprot.writeString(struct.applicationId);
+        }
+        if (struct.isSetLogSchemaVersion()) {
+          oprot.writeI32(struct.logSchemaVersion);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, generateRecordStructureLibrary_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.applicationId = iprot.readString();
+          struct.setApplicationIdIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.logSchemaVersion = iprot.readI32();
+          struct.setLogSchemaVersionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class generateRecordStructureLibrary_result implements org.apache.thrift.TBase<generateRecordStructureLibrary_result, generateRecordStructureLibrary_result._Fields>, java.io.Serializable, Cloneable, Comparable<generateRecordStructureLibrary_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("generateRecordStructureLibrary_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new generateRecordStructureLibrary_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new generateRecordStructureLibrary_resultTupleSchemeFactory());
+    }
+
+    public FileData success; // required
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, FileData.class)));
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(generateRecordStructureLibrary_result.class, metaDataMap);
+    }
+
+    public generateRecordStructureLibrary_result() {
+    }
+
+    public generateRecordStructureLibrary_result(
+      FileData success,
+      ControlThriftException ControlException)
+    {
+      this();
+      this.success = success;
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public generateRecordStructureLibrary_result(generateRecordStructureLibrary_result other) {
+      if (other.isSetSuccess()) {
+        this.success = new FileData(other.success);
+      }
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public generateRecordStructureLibrary_result deepCopy() {
+      return new generateRecordStructureLibrary_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+      this.ControlException = null;
+    }
+
+    public FileData getSuccess() {
+      return this.success;
+    }
+
+    public generateRecordStructureLibrary_result setSuccess(FileData success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public generateRecordStructureLibrary_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((FileData)value);
+        }
+        break;
+
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof generateRecordStructureLibrary_result)
+        return this.equals((generateRecordStructureLibrary_result)that);
+      return false;
+    }
+
+    public boolean equals(generateRecordStructureLibrary_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_success = true && (isSetSuccess());
+      builder.append(present_success);
+      if (present_success)
+        builder.append(success);
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(generateRecordStructureLibrary_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("generateRecordStructureLibrary_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+      if (success != null) {
+        success.validate();
+      }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class generateRecordStructureLibrary_resultStandardSchemeFactory implements SchemeFactory {
+      public generateRecordStructureLibrary_resultStandardScheme getScheme() {
+        return new generateRecordStructureLibrary_resultStandardScheme();
+      }
+    }
+
+    private static class generateRecordStructureLibrary_resultStandardScheme extends StandardScheme<generateRecordStructureLibrary_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, generateRecordStructureLibrary_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.success = new FileData();
+                struct.success.read(iprot);
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, generateRecordStructureLibrary_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.success != null) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          struct.success.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class generateRecordStructureLibrary_resultTupleSchemeFactory implements SchemeFactory {
+      public generateRecordStructureLibrary_resultTupleScheme getScheme() {
+        return new generateRecordStructureLibrary_resultTupleScheme();
+      }
+    }
+
+    private static class generateRecordStructureLibrary_resultTupleScheme extends TupleScheme<generateRecordStructureLibrary_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, generateRecordStructureLibrary_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetControlException()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          struct.success.write(oprot);
+        }
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, generateRecordStructureLibrary_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.success = new FileData();
+          struct.success.read(iprot);
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getRecordStructureSchema_args implements org.apache.thrift.TBase<getRecordStructureSchema_args, getRecordStructureSchema_args._Fields>, java.io.Serializable, Cloneable, Comparable<getRecordStructureSchema_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getRecordStructureSchema_args");
+
+    private static final org.apache.thrift.protocol.TField APPLICATION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("applicationId", org.apache.thrift.protocol.TType.STRING, (short)1);
+    private static final org.apache.thrift.protocol.TField LOG_SCHEMA_VERSION_FIELD_DESC = new org.apache.thrift.protocol.TField("logSchemaVersion", org.apache.thrift.protocol.TType.I32, (short)2);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getRecordStructureSchema_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getRecordStructureSchema_argsTupleSchemeFactory());
+    }
+
+    public String applicationId; // required
+    public int logSchemaVersion; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      APPLICATION_ID((short)1, "applicationId"),
+      LOG_SCHEMA_VERSION((short)2, "logSchemaVersion");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // APPLICATION_ID
+            return APPLICATION_ID;
+          case 2: // LOG_SCHEMA_VERSION
+            return LOG_SCHEMA_VERSION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __LOGSCHEMAVERSION_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.APPLICATION_ID, new org.apache.thrift.meta_data.FieldMetaData("applicationId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
+      tmpMap.put(_Fields.LOG_SCHEMA_VERSION, new org.apache.thrift.meta_data.FieldMetaData("logSchemaVersion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32          , "Integer")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getRecordStructureSchema_args.class, metaDataMap);
+    }
+
+    public getRecordStructureSchema_args() {
+    }
+
+    public getRecordStructureSchema_args(
+      String applicationId,
+      int logSchemaVersion)
+    {
+      this();
+      this.applicationId = applicationId;
+      this.logSchemaVersion = logSchemaVersion;
+      setLogSchemaVersionIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getRecordStructureSchema_args(getRecordStructureSchema_args other) {
+      __isset_bitfield = other.__isset_bitfield;
+      if (other.isSetApplicationId()) {
+        this.applicationId = other.applicationId;
+      }
+      this.logSchemaVersion = other.logSchemaVersion;
+    }
+
+    public getRecordStructureSchema_args deepCopy() {
+      return new getRecordStructureSchema_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.applicationId = null;
+      setLogSchemaVersionIsSet(false);
+      this.logSchemaVersion = 0;
+    }
+
+    public String getApplicationId() {
+      return this.applicationId;
+    }
+
+    public getRecordStructureSchema_args setApplicationId(String applicationId) {
+      this.applicationId = applicationId;
+      return this;
+    }
+
+    public void unsetApplicationId() {
+      this.applicationId = null;
+    }
+
+    /** Returns true if field applicationId is set (has been assigned a value) and false otherwise */
+    public boolean isSetApplicationId() {
+      return this.applicationId != null;
+    }
+
+    public void setApplicationIdIsSet(boolean value) {
+      if (!value) {
+        this.applicationId = null;
+      }
+    }
+
+    public int getLogSchemaVersion() {
+      return this.logSchemaVersion;
+    }
+
+    public getRecordStructureSchema_args setLogSchemaVersion(int logSchemaVersion) {
+      this.logSchemaVersion = logSchemaVersion;
+      setLogSchemaVersionIsSet(true);
+      return this;
+    }
+
+    public void unsetLogSchemaVersion() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LOGSCHEMAVERSION_ISSET_ID);
+    }
+
+    /** Returns true if field logSchemaVersion is set (has been assigned a value) and false otherwise */
+    public boolean isSetLogSchemaVersion() {
+      return EncodingUtils.testBit(__isset_bitfield, __LOGSCHEMAVERSION_ISSET_ID);
+    }
+
+    public void setLogSchemaVersionIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LOGSCHEMAVERSION_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case APPLICATION_ID:
+        if (value == null) {
+          unsetApplicationId();
+        } else {
+          setApplicationId((String)value);
+        }
+        break;
+
+      case LOG_SCHEMA_VERSION:
+        if (value == null) {
+          unsetLogSchemaVersion();
+        } else {
+          setLogSchemaVersion((Integer)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case APPLICATION_ID:
+        return getApplicationId();
+
+      case LOG_SCHEMA_VERSION:
+        return Integer.valueOf(getLogSchemaVersion());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case APPLICATION_ID:
+        return isSetApplicationId();
+      case LOG_SCHEMA_VERSION:
+        return isSetLogSchemaVersion();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getRecordStructureSchema_args)
+        return this.equals((getRecordStructureSchema_args)that);
+      return false;
+    }
+
+    public boolean equals(getRecordStructureSchema_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_applicationId = true && this.isSetApplicationId();
+      boolean that_present_applicationId = true && that.isSetApplicationId();
+      if (this_present_applicationId || that_present_applicationId) {
+        if (!(this_present_applicationId && that_present_applicationId))
+          return false;
+        if (!this.applicationId.equals(that.applicationId))
+          return false;
+      }
+
+      boolean this_present_logSchemaVersion = true;
+      boolean that_present_logSchemaVersion = true;
+      if (this_present_logSchemaVersion || that_present_logSchemaVersion) {
+        if (!(this_present_logSchemaVersion && that_present_logSchemaVersion))
+          return false;
+        if (this.logSchemaVersion != that.logSchemaVersion)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_applicationId = true && (isSetApplicationId());
+      builder.append(present_applicationId);
+      if (present_applicationId)
+        builder.append(applicationId);
+
+      boolean present_logSchemaVersion = true;
+      builder.append(present_logSchemaVersion);
+      if (present_logSchemaVersion)
+        builder.append(logSchemaVersion);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(getRecordStructureSchema_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetApplicationId()).compareTo(other.isSetApplicationId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetApplicationId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.applicationId, other.applicationId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetLogSchemaVersion()).compareTo(other.isSetLogSchemaVersion());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetLogSchemaVersion()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.logSchemaVersion, other.logSchemaVersion);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getRecordStructureSchema_args(");
+      boolean first = true;
+
+      sb.append("applicationId:");
+      if (this.applicationId == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.applicationId);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("logSchemaVersion:");
+      sb.append(this.logSchemaVersion);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getRecordStructureSchema_argsStandardSchemeFactory implements SchemeFactory {
+      public getRecordStructureSchema_argsStandardScheme getScheme() {
+        return new getRecordStructureSchema_argsStandardScheme();
+      }
+    }
+
+    private static class getRecordStructureSchema_argsStandardScheme extends StandardScheme<getRecordStructureSchema_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getRecordStructureSchema_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // APPLICATION_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.applicationId = iprot.readString();
+                struct.setApplicationIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // LOG_SCHEMA_VERSION
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.logSchemaVersion = iprot.readI32();
+                struct.setLogSchemaVersionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getRecordStructureSchema_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.applicationId != null) {
+          oprot.writeFieldBegin(APPLICATION_ID_FIELD_DESC);
+          oprot.writeString(struct.applicationId);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldBegin(LOG_SCHEMA_VERSION_FIELD_DESC);
+        oprot.writeI32(struct.logSchemaVersion);
+        oprot.writeFieldEnd();
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getRecordStructureSchema_argsTupleSchemeFactory implements SchemeFactory {
+      public getRecordStructureSchema_argsTupleScheme getScheme() {
+        return new getRecordStructureSchema_argsTupleScheme();
+      }
+    }
+
+    private static class getRecordStructureSchema_argsTupleScheme extends TupleScheme<getRecordStructureSchema_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getRecordStructureSchema_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetApplicationId()) {
+          optionals.set(0);
+        }
+        if (struct.isSetLogSchemaVersion()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetApplicationId()) {
+          oprot.writeString(struct.applicationId);
+        }
+        if (struct.isSetLogSchemaVersion()) {
+          oprot.writeI32(struct.logSchemaVersion);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getRecordStructureSchema_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.applicationId = iprot.readString();
+          struct.setApplicationIdIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.logSchemaVersion = iprot.readI32();
+          struct.setLogSchemaVersionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getRecordStructureSchema_result implements org.apache.thrift.TBase<getRecordStructureSchema_result, getRecordStructureSchema_result._Fields>, java.io.Serializable, Cloneable, Comparable<getRecordStructureSchema_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getRecordStructureSchema_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getRecordStructureSchema_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getRecordStructureSchema_resultTupleSchemeFactory());
+    }
+
+    public FileData success; // required
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, FileData.class)));
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getRecordStructureSchema_result.class, metaDataMap);
+    }
+
+    public getRecordStructureSchema_result() {
+    }
+
+    public getRecordStructureSchema_result(
+      FileData success,
+      ControlThriftException ControlException)
+    {
+      this();
+      this.success = success;
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getRecordStructureSchema_result(getRecordStructureSchema_result other) {
+      if (other.isSetSuccess()) {
+        this.success = new FileData(other.success);
+      }
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public getRecordStructureSchema_result deepCopy() {
+      return new getRecordStructureSchema_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+      this.ControlException = null;
+    }
+
+    public FileData getSuccess() {
+      return this.success;
+    }
+
+    public getRecordStructureSchema_result setSuccess(FileData success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public getRecordStructureSchema_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((FileData)value);
+        }
+        break;
+
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getRecordStructureSchema_result)
+        return this.equals((getRecordStructureSchema_result)that);
+      return false;
+    }
+
+    public boolean equals(getRecordStructureSchema_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_success = true && (isSetSuccess());
+      builder.append(present_success);
+      if (present_success)
+        builder.append(success);
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(getRecordStructureSchema_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getRecordStructureSchema_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+      if (success != null) {
+        success.validate();
+      }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getRecordStructureSchema_resultStandardSchemeFactory implements SchemeFactory {
+      public getRecordStructureSchema_resultStandardScheme getScheme() {
+        return new getRecordStructureSchema_resultStandardScheme();
+      }
+    }
+
+    private static class getRecordStructureSchema_resultStandardScheme extends StandardScheme<getRecordStructureSchema_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getRecordStructureSchema_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.success = new FileData();
+                struct.success.read(iprot);
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getRecordStructureSchema_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.success != null) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          struct.success.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getRecordStructureSchema_resultTupleSchemeFactory implements SchemeFactory {
+      public getRecordStructureSchema_resultTupleScheme getScheme() {
+        return new getRecordStructureSchema_resultTupleScheme();
+      }
+    }
+
+    private static class getRecordStructureSchema_resultTupleScheme extends TupleScheme<getRecordStructureSchema_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getRecordStructureSchema_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetControlException()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          struct.success.write(oprot);
+        }
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getRecordStructureSchema_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.success = new FileData();
+          struct.success.read(iprot);
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
           struct.ControlException = new ControlThriftException();
           struct.ControlException.read(iprot);
           struct.setControlExceptionIsSet(true);

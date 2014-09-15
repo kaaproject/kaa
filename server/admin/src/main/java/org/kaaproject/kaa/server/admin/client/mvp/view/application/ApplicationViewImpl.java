@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.Label;
 public class ApplicationViewImpl extends BaseDetailsViewImpl implements ApplicationView {
 
     private SizedTextBox applicationName;
-    private SizedTextBox applicationKey;
+//    private SizedTextBox applicationKey;
     private SizedTextBox applicationToken;
 
     private Button generateSdkButton;
@@ -68,12 +68,12 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
         applicationName.addInputHandler(this);
         applicationName.setFocus(true);
 
-        applicationKey = new SizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
-        applicationKey.setWidth("100%");
-
-        Label keyLabel = new Label(Utils.constants.publicKey());
-        detailsTable.setWidget(1, 0, keyLabel);
-        detailsTable.setWidget(1, 1, applicationKey);
+//        applicationKey = new SizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
+//        applicationKey.setWidth("100%");
+//
+//        Label keyLabel = new Label(Utils.constants.publicKey());
+//        detailsTable.setWidget(1, 0, keyLabel);
+//        detailsTable.setWidget(1, 1, applicationKey);
 
         if (!create) {
             applicationToken = new SizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
@@ -85,7 +85,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
             detailsTable.setWidget(2, 1, applicationToken);
         }
 
-        applicationKey.addInputHandler(this);
+//        applicationKey.addInputHandler(this);
 
         if (KaaAdmin.isDevMode()) {
             generateSdkButton = new Button(Utils.constants.generate_sdk());
@@ -113,10 +113,10 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
         return generateSdkButton;
     }
 
-    @Override
-    public HasValue<String> getApplicationKey() {
-        return applicationKey;
-    }
+//    @Override
+//    public HasValue<String> getApplicationKey() {
+//        return applicationKey;
+//    }
 
     @Override
     public HasValue<String> getApplicationToken() {

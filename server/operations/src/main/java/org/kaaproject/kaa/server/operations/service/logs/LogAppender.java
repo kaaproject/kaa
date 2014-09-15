@@ -16,55 +16,242 @@
 
 package org.kaaproject.kaa.server.operations.service.logs;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.avro.generic.GenericRecord;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogEventDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The Interface LogAppender.
+ * The Class LogAppender.
  */
-public interface LogAppender {
+public abstract class LogAppender {
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(LogAppender.class);
+
+    /** The Constant LOG_HEADER_VERSION. */
+    private static final int LOG_HEADER_VERSION = 1;
+
+    /** The appender id. */
+    private String appenderId;
+
+    /** The name. */
+    private String name;
+
+    /** The application token. */
+    private String applicationToken;
+
+    /** The header. */
+    private List<LogHeaderStructureDto> header;
+
+    /** The converters. */
+    Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
 
     /**
-     * Set the name of this appender.
-     * @param name the name of this appender
+     * Release any resources allocated within the appender such as file handles, network connections, etc.
      */
-    public void setName(String name);
-
-    /**
-     * Return the name of this appender.
-     * @return the name of this appender
-     */
-    public String getName();
-
-    /**
-     * Gets the id.
-     *
-     * @return the id
-     */
-    public String getAppenderId();
-
-    /**
-     * Set the id of appender.
-     *
-     * @param appenderId the id of this appender
-     */
-    public void setAppenderId(String appenderId);
-
-    /**
-     * Release any resources allocated within the appender such as file
-     * handles, network connections, etc.
-     */
-    public void close();
+    public abstract void close();
 
     /**
      * Log in <code>LogAppender</code> specific way.
+     *
      * @param logEventPack the pack of Log Events
+     * @param header the header
      */
-    public void doAppend(LogEventPack logEventPack);
+    public abstract void doAppend(LogEventPack logEventPack, RecordHeader header);
 
     /**
      * Change parameters of log appender.
      *
      * @param appender the appender
      */
-    void init(LogAppenderDto appender);
+    public abstract void initLogAppender(LogAppenderDto appender);
+
+    /**
+     * Set the name of this appender.
+     *
+     * @param name the name of this appender
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Return the name of this appender.
+     *
+     * @return the name of this appender
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
+    public String getAppenderId() {
+        return appenderId;
+    }
+
+    /**
+     * Set the id of appender.
+     *
+     * @param appenderId the id of this appender
+     */
+    public void setAppenderId(String appenderId) {
+        this.appenderId = appenderId;
+    }
+
+    /**
+     * Gets the application token.
+     *
+     * @return the applicationToken
+     */
+    public String getApplicationToken() {
+        return applicationToken;
+    }
+
+    /**
+     * Sets the application token.
+     *
+     * @param applicationToken the applicationToken to set
+     */
+    public void setApplicationToken(String applicationToken) {
+        this.applicationToken = applicationToken;
+    }
+
+    /**
+     * Gets the header.
+     *
+     * @return the header
+     */
+    public List<LogHeaderStructureDto> getHeader() {
+        return header;
+    }
+
+    /**
+     * Sets the header.
+     *
+     * @param header the new header
+     */
+    public void setHeader(List<LogHeaderStructureDto> header) {
+        this.header = header;
+    }
+
+    /**
+     * Inits the.
+     *
+     * @param appender the appender
+     */
+    public void init(LogAppenderDto appender) {
+        this.header = appender.getHeaderStructure();
+        initLogAppender(appender);
+    }
+
+    /**
+     * Do append.
+     *
+     * @param logEventPack the log event pack
+     */
+    public void doAppend(LogEventPack logEventPack) {
+        if (logEventPack != null) {
+            doAppend(logEventPack, generateHeader(logEventPack));
+        } else {
+            LOG.warn("Can't append log events. LogEventPack object is null.");
+        }
+    }
+
+    /**
+     * Generate log event.
+     *
+     * @param logEventPack the log event pack
+     * @param header the header
+     * @return the list
+     */
+    protected List<LogEventDto> generateLogEvent(LogEventPack logEventPack, RecordHeader header) {
+        LOG.debug("Generate LogEventDto objects from LogEventPack [{}] and header [{}]", logEventPack, header);
+        List<LogEventDto> events = new ArrayList<>(logEventPack.getEvents().size());
+        GenericAvroConverter<GenericRecord> eventConverter = getConverter(logEventPack.getLogSchema().getSchema());
+        GenericAvroConverter<GenericRecord> headerConverter = getConverter(header.getSchema().toString());
+        try {
+            for (LogEvent logEvent : logEventPack.getEvents()) {
+                LOG.debug("Convert log events [{}] to dto objects.", logEvent);
+                if (logEvent == null | logEvent.getLogData() == null) {
+                    continue;
+                }
+                LOG.trace("Avro record converter [{}] with log data [{}]", eventConverter, logEvent.getLogData());
+                GenericRecord decodedLog = eventConverter.decodeBinary(logEvent.getLogData());
+                LOG.trace("Avro header record converter [{}]", headerConverter);
+                String encodedJsonLogHeader = headerConverter.endcodeToJson(header);
+                String encodedJsonLog = eventConverter.endcodeToJson(decodedLog);
+                events.add(new LogEventDto(encodedJsonLogHeader, encodedJsonLog));
+            }
+        } catch (IOException e) {
+            LOG.error("Unexpected IOException while decoding LogEvents", e);
+        }
+        return events;
+    }
+
+    /**
+     * Gets the converter.
+     *
+     * @param schema the schema
+     * @return the converter
+     */
+    private GenericAvroConverter<GenericRecord> getConverter(String schema) {
+        LOG.trace("Get converter for schema [{}]", schema);
+        GenericAvroConverter<GenericRecord> genAvroConverter = converters.get(schema);
+        if (genAvroConverter == null) {
+            LOG.trace("Create new converter for schema [{}]", schema);
+            genAvroConverter = new GenericAvroConverter<GenericRecord>(schema);
+            converters.put(schema, genAvroConverter);
+        }
+        LOG.trace("Get converter [{}] from map.", genAvroConverter);
+        return genAvroConverter;
+    }
+
+    /**
+     * Generate header.
+     *
+     * @param logEventPack the log event pack
+     * @return the log header
+     */
+    private RecordHeader generateHeader(LogEventPack logEventPack) {
+        RecordHeader logHeader = null;
+        if (header != null) {
+            logHeader = new RecordHeader();
+            for (LogHeaderStructureDto field : header) {
+                switch (field) {
+                    case KEYHASH:
+                        logHeader.setEndpointKeyHash(logEventPack.getEndpointKey());
+                        break;
+                    case TIMESTAMP:
+                        logHeader.setTimestamp(System.currentTimeMillis());
+                        break;
+                    case TOKEN:
+                        logHeader.setApplicationToken(applicationToken);
+                        break;
+                    case VERSION:
+                        logHeader.setHeaderVersion(LOG_HEADER_VERSION);
+                        break;
+                    default:
+                        LOG.warn("Current header field [{}] doesn't support", field);
+                        break;
+                }
+            }
+        }
+        return logHeader;
+    }
+
 }

@@ -16,12 +16,25 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.*;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_LOG_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_PROPERTIES;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_STATUS;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TYPE;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -38,6 +51,7 @@ import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.avro.DaoAvroUtil;
 
 @Entity
@@ -69,18 +83,23 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     private LogAppenderTypeDto type;
 
     @Column(name = LOG_APPENDER_DESCRIPTION, length = 1000)
-    protected String description;
+    private String description;
 
     @Column(name = LOG_APPENDER_CREATED_USERNAME)
-    protected String createdUsername;
+    private String createdUsername;
 
     @Column(name = LOG_APPENDER_CREATED_TIME)
-    protected long createdTime;
-
+    private long createdTime;
 
     @Lob
     @Column(name = LOG_APPENDER_PROPERTIES)
     private byte[] properties;
+
+    @ElementCollection(targetClass = LogHeaderStructureDto.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "header_structure")
+    @Column(name = "structure_field", nullable = false)
+    private List<LogHeaderStructureDto> headerStructure;
 
     public LogAppender() {
     }
@@ -98,6 +117,7 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
             this.createdUsername = dto.getCreatedUsername();
             this.createdTime = dto.getCreatedTime();
             this.type = dto.getType();
+            this.headerStructure = dto.getHeaderStructure();
             this.properties = DaoAvroUtil.convertParametersToBytes(dto.getProperties());
         }
     }
@@ -150,6 +170,14 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         this.properties = properties;
     }
 
+    public List<LogHeaderStructureDto> getHeaderStructure() {
+        return headerStructure;
+    }
+
+    public void setHeaderStructure(List<LogHeaderStructureDto> headerStructure) {
+        this.headerStructure = headerStructure;
+    }
+
     @Override
     public LogAppenderDto toDto() {
         LogAppenderDto dto = createDto();
@@ -163,6 +191,7 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         dto.setDescription(description);
         dto.setSchema(new SchemaDto(logSchema.getStringId(), logSchema.getMajorVersion(), logSchema.getMinorVersion()));
         dto.setStatus(status);
+        dto.setHeaderStructure(headerStructure != null ? new ArrayList<>(headerStructure) : new ArrayList<LogHeaderStructureDto>());
         dto.setType(type);
         dto.setProperties(DaoAvroUtil.convertParametersFromBytes(properties));
         return dto;
@@ -173,10 +202,10 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         return new LogAppenderDto();
     }
 
-	@Override
-	public String toString() {
-		return "LogAppender [name=" + name + ", status=" + status + ", type="
-				+ type + ", description=" + description + ", createdUsername="
-				+ createdUsername + ", createdTime=" + createdTime + "]";
-	}
+    @Override
+    public String toString() {
+        return "LogAppender [name=" + name + ", status=" + status + ", type="
+                + type + ", description=" + description + ", createdUsername="
+                + createdUsername + ", createdTime=" + createdTime + "]";
+    }
 }

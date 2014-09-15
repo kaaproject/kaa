@@ -41,6 +41,7 @@ import org.kaaproject.kaa.client.channel.HttpServerInfo;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
@@ -69,6 +70,11 @@ public class DefaultBootstrapManagerTest {
 
         public boolean isServerUpdated() {
             return serverUpdated;
+        }
+
+        @Override
+        public void setConnectivityChecker(ConnectivityChecker checker) {
+
         }
 
         @Override
@@ -122,7 +128,6 @@ public class DefaultBootstrapManagerTest {
         public void clearChannelList() {
 
         }
-
     }
 
     @Test

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.channel;
 
 import java.util.Map;
 
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
@@ -71,6 +72,15 @@ public interface KaaDataChannel {
     ChannelType getType();
 
     /**
+     * Retrieves the channel's server type (i.e. OPERATIONS or BOOTSTRAP).
+     *
+     * @return the channel's server type.
+     * @see ServerType
+     *
+     */
+    ServerType getServerType();
+
+    /**
      * Sets the response demultiplexer for this channel.
      *
      * @param demultiplexer demultiplexer instance to be set.
@@ -96,6 +106,15 @@ public interface KaaDataChannel {
      *
      */
     void setServer(ServerInfo server);
+
+    /**
+     * Sets connectivity checker to the current channel.
+     *
+     * @param checker platform-dependent connectivity checker.
+     * @see ConnectivityChecker
+     *
+     */
+    void setConnectivityChecker(ConnectivityChecker checker);
 
     /**
      * Retrieves the map of transport types and their directions supported by this channel.

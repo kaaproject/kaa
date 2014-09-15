@@ -15,15 +15,15 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.messages.io.request;
 
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 
 public class NettyTcpSyncMessage extends AbstractRequestMessage implements SessionAwareRequest {
 
-    private final KaaSync command;
+    private final SyncRequest command;
     private final NettySessionInfo sessionInfo;
 
-    public NettyTcpSyncMessage(KaaSync command, NettySessionInfo sessionInfo,
+    public NettyTcpSyncMessage(SyncRequest command, NettySessionInfo sessionInfo,
             ResponseBuilder responseConverter, ErrorBuilder errorConverter, SyncStatistics syncStatistics) {
         super(sessionInfo.getUuid(), sessionInfo.getCtx(), sessionInfo.getChannelType(), responseConverter, errorConverter, syncStatistics);
         this.command = command;
@@ -38,6 +38,11 @@ public class NettyTcpSyncMessage extends AbstractRequestMessage implements Sessi
     @Override
     public NettySessionInfo getSessionInfo() {
         return sessionInfo;
+    }
+
+    @Override
+    public boolean isEncrypted() {
+        return command.isEncrypted();
     }
 
     @Override

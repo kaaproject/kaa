@@ -28,10 +28,16 @@ typedef shared.Integer int
 enum SdkPlatform {
   JAVA = 1,
   ANDROID = 2,
-  CPP = 3
+  CPP = 3,
+  C = 4
 }
 
 struct Sdk {
+  1: string fileName
+  2: binary data
+}
+
+struct FileData {
   1: string fileName
   2: binary data
 }
@@ -235,5 +241,6 @@ service ControlThriftService extends cli.CliThriftService{
   data registerLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   data unregisterLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   void deleteLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
-
+  FileData generateRecordStructureLibrary(1: id applicationId, 2: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
+  FileData getRecordStructureSchema(1: id applicationId, 2: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
 }

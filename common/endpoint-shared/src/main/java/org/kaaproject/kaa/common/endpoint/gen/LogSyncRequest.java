@@ -7,7 +7,7 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"logEntries\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"LogEntry\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}},\"null\"]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"logEntries\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"LogEntry\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}],\"direction\":\"out\"}},\"null\"]}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String requestId;
    private java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogEntry> logEntries;

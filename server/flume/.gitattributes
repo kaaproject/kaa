@@ -1,0 +1,6 @@
+src/main/sh/bin/*	eol=lf
+src/deb/control/*	eol=lf
+src/rpm/control/*	eol=lf
+package/conf/conf.sink.template/*   eol=lf
+package/conf/conf.source.template/*   eol=lf
+package/conf/init.d/*		eol=lf

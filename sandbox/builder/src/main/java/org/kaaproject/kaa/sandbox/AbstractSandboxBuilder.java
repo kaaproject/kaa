@@ -116,8 +116,8 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             logger.info("Executing remote ssh commands...");
             executeScheduledSshCommands();
             logger.info("Remote ssh commands execution is completed.");
-            logger.info("Sleeping 20 sec.");
-            Thread.sleep(20000);
+            logger.info("Sleeping 80 sec.");
+            Thread.sleep(80000);
             initBoxData();
             logger.info("Sleeping 20 sec.");
             Thread.sleep(20000);

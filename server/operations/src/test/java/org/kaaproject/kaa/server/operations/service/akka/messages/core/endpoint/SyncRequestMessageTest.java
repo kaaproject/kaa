@@ -36,7 +36,7 @@ public class SyncRequestMessageTest {
     @Test
     public void testIsValid(){
 
-        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), null, ChannelType.HTTP, null, null, "applicationToken", 0);
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), null, ChannelType.HTTP, null, null, "applicationToken", 0, true);
 
         SyncRequest request = new SyncRequest();
         request.setSyncRequestMetaData(new SyncRequestMetaData());

@@ -33,6 +33,7 @@ import org.kaaproject.kaa.client.channel.HttpServerInfo;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
 import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
@@ -79,15 +80,15 @@ public class DefaultBootstrapManager implements BootstrapManager {
         switch(channel.getChannelType()) {
             case HTTP:
                 HttpParameters httpParams = HttpChannel.getHttpParametersFromSupportedChannel(supportedChannel);
-                info = new HttpServerInfo(httpParams.getHostName(), httpParams.getPort(), server.getPublicKey().array());
+                info = new HttpServerInfo(ServerType.OPERATIONS, httpParams.getHostName(), httpParams.getPort(), server.getPublicKey().array());
                 break;
             case HTTP_LP:
                 HttpLongPollParameters longPollParams = HttpLongPollChannel.getHttpLongPollParametersFromSupportedChannel(supportedChannel);
-                info = new HttpLongPollServerInfo(longPollParams.getHostName(), longPollParams.getPort(), server.getPublicKey().array());
+                info = new HttpLongPollServerInfo(ServerType.OPERATIONS, longPollParams.getHostName(), longPollParams.getPort(), server.getPublicKey().array());
                 break;
             case KAATCP:
                 KaaTcpParameters tcpParams = KaaTcpChannel.getKaaTcpParametersFromSupportedChannel(supportedChannel);
-                info = new KaaTcpServerInfo(tcpParams.getHostName(), tcpParams.getPort(), server.getPublicKey().array());
+                info = new KaaTcpServerInfo(ServerType.OPERATIONS, tcpParams.getHostName(), tcpParams.getPort(), server.getPublicKey().array());
                 break;
             default:
                 throw new BootstrapRuntimeException("Invalid type");

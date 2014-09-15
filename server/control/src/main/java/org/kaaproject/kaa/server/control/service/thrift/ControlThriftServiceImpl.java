@@ -23,10 +23,12 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.avro.Schema;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
@@ -74,9 +76,11 @@ import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
+import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -85,12 +89,14 @@ import org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.kaaproject.kaa.server.control.service.ControlService;
+import org.kaaproject.kaa.server.control.service.log.RecordLibraryGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -106,6 +112,8 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
             .getLogger(ControlThriftServiceImpl.class);
+
+    private static final String SCHEMA_NAME_PATTERN = "kaa-record-schema-l{}.avsc";
 
     /** The control service. */
     @Autowired
@@ -934,6 +942,29 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     }
 
     /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#generateRecordStructureLibrary(java.lang.String, int)
+     */
+    @Override
+    public FileData generateRecordStructureLibrary(
+            String applicationId, int logSchemaVersion)
+            throws ControlThriftException, TException {
+        try {
+            ApplicationDto application = applicationService.findAppById(applicationId);
+            if (application == null) {
+                throw new TException("Application not found!");
+            }
+            LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
+            if (logSchema == null) {
+                throw new TException("Log schema not found!");
+            }
+            return RecordLibraryGenerator.generateRecordLibrary(logSchemaVersion, logSchema.getSchema());
+        } catch (Exception e) {
+            LOG.error("Unable to generate Record Structure Library", e);
+            throw new TException(e);
+        }
+    }
+
+    /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface#editNotificationSchema(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)
      */
     /* GUI method */
@@ -1556,4 +1587,34 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         LOG.info("Send notification to operation servers about removing appender.");
         controlZKService.sendEndpointNotification(thriftNotification);
     }
+
+    @Override
+    public FileData getRecordStructureSchema(String applicationId, int logSchemaVersion) throws ControlThriftException, TException {
+
+        try {
+            ApplicationDto application = applicationService.findAppById(applicationId);
+            if (application == null) {
+                throw new TException("Application not found!");
+            }
+            LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
+            if (logSchema == null) {
+                throw new TException("Log schema not found!");
+            }
+
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+            String libraryFileName = MessageFormatter.arrayFormat(SCHEMA_NAME_PATTERN, new Object[] { logSchemaVersion }).getMessage();
+            String schemaInJson = recordWrapperSchema.toString(true);
+            byte[] schemaData = schemaInJson.getBytes(StandardCharsets.UTF_8);
+
+            FileData schema = new FileData();
+            schema.setFileName(libraryFileName);
+            schema.setData(schemaData);
+            return schema;
+
+        } catch (Exception e) {
+            LOG.error("Unable to get Record Structure Schema", e);
+            throw new TException(e);
+        }
+    }
+
 }

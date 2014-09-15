@@ -105,7 +105,7 @@ start() {
 
 stop() {
   if [ ! -e $SERVER_PID_FILE ]; then
-    log_failure_msg "$desc is not running"
+    failure && echo "$desc is not running"
     exit 0
   fi
 

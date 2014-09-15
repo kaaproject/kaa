@@ -16,9 +16,20 @@
 
 set -e
 
-if [ -d /usr/lib/#servername# ]; then
-    rm -rf /usr/lib/#servername#
+if [ "$1" = "1" ]; then
+   if [ -d /usr/lib/#servername# ]; then
+      rm -rf /usr/lib/#servername#
+   fi
+elif [ "$1" = "2" ]; then
+   if [ -x "/etc/init.d/#servername#" ]; then
+       if ! service_loc="$(type -p "service")" || [ -z "$service_loc" ]; then
+	  invoke-rc.d #servername# stop || exit $?
+       else
+	  service #servername# stop || exit $?
+       fi
+   fi
 fi
+
 
 getent group  kaa &>/dev/null || groupadd -r kaa || :
 getent passwd kaa &>/dev/null || useradd  -r -g kaa \

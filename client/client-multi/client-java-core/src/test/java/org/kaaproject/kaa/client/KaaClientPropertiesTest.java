@@ -16,14 +16,17 @@
 
 package org.kaaproject.kaa.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
-import org.kaaproject.kaa.client.channel.BootstrapServerInfo;
+import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
+import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 
@@ -80,10 +83,13 @@ public class KaaClientPropertiesTest {
     public void testGetBootstrapServers() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         KaaClientProperties properties = new KaaClientProperties();
-        List<BootstrapServerInfo> bootstraps = properties.getBootstrapServers();
+        Map<ChannelType, List<ServerInfo>> bootstraps = properties.getBootstrapServers();
         assertEquals(1, bootstraps.size());
-        assertEquals("localhost", bootstraps.get(0).getHost());
-        assertEquals(9889, bootstraps.get(0).getPort());
+
+        KaaTcpServerInfo si = (KaaTcpServerInfo)bootstraps.get(ChannelType.KAATCP).get(0);
+
+        assertEquals("localhost", si.getHost());
+        assertEquals(9889, si.getPort());
     }
 
     @Test

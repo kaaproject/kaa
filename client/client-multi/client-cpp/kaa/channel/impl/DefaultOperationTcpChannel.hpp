@@ -19,7 +19,7 @@
 
 
 #include "kaa/channel/IDataChannel.hpp"
-#include "kaa/channel/server/OperationServerKaaTcpInfo.hpp"
+#include "kaa/channel/server/KaaTcpServerInfo.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
@@ -42,13 +42,21 @@ public:
     virtual void syncAck(TransportType type);
 
     virtual const std::string& getId() const { return CHANNEL_ID; }
-    virtual ChannelType getType() const { return ChannelType::KAATCP; }
+    virtual ChannelType getChannelType() const { return ChannelType::KAATCP; }
 
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer);
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(IServerInfoPtr server);
 
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
+
+    virtual ServerType getServerType() const {
+        return ServerType::OPERATIONS;
+    }
+    
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
+        connectivityChecker_= checker;
+    }
 
     void onReadEvent(const boost::system::error_code& err);
     void onPingTimeout(const boost::system::error_code& err);
@@ -63,7 +71,8 @@ public:
     void onServerFailed();
 
 private:
-    static const boost::uint16_t PING_TIMEOUT = 200;
+    static const boost::uint16_t PING_TIMEOUT;
+    static const boost::uint16_t RECONNECT_TIMEOUT;
 
     boost::system::error_code sendKaaSync(const std::map<TransportType, ChannelDirection>& transportTypes);
     boost::system::error_code sendConnect();
@@ -87,6 +96,7 @@ private:
     boost::asio::io_service::work work_;
     boost::asio::ip::tcp::socket sock_;
     boost::asio::deadline_timer pingTimer_;
+    boost::asio::deadline_timer reconnectTimer_;
     boost::asio::streambuf responseBuffer_;
     boost::thread_group channelThreads_;
 
@@ -104,6 +114,7 @@ private:
 
     boost::mutex channelGuard_;
 
+    ConnectivityCheckerPtr connectivityChecker_;
 };
 
 }

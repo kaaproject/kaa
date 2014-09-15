@@ -16,38 +16,33 @@
 
 package org.kaaproject.kaa.server.common.dao.model.mongo;
 
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 import java.io.Serializable;
+
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 
 @Document
 public final class LogEvent  implements ToDto<LogEventDto>, Serializable {
 
     private static final long serialVersionUID = 5104926263610142098L;
-    
+
     @Id
     private String id;
-    @Indexed
-    @Field("endpoint_key")
-    private String endpointKey;
-    @Field("date_created")
-    private long dateCreated;
+    private DBObject header;
     private DBObject event;
 
     public LogEvent() {
-        
+
     }
 
     public LogEvent(LogEventDto dto) {
         this.id = dto.getId();
-        this.endpointKey = dto.getEndpointKey();
-        this.dateCreated = dto.getDateCreated();
+        this.header = (DBObject) JSON.parse(dto.getHeader());
         this.event = (DBObject) JSON.parse(dto.getEvent());
     }
 
@@ -58,23 +53,7 @@ public final class LogEvent  implements ToDto<LogEventDto>, Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    
-    public String getEndpointKey() {
-        return endpointKey;
-    }
 
-    public void setEndpointKey(String endpointKey) {
-        this.endpointKey = endpointKey;
-    }
-    
-    public long getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(long dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-    
     public DBObject getEvent() {
         return event;
     }
@@ -82,55 +61,24 @@ public final class LogEvent  implements ToDto<LogEventDto>, Serializable {
     public void setEvent(DBObject event) {
         this.event = event;
     }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
 
-        LogEvent that = (LogEvent) o;
-        
-        if (endpointKey != null ? !endpointKey.equals(that.endpointKey) : that.endpointKey != null) {
-            return false;
-        }
-        if (dateCreated != that.dateCreated) {
-            return false;
-        }
-        if (event != null ? !event.equals(that.event) : that.event != null) {
-            return false;
-        }
-        
-        return true;
+    public DBObject getHeader() {
+        return header;
     }
-    
-    @Override
-    public int hashCode() {
-        int result = endpointKey != null ? endpointKey.hashCode() : 0;
-        result = 31 * result + (int) dateCreated;
-        result = 31 * result + (event != null ? event.hashCode() : 0);
-        return result;
+
+    public void setHeader(DBObject header) {
+        this.header = header;
     }
 
     @Override
     public String toString() {
-        return "LogEventPack{" +
-                "id='" + id + '\'' +
-                ", endpointKey='" + endpointKey + '\'' +
-                ", dateCreated='" + dateCreated + '\'' +
-                ", event='" + event +
-                '}';
+        return "LogEvent [id=" + id + ", header=" + header + ", event=" + event + "]";
     }
 
     @Override
     public LogEventDto toDto() {
         LogEventDto dto = new LogEventDto();
         dto.setId(id);
-        dto.setEndpointKey(endpointKey);
-        dto.setDateCreated(dateCreated);
         dto.setEvent(event != null ? event.toString() : null);
         return dto;
     }
