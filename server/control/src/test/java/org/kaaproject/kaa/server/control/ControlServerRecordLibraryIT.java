@@ -30,8 +30,7 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
     /**
      * Test generate record library.
      *
-     * @throws TException
-     *             the t exception
+     * @throws TException the t exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Test
@@ -39,11 +38,42 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
         ApplicationDto application = createApplication();
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        FileData library =
-                client.generateRecordStructureLibrary(application.getId(), logSchema.getMajorVersion());
+        FileData library = client.generateRecordStructureLibrary(application.getId(), logSchema.getMajorVersion());
         Assert.assertNotNull(library);
         Assert.assertFalse(strIsEmpty(library.getFileName()));
         Assert.assertNotNull(library.getData());
     }
 
+    @Test(expected = TException.class)
+    public void testGenerateRecordLibraryWithEmptyApp() throws TException, IOException {
+        client.generateRecordStructureLibrary("0", 0);
+    }
+
+    @Test(expected = TException.class)
+    public void testGenerateRecordLibraryWithEmptyLogSchema() throws TException, IOException {
+        ApplicationDto application = createApplication();
+        client.generateRecordStructureLibrary(application.getId(), 0);
+    }
+
+    @Test
+    public void testGetRecordStructureSchema() throws TException, IOException {
+        ApplicationDto application = createApplication();
+        LogSchemaDto logSchema = createLogSchema(application.getId());
+
+        FileData library = client.getRecordStructureSchema(application.getId(), logSchema.getMajorVersion());
+        Assert.assertNotNull(library);
+        Assert.assertFalse(strIsEmpty(library.getFileName()));
+        Assert.assertNotNull(library.getData());
+    }
+
+    @Test(expected = TException.class)
+    public void testGetRecordStructureSchemaWithEmptyApp() throws TException, IOException {
+        client.getRecordStructureSchema("0", 0);
+    }
+
+    @Test(expected = TException.class)
+    public void testGetRecordStructureSchemaWithEmptyLogSchema() throws TException, IOException {
+        ApplicationDto application = createApplication();
+        client.getRecordStructureSchema(application.getId(), 0);
+    }
 }

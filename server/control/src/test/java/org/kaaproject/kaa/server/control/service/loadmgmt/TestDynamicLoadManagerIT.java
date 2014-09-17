@@ -53,7 +53,11 @@ import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
 import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.slf4j.Logger;
@@ -512,6 +516,17 @@ public class TestDynamicLoadManagerIT {
         ZkHttpStatistics httpChannelStatistics = new ZkHttpStatistics(statistics );
         SupportedChannel channelHttp = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.HTTP, true, httpCommunicationParameters, httpChannelStatistics));
         supportedChannels.add(channelHttp);
+        
+        ZkHttpLpComunicationParameters httpLpCommunicationParameters = new ZkHttpLpComunicationParameters(new IpComunicationParameters("localhost", httpPort+1));
+        ZkHttpLpStatistics httpLpChannelStatistics = new ZkHttpLpStatistics(statistics );
+        SupportedChannel channelHttpLp = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.HTTP_LP, true, httpLpCommunicationParameters, httpLpChannelStatistics));
+        supportedChannels.add(channelHttpLp);
+        
+        ZkKaaTcpComunicationParameters kaaCommunicationParameters = new ZkKaaTcpComunicationParameters(new IpComunicationParameters("localhost", httpPort+2));
+        ZkKaaTcpStatistics kaaChannelStatistics = new ZkKaaTcpStatistics(statistics );
+        SupportedChannel channelKaa = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.KAATCP, true, kaaCommunicationParameters, kaaChannelStatistics));
+        supportedChannels.add(channelKaa);
+        
         nodeInfo.setSupportedChannelsArray(supportedChannels );
         nodeInfo.setConnectionInfo(new ConnectionInfo(thriftHost, thriftPort, publicKey));
         return nodeInfo;
@@ -530,6 +545,19 @@ public class TestDynamicLoadManagerIT {
                 true, 
                 CommunicationParameters, 
                 ChannelStatistics)));
+        
+        ZkKaaTcpComunicationParameters kaaCommunicationParameters = new ZkKaaTcpComunicationParameters(new IpComunicationParameters(host, port+1));
+        ZkKaaTcpStatistics kaaChannelStatistics = new ZkKaaTcpStatistics(new BaseStatistics(
+                Integer.valueOf(0), 
+                Integer.valueOf(0), 
+                Integer.valueOf(0), 
+                Long.valueOf(0)));
+        chList.add(new BootstrapSupportedChannel(new ZkSupportedChannel(
+                ZkChannelType.KAATCP, 
+                true, 
+                kaaCommunicationParameters, 
+                kaaChannelStatistics)));
+        
         return new BootstrapNodeInfo(bsConnectionInfo, chList );
     }
 }
