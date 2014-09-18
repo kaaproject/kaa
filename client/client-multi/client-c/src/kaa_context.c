@@ -21,7 +21,11 @@ kaa_error_t kaa_create_context(kaa_context_t ** context_p)
 {
     int error_c = 0;
     kaa_context_t *context = KAA_MALLOC(kaa_context_t);
-    error_c |= (context == NULL);
+
+    if (!context) {
+        return KAA_ERR_NOMEM;
+    }
+
     error_c |= kaa_create_status(&(context->status));
     error_c |= kaa_create_user_manager(&(context->user_manager));
     error_c |= kaa_create_profile_manager(&(context->profile_manager));
