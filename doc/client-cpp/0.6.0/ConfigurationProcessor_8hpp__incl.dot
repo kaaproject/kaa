@@ -1,0 +1,38 @@
+digraph "/var/lib/jenkins/workspace/kaa_github/client/client-multi/client-cpp/kaa/configuration/ConfigurationProcessor.hpp"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_github/client/client\l-multi/client-cpp/kaa/configuration\l/ConfigurationProcessor.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="boost/cstdint.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="boost/signals2.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="boost/smart_ptr/shared\l_ptr.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="boost/thread/recursive\l_mutex.hpp",height=0.2,width=0.4,color="grey75"];
+  Node1 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="kaa/configuration/IConfiguration\lProcessor.hpp",height=0.2,width=0.4,color="black",URL="$IConfigurationProcessor_8hpp.html"];
+  Node6 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="kaa/configuration/IConfiguration\lProcessedObservable.hpp",height=0.2,width=0.4,color="black",URL="$IConfigurationProcessedObservable_8hpp.html"];
+  Node7 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="kaa/configuration/IConfiguration\lProcessedObserver.hpp",height=0.2,width=0.4,color="black",URL="$IConfigurationProcessedObserver_8hpp.html"];
+  Node8 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="boost/signals2/trackable.hpp",height=0.2,width=0.4,color="grey75"];
+  Node6 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 [label="kaa/configuration/IDecoded\lDeltaObservable.hpp",height=0.2,width=0.4,color="black",URL="$IDecodedDeltaObservable_8hpp.html"];
+  Node10 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 [label="kaa/configuration/IGeneric\lDeltaReceiver.hpp",height=0.2,width=0.4,color="black",URL="$IGenericDeltaReceiver_8hpp.html"];
+  Node11 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 [label="avro/Generic.hh",height=0.2,width=0.4,color="grey75"];
+  Node6 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node13 [label="kaa/schema/ISchemaUpdates\lReceiver.hpp",height=0.2,width=0.4,color="black",URL="$ISchemaUpdatesReceiver_8hpp.html"];
+  Node13 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node13 -> Node14 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node14 [label="avro/ValidSchema.hh",height=0.2,width=0.4,color="grey75"];
+  Node13 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}

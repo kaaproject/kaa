@@ -1,0 +1,20 @@
+digraph "kaa::EmptyDeltaType"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="kaa::EmptyDeltaType",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa::IDeltaType",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IDeltaType.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="kaa::AddedItemsDeltaType",height=0.2,width=0.4,color="black",URL="$classkaa_1_1AddedItemsDeltaType.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="kaa::DefaultDeltaType",height=0.2,width=0.4,color="black",URL="$classkaa_1_1DefaultDeltaType.html"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="kaa::RemovedItemsDeltaType",height=0.2,width=0.4,color="black",URL="$classkaa_1_1RemovedItemsDeltaType.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="kaa::ResetDeltaType",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ResetDeltaType.html"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="kaa::ValueDeltaType",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ValueDeltaType.html"];
+}
