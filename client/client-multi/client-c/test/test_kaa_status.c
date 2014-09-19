@@ -45,13 +45,13 @@ void    kaa_read_status_ext(char **buffer, size_t *buffer_size, int *needs_deall
     *buffer = (char*)calloc(*buffer_size, sizeof(char));
 
     if (*buffer == NULL) {
+        fclose(status_file);
         return;
     }
 
     fseek(status_file, 0, SEEK_SET);
     if (fread(*buffer, *buffer_size, 1, status_file) == 0) {
         free(*buffer);
-        return;
     }
 
     fclose(status_file);
