@@ -26,24 +26,38 @@ extern "C" {
 
 #include "kaa_common.h"
 
+struct kaa_list_t {
+    void *              data;
+    struct kaa_list_t * next;
+};
 typedef struct kaa_list_t kaa_list_t;
+
 
 typedef void (* deallocate_list_data)(void *);
 
 /**
  * Adds new element to the end of the list.
+ *
+ * \retval KAA_ERR_NONE Element was added successfuly
+ * \retval KAA_ERR_NOMEM Not enough memory
  */
-void kaa_list_push_back(kaa_list_t * head, void *data);
+kaa_error_t kaa_list_push_back(kaa_list_t **head, void *data);
 
 /**
- * Adds new element to the begin of the list, returns new list head.
+ * Adds new element to the begin of the list.
+ *
+ * \retval KAA_ERR_NONE Element was added successfuly
+ * \retval KAA_ERR_NOMEM Not enough memory
  */
-kaa_list_t * kaa_list_push_front(kaa_list_t * head, void *data);
+kaa_error_t kaa_list_push_front(kaa_list_t **head, void *data);
 
 /**
  * Returns data on current list position.
  */
-void * kaa_list_get_data(kaa_list_t * position);
+static inline void *kaa_list_get_data(kaa_list_t * position)
+{
+    return (position ? position->data : NULL);
+}
 
 /**
  * Returns size of the list.
@@ -53,12 +67,18 @@ size_t kaa_list_get_size(kaa_list_t * position);
 /**
  * Checks if there is an element after current position.
  */
-KAA_BOOL kaa_list_has_next(kaa_list_t * position);
+static inline KAA_BOOL kaa_list_has_next(kaa_list_t * position)
+{
+    return (position && (NULL != position->next));
+}
 
 /**
  * Returns next element.
  */
-kaa_list_t *kaa_list_next(kaa_list_t * position);
+static inline kaa_list_t *kaa_list_next(kaa_list_t * position)
+{
+    return (position ? position->next : NULL);
+}
 
 /**
  * Adds all elements of list2 to the end of list1.
@@ -68,7 +88,9 @@ kaa_list_t *kaa_lists_merge(kaa_list_t * list1, kaa_list_t *list2);
 
 /**
  * Creates list with 1 element having given data.
- * Returns iterator to the head of created list.
+ *
+ * \return iterator to the head of created list.
+ * \retval NULL Not enough memory
  */
 kaa_list_t *kaa_list_create(void *data);
 
@@ -93,7 +115,9 @@ void kaa_list_set_data_at(kaa_list_t * position, void * data, deallocate_list_da
 
 /**
  * Insert data after a given iterator.
- * Returns iterator to an inserted item in list.
+ *
+ * \return iterator to an inserted item in list.
+ * \retval NULL Not enough memory
  */
 kaa_list_t * kaa_list_insert_after(kaa_list_t * position, void * data);
 

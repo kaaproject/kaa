@@ -147,7 +147,7 @@ kaa_list_t *kaa_deserialize_array(avro_reader_t reader, deserialize ds)
 
         while (--element_count > 0) {
             void* data = ds(reader);
-            array = kaa_list_push_front(array, data);
+            kaa_list_push_front(&array, data); // FIXME: check return value
         }
 
         avro_binary_encoding.read_long(reader, &element_count);

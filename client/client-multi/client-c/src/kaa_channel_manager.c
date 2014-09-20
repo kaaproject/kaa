@@ -58,9 +58,9 @@ static kaa_error_t register_sync_handler(kaa_channel_manager_t* manager, size_t 
         }
 
         if (manager->sync_handlers == NULL) {
-            manager->sync_handlers = kaa_list_create(sync);
+            manager->sync_handlers = kaa_list_create(sync); // FIXME: check return value
         } else {
-            manager->sync_handlers = kaa_list_push_front(manager->sync_handlers, sync);
+            kaa_list_push_front(&manager->sync_handlers, sync); // FIXME: check return value
         }
 
         return KAA_ERR_NONE;

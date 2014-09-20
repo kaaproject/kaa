@@ -17,17 +17,16 @@
 #ifndef KAA_MEM_H_
 #define KAA_MEM_H_
 
-#ifdef KAA_TRACE_MEMORY_ALLOCATIONS
 #include <stdlib.h>
+#ifdef KAA_TRACE_MEMORY_ALLOCATIONS
 #include <stdio.h>
 void *malloc_stub(size_t s, const char *file, int line);
 void *calloc_stub(size_t n, size_t s, const char *file, int line);
 
 #define KAA_MALLOC(T)           (T*)malloc_stub(sizeof(T), __FILE__, __LINE__)
 #define KAA_CALLOC(N,S)         calloc_stub(N, S, __FILE__, __LINE__)
-#define KAA_FREE(P)             printf("[%s:%i] going to deallocate memory at {%p}\n", __FILE__, __LINE__, P);     free((void *)P)
+#define KAA_FREE(P)             do { printf("[%s:%i] going to deallocate memory at {%p}\n", __FILE__, __LINE__, P); free((void *)(P)) } while (0)
 #else
-#include <stdlib.h>
 #define KAA_MALLOC(T)           (T*)malloc(sizeof(T))
 #define KAA_CALLOC(N,S)         calloc(N, S)
 #define KAA_FREE(P)             free(P)

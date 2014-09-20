@@ -57,12 +57,13 @@ kaa_error_t kaa_add_operation_server(kaa_bootstrap_manager_t *bm, kaa_ops_t* new
     kaa_list_t* ops_list = bm->ops_list[new_s->channel_type];
     if (!ops_list) {
         bm->ops_list[new_s->channel_type] = kaa_list_create(new_s);
+        // FIXME: check for return value
     } else {
         kaa_list_t* cur_s = ops_list;
         kaa_list_t* prev_s = NULL;
 
         while (cur_s) {
-            kaa_ops_t* s = kaa_list_get_data(cur_s);
+            kaa_ops_t* s = (kaa_ops_t *)kaa_list_get_data(cur_s);
             if (s->priority >= new_s->priority) {
                 break;
             }
@@ -72,11 +73,12 @@ kaa_error_t kaa_add_operation_server(kaa_bootstrap_manager_t *bm, kaa_ops_t* new
         }
 
         if (!prev_s) {
-            bm->ops_list[new_s->channel_type] = kaa_list_push_front(cur_s, new_s);
+            kaa_list_push_front(&cur_s, new_s); // FIXME: check return value
+            bm->ops_list[new_s->channel_type] = cur_s;
         } else if (!cur_s) {
-            kaa_list_push_back(prev_s, new_s);
+            kaa_list_push_back(&prev_s, new_s); // FIXME: check return value
         } else {
-            kaa_list_insert_after(prev_s, new_s);
+            kaa_list_insert_after(prev_s, new_s); // FIXME: check return value
         }
     }
 
