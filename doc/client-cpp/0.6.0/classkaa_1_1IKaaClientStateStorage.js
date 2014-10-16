@@ -1,0 +1,28 @@
+var classkaa_1_1IKaaClientStateStorage =
+[
+    [ "~IKaaClientStateStorage", "classkaa_1_1IKaaClientStateStorage.html#a87d1e6140c7ed4f082c76a35aa64d336", null ],
+    [ "getAppSeqNumber", "classkaa_1_1IKaaClientStateStorage.html#a9313e729e010056883bd1c951456e4be", null ],
+    [ "getAttachedEndpoints", "classkaa_1_1IKaaClientStateStorage.html#ae7c391871f27078eca3ed251228311ad", null ],
+    [ "getConfigurationSequenceNumber", "classkaa_1_1IKaaClientStateStorage.html#a30626f712655ac6f40336641d9e8192b", null ],
+    [ "getEndpointAccessToken", "classkaa_1_1IKaaClientStateStorage.html#ad125e6e47c01536951f008b2b438a198", null ],
+    [ "getEndpointAttachStatus", "classkaa_1_1IKaaClientStateStorage.html#aa7cbbd1a3144c9c22d08701a2e6ed8ed", null ],
+    [ "getEndpointKeyHash", "classkaa_1_1IKaaClientStateStorage.html#ae591e706c7a38fabbb039863edb66802", null ],
+    [ "getEventSequenceNumber", "classkaa_1_1IKaaClientStateStorage.html#a2482e9ee8394b03bb6ea2dc9a2771712", null ],
+    [ "getNotificationSequenceNumber", "classkaa_1_1IKaaClientStateStorage.html#a3b68f67f7a452490d3c341421f148396", null ],
+    [ "getProfileHash", "classkaa_1_1IKaaClientStateStorage.html#a111d4ab88d4e59e5a98bb7e665ef3744", null ],
+    [ "getTopicStates", "classkaa_1_1IKaaClientStateStorage.html#a7a681cc098660713f3fd0464d3ad5c62", null ],
+    [ "isRegistered", "classkaa_1_1IKaaClientStateStorage.html#a6bd65d8d4771019ddb48ef63619641d4", null ],
+    [ "read", "classkaa_1_1IKaaClientStateStorage.html#afb70328cbeae81afe5b794ab3cec7f89", null ],
+    [ "save", "classkaa_1_1IKaaClientStateStorage.html#a18d0088bf70d800cd1ad0a7db64799ab", null ],
+    [ "setAppSeqNumber", "classkaa_1_1IKaaClientStateStorage.html#a16288d3e4838465d7bb02e6387d81bfe", null ],
+    [ "setAttachedEndpoints", "classkaa_1_1IKaaClientStateStorage.html#a4ecb4eaad2a37c309afcdb7826c23fe9", null ],
+    [ "setConfigurationSequenceNumber", "classkaa_1_1IKaaClientStateStorage.html#a93f1981ac8b7cb0b6bac702403b84606", null ],
+    [ "setEndpointAccessToken", "classkaa_1_1IKaaClientStateStorage.html#a09bd92c9426fbc189c983daf924b031b", null ],
+    [ "setEndpointAttachStatus", "classkaa_1_1IKaaClientStateStorage.html#a229c2e2b7f18b2c82b1d7438004376a5", null ],
+    [ "setEndpointKeyHash", "classkaa_1_1IKaaClientStateStorage.html#a228f7cc511aad16ae48455dfe0bd38e6", null ],
+    [ "setEventSequenceNumber", "classkaa_1_1IKaaClientStateStorage.html#ae58259627ceb65f680eaef0fdefef3a4", null ],
+    [ "setNotificationSequenceNumber", "classkaa_1_1IKaaClientStateStorage.html#a35f84e6bfc3fe3bb322a1bf910ce47e5", null ],
+    [ "setProfileHash", "classkaa_1_1IKaaClientStateStorage.html#a52de764570110f37e5874d57dd4bbf0f", null ],
+    [ "setRegistered", "classkaa_1_1IKaaClientStateStorage.html#a3dae93180bcfb07ae7d554644abc0bfe", null ],
+    [ "setTopicStates", "classkaa_1_1IKaaClientStateStorage.html#a8dda81eab4b44f0c4c9ca76552adbd8d", null ]
+];

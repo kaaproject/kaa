@@ -1,0 +1,22 @@
+digraph "/var/lib/jenkins/workspace/kaa/client/client-multi/client-cpp/kaa/common" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_870bea017f31390b9e86f2a1fca8623f {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_870bea017f31390b9e86f2a1fca8623f.html"]
+  subgraph clusterdir_dc04581cf0f553de79abf65c8a71b1bc {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_dc04581cf0f553de79abf65c8a71b1bc.html"];
+    dir_dc04581cf0f553de79abf65c8a71b1bc [shape=plaintext label="common"];
+    dir_9de3e21736a67c1f5898d56f0708d815 [shape=box label="exception" color="black" fillcolor="white" style="filled" URL="dir_9de3e21736a67c1f5898d56f0708d815.html"];
+    dir_94698b4a1ffacf5f3f23350dc7a83a13 [shape=box label="types" color="black" fillcolor="white" style="filled" URL="dir_94698b4a1ffacf5f3f23350dc7a83a13.html"];
+  }
+  }
+  dir_01cd599b2e226e639258fa983cfa0e86 [shape=box label="configuration" color="red" URL="dir_01cd599b2e226e639258fa983cfa0e86.html"];
+  dir_94698b4a1ffacf5f3f23350dc7a83a13->dir_9de3e21736a67c1f5898d56f0708d815 [headlabel="1", labeldistance=1.5 headhref="dir_000017_000016.html"];
+  dir_01cd599b2e226e639258fa983cfa0e86->dir_94698b4a1ffacf5f3f23350dc7a83a13 [headlabel="6", labeldistance=1.5 headhref="dir_000018_000017.html"];
+  dir_01cd599b2e226e639258fa983cfa0e86->dir_dc04581cf0f553de79abf65c8a71b1bc [headlabel="7", labeldistance=1.5 headhref="dir_000018_000015.html"];
+  dir_dc04581cf0f553de79abf65c8a71b1bc->dir_94698b4a1ffacf5f3f23350dc7a83a13 [headlabel="8", labeldistance=1.5 headhref="dir_000015_000017.html"];
+  dir_dc04581cf0f553de79abf65c8a71b1bc->dir_01cd599b2e226e639258fa983cfa0e86 [headlabel="1", labeldistance=1.5 headhref="dir_000015_000018.html"];
+  dir_dc04581cf0f553de79abf65c8a71b1bc->dir_9de3e21736a67c1f5898d56f0708d815 [headlabel="6", labeldistance=1.5 headhref="dir_000015_000016.html"];
+}

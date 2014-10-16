@@ -1,0 +1,44 @@
+digraph "Graphical Class Hierarchy"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="kaa::IConfigurationHashContainer",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IConfigurationHashContainer.html"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa::IConfigurationPersistence\lManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IConfigurationPersistenceManager.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="kaa::ConfigurationPersistence\lManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ConfigurationPersistenceManager.html"];
+  Node4 [label="kaa::IConfigurationProcessed\lObservable",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IConfigurationProcessedObservable.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="kaa::IConfigurationProcessor",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IConfigurationProcessor.html"];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="kaa::ConfigurationProcessor",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ConfigurationProcessor.html"];
+  Node7 [label="kaa::IDecodedDeltaObservable",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IDecodedDeltaObservable.html"];
+  Node7 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="kaa::IDeltaManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IDeltaManager.html"];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="kaa::DefaultDeltaManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1DefaultDeltaManager.html"];
+  Node10 [label="trackable",height=0.2,width=0.4,color="grey75"];
+  Node10 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 [label="kaa::IConfigurationProcessed\lObserver",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IConfigurationProcessedObserver.html"];
+  Node11 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 [label="kaa::IConfigurationManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IConfigurationManager.html"];
+  Node12 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node13 [label="kaa::ConfigurationManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ConfigurationManager.html"];
+  Node10 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node14 [label="kaa::IConfigurationReceiver",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IConfigurationReceiver.html"];
+  Node14 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node15 [label="kaa::IGenericDeltaReceiver",height=0.2,width=0.4,color="black",URL="$classkaa_1_1IGenericDeltaReceiver.html"];
+  Node15 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node15 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node16 [label="kaa::ISchemaUpdatesReceiver",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ISchemaUpdatesReceiver.html"];
+  Node16 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node16 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node16 -> Node17 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node17 [label="kaa::ISchemaPersistenceManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ISchemaPersistenceManager.html"];
+  Node17 -> Node18 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node18 [label="kaa::SchemaPersistenceManager",height=0.2,width=0.4,color="black",URL="$classkaa_1_1SchemaPersistenceManager.html"];
+}

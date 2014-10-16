@@ -1,0 +1,14 @@
+digraph "/var/lib/jenkins/workspace/kaa/client" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_ce5d9cec498ae891b1d67368232ddc25 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_ce5d9cec498ae891b1d67368232ddc25.html"]
+  subgraph clusterdir_150f8d64c8890268dff95839803127b1 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_150f8d64c8890268dff95839803127b1.html"];
+    dir_150f8d64c8890268dff95839803127b1 [shape=plaintext label="client"];
+    dir_c5da0f30310fc757720a9094f646e23f [shape=box label="client-multi" color="red" fillcolor="white" style="filled" URL="dir_c5da0f30310fc757720a9094f646e23f.html"];
+  }
+  }
+}
