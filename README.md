@@ -8,5 +8,5 @@ Kaa is an open source framework for connected applications management, profiling
 For further information please visit
 
 * [Kaa website](http://www.kaaproject.org/)
-* [Project wiki](https://kaaproject.atlassian.net/wiki/display/KAA)
-* [Task tracker](https://kaaproject.atlassian.net/browse/KAA/)
+* [Project wiki](http://docs.kaaproject.org/display/KAA/)
+* [Task tracker](http://jira.kaaproject.org/browse/KAA/)
