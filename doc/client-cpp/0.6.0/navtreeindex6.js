@@ -1,5 +1,9 @@
 var NAVTREEINDEX6 =
 {
+"classkaa_1_1LoggerFactory.html#af3b85c0a290b78e500da4d8cd929042b":[2,0,0,147,1],
+"classkaa_1_1LoggingTransport.html":[2,0,0,148],
+"classkaa_1_1LoggingTransport.html#a2c06adf8055b3e0973adf64ed82280c9":[2,0,0,148,0],
+"classkaa_1_1LoggingTransport.html#a821689dac98c6c198464d11fe0437f62":[2,0,0,148,2],
 "classkaa_1_1LoggingTransport.html#aa32dc184c40159442841c40ce55ca570":[2,0,0,148,3],
 "classkaa_1_1LoggingTransport.html#acaba1cdd5ced581dc3b4383250cbcadf":[2,0,0,148,1],
 "classkaa_1_1LoggingUtils.html":[2,0,0,149],
@@ -245,9 +249,5 @@ var NAVTREEINDEX6 =
 "events_page.html#Usage":[0,5,0],
 "events_page.html#find_recepients":[0,5,0,2],
 "events_page.html#receiving":[0,5,0,1],
-"events_page.html#sending":[0,5,0,0],
-"files.html":[3,0],
-"functions.html":[2,3,0,0],
-"functions.html":[2,3,0],
-"functions_b.html":[2,3,0,1]
+"events_page.html#sending":[0,5,0,0]
 };

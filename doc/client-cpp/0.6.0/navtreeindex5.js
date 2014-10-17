@@ -1,5 +1,9 @@
 var NAVTREEINDEX5 =
 {
+"classkaa_1_1ILogStorage.html#a13344fb94b7069a79753640ae9fde4b5":[2,0,0,109,1],
+"classkaa_1_1ILogStorage.html#a1bd96b0331429bfd6fc4370d16a78fb8":[2,0,0,109,2],
+"classkaa_1_1ILogStorage.html#a5a2debb41cb670c434c571e40e116d37":[2,0,0,109,0],
+"classkaa_1_1ILogStorage.html#aac775eeea6e92545d643e4a3d5d07a6f":[2,0,0,109,6],
 "classkaa_1_1ILogStorage.html#ab45a5511ba6f4dd11cb25d4bb4e77942":[2,0,0,109,4],
 "classkaa_1_1ILogStorage.html#ad8fcd59868293b6dfe286601c24a96c2":[2,0,0,109,3],
 "classkaa_1_1ILogStorage.html#aedb08d459614dace530ce5798e2565df":[2,0,0,109,5],
@@ -170,9 +174,9 @@ var NAVTREEINDEX5 =
 "classkaa_1_1KaaException.html#ac878b83287724ba21e759f3127b8e9b8":[2,0,0,138,3],
 "classkaa_1_1KaaException.html#ad1bb8ec52b47cc0d247a14e05bd39f66":[2,0,0,138,2],
 "classkaa_1_1KaaSyncRequest.html":[2,0,0,139],
-"classkaa_1_1KaaSyncRequest.html#a4067076fc6cba56e47717464ab24acbb":[2,0,0,139,0],
 "classkaa_1_1KaaSyncRequest.html#a8433c93b90726616e72bc1a438eb2b46":[2,0,0,139,2],
 "classkaa_1_1KaaSyncRequest.html#ae0b1d06f7f55632abc3dd9caa1c2130d":[2,0,0,139,1],
+"classkaa_1_1KaaSyncRequest.html#af9c2f1847f26379d0bd466c3a673a030":[2,0,0,139,0],
 "classkaa_1_1KaaSyncResponse.html":[2,0,0,140],
 "classkaa_1_1KaaSyncResponse.html#a31f93ecf13b34cb787183de23b0d0abe":[2,0,0,140,1],
 "classkaa_1_1KaaSyncResponse.html#a53bca330eb398b1ff55cf958b15c00fa":[2,0,0,140,4],
@@ -245,9 +249,5 @@ var NAVTREEINDEX5 =
 "classkaa_1_1LogRecord.html#a69c53fcca266e28f90a937d8619478d1":[2,0,0,150,2],
 "classkaa_1_1LogRecord.html#ab6dc4d0a33d7e7130cdac646e37f2fbc":[2,0,0,150,0],
 "classkaa_1_1LoggerFactory.html":[2,0,0,147],
-"classkaa_1_1LoggerFactory.html#a0cbfa048b28ef9094529d53420a773eb":[2,0,0,147,0],
-"classkaa_1_1LoggerFactory.html#af3b85c0a290b78e500da4d8cd929042b":[2,0,0,147,1],
-"classkaa_1_1LoggingTransport.html":[2,0,0,148],
-"classkaa_1_1LoggingTransport.html#a2c06adf8055b3e0973adf64ed82280c9":[2,0,0,148,0],
-"classkaa_1_1LoggingTransport.html#a821689dac98c6c198464d11fe0437f62":[2,0,0,148,2]
+"classkaa_1_1LoggerFactory.html#a0cbfa048b28ef9094529d53420a773eb":[2,0,0,147,0]
 };

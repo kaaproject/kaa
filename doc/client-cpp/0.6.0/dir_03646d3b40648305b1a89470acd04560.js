@@ -8,9 +8,7 @@ var dir_03646d3b40648305b1a89470acd04560 =
     [ "IKaaTcpRequest.hpp", "IKaaTcpRequest_8hpp.html", [
       [ "IKaaTcpRequest", "classkaa_1_1IKaaTcpRequest.html", "classkaa_1_1IKaaTcpRequest" ]
     ] ],
-    [ "KaaSyncRequest.hpp", "KaaSyncRequest_8hpp.html", [
-      [ "KaaSyncRequest", "classkaa_1_1KaaSyncRequest.html", "classkaa_1_1KaaSyncRequest" ]
-    ] ],
+    [ "KaaSyncRequest.hpp", "KaaSyncRequest_8hpp.html", "KaaSyncRequest_8hpp" ],
     [ "KaaSyncResponse.hpp", "KaaSyncResponse_8hpp.html", [
       [ "KaaSyncResponse", "classkaa_1_1KaaSyncResponse.html", "classkaa_1_1KaaSyncResponse" ]
     ] ],
