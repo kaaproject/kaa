@@ -26,6 +26,8 @@
 
 #include "kaa/channel/server/IServerInfo.hpp"
 
+#define KAA_THREADSAFE
+
 namespace kaa {
 
 /**

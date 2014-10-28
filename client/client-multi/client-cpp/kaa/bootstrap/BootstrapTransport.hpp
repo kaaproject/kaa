@@ -29,7 +29,7 @@ public:
 
     void                        sync();
 
-    boost::shared_ptr<Resolve>  createResolveRequest();
+    std::shared_ptr<Resolve>  createResolveRequest();
     void onResolveResponse(OperationsServerList servers);
 private:
     IBootstrapManager &  bootstrapManager_;

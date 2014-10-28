@@ -35,7 +35,7 @@ public:
      * @param field     Name of a field in a given record.
      * @param datum     Avro datum containing data to be converted.
      */
-    virtual void run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum) = 0;
+    virtual void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum) = 0;
 
     virtual ~AbstractStrategy() {}
 };

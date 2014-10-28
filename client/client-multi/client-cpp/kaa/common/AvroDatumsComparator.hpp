@@ -18,7 +18,7 @@
 #define AVRODATUMSCOMPARATOR_HPP_
 
 #include <avro/Generic.hh>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/common/exception/KaaException.hpp"
 
@@ -58,9 +58,9 @@ bool compareDatumsLess(const avro::GenericDatum &left, const avro::GenericDatum 
     case avro::Type::AVRO_STRING:
         return std::less<std::string>()(left.value<std::string>(), right.value<std::string>());
     case avro::Type::AVRO_INT:
-        return std::less<boost::int32_t>()(left.value<boost::int32_t>(), right.value<boost::int32_t>());
+        return std::less<std::int32_t>()(left.value<std::int32_t>(), right.value<std::int32_t>());
     case avro::Type::AVRO_LONG:
-        return std::less<boost::int64_t>()(left.value<boost::int64_t>(), right.value<boost::int64_t>());
+        return std::less<std::int64_t>()(left.value<std::int64_t>(), right.value<std::int64_t>());
     case avro::Type::AVRO_FLOAT:
         return std::less<float>()(left.value<float>(), right.value<float>());
     case avro::Type::AVRO_DOUBLE:
@@ -68,9 +68,9 @@ bool compareDatumsLess(const avro::GenericDatum &left, const avro::GenericDatum 
     case avro::Type::AVRO_BOOL:
         return std::less<bool>()(left.value<bool>(), right.value<bool>());
     case avro::Type::AVRO_BYTES: {
-        std::vector<boost::uint8_t> l_vec = left.value<std::vector<boost::uint8_t> >();
-        std::vector<boost::uint8_t> r_vec = right.value<std::vector<boost::uint8_t> >();
-        return std::less<std::vector<boost::uint8_t> >()(l_vec, r_vec);
+        std::vector<std::uint8_t> l_vec = left.value<std::vector<std::uint8_t> >();
+        std::vector<std::uint8_t> r_vec = right.value<std::vector<std::uint8_t> >();
+        return std::less<std::vector<std::uint8_t> >()(l_vec, r_vec);
     }
 
     case avro::Type::AVRO_RECORD: {
@@ -110,9 +110,9 @@ bool compareDatumsLess(const avro::GenericDatum &left, const avro::GenericDatum 
     }
 
     case avro::Type::AVRO_FIXED: {
-        std::vector<boost::uint8_t> l_vec = left.value<avro::GenericFixed>().value();
-        std::vector<boost::uint8_t> r_vec = right.value<avro::GenericFixed>().value();
-        return std::less<std::vector<boost::uint8_t> >()(l_vec, r_vec);
+        std::vector<std::uint8_t> l_vec = left.value<avro::GenericFixed>().value();
+        std::vector<std::uint8_t> r_vec = right.value<avro::GenericFixed>().value();
+        return std::less<std::vector<std::uint8_t> >()(l_vec, r_vec);
     }
 
     case avro::Type::AVRO_NULL:

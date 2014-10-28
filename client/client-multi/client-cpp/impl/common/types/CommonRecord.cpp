@@ -21,7 +21,6 @@
 #include <exception>
 #include <sstream>
 
-#include <boost/cstdint.hpp>
 #include <avro/Generic.hh>
 #include "kaa/common/types/SetValueHelper.hpp"
 

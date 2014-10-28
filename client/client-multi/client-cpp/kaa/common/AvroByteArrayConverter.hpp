@@ -20,14 +20,13 @@
 #include <string>
 #include <memory>
 #include <sstream>
+#include <cstdint>
 
 #include <avro/Compiler.hh>
 #include <avro/Specific.hh>
 #include <avro/Stream.hh>
 #include <avro/Encoder.hh>
 #include <avro/Decoder.hh>
-
-#include <boost/cstdint.hpp>
 
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/common/exception/KaaException.hpp"
@@ -60,7 +59,7 @@ public:
      * @param dataSize size of data
      * @return the result of conversion
      */
-    T fromByteArray(const boost::uint8_t* data, const boost::uint32_t& dataSize);
+    T fromByteArray(const std::uint8_t* data, const std::uint32_t& dataSize);
 
     /**
      * Creates avro object from byte array
@@ -69,7 +68,7 @@ public:
      * @param dataSize size of data
      * @param the result of conversion
      */
-    void fromByteArray(const boost::uint8_t* data, const boost::uint32_t& dataSize, T& datum);
+    void fromByteArray(const std::uint8_t* data, const std::uint32_t& dataSize, T& datum);
 
     /**
      * Converts object to byte array
@@ -110,7 +109,7 @@ AvroByteArrayConverter<T>::AvroByteArrayConverter()
 }
 
 template<typename T>
-T AvroByteArrayConverter<T>::fromByteArray(const boost::uint8_t* data, const boost::uint32_t& dataSize)
+T AvroByteArrayConverter<T>::fromByteArray(const std::uint8_t* data, const std::uint32_t& dataSize)
 {
     if (!data || dataSize == 0) {
         throw KaaException("null data to decode");
@@ -126,7 +125,7 @@ T AvroByteArrayConverter<T>::fromByteArray(const boost::uint8_t* data, const boo
 }
 
 template<typename T>
-void AvroByteArrayConverter<T>::fromByteArray(const boost::uint8_t* data, const boost::uint32_t& dataSize, T& datum)
+void AvroByteArrayConverter<T>::fromByteArray(const std::uint8_t* data, const std::uint32_t& dataSize, T& datum)
 {
     if (!data || dataSize == 0) {
         throw KaaException("null data to decode");

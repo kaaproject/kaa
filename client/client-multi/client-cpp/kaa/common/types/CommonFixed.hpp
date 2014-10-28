@@ -20,8 +20,8 @@
 #include "kaa/common/types/ICommonValue.hpp"
 #include "kaa/common/types/ISchemaDependent.hpp"
 
-#include <boost/cstdint.hpp>
 #include <boost/ref.hpp>
+#include <cstdint>
 #include <vector>
 #include <iomanip>
 #include <sstream>
@@ -39,10 +39,10 @@ public:
     avro::GenericDatum      toAvro()    const;
     std::string             toString()  const;
 
-    void                    setValue(const std::vector<boost::uint8_t> &value);
+    void                    setValue(const std::vector<std::uint8_t> &value);
 private:
     avro::NodePtr schema_;
-    std::vector<boost::uint8_t> value_;
+    std::vector<std::uint8_t> value_;
 };
 
 }  // namespace kaa

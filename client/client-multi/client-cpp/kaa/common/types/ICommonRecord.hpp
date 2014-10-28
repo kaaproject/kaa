@@ -86,7 +86,7 @@ public:
     virtual const container_type &  getFields   () const = 0;
 };
 
-typedef ICommonRecordBase<std::map<std::string, boost::shared_ptr<ICommonValue> > > ICommonRecord;
+typedef ICommonRecordBase<std::map<std::string, std::shared_ptr<ICommonValue> > > ICommonRecord;
 
 }  // namespace kaa
 

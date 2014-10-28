@@ -26,7 +26,7 @@ namespace kaa {
  */
 class FieldProcessor {
 public:
-    FieldProcessor(boost::shared_ptr<ICommonRecord> parent, const std::string &field)
+    FieldProcessor(std::shared_ptr<ICommonRecord> parent, const std::string &field)
     : strategy_(NULL), parentRecord_(parent), field_(field) {}
     ~FieldProcessor() { if (strategy_ != NULL) delete strategy_;}
 
@@ -42,7 +42,7 @@ public:
 
 private:
     AbstractStrategy * strategy_;
-    boost::shared_ptr<ICommonRecord> parentRecord_;
+    std::shared_ptr<ICommonRecord> parentRecord_;
     const std::string &field_;
 };
 

@@ -53,7 +53,7 @@ ICommonRecord &ConfigurationManager::getConfiguration()
     lock_type lock(configurationGuard_);
     KAA_MUTEX_LOCKED("configurationGuard_");
 
-    if (root_.get() == NULL) {
+    if (!root_.get()) {
         throw KaaException("Attempting to get empty configuration.");
     }
     return *root_;
@@ -93,7 +93,7 @@ void ConfigurationManager::onDeltaRecevied(int index, const avro::GenericDatum &
 
 void ConfigurationManager::onConfigurationProcessed()
 {
-    if (root_.get() == NULL) {
+    if (!root_.get()) {
         throw KaaException("Configuration processed but no record was created.");
     }
     ICommonRecord &record = *root_;
@@ -106,7 +106,7 @@ bool ConfigurationManager::isSubscribed(uuid_t uuid)
     return (it != records_.end());
 }
 
-void ConfigurationManager::subscribe(uuid_t uuid, boost::shared_ptr<ICommonRecord> record)
+void ConfigurationManager::subscribe(uuid_t uuid, std::shared_ptr<ICommonRecord> record)
 {
     KAA_LOG_DEBUG(boost::format("Going to subscribe object with UUID %1%") % LoggingUtils::ByteArrayToString(uuid.data, uuid.size()));
     uuid_t root_uuid = root_->getUuid();
@@ -129,9 +129,9 @@ void ConfigurationManager::unsubscribe(uuid_t uuid)
     records_.erase(uuid);
 }
 
-void ConfigurationManager::updateRecord(boost::shared_ptr<ICommonRecord> rec, const avro::GenericDatum &datum)
+void ConfigurationManager::updateRecord(std::shared_ptr<ICommonRecord> rec, const avro::GenericDatum &datum)
 {
-    boost::scoped_ptr<FieldProcessor> fp(new FieldProcessor(rec, ""));
+    std::unique_ptr<FieldProcessor> fp(new FieldProcessor(rec, ""));
     fp->setStrategy(static_cast<AbstractStrategy *>(new RecordProcessStrategy(
               boost::bind(&ConfigurationManager::isSubscribed, this, _1)
             , boost::bind(&ConfigurationManager::subscribe, this, _1, _2)

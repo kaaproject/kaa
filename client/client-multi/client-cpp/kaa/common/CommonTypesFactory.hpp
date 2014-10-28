@@ -22,17 +22,18 @@
 #include "kaa/common/types/ICommonValue.hpp"
 #include "kaa/common/types/ICommonRecord.hpp"
 #include "kaa/common/types/ICommonArray.hpp"
-#include <boost/cstdint.hpp>
+#include <cstdint>
+#include <memory>
 
 namespace kaa {
 
 class CommonTypesFactory {
 public:
     CommonTypesFactory() {};
-    typedef boost::shared_ptr<ICommonValue> return_type;
+    typedef std::shared_ptr<ICommonValue> return_type;
 
-    static boost::shared_ptr<ICommonRecord> createCommonRecord(uuid_t uuid, const avro::NodePtr schema);
-    static boost::shared_ptr<ICommonArray> createCommonArray(const avro::NodePtr &schema);
+    static std::shared_ptr<ICommonRecord> createCommonRecord(uuid_t uuid, const avro::NodePtr schema);
+    static std::shared_ptr<ICommonArray> createCommonArray(const avro::NodePtr &schema);
 
     template<avro::Type T>
     static return_type createCommon(const avro::GenericDatum & d);

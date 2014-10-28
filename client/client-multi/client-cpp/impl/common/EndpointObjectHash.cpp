@@ -24,7 +24,7 @@ namespace kaa {
 EndpointObjectHash::EndpointObjectHash()
     : Botan::SHA_160(), withData_(false) {}
 
-EndpointObjectHash::EndpointObjectHash(const boost::uint8_t* data, const boost::uint32_t& dataSize)
+EndpointObjectHash::EndpointObjectHash(const std::uint8_t* data, const std::uint32_t& dataSize)
     : Botan::SHA_160(), withData_(true)
 {
     clone(data, dataSize);
@@ -66,9 +66,9 @@ EndpointObjectHash& EndpointObjectHash::operator=(EndpointObjectHash& endpointHa
 SharedDataBuffer EndpointObjectHash::getHash()
 {
     if (withData_ && !hashBuffer_.first) {
-        boost::uint32_t size = output_length();
+        std::uint32_t size = output_length();
 
-        hashBuffer_.first.reset(new boost::uint8_t[size]);
+        hashBuffer_.first.reset(new std::uint8_t[size]);
         hashBuffer_.second = size;
         final(hashBuffer_.first.get());
     }
@@ -76,7 +76,7 @@ SharedDataBuffer EndpointObjectHash::getHash()
     return hashBuffer_;
 }
 
-void EndpointObjectHash::clone(const boost::uint8_t* data, const boost::uint32_t& dataSize)
+void EndpointObjectHash::clone(const std::uint8_t* data, const std::uint32_t& dataSize)
 {
     if (!data || dataSize == 0) {
         throw KaaException("empty raw data or null size");
@@ -96,10 +96,10 @@ bool EndpointObjectHash::isEqual(SharedDataBuffer left, SharedDataBuffer right)
     return false;
 }
 
-EndpointObjectHash::operator std::vector<boost::uint8_t>()
+EndpointObjectHash::operator std::vector<std::uint8_t>()
 {
     SharedDataBuffer buffer = getHash();
-    std::vector<boost::uint8_t> result;
+    std::vector<std::uint8_t> result;
 
     for (size_t i = 0; i < buffer.second; ++i) {
         result.push_back(buffer.first[i]);

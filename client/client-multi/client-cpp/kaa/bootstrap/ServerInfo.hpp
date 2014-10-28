@@ -18,8 +18,7 @@
 #define SERVERINFO_HPP_
 
 #include <string>
-
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include <botan/botan.h>
 #include <botan/base64.h>
@@ -31,7 +30,7 @@ namespace kaa {
 class ServerInfo {
 public:
     ServerInfo() { }
-    ServerInfo(const std::string& host, const Botan::MemoryVector<boost::uint8_t>& publicKey)
+    ServerInfo(const std::string& host, const Botan::MemoryVector<std::uint8_t>& publicKey)
             : host_(host), publicKey_(publicKey) { }
     ServerInfo(const std::string& host, const std::string& publicKey)
             : host_(host), publicKey_(Botan::base64_decode(publicKey)) { }
@@ -40,13 +39,13 @@ public:
     bool isValid() const { return !host_.empty(); }
 
     const std::string& getHost() const { return host_; }
-    const Botan::MemoryVector<boost::uint8_t>& getPublicKey() const { return publicKey_; }
+    const Botan::MemoryVector<std::uint8_t>& getPublicKey() const { return publicKey_; }
 
     HttpUrl getUrl() const { return HttpUrl(host_); }
 
 private:
     std::string host_;
-    Botan::MemoryVector<boost::uint8_t> publicKey_;
+    Botan::MemoryVector<std::uint8_t> publicKey_;
 };
 
 }

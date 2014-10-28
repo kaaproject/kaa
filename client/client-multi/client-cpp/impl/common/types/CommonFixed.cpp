@@ -25,7 +25,7 @@ CommonFixed::CommonFixed(const avro::NodePtr &schema)
 
 }
 
-void CommonFixed::setValue(const std::vector<boost::uint8_t> &value)
+void CommonFixed::setValue(const std::vector<std::uint8_t> &value)
 {
     value_ = value;
 }
