@@ -263,7 +263,6 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
                 ", majorVersion=" + majorVersion +
                 ", minorVersion=" + minorVersion +
                 ", lastModifyTime=" + lastModifyTime +
-                ", body='" + body + '\'' +
                 ", status=" + status +
                 '}';
     }

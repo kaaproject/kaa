@@ -22,41 +22,37 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 
 /**
- * Abstract container for the profile object.<br>
- * <br>
- * Should be used to implement user profile container.
- * It is responsible for serializing profile and notifying Kaa stuff
+ * <p>Abstract container for a profile.</p>
+ *
+ * <p><b>Should be used to implement user profile container.</b></p>
+ *
+ * <p>It is responsible for serializing profile and notifying Kaa stuff
  * about any updates ({@link AbstractProfileContainer#updateProfile()}).
- * Profile class is auto-generated according to predefined Avro schema.<br>
- * <br>
+ * A profile class is auto-generated according to a predefined Avro schema.</p>
+ *
  * <pre>
  * {@code
- * // Assume, BasicEndpointProfile is a profile class auto-generated according to predefined Avro schema
+ * // Assume, BasicEndpointProfile is a profile class auto-generated
+ * // according to predefined Avro schema
  * public class BasicProfileContainer extends AbstractProfileContainer<BasicEndpointProfile> {
  *     private BasicEndpointProfile profile = new BasicEndpointProfile();
  *
- *     public BasicProfileContainer() {}
+ *     \@Override
  *     public BasicEndpointProfile getProfile() {
  *         return profile;
  *     }
+ *
+ *     \@Override
  *     protected Class<BasicEndpointProfile> getProfileClass() {
  *         return BasicEndpointProfile.class;
  *     }
- *     // User-define method
+ *
  *     public void setNewProfile(BasicEndpointProfile profile) {
  *         this.profile = profile;
- *         // Update method should be called to notify about changes in the profile.
+ *         // NOTE: Update method should be called to notify about changes in the profile.
  *         updateProfile();
  *     }
  * }
- *
- * BasicProfileContainer container = new BasicProfileContainer();
- * ProfileManager manager = kaaClient.getProfileManager();
- * manager.setProfileContainer(container);
- *
- * // Assume, profile is changed. Current implementation of the profile container
- * // notifies Kaa inner stuff about profile update.
- * container.setNewProfile(new BasicEndpointProfile());
  * }
  * </pre>
  *
@@ -75,6 +71,8 @@ public abstract class AbstractProfileContainer<T extends SpecificRecordBase> imp
     }
 
     /**
+     * Retrieves profile class object.
+     *
      * @return Class object of the user-defined profile
      */
     protected abstract Class<T> getProfileClass();
@@ -82,7 +80,7 @@ public abstract class AbstractProfileContainer<T extends SpecificRecordBase> imp
     /**
      * Retrieves serialized profile.
      *
-     * @return byte array with avro serialized profile.
+     * @return Byte array with avro serialized profile.
      *
      */
     @Override
@@ -91,7 +89,9 @@ public abstract class AbstractProfileContainer<T extends SpecificRecordBase> imp
     }
 
     /**
-     * Updates profile. Call this method when you finish to update your profile.
+     * Notify Kaa about profile updates.</br>
+     * </br>
+     * <b>NOTE: Need to call this method every time when profile is updated.</b>
      */
     protected final void updateProfile() throws IOException {
         if (listener != null) {
@@ -100,10 +100,12 @@ public abstract class AbstractProfileContainer<T extends SpecificRecordBase> imp
     }
 
     /**
-     * Sets profile listener.<br>
-     * <br>
-     * <b>NOTE:</b>DO NOT use this API explicitly.
-     * This method is used for post initialization of a user defined profile container.
+     * Kaa specific stuff.</br>
+     * </br>
+     * <b>NOTE: DO NOT use this API explicitly.</b></br>
+     * </br>
+     * This method is used for a post initialization of a user defined
+     * profile container.
      *
      * @param listener New profile listener.
      */
@@ -115,7 +117,7 @@ public abstract class AbstractProfileContainer<T extends SpecificRecordBase> imp
     /**
      * Retrieves user-defined profile object. Should be implemented by the user.
      *
-     * @return profile object
+     * @return Profile class object
      *
      */
     public abstract T getProfile();

@@ -269,14 +269,16 @@ public class UserActorMessageProcessor {
 
         if(eventsToSend.size() > 0){
             if (recipient.isLocal()) {
-                for(EndpointEvent event : eventsToSend){
-                    LOG.debug("[{}] forwarding event {} to local recepient {}", userId, event, recipient);
+                if(LOG.isTraceEnabled()){
+                    for(EndpointEvent event : eventsToSend){
+                        LOG.trace("[{}] forwarding event {} to local recepient {}", userId, event, recipient);
+                    }
                 }
                 EndpointEventReceiveMessage message = new EndpointEventReceiveMessage(userId, eventsToSend, recipient, context.self());
                 sendEventToLocal(context, message);
             } else {
                 for(EndpointEvent event : eventsToSend){
-                    LOG.debug("[{}] forwarding event {} to remote recepient {}", userId, event, recipient);
+                    LOG.trace("[{}] forwarding event {} to remote recepient {}", userId, event, recipient);
                     RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(tenantId, userId, event, recipient);
                     eventService.sendEvent(remoteEvent);
                 }
@@ -295,7 +297,7 @@ public class UserActorMessageProcessor {
 
     private void processEvent(ActorContext context, EndpointEvent event) {
         String fqn = event.getEventClassFQN();
-        LOG.debug("[{}] Processing event {} from {}", userId, fqn, event.getSender());
+        LOG.debug("[{}] Processing event {} from {}", userId, event.getId(), event.getSender());
 
         Integer version;
         if (event.getVersion() == 0) {
@@ -307,7 +309,7 @@ public class UserActorMessageProcessor {
             event.setVersion(version);
             Set<RouteTableKey> recipientKeys = cacheService.getRouteKeys(new EventClassFqnVersion(tenantId, fqn, version));
             if (!recipientKeys.isEmpty()) {
-                LOG.debug("[{}] Put event {} with {} recipient keys to storage", userId, event, recipientKeys.size());
+                LOG.debug("[{}] Put event {} with {} recipient keys to storage", userId, event.getId(), recipientKeys.size());
                 eventStorage.put(event, recipientKeys);
 
                 Set<RouteTableAddress> recipients = routeTable.getRoutes(recipientKeys, event.getTarget());
@@ -322,7 +324,7 @@ public class UserActorMessageProcessor {
 
                 scheduleTimeoutMessage(context, event);
             } else {
-                LOG.debug("[{}] event {} is ignored due to it does not have any potential recepients", userId, event);
+                LOG.debug("[{}] event {} is ignored due to it does not have any potential recepients", userId, event.getId());
             }
         }
     }

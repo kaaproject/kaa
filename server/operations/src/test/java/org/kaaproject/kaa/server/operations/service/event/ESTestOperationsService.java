@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.security.PublicKey;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
@@ -43,12 +44,17 @@ public class ESTestOperationsService implements OperationsService {
      */
     @Override
     public SyncResponseHolder sync(SyncRequest request) throws GetDeltaException {
+        return sync(request, null);
+    }
+
+    @Override
+    public SyncResponse updateSyncResponse(SyncResponse response, List<NotificationDto> notifications, String unicastNotificationId) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public SyncResponse updateSyncResponse(SyncResponse response, List<NotificationDto> notifications, String unicastNotificationId) {
+    public SyncResponseHolder sync(SyncRequest request, EndpointProfileDto profile) throws GetDeltaException {
         // TODO Auto-generated method stub
         return null;
     }

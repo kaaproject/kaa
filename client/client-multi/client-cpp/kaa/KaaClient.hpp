@@ -71,6 +71,10 @@ public:
     virtual IKaaChannelManager&                 getChannelManager()  { return *channelManager_; }
     virtual const KeyPair&                      getClientKeyPair() { return clientKeys_; }
     virtual ILogCollector&                      getLogCollector() { return *logCollector_; }
+    virtual IKaaDataMultiplexer&                getOperationMultiplexer() { return *operationsProcessor_; }
+    virtual IKaaDataDemultiplexer&              getOperationDemultiplexer() { return *operationsProcessor_; }
+    virtual IKaaDataMultiplexer&                getBootstrapMultiplexer() { return *bootstrapProcessor_; }
+    virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer() { return *bootstrapProcessor_; }
 private:
     void initKaaConfiguration();
     void initKaaTransport();

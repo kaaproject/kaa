@@ -19,7 +19,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -75,7 +74,7 @@ public class KaaTcpTestClient implements Runnable, BootstrapResponseListener {
      * @throws UnknownHostException 
      * 
      */
-    public KaaTcpTestClient(String hostName, int port, String applicationToken, HttpActivity activity) throws UnknownHostException, IOException {
+    public KaaTcpTestClient(String hostName, int port, String applicationToken, HttpActivity activity) throws IOException {
         clientSocket = new Socket(hostName, port);
         connected = true;
         inReader = new DataInputStream(clientSocket.getInputStream());

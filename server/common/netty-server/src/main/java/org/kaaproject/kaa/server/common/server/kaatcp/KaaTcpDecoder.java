@@ -65,7 +65,7 @@ public class KaaTcpDecoder extends SimpleChannelInboundHandler<byte []>  {
     private void processFrame(MqttFrame frame, AbstractKaaTcpCommandProcessor processor) throws Exception {
         Attribute<Track> sessionTrackAttr = currentCtx.channel().attr(NettyHttpServer.TRACK_KEY);
         if (sessionTrackAttr.get() != null) {
-            int id = sessionTrackAttr.get().newRequest(processor.getName());
+            int id = sessionTrackAttr.get().newRequest();
             processor.setCommandId(id);
         }
         processor.setRequest(frame);

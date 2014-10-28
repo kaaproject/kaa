@@ -108,12 +108,15 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
                 int version = filterDto.getMajorVersion();
                 cacheService.resetFilters(new AppVersionKey(appDto.getApplicationToken(), version));
             }
+            if (notification.getGroupId() != null) {
+                cacheService.resetGroup(notification.getGroupId());
+            }
             if(notification.getAppSeqNumber() != 0){
                 LOG.debug("Going to update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(), notification.getAppSeqNumber(), Thread.currentThread().getId());
                 synchronized (cacheService) {
                     int currentSeqNumber = cacheService.getAppSeqNumber(appDto.getApplicationToken()).getSeqNumber();
                     if(currentSeqNumber < notification.getAppSeqNumber()){
-                        cacheService.putAppSeqNumber(appDto.getApplicationToken(), new AppSeqNumber(appDto.getId(), appDto.getApplicationToken(), notification.getAppSeqNumber()));
+                        cacheService.putAppSeqNumber(appDto.getApplicationToken(), new AppSeqNumber(appDto.getTenantId(), appDto.getId(), appDto.getApplicationToken(), notification.getAppSeqNumber()));
                         LOG.debug("Update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(), notification.getAppSeqNumber(), Thread.currentThread().getId());
                     }else{
                         LOG.debug("Update ignored. application {} already has seqNumber {}", appDto.getApplicationToken(), notification.getAppSeqNumber());

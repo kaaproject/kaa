@@ -267,11 +267,12 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <name>kaa-${artifactId}</name>
+                            <name>kaa-${project.artifactId}</name>
                             <classifier>${build.number}-${scm.version}</classifier>
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>
                             <group>Applications/Kaa</group>
+                            <targetOS>linux</targetOS>
                             <packager>${user.name}</packager>
                             <changelogFile>CHANGELOG</changelogFile>
                             <defaultDirmode>500</defaultDirmode>

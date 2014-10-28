@@ -32,7 +32,10 @@
     </appender>
 
     <category name="org.kaaproject.kaa">
-        <level value="TRACE"/>
+        <level value="INFO"/>
+    </category>
+    <category name="org.kaaproject.kaa.metrics">
+        <level value="INFO"/>
     </category>
     <category name="org.kaaproject.kaa.server.operations.service.statistics">
         <level value="INFO"/>

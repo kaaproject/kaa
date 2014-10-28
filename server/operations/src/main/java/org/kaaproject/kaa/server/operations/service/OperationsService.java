@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
@@ -43,6 +44,15 @@ public interface OperationsService extends PublicKeyAware{
      */
     SyncResponseHolder sync(SyncRequest request) throws GetDeltaException;
 
+    /**
+     * Sync endpoint state.
+     *
+     * @param request the request
+     * @return the sync response
+     * @throws GetDeltaException the get delta exception
+     */
+    SyncResponseHolder sync(SyncRequest request, EndpointProfileDto profile) throws GetDeltaException;    
+    
     /**
      * Update sync response.
      *

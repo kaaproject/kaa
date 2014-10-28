@@ -141,7 +141,7 @@ public class OperationsHttpServerIT {
         private long calculatedProcessTime;
 
         @Override
-        public int newRequest(String requestName) {
+        public int newRequest() {
             requestStart = System.currentTimeMillis();
             id = rnd.nextInt();
             return id;

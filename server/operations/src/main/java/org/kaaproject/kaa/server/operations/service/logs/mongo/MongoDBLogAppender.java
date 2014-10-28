@@ -57,6 +57,7 @@ public class MongoDBLogAppender extends LogAppender {
     @Override
     public void close() {
         closed = true;
+        LOG.debug("Stoped mongo log appender.");
     }
 
     @Override

@@ -123,19 +123,12 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
 
     @Override
     public void onLogResponse(LogSyncResponse response) throws IOException {
+        isUploading = false;
+
         if (response.getResult() == SyncResponseResultType.SUCCESS) {
             storage.removeRecordBlock(response.getRequestId());
-            if (storageStatus.getConsumedVolume() >= configuration.getBatchVolume()) {
-                if (transport != null) {
-                    transport.sync();
-                } else {
-                    LOG.warn("Log transport is null");
-                }
-            } else {
-                isUploading = false;
-            }
+            processUploadDecision(uploadStrategy.isUploadNeeded(configuration, storageStatus));
         } else {
-            isUploading = false;
             storage.notifyUploadFailed(response.getRequestId());
         }
     }

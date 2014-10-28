@@ -119,7 +119,7 @@ public final class AvroBinaryDelta implements RawBinaryDelta {
      */
     @Override
     public synchronized boolean hasChanges() {
-        return serializedData != null || !deltaQueue.isEmpty();
+        return serializedData != null || !(deltaQueue == null || deltaQueue.isEmpty());
     }
 
     /*

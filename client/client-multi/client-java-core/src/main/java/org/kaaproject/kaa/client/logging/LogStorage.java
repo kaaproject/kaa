@@ -17,49 +17,52 @@
 package org.kaaproject.kaa.client.logging;
 
 /**
- * Interface for log storage.
+ * <p>Interface for log storage.</p>
  *
- * Persists each new log record, forms on demand
- * new log block for sending it to the operation server, removes already sent records,
- * cleans up elder records if case limitation set on a storage size. 
+ * <p>Persists each new log record, forms on demand new log block for sending
+ * it to the Operation server, removes already sent records, cleans up elder
+ * records in case if there is some limitation on a size of log storage.</p>
  *
- * Reference implementation used by default (@see MemoryLogStorage).
+ * <p>Reference implementation used by default ({@link MemoryLogStorage}).</p>
  */
 public interface LogStorage {
     /**
      * Persists new log record.
      *
-     * @param record New record (@see LogRecord)
+     * @param record New record ({@link LogRecord})
      */
     void addLogRecord(LogRecord record);
 
     /**
-     * Retrieves new log block of specified size or 
-     * null if there is no logs. The size of retrieved log records 
-     * should NOT be greater than specified block size.
+     * <p>Retrieves new log block of specified size or null if there is no logs.</p>
+     *
+     * <p>The size of retrieved log records should NOT be greater than specified
+     * block size.</p>
      *
      * @param blockSize Maximum size of sending log block
-     * @return New log block (@see LogBlock)
+     * @return New log block ({@link  LogBlock})
      */
     LogBlock getRecordBlock(long blockSize);
 
     /**
-     * Removes already sent log records by its bloc id.
+     * <p>Removes already sent log records by its block id.</p>
+     *
+     * <p>Use in case of a successful upload.</p>
      *
      * @param id Unique id of sent log block
      */
     void removeRecordBlock(String id);
 
     /**
-     * Removes records untill inner storage has equal or less size
-     * than specified one.
+     * Removes elder records until occupied size becomes equal or less than
+     * specified in a passed parameter.
      *
      * @param maximumAllowedVolume Maximum size of inner storage
      */
     void removeOldestRecord(long maximumAllowedVolume);
 
     /**
-     * Notifies if sending of log block with specified id was failed.
+     * Notifies if sending of a log block with a specified id was failed.
      *
      * @param id Unique id of log block.
      */

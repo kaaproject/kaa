@@ -19,7 +19,8 @@
  */
 package org.kaaproject.kaa.server.bootstrap.service.security;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileWriter;

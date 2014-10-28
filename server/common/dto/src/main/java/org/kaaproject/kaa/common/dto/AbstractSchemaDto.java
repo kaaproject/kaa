@@ -131,7 +131,7 @@ public abstract class AbstractSchemaDto extends SchemaDto {
     public String toString() {
         return "AbstractSchemaDto [id=" + id + ", applicationId="
                 + applicationId + ", majorVersion=" + majorVersion
-                + ", minorVersion=" + minorVersion + ", schema=" + schema
+                + ", minorVersion=" + minorVersion
                 + ", name=" + name + ", description=" + description
                 + ", createdUsername=" + createdUsername + ", createdTime="
                 + createdTime + ", endpointCount=" + endpointCount + "]";

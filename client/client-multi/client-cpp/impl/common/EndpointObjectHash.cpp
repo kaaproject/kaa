@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <vector>
+
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 

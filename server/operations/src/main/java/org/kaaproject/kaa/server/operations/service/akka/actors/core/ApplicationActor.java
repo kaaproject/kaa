@@ -162,7 +162,11 @@ public class ApplicationActor extends UntypedActor {
      */
     @Override
     public void onReceive(Object message) throws Exception {
-        LOG.debug("[{}] Received: {}", applicationToken, message);
+        if(LOG.isTraceEnabled()){
+            LOG.trace("[{}] Received: {}", applicationToken, message);
+        }else{
+            LOG.debug("[{}] Received: {}", applicationToken, message.getClass().getName());
+        }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
         } else if (message instanceof EndpointEventDeliveryMessage) {

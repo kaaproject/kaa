@@ -34,6 +34,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Ses
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
+import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.slf4j.Logger;
@@ -95,6 +96,9 @@ public class DefaultAkkaService implements AkkaService {
     /** The event service. */
     @Autowired
     private EventService eventService;
+    
+    @Autowired
+    private MetricsService metricsService;
 
     @Autowired
     private LogAppenderService logAppenderService;
@@ -115,7 +119,7 @@ public class DefaultAkkaService implements AkkaService {
         opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService, notificationDeltaService, eventService,
                 applicationService, logAppenderService)), EPS);
         LOG.info("Initializing Akka io router...");
-        ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor, cacheService, new KeyPair(
+        ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor, metricsService, cacheService, new KeyPair(
                 keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()), supportUnencryptedConnection))), "ioRouter");
         LOG.info("Initializing Akka event service listener...");
         listener = new AkkaEventServiceListener(opsActor);

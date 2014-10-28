@@ -26,7 +26,7 @@
 
     <bean id="resolveCommandFactory" class="org.kaaproject.kaa.server.bootstrap.service.http.commands.ResolveCommandFactory" />
 
-    <bean id="bootstrapConfig" class="org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig">
+    <bean id="bootstrapConfig" class="org.kaaproject.kaa.server.bootstrap.service.config.KaaHttpServiceChannelConfig">
         <property name="commandList">
             <list>
                 <ref bean="resolveCommandFactory" />
@@ -36,20 +36,21 @@
         <property name="bindInterface" value="#{properties[netty_host]}"></property>
         <property name="clientMaxBodySize" value="#{properties[http_maxContentLength]}"></property>
         <property name="executorThreadSize" value="#{properties[executorThreadSize]}"></property>
+        <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
+        <property name="statisticsUpdateTimes" value="#{properties[statistics_update_times]}" />
     </bean>
 
-    <bean id="bootstrapHttpServerInitializer" class="org.kaaproject.kaa.server.bootstrap.service.http.BootstrapServerInitializer" />
+    <bean id="bootstrapHttpServerInitializer" class="org.kaaproject.kaa.server.bootstrap.service.http.KaaHttpServerInitializer" />
 
-    <bean id="nettyHttpServer" class="org.kaaproject.kaa.server.bootstrap.service.http.ProtocolService">
+    <bean id="nettyHttpServer" class="org.kaaproject.kaa.server.bootstrap.service.http.KaaHttpService">
         <constructor-arg ref="bootstrapConfig" />
+        <constructor-arg ref="operationsServerConfig" />
         <constructor-arg ref="bootstrapHttpServerInitializer" />
     </bean>
     
     <!-- Configuration from properties file -->
 
-    <bean id="operationsServerConfig" class="org.kaaproject.kaa.server.bootstrap.service.config.OperationsServerConfig">
-        <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
-        <property name="statisticsUpdateTimes" value="#{properties[statistics_update_times]}" />
+    <bean id="operationsServerConfig" class="org.kaaproject.kaa.server.bootstrap.service.config.BootstrapServerConfig">
         <property name="thriftHost" value="#{properties[thrift_host]}" />
         <property name="thriftPort" value="#{properties[thrift_port]}" />
         <property name="zkEnabled" value="#{properties[zk_enabled]}" />
@@ -61,16 +62,13 @@
     
     <!-- KAA TCP -->
 
-    <bean id="nettyKaaTcpStatisticsService" class="org.kaaproject.kaa.server.bootstrap.service.statistics.StatisticsFactory" factory-method="getService">
-        <constructor-arg value="KAATCP" />
-    </bean>
-
     <bean id="kaaTcpCommandFactory" class="org.kaaproject.kaa.server.bootstrap.service.tcp.commands.KaaTcpCommandFactory" />
 
     <bean id="nettyKaaTcpChannelConfig" class="org.kaaproject.kaa.server.bootstrap.service.config.KaaTcpServiceChannelConfig">
+        <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
+        <property name="statisticsUpdateTimes" value="#{properties[statistics_update_times]}" />
         <property name="bindInterface" value="#{properties[channel_kaa_tcp_host]}" />
         <property name="port" value="#{properties[channel_kaa_tcp_port]}" />
-        <property name="sessionTrack" ref="nettyKaaTcpStatisticsService" />
         <property name="commandList">
             <list>
                 <ref bean="kaaTcpCommandFactory" />

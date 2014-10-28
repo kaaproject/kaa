@@ -32,7 +32,7 @@
     </appender>
 
     <category name="org.kaaproject.kaa.server">
-        <level value="DEBUG"/>
+        <level value="INFO"/>
     </category>
     <category name="org.springframework">
         <level value="INFO"/>

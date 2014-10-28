@@ -27,7 +27,7 @@ import java.util.List;
 public interface DeltaType {
 
     /**
-     * Checks if the field was set to default value
+     * Checks if the field was set to a default value.
      *
      * @return true if the field set to default, false otherwise
      *
@@ -35,33 +35,37 @@ public interface DeltaType {
     boolean isDefault();
 
     /**
-     * Checks if the container field have been cleared
+     * Checks if the container field has been cleared.
      *
-     * @return true if the container field is cleared, false if not (or field is not array)
+     * @return true if the container field is cleared, false if not
+     * (or field is not array)
      *
      */
     boolean isReset();
 
     /**
-     * Retrieves new field value
+     * Retrieves new field value.
      *
-     * @return value of the appropriate type ({@link ConfigurationDelta} for record items), or null if there is no new value (or field is array)
+     * @return value of the appropriate type ({@link ConfigurationDelta} for
+     * record items), or null if there is no new value (or field is array)
      *
      */
     Object getNewValue();
 
     /**
-     * Retrieves list of removed addressable items
+     * Retrieves list of removed addressable items.
      *
-     * @return list which contains handlers of removed items, null if there is no removed items (or field is not array)
+     * @return list which contains handlers of removed items, null if there
+     * is no removed items (or field is not array)
      *
      */
     List<DeltaHandlerId> getRemovedItems();
 
     /**
-     * Retrieves list of added items
+     * Retrieves list of added items.
      *
-     * @return list of added items. (List of {@link ConfigurationDelta} for complex items), null if there is no added items (or field is not array)
+     * @return list of added items. (List of {@link ConfigurationDelta} for
+     * complex items), null if there is no added items (or field is not array)
      *
      */
     List<Object> getAddedItems();

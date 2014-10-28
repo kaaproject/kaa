@@ -325,9 +325,9 @@ public class DefaultEndpointUserServiceTest {
         when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TEST_TENANT_ID, "fqn2"))).thenReturn(ECF1_ID);
         when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TEST_TENANT_ID, "fqn3"))).thenReturn(ECF1_ID);
 
-        when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM));
-        when(cacheService.getAppSeqNumber(TEST_APP_TOKEN2)).thenReturn(new AppSeqNumber(TEST_APP_ID2, TEST_APP_TOKEN2, TEST_APP_SEQ_NUM));
-        when(cacheService.getAppSeqNumber(TEST_APP_TOKEN3)).thenReturn(new AppSeqNumber(TEST_APP_ID3, TEST_APP_TOKEN3, TEST_APP_SEQ_NUM));
+        when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM));
+        when(cacheService.getAppSeqNumber(TEST_APP_TOKEN2)).thenReturn(new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID2, TEST_APP_TOKEN2, TEST_APP_SEQ_NUM));
+        when(cacheService.getAppSeqNumber(TEST_APP_TOKEN3)).thenReturn(new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID3, TEST_APP_TOKEN3, TEST_APP_SEQ_NUM));
 
         RouteTableKey key1 = new RouteTableKey(TEST_APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
         RouteTableKey key2 = new RouteTableKey(TEST_APP_TOKEN2, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
@@ -345,7 +345,7 @@ public class DefaultEndpointUserServiceTest {
         when(cacheService.getRouteKeys(new EventClassFqnVersion(TEST_TENANT_ID, "fqn3", ECF1_VERSION))).thenReturn(fqn3Keys);
 
         EventListenersResponse response = endpointUserService.findListeners(profileMock,
-                                            new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
+                                            new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
 
         assertNotNull(response);
         assertEquals(SyncResponseResultType.SUCCESS, response.getResult());
@@ -369,7 +369,7 @@ public class DefaultEndpointUserServiceTest {
         when(profileMock.getEndpointUserId()).thenReturn(null);
 
         EventListenersResponse response = endpointUserService.findListeners(profileMock,
-                                            new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
+                                            new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
 
         assertNotNull(response);
         assertEquals(SyncResponseResultType.FAILURE, response.getResult());
@@ -397,7 +397,7 @@ public class DefaultEndpointUserServiceTest {
         when(endpointService.findEndpointProfilesByUserId(USER_ID)).thenReturn(Arrays.asList(profileMock));
 
         EventListenersResponse response = endpointUserService.findListeners(profileMock,
-                                            new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
+                                            new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
 
         assertNotNull(response);
         assertEquals(SyncResponseResultType.SUCCESS, response.getResult());

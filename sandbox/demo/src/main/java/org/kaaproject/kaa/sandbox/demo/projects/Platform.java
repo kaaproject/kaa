@@ -30,7 +30,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum Platform {
 
-    ANDROID;
+    ANDROID,
+    JAVA;
 
     public String value() {
         return name();

@@ -16,17 +16,13 @@
 
 package org.kaaproject.kaa.server.operations.service.config;
 
+import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
+
 
 /**
  * The Class OperationsServerConfig.
  */
 public class OperationsServerConfig {
-
-    /** Statistics collect window in seconds */
-    private long statisticsCalculationWindow;
-
-    /** Number of statistics update during collect window */
-    private int statisticsUpdateTimes;
 
     /** The thrift host. */
     private String thriftHost;
@@ -49,38 +45,9 @@ public class OperationsServerConfig {
     /** The zk ignore errors. */
     private boolean zkIgnoreErrors;
 
-    /**
-     * Statistics collect window getter.
-     * @return the statisticsCalculationWindow long in ms
-     */
-    public long getStatisticsCalculationWindow() {
-        return statisticsCalculationWindow;
-    }
-
-    /**
-     * Statistics collect window setter.
-     * @param statisticsCalculationWindow long in ms
-     */
-    public void setStatisticsCalculationWindow(long statisticsCalculationWindow) {
-        this.statisticsCalculationWindow = statisticsCalculationWindow;
-    }
-
-    /**
-     * Number of statistics update during collect window getter.
-     * @return the statisticsUpdateTimes int number
-     */
-    public int getStatisticsUpdateTimes() {
-        return statisticsUpdateTimes;
-    }
-
-    /**
-     * Number of statistics update during collect window setter.
-     * @param statisticsUpdateTimes int number
-     */
-    public void setStatisticsUpdateTimes(int statisticsUpdateTimes) {
-        this.statisticsUpdateTimes = statisticsUpdateTimes;
-    }
-
+    /** The operations node. */
+    private OperationsNode operationsNode;
+    
     /**
      * @return the thriftHost
      */
@@ -177,6 +144,20 @@ public class OperationsServerConfig {
      */
     public void setZkIgnoreErrors(boolean zkIgnoreErrors) {
         this.zkIgnoreErrors = zkIgnoreErrors;
+    }
+
+    /**
+     * @return the operationsNode
+     */
+    public OperationsNode getOperationsNode() {
+        return operationsNode;
+    }
+
+    /**
+     * @param operationsNode the operationsNode to set
+     */
+    public void setOperationsNode(OperationsNode operationsNode) {
+        this.operationsNode = operationsNode;
     }
 
 }

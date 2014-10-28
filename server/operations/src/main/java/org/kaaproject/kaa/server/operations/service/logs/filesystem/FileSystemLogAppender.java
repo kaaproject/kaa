@@ -71,6 +71,7 @@ public class FileSystemLogAppender extends LogAppender{
         if (fileAppender != null) {
             fileAppender.close();
         }
+        LOG.debug("Stoped filesystem log appender.");
     }
 
     @Override

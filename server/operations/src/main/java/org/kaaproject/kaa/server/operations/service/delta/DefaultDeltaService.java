@@ -123,7 +123,10 @@ public class DefaultDeltaService implements DeltaService {
     public GetDeltaResponse getDelta(GetDeltaRequest request, HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException {
         GetDeltaResponse response;
         EndpointProfileDto profile = request.getEndpointProfile();
-        String endpointId = Base64Util.encode(profile);
+        String endpointId = "N/A";
+        if(LOG.isDebugEnabled() && profile != null && profile.getEndpointKeyHash() != null){
+            endpointId = Base64Util.encode(profile.getEndpointKeyHash());
+        }
 
         if (request.getSequenceNumber() == curAppSeqNumber) {
             LOG.debug("[{}] No changes to current application was made -> no delta", endpointId);
@@ -136,15 +139,17 @@ public class DefaultDeltaService implements DeltaService {
             boolean resync = request.isFirstRequest();
             if(!resync && !request.getConfigurationHash().binaryEquals(profile.getConfigurationHash())){
                 resync = true;
-                String serverHash = "";
-                String clientHash = "";
-                if(profile.getConfigurationHash() != null){
-                    serverHash = MessageEncoderDecoder.bytesToHex(profile.getConfigurationHash());
+                if(profile.getConfigurationHash() != null && LOG.isWarnEnabled()){
+                    String serverHash = "";
+                    String clientHash = "";
+                    if(profile.getConfigurationHash() != null){
+                        serverHash = MessageEncoderDecoder.bytesToHex(profile.getConfigurationHash());
+                    }
+                    if(request.getConfigurationHash() != null){
+                        clientHash = MessageEncoderDecoder.bytesToHex(request.getConfigurationHash().getData());
+                    }
+                    LOG.warn("[{}] Configuration hash mismatch! server {}, client {}", endpointId, serverHash, clientHash);
                 }
-                if(request.getConfigurationHash() != null){
-                    clientHash = MessageEncoderDecoder.bytesToHex(request.getConfigurationHash().getData());
-                }
-                LOG.warn("[{}] Configuration hash mismatch! server {}, client {}", endpointId, serverHash, clientHash);
             }
             DeltaCacheKey deltaKey;
             if (resync) {

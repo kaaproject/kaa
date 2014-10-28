@@ -27,6 +27,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
+import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +117,8 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
     }
 
     @Override
-    protected void setupProjectConfig() {
+    protected void setupProjectConfigs() {
+        Project projectConfig = new Project();
         projectConfig.setId("smarthouse_demo");
         projectConfig.setName("Smart House Demo");
         projectConfig.setDescription("Smart house application on android platform demonstrating event subsystem (IoT)");
@@ -125,6 +127,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         projectConfig.setProjectFolder("smarthouse_demo/SmartHouseDemo");
         projectConfig.setSdkLibDir("smarthouse_demo/SmartHouseDemo/libs");
         projectConfig.setDestBinaryFile("smarthouse_demo/SmartHouseDemo/bin/SmartHouseDemo-debug.apk");
+        projectConfigs.add(projectConfig);
     }
 
 }

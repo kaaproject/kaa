@@ -110,7 +110,11 @@ public class EndpointActor extends UntypedActor {
      */
     @Override
     public void onReceive(Object message) throws Exception {
-        LOG.debug("[{}] Received: {}", actorKey, message);
+        if(LOG.isTraceEnabled()){
+            LOG.trace("[{}] Received: {}", actorKey, message);
+        }else{
+            LOG.debug("[{}] Received: {}", actorKey, message.getClass().getName());
+        }
         if (message instanceof SyncRequestMessage) {
             processEndpointSync((SyncRequestMessage) message);
         } else if (message instanceof EndpointEventReceiveMessage) {

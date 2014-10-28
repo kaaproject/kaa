@@ -24,6 +24,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kaaproject.kaa.server.bootstrap.service.config.KaaHttpServiceChannelConfig;
+import org.kaaproject.kaa.server.bootstrap.service.config.BootstrapServerConfig;
 import org.kaaproject.kaa.server.common.server.http.DefaultHttpServerInitializer;
 import org.kaaproject.kaa.server.common.server.http.NettyHttpServer;
 
@@ -32,11 +34,13 @@ public class ProtocolServiceTest {
 
     private static NettyHttpServer serverMock;
     private static DefaultHttpServerInitializer initializerMock;
-    private static BootstrapConfig config;
+    private static KaaHttpServiceChannelConfig config;
+    private static BootstrapServerConfig serverConfig;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        config = new BootstrapConfig();
+        config = new KaaHttpServiceChannelConfig();
+        serverConfig = new BootstrapServerConfig();
         serverMock = mock(NettyHttpServer.class);
         initializerMock = mock(DefaultHttpServerInitializer.class);
         when(serverMock.getConf()).thenReturn(config);
@@ -44,14 +48,14 @@ public class ProtocolServiceTest {
 
     @Test
     public void testProtocolService() {
-        ProtocolService ps = new ProtocolService(config, initializerMock);
+        KaaHttpService ps = new KaaHttpService(config, serverConfig, initializerMock);
         ps.setNetty(serverMock);
         assertNotNull(ps);
     }
 
     @Test
     public void testStart() {
-        ProtocolService ps = new ProtocolService(config, initializerMock);
+        KaaHttpService ps = new KaaHttpService(config, serverConfig, initializerMock);
         ps.setNetty(serverMock);
         ps.start();
         verify(serverMock, times(1)).init();
@@ -60,7 +64,7 @@ public class ProtocolServiceTest {
 
     @Test
     public void testStop() {
-        ProtocolService ps = new ProtocolService(config, initializerMock);
+        KaaHttpService ps = new KaaHttpService(config, serverConfig, initializerMock);
         ps.setNetty(serverMock);
         ps.stop();
         verify(serverMock, times(1)).shutdown();

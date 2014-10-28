@@ -51,8 +51,6 @@
     <!-- Configuration from properties file -->
 
     <bean id="operationsServerConfig" class="org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig">
-        <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
-        <property name="statisticsUpdateTimes" value="#{properties[statistics_update_times]}" />
         <property name="thriftHost" value="#{properties[thrift_host]}" />
         <property name="thriftPort" value="#{properties[thrift_port]}" />
         <property name="zkEnabled" value="#{properties[zk_enabled]}" />
@@ -66,10 +64,6 @@
 
     <!-- HTTP -->
 
-    <bean id="httpStatisticsService" class="org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory" factory-method="getService">
-        <constructor-arg value="HTTP" />
-    </bean>
-
     <bean id="httpSyncCommandFactory" class="org.kaaproject.kaa.server.operations.service.http.commands.SyncCommandFactory">
         <property name="commandName" value="Sync" />
     </bean>
@@ -79,11 +73,12 @@
     </bean>
 
     <bean id="nettyHttpChannelConfig" class="org.kaaproject.kaa.server.operations.service.config.HttpChannelConfig">
+        <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
+        <property name="statisticsUpdateTimes" value="#{properties[statistics_update_times]}" />
         <property name="bindInterface" value="#{properties[channel_http_host]}" />
         <property name="port" value="#{properties[channel_http_port]}" />
         <property name="clientMaxBodySize" value="#{properties[http_maxContentLength]}" />
         <property name="executorThreadSize" value="#{properties[executorThreadSize]}" />
-        <property name="sessionTrack" ref="httpStatisticsService" />
         <property name="commandList">
             <list>
                 <ref bean="httpSyncCommandFactory" />
@@ -102,10 +97,6 @@
 
     <!-- HTTP LP -->
 
-    <bean id="httpLpStatisticsService" class="org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory" factory-method="getService">
-        <constructor-arg value="HTTP_LP" />
-    </bean>
-
     <bean id="httpLpSyncCommandFactory" class="org.kaaproject.kaa.server.operations.service.http.commands.SyncCommandFactory">
         <property name="commandName" value="Sync" />
     </bean>
@@ -114,11 +105,12 @@
     </bean>
 
     <bean id="nettyHttpLpChannelConfig" class="org.kaaproject.kaa.server.operations.service.config.HttpLpChannelConfig">
+        <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
+        <property name="statisticsUpdateTimes" value="#{properties[statistics_update_times]}" />
         <property name="bindInterface" value="#{properties[channel_http_lp_host]}" />
         <property name="port" value="#{properties[channel_http_lp_port]}" />
         <property name="clientMaxBodySize" value="#{properties[http_maxContentLength]}" />
         <property name="executorThreadSize" value="#{properties[executorThreadSize]}" />
-        <property name="sessionTrack" ref="httpLpStatisticsService" />
         <property name="commandList">
             <list>
                 <ref bean="httpLpSyncCommandFactory" />
@@ -137,16 +129,13 @@
 
     <!-- KAA TCP -->
 
-    <bean id="nettyKaaTcpStatisticsService" class="org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory" factory-method="getService">
-        <constructor-arg value="KAATCP" />
-    </bean>
-
     <bean id="kaaTcpCommandFactory" class="org.kaaproject.kaa.server.operations.service.tcp.commands.KaaTcpCommandFactory" />
 
     <bean id="nettyKaaTcpChannelConfig" class="org.kaaproject.kaa.server.operations.service.config.KaaTcpServiceChannelConfig">
+        <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
+        <property name="statisticsUpdateTimes" value="#{properties[statistics_update_times]}" />
         <property name="bindInterface" value="#{properties[channel_kaa_tcp_host]}" />
         <property name="port" value="#{properties[channel_kaa_tcp_port]}" />
-        <property name="sessionTrack" ref="nettyKaaTcpStatisticsService" />
         <property name="commandList">
             <list>
                 <ref bean="kaaTcpCommandFactory" />
@@ -200,4 +189,8 @@
     <!-- Log Appenders -->
     <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderBuilder" />
 
+    <bean id="metricsService" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultMerticsService" init-method="startReport" destroy-method="stopReport">
+        <property name="enabled" value="#{properties[metrics_enabled]}"/>
+    </bean>
+    
 </beans>

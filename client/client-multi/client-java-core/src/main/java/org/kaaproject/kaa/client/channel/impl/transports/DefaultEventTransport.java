@@ -114,4 +114,20 @@ public class DefaultEventTransport extends AbstractKaaTransport implements
         return TransportType.EVENT;
     }
 
+    @Override
+    public void blockEventManager() {
+        if (manager != null) {
+            manager.engageDataChannel();
+        }
+    }
+
+    @Override
+    public void releaseEventManager() {
+        if (manager != null) {
+            if (manager.releaseDataChannel()) {
+                sync();
+            }
+        }
+    }
+
 }

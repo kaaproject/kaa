@@ -22,10 +22,12 @@ import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
@@ -324,4 +326,14 @@ public interface CacheService {
     void setEventClassService(EventClassService eventClassService);
 
     void setApplicationEventMapService(ApplicationEventMapService applicationEventMapService);
+
+    EndpointGroupDto getEndpointGroupById(String endpointGroupId);
+
+    TopicDto getTopicById(String topicId);
+
+    EndpointGroupDto putEndpointGroup(String key, EndpointGroupDto value);
+
+    TopicDto putTopic(String key, TopicDto value);
+
+    void resetGroup(String key);
 }

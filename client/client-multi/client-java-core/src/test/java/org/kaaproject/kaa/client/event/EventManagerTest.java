@@ -91,6 +91,32 @@ public class EventManagerTest {
     }
 
     @Test
+    public void testEngageRelease() throws IOException {
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+
+        EventTransport transport = Mockito.mock(EventTransport.class);
+        EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
+
+        EventManager  eventManager = new DefaultEventManager(state, transport);
+        eventManager.registerEventFamily(eventFamily);
+        try {
+            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
+        } catch (IOException e) {
+            assertTrue("Unexpected exception", false);
+        }
+        Mockito.verify(transport, times(1)).sync();
+        eventManager.engageDataChannel();
+        try {
+            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
+        } catch (IOException e) {
+            assertTrue("Unexpected exception", false);
+        }
+        Mockito.verify(transport, times(1)).sync();
+
+        assertTrue(eventManager.releaseDataChannel());
+    }
+
+    @Test
     public void testOneEventForTwoDifferentFamilies() throws IOException {
         KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
 

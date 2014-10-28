@@ -15,10 +15,11 @@
  */
 package org.kaaproject.kaa.server.bootstrap.service.tcp.commands;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.nio.ByteBuffer;
@@ -44,7 +45,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.D
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MessageType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
-import org.mockito.Mock;
+
 
 /**
  * @author Andrey Panasenko

@@ -169,7 +169,7 @@
         <dependency>
             <groupId>org.kaaproject.kaa.avrogenc</groupId>
             <artifactId>avrogenc</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.6.0</version>
         </dependency>
         <dependency>
         	<groupId>org.apache.velocity</groupId>
@@ -603,8 +603,10 @@
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>
                             <group>Applications/Kaa</group>
+                            <targetOS>linux</targetOS>
                             <packager>${user.name}</packager>
                             <changelogFile>CHANGELOG</changelogFile>
+                            <targetOS>linux</targetOS>
                             <defaultDirmode>500</defaultDirmode>
                             <defaultFilemode>400</defaultFilemode>
                             <defaultUsername>kaa</defaultUsername>

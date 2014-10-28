@@ -45,7 +45,9 @@ public class KaaTcpEncoder extends ChannelOutboundHandlerAdapter {
         } else {
             MqttFrame frame = (MqttFrame) msg;
             byte[] data = frame.getFrame().array();
-            LOG.trace("Sending {} data for frame {}", Arrays.toString(data), frame);
+            if(LOG.isTraceEnabled()){
+                LOG.trace("Sending {} data for frame {}", Arrays.toString(data), frame);
+            }
             ChannelFuture future = ctx.writeAndFlush(data, promise);
             if (frame.isNeedCloseConnection()) {
                 future.addListener(ChannelFutureListener.CLOSE);

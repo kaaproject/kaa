@@ -16,14 +16,18 @@
 package org.kaaproject.kaa.sandbox.demo;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.iharder.Base64;
 
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
@@ -72,7 +76,7 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     public static String tenantDeveloperPassword = DEFAULT_TENANT_DEVELOPER_PASSWORD;
     
     protected final SdkKey sdkKey;
-    protected final Project projectConfig;
+    protected final List<Project> projectConfigs = new ArrayList<>();
     
     public static void updateCredentialsFromArgs(String[] args) {
         logger.info("Updating credentials information from arguments...");
@@ -125,7 +129,6 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
 
     protected AbstractDemoBuilder() {
         this.sdkKey = new SdkKey();
-        this.projectConfig = new Project();
     }
     
     @Override
@@ -133,23 +136,31 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
         logger.info("Demo application build started...");
         createUsers(client);
         buildDemoApplicationImpl(client);
-        setupProjectConfig();
+        setupProjectConfigs();
         logger.info("Demo application build finished.");
         try {
-            projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkKey, Base64.URL_SAFE));
+            for (Project projectConfig : projectConfigs) {
+                if (projectConfig.getPlatform()==Platform.ANDROID) {
+                    sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+                }
+                else if (projectConfig.getPlatform()==Platform.JAVA) {
+                    sdkKey.setTargetPlatform(SdkPlatform.JAVA);
+                }
+                projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkKey, Base64.URL_SAFE));
+            }
         } catch (IOException e) {
             logger.error("Unable to generate sdk key", e);
         }
     }
 
     @Override
-    public Project getProjectConfig() {
-        return projectConfig;
+    public List<Project> getProjectConfigs() {
+        return projectConfigs;
     }
     
     protected abstract void buildDemoApplicationImpl(AdminClient client) throws Exception;
     
-    protected abstract void setupProjectConfig();
+    protected abstract void setupProjectConfigs();
     
     private void createUsers(AdminClient client) throws Exception {
         if (!usersCreated) {

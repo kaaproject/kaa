@@ -326,11 +326,11 @@ public class ConcurrentCacheServiceTest {
 
     @Test
     public void testGetAppSeqNumber() throws GetDeltaException {
-        assertEquals(new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
+        assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
         verify(appService, times(1)).findAppByApplicationToken(TEST_APP_TOKEN);
         reset(appService);
 
-        assertEquals(new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
+        assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
         verify(appService, times(0)).findAppByApplicationToken(TEST_APP_TOKEN);
         reset(appService);
     }
@@ -341,7 +341,7 @@ public class ConcurrentCacheServiceTest {
             launchCodeInParallelThreads(STRESS_TEST_N_THREADS, new Runnable() {
                 @Override
                 public void run() {
-                    assertEquals(new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
+                    assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
                 }
             });
 

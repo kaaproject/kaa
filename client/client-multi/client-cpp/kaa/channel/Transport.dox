@@ -13,17 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*!
-    \page transport_page Kaa transport
-    
-    Description of Kaa transport...
-    
-    \section bootstrap Communication with Bootstrap server
-    Describe how does client communicate with Bootstrap server
-    \section operations Communication with Operations server
-    Describe how does client communicate with Operations server
-    \section channels Channels
-    Channels description
-    \section see_also See also
-*/
+ 

@@ -21,6 +21,10 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-Wall -std=c++0x --coverage -O3 -g -pthread")
 endif ()
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++11 -stdlib=libc++ -g --coverage")
+endif()
+
 set ( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Modules/)
 
 add_definitions (-DBOOST_TEST_DYN_LINK -DBOOST_LOG_DYN_LINK -DRESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/resources")

@@ -23,10 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
@@ -428,6 +430,36 @@ public class TestCacheService implements CacheService {
     public void setApplicationEventMapService(ApplicationEventMapService applicationEventMapService) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public EndpointGroupDto getEndpointGroupById(String endpointGroupId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TopicDto getTopicById(String topicId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EndpointGroupDto putEndpointGroup(String key, EndpointGroupDto value) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TopicDto putTopic(String key, TopicDto value) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void resetGroup(String key) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

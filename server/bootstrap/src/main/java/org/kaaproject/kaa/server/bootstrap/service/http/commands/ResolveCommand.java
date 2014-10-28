@@ -81,6 +81,8 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
 
     protected AvroByteArrayConverter<Resolve> requestConverter;
     protected AvroByteArrayConverter<OperationsServerList> responseConverter;
+    
+    protected long processingStartTimestamp = 0;
 
     /**
      * Default constructor ResolveCommand()
@@ -96,6 +98,7 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
      */
     @Override
     public void parse() throws Exception {
+        processingStartTimestamp = System.currentTimeMillis();
         LOG.trace("CommandName {}: parse", COMMAND_NAME);
         HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
         HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(factory, getRequest());
@@ -151,6 +154,7 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
         if (isNeedConnectionClose()) {
             httpResponse.headers().set(CONNECTION, HttpHeaders.Values.CLOSE);
         }
+        setSyncTime(System.currentTimeMillis() - processingStartTimestamp);
         return httpResponse;
     }
 
@@ -162,6 +166,10 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
         return true;
     }
 
+    /**
+     * Return command name
+     * @return String - command name
+     */
     public static String getCommandName() {
         return COMMAND_NAME;
     }

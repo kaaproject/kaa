@@ -19,23 +19,21 @@
  */
 package org.kaaproject.kaa.server.bootstrap.service.thrift;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.thrift.TException;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
-import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
 import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftChannelType;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;

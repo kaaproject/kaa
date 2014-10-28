@@ -17,14 +17,14 @@
 package org.kaaproject.kaa.client.profile;
 
 /**
- * Interface for the profile manager.<br>
- * <br>
- * Responsible for the management of the user-defined profile container
- * ({@link AbstractProfileContainer})<br>
- * <br>
- * Profile manager is used to track any profile updates.
- * If no container is set, Kaa won't be able to process these updates.<br>
- * <br>
+ * <p>Interface for the profile manager.</p>
+ *
+ * <p>Responsible for the management of the user-defined profile container
+ * ({@link AbstractProfileContainer})</p>
+ *
+ * <p>Profile manager is used to track any profile updates.
+ * If no container is set, Kaa won't be able to process these updates.</p>
+ *
  * <pre>
  * {@code
  * // Assume, BasicEndpointProfile is a profile class auto-generated according to predefined Avro schema

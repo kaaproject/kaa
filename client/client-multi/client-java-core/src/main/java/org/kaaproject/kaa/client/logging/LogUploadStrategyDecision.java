@@ -17,10 +17,20 @@
 package org.kaaproject.kaa.client.logging;
 
 /**
- * Describes possible decisions of defined log upload strategy (@see LogUploadStrategy)
+ * Describes all possible decisions for a log upload strategy ({@link LogUploadStrategy}).
  */
 public enum LogUploadStrategyDecision {
+    /**
+     * Do nothing except adding log record to a storage.
+     */
     NOOP,
+    /**
+     * Kaa SDK should initiate log upload on the Operation server.
+     */
     UPLOAD,
+    /**
+     * A memory size occupied by logs is exceeded a maximum allowed size for storage.
+     * Forced deletion of the elder logs should be initiated.
+     */
     CLEANUP
 }

@@ -46,7 +46,7 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
     public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws IOException {
         if (transport != null) {
             Resolve request = transport.createResolveRequest();
-            LOG.info("Created Resolve request {}", request);
+            LOG.trace("Created Resolve request {}", request);
             return requestConverter.toByteArray(request);
         }
         return null; //NOSONAR
@@ -56,8 +56,16 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
     public synchronized void processResponse(byte[] response) throws IOException {
         if (transport != null && response != null) {
             OperationsServerList list = responseConverter.fromByteArray(response);
-            LOG.info("Received OperationssServerList response {}", list);
+            LOG.trace("Received OperationssServerList response {}", list);
             transport.onResolveResponse(list);
         }
+    }
+
+    @Override
+    public void preProcess() {
+    }
+
+    @Override
+    public void postProcess() {
     }
 }

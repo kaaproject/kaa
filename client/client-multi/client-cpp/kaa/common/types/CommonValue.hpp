@@ -26,7 +26,7 @@
 
 namespace kaa {
 
-template <typename T, CommonValueType CVT = CommonValueType::COMMON_UNKNOWN>
+template <typename T, CommonValueType CVT>
 class CommonValue : public ICommonValue {
 public:
     typedef T                       value_type;
@@ -49,7 +49,7 @@ private:
 };
 
 template <>
-CommonValue<boost::uint8_t *>::~CommonValue()
+CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES>::~CommonValue()
 {
     delete[] value_;
 }
@@ -81,7 +81,7 @@ std::string CommonValue<T, CVT>::toString() const
 }
 
 template <>
-std::string CommonValue<std::string>::toString() const
+std::string CommonValue<std::string, CommonValueType::COMMON_STRING>::toString() const
 {
     std::stringstream ss;
     ss << "\"" << value_ << "\"";
@@ -125,7 +125,7 @@ CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES>::CommonValue(const 
 }
 
 template <>
-std::string CommonValue<boost::uint8_t *>::toString() const
+std::string CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES>::toString() const
 {
     std::stringstream ss;
     for (size_t i = 0; i < valLength_; ) {

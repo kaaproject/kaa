@@ -15,7 +15,9 @@
  */
 package org.kaaproject.kaa.server.bootstrap.service.tcp;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 

@@ -42,6 +42,7 @@ public class FlumeLogAppender extends LogAppender {
     @Override
     public void close() {
         flumeClientManger.cleanUp();
+        LOG.debug("Stoped flume log appender.");
     }
 
     @Override

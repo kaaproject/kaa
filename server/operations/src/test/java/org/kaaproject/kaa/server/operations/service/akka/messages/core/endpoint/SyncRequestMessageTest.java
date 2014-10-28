@@ -15,6 +15,7 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -50,32 +51,32 @@ public class SyncRequestMessageTest {
 
         Assert.assertFalse(message.isValid(TransportType.PROFILE));
         other.setProfileSyncRequest(new ProfileSyncRequest());
-        message.update(otherMessage);
+        message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.PROFILE));
 
         Assert.assertFalse(message.isValid(TransportType.CONFIGURATION));
-        other.setConfigurationSyncRequest(new ConfigurationSyncRequest());
-        message.update(otherMessage);
+        other.setConfigurationSyncRequest(new ConfigurationSyncRequest(10, ByteBuffer.wrap("String".getBytes())));
+        message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.CONFIGURATION));
 
         Assert.assertFalse(message.isValid(TransportType.NOTIFICATION));
         other.setNotificationSyncRequest(new NotificationSyncRequest());
-        message.update(otherMessage);
+        message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.NOTIFICATION));
 
         Assert.assertFalse(message.isValid(TransportType.USER));
         other.setUserSyncRequest(new UserSyncRequest());
-        message.update(otherMessage);
+        message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.USER));
 
         Assert.assertFalse(message.isValid(TransportType.LOGGING));
         other.setLogSyncRequest(new LogSyncRequest());
-        message.update(otherMessage);
+        message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.LOGGING));
 
         Assert.assertFalse(message.isValid(TransportType.EVENT));
         other.setEventSyncRequest(new EventSyncRequest());
-        message.update(otherMessage);
+        message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.EVENT));
 
     }

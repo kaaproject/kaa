@@ -16,21 +16,19 @@
 
 package org.kaaproject.kaa.client.logging;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.logging.gen.SuperRecord;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
 
 public class DefaultLogCollectorTest {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogCollectorTest.class);
@@ -46,9 +44,6 @@ public class DefaultLogCollectorTest {
             SuperRecord record = new SuperRecord();
             record.setLogdata("test");
 
-            /*
-             * Size of each record is 5B.
-             */
             logCollector.addLogRecord(record);
             logCollector.addLogRecord(record);
             logCollector.addLogRecord(record);
@@ -58,10 +53,11 @@ public class DefaultLogCollectorTest {
             verify(transport, times(1)).sync();
         } catch (Exception e) {
             Assert.assertTrue("Exception: " + e.toString(), false);
-        } 
+        }
     }
 
     private static class CustomStrategy implements LogUploadStrategy {
+        @Override
         public LogUploadStrategyDecision isUploadNeeded(LogUploadConfiguration configuration, LogStorageStatus status) {
             LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
 
@@ -83,9 +79,6 @@ public class DefaultLogCollectorTest {
         logCollector.setUploadStrategy(new CustomStrategy());
 
         try {
-            /*
-             * Size of each record is 5B.
-             */
             SuperRecord record = new SuperRecord();
 
             record.setLogdata("test");
@@ -98,10 +91,12 @@ public class DefaultLogCollectorTest {
     }
 
     private static class CustomStorageStatus implements LogStorageStatus {
+        @Override
         public long getConsumedVolume() {
             return 10000000;
         }
 
+        @Override
         public long getRecordCount() {
             return 1;
         }
@@ -118,9 +113,6 @@ public class DefaultLogCollectorTest {
         logCollector.setUploadStrategy(strategy);
 
         try {
-            /*
-             * Size of each record is 5B.
-             */
             SuperRecord record = new SuperRecord();
 
             record.setLogdata("test");
@@ -174,16 +166,10 @@ public class DefaultLogCollectorTest {
         logCollector.setConfiguration(conf);
 
         try {
-            /*
-             * Size of each record is 5B.
-             */
             SuperRecord record = new SuperRecord();
 
             record.setLogdata("test");
 
-            /*
-             * Size of each record is 3B.
-             */
             logCollector.addLogRecord(record);
             logCollector.addLogRecord(record);
             logCollector.addLogRecord(record);
@@ -207,7 +193,7 @@ public class DefaultLogCollectorTest {
 
             }
 
-            verify(transport, times(2)).sync();
+            verify(transport, times(1)).sync();
         } catch (Exception e) {
             Assert.assertTrue("Exception: " + e.toString(), false);
         }

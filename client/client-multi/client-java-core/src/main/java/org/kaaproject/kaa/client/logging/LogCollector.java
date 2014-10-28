@@ -21,15 +21,15 @@ import java.io.IOException;
 import org.kaaproject.kaa.client.logging.gen.SuperRecord;
 
 /**
- * Interface for log collector.
+ * <p>Interface for a log collector.</p>
  *
- * Adds new log record to a local storage.
+ * <p>Adds new log record to a local storage.</p>
  *
- * May be configured by setting user defined log record storage,
+ * <p>May be configured by setting user defined log record storage,
  * storage status, upload configuration and log upload strategy.
- * Each of them may be set independently of others.
+ * Each of them may be set independently of others.</p>
  *
- * Reference implementation of each module used by default.
+ * <p>Reference implementation of each module used by default.</p>
  *
  * @see LogStorage
  * @see LogStorageStatus

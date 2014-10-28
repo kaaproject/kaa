@@ -22,7 +22,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/main/resources/demo/projects</directory>
+            <directory>${project.build.directory}/demo_projects</directory>
             <outputDirectory>demo_projects</outputDirectory>
         </fileSet>
     </fileSets>

@@ -18,4 +18,5 @@ tmp_sh/
 .gwt/
 .settings/
 /bin
+bin/
 **/dependency-reduced-pom.xml

@@ -36,6 +36,10 @@ public class DesktopKaaClient extends AbstractKaaClient {
         super();
     }
 
+    DesktopKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+        super(properties);
+    }
+
     @Override
     public AbstractHttpClient createHttpClient(String url,
             PrivateKey privateKey, PublicKey publicKey,

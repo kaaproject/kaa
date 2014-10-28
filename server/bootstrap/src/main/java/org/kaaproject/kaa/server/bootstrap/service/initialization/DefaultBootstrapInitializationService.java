@@ -32,8 +32,8 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
-import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
-import org.kaaproject.kaa.server.bootstrap.service.http.ProtocolService;
+import org.kaaproject.kaa.server.bootstrap.service.config.KaaHttpServiceChannelConfig;
+import org.kaaproject.kaa.server.bootstrap.service.config.BootstrapServerConfig;
 import org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.bootstrap.service.thrift.BootstrapThriftServiceImpl;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
@@ -97,7 +97,10 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
 
     /** Bootstrap Config. */
     @Autowired
-    private BootstrapConfig bootstrapConfig;
+    private KaaHttpServiceChannelConfig bootstrapConfig;
+    
+    @Autowired
+    private BootstrapServerConfig serverConfig;
 
     /** The bootstrap node. */
     private BootstrapNode bootstrapNode;
@@ -107,7 +110,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
 
     /** The http service. */
 //    @Autowired
-//    private ProtocolService httpService;
+//    private KaaHttpService httpService;
 
     @Autowired
     private OperationsServerListService operationsServerListService;
@@ -119,9 +122,9 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
     /**
      * Return Bootstrap Config.
      *
-     * @return BootstrapConfig
+     * @return KaaHttpServiceChannelConfig
      */
-    private BootstrapConfig getConfig() {
+    private KaaHttpServiceChannelConfig getConfig() {
         return bootstrapConfig;
     }
 
@@ -212,8 +215,8 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
     /**
      * Start thrift.
      *
-     * @param thriftShutdownLatch
-     * @param thriftStartupLatch
+     * @param thriftStartupLatch CountDownLatch
+     * @param thriftShutdownLatch CountDownLatch
      */
     private void startThrift(final CountDownLatch thriftStartupLatch, final CountDownLatch thriftShutdownLatch) {
         Runnable thriftRunnable = new Runnable() {
@@ -265,7 +268,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
     /**
      * Start zk.
      *
-     * @throws Exception
+     * @throws Exception in case of error
      */
     private void startZK() throws Exception { // NOSONAR
         if (zkEnabled) {
@@ -284,6 +287,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             bootstrapNode = new BootstrapNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(zkMaxRetryTime, zkSleepTime));
             if (bootstrapNode != null) {
                 bootstrapNode.start();
+                serverConfig.setBootstrapNode(bootstrapNode);
             }
         }
     }
@@ -300,6 +304,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             LOG.warn("Exception when closing ZK node", e);
         } finally {
             bootstrapNode = null;
+            serverConfig.setBootstrapNode(bootstrapNode);
         }
     }
 

@@ -79,7 +79,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
     public static final int NUMBER_OF_TESTS = 10;
 
     /** Max test complete timeout */
-    public static final int MAX_TIMEOUT_TEST_WAIT = NUMBER_OF_TESTS*25;
+    public static final int MAX_TIMEOUT_TEST_WAIT = NUMBER_OF_TESTS*100;
 
     /** HTTP request header field, used to set Test ID */
     public static final String REQUEST_ID = "RequestID";
@@ -265,7 +265,9 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
             synchronized (sync) {
                 if (testProcessed < NUMBER_OF_TESTS
                         || sessionsCreated > sessionsClosed) {
+                    logger.info("get to wait {}",testProcessed);
                     sync.wait(MAX_TIMEOUT_TEST_WAIT);
+                    logger.info("leave wait {}",testProcessed);
                 }
             }
         } catch (InterruptedException e) {
@@ -506,7 +508,7 @@ public class NettyHttpServerIT implements SessionTrackable, Track {
     }
 
     @Override
-    public int newRequest(String requestName) {
+    public int newRequest() {
         int id = rnd.nextInt();
         requests.put(new Integer(id), new Long(System.currentTimeMillis()));
         return id;

@@ -57,6 +57,8 @@ public:
     virtual void detachEndpoint(const std::string&  endpointKeyHash
                               , IEndpointAttachStatusListener* listener = nullptr);
 
+    virtual void detachEndpoint(IEndpointAttachStatusListener* listener = nullptr);
+
     virtual void attachUser(const std::string& userExternalId
                           , const std::string& userAccessToken
                           , IEndpointAttachStatusListener* listener = nullptr);

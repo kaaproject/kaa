@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# Copyright 2014 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -e
+
+chown -R kaa:kaa /usr/lib/kaa-map-aggregator > /dev/null
+
+if [ ! -d /flume ]; then
+	mkdir /flume
+fi
+
+chown -R flume:flume /flume
+
+if [ ! -d /flume/kaa-map-aggregator ]; then
+	mkdir /flume/kaa-map-aggregator
+fi
+
+chown -R kaa:kaa /flume/kaa-map-aggregator
+
+if [ -h /etc/kaa-map-aggregator/conf ]; then
+    rm -f /etc/kaa-map-aggregator/conf
+fi
+
+if [ ! -d /etc/kaa-map-aggregator ]; then
+    mkdir -p /etc/kaa-map-aggregator
+fi
+
+if [ ! -d /var/log/kaa ]; then
+    mkdir -p /var/log/kaa
+fi
+
+chown -R kaa:kaa /var/log/kaa
+chmod 755 /var/log/kaa
+
+ln -s /usr/lib/kaa-map-aggregator/conf /etc/kaa-map-aggregator/conf
+
+if [ -f /usr/lib/kaa-map-aggregator/bin/kaa-map-aggregator.init.d ]; then
+    mv /usr/lib/kaa-map-aggregator/bin/kaa-map-aggregator.init.d /etc/init.d/kaa-map-aggregator
+fi
+
+if [ -x "/etc/init.d/kaa-map-aggregator" ]; then
+	if [ ! -e "/etc/init/kaa-map-aggregator.conf" ]; then
+		if ! chkconfig_loc="$(type -p "chkconfig")" || [ -z "$chkconfig_loc" ]; then
+		    update-rc.d -f kaa-map-aggregator defaults >/dev/null
+		else
+		    chkconfig --add kaa-map-aggregator >/dev/null
+		fi
+	fi
+fi
+
+
+
+
+

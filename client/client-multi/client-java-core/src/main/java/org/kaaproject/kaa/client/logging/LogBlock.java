@@ -19,23 +19,24 @@ package org.kaaproject.kaa.client.logging;
 import java.util.List;
 
 /**
- * Wrapper class for sending log block.
- * Each log block should have its unique id
- * to be mapped in the log storage and delivery stuff.
+ * <p>Wrapper class for a log block which is going to be sent.</p>
+ *
+ * <p>Each log block should have its unique id to be mapped in the log storage and
+ * delivery stuff.</p>
  */
 public class LogBlock {
     /**
      * Unique id for sending log block
      */
-    private final String    id;
+    private final String id;
 
     /**
-     * Sending log block
+     * A log block, which is going to be sent.
      */
     private final List<LogRecord> logRecords;
 
     /**
-     * Constructs wrapper for sending log block.
+     * Constructs wrapper for a log block.
      *
      * @param id Unique id used for mapping in a delivery stuff and local log storage
      * @param records Sending log block

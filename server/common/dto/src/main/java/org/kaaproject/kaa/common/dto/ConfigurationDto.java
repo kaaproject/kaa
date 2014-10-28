@@ -61,8 +61,6 @@ public class ConfigurationDto extends AbstractStructureDto {
 
     @Override
     public String toString() {
-        return "ConfigurationDto{" + super.toString() +
-                "protocolSchema='" + protocolSchema + '\'' +
-                '}';
+        return "ConfigurationDto{" + super.toString()+"}";
     }
 }

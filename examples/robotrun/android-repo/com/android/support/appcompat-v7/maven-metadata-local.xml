@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.android.support</groupId>
+  <artifactId>appcompat-v7</artifactId>
+  <versioning>
+    <versions>
+      <version>19.1.0</version>
+    </versions>
+    <lastUpdated>20140326202543</lastUpdated>
+  </versioning>
+</metadata>

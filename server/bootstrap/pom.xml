@@ -412,6 +412,7 @@
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>
                             <group>Applications/Kaa</group>
+                            <targetOS>linux</targetOS>
                             <packager>${user.name}</packager>
                             <changelogFile>CHANGELOG</changelogFile>
                             <defaultDirmode>500</defaultDirmode>

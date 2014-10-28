@@ -245,6 +245,11 @@ void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAcce
     }
 }
 
+void EndpointRegistrationManager::detachEndpoint(IEndpointAttachStatusListener* listener)
+{
+    this->detachEndpoint(endpointKeyHash_, listener);
+}
+
 void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyHash, IEndpointAttachStatusListener* listener)
 {
     if (endpointKeyHash.empty()) {

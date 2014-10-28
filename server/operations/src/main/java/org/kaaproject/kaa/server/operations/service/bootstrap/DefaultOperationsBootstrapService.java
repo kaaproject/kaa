@@ -43,7 +43,6 @@ import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
-import org.kaaproject.kaa.server.operations.service.statistics.StatisticsFactory;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,7 +196,6 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
             server.stop();
         }
         nettyServersList.clear();
-        StatisticsFactory.shutdown();
         if (akkaService != null) {
             akkaService.getActorSystem().shutdown();
         }

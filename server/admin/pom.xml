@@ -137,7 +137,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.3.4.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -147,7 +146,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -667,6 +665,7 @@
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>
                             <group>Applications/Kaa</group>
+                            <targetOS>linux</targetOS>
                             <packager>${user.name}</packager>
                             <changelogFile>CHANGELOG</changelogFile>
                             <defaultDirmode>500</defaultDirmode>

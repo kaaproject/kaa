@@ -123,8 +123,14 @@ public class DefaultOperationsService implements OperationsService {
      */
     @Override
     public SyncResponseHolder sync(SyncRequest request) throws GetDeltaException {
-        return processSync(request);
+        return sync(request, null);
     }
+    
+    
+    @Override
+    public SyncResponseHolder sync(SyncRequest request, EndpointProfileDto profile) throws GetDeltaException {
+        return processSync(request, profile);
+    }    
 
     /**
      * Process sync.
@@ -139,11 +145,11 @@ public class DefaultOperationsService implements OperationsService {
      * @throws GetDeltaException
      *             the get delta exception
      */
-    private SyncResponseHolder processSync(SyncRequest request) throws GetDeltaException {
+    private SyncResponseHolder processSync(SyncRequest request, EndpointProfileDto profile) throws GetDeltaException {
         SyncRequestMetaData metaData = request.getSyncRequestMetaData();
         String endpointId = Base64Util.encode(metaData.getEndpointPublicKeyHash().array());
         int requestHash = request.hashCode();
-        LOG.trace("[{}][{}] processing sync. request: ", endpointId, requestHash, request);
+        LOG.trace("[{}][{}] processing sync. request: {}", endpointId, requestHash, request);
 
         if (!validate(endpointId, request)) {
             return SyncResponseHolder.failure(request.getRequestId());
@@ -152,8 +158,6 @@ public class DefaultOperationsService implements OperationsService {
         SyncResponseHolder response = new SyncResponseHolder(new SyncResponse());
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.SUCCESS);
-
-        EndpointProfileDto profile = null;
 
         ProfileSyncRequest profileSyncRequest = request.getProfileSyncRequest();
         if (profileSyncRequest != null) {
@@ -256,7 +260,7 @@ public class DefaultOperationsService implements OperationsService {
         }
 
         if (updateProfileRequired) {
-            profileService.updateProfile(profile);
+            response.setEndpointProfile(profileService.updateProfile(profile));
         }
 
         LOG.debug("[{}][{}] processed sync request", endpointId, requestHash);

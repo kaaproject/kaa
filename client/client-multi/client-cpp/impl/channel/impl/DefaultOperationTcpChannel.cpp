@@ -217,7 +217,7 @@ boost::system::error_code DefaultOperationTcpChannel::sendKaaSync(const std::map
     KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Sending KAASYNC message") % getId());
     const auto& requestBody = multiplexer_->compileRequest(transportTypes);
     const auto& requestEncoded = encDec_->encodeData(requestBody.data(), requestBody.size());
-    return sendData(KaaSyncRequest(false, true, 0, requestEncoded));
+    return sendData(KaaSyncRequest(false, true, 0, requestEncoded, KaaSyncMessageType::SYNC));
 }
 
 boost::system::error_code DefaultOperationTcpChannel::sendConnect()

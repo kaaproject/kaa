@@ -25,16 +25,21 @@ public final class AppSeqNumber implements Serializable{
      */
     private static final long serialVersionUID = -5524478984530847211L;
 
-
+    private final String tenantId;
     private final String appId;
     private final String appToken;
     private final int seqNumber;
 
-    public AppSeqNumber(String appId, String appToken, int seqNumber) {
+    public AppSeqNumber(String tenantId, String appId, String appToken, int seqNumber) {
         super();
+        this.tenantId = tenantId;
         this.appId = appId;
         this.appToken = appToken;
         this.seqNumber = seqNumber;
+    }
+
+    public String getTenantId() {
+        return tenantId;
     }
 
     public String getAppId() {
@@ -53,7 +58,6 @@ public final class AppSeqNumber implements Serializable{
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((appId == null) ? 0 : appId.hashCode());
         result = prime * result + ((appToken == null) ? 0 : appToken.hashCode());
         result = prime * result + seqNumber;
         return result;
@@ -61,33 +65,20 @@ public final class AppSeqNumber implements Serializable{
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         AppSeqNumber other = (AppSeqNumber) obj;
-        if (appId == null) {
-            if (other.appId != null) {
-                return false;
-            }
-        } else if (!appId.equals(other.appId)) {
-            return false;
-        }
         if (appToken == null) {
-            if (other.appToken != null) {
+            if (other.appToken != null)
                 return false;
-            }
-        } else if (!appToken.equals(other.appToken)) {
+        } else if (!appToken.equals(other.appToken))
             return false;
-        }
-        if (seqNumber != other.seqNumber) {
+        if (seqNumber != other.seqNumber)
             return false;
-        }
         return true;
     }
 

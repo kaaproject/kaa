@@ -34,25 +34,28 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
+import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
@@ -97,7 +100,11 @@ public class ConcurrentCacheService implements CacheService {
     /** The endpoint service. */
     @Autowired
     private EndpointService endpointService;
-    //
+
+    /** The topic service. */
+    @Autowired
+    private TopicService topicService;
+
     /** The profile service. */
     @Autowired
     private ProfileService profileService;
@@ -113,43 +120,49 @@ public class ConcurrentCacheService implements CacheService {
     private ApplicationEventMapService applicationEventMapService;
 
     /** The app seq number memorizer. */
-    private final CacheTemporaryMemorizer<String, AppSeqNumber> appSeqNumberMemorizer = new CacheTemporaryMemorizer<String, AppSeqNumber>();
+    private final CacheTemporaryMemorizer<String, AppSeqNumber> appSeqNumberMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The cf id memorizer. */
-    private final CacheTemporaryMemorizer<ConfigurationIdKey, String> cfIdMemorizer = new CacheTemporaryMemorizer<ConfigurationIdKey, String>();
+    private final CacheTemporaryMemorizer<ConfigurationIdKey, String> cfIdMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The history memorizer. */
-    private final CacheTemporaryMemorizer<HistoryKey, List<HistoryDto>> historyMemorizer = new CacheTemporaryMemorizer<HistoryKey, List<HistoryDto>>();
+    private final CacheTemporaryMemorizer<HistoryKey, List<HistoryDto>> historyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The filter lists memorizer. */
-    private final CacheTemporaryMemorizer<AppVersionKey, List<ProfileFilterDto>> filterListsMemorizer = new CacheTemporaryMemorizer<AppVersionKey, List<ProfileFilterDto>>();
+    private final CacheTemporaryMemorizer<AppVersionKey, List<ProfileFilterDto>> filterListsMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The filters memorizer. */
-    private final CacheTemporaryMemorizer<String, ProfileFilterDto> filtersMemorizer = new CacheTemporaryMemorizer<String, ProfileFilterDto>();
+    private final CacheTemporaryMemorizer<String, ProfileFilterDto> filtersMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The cf memorizer. */
-    private final CacheTemporaryMemorizer<EndpointObjectHash, EndpointConfigurationDto> cfMemorizer = new CacheTemporaryMemorizer<EndpointObjectHash, EndpointConfigurationDto>();
+    private final CacheTemporaryMemorizer<EndpointObjectHash, EndpointConfigurationDto> cfMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The cf schema memorizer. */
-    private final CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto> cfSchemaMemorizer = new CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto>();
+    private final CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto> cfSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The pf schema memorizer. */
-    private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto>();
+    private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint key memorizer. */
-    private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer = new CacheTemporaryMemorizer<EndpointObjectHash, PublicKey>();
+    private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The merged configuration memorizer. */
-    private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData> mergedConfigurationMemorizer = new CacheTemporaryMemorizer();
+    private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData>();
 
     /** The delta memorizer. */
-    private final CacheTemporaryMemorizer<DeltaCacheKey, DeltaCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<DeltaCacheKey, DeltaCacheEntry>();
+    private final CacheTemporaryMemorizer<DeltaCacheKey, DeltaCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint key memorizer. */
-    private final CacheTemporaryMemorizer<EventClassFamilyIdKey, String> ecfIdKeyMemorizer = new CacheTemporaryMemorizer<EventClassFamilyIdKey, String>();
+    private final CacheTemporaryMemorizer<EventClassFamilyIdKey, String> ecfIdKeyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint key memorizer. */
-    private final CacheTemporaryMemorizer<String, String> tenantIdMemorizer = new CacheTemporaryMemorizer<String, String>();
+    private final CacheTemporaryMemorizer<String, String> tenantIdMemorizer = new CacheTemporaryMemorizer<>();
+
+    /** The endpoint groups memorizer. */
+    private final CacheTemporaryMemorizer<String, EndpointGroupDto> groupsMemorizer = new CacheTemporaryMemorizer<String, EndpointGroupDto>();
+
+    /** The topics memorizer. */
+    private final CacheTemporaryMemorizer<String, TopicDto> topicsMemorizer = new CacheTemporaryMemorizer<String, TopicDto>();
 
     /** The history seq number comparator. */
     public static final Comparator<HistoryDto> HISTORY_SEQ_NUMBER_COMPARATOR = new Comparator<HistoryDto>() {
@@ -177,7 +190,7 @@ public class ConcurrentCacheService implements CacheService {
             public AppSeqNumber compute(String key) {
                 LOG.debug("Fetching result for getAppSeqNumber");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key);
-                AppSeqNumber appSeqNumber = new AppSeqNumber(appDto.getId(), appDto.getApplicationToken(), appDto.getSequenceNumber());
+                AppSeqNumber appSeqNumber = new AppSeqNumber(appDto.getTenantId(), appDto.getId(), appDto.getApplicationToken(), appDto.getSequenceNumber());
                 putAppSeqNumber(key, appSeqNumber);
                 return appSeqNumber;
             }
@@ -723,6 +736,50 @@ public class ConcurrentCacheService implements CacheService {
         return delta;
     }
 
+    @Override
+    @CacheEvict(value = "endpointGroups", key = "#key")
+    public void resetGroup (String key) {
+    }
+    
+    @Override
+    @CachePut(value = "endpointGroups", key = "#key")
+    public EndpointGroupDto putEndpointGroup (String key, EndpointGroupDto value) {
+        return value;
+    }
+    
+    @Override
+    @Cacheable("endpointGroups")
+    public EndpointGroupDto getEndpointGroupById(String endpointGroupId) {
+        return groupsMemorizer.compute(endpointGroupId, new Computable<String, EndpointGroupDto>() {
+            @Override
+            public EndpointGroupDto compute(String key) {
+                LOG.debug("Fetching result for token id");
+                EndpointGroupDto groupDto = endpointService.findEndpointGroupById(key);
+                return groupDto;
+            }
+
+        });
+    }
+
+    @Override
+    @CachePut(value = "topics", key = "#key")
+    public TopicDto putTopic (String key, TopicDto value) {
+        return value;
+    }
+    
+    @Override
+    @Cacheable("topics")
+    public TopicDto getTopicById(String topicId) {
+        return topicsMemorizer.compute(topicId, new Computable<String, TopicDto>() {
+            @Override
+            public TopicDto compute(String key) {
+                LOG.debug("Fetching result for token id");
+                TopicDto topicDto = topicService.findTopicById(key);
+                return topicDto;
+            }
+        });
+    }
+    
     /*
      * (non-Javadoc)
      *

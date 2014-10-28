@@ -203,6 +203,10 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -537,6 +541,7 @@
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>
                             <group>Applications/Kaa</group>
+                            <targetOS>linux</targetOS>
                             <packager>${user.name}</packager>
                             <changelogFile>CHANGELOG</changelogFile>
                             <defaultDirmode>500</defaultDirmode>

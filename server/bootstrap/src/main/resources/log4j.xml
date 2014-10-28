@@ -32,10 +32,10 @@
     </appender>
 
     <category name="org.kaaproject.kaa.server.bootstrap">
-        <level value="TRACE"/>
+        <level value="INFO"/>
     </category>
     <category name="org.kaaproject.kaa.server.common">
-        <level value="TRACE"/>
+        <level value="INFO"/>
     </category>
     <category name="org.springframework">
         <level value="INFO"/>

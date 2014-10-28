@@ -15,6 +15,60 @@
  */
 
 /**
- * Provides implementation of endpoint/user registration
+ * <p>Provides implementation of endpoint/user registration.</p>
+ * 
+ *  <p>
+ *  In order to have ability to send and (or) receive events an application must
+ *  be attached to the user entity in Kaa ecosystem. User registration module 
+ *  gives API to manage endpoint-to-user attachments.<br>
+ *  <br>
+ *  In scope of this java endpoint sdk provides next functionality:
+ *  <il>
+ *      <li>Attach current endpoint to user entity;</li>
+ *      <li>Attach other endpoint to user entity;</li>
+ *      <li>Detach endpoint from user entity.</li>
+ *  </il>
+ *  <br>
+ *  If endpoint is assumed to be attached or detached by another application it
+ *  is possible to set up callback for notifications when this endpoint becomes 
+ *  attached or detached.<br>
+ *  <br>
+ *  All operations being described on this page are run in asynchronous mode. Thus, 
+ *  in order to retrieve result for each operation an appropriate callback should be registered.
+ *  </p>
+ *  <h2>Usage</h2>
+ *  <p>
+ *  Attaching current endpoint to user:
+ *  <pre>
+ *  {@code
+ *      EndpointRegistrationManager registrationManager = kaaClient.getEndpointRegistrationManager();
+ *      registrationManager.attachUser("userExternalId", "userAccessToken", new UserAuthResultListener() { ... });
+ *  }
+ *  </pre>
+ *  To check if this endpoint is attached to user call {@link org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager#isAttachedToUser()}.<br>
+ *  <br>
+ *  Attaching any endpoint to user by its access token:
+ *  <pre>
+ *  {@code
+ * EndpointRegistrationManager registrationManager = kaaClient.getEndpointRegistrationManager();
+ * registrationManager.attachEndpoint(new EndpointAccessToken("accessToken"), new EndpointOperationResultListener() {...});
+ * }
+ * </pre>
+ * Detaching endpoint from user by its {@link org.kaaproject.kaa.client.event.EndpointKeyHash}:
+ * <pre>
+ * {@code
+ * EndpointRegistrationManager registrationManager = kaaClient.getEndpointRegistrationManager();
+ * registrationManager.detachEndpoint((new EndpointKeyHash("keyHash"), new EndpointOperationResultListener() {...});
+ * }
+ * </pre>
+ * EndpointKeyHash for endpoint can be received with AttachEndpoint operation
+ * provided from Operations server. See {@link org.kaaproject.kaa.client.event.registration.EndpointOperationResultListener}. <br>
+ * <br>
+ * If current endpoint is assumed to be attached or detached by another endpoint,
+ * specific {@link org.kaaproject.kaa.client.event.registration.CurrentEndpointAttachListener} and {@link org.kaaproject.kaa.client.event.registration.CurrentEndpointDetachListener}
+ * may be specified to receive notification about such event.<br>
+ * <br>
+ * </p>
  */
 package org.kaaproject.kaa.client.event.registration;
+

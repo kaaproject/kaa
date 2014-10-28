@@ -92,17 +92,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract class that holds general elements of Kaa library.<br>
- * <br>
- * This class creates and binds Kaa library modules.
- * Public access to each module is performed using {@link KaaClient} interface.<br><br>
- * Class contains abstract methods
+ * <p>Abstract class that holds general elements of Kaa library.</p>
+ *
+ * <p>This class creates and binds Kaa library modules. Public access to each
+ * module is performed using {@link KaaClient} interface.</p>
+ *
+ * <p>Class contains abstract methods
  * {@link AbstractKaaClient#createHttpClient(String, PrivateKey, PublicKey, PublicKey)}
- * and {@link AbstractKaaClient#createPersistentStorage()}
- * which are used to reference the platform-specific implementation of http
- * client and Kaa's state perisitant storage.<br><br>
- * Http client ({@link AbstractHttpClient}) is used to provide basic
- * communication using HTTP protocol with Bootstrap and Operation servers.<br>
+ * and {@link AbstractKaaClient#createPersistentStorage()} which are used to
+ * reference the platform-specific implementation of http client and Kaa's state
+ * persistent storage.</p>
+ *
+ * <p>Http client ({@link AbstractHttpClient}) is used to provide basic
+ * communication with Bootstrap and Operation servers using HTTP protocol.</p>
  *
  * @author Yaroslav Zeygerman
  *
@@ -150,7 +152,11 @@ public abstract class AbstractKaaClient implements KaaClient {
     private final DefaultOperationTcpChannel defaultOperationTcpChannel;
 
     AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        properties = new KaaClientProperties();
+        this(new KaaClientProperties());
+    }
+
+    AbstractKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+        this.properties = properties;
 
         Map<ChannelType, List<ServerInfo>> bootstrapServers = properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
@@ -281,7 +287,7 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     void start() throws IOException, TransportException {
         if (!isInitialized) {
-            LOG.warn("Client is already initialized!");
+            LOG.warn("Client is not initialized!");
             // TODO: throw exception instead
             return;
         }
@@ -315,7 +321,7 @@ public abstract class AbstractKaaClient implements KaaClient {
     }
 
     @Override
-    public ConfigurationManager getConfiguationManager() {
+    public ConfigurationManager getConfigurationManager() {
         return configurationManager;
     }
 

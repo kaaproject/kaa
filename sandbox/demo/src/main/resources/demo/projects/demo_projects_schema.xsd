@@ -34,6 +34,7 @@
 <xs:simpleType name="platform">
   <xs:restriction base="xs:string">
     <xs:enumeration value="ANDROID"/>
+    <xs:enumeration value="JAVA"/>
   </xs:restriction>
 </xs:simpleType>
  

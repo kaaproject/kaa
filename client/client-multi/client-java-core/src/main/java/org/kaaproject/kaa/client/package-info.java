@@ -15,6 +15,25 @@
  */
 
 /**
- * Provides Kaa Client implementation
+ * <p>Provides Kaa Client implementation.</p>
+ *
+ * <p>To start deal with Kaa, following steps should be done:</p>
+ * <pre>
+ * {@code
+ * KaaDesktop kaaDesktop = new KaaDesktop();
+ * KaaClient kaaClient = kaaDesktop.getClient();
+ *
+ * // OR
+ *
+ * KaaAndroid kaaAndroid = new KaaAndroid(androidContext);
+ * KaaClient kaaClient = kaaAndroid.getClient();
+ *
+ * // Access to all Kaa submodules through 'kaaClient' object
+ * }
+ * </pre>
+ *
+ * @see org.kaaproject.kaa.client.Kaa
+ * @see org.kaaproject.kaa.client.KaaClient
+ *
  */
 package org.kaaproject.kaa.client;

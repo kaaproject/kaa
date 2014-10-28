@@ -32,6 +32,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
@@ -126,6 +130,46 @@ public class AdminClient {
         ParameterizedTypeReference<List<ApplicationDto>> typeRef = new ParameterizedTypeReference<List<ApplicationDto>>() {};
         ResponseEntity<List<ApplicationDto>> entity = restTemplate.exchange(url + "applications", HttpMethod.GET, null, typeRef);
         return entity.getBody();
+    }
+    
+    public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, String schemaResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("configurationSchema", configurationSchema);
+        params.add("file", getFileResource(schemaResource));
+        return restTemplate.postForObject(url + "configurationSchema", params, ConfigurationSchemaDto.class);
+    }
+    
+    public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws Exception {
+        return restTemplate.getForObject(url + "configurationSchema/"+configurationSchemaId, ConfigurationSchemaDto.class);
+    }
+    
+    public LogSchemaDto createLogSchema(LogSchemaDto logSchema, String schemaResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("logSchema", logSchema);
+        params.add("file", getFileResource(schemaResource));
+        return restTemplate.postForObject(url + "logSchema", params, LogSchemaDto.class);
+    }
+    
+    public List<EndpointGroupDto> getEndpointGroups(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<EndpointGroupDto>> typeRef = new ParameterizedTypeReference<List<EndpointGroupDto>>() {};
+        ResponseEntity<List<EndpointGroupDto>> entity = restTemplate.exchange(url + "endpointGroups/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+    
+    public List<ConfigurationRecordDto> getConfigurationRecords(String endpointGroupId, boolean includeDeprecated) throws Exception {
+        ParameterizedTypeReference<List<ConfigurationRecordDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationRecordDto>>() {};
+        ResponseEntity<List<ConfigurationRecordDto>> entity = restTemplate.exchange(url + 
+                "configurationRecords?endpointGroupId={endpointGroupId}&includeDeprecated={includeDeprecated}", 
+                HttpMethod.GET, null, typeRef, endpointGroupId, includeDeprecated);
+        return entity.getBody();
+    }
+    
+    public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws Exception {
+        return restTemplate.postForObject(url + "configuration", configuration, ConfigurationDto.class);
+    }
+    
+    public void activateConfiguration(String configurationId) throws Exception {
+        restTemplate.postForLocation(url + "activateConfiguration", configurationId);
     }
     
     public UserDto editUser(UserDto user) throws Exception {

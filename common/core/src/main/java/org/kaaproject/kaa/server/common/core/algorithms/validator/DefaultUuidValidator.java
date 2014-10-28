@@ -98,14 +98,14 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
 
     private void generateUuidForRecord(GenericRecord record) {
         GenericData.Fixed newUuid = CommonUtils.generateUuidObject();
-        LOG.info("Generated new UUID {}", newUuid);
+        LOG.trace("Generated new UUID {}", newUuid);
         record.put(UUID_FIELD, newUuid);
         processedUuids.add(newUuid);
     }
 
     private void copyUuid(GenericRecord destRecord, GenericRecord srcRecord) {
         GenericData.Fixed uuid = (GenericData.Fixed) srcRecord.get(UUID_FIELD);
-        LOG.info("Replacing with previous UUID {}", uuid);
+        LOG.trace("Replacing with previous UUID {}", uuid);
         destRecord.put(UUID_FIELD, uuid);
         processedUuids.add(uuid);
     }
@@ -122,7 +122,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
     @SuppressWarnings({"unchecked", "rawtypes"})
     private GenericRecord validateRecord(GenericRecord currentRecord, GenericRecord previousRecord, GenericRecord rootPreviousRecord) {
         if (currentRecord != null) {
-            LOG.debug("Processing new record: {}, old record: {}", currentRecord, previousRecord);
+            LOG.trace("Processing new record: {}, old record: {}", currentRecord, previousRecord);
             if (isRecordHaveUuid(currentRecord)) {
                 GenericData.Fixed uuidValue = (GenericData.Fixed) currentRecord.get(UUID_FIELD);
                 if (uuidValue == null) {
@@ -132,28 +132,28 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
                         generateUuidForRecord(currentRecord);
                     }
                 } else {
-                    LOG.info("Validating existing UUID {}", uuidValue);
+                    LOG.trace("Validating existing UUID {}", uuidValue);
                     if (!processedUuids.contains(uuidValue)) {
                         if (previousRecord == null) {
                             GenericRecord validatingRecord = findRecordByUuid(rootPreviousRecord, uuidValue);
                             if (validatingRecord == null
                                     || !validatingRecord.getSchema().getFullName().equals(currentRecord.getSchema().getFullName())) {
-                                LOG.info("Unknown UUID {}. Generating a new one", uuidValue);
+                                LOG.trace("Unknown UUID {}. Generating a new one", uuidValue);
                                 generateUuidForRecord(currentRecord);
                             } else if (!uuidValue.equals(validatingRecord.get(UUID_FIELD))) {
                                 copyUuid(currentRecord, validatingRecord);
                             } else {
-                                LOG.info("UUID {} is valid", uuidValue);
+                                LOG.trace("UUID {} is valid", uuidValue);
                                 processedUuids.add(uuidValue);
                             }
                         } else if (!uuidValue.equals(previousRecord.get(UUID_FIELD))) {
                             copyUuid(currentRecord, previousRecord);
                         } else {
-                            LOG.info("UUID {} is valid", uuidValue);
+                            LOG.trace("UUID {} is valid", uuidValue);
                             processedUuids.add(uuidValue);
                         }
                     } else {
-                        LOG.info("UUID {} is already in use. Generating a new one", uuidValue);
+                        LOG.trace("UUID {} is already in use. Generating a new one", uuidValue);
                         generateUuidForRecord(currentRecord);
                     }
                 }
@@ -184,7 +184,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
                         }
                         currentRecord.put(position, subResult);
                     } else if (currentValue instanceof GenericArray) {
-                        LOG.debug("Found array value {}", currentValue);
+                        LOG.trace("Found array value {}", currentValue);
                         GenericArray array = (GenericArray) currentValue;
                         if (array != null) {
                             int size = array.size();
@@ -221,7 +221,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
         if(currentRecord != null) {
             config = converter.endcodeToJson(currentRecord);
         }
-        LOG.info("Generated uuid fields for records {}", currentRecord);
+        LOG.trace("Generated uuid fields for records {}", currentRecord);
         return dataFactory.createData(schema, config);
     }
 

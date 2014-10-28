@@ -44,6 +44,7 @@ public class OperationsThriftServiceTest {
     private CacheService cacheService;
     private ApplicationService applicationService;
 
+    private static final String TEST_TENANT_ID = "testTenantId";
     private static final String TEST_APP_ID = "testAppId";
     private static final String TEST_APP_TOKEN = "testApp";
     private static final String TEST_PF_ID = "pfID";
@@ -103,14 +104,14 @@ public class OperationsThriftServiceTest {
         pfDto.setMajorVersion(PF_VERSION);
 
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
-        Mockito.when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, 0));
+        Mockito.when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, 0));
         Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
         operationsThriftService.onNotification(notification);
         Mockito.verify(applicationService).findAppById(TEST_APP_ID);
         Mockito.verify(cacheService).getFilter(TEST_PF_ID);
         Mockito.verify(cacheService).resetFilters(new AppVersionKey(TEST_APP_TOKEN, PF_VERSION));
         //Due to notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
-        Mockito.verify(cacheService, Mockito.times(1)).putAppSeqNumber(TEST_APP_TOKEN, new AppSeqNumber(TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER));
+        Mockito.verify(cacheService, Mockito.times(1)).putAppSeqNumber(TEST_APP_TOKEN, new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER));
         Mockito.verify(akkaService).onNotification(notification);
     }
 

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
@@ -52,8 +51,9 @@ public class DefaultEventManager implements EventManager {
     private final Object            eventsGuard = new Object();
     private final Map<String, EventListenersRequestBinding> eventListenersRequests = new HashMap<String, EventListenersRequestBinding>();
     private final EventTransport transport;
-    private final AtomicInteger eventSequence = new AtomicInteger();
     private final KaaClientState state;
+
+    private Boolean isEngaged = false;
 
     private class EventListenersRequestBinding {
         private final FetchEventListeners     listener;
@@ -120,7 +120,9 @@ public class DefaultEventManager implements EventManager {
         synchronized (eventsGuard) {
             currentEvents.add(new Event(state.getAndIncrementEventSeqNum(), eventFqn, ByteBuffer.wrap(data), null, target));
         }
-        transport.sync();
+        if (!isEngaged) {
+            transport.sync();
+        }
     }
 
     @Override
@@ -149,7 +151,9 @@ public class DefaultEventManager implements EventManager {
         eventListenersRequests.put(requestId, bind);
         LOG.debug("Adding event listener resolution request. Request ID: {}"
                 , requestId);
-        transport.sync();
+        if (!isEngaged) {
+            transport.sync();
+        }
         return requestId;
     }
 
@@ -177,6 +181,23 @@ public class DefaultEventManager implements EventManager {
             currentEvents.clear();
         }
         return pendingEvents;
+    }
+
+    @Override
+    public synchronized void engageDataChannel() {
+        isEngaged = true;
+    }
+
+    @Override
+    public synchronized boolean releaseDataChannel() {
+        isEngaged = false;
+        boolean needSync = !currentEvents.isEmpty();
+        if (!needSync) {
+            for (EventListenersRequestBinding b : eventListenersRequests.values()) {
+                needSync |= !b.isSent();
+            }
+        }
+        return needSync;
     }
 
 }

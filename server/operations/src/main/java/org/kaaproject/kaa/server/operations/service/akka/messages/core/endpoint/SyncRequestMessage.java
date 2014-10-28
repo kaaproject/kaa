@@ -18,11 +18,15 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint
 
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request;
@@ -36,7 +40,7 @@ import akka.actor.ActorRef;
 /**
  * The Class SyncRequestMessage.
  */
-public class SyncRequestMessage extends EndpointAwareMessage implements ChannelAware{
+public class SyncRequestMessage extends EndpointAwareMessage implements ChannelAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyncRequestMessage.class);
 
@@ -51,7 +55,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
 
     /**
      * Instantiates a new sync request message.
-     *
+     * 
      * @param appToken
      *            the app token
      * @param key
@@ -70,7 +74,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
 
     /**
      * Gets the request.
-     *
+     * 
      * @return the request
      */
     public SyncRequest getRequest() {
@@ -100,58 +104,113 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         return command;
     }
 
-    public void cleanRequest() {
+    public void updateRequest(SyncResponse response) {
         UUID channelUuid = getChannelUuid();
         LOG.debug("[{}] Cleanup profile request", channelUuid);
         request.setProfileSyncRequest(null);
-        if(request.getUserSyncRequest() != null){
+        if (request.getUserSyncRequest() != null) {
             LOG.debug("[{}] Cleanup user request", channelUuid);
             request.setUserSyncRequest(new UserSyncRequest());
         }
-        if(request.getEventSyncRequest() != null){
+        if (request.getEventSyncRequest() != null) {
             LOG.debug("[{}] Cleanup event request", channelUuid);
             request.setEventSyncRequest(new EventSyncRequest());
         }
-        if(request.getLogSyncRequest() != null){
+        if (request.getLogSyncRequest() != null) {
             LOG.debug("[{}] Cleanup log request", channelUuid);
             request.getLogSyncRequest().setLogEntries(null);
         }
-        if(request.getNotificationSyncRequest() != null){
-            LOG.debug("[{}] Cleanup notification request", channelUuid);
+        if (request.getNotificationSyncRequest() != null) {
+            LOG.debug("[{}] Cleanup/update notification request", channelUuid);
+            if (response != null && response.getNotificationSyncResponse() != null) {
+                request.getNotificationSyncRequest().setAppStateSeqNumber(
+                        response.getNotificationSyncResponse().getAppStateSeqNumber());
+            }
             request.getNotificationSyncRequest().setSubscriptionCommands(null);
             request.getNotificationSyncRequest().setAcceptedUnicastNotifications(null);
         }
+        if (request.getConfigurationSyncRequest() != null) {
+            LOG.debug("[{}] Cleanup/update configuration request", channelUuid);
+            if (response != null && response.getConfigurationSyncResponse() != null) {
+                request.getConfigurationSyncRequest().setAppStateSeqNumber(
+                        response.getConfigurationSyncResponse().getAppStateSeqNumber());
+            }
+        }
     }
 
-    public void update(SyncRequestMessage syncRequest) {
+    public SyncRequest merge(SyncRequestMessage syncRequest) {
         UUID channelUuid = getChannelUuid();
         SyncRequest other = syncRequest.getRequest();
+        LOG.trace("[{}] Merging original request {} with new request {}", channelUuid, request, other);
         request.setRequestId(other.getRequestId());
         request.getSyncRequestMetaData().setProfileHash(other.getSyncRequestMetaData().getProfileHash());
         LOG.debug("[{}] Updated request id and profile hash", channelUuid);
+        SyncRequest diff = new SyncRequest();
+        diff.setRequestId(other.getRequestId());
+        diff.setSyncRequestMetaData(other.getSyncRequestMetaData());
         if (other.getConfigurationSyncRequest() != null) {
+            diff.setConfigurationSyncRequest(diff(request.getConfigurationSyncRequest(),
+                    other.getConfigurationSyncRequest()));
             request.setConfigurationSyncRequest(other.getConfigurationSyncRequest());
             LOG.debug("[{}] Updated configuration request", channelUuid);
         }
         if (other.getNotificationSyncRequest() != null) {
+            diff.setNotificationSyncRequest(diff(request.getNotificationSyncRequest(),
+                    other.getNotificationSyncRequest()));
             request.setNotificationSyncRequest(other.getNotificationSyncRequest());
             LOG.debug("[{}] Updated notification request", channelUuid);
         }
         if (other.getProfileSyncRequest() != null) {
+            diff.setProfileSyncRequest(other.getProfileSyncRequest());
             request.setProfileSyncRequest(other.getProfileSyncRequest());
             LOG.debug("[{}] Updated profile request", channelUuid);
         }
         if (other.getUserSyncRequest() != null) {
+            diff.setUserSyncRequest(other.getUserSyncRequest());
             request.setUserSyncRequest(other.getUserSyncRequest());
             LOG.debug("[{}] Updated user request", channelUuid);
         }
         if (other.getEventSyncRequest() != null) {
+            diff.setEventSyncRequest(other.getEventSyncRequest());
             request.setEventSyncRequest(other.getEventSyncRequest());
             LOG.debug("[{}] Updated event request", channelUuid);
         }
         if (other.getLogSyncRequest() != null) {
+            diff.setLogSyncRequest(other.getLogSyncRequest());
             request.setLogSyncRequest(other.getLogSyncRequest());
             LOG.debug("[{}] Updated log request", channelUuid);
+        }
+        return diff;
+    }
+
+    private NotificationSyncRequest diff(NotificationSyncRequest oldRequest, NotificationSyncRequest newRequest) {
+        if (oldRequest == null) {
+            return newRequest;
+        } else {
+            if (oldRequest.getAppStateSeqNumber() < newRequest.getAppStateSeqNumber()
+                    || (newRequest.getAcceptedUnicastNotifications() != null && newRequest
+                            .getAcceptedUnicastNotifications().size() > 0)
+                    || (newRequest.getSubscriptionCommands() != null && newRequest.getSubscriptionCommands().size() > 0)
+            // TODO: Add topicListHash comparison
+            ) {
+                return newRequest;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private ConfigurationSyncRequest diff(ConfigurationSyncRequest oldRequest, ConfigurationSyncRequest newRequest) {
+        if (oldRequest == null) {
+            return newRequest;
+        } else {
+            if (oldRequest.getAppStateSeqNumber() != newRequest.getAppStateSeqNumber()
+                    || Arrays.equals(oldRequest.getConfigurationHash().array(), newRequest.getConfigurationHash()
+                            .array())) {
+                return newRequest;
+            } else {
+                return null;
+            }
         }
     }
 

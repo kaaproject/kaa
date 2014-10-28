@@ -33,6 +33,8 @@ class IEndpointRegistrationManager;
 class IConfigurationPersistenceManager;
 class IKaaChannelManager;
 class ILogCollector;
+class IKaaDataMultiplexer;
+class IKaaDataDemultiplexer;
 
 /**
  * Interface for the Kaa client.
@@ -141,6 +143,34 @@ public:
      * @return @link LogCollector @endlink object
      */
     virtual ILogCollector&                    getLogCollector() = 0;
+
+    /**
+     * Retrieves Kaa operations data multiplexer
+     *
+     * @return @link IKaaDataMultiplexer @endlink object
+     */
+    virtual IKaaDataMultiplexer&              getOperationMultiplexer() = 0;
+
+    /**
+     * Retrieves Kaa operations data demultiplexer
+     *
+     * @return @link IKaaDataDemultiplexer @endlink object
+     */
+    virtual IKaaDataDemultiplexer&            getOperationDemultiplexer() = 0;
+
+    /**
+     * Retrieves Kaa bootstrap data multiplexer
+     *
+     * @return @link IKaaDataMultiplexer @endlink object
+     */
+    virtual IKaaDataMultiplexer&              getBootstrapMultiplexer() = 0;
+
+    /**
+     * Retrieves Kaa bootstrap data demultiplexer
+     *
+     * @return @link IKaaDataDemultiplexer @endlink object
+     */
+    virtual IKaaDataDemultiplexer&            getBootstrapDemultiplexer() = 0;
 
     virtual ~IKaaClient() { }
 };

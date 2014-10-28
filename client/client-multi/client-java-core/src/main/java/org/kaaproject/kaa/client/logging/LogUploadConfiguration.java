@@ -17,16 +17,37 @@
 package org.kaaproject.kaa.client.logging;
 
 /**
- * Interface for log upload configuration.
+ * <p>Interface for log upload configuration.</p>
  *
- * Describes threshold values for upload strategy to decide whether logs
- * should be sent or cleaned up.
- * 
- * Reference implementation is  (@see DefaultLogUploadConfiguration) 
- * and used by default (@see DefaultLogUploadStrategy).
+ * <p>Describes threshold values for upload strategy to decide whether logs
+ * should be sent or cleaned up.</p>
+ *
+ * <p>Reference implementation is  ({@link DefaultLogUploadConfiguration})
+ * and used by default ({@link DefaultLogUploadStrategy}).</p>
  */
 public interface LogUploadConfiguration {
+    /**
+     * <p>Retrieves a maximum size of log batch sends to the Operation server.</p>
+     *
+     * <p><b>NOTE: The upper bound is 32KB due a server limitations</b>
+     * ({@link DefaultLogUploadConfiguration#MAX_BATCH_VOLUME}).</p>
+     *
+     * @return Size in bytes.
+     */
     long getBatchVolume();
+
+    /**
+     * Retrieves a threshold value of memory occupied by added logs. If this
+     * value is exceeded, log sending should be initiated.
+     *
+     * @return Size in bytes.
+     */
     long getVolumeThreshold();
+
+    /**
+     * Maximum size of memory logs can occupy.
+     *
+     * @return Size in bytes.
+     */
     long getMaximumAllowedVolume();
 }

@@ -64,6 +64,13 @@ public:
                               , IEndpointAttachStatusListener* listener = nullptr) = 0;
 
     /**
+     * Adds current endpoint detach request
+     * @param listener Optional listener to notify about result of endpoint detaching.
+     *        Set to null if is no need in it.
+     */
+    virtual void detachEndpoint(IEndpointAttachStatusListener* listener = nullptr) = 0;
+
+    /**
      * Creates user attach request
      *
      * @param userExternalId

@@ -41,11 +41,6 @@ public class OperationsServerConfigTest {
         OperationsServerConfig config = new OperationsServerConfig();
         assertNotNull(config);
 
-        config.setStatisticsCalculationWindow(10101);
-        assertEquals(10101, config.getStatisticsCalculationWindow());
-
-        config.setStatisticsUpdateTimes(10);
-        assertEquals(10, config.getStatisticsUpdateTimes());
     }
 
 }

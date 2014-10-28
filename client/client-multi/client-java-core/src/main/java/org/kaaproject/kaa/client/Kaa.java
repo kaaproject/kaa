@@ -21,34 +21,31 @@ import java.io.IOException;
 import org.kaaproject.kaa.client.transport.TransportException;
 
 /**
- * Entry point to the Kaa library.
- * <br><br>
- * Responsible for the Kaa initialization and start/stop actions.
- * Contains abstract method {@link Kaa#createClient()} for {@link AbstractKaaClient} concrete object creation.
- * All manipulations using Kaa library should be accessed through {@link KaaClient} interface.<br>
- * <br>
- * <b>WARNING:</b> Calling {@link Kaa#getClient()} without previously initialized Kaa library
- * ({@link Kaa#init()}) will return null and will cause NullPointerException
- * when attempting to use Kaa client functionality.
- * <br><br>
- * Available implementations can be found in Maven projects
- * <i>client-java-android</i> and <i>client-java-desktop</i>.
- * <br><br>
- * Start Kaa:
+ * <p>Entry point to the Kaa library.</p>
+ *
+ * <p>Responsible for the Kaa initialization and start/stop actions.
+ * Contains abstract method {@link Kaa#createClient()} for {@link AbstractKaaClient}
+ * concrete object creation. All manipulations using Kaa library should be
+ * accessed through {@link KaaClient} interface.</p>
+ *
+ * <p><b>WARNING:</b> Calling {@link Kaa#getClient()} without previously
+ * initialized Kaa library ({@link Kaa#init()}) will return null and will
+ * cause NullPointerException when attempting to use Kaa client functionality.</p>
+ *
+ * <p>Available implementations can be found in Maven projects
+ * <i>client-java-android</i> and <i>client-java-desktop</i></p>.
+ *
+ * <h5>Example</h5>
  * <pre>
  * {@code
+ * // Start Kaa
  * Kaa kaa = new SomeKaaImpl();
  * kaa.start();}
- * </pre>
- * Stop Kaa:
- * <pre>
- * {@code
+ *
+ * // Stop Kaa:
  * kaa.stop();
- * }
- * </pre>
- * Accessing KaaClient:
- * <pre>
- * {@code
+ *
+ * // Accessing KaaClient:
  * KaaClient kaaClient = kaa.getClient();
  * ...
  * }
@@ -67,11 +64,12 @@ public abstract class Kaa {
     }
 
     /**
-     * Initialize Kaa library
-     * <br><br>
-     * Each call forces {@link KaaClient} to be reinitialized. All current processes
-     * will be stopped and new client will be created using {@link Kaa#createClient()}
-     * and {@link Kaa#start()} should be called as client will not start automatically.
+     * <p>Initialize Kaa library.</p>
+     *
+     * <p>Each call forces {@link KaaClient} to be reinitialized. All current
+     * processes will be stopped and new client will be created using
+     * {@link Kaa#createClient()} and {@link Kaa#start()} should be called as
+     * client will not start automatically.</p>
      *
      * @throws Exception
      *
@@ -93,9 +91,9 @@ public abstract class Kaa {
     protected abstract AbstractKaaClient createClient() throws Exception;
 
     /**
-     * Starts Kaa's work flow.
-     * <br><br>
-     * Should be called after each call to {@link Kaa#init()}.
+     * <p>Starts Kaa's work flow.</p>
+     *
+     * <p>Should be called after each call to {@link Kaa#init()}.</p>
      *
      * @see AbstractKaaClient#start()
      */
@@ -115,7 +113,7 @@ public abstract class Kaa {
             client.stop();
         }
     }
-    
+
     /**
      * Pauses Kaa's work flow.
      */
@@ -124,7 +122,7 @@ public abstract class Kaa {
             client.pause();
         }
     }
-    
+
     /**
      * Resumes Kaa's work flow.
      */
@@ -135,12 +133,13 @@ public abstract class Kaa {
     }
 
     /**
-     * Retrieves the Kaa client.
-     * <br><br>
-     * Use this to access Kaa library functionality.
+     * <p>Retrieves the Kaa client.</p>
+     *
+     * <p>Use this to access Kaa library functionality.</p>
      *
      * @return Kaa client.
      * @see KaaClient
+     *
      */
     public KaaClient getClient() {
         return client;

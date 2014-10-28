@@ -24,10 +24,10 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 /**
- * Interface for the notifications delivery system.<br>
- * <br>
- * Responsible for processing received topic/notification updates,
- * subscribing for voluntary topic updates and unsubscribing from them.<br>
+ * <p>Interface for the notifications delivery system.</p>
+ *
+ * <p>Responsible for processing received topic/notification updates,
+ * subscribing for voluntary topic updates and unsubscribing from them.</p>
  *
  * @author Yaroslav Zeygerman
  *
@@ -39,10 +39,10 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
 public interface NotificationManager {
 
     /**
-     * Add listener for all mandatory topics' updates.<br>
-     * <br>
-     * If specific listener is needed for some mandatory topic,
-     * use {@link NotificationManager#updateTopicSubscriptions}
+     * <p>Add listener for all mandatory topics' updates.</p>
+     *
+     * <p>If specific listener is needed for some mandatory topic, use
+     * {@link NotificationManager#updateTopicSubscriptions}.</p>
      *
      * @param listener the listener to receive notification.
      * @see AbstractNotificationListener
@@ -51,7 +51,7 @@ public interface NotificationManager {
     void addMandatoryTopicsListener(NotificationListener listener);
 
     /**
-     * Removes listener of mandatory topics' updates.
+     * <p>Removes listener of mandatory topics' updates.</p>
      *
      * @param listener the listener which is no longer needs updates.
      * @see AbstractNotificationListener
@@ -78,14 +78,13 @@ public interface NotificationManager {
     void removeTopicListListener(NotificationTopicListListener listener);
 
     /**
-     * Updates (subscribe/unsubscribe) info about topic's subscriptions.<br>
-     * <br>
-     * Basic usage is to subscribe for voluntary topic updates and
-     * unsubscribe from them. More than one listener may be used for
-     * the same topic.<br>
-     * <br>
-     * Also it may be used to add/remove specific listener(s)
-     * for some mandatory topic.
+     * <p>Updates (subscribe/unsubscribe) info about topic's subscriptions.</p>
+     *
+     * <p>Basic usage is to subscribe for voluntary topic updates and unsubscribe
+     * from them. More than one listener may be used for the same topic.</p>
+     *
+     * <p>Also it may be used to add/remove specific listener(s) for some
+     * mandatory topic.</p>
      * <pre>
      * {@code
      * // Assume, BasicNotification is a notification class auto-generated according to predefined Avro schema
@@ -117,8 +116,8 @@ public interface NotificationManager {
      * }
      * </pre>
      *
-     * @throws KaaException when topic isn't found or bad subscription
-     * info was passed (empty id or null subscriber).
+     * @throws KaaException when topic isn't found or bad subscription info
+     * was passed (empty id or null subscriber).
      *
      * @param subscribers collections of pairs topic id/subscriber info.
      * @see NotificationListenerInfo
@@ -137,9 +136,9 @@ public interface NotificationManager {
     List<Topic> getTopics();
 
     /**
-     * Retrieves and clears the current list of Subscription commands.<br>
-     * <br>
-     * <b>NOTE:</b>DO NOT call method explicitly.
+     * <p>Retrieves and clears the current list of Subscription commands.</p>
+     *
+     * <p><b>NOTE:</b>DO NOT call method explicitly.</p>
      *
      * @return the list of Subscription commands.
      * @see SubscriptionCommand
@@ -148,9 +147,9 @@ public interface NotificationManager {
     List<SubscriptionCommand> releaseSubscriptionCommands();
 
     /**
-     * Sets the transport to Notification manager.<br>
-     * <br>
-     * <b>NOTE:</b>DO NOT call method explicitly.
+     * <p>Sets the transport to Notification manager.</p>
+     *
+     * <p><b>NOTE:</b>DO NOT call method explicitly.</p>
      *
      * @param transport the transport object to be set.
      * @see NotificationTransport

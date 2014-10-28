@@ -44,8 +44,8 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     }
 
     @Test
-    public void testGetConfiguationManager() {
-        assertNotNull(getConfiguationManager());
+    public void testGetConfigurationManager() {
+        assertNotNull(getConfigurationManager());
     }
 
     @Test

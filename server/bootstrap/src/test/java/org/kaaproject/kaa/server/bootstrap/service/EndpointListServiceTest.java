@@ -16,33 +16,20 @@
 
 package org.kaaproject.kaa.server.bootstrap.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Assert;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
-import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
-import org.kaaproject.kaa.server.bootstrap.service.http.BootstrapConfig;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftChannelType;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftIpParameters;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChannel;
-import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
-import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
-import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
 
 public class EndpointListServiceTest {
 

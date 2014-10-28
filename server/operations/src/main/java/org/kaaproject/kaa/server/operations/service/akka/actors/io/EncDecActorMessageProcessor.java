@@ -41,6 +41,8 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Ses
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.NettySessionResponseMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.SessionResponse;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.metrics.MeterClient;
+import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,8 +67,14 @@ public class EncDecActorMessageProcessor {
 
     /** The eps actor. */
     private final ActorRef opsActor;
+    
+    private final MeterClient sessionInitMeter;
+    private final MeterClient sessionRequestMeter;
+    private final MeterClient sessionResponseMeter;
+    private final MeterClient redirectMeter;
+    private final MeterClient errorMeter;
 
-    protected EncDecActorMessageProcessor(ActorRef epsActor, CacheService cacheService, KeyPair serverKeys, Boolean supportUnencryptedConnection) {
+    protected EncDecActorMessageProcessor(ActorRef epsActor, MetricsService metricsService, CacheService cacheService, KeyPair serverKeys, Boolean supportUnencryptedConnection) {
         super();
         this.opsActor = epsActor;
         this.cacheService = cacheService;
@@ -74,10 +82,16 @@ public class EncDecActorMessageProcessor {
         this.crypt = new MessageEncoderDecoder(serverKeys.getPrivate(), serverKeys.getPublic());
         this.requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
         this.responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        this.sessionInitMeter = metricsService.createMeter("sessionInitMeter", Thread.currentThread().getName());
+        this.sessionRequestMeter = metricsService.createMeter("sessionRequestMeter", Thread.currentThread().getName());
+        this.sessionResponseMeter = metricsService.createMeter("sessionResponseMeter", Thread.currentThread().getName());
+        this.redirectMeter = metricsService.createMeter("redirectMeter", Thread.currentThread().getName());
+        this.errorMeter = metricsService.createMeter("errorMeter", Thread.currentThread().getName());
     }
 
     void decodeAndForward(ActorContext context, SessionInitRequest message) {
         try {
+            sessionInitMeter.mark();
             processSignedRequest(context, message);
         } catch (Exception e) {
             processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
@@ -86,6 +100,7 @@ public class EncDecActorMessageProcessor {
 
     void decodeAndForward(ActorContext context, SessionAwareRequest message) {
         try {
+            sessionRequestMeter.mark();
             processSessionRequest(context, message);
         } catch (Exception e) {
             processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
@@ -94,6 +109,7 @@ public class EncDecActorMessageProcessor {
 
     void encodeAndReply(SessionResponse message) {
         try {
+            sessionResponseMeter.mark();
             processSessionResponse(message);
         } catch (Exception e) {
             processErrors(message.getChannelContext(), message.getErrorConverter(), e);
@@ -107,6 +123,7 @@ public class EncDecActorMessageProcessor {
 
     void redirect(RedirectionRule redirection, SessionInitRequest message) {
         try {
+            redirectMeter.mark();
             SyncRequest request = decodeRequest(message);
             SyncResponse response = buildRedirectionResponse(redirection, request);
 
@@ -124,6 +141,7 @@ public class EncDecActorMessageProcessor {
 
     void redirect(RedirectionRule redirection, SessionAwareRequest message) {
         try {
+            redirectMeter.mark();
             SyncRequest request = decodeRequest(message);
             SyncResponse response = buildRedirectionResponse(redirection, request);
 
@@ -282,6 +300,7 @@ public class EncDecActorMessageProcessor {
 
     private void processErrors(ChannelHandlerContext ctx, ErrorBuilder converter, Exception e) {
         LOG.trace("Request processing failed", e);
+        errorMeter.mark();
         Object[] responses = converter.build(e);
         if(responses != null && responses.length > 0){
             for(Object response : responses){

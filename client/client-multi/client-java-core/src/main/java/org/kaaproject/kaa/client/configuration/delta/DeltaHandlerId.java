@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.configuration.delta;
 import java.util.UUID;
 
 /**
- * Id which is used to identify delta objects and subscribe for their updates
+ * Unique id is used to identify delta objects and subscribe for their updates.
  *
  * @author Yaroslav Zeygerman
  *

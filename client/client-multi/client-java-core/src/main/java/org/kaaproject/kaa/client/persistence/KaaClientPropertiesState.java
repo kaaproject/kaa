@@ -64,13 +64,13 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String NF_SUBSCRIPTIONS = "nf_subscriptions";
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
-    private static final String STATE_FILE_LOCATION = "state.file_location";
-    private static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
-    private static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
+    public static final String STATE_FILE_LOCATION = "state.file_location";
+    public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
+    public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
 
-    private static final String STATE_FILE_DEFAULT = "state.properties";
-    private static final String CLIENT_PRIVATE_KEY_DEFAULT = "key.private";
-    private static final String CLIENT_PUBLIC_KEY_DEFAULT = "key.public";
+    public static final String STATE_FILE_DEFAULT = "state.properties";
+    public static final String CLIENT_PRIVATE_KEY_DEFAULT = "key.private";
+    public static final String CLIENT_PUBLIC_KEY_DEFAULT = "key.public";
     private static final String ENDPOINT_KEY_HASH = "key.hash";
 
     private static final String EVENT_SEQ_NUM = "event.seq.num";
@@ -78,7 +78,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private final PersistentStorage storage;
     private final KaaClientProperties state;
     private final String stateFileLocation;
-    private final String privateKeyFileLocation;
+    private final String clientPrivateKeyFileLocation;
     private final String clientPublicKeyFileLocation;
     private final Map<String, TopicSubscriptionInfo> nfSubscriptions = new HashMap<String, TopicSubscriptionInfo>();
     private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
@@ -92,7 +92,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                 properties.getProperty(STATE_FILE_LOCATION) :
                 STATE_FILE_DEFAULT;
 
-        privateKeyFileLocation = properties.containsKey(CLIENT_PRIVATE_KEY_FILE_LOCATION) ?
+        clientPrivateKeyFileLocation = properties.containsKey(CLIENT_PRIVATE_KEY_FILE_LOCATION) ?
                 properties.getProperty(CLIENT_PRIVATE_KEY_FILE_LOCATION) :
                 CLIENT_PRIVATE_KEY_DEFAULT;
 
@@ -115,7 +115,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                     //FIXME: research avro documentation for more convenient approach of iteration through encoded record
                     while (true) {
                       decodedInfo = avroReader.read(null, decoder);
-                      LOG.info("Loaded {}", decodedInfo);
+                      LOG.debug("Loaded {}", decodedInfo);
                       nfSubscriptions.put(decodedInfo.getTopicInfo().getId(), decodedInfo);
                     }
                 } catch (Exception e) {
@@ -198,25 +198,26 @@ public class KaaClientPropertiesState implements KaaClientState {
     @Override
     public PrivateKey getPrivateKey() {
         PrivateKey privateKey = null;
-        if (storage.exists(privateKeyFileLocation)) {
+        LOG.debug("Check if key exists {}", clientPrivateKeyFileLocation);
+        if (storage.exists(clientPrivateKeyFileLocation)) {
             try {
-                InputStream input = storage.openForRead(privateKeyFileLocation);
+                InputStream input = storage.openForRead(clientPrivateKeyFileLocation);
                 privateKey = KeyUtil.getPrivate(input);
             } catch (Exception e) {
-                LOG.info("Error loading Client Private Key", e);
+                LOG.error("Error loading Client Private Key", e);
                 throw new RuntimeException(e); //NOSONAR
             }
         }
         if (privateKey == null) {
-            LOG.info("Generating Client Key pair");
+            LOG.debug("Generating Client Key pair");
             try {
-                OutputStream privateKeyOutput = storage.openForWrite(privateKeyFileLocation);
+                OutputStream privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
                 OutputStream publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
                 KeyPair kp = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
                 updateEndpointKeyHash(kp);
                 privateKey = kp.getPrivate();
             } catch (IOException e) {
-                LOG.info("Error generating Client Key pair", e);
+                LOG.error("Error generating Client Key pair", e);
                 throw new RuntimeException(e);
             }
         }
@@ -226,25 +227,26 @@ public class KaaClientPropertiesState implements KaaClientState {
     @Override
     public PublicKey getPublicKey() {
         PublicKey publicKey = null;
+        LOG.debug("Check if key exists {}", clientPublicKeyFileLocation);
         if (storage.exists(clientPublicKeyFileLocation)) {
             try {
                 InputStream input = storage.openForRead(clientPublicKeyFileLocation);
                 publicKey = KeyUtil.getPublic(input);
             } catch (Exception e) {
-                LOG.info("Error loading Client Public Key", e);
+                LOG.error("Error loading Client Public Key", e);
                 throw new RuntimeException(e); //NOSONAR
             }
         }
         if (publicKey == null) {
-            LOG.info("Generating Client Key pair");
+            LOG.debug("Generating Client Key pair");
             try {
-                OutputStream privateKeyOutput = storage.openForWrite(privateKeyFileLocation);
+                OutputStream privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
                 OutputStream publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
                 KeyPair kp = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
                 updateEndpointKeyHash(kp);
                 publicKey = kp.getPublic();
             } catch (IOException e) {
-                LOG.info("Error generating Client Key pair", e);
+                LOG.error("Error generating Client Key pair", e);
                 throw new RuntimeException(e);
             }
         }
@@ -300,14 +302,14 @@ public class KaaClientPropertiesState implements KaaClientState {
         if (subscriptionInfo == null) {
             subscriptionInfo = TopicSubscriptionInfo.newBuilder().setTopicInfo(topic).setSeqNumber(0).build();
             nfSubscriptions.put(topic.getId(), subscriptionInfo);
-            LOG.info("Adding new seqNumber 0 for {} subscription", topic.getId());
+            LOG.debug("Adding new seqNumber 0 for {} subscription", topic.getId());
         }
     }
 
     @Override
     public void removeTopic(String topicId) {
         if (nfSubscriptions.remove(topicId) != null) {
-            LOG.info("Removed subscription info for {}", topicId);
+            LOG.debug("Removed subscription info for {}", topicId);
         }
     }
 
@@ -320,7 +322,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                 updated = true;
                 subscriptionInfo.setSeqNumber(sequenceNumber);
                 nfSubscriptions.put(topicId, subscriptionInfo);
-                LOG.info("Updated seqNumber to {} for {} subscription", subscriptionInfo.getSeqNumber(), topicId);
+                LOG.debug("Updated seqNumber to {} for {} subscription", subscriptionInfo.getSeqNumber(), topicId);
             }
         }
         return updated;

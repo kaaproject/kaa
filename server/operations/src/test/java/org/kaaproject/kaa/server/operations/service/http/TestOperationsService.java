@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
@@ -68,11 +69,21 @@ public class TestOperationsService implements OperationsService {
     public SyncResponseHolder sync(SyncRequest request)
             throws GetDeltaException {
 
+        return sync(request, null);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.operations.service.EndpointService#sync(org.kaaproject.kaa.common.endpoint.gen.SyncRequest)
+     */
+    @Override
+    public SyncResponseHolder sync(SyncRequest request, EndpointProfileDto profile)
+            throws GetDeltaException {
+
         SyncResponse response = generateSyncResponse();
         SyncResponseHolder holder = new SyncResponseHolder(response);
 
         return holder;
-    }
+    }    
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.EndpointService#updateSyncResponse(org.kaaproject.kaa.common.endpoint.gen.SyncResponse, java.util.List, java.lang.String)

@@ -15,6 +15,61 @@
  */
 
 /**
- * Provides implementation of delta configuration management
+ * Provides interfaces to deal with configuration deltas.
+ *
+ * <p>Assume, received root delta looks as follows:</p>
+ * <pre>
+ * {@code
+ * {
+ *     "schemaName": "testT",
+ *     "schemaNamespace": "org.kaa.config",
+ *     "testField1": "abc",
+ *     "testField2": {
+ *          "schemaName": "testRecordT",
+ *          "schemaNamespace": "org.kaa.config",
+ *          "testField3": 456,
+ *          "__uuid": {
+ *              "schemaName": "uuidT",
+ *              "schemaNamespace": "org.kaaproject.configuration",
+ *              "value": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+ *          }
+ *     },
+ *     "__uuid": {
+ *     "schemaName": "uuidT",
+ *     "schemaNamespace": "org.kaaproject.configuration",
+ *     "value": [1,2,3,4,5,6,7,1,1,1,11,1,1,14,15,16]
+ *     }
+ * }
+ * }
+ * </pre>
+ *
+ * <p>In order to access to the received data, do following:</p>
+ * <pre>
+ * {@code
+ * ConfigurationDelta rootDelta = // obtained from a delta receiver;
+ *
+ * if (rootDelta.hasChanged("testField1")) {
+ *     DeltaType dt = rootDelta.getDeltaType("testField1");
+ *     String testField1 = (String)dt.getNewValue();
+ *     System.out.println("testField1: " + testField1);
+ * }
+ *
+ * DeltaType subrecordDT = rootDelta.getDeltaType("testField2");
+ *
+ * if (subrecordDT != null) {
+ *     ConfigurationDelta testField2 = (ConfigurationDelta)subrecordDT.getNewValue();
+ *
+ *     if (testField2 != null) {
+ *         Integer testField3 = (Integer)testField2.getDeltaType("testField3").getNewValue();
+ *         System.out.println("testField3: " + testField3);
+ *     }
+ * }
+ * }
+ * </pre>
+ *
+ * @see org.kaaproject.kaa.client.configuration.delta.ConfigurationDelta
+ * @see org.kaaproject.kaa.client.configuration.delta.DeltaType
+ * @see org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager
+ * @see org.kaaproject.kaa.client.configuration.delta.manager.DeltaReceiver
  */
 package org.kaaproject.kaa.client.configuration.delta;

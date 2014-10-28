@@ -21,11 +21,11 @@ import org.kaaproject.kaa.client.configuration.delta.DeltaHandlerId;
 import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
 
 /**
- * Interface for managing partial configuration updates.<br>
- * <br>
- * Use this manager to subscribe {@link DeltaReceiver} implementation for
- * receiving configuration deltas instead of full resync updates
- * from {@link ConfigurationManager}
+ * <p>Interface for managing partial configuration updates.</p>
+ *
+ * <p>Use this manager to subscribe {@link DeltaReceiver} implementation for
+ * receiving configuration deltas instead of full resync updates from
+ * {@link ConfigurationManager}.</p>
  *
  * @author Yaroslav Zeygerman
  *
@@ -36,7 +36,7 @@ import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
 public interface DeltaManager {
 
     /**
-     * Registers root receiver to receive first and full resync deltas
+     * Registers root receiver to receive first and full resync deltas.
      *
      * @param receiver the root receiver object
      * @see DeltaReceiver
@@ -45,7 +45,7 @@ public interface DeltaManager {
     void registerRootReceiver(DeltaReceiver receiver);
 
     /**
-     * Subscribes receiver for delta updates by the given handler id
+     * Subscribes receiver for delta updates by the given handler id.
      *
      * @param handlerId id of the delta handler
      * @param receiver the object to receive updates
@@ -57,7 +57,7 @@ public interface DeltaManager {
     void subscribeForDeltaUpdates(DeltaHandlerId handlerId, DeltaReceiver receiver);
 
     /**
-     * Unsubscribes receiver from delta updates
+     * Unsubscribes receiver from delta updates.
      *
      * @param handlerId id of the handler to be unsubscribed
      * @see DeltaHandlerId

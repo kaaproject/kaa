@@ -98,9 +98,9 @@ public:
     virtual void updateTopicSubscriptions(const TopicSubscribers& subscribers) = 0;
 
     /**
-     * Retrieves the current topics' list.
+     * Retrieves the current set of topics.
      *
-     * @return the list of topics' names.
+     * @return the set of "topic's id/topic" pairs.
      * @see Topic
      *
      */

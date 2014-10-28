@@ -1,9 +1,21 @@
-<!-- Copyright 2014 CyberVision, Inc. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with 
-    the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, 
-    software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
-    License for the specific language governing permissions and limitations under the License. -->
+<!--
+Copyright 2014 CyberVision, Inc.
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.kaaproject</groupId>
@@ -22,9 +34,17 @@
         <spring.version>4.0.2.RELEASE</spring.version>
         <spring.security.version>3.2.1.RELEASE</spring.security.version>
         <spring.data.version>1.3.0.RELEASE</spring.data.version>
+        <ehcache.version>2.8.1</ehcache.version>
+        <ehcache-spring.version>1.2.0</ehcache-spring.version>
+        <hibernate.version>4.3.5.Final</hibernate.version>
+        <pgsql.driver.ver>9.3-1101-jdbc41</pgsql.driver.ver>
+        <h2.driver.ver>1.4.179</h2.driver.ver>
+        <gwt.version>2.6.0</gwt.version>
         <aspectj.version>1.7.4</aspectj.version>
-        <slf4j.version>1.7.6</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
+
+        <hadoop.version>2.4.1</hadoop.version>
+        <flume.version>1.5.0.1</flume.version>
+
         <netty.version>4.0.20.Final</netty.version>
         <avro.version>1.7.5</avro.version>
         <zookeeper.version>3.4.5</zookeeper.version>
@@ -35,21 +55,23 @@
         <commons-codec.version>1.9</commons-codec.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-digester3.version>3.2</commons-digester3.version>
+        <commons.dbcp.version>1.4</commons.dbcp.version>
+        <commons.pool.version>1.5.4</commons.pool.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
-        <jcs.version>1.3</jcs.version>
-        <junit.version>4.11</junit.version>
         <jackson.version>1.9.13</jackson.version>
+        <joda-time.version>2.2</joda-time.version>
+        <junit.version>4.11</junit.version>
         <embed.mongo.version>1.42</embed.mongo.version>
         <mockito.version>1.9.5</mockito.version>
-        <gwt.version>2.6.0</gwt.version>
-        <!-- reporting -->
+        <equalsverifier.version>1.4.1</equalsverifier.version>
+
+        <slf4j.version>1.7.6</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
+        <metrics.version>3.1.0</metrics.version>
+
         <findbugs.version>2.5.2</findbugs.version>
         <checkstyle.version>2.9.1</checkstyle.version>
-        <ehcache.version>2.8.1</ehcache.version>
-        <ehcache-spring.version>1.2.0</ehcache-spring.version>
         <rat.version>0.10</rat.version>
-        <flume.version>1.5.0.1</flume.version>
-        <hadoop.version>2.4.1</hadoop.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -77,6 +99,21 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+        </profile>
+        <profile>
+            <id>examples</id>
+            <properties>
+                <build.number>local_build</build.number>
+                <scm.version>local_scm</scm.version>
+            </properties>
+            <modules>
+                <module>avrogenc</module>
+                <module>common</module>
+                <module>client</module>
+                <module>server</module>
+                <module>examples</module>
+                <module>sandbox</module>
+            </modules>
         </profile>
         <profile>
             <id>jenkins</id>
@@ -171,6 +208,19 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>repository</id>
+            <distributionManagement>
+                <repository>
+                  <id>kaa.release</id>
+                  <url>http://repository.kaaproject.org/repository/internal/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>kaa.snapshots</id>
+                    <url>http://repository.kaaproject.org/repository/snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
     </profiles>
 
     <build>
@@ -217,8 +267,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.17</version>
                 </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+                <!--This plugin's configuration is used to store Eclipse 
+                    m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -309,6 +361,11 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.9.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -348,16 +405,18 @@
                         <exclude>**/gcovr</exclude>
                         <exclude>**/README.md</exclude>
                         <exclude>**/gen/*.java</exclude>
+                        <exclude>**/gen/**/*.java</exclude>
                         <exclude>**/*.avsc</exclude>
                         <exclude>**/*.iml</exclude>
+                        <exclude>**/*.readme</exclude>
+                        <exclude>**/appcompat-v7/**</exclude>
+                        <exclude>**/support-v4/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
-    <dependencies>
-    </dependencies>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -404,6 +463,76 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${pgsql.driver.ver}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>${commons.dbcp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-pool</groupId>
+                <artifactId>commons-pool</artifactId>
+                <version>${commons.pool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.jqno.equalsverifier</groupId>
+                <artifactId>equalsverifier</artifactId>
+                <version>${equalsverifier.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.driver.ver}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.flapdoodle.embed</groupId>
+                <artifactId>de.flapdoodle.embed.mongo</artifactId>
+                <version>${embed.mongo.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.flume</groupId>
                 <artifactId>flume-ng-clients</artifactId>
                 <version>${flume.version}</version>
@@ -422,6 +551,17 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -472,8 +612,9 @@
                     </tags>
                 </configuration>
             </plugin>
-            <!-- uncomment when all licence headers will be added <plugin> <groupId>org.apache.rat</groupId> <artifactId>apache-rat-plugin</artifactId> <version>${rat.version}</version> 
-                </plugin> -->
+            <!-- uncomment when all licence headers will be added <plugin> 
+                <groupId>org.apache.rat</groupId> <artifactId>apache-rat-plugin</artifactId> 
+                <version>${rat.version}</version> </plugin> -->
         </plugins>
     </reporting>
 

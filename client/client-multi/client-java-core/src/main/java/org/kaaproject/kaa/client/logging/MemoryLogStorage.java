@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Reference implementation of @see LogStorage and @see LogStorageStatus
+ * Reference implementation for {@link LogStorage} and {@link LogStorageStatus}
  */
 public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     private static final Logger LOG = LoggerFactory.getLogger(MemoryLogStorage.class);
@@ -90,7 +90,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     private final List<Bucket> buckets;
 
     private long consumedSize;
-    private long recordCount; 
+    private long recordCount;
 
     public MemoryLogStorage(long bucketSize) {
         maxBucketSize = bucketSize;
@@ -106,9 +106,8 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
             if (buckets.isEmpty()) {
                 initBucketList();
             }
-            //FIXME: Bucket max size may be less than record size
-            boolean isPushed = currentBucket.tryPushRecord(record);
-            if (!isPushed) {
+
+            if (currentBucket.isUsed() || !currentBucket.tryPushRecord(record)) {
                 Bucket newBucket = new Bucket(maxBucketSize);
                 buckets.add(newBucket);
                 currentBucket = newBucket;
@@ -275,7 +274,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
 
         maxBucketSize = newBucketSize;
     }
-    
+
     private void initBucketList() {
         currentBucket = new Bucket(maxBucketSize);
         buckets.add(currentBucket);

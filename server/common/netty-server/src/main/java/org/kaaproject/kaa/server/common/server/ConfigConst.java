@@ -53,4 +53,14 @@ public interface ConfigConst { //NOSONAR
      */
     String UUID_KEY = "UUID"; //NOSONAR
     String TRACK_KEY = "TRACK"; //NOSONAR
+    
+    /**
+     * Default value of statistics collect window in seconds
+     */
+    int DEFAULT_STATISTICS_CALCULATION_WINDOW = 300; 
+    
+    /**
+     * Number of statistics update during collect window
+     */
+    int DEFAULT_STATISTICS_UPDATE_TIMES = 60;
 }

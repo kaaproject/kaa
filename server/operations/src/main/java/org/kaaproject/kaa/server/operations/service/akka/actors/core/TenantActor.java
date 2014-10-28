@@ -158,7 +158,11 @@ public class TenantActor extends UntypedActor{
      */
     @Override
     public void onReceive(Object message) throws Exception {
-        LOG.debug("[{}] Received: {}", tenantId, message);
+        if(LOG.isTraceEnabled()){
+            LOG.trace("[{}] Received: {}", tenantId, message);
+        }else{
+            LOG.debug("[{}] Received: {}", tenantId, message.getClass().getName());
+        }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
         } else if (message instanceof UserAwareMessage) {

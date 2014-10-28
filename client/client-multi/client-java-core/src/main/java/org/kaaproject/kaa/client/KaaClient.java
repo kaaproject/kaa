@@ -34,9 +34,9 @@ import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 
 /**
- * Interface for the Kaa client.
+ * <p>Interface for the Kaa client.</p>
  *
- * Base interface to operate with {@link Kaa} library.
+ * <p>Base interface to operate with {@link Kaa} library.</p>
  *
  * @author Yaroslav Zeygerman
  *
@@ -72,7 +72,7 @@ public interface KaaClient {
      * @return {@link ConfigurationManager} object.
      *
      */
-    ConfigurationManager getConfiguationManager();
+    ConfigurationManager getConfigurationManager();
 
     /**
      * Retrieves Kaa delta manager.
@@ -136,67 +136,67 @@ public interface KaaClient {
     KaaChannelManager getChannelMananager();
 
     /**
-     * Retrieves data multiplexer for communication with Operation server.
+     * <p>Retrieves data multiplexer for communication with Operation server.</p>
      *
-     * Required in user implementation of an operation data channel.
+     * <p>Required in user implementation of an operation data channel.</p>
      *
      * @return {@link KaaDataMultiplexer} object
      */
     KaaDataMultiplexer getOperationMultiplexer();
 
     /**
-     * Retrieves data demultiplexer for communication with Operation server.
+     * <p>Retrieves data demultiplexer for communication with Operation server.</p>
      *
-     * Required in user implementation of an operation data channel.
+     * <p>Required in user implementation of an operation data channel.</p>
      *
      * @return {@link KaaDataDemultiplexer} object
      */
     KaaDataDemultiplexer getOperationDemultiplexer();
 
     /**
-     * Retrieves data multiplexer for communication with Bootstrap server.
+     * <p>Retrieves data multiplexer for communication with Bootstrap server.</p>
      *
-     * Required in user implementation of a bootstrap data channel.
+     * <p>Required in user implementation of a bootstrap data channel.</p>
      *
      * @return {@link KaaDataMultiplexer} object
      */
     KaaDataMultiplexer getBootstrapMultiplexer();
 
     /**
-     * Retrieves data demultiplexer for communication with Bootstrap server.
+     * <p>Retrieves data demultiplexer for communication with Bootstrap server.</p>
      *
-     * Required in user implementation of a bootstrap data channel.
+     * <p>Required in user implementation of a bootstrap data channel.</p>
      *
      * @return {@link KaaDataDemultiplexer} object
      */
     KaaDataDemultiplexer getBootstrapDemultiplexer();
 
     /**
-     * Retrieves the client's public key.
+     * <p>Retrieves the client's public key.</p>
      *
-     * Required in user implementation of an operation data channel.
-     * Public key hash (SHA-1) is used by servers as identification number to
-     * uniquely identify each connected endpoint.
+     * <p>Required in user implementation of an operation data channel. Public
+     * key hash (SHA-1) is used by servers as identification number to uniquely
+     * identify each connected endpoint.</p>
      *
      * @return client's public key
      */
     PublicKey getClientPublicKey();
 
     /**
-     * Retrieves endpoint public key hash. <br>
-     * <br>
-     * Required in {@link EndpointRegistrationManager} implementation
-     * to react on detach response from Operations server.
+     * <p>Retrieves endpoint public key hash.</p>
+     *
+     * <p>Required in {@link EndpointRegistrationManager} implementation
+     * to react on detach response from Operations server.</p>
      *
      * @return String containing current endpoint's public key hash.
      */
     String getEndpointKeyHash();
 
     /**
-     * Retrieves the client's private key.
+     * <p>Retrieves the client's private key.</p>
      *
-     * Required in user implementation of an operation data channel.
-     * Private key is used by encryption schema between endpoint and servers.
+     * <p>Required in user implementation of an operation data channel.
+     * Private key is used by encryption schema between endpoint and servers.</p>
      *
      * @return client's private key
      */

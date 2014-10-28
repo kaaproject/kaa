@@ -34,12 +34,15 @@
     <bean id="operationsBootstrapService" class="org.kaaproject.kaa.server.operations.service.event.ESTestOperationsBootstrapService" />
     <bean id="akkaService" class="org.kaaproject.kaa.server.operations.service.event.ESTestAkkaService" />
     <bean id="operationsService" class="org.kaaproject.kaa.server.operations.service.event.ESTestOperationsService" />
+    <!--bean id="sysMonInfo" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultSystemMonitoringInfo" />
+    <bean id="metricsService" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultMerticsService" init-method="startReport" destroy-method="stopReport">
+        <property name="enabled" value="#{properties[metrics_enabled]}"/>
+        <property name="monitor" ref="metricsService" />
+    </bean-->
 
     <!-- Configuration from properties file -->
 
     <bean id="operationsServerConfig" class="org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig">
-        <property name="statisticsCalculationWindow" value="#{properties[statistics_calculation_window]}" />
-        <property name="statisticsUpdateTimes" value="#{properties[statistics_update_times]}" />
         <property name="thriftHost" value="#{properties[thrift_host]}" />
         <property name="thriftPort" value="#{properties[thrift_port]}" />
         <property name="zkEnabled" value="#{properties[zk_enabled]}" />

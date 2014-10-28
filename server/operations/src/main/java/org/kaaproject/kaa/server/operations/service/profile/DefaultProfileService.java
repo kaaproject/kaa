@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
@@ -32,6 +31,8 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
+import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
+import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
 import org.slf4j.Logger;
@@ -97,19 +98,19 @@ public class DefaultProfileService implements ProfileService {
         LOG.debug("Registering Profile for {}", request.getEndpointKey());
         LOG.trace("Lookup application by token: {}", request.getAppToken());
 
-        ApplicationDto applicationDto = applicationService.findAppByApplicationToken(request.getAppToken());
-        LOG.trace("Application by token: {} found: {}", request.getAppToken(), applicationDto);
+        AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(request.getAppToken());
+        LOG.trace("Application by token: {} found: {}", request.getAppToken(), appSeqNumber);
 
-        String profileJson = decodeProfile(request.getProfile(), applicationDto.getId(), request.getVersionInfo().getProfileVersion());
+        String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), request.getVersionInfo().getProfileVersion());
 
         EndpointProfileDto dto = new EndpointProfileDto();
-        dto.setApplicationId(applicationDto.getId());
+        dto.setApplicationId(appSeqNumber.getAppId());
         dto.setEndpointKey(request.getEndpointKey());
         dto.setEndpointKeyHash(EndpointObjectHash.fromSHA1(request.getEndpointKey()).getData());
         dto.setProfile(profileJson);
         dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
-        populateVersionStates(applicationDto.getTenantId(), dto, request.getVersionInfo());
+        populateVersionStates(appSeqNumber.getTenantId(), dto, request.getVersionInfo());
 
         if(request.getAccessToken() != null){
             dto.setAccessToken(request.getAccessToken());
@@ -134,8 +135,10 @@ public class DefaultProfileService implements ProfileService {
         LOG.debug("Updating Profile for {}", request.getEndpointKeyHash());
 
         EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(request.getEndpointKeyHash().getData());
+        
+        AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(request.getApplicationToken());
 
-        String profileJson = decodeProfile(request.getProfile(), dto.getApplicationId(), request.getVersionInfo().getProfileVersion());
+        String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), request.getVersionInfo().getProfileVersion());
 
         if(request.getAccessToken() != null){
             dto.setAccessToken(request.getAccessToken());
@@ -143,9 +146,7 @@ public class DefaultProfileService implements ProfileService {
         dto.setProfile(profileJson);
         dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
-        ApplicationDto applicationDto = applicationService.findAppById(dto.getApplicationId());
-
-        populateVersionStates(applicationDto.getTenantId(), dto, request.getVersionInfo());
+        populateVersionStates(appSeqNumber.getTenantId(), dto, request.getVersionInfo());
 
         List<EndpointGroupStateDto> egsList = new ArrayList<>();
         dto.setCfGroupStates(egsList);
@@ -189,13 +190,13 @@ public class DefaultProfileService implements ProfileService {
      *            the schema version
      * @return the string
      */
-    private String decodeProfile(byte[] profileRaw, String appId, int schemaVersion) {
-        LOG.trace("Lookup profileSchema by appId: {} and version: {}", appId, schemaVersion);
+    private String decodeProfile(byte[] profileRaw, String appToken, int schemaVersion) {
+        LOG.trace("Lookup profileSchema by appToken: {} and version: {}", appToken, schemaVersion);
 
-        ProfileSchemaDto profileSchemaDto = profileService.findProfileSchemaByAppIdAndVersion(appId, schemaVersion);
+        ProfileSchemaDto profileSchemaDto = cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(appToken, schemaVersion));
         String profileSchema = profileSchemaDto.getSchema();
 
-        LOG.trace("ProfileSchema by appId: {} and version: {} found: {}", appId, schemaVersion, profileSchema);
+        LOG.trace("ProfileSchema by appToken: {} and version: {} found: {}", appToken, schemaVersion, profileSchema);
 
         String profileJson = GenericAvroConverter.toJson(profileRaw, profileSchema);
         LOG.trace("Profile json : {} ", profileJson);

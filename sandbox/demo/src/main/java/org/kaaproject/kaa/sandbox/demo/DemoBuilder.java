@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.sandbox.demo;
 
+import java.util.List;
+
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 
@@ -22,6 +24,6 @@ public interface DemoBuilder {
 
     void buildDemoApplication(AdminClient client) throws Exception;
     
-    Project getProjectConfig();
+    List<Project> getProjectConfigs();
     
 }

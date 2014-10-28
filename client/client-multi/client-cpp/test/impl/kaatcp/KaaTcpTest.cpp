@@ -187,8 +187,8 @@ BOOST_AUTO_TEST_CASE(testResponseProcessor)
 
 BOOST_AUTO_TEST_CASE(testKaaSyncRequest)
 {
-    KaaSyncRequest request(false, true, 0x07, std::vector<boost::uint8_t>({ 0xFF }));
-    unsigned char checkKaaSync[] = { 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x07, 0x05, 0xFF };
+    KaaSyncRequest request(false, true, 0x07, std::vector<boost::uint8_t>({ 0xFF }), KaaSyncMessageType::SYNC);
+    unsigned char checkKaaSync[] = { 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x07, 0x15, 0xFF };
     const auto& rawMessage = request.getRawMessage();
     BOOST_CHECK_EQUAL(15, rawMessage.size());
     BOOST_CHECK_EQUAL_COLLECTIONS(checkKaaSync, checkKaaSync + 15, rawMessage.begin(), rawMessage.end());

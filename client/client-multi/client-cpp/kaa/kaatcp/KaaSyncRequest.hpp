@@ -23,11 +23,17 @@
 
 namespace kaa {
 
+enum class KaaSyncMessageType : boost::uint8_t {
+    UNUSED      = 0x0,
+    SYNC        = 0x1,
+    BOOTSTRAP   = 0x2
+};
+
 class KaaSyncRequest : public IKaaTcpRequest
 {
 public:
     template<class T>
-    KaaSyncRequest(bool zipped, bool encrypted, boost::uint16_t messageId, const T& payload) : message_(0)
+    KaaSyncRequest(bool zipped, bool encrypted, boost::uint16_t messageId, const T& payload, KaaSyncMessageType messageType) : message_(0)
     {
         char header[6];
         boost::uint8_t size = KaaTcpCommon::createBasicHeader(
@@ -56,6 +62,8 @@ public:
         std::copy(reinterpret_cast<boost::uint8_t *>(&messageIdNetworkOrder), reinterpret_cast<boost::uint8_t *>(&messageIdNetworkOrder) + 2, messageIt);
         messageIt += 2;
 
+        *messageIt |= (((boost::uint8_t)messageType) << 4);
+
         *messageIt |= KaaTcpCommon::KAA_SYNC_REQUEST_BIT;
         if (zipped) {
             *messageIt |= KaaTcpCommon::KAA_SYNC_ZIPPED_BIT;
@@ -74,6 +82,9 @@ public:
 
 private:
     std::vector<boost::uint8_t> message_;
+
+    static const boost::uint8_t KAA_SYNC_MESSAGE_TYPE_SYNC      = 0x01;
+    static const boost::uint8_t KAA_SYNC_MESSAGE_TYPE_BOOTSTRAP = 0x02;
 };
 
 }

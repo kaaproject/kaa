@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
+import java.util.Random;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -38,6 +39,12 @@ public class EndpointAwareMessage {
 
     /** The originator. */
     private final ActorRef originator;
+    
+    private final static ThreadLocal<Random> state = new ThreadLocal<Random>() {
+        protected Random initialValue() {
+            return new Random();
+        }
+    };
 
     /**
      * Instantiates a new endpoint aware message.
@@ -50,7 +57,7 @@ public class EndpointAwareMessage {
      *            the originator
      */
     public EndpointAwareMessage(String appToken, EndpointObjectHash key, ActorRef originator) {
-        this(UUID.randomUUID(), appToken, key, originator);
+        this(new UUID(state.get().nextLong(), state.get().nextLong()), appToken, key, originator);
     }
 
     /**

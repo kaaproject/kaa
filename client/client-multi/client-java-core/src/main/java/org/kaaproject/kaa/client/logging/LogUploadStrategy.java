@@ -17,20 +17,22 @@
 package org.kaaproject.kaa.client.logging;
 
 /**
- * Interface for log upload strategy.
- * Used by log collector on each adding of the new log record in order to check
- * whether to send logs to server or clean up local storage.
+ * <p>Interface for log upload strategy.</p>
  *
- * Reference implementation used by default (@see DefaultLogUploadStrategy).
+ * <p>Used by log collector on each adding of the new log record in order
+ * to check whether to send logs to server or clean up local storage.</p>
+ *
+ * <p>Reference implementation used by default ({@link DefaultLogUploadStrategy}).</p>
  */
 public interface LogUploadStrategy {
     /**
-     * Retrieves log upload decision based on current storage 
-     * status and defined upload configuration.
-     * 
-     * @param configuration Log upload configuration (@see LogUploadConfiguration)
+     * Retrieves log upload decision based on current storage status
+     * and defined upload configuration.
+     *
+     * @param configuration Log upload configuration ({@link LogUploadConfiguration})
      * @param status Log storage status
-     * @return Upload decision (@see LogUploadStrategyDecision)
+     *
+     * @return Upload decision ({@link LogUploadStrategyDecision})
      */
     LogUploadStrategyDecision isUploadNeeded(LogUploadConfiguration configuration, LogStorageStatus status);
 }

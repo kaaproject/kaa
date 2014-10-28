@@ -30,10 +30,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ProtocolServiceIT {
 
     @Autowired
-    protected ProtocolService nettyHttpServer;
+    protected KaaHttpService nettyHttpServer;
 
     @Autowired
-    protected BootstrapServerInitializer serverInitializer;
+    protected KaaHttpServerInitializer serverInitializer;
 
     @Test
     public void testStartStopSuccess() {

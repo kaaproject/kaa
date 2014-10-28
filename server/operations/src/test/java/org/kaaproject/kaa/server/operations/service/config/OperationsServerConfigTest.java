@@ -46,8 +46,6 @@ public class OperationsServerConfigTest {
     public void ConfigFillParamsTest() {
         assertNotNull(config);
 
-        assertEquals(300, config.getStatisticsCalculationWindow());
-        assertEquals(60, config.getStatisticsUpdateTimes());
         assertEquals("localhost", config.getThriftHost());
         assertEquals(10091, config.getThriftPort());
         assertEquals(false, config.isZkEnabled());

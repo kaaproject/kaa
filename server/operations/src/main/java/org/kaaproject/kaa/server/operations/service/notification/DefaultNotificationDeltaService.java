@@ -44,6 +44,7 @@ import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationResponse;
+import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,10 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
     /** The endpoint service. */
     @Autowired
     private EndpointService endpointService;
+
+    /** The cache service. */
+    @Autowired
+    CacheService cacheService;
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService#getNotificationDelta(org.kaaproject.kaa.server.operations.pojo.GetNotificationRequest, org.kaaproject.kaa.server.operations.service.delta.HistoryDelta)
@@ -229,10 +234,10 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
     private List<TopicDto> recalculateTopicList(HistoryDelta historyDelta) {
         Set<TopicDto> topicSet = new HashSet<TopicDto>();
         for (EndpointGroupStateDto egs : historyDelta.getEndpointGroupStates()) {
-            EndpointGroupDto endpointGroup = endpointService.findEndpointGroupById(egs.getEndpointGroupId());
+            EndpointGroupDto endpointGroup = cacheService.getEndpointGroupById(egs.getEndpointGroupId());
             if (endpointGroup.getTopics() != null) {
                 for (String topicId : endpointGroup.getTopics()) {
-                    TopicDto topic = topicService.findTopicById(topicId);
+                    TopicDto topic = cacheService.getTopicById(topicId);
                     topicSet.add(topic);
                 }
             }

@@ -52,7 +52,7 @@ public class DesktopKaaClientTest {
 
         clientSpy.init();
 
-        Assert.assertNotNull(clientSpy.getConfiguationManager());
+        Assert.assertNotNull(clientSpy.getConfigurationManager());
         Assert.assertNotNull(clientSpy.getConfigurationPersistenceManager());
         Assert.assertNotNull(clientSpy.getDeltaManager());
         Assert.assertNotNull(clientSpy.getNotificationManager());
@@ -68,7 +68,7 @@ public class DesktopKaaClientTest {
         //does nothing before initialization;
         clientSpy.start();
 
-        Assert.assertNotNull(clientSpy.getConfiguationManager());
+        Assert.assertNotNull(clientSpy.getConfigurationManager());
         Assert.assertNotNull(clientSpy.getConfigurationPersistenceManager());
         Assert.assertNotNull(clientSpy.getDeltaManager());
         Assert.assertNotNull(clientSpy.getNotificationManager());
@@ -101,7 +101,7 @@ public class DesktopKaaClientTest {
 
         clientSpy.stop();
 
-        Assert.assertNotNull(clientSpy.getConfiguationManager());
+        Assert.assertNotNull(clientSpy.getConfigurationManager());
         Assert.assertNotNull(clientSpy.getConfigurationPersistenceManager());
         Assert.assertNotNull(clientSpy.getDeltaManager());
         Assert.assertNotNull(clientSpy.getNotificationManager());

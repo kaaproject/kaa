@@ -184,4 +184,19 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
         }
         return null; //NOSONAR
     }
+
+    @Override
+    public void preProcess() {
+        if (eventTransport != null) {
+            eventTransport.blockEventManager();
+        }
+
+    }
+
+    @Override
+    public void postProcess() {
+        if (eventTransport != null) {
+            eventTransport.releaseEventManager();
+        }
+    }
 }

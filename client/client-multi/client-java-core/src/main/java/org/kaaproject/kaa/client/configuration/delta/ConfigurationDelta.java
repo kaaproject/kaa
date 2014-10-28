@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.configuration.delta;
 
 /**
- * Interface for the delta object
+ * Interface for the configuration delta object
  *
  * @author Yaroslav Zeygerman
  * @see DeltaType
@@ -25,7 +25,7 @@ package org.kaaproject.kaa.client.configuration.delta;
 public interface ConfigurationDelta {
 
     /**
-     * Retrieves handler id of the current delta
+     * Retrieves handler id for a current delta
      *
      * @return handler id of this delta, or null if the delta doesn't
      *         have a handler id

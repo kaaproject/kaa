@@ -17,8 +17,101 @@
 /*!
     \page events_page Event subsystem
     
-    \section Description
-    Some text describing event subsystem...
+    Endpoint is able to send or receive events when it is attached to user. See \ref user_page.
+    
+    Auto-generated headers based on selected event class family schemas can be found
+    in <i>kaa/event/gen/</i>.
+    
+    Event classes definitions are separated into specific namespace for each 
+    event class family. Name of this namespace is defined as:<br>
+    ns<i>EventClassFamilyName</i>
+    
+    \section Usage
+    For the example, we have one event class family named "ExampleClassFamily":
+    @code
+        [
+            {
+                "namespace": "org.kaa.example.events",
+                "name": "TestEvent",
+                "type": "record",
+                "fields": []
+            }
+        ]
+    @endcode
+    
+    Including header for ExampleClassFamily:
+    @code
+        #include <kaa/event/gen/ExampleClassFamily.hpp>
+    @endcode
+    
+    Getting ExampleClassFamily instance:
+    @code
+        using namespace kaa;
+        ExampleClassFamily &classFamily = Kaa::getKaaClient().getEventFamilyFactory().getExampleClassFamily();
+    @endcode
+    
+    \subsection sending Sending an event
+    
+    Sending event to all available recipients:
+    @code
+        nsExampleClassFamily::TestEvent event;
+        classFamily.sendEvent(event);
+    @endcode
+    or
+    @code
+        nsExampleClassFamily::TestEvent event;
+        classFamily.sendEventToAll(event);
+    @endcode
+    
+    Sending event to a concrete target:
+    @code
+        std::string target = "lZjEzq4E/D5aWjXYuG1N2sKYt/U="; // Target's public key hash.
+        nsExampleClassFamily::TestEvent event;
+        classFamily.sendEvent(event, target);
+    @endcode
+    
+    \subsection receiving Receiving an event
+
+    Define event listener:
+    @code
+        class ExampleEventsListener : public ExampleClassFamily::ExampleClassFamilyListener {
+        public: 
+            void onEvent(const nsExampleClassFamily::TestEvent &event, const std::string & source = "") {
+                std::cout << "Received event!" << std::endl;
+            }
+        };
+    @endcode
+    
+    Register event listener:
+    @code
+        ExampleClassFamily::ExampleClassFamilyListener * listener = new ExampleEventsListener();
+        classFamily.addEventFamilyListener(&listener);
+    @endcode
+    
+    \subsection find_recepients Searching for event recipients
+    
+    @code
+        class EventRecipientsResolveListener : public IFetchEventListeners {
+        public:
+            void onEventListenersReceived(const std::vector<std::string >& eventListeners) {
+                for (const auto &target : eventListeners) {
+                    std::cout << "Recipient key hash = " << target << std::endl;
+                }
+            }
+            
+            void onRequestFailed() {
+                std::cout << "Failed to find recipients of event org.kaa.example.events.TestEvent" << std::endl;
+            }
+        };
+        
+        IFetchEventListeners *listener = new EventRecipientsResolveListener();
+        std::list<std::string > fqns = { "org.kaa.example.events.TestEvent" };
+        
+        Kaa::getKaaClient().getEventListenersResolver().findEventListeners(fqns, listener);
+    @endcode
+    
+    <b>NOTE:</b> Passing multiple events fqns means that recipient MUST support 
+    receiving ALL mentioned events.
     
     \section References
     \subpage user_page

@@ -20,12 +20,31 @@ import org.kaaproject.kaa.server.common.zk.ZkChannelException;
 import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
 
 /**
+ * Service Channel operation interface.
  * @author Andrey Panasenko
  *
  */
 public interface ServiceChannel {
+    /**
+     * Return type of service channel
+     * @return ChannelType - type of ServiceChannel
+     */
     public ChannelType getChannelType();
+    
+    /**
+     * Start service channel
+     */
     public void start();
+    
+    /**
+     * Stop service channel
+     */
     public void stop();
+    
+    /**
+     * Return supported channel info in ZK format
+     * @return SupportedChannel
+     * @throws ZkChannelException in case of error
+     */
     public SupportedChannel getZkSupportedChannel() throws ZkChannelException;
 }

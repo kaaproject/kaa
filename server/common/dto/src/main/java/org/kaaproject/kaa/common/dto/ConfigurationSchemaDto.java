@@ -163,10 +163,6 @@ public class ConfigurationSchemaDto extends AbstractSchemaDto {
                 ", applicationId='" + applicationId + '\'' +
                 ", majorVersion=" + majorVersion +
                 ", minorVersion=" + minorVersion +
-                ", schema='" + schema + '\'' +
-                ", protocolSchema='" + protocolSchema + '\'' +
-                ", baseSchema='" + baseSchema + '\'' +
-                ", overrideSchema='" + overrideSchema + '\'' +
                 ", status=" + status +
                 '}';
     }

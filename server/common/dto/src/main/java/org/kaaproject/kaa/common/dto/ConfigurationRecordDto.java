@@ -25,6 +25,9 @@ public class ConfigurationRecordDto implements Serializable {
     
     private ConfigurationDto activeConfiguration; 
     private ConfigurationDto inactiveConfiguration;
+    
+    public ConfigurationRecordDto() {
+    }
 
     public ConfigurationRecordDto(ConfigurationDto activeConfiguration, ConfigurationDto inactiveConfiguration) {
         this.activeConfiguration = activeConfiguration;

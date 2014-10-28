@@ -1,0 +1,4 @@
+src/sh/bin/*	eol=lf
+src/sh/conf/*	eol=lf
+src/deb/control/*	eol=lf
+src/rpm/control/*	eol=lf

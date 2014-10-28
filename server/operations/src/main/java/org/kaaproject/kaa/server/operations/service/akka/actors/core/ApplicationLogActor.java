@@ -176,6 +176,7 @@ public class ApplicationLogActor extends UntypedActor {
         for (int i = 0; i < logAppenders.size(); i++) {
             LogAppender appender = logAppenders.get(i);
             if (appender != null && appender.getAppenderId().equals(appenderId)) {
+                LOG.debug("Close and remo log appender with id [{}].", appenderId);
                 appender.close();
                 logAppenders.remove(i);
                 break;

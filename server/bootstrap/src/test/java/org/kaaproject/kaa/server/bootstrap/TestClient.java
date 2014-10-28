@@ -21,7 +21,6 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.PublicKey;
 import java.util.List;
@@ -71,7 +70,7 @@ public class TestClient implements Runnable {
     /** Multipart objects container */
     private final MultipartObjects objects;
 
-    public TestClient(String nettyHost, int nettyPort, PublicKey serverPublicKey, HttpActivity activity) throws MalformedURLException, IOException {
+    public TestClient(String nettyHost, int nettyPort, PublicKey serverPublicKey, HttpActivity activity) throws IOException {
         testId = rnd.nextInt();
         String url = "http://"+nettyHost+":"+nettyPort+"/domain/"+ResolveCommand.getCommandName();
         connection = (HttpURLConnection)new URL(url).openConnection();

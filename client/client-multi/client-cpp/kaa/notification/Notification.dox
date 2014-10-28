@@ -16,4 +16,243 @@
 
 /*!
     \page notification_management_page Notification management
+
+    \section brief Brief description
+
+    The Kaa Notifications subsystem enables messages delivery from the 
+    Kaa cluster to endpoints (EP). It is based on auto-generated classes
+    according to the topic's notification schema used during SDK generation.
+
+    Notification topics can be mandatory or voluntary. Mandatory topic
+    notifications are delivered in an enforced manner. Voluntary topics require
+    subscription. It is the responsibility of the client code to register
+    the topic update listener and subscribe to voluntary topics.
+
+    \section topics Topics - usage examples
+
+    \subsection retrieving_topic_list Getting access to the current topic list
+    @code
+        using namespace kaa;
+
+        /*
+         * Kaa initialization
+         */
+
+        IKaaClient& kaaClient = Kaa::getKaaClient();
+        INotificationManager& notificationManager = kaaClient.getNotificationManager();
+        const auto& topics = notificationManager.getTopics();
+
+        for (const auto it : topics) {
+            std::cout << "Id: " << it.first << ", name: " << it.second.name
+                      << ", type: " << LoggingUtils::TopicSubscriptionTypeToString(
+                              it.second.subscriptionType) << std::endl;
+        }
+    @endcode
+
+    \subsection topic_update_subscription Topic update subscription
+    If there is need to know about topic list updates, do following:
+    @code
+        class BasicTopicUpdateListener : public INotificationTopicsListener {
+        public:
+            // Will be called on each update of the topic list 
+            virtual void onListUpdated(const Topics& newList) {
+                for (const auto topic : newList) {
+                    std::cout << "Id: " << topic.id << ", name: " << topic.name
+                              << ", type: " << LoggingUtils::TopicSubscriptionTypeToString(
+                                      topic.subscriptionType) << std::endl;
+                }
+            }
+        };
+        ...
+        // Create and subscribe listener for topic list updates
+        std::unique_ptr<INotificationTopicsListener> topicUpdateListener(new BasicTopicUpdateListener);
+        notificationManager.addTopicsListener(topicUpdateListener.get());
+        ...
+        // Remove topic update listener
+        notificationManager.removeTopicsListener(topicUpdateListener.get());
+    @endcode
+
+    \section notifications Notifications - usage examples 
+
+    In order to receive notifications, both mandatory or voluntary, there 
+    should be add an appropriate listener. The listener may be one for all topics.
+    Also there is possibility to add listener for specific topic notifications.
+
+    Assume, notification schema has the following form:
+    @code{.json}
+        {
+            "type": "record",
+            "name": "BasicNotification",
+            "namespace": "org.kaaproject.kaa.client.example",
+            "fields": [
+                {
+                    "name": "body",
+                    "type": "string"
+                }
+            ]
+        }
+    @endcode
+
+    After calling avrogen.sh script Avro C++ compiler will be generated
+    appropriate code and put it into NotificationGen.hpp header.
+    So auto-generated notification class will be like:
+    @code
+        struct BasicNotification {
+            std::string body;
+        };
+    @endcode
+
+    As mentioned earlier, there is two kind of topics - mandatory and voluntary.
+    Further it will be discussed dealing with both of them.
+
+    \subsection global_mandatory_listeners Global listener(s) for mandatory topics
+
+    Below is an example for receiving notifications for all mandatory topics:
+    @code
+        #include "kaa/gen/NotificationGen.hpp" // auto-generated header
+
+        class BasicNotificationListener : public AbstractNotificationListener<BasicNotification> {
+            virtual void onNotification(const std::string& id, const BasicNotification& notification) {
+                std::cout << "Received notification with body: " << notification.body << std::endl;
+            }
+        };
+        ...
+        std::unique_ptr<INotificationListener> mandatoryTopicListener(new BasicNotificationListener);
+        notificationManager.addMandatoryTopicsListener(mandatoryTopicListener.get());
+    @endcode
+
+    \subsection specific_listener Specific listener(s) for mandatory topic 
+
+    To add specific listener(s) for some mandatory topic do following:
+    @code
+        #include "kaa/gen/NotificationGen.hpp" // auto-generated header
+
+        class WheatherNotificationListener : public AbstractNotificationListener<Topic> {
+            virtual void onNotification(const std::string& id, const BasicNotification& notification) {
+                std::cout << "What's weather: " << notification.body << std::endl;
+            }
+        };
+
+        class NewsNotificationListener : public AbstractNotificationListener<BasicNotification> {
+            virtual void onNotification(const std::string& id, const BasicNotification& notification) {
+                std::cout << "What's news: " << notification.body << std::endl;
+            }
+        };
+
+        // Add specific listeners both for news and weather topics
+        std::unique_ptr<INotificationListener> weatherTopicListener(new WheatherNotificationListener);
+        std::unique_ptr<INotificationListener> newsTopicListener(new NewsNotificationListener);
+    
+        TopicSubscriberInfo wI;
+        wI.action_ = TopicSubscriberInfo::ADD;
+        wI.lisnener_ = weatherTopicListener.get();
+    
+        TopicSubscriberInfo nI;
+        nI.action_ = TopicSubscriberInfo::ADD;
+        nI.lisnener_ = newsTopicListener.get();
+    
+        TopicSubscribers subscriptionInfo({{"wheather_topic_id", wI}, {"news_topic_id", nI}});
+        notificationManager.updateTopicSubscriptions(subscriptionInfo);
+    @endcode
+
+    \subsection removal_listeners_for_mandatory_topics Removal of listeners for mandatory topics 
+
+    Removal of the global listener for mandatory topics
+    @code
+        notificationManager.removeMandatoryTopicsListener(mandatoryTopicListener.get());
+    @endcode
+
+    Removal of the specific listener for some mandatory topic
+    @code
+        TopicSubscriberInfo nI;
+        nI.action_ = TopicSubscriberInfo::REMOVE;
+        nI.lisnener_ = newsTopicListener.get();
+        TopicSubscribers subscriptionInfo({{"news_topic_id", nI}});
+        notificationManager.updateTopicSubscriptions(subscriptionInfo);
+    @endcode
+
+    \subsection voluntary_topics Voluntary topic (un)subscription
+
+    To receive notifications for some voluntary topic, firstly you should 
+    subscribe for it. Steps are equal to @ref specific_listener. If there is
+    no need in a subscription for some voluntary topic, repeat steps
+    @ref removal_listeners_for_mandatory_topics.
+
+    <b>NOTE: If there is need to subscribe/unsubscribe for/from a several
+    voluntary topic, please, do it at ONCE. Such approach helps to reduce
+    number of connection to the Operation server, improve framework performance
+    and avoid possible race conditions.</b>
+
+    Below there is an example describing the true way of dealing with
+    voluntary topics:
+    @code
+        class FirstVoluntaryNotificationListener : public AbstractNotificationListener<Topic> {
+            virtual void onNotification(const std::string& id, const Topic& notification) {
+                std::cout << "New data: " << notification.name << std::endl;
+            }
+        };
+    
+        class SecondVoluntaryNotificationListener : public AbstractNotificationListener<Topic> {
+            virtual void onNotification(const std::string& id, const Topic& notification) {
+                std::cout << "New data: " << notification.name << std::endl;
+            }
+        };
+
+        ...
+
+        std::unique_ptr<INotificationListener> boringTopicVoluntaryListener(new BasicNotificationListener);
+
+        std::unique_ptr<INotificationListener> firstVoluntaryListener(new FirstVoluntaryNotificationListener);
+        std::unique_ptr<INotificationListener> secondVoluntaryListener(new SecondVoluntaryNotificationListener);
+
+        ...
+
+        // Subscribe for new voluntary topic
+        TopicSubscriberInfo newVolInf;
+        newVolInf.action_ = TopicSubscriberInfo::ADD;
+        newVolInf.lisnener_ = firstVoluntaryListener.get();
+
+        // Assume there is already one voluntary subscription. Unsubscribe from it.
+        TopicSubscriberInfo oldVolInf;
+        oldVolInf.action_ = TopicSubscriberInfo::REMOVE;
+        oldVolInf.lisnener_ = boringTopicVoluntaryListener.get();
+        TopicSubscribers subscriptionInfo1({{"boring_voluntary_topic_id", oldVolInf}
+                                            , {"new_voluntary_topic_id", newVolInf}});
+
+        notificationManager.updateTopicSubscriptions(subscriptionInfo1);
+
+        ...
+
+        // Add new listener to "new_voluntary_topic_id" topic
+        TopicSubscriberInfo newVolListenerInf;
+        newVolListenerInf.action_ = TopicSubscriberInfo::ADD;
+        newVolListenerInf.lisnener_ = secondVoluntaryListener.get();
+
+        TopicSubscribers subscriptionInfo2({{"new_voluntary_topic_id", newVolListenerInf}});
+
+        notificationManager.updateTopicSubscriptions(subscriptionInfo2);
+
+        ...
+
+        // Remove first listener from two added before
+        TopicSubscriberInfo removeAdditionalVolListinf;
+        newVolListenerInf.action_ = TopicSubscriberInfo::REMOVE;
+        newVolListenerInf.lisnener_ = firstVoluntaryListener.get();
+
+        TopicSubscribers subscriptionInfo3({{"new_voluntary_topic_id", removeAdditionalVolListinf}});
+
+        notificationManager.updateTopicSubscriptions(subscriptionInfo3);
+
+        ...
+
+        // Remove second listener from two added before. If no listener exits,
+        // Kaa unsubscribes from this voluntary topic.
+        TopicSubscriberInfo removeLastVolListinf;
+        newVolListenerInf.action_ = TopicSubscriberInfo::REMOVE;
+        newVolListenerInf.lisnener_ = secondVoluntaryListener.get();
+
+        TopicSubscribers subscriptionInfo4({{"new_voluntary_topic_id", removeLastVolListinf}});
+
+        notificationManager.updateTopicSubscriptions(subscriptionInfo4);
+    @endcode
 */

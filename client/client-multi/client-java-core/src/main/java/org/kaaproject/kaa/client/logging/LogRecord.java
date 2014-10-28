@@ -22,22 +22,22 @@ import org.kaaproject.kaa.client.logging.gen.SuperRecord;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 
 /**
- * This class is auto-generated. Do not change it.
+ * <p>Wrapper class to encapsulate Avro-generated log record.</p>
  *
- * Wrapper class to encapsulate Avro-generated log record. 
- * Use it for log collecting.
+ * <p>Used for Kaa own needs.</p>
  */
 public class LogRecord {
     /**
      * Thread-local converter of log records to bytes.
      */
-    private static final ThreadLocal<AvroByteArrayConverter<SuperRecord>> CONVERTER 
+    private static final ThreadLocal<AvroByteArrayConverter<SuperRecord>> CONVERTER
                             = new ThreadLocal<AvroByteArrayConverter<SuperRecord>>() {
         @Override
         protected AvroByteArrayConverter<SuperRecord> initialValue() {
             return new AvroByteArrayConverter<>(SuperRecord.class);
         }
     };
+
     /**
      * Avro-encoded log record.
      */

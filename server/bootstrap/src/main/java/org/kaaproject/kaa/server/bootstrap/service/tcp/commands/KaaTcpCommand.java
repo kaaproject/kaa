@@ -52,7 +52,7 @@ public class KaaTcpCommand extends AbstractKaaTcpCommandProcessor implements Cal
     
     /**
      * Default Constructor.
-     * @param operationsServerListService
+     * @param operationsServerListService OperationsServerListService
      */
     public KaaTcpCommand(OperationsServerListService operationsServerListService) {
         this.operationsServerListService = operationsServerListService;
@@ -94,6 +94,7 @@ public class KaaTcpCommand extends AbstractKaaTcpCommandProcessor implements Cal
 
     /**
      * Pack and return list of Operations servers.
+     * @param messageId int
      * @return MqttFrame of BootstrapResponse message
      * @throws UnknownOperationsServerExceptions 
      */

@@ -142,7 +142,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     }
 
     @Override
-    public synchronized void useNextOperationsServer(ChannelType type) {
+    public void useNextOperationsServer(ChannelType type) {
         if (mappedOperationServerList != null && !mappedOperationServerList.isEmpty()) {
             if (!mappedIterators.get(type).hasNext()) {
                 transport.sync();

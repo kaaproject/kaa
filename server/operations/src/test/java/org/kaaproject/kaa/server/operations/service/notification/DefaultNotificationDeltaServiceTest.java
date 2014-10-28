@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
@@ -43,9 +42,8 @@ import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationResponse;
+import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
-import org.kaaproject.kaa.server.operations.service.notification.DefaultNotificationDeltaService;
-import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -75,6 +73,7 @@ public class DefaultNotificationDeltaServiceTest {
     private NotificationService notificationService;
     private TopicService topicService;
     private EndpointService endpointService;
+    private CacheService cacheService;
     
     @Before
     public void before() {
@@ -82,7 +81,9 @@ public class DefaultNotificationDeltaServiceTest {
         notificationService = mock(NotificationService.class);
         topicService = mock(TopicService.class);
         endpointService = mock(EndpointService.class);
+        cacheService = mock(CacheService.class);
 
+        ReflectionTestUtils.setField(notificationDeltaService, "cacheService", cacheService);
         ReflectionTestUtils.setField(notificationDeltaService, "notificationService", notificationService);
         ReflectionTestUtils.setField(notificationDeltaService, "topicService", topicService);
         ReflectionTestUtils.setField(notificationDeltaService, "endpointService", endpointService);
@@ -175,7 +176,14 @@ public class DefaultNotificationDeltaServiceTest {
         TopicDto t5 = new TopicDto();
         t5.setId(T5);
         t5.setName(T5);
-        t5.setType(TopicTypeDto.MANDATORY);        
+        t5.setType(TopicTypeDto.MANDATORY);
+        
+        Mockito.when(cacheService.getEndpointGroupById(EG1)).thenReturn(eg1);
+        Mockito.when(cacheService.getEndpointGroupById(EG2)).thenReturn(eg2);
+        Mockito.when(cacheService.getEndpointGroupById(EG3)).thenReturn(eg3);
+        Mockito.when(cacheService.getTopicById(T1)).thenReturn(t1);
+        Mockito.when(cacheService.getTopicById(T3)).thenReturn(t3);
+        Mockito.when(cacheService.getTopicById(T5)).thenReturn(t5);
         
         Mockito.when(endpointService.findEndpointGroupById(EG1)).thenReturn(eg1);
         Mockito.when(endpointService.findEndpointGroupById(EG2)).thenReturn(eg2);
@@ -201,13 +209,13 @@ public class DefaultNotificationDeltaServiceTest {
         GetNotificationRequest request = new GetNotificationRequest(profile, subscriptionCommands, acceptedUnicastNotifications, topicStates);
         GetNotificationResponse response = notificationDeltaService.getNotificationDelta(request, historyDelta);
         
-        Mockito.verify(endpointService).findEndpointGroupById(EG1);
-        Mockito.verify(endpointService).findEndpointGroupById(EG2);
-        Mockito.verify(endpointService).findEndpointGroupById(EG3);
+        Mockito.verify(cacheService).getEndpointGroupById(EG1);
+        Mockito.verify(cacheService).getEndpointGroupById(EG2);
+        Mockito.verify(cacheService).getEndpointGroupById(EG3);
         
-        Mockito.verify(topicService).findTopicById(T1);
-        Mockito.verify(topicService).findTopicById(T3);
-        Mockito.verify(topicService).findTopicById(T5);
+        Mockito.verify(cacheService).getTopicById(T1);
+        Mockito.verify(cacheService).getTopicById(T3);
+        Mockito.verify(cacheService).getTopicById(T5);
         
         Mockito.verify(notificationService).findNotificationsByTopicIdAndVersionAndStartSecNum(T1, 42, 0, 0);
         Mockito.verify(notificationService).findNotificationsByTopicIdAndVersionAndStartSecNum(T2, 0, 0, 0);

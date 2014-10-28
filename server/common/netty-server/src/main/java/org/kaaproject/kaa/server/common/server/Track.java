@@ -17,17 +17,16 @@
 package org.kaaproject.kaa.server.common.server;
 
 /**
- * Interface Track is used to collect statistics of HTTP requests.
+ * Interface Track is used to collect statistics of requests.
  *
  * @author Andrey Panasenko
  */
 public interface Track {
     /**
      * Set new request was received
-     * @param requestName - part of URI represented HTTP request.
      * @return int - request ID
      */
-    public int newRequest(String requestName);
+    public int newRequest();
 
     /**
      * Set time of processed request

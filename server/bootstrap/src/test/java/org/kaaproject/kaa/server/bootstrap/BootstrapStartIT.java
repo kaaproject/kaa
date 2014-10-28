@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -124,6 +123,7 @@ public class BootstrapStartIT {
     private static ExecutorService executor = null;
 
     private static boolean testFailed = false;
+    
 
     /** Class for Bootstrap service starting */
     public class BootstrapStarted extends Thread {
@@ -210,7 +210,12 @@ public class BootstrapStartIT {
          */
         @Override
         public void onNodeUpdated(BootstrapNodeInfo nodeInfo) {
-
+            logger.info("Bootstrap node updated "+nodeInfo.getConnectionInfo().getThriftHost());
+            synchronized (sync) {
+                nodeInfos.clear();
+                nodeInfos.add(nodeInfo);
+                sync.notify();
+            }
         }
 
         /* (non-Javadoc)

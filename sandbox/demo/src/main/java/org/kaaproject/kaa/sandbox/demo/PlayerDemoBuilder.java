@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
+import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,8 @@ public class PlayerDemoBuilder extends AbstractDemoBuilder {
     }
 
     @Override
-    protected void setupProjectConfig() {
+    protected void setupProjectConfigs() {
+        Project projectConfig = new Project();
         projectConfig.setId("player_demo");
         projectConfig.setName("Player Demo");
         projectConfig.setDescription("Music player on android platform demonstrating event subsystem");
@@ -103,6 +105,7 @@ public class PlayerDemoBuilder extends AbstractDemoBuilder {
         projectConfig.setProjectFolder("player_demo/PlayerDemo");
         projectConfig.setSdkLibDir("player_demo/PlayerDemo/libs");
         projectConfig.setDestBinaryFile("player_demo/PlayerDemo/bin/PlayerDemo-debug.apk");
+        projectConfigs.add(projectConfig);
     }
 
 }

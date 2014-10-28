@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
@@ -111,7 +112,7 @@ public class EndpointActorMessageProcessorTest {
         Mockito.when(systemMock.scheduler()).thenReturn(schedulerMock);
 
         SyncResponseHolder responseHolder = Mockito.mock(SyncResponseHolder.class);
-        Mockito.when(osMock.sync(Mockito.any(SyncRequest.class))).thenReturn(responseHolder);
+        Mockito.when(osMock.sync(Mockito.any(SyncRequest.class), Mockito.any(EndpointProfileDto.class))).thenReturn(responseHolder);
 
         final UUID channelId = UUID.randomUUID();
         SyncRequestMessage message = Mockito.mock(SyncRequestMessage.class);

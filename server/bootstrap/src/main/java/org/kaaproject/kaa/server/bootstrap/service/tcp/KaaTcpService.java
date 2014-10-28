@@ -15,12 +15,16 @@
  */
 package org.kaaproject.kaa.server.bootstrap.service.tcp;
 
+import java.io.IOException;
+
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.server.bootstrap.service.config.KaaTcpServiceChannelConfig;
-import org.kaaproject.kaa.server.bootstrap.service.config.OperationsServerConfig;
+import org.kaaproject.kaa.server.bootstrap.service.config.BootstrapServerConfig;
 import org.kaaproject.kaa.server.bootstrap.service.initialization.ServiceChannel;
 import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
+import org.kaaproject.kaa.server.common.server.StatisticsNodeUpdater;
 import org.kaaproject.kaa.server.common.server.kaatcp.NettyKaaTcpServer;
+import org.kaaproject.kaa.server.common.server.statistics.StatisticsService;
 import org.kaaproject.kaa.server.common.zk.ZkChannelException;
 import org.kaaproject.kaa.server.common.zk.ZkChannelsUtils;
 import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
@@ -37,11 +41,11 @@ import org.slf4j.LoggerFactory;
  * @author Andrey Panasenko
  *
  */
-public class KaaTcpService implements ServiceChannel {
+public class KaaTcpService implements ServiceChannel, StatisticsNodeUpdater {
     
     private static final Logger LOG = LoggerFactory.getLogger(KaaTcpService.class);
     
-    private OperationsServerConfig opServerConfig;
+    private BootstrapServerConfig opServerConfig;
     
     private KaaTcpServiceChannelConfig kaaTcpConfig;
     
@@ -58,17 +62,20 @@ public class KaaTcpService implements ServiceChannel {
 
     private long timeStarted = 0;
     
+    private StatisticsService statService;
     /**
      * Default Constructor.
-     * @param opServerConfig - OperationsServerConfig common server configuration
+     * @param opServerConfig - BootstrapServerConfig common server configuration
      * @param kaaTcpConfig - KaaTcpServiceChannelConfig KaaTcp Channel specific configuration including communication parameters.
      * @param initializer - KaaTcpServerInitializer KaaTcp Service initializer class.
      */
-    public KaaTcpService(OperationsServerConfig opServerConfig, KaaTcpServiceChannelConfig kaaTcpConfig, KaaTcpServerInitializer initializer) {
+    public KaaTcpService(BootstrapServerConfig opServerConfig, KaaTcpServiceChannelConfig kaaTcpConfig, KaaTcpServerInitializer initializer) {
         this.setOpServerConfig(opServerConfig);
         this.kaaTcpConfig = kaaTcpConfig;
         this.initializer = initializer;
         this.netty = new NettyKaaTcpServer(kaaTcpConfig, initializer);
+        this.statService = new StatisticsService(getChannelType(), kaaTcpConfig, this);
+        this.kaaTcpConfig.setSessionTrack(statService);
         LOG.info("KaaTcp netty starting: {}", netty.toString());
     }
 
@@ -88,6 +95,7 @@ public class KaaTcpService implements ServiceChannel {
         netty.init();
         initializer.setExecutor(netty.getEventExecutorGroup());
         netty.start();
+        statService.start();
         LOG.info("KaaTcp netty started");
     }
 
@@ -96,6 +104,7 @@ public class KaaTcpService implements ServiceChannel {
      */
     @Override
     public void stop() {
+        statService.shutdown();
         netty.shutdown();
         netty.deInit();
         LOG.info("KaaTcp netty stoped");
@@ -137,19 +146,46 @@ public class KaaTcpService implements ServiceChannel {
     }
 
     /**
-     * OperationsServerConfig getter.
-     * @return OperationsServerConfig the opServerConfig
+     * BootstrapServerConfig getter.
+     * @return BootstrapServerConfig the opServerConfig
      */
-    public OperationsServerConfig getOpServerConfig() {
+    public BootstrapServerConfig getOpServerConfig() {
         return opServerConfig;
     }
 
     /**
-     * OperationsServerConfig setter.
+     * BootstrapServerConfig setter.
      * @param opServerConfig the opServerConfig to set
      */
-    public void setOpServerConfig(OperationsServerConfig opServerConfig) {
+    public void setOpServerConfig(BootstrapServerConfig opServerConfig) {
         this.opServerConfig = opServerConfig;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.common.server.StatisticsNodeUpdater#setStatistics(int, int, int)
+     */
+    @Override
+    public void setStatistics(int averageProcessedRequests, int averageOnlineSessions, int averageDeltaSync) {
+        processedRequestCount = Integer.valueOf(averageProcessedRequests);
+        registeredUsersCount = Integer.valueOf(averageOnlineSessions);
+        deltaCalculationCount = Integer.valueOf(averageDeltaSync);
+        timeStarted = System.currentTimeMillis();
+        if (getOpServerConfig().getBootstrapNode() != null) {
+            try {
+                getOpServerConfig().getBootstrapNode().updateNodeStatsValues(
+                        ZkChannelsUtils.getZkChannelTypeFromChanneltype(getChannelType()), 
+                        averageDeltaSync, 
+                        averageProcessedRequests, 
+                        averageOnlineSessions);
+            } catch (IOException e) {
+                LOG.error("Error update statistics for channel "+getChannelType(), e);
+            } catch (ZkChannelException e) {
+                LOG.error("Error update statistics for channel "+getChannelType(), e);
+            }            
+        } else {
+            LOG.error("Error update statistics for channel "+getChannelType()+ " BootstrapNode not set.");
+        }
+        
     }
 
 }

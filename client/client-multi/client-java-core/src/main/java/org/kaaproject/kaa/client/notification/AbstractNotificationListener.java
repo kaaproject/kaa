@@ -23,25 +23,22 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 
 /**
- * Abstract listener for received notifications.<br>
- * <br>
- * Responsible for processing notifications either on a specific topic or all at once.<br>
- * <pre>
+ * <p>Abstract listener for received notifications.</p>
+ *
+ * <p>Responsible for processing notifications either on a specific topic or all at once.</p>
  * {@code
  * // Assume, BasicNotification is a notification class auto-generated according to predefined Avro schema
  * public class UserNotificationListener extends AbstractNotificationListener<BasicNotification> {
- *     public UserNotificationListener() {}
+ *     \@Override
  *     protected Class<BasicNotification> getNotificationClass() {
  *         return BasicNotification.class;
  *     }
+ *
+ *     \@Override
  *     public void onNotification(String topicId, BasicNotification notification) {
  *         System.out.println("Got notification: " + notification.toString());
  *     }
  * }
- *
- * // Add listener to catch notifications on all mandatory topics
- * UserNotificationListener mandatoryListener = new UserNotificationListener();
- * kaaClient.getNotificationManager().addMandatoryTopicsListener(mandatoryListener);
  * }
  * </pre>
  *
@@ -55,6 +52,14 @@ public abstract class AbstractNotificationListener<T extends SpecificRecordBase>
         converter = new AvroByteArrayConverter<T>(getNotificationClass());
     }
 
+    /**
+     * Convert raw Avro-encoded data to specific notification class according
+     * to predefined Avro schema.
+     *
+     * @param topicId Unique topic identifier
+     * @param notification Raw Avro-encoded data
+     *
+     */
     @Override
     public final void onNotificationRaw(String topicId, ByteBuffer notification) throws IOException {
         onNotification(topicId, converter.fromByteArray(notification.array()));
@@ -63,16 +68,16 @@ public abstract class AbstractNotificationListener<T extends SpecificRecordBase>
     /**
      * Retrieves the notification's class.
      *
-     * @return the notification's class object.
+     * @return The notification's class object.
      *
      */
     protected abstract Class<T> getNotificationClass();
 
     /**
-     * Called on each notification.
+     * Called on each received notification.
      *
-     * @param topicId the topic's id.
-     * @param notification the notification object.
+     * @param topicId Unique topic identifier
+     * @param notification Received notification.
      *
      */
     public abstract void onNotification(String topicId, T notification);

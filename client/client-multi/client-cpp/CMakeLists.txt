@@ -23,6 +23,10 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x -g")
 endif ()
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++11 -stdlib=libc++ -g")
+endif()
+
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 find_package (Boost 1.55 REQUIRED COMPONENTS log signals system thread)
@@ -104,6 +108,12 @@ set (KAA_SOURCE_FILES
 add_library(kaacpp_o OBJECT ${KAA_SOURCE_FILES})
 
 add_library (kaacpp SHARED ./kaa $<TARGET_OBJECTS:kaacpp_o>)
+
+target_link_libraries(kaacpp pthread
+    ${BOTAN_LIBRARY}
+    ${AVRO_LIBRARIES}
+    ${Boost_LIBRARIES})
+
 add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)
 
 install (TARGETS kaacpp kaacpp_s

@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.configuration.delta.manager;
 import org.kaaproject.kaa.client.configuration.delta.ConfigurationDelta;
 
 /**
- * Interface for receivers of configuration deltas
+ * Interface for listener to receive configuration deltas.
  *
  * @author Yaroslav Zeygerman
  *
@@ -27,9 +27,10 @@ import org.kaaproject.kaa.client.configuration.delta.ConfigurationDelta;
 public interface DeltaReceiver {
 
     /**
-     * This callback method will be called on each received appropriate delta
+     * This callback will be called on each received delta (either for a root
+     * record or some configuration subtree).
      *
-     * @param delta configuration delta
+     * @param delta Configuration delta
      * @see ConfigurationDelta
      *
      */

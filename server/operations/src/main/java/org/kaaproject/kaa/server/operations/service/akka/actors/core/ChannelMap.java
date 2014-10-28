@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
@@ -53,7 +54,7 @@ public class ChannelMap {
 
     public ChannelMetaData getByRequestId(UUID id){
         for(ChannelMetaData data : this.map.values()){
-            if(data.getRequest().getChannelUuid().equals(id)){
+            if(data.getRequestMessage().getChannelUuid().equals(id)){
                 return data;
             }
         }
@@ -73,7 +74,7 @@ public class ChannelMap {
     public List<ChannelMetaData> getByTransportType(TransportType type) {
         List<ChannelMetaData> result = new ArrayList<>();
         for(ChannelMetaData data : map.values()){
-            if(data.getRequest().isValid(type)){
+            if(data.getRequestMessage().isValid(type)){
                 result.add(data);
             }
         }
@@ -90,19 +91,20 @@ public class ChannelMap {
             this(request, null);
         }
 
-        public ChannelMetaData(SyncRequestMessage request, SyncResponseHolder response) {
+        private ChannelMetaData(SyncRequestMessage request, SyncResponseHolder response) {
             super();
             this.session = request.getSession();
             this.request = request;
             this.response = response;
         }
 
-        public void updateRequest(SyncRequestMessage syncRequest){
-            this.request.update(syncRequest);
+        public SyncRequest mergeRequest(SyncRequestMessage syncRequest){
+            return this.request.merge(syncRequest);
         }
 
-        public void updateReqResp(SyncResponseHolder response){
-            cleanRequest();
+        public void update(SyncResponseHolder response){
+            this.lastActivityTime = System.currentTimeMillis();
+            this.request.updateRequest(response.getResponse());
             this.response = response;
         }
 
@@ -122,11 +124,11 @@ public class ChannelMap {
             return session.getKeepAlive();
         }
 
-        public SyncRequestMessage getRequest() {
+        public SyncRequestMessage getRequestMessage() {
             return request;
         }
 
-        public SyncResponseHolder getResponse() {
+        public SyncResponseHolder getResponseHolder() {
             return response;
         }
 
@@ -136,10 +138,6 @@ public class ChannelMap {
 
         public void setLastActivityTime(long lastActivityTime) {
             this.lastActivityTime = lastActivityTime;
-        }
-
-        public void cleanRequest() {
-            request.cleanRequest();
         }
 
         @Override
@@ -179,6 +177,10 @@ public class ChannelMap {
             builder.append(session);
             builder.append("]");
             return builder.toString();
+        }
+
+        public boolean isFirstRequest() {
+            return response == null;
         }
 
 

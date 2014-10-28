@@ -21,6 +21,10 @@ enable_language(C)
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c1x -Wall")
 
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
+endif()
+
 if (CMAKE_COMPILER_IS_GNUCC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
 endif ()
@@ -56,6 +60,9 @@ set (KAA_SOURCE_FILES
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
 
 add_library (kaac SHARED ./src $<TARGET_OBJECTS:kaac_o>)
+
+target_link_libraries(kaac ssl crypto)
+
 add_library (kaac_s STATIC ./src $<TARGET_OBJECTS:kaac_o>)
 
 if (KAA_UNITTESTS_COMPILE)

@@ -86,4 +86,17 @@ public interface EventManager extends EventListenersResolver {
      * Clears the current manager's state.
      */
     void clearState();
+
+    /**
+     * Restrict manager to use data channel until {@link #releaseDataChannel()} called
+     */
+    void engageDataChannel();
+
+    /**
+     * Allow manager to use data channel.
+     *
+     * @return <b>true</b> if there is data to be sent via data channel<br>
+     * <b>false</b> otherwise
+     */
+    boolean releaseDataChannel();
 }

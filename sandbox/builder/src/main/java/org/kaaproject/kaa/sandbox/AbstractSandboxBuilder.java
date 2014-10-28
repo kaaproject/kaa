@@ -19,18 +19,25 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
@@ -44,10 +51,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.apache.tools.ant.taskdefs.optional.ssh.SSHBase;
 import org.apache.tools.ant.taskdefs.optional.ssh.Scp;
 import org.apache.tools.ant.types.FileSet;
-import org.apache.http.util.EntityUtils;
 import org.kaaproject.kaa.sandbox.demo.AbstractDemoBuilder;
 import org.kaaproject.kaa.sandbox.demo.DemoBuilder;
 import org.kaaproject.kaa.sandbox.demo.DemoBuildersRegistry;
@@ -62,6 +69,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxConstants {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSandboxBuilder.class);
+    private static final String MD5 = "MD5";
+    private static final String MD5_FILE_EXT = ".md5";
 
     protected final File basePath;
     protected final OsType osType;
@@ -139,25 +148,17 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
     private void loadBox() throws Exception {
         logger.info("Loading box '{}' ...", boxName);
         String fileName = FilenameUtils.getName(baseImageUrl.toString());
-        baseImageFile = new File(basePath, fileName);
+        baseImageFile = new File(System.getProperty("java.io.tmpdir"), fileName);
         logger.info("Downloading base image to file '{}'...", baseImageFile.getAbsolutePath());
-        if (baseImageFile.exists()) {
-            baseImageFile.delete();
-        }
-
         downloadFile(baseImageUrl, baseImageFile);
-
+        
         if (baseImageFile.exists() && baseImageFile.isFile()) {
             logger.info("Downloaded base image to file '{}'.", baseImageFile.getAbsolutePath());
-        }
-        else {
+        } else {
             logger.error("Unable to download image file to '{}'", baseImageFile.getAbsolutePath());
             throw new RuntimeException("Unable to download image file!");
         }
         loadBoxImpl();
-
-        baseImageFile.delete();
-
         logger.info("Box '{}' is loaded.", boxName);
     }
 
@@ -165,22 +166,36 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 64;
 
     private void downloadFile(URL sourceUrl, File targetFile) throws Exception {
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpContext context = new BasicHttpContext();
+        if (targetFile.exists()) {
+            String checksumFileUrl = sourceUrl.toString() + MD5_FILE_EXT;
+            String md5sum = downloadCheckSumFile(httpClient, context, checksumFileUrl);
+            boolean result = compareChecksum(targetFile, md5sum);
+            logger.debug("Compare checksum result is {}", result);
+            if (!result) {
+                targetFile.delete();
+                downloadFile(httpClient, context, sourceUrl, targetFile);
+            }
+        } else {
+            downloadFile(httpClient, context, sourceUrl, targetFile);
+        }
+    }
+
+    private void downloadFile(HttpClient httpClient, HttpContext context, URL sourceUrl, File targetFile) throws Exception {
+        logger.debug("Download {} to file {}", sourceUrl.toString(), targetFile.getAbsolutePath());
         HttpEntity entity = null;
         try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpContext context = new BasicHttpContext();
             HttpGet httpGet = new HttpGet(sourceUrl.toURI());
             HttpResponse response = httpClient.execute(httpGet, context);
             entity = response.getEntity();
             long length = entity.getContentLength();
-
             InputStream in = new BufferedInputStream(entity.getContent());
             OutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile));
-            copyLarge(in,out, new byte[DEFAULT_BUFFER_SIZE], length);
+            copyLarge(in, out, new byte[DEFAULT_BUFFER_SIZE], length);
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
-        }
-        finally {
+        } finally {
             EntityUtils.consumeQuietly(entity);
         }
     }
@@ -343,7 +358,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         List<Project> projects = new ArrayList<>();
         for (DemoBuilder demoBuilder : demoBuilders) {
             demoBuilder.buildDemoApplication(adminClient);
-            projects.add(demoBuilder.getProjectConfig());
+            projects.addAll(demoBuilder.getProjectConfigs());
         }
 
         //Prepare projects XML file
@@ -484,6 +499,38 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         ssh.setPort(sshForwardPort);
         ssh.setHost(DEFAULT_HOST);
         ssh.setTrust(true);
+    }
+    
+    private boolean compareChecksum(File targetFile, String downloadedCheckSum) {
+        String checkSum = "";
+        try (FileInputStream fileInput = new FileInputStream(targetFile)) {
+            MessageDigest messageDigest = MessageDigest.getInstance(MD5);
+            byte[] dataBytes = new byte[1024 * 100];
+            int bytesRead = 0;
+            while ((bytesRead = fileInput.read(dataBytes)) != -1) {
+                messageDigest.update(dataBytes, 0, bytesRead);
+            }
+            byte[] digestBytes = messageDigest.digest();
+            checkSum = DatatypeConverter.printHexBinary(digestBytes);
+            logger.debug("Calculated checksum for filer[{}]: [{}], downloaded is [{}]", targetFile.getAbsolutePath(), checkSum, downloadedCheckSum);
+        } catch (IOException | NoSuchAlgorithmException e) {
+            logger.debug("Can't calculate checksum for file [{}]", targetFile.getAbsolutePath());
+        }
+        return checkSum.equalsIgnoreCase(downloadedCheckSum);
+    }
+    
+    public String downloadCheckSumFile(HttpClient httpClient, HttpContext context, String url) throws Exception {
+        logger.debug("Starting download [{}] ...", url);
+        HttpGet httpGet = new HttpGet(URI.create(url));
+        HttpResponse response = httpClient.execute(httpGet, context);
+        HttpEntity entity = response.getEntity();
+        InputStream in = entity.getContent();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        IOUtils.copy(in, out);
+        IOUtils.closeQuietly(in);
+        IOUtils.closeQuietly(out);
+        String checkSum = new String(out.toByteArray(), StandardCharsets.UTF_8);
+        return checkSum != null ? checkSum.trim() : "";
     }
 
 }

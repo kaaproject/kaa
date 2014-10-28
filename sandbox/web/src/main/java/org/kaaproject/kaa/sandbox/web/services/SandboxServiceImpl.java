@@ -247,7 +247,10 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                         }
                         else {
                             outStream.println("Building binary file...");
-                            File projectFolder = new File(rootDir, project.getProjectFolder());
+                            File projectFolder = rootDir;
+                            if (project.getProjectFolder() != null && !project.getProjectFolder().trim().isEmpty()) {
+                                projectFolder = new File(rootDir, project.getProjectFolder());
+                            }
                             
                             executeCommand(outStream, new String[]{"ant"}, projectFolder);
                             
@@ -263,6 +266,9 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                             binaryFileData.setFileData(binaryFileBytes);
                             if (project.getPlatform()==Platform.ANDROID) {
                                 binaryFileData.setContentType("application/vnd.android.package-archive");
+                            }
+                            else if (project.getPlatform()==Platform.JAVA) {
+                                binaryFileData.setContentType("application/x-compressed");
                             }
                             cacheService.putProjectFile(dataKey, binaryFileData);
                         }

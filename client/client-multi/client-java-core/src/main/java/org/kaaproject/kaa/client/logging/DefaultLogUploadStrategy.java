@@ -20,11 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Reference implementation of @see LogUploadStrategy
+ * Reference implementation for {@link LogUploadStrategy}.
  */
 public class DefaultLogUploadStrategy implements LogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogUploadStrategy.class);
-    
+
     public DefaultLogUploadStrategy() {
     }
 

@@ -77,8 +77,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         SUPPORTED_TYPES.put(TransportType.LOGGING, ChannelDirection.BIDIRECTIONAL);
     }
 
-    private static final int PING_TIMEOUT = 200;
-
+    private static final int PING_TIMEOUT = 100;
+    private static final int CHANNEL_TIMEOUT = 200;
+    
     private static final String CHANNEL_ID = "default_operation_tcp_channel";
 
     private KaaTcpServerInfo currentServer;
@@ -100,6 +101,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final int RECONNECT_TIMEOUT = 5; // in sec
     private ConnectivityChecker connectivityChecker;
+    
 
     private final List<TransportType> ackTypes = new ArrayList<TransportType>();
 
@@ -152,7 +154,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             }
             if (resultBody != null) {
                 try {
+                    demultiplexer.preProcess();
                     demultiplexer.processResponse(resultBody);
+                    demultiplexer.postProcess();
                 } catch (Exception e) {
                     LOG.error("Failed to process response for channel [{}]", getId());
                     LOG.error("Stack Trace: ", e);
@@ -209,13 +213,20 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         LOG.info("Channel [{}] received end of stream", getId(), size);
                         break;
                     }
-                } catch (IOException | KaaTcpProtocolException | RuntimeException e) {
-                    if (!Thread.currentThread().isInterrupted()) {
+                } catch (IOException | KaaTcpProtocolException e) {
+                    if (!isShutdown) {
+                        LOG.error("Failed to read from the socket for channel [{}]: {}", getId());
+                        LOG.error("Stack trace: ", e);
+                        onServerFailed();
+                    }
+                } catch (RuntimeException e) {
+                    if (!Thread.currentThread().isInterrupted() && !isShutdown) {
                         LOG.error("Failed to read from the socket for channel [{}]: {}", getId());
                         LOG.error("Stack trace: ", e);
                         onServerFailed();
                     } else {
-                        LOG.info("Socket connection for channel [{}] was interrupted", getId());
+                        LOG.warn("Socket connection for channel was interrupted", e);
+                        LOG.info("Socket connection for channel [{}] was interrupted, shutdown [{}]", getId(), isShutdown);
                     }
                 }
             }
@@ -291,7 +302,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         byte [] requestBodyEncoded = encDec.encodeData(body);
         byte [] sessionKey = encDec.getEncodedSessionKey();
         byte [] signature = encDec.sign(sessionKey);
-        sendFrame(new Connect(PING_TIMEOUT, sessionKey, requestBodyEncoded, signature));
+        sendFrame(new Connect(CHANNEL_TIMEOUT, sessionKey, requestBodyEncoded, signature));
     }
 
     private synchronized void closeConnection() {
@@ -355,7 +366,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private void schedulePingTask() {
         if (executor != null) {
             LOG.debug("Scheduling a ping task ({} seconds) for channel [{}]", PING_TIMEOUT, getId());
-            pingTaskFuture = executor.schedule(pingTask, PING_TIMEOUT, TimeUnit.SECONDS);
+            pingTaskFuture = executor.schedule(pingTask, PING_TIMEOUT, TimeUnit.SECONDS);   
         }
     }
 
@@ -430,7 +441,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     @Override
-    public synchronized void syncAck(TransportType type) {
+    public void syncAck(TransportType type) {
         LOG.info("Adding sync acknowledgement for type {} as a regular sync for channel [{}]", type, getId());
         ackTypes.add(type);
     }
@@ -473,8 +484,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     public void shutdown() {
-        closeConnection();
         isShutdown = true;
+        closeConnection();
         if (executor != null) {
             executor.shutdownNow();
         }

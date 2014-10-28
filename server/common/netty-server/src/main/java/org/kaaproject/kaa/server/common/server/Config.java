@@ -48,6 +48,12 @@ public class Config implements ConfigConst {
      */
     private int clientMaxBodySize = DEFAULT_MAX_SIZE_VALUE;
 
+    /** Statistics collect window in seconds */
+    private long statisticsCalculationWindow = DEFAULT_STATISTICS_CALCULATION_WINDOW;
+
+    /** Number of statistics update during collect window */
+    private int statisticsUpdateTimes = DEFAULT_STATISTICS_UPDATE_TIMES;
+    
     /**
      * commandFactories - used to store list of Classes which create CommanProcessors.
      */
@@ -148,6 +154,34 @@ public class Config implements ConfigConst {
      */
     public void setSessionTrack(SessionTrackable sessionTrack) {
         this.sessionTrack = sessionTrack;
+    }
+
+    /**
+     * @return the statisticsCalculationWindow
+     */
+    public long getStatisticsCalculationWindow() {
+        return statisticsCalculationWindow;
+    }
+
+    /**
+     * @param statisticsCalculationWindow the statisticsCalculationWindow to set
+     */
+    public void setStatisticsCalculationWindow(long statisticsCalculationWindow) {
+        this.statisticsCalculationWindow = statisticsCalculationWindow;
+    }
+
+    /**
+     * @return the statisticsUpdateTimes
+     */
+    public int getStatisticsUpdateTimes() {
+        return statisticsUpdateTimes;
+    }
+
+    /**
+     * @param statisticsUpdateTimes the statisticsUpdateTimes to set
+     */
+    public void setStatisticsUpdateTimes(int statisticsUpdateTimes) {
+        this.statisticsUpdateTimes = statisticsUpdateTimes;
     }
 
     @Override

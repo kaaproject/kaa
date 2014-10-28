@@ -59,7 +59,7 @@ public class ChannelMapTest {
         Assert.assertEquals(md1, md2);
         SyncRequest newRequest = new SyncRequest();
         newRequest.setSyncRequestMetaData(new SyncRequestMetaData());
-        md2.updateRequest(new SyncRequestMessage(session, request, null, null));
+        md2.mergeRequest(new SyncRequestMessage(session, request, null, null));
         Assert.assertEquals(md1, md2);
     }
 

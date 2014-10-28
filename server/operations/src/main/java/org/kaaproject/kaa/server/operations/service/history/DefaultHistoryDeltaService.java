@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.operations.service.history;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,12 +133,12 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
 
             if (egs != null) {
                 if (changeType == ChangeType.REMOVE_TOPIC || changeType == ChangeType.ADD_TOPIC) {
-                    LOG.debug("[{}] Detected {} for {} on group {} which means topic list change", endpointId, changeType, change.getTopicId(),
+                    LOG.trace("[{}] Detected {} for {} on group {} which means topic list change", endpointId, changeType, change.getTopicId(),
                             change.getEndpointGroupId());
                     historyDelta.setTopicListChanged(true);
                     continue;
                 } else if (changeType == ChangeType.REMOVE_CONF || changeType == ChangeType.ADD_CONF) {
-                    LOG.debug("[{}] Detected {} for {} on group {} which means configuration change", endpointId, changeType, change.getConfigurationId(),
+                    LOG.trace("[{}] Detected {} for {} on group {} which means configuration change", endpointId, changeType, change.getConfigurationId(),
                             change.getEndpointGroupId());
                     if (changeType == ChangeType.ADD_CONF) {
                         egs.setConfigurationId(change.getConfigurationId());
@@ -148,14 +147,14 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
                     }
                     historyDelta.setConfigurationChanged(true);
                 } else if (changeType == ChangeType.REMOVE_PROF) {
-                    LOG.debug("[{}] Detected {} for {} on group {} which means configuration/topic list change", endpointId, changeType,
+                    LOG.trace("[{}] Detected {} for {} on group {} which means configuration/topic list change", endpointId, changeType,
                             change.getProfileFilterId(), change.getEndpointGroupId());
                     groupsMap.remove(egs.getEndpointGroupId());
                     historyDelta.setAllChanged();
                 } else if (changeType == ChangeType.ADD_PROF) {
-                    LOG.debug("[{}] Detected {} for {} on group {}", endpointId, changeType, change.getProfileFilterId(), change.getEndpointGroupId());
+                    LOG.trace("[{}] Detected {} for {} on group {}", endpointId, changeType, change.getProfileFilterId(), change.getEndpointGroupId());
                     if (!filterService.matches(historyKey.getAppToken(), change.getProfileFilterId(), profile.getProfile().toString())) {
-                        LOG.debug("[{}] Detected {} does not match current profile body which means configuration/topic list change", endpointId,
+                        LOG.trace("[{}] Detected {} does not match current profile body which means configuration/topic list change", endpointId,
                                 change.getProfileFilterId());
                         groupsMap.remove(egs.getEndpointGroupId());
                         historyDelta.setAllChanged();
@@ -165,9 +164,9 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
                 }
             } else {
                 if (changeType == ChangeType.ADD_PROF) {
-                    LOG.debug("[{}] Detected {} for {} on group {}", endpointId, changeType, change.getProfileFilterId(), change.getEndpointGroupId());
+                    LOG.trace("[{}] Detected {} for {} on group {}", endpointId, changeType, change.getProfileFilterId(), change.getEndpointGroupId());
                     if (filterService.matches(historyKey.getAppToken(), change.getProfileFilterId(), profile.getProfile().toString())) {
-                        LOG.debug("[{}] Detected {} match current profile body which means possible configuration/topic list change", endpointId,
+                        LOG.trace("[{}] Detected {} match current profile body which means possible configuration/topic list change", endpointId,
                                 change.getProfileFilterId());
                         egs = new EndpointGroupStateDto(groupId, change.getProfileFilterId(), null);
                         groupsMap.put(groupId, egs);

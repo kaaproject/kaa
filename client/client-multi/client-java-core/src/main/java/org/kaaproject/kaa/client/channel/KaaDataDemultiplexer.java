@@ -35,4 +35,13 @@ public interface KaaDataDemultiplexer {
      */
     void processResponse(byte [] response) throws Exception;
 
+    /**
+     * Routines to be executed before response will be processed
+     */
+    void preProcess();
+
+    /**
+     * Define routines to be executed after response is processed.
+     */
+    void postProcess();
 }
