@@ -30,7 +30,7 @@ public:
 
     void sync();
 
-    boost::shared_ptr<LogSyncRequest>   createLogSyncRequest();
+    std::shared_ptr<LogSyncRequest>     createLogSyncRequest();
     void                                onLogSyncResponse(const LogSyncResponse& response);
 private:
     LogCollector&   collector_;

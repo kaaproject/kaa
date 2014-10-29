@@ -17,7 +17,7 @@
 #include "kaa/http/MultipartPostHttpRequest.hpp"
 
 #include <sstream>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/logging/Log.hpp"
 
@@ -63,7 +63,7 @@ std::string MultipartPostHttpRequest::getRequestData() const
     for (auto it = bodyFields_.begin(); it != bodyFields_.end(); ++it) {
         bodyStream << "--" << BOUNDARY << "\r\n";
         bodyStream << "Content-Disposition: form-data; name=\"" << it->first << "\"\r\n\r\n";
-        const std::vector<boost::uint8_t>& body = it->second;
+        const std::vector<std::uint8_t>& body = it->second;
         bodyStream.write(reinterpret_cast<const char *>(body.data()), body.size());
         bodyStream << "\r\n";
     }
@@ -88,7 +88,7 @@ void MultipartPostHttpRequest::removeHeaderField(const std::string& name)
     headerFields_.erase(name);
 }
 
-void MultipartPostHttpRequest::setBodyField(const std::string& name, const std::vector<boost::uint8_t>& value)
+void MultipartPostHttpRequest::setBodyField(const std::string& name, const std::vector<std::uint8_t>& value)
 {
     bodyFields_.insert(std::make_pair(name, value));
 }

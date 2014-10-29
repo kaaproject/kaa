@@ -29,17 +29,17 @@ public:
     PingRequest() : message_(2)
     {
         char header[2];
-        KaaTcpCommon::createBasicHeader((boost::uint8_t) KaaTcpMessageType::MESSAGE_PINGREQ, 0, header);
-        std::copy(reinterpret_cast<const boost::uint8_t *>(header),
-                reinterpret_cast<const boost::uint8_t *>(header + 2),
+        KaaTcpCommon::createBasicHeader((std::uint8_t) KaaTcpMessageType::MESSAGE_PINGREQ, 0, header);
+        std::copy(reinterpret_cast<const std::uint8_t *>(header),
+                reinterpret_cast<const std::uint8_t *>(header + 2),
                 message_.begin());
     }
     ~PingRequest() { }
 
-    const std::vector<boost::uint8_t>& getRawMessage() const { return message_; }
+    const std::vector<std::uint8_t>& getRawMessage() const { return message_; }
 
 private:
-    std::vector<boost::uint8_t> message_;
+    std::vector<std::uint8_t> message_;
 
 };
 

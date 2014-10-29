@@ -18,12 +18,12 @@
 
 #include <cstring>
 #include <cstdlib>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
-HttpResponse::HttpResponse(const char *data, size_t len) : statusCode_(0)
+HttpResponse::HttpResponse(const char *data, std::size_t len) : statusCode_(0)
 {
     if (data == nullptr || len < HTTP_VERSION_OFFSET + 5) {
         throw KaaException("Empty response was given");
@@ -55,7 +55,7 @@ int HttpResponse::getStatusCode() const
     return statusCode_;
 }
 
-void HttpResponse::parseResponse(const char *data, size_t len)
+void HttpResponse::parseResponse(const char *data, std::size_t len)
 {
     const char *cursor = data;
     cursor += HTTP_VERSION_OFFSET;
@@ -81,7 +81,7 @@ void HttpResponse::parseResponse(const char *data, size_t len)
     if (it != header_.end()) {
         auto len = std::strtol(it->second.c_str(), NULL, 10);
         if (len > 0) {
-            body_.first.reset(new boost::uint8_t[len]);
+            body_.first.reset(new std::uint8_t[len]);
             body_.second = len;
             memcpy(body_.first.get(), cursor, len);
         }

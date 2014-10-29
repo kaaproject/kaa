@@ -32,9 +32,9 @@ void LoggingTransport::sync()
     syncByType();
 }
 
-boost::shared_ptr<LogSyncRequest> LoggingTransport::createLogSyncRequest()
+std::shared_ptr<LogSyncRequest> LoggingTransport::createLogSyncRequest()
 {
-    boost::shared_ptr<LogSyncRequest> request(new LogSyncRequest());
+    std::shared_ptr<LogSyncRequest> request(new LogSyncRequest());
 
     LogSyncRequest logBlockRequest = collector_.getLogUploadRequest();
     if (!logBlockRequest.requestId.is_null() && !logBlockRequest.requestId.get_string().empty()) {

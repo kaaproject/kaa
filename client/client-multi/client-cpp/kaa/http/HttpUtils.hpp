@@ -17,13 +17,14 @@
 #ifndef HTTPUTILS_HPP_
 #define HTTPUTILS_HPP_
 
+#include <cstdint>
 #include <boost/noncopyable.hpp>
 
 namespace kaa {
 
 class HttpUtils : public boost::noncopyable {
 public:
-    static boost::asio::ip::tcp::endpoint getEndpoint(std::string host, uint16_t port)
+    static boost::asio::ip::tcp::endpoint getEndpoint(std::string host, std::uint16_t port)
     {
         char portStr[6];
         snprintf(portStr, 6, "%u", port);

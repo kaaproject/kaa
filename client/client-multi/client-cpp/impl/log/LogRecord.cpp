@@ -18,7 +18,7 @@
 
 namespace kaa {
 
-    const std::vector<boost::uint8_t>& LogRecord::getData() {
+    const std::vector<std::uint8_t>& LogRecord::getData() {
     return logData_;
 }
 

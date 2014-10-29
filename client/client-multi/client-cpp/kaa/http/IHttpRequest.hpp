@@ -18,14 +18,14 @@
 #define IHTTPREQUEST_HPP_
 
 #include <string>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace kaa {
 
 class IHttpRequest {
 public:
     virtual std::string getHost() const = 0;
-    virtual uint16_t getPort() const = 0;
+    virtual std::uint16_t getPort() const = 0;
     virtual std::string getRequestData() const = 0;
     virtual void setHeaderField(const std::string& name, const std::string& value) = 0;
     virtual void removeHeaderField(const std::string& name) = 0;

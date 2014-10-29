@@ -19,8 +19,8 @@
 
 #include "kaa/log/ILogCollector.hpp"
 
-#include <boost/thread/mutex.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <memory>
+#include "kaa/KaaThread.hpp"
 #include "kaa/log/MemoryLogStorage.hpp"
 #include "kaa/log/SizeUploadStrategy.hpp"
 #include "kaa/log/DefaultLogUploadConfiguration.hpp"
@@ -57,9 +57,6 @@ private:
     void doUpload();
     void doCleanup();
 private:
-    typedef boost::mutex                    mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
-
     ILogStorage *               storage_;
     ILogStorageStatus *         status_;
     ILogUploadConfiguration *   configuration_;
@@ -69,13 +66,13 @@ private:
 
     std::map<std::string, LogSyncRequest> requests_;
 
-    mutex_type                  storageGuard_;
-    mutex_type                  requestsGuard_;
+    KAA_MUTEX_DECLARE(storageGuard_);
+    KAA_MUTEX_DECLARE(requestsGuard_);
     bool                        isUploading_;
 
-    boost::scoped_ptr<MemoryLogStorage>                 defaultLogStorage_;
-    boost::scoped_ptr<SizeUploadStrategy>               defaultUploadStrategy_;
-    boost::scoped_ptr<DefaultLogUploadConfiguration>    defaultConfiguration_;
+    std::unique_ptr<MemoryLogStorage>                 defaultLogStorage_;
+    std::unique_ptr<SizeUploadStrategy>               defaultUploadStrategy_;
+    std::unique_ptr<DefaultLogUploadConfiguration>    defaultConfiguration_;
 };
 
 }  // namespace kaa

@@ -17,14 +17,14 @@
 #ifndef IHTTPRESPONSE_HPP_
 #define IHTTPRESPONSE_HPP_
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <boost/shared_array.hpp>
 #include <string>
 #include <vector>
 
 namespace kaa {
 
-typedef std::pair<boost::shared_array<boost::uint8_t>, size_t> SharedBody;
+typedef std::pair<boost::shared_array<std::uint8_t>, size_t> SharedBody;
 
 class IHttpResponse {
 public:

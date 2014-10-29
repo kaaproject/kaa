@@ -20,7 +20,8 @@
 #include "kaa/http/IHttpClient.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread/mutex.hpp>
+
+#include "kaa/KaaThread.hpp"
 
 namespace kaa {
 
@@ -30,7 +31,7 @@ public:
     HttpClient() : io_(), sock_(io_) { }
     ~HttpClient() { }
 
-    virtual boost::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request);
+    virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request);
     virtual void closeConnection();
 
 private:
@@ -40,7 +41,8 @@ private:
 private:
     boost::asio::io_service io_;
     boost::asio::ip::tcp::socket sock_;
-    boost::mutex guard_;
+
+    KAA_MUTEX_DECLARE(guard_);
 };
 
 }

@@ -25,7 +25,7 @@ namespace kaa {
 
 class HttpResponse : public IHttpResponse {
 public:
-    HttpResponse(const char *data, size_t len);
+    HttpResponse(const char *data, std::size_t len);
     HttpResponse(const std::string& data);
     ~HttpResponse() { }
 
@@ -34,7 +34,7 @@ public:
     virtual int getStatusCode() const;
 
 private:
-    static const boost::uint8_t  HTTP_VERSION_OFFSET = 9;
+    static const std::uint8_t  HTTP_VERSION_OFFSET = 9;
 
     void parseResponse(const char *data, size_t len);
 

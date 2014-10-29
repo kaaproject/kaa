@@ -39,7 +39,7 @@ void MemoryLogStorage::addLogRecord(const LogRecord & record)
                      % record.getSize() % occupiedSize_);
 }
 
-ILogStorage::container_type MemoryLogStorage::getRecordBlock(size_t blockSize, const std::string& blockId)
+ILogStorage::container_type MemoryLogStorage::getRecordBlock(std::size_t blockSize, const std::string& blockId)
 {
     if (blockSize_ != blockSize) {
         resize(blockSize);
@@ -90,15 +90,15 @@ void MemoryLogStorage::notifyUploadFailed(const std::string& blockId)
     KAA_LOG_ERROR(boost::format("Can not remove find log block with id: \"%1%\"") % blockId);
 }
 
-void MemoryLogStorage::removeOldestRecords(size_t allowedVolume)
+void MemoryLogStorage::removeOldestRecords(std::size_t allowedVolume)
 {
     KAA_LOG_INFO(boost::format("Going to perform clean-up. Occupied %1% bytes, allowed %2% bytes") % occupiedSize_ % allowedVolume);
-    size_t releasedSpace = 0;
+    std::size_t releasedSpace = 0;
     for (auto block = logBlocks_.begin(); block != logBlocks_.end(); ++block) {
         if (!block->finalized_) {
             while (occupiedSize_ > allowedVolume && !block->logs_.empty()) {
                 auto log_it = block->logs_.begin();
-                size_t frontLogSize = log_it->getSize();
+                std::size_t frontLogSize = log_it->getSize();
                 block->actualSize_ -= frontLogSize;
                 occupiedSize_ -= frontLogSize;
                 releasedSpace += frontLogSize;
@@ -117,25 +117,25 @@ void MemoryLogStorage::removeOldestRecords(size_t allowedVolume)
                         % releasedSpace % occupiedSize_ % allowedVolume);
 }
 
-size_t MemoryLogStorage::getConsumedVolume() const
+std::size_t MemoryLogStorage::getConsumedVolume() const
 {
-    size_t totalSize = 0;
+    std::size_t totalSize = 0;
     for (const LogBlock& block : logBlocks_) {
         totalSize += (block.finalized_ ? 0 : block.actualSize_);
     }
     return totalSize;
 }
 
-size_t MemoryLogStorage::getRecordsCount() const
+std::size_t MemoryLogStorage::getRecordsCount() const
 {
-    size_t totalRecordCount = 0;
+    std::size_t totalRecordCount = 0;
     for (const LogBlock& block : logBlocks_) {
         totalRecordCount += block.logs_.size();
     }
     return totalRecordCount;
 }
 
-void MemoryLogStorage::resize(size_t blockSize)
+void MemoryLogStorage::resize(std::size_t blockSize)
 {
     container_type logsPool;
     for (auto it = logBlocks_.begin(); it != logBlocks_.end(); ++it) {

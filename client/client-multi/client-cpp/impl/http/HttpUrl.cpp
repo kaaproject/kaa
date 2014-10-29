@@ -37,7 +37,7 @@ HttpUrl::HttpUrl(const char *url) {
 
 void HttpUrl::parseUrl()
 {
-    boost::uint16_t default_port = HTTP_DEFAULT_PORT;
+    std::uint16_t default_port = HTTP_DEFAULT_PORT;
     auto cursor = url_.c_str();
     if (strncmp(cursor, "http", 4) == 0) {
         if (*(cursor + 4) == ':') {

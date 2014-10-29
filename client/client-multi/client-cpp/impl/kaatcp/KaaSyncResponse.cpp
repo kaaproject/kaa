@@ -20,20 +20,20 @@
 namespace kaa {
 
 
-KaaSyncResponse::KaaSyncResponse(const char * payload, boost::uint32_t size) : isZipped_(false), isEncrypted_(false), messageId_(0)
+KaaSyncResponse::KaaSyncResponse(const char * payload, std::uint32_t size) : isZipped_(false), isEncrypted_(false), messageId_(0)
 {
     parseMessage(payload, size);
 }
 
-void KaaSyncResponse::parseMessage(const char * payload, boost::uint32_t size)
+void KaaSyncResponse::parseMessage(const char * payload, std::uint32_t size)
 {
     payload += 9;
-    messageId_ = ntohs(*(boost::uint16_t *)payload);
+    messageId_ = ntohs(*(std::uint16_t *)payload);
     payload += 2;
     isZipped_ = (*payload) & KaaTcpCommon::KAA_SYNC_ZIPPED_BIT;
     isEncrypted_ = (*payload) & KaaTcpCommon::KAA_SYNC_ENCRYPTED_BIT;
     ++payload;
-    payload_.assign((const boost::uint8_t*) payload, (const boost::uint8_t*) payload + size - KaaTcpCommon::KAA_SYNC_HEADER_LENGTH);
+    payload_.assign((const std::uint8_t*) payload, (const std::uint8_t*) payload + size - KaaTcpCommon::KAA_SYNC_HEADER_LENGTH);
 }
 
 }

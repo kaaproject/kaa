@@ -17,7 +17,7 @@
 #ifndef IHTTPCLIENT_HPP_
 #define IHTTPCLIENT_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "kaa/http/IHttpResponse.hpp"
 #include "kaa/http/IHttpRequest.hpp"
 
@@ -26,7 +26,7 @@ namespace kaa {
 class IHttpClient
 {
 public:
-    virtual boost::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request) = 0;
+    virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request) = 0;
     virtual void closeConnection() = 0;
 
     virtual ~IHttpClient() { }

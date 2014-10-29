@@ -18,7 +18,7 @@
 #define HTTPURL_HPP_
 
 #include <string>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace kaa {
 
@@ -28,19 +28,19 @@ public:
     HttpUrl(const char *url);
 
     std::string getHost() const { return host_; }
-    boost::uint16_t getPort() const { return port_; }
+    std::uint16_t getPort() const { return port_; }
     std::string getUri()  const { return uri_; }
 
 private:
-    static const boost::uint16_t HTTP_DEFAULT_PORT  = 80;
-    static const boost::uint16_t HTTPS_DEFAULT_PORT = 443;
+    static const std::uint16_t HTTP_DEFAULT_PORT  = 80;
+    static const std::uint16_t HTTPS_DEFAULT_PORT = 443;
 
     void parseUrl();
 
 private:
     std::string        url_;
     std::string        host_;
-    boost::uint16_t    port_;
+    std::uint16_t    port_;
     std::string        uri_;
 };
 
