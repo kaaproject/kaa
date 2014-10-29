@@ -46,7 +46,7 @@ public:
     virtual void log(LogLevel level, const char *message) const = 0;
 };
 
-typedef boost::shared_ptr<ILogger> LoggerPtr;
+typedef std::shared_ptr<ILogger> LoggerPtr;
 
 }  // namespace kaa
 

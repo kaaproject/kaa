@@ -26,11 +26,11 @@ public:
     KaaTcpServerInfo(ServerType type, const std::string& hostPort, const std::string& publicKey) :
         AbstractServerInfo(type, hostPort, publicKey) {}
 
-    KaaTcpServerInfo(ServerType type, const std::string& host, const boost::int32_t& port, const std::string& publicKey)
+    KaaTcpServerInfo(ServerType type, const std::string& host, const std::int32_t& port, const std::string& publicKey)
         : AbstractServerInfo(type, host, port, publicKey) {}
 
-    KaaTcpServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
-            , const Botan::MemoryVector<boost::uint8_t>& publicKey)
+    KaaTcpServerInfo(ServerType type, const std::string& host, const std::int32_t& port
+            , const Botan::MemoryVector<std::uint8_t>& publicKey)
         : AbstractServerInfo(type, host, port, publicKey) {}
 
     virtual HttpUrl getUrl() const {

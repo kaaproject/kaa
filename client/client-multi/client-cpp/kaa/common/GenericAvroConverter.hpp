@@ -18,8 +18,8 @@
 #define GENERICSCHEMACONVERTER_HPP_
 
 #include <avro/ValidSchema.hh>
-#include <boost/cstdint.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include <cstdint>
+#include <memory>
 
 #include <kaa/common/exception/KaaException.hpp>
 
@@ -30,23 +30,23 @@ public:
     typedef avro::ValidSchema Schema;
 
     GenericAvroConverter(Schema schema) { schema_.reset(new Schema(schema)); }
-    GenericAvroConverter(boost::shared_ptr<Schema> schema) { schema_ = schema; }
+    GenericAvroConverter(std::shared_ptr<Schema> schema) { schema_ = schema; }
     ~GenericAvroConverter() { schema_.reset(); }
 
     template <typename T>
-    T decodeBinary(const boost::uint8_t *data, size_t data_length) throw (KaaException);
+    T decodeBinary(const std::uint8_t *data, std::size_t data_length) throw (KaaException);
 
     template <typename T>
-    void decodeBinary(const boost::uint8_t *data, size_t data_length, T& result) throw (KaaException);
+    void decodeBinary(const std::uint8_t *data, std::size_t data_length, T& result) throw (KaaException);
 
     template <typename T>
-    T decodeJson(const boost::uint8_t *data, size_t data_length) throw (KaaException);
+    T decodeJson(const std::uint8_t *data, std::size_t data_length) throw (KaaException);
 
     template <typename T>
     size_t encode(T &value, std::ostream &os) throw (KaaException);
 
 private:
-    boost::shared_ptr<Schema> schema_;
+    std::shared_ptr<Schema> schema_;
 };
 
 }  // namespace kaa

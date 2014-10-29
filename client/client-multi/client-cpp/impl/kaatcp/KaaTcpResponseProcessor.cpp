@@ -21,7 +21,7 @@
 namespace kaa
 {
 
-void KaaTcpResponseProcessor::processResponseBuffer(const char *buf, boost::uint32_t size)
+void KaaTcpResponseProcessor::processResponseBuffer(const char *buf, std::uint32_t size)
 {
     parser_.parseBuffer(buf, size);
     const auto& messages_ = parser_.releaseMessages();

@@ -17,10 +17,8 @@
 #ifndef EVENTFAMILYFACTORY_HPP_
 #define EVENTFAMILYFACTORY_HPP_
 
-#include "boost/shared_ptr.hpp"
-
+#include <memory>
 #include "kaa/event/IEventManager.hpp"
-
 #include "kaa/event/gen/BasicEventFamily.hpp"
 
 namespace kaa {
@@ -43,18 +41,18 @@ public:
 private:
     IEventManager& eventManager_;
     std::set<std::string> efcNames_;
-    std::map<std::string, boost::shared_ptr<IEventFamily> > eventFamilies_;
+    std::map<std::string, std::shared_ptr<IEventFamily> > eventFamilies_;
     std::map<std::string, FQNList > supportedFQNLists_;
 
-    boost::shared_ptr<IEventFamily> getEventFamilyByName(const std::string& efcName) {
+    std::shared_ptr<IEventFamily> getEventFamilyByName(const std::string& efcName) {
         auto it = eventFamilies_.find(efcName);
         if (it != eventFamilies_.end()) {
             return it->second;
         }
-        return boost::shared_ptr<IEventFamily>();
+        return std::shared_ptr<IEventFamily>();
     }
 
-    void addEventFamilyByName(const std::string& efcName, boost::shared_ptr<IEventFamily> eventFamily) {
+    void addEventFamilyByName(const std::string& efcName, std::shared_ptr<IEventFamily> eventFamily) {
         eventManager_.registerEventFamily(eventFamily.get());
         eventFamilies_[efcName] = eventFamily;
     }
@@ -72,7 +70,7 @@ private:
         return efcNames_;
     }
 
-    boost::shared_ptr<BasicEventFamily> concreteEventFamily_;
+    std::shared_ptr<BasicEventFamily> concreteEventFamily_;
 };
 
 } /* namespace kaa */

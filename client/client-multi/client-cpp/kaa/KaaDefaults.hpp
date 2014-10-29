@@ -22,7 +22,7 @@
 #include <string>
 
 #include <botan/base64.h>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/channel/server/IServerInfo.hpp"
 
@@ -36,17 +36,17 @@ namespace kaa {
 
 extern const char * const APPLICATION_TOKEN;
 
-extern const boost::uint32_t PROFILE_VERSION;
+extern const std::uint32_t PROFILE_VERSION;
 
-extern const boost::uint32_t CONFIG_VERSION;
+extern const std::uint32_t CONFIG_VERSION;
 
-extern const boost::uint32_t SYSTEM_NF_VERSION;
+extern const std::uint32_t SYSTEM_NF_VERSION;
 
-extern const boost::uint32_t USER_NF_VERSION;
+extern const std::uint32_t USER_NF_VERSION;
 
-extern const boost::uint32_t LOG_SCHEMA_VERSION;
+extern const std::uint32_t LOG_SCHEMA_VERSION;
 
-extern const boost::uint32_t POLLING_PERIOD_SECONDS;
+extern const std::uint32_t POLLING_PERIOD_SECONDS;
 
 extern const char * const CLIENT_PUB_KEY_LOCATION;
 
@@ -57,10 +57,10 @@ extern const char * const CLIENT_STATUS_FILE_LOCATION;
 typedef std::vector<IServerInfoPtr> BootstrapServers;
 const BootstrapServers& getServerInfoList();
 
-const Botan::SecureVector<boost::uint8_t>& getDefaultConfigData();
+const Botan::SecureVector<std::uint8_t>& getDefaultConfigData();
 const std::string& getDefaultConfigSchema();
 
-typedef std::map<std::string, boost::int32_t> EventClassFamilyVersionInfos;
+typedef std::map<std::string, std::int32_t> EventClassFamilyVersionInfos;
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo();
 
 }

@@ -22,8 +22,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
-
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/gen/EndpointGen.hpp"
@@ -51,7 +50,7 @@ public:
     }
 
     virtual void onGenericEvent(const std::string& fqn
-                              , const std::vector<boost::uint8_t>& data
+                              , const std::vector<std::uint8_t>& data
                               , const std::string& source)
     {
         if (fqn.empty() || data.empty()) {
@@ -73,7 +72,7 @@ public:
         AvroByteArrayConverter<Topic> converter;
         converter.toByteArray(e, stream);
         const auto& encodedData = stream.str();
-        std::vector<boost::uint8_t> buffer(encodedData.begin(), encodedData.end());
+        std::vector<std::uint8_t> buffer(encodedData.begin(), encodedData.end());
         eventManager_.produceEvent("{event.event_name}", buffer, target);
     }
 

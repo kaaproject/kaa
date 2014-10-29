@@ -23,7 +23,7 @@
 
 namespace kaa {
 
-typedef boost::shared_ptr<UserAttachRequest> UserAttachRequestPtr;
+typedef std::shared_ptr<UserAttachRequest> UserAttachRequestPtr;
 
 class IRegistrationProcessor {
 public:
