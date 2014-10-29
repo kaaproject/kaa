@@ -26,7 +26,7 @@ namespace kaa {
 class UserTransport : public AbstractKaaTransport<TransportType::USER>, public IUserTransport {
 public:
     UserTransport(IRegistrationProcessor & manager, IKaaChannelManager& channelManager);
-    boost::shared_ptr<UserSyncRequest>     createUserRequest();
+    std::shared_ptr<UserSyncRequest>     createUserRequest();
     void                onUserResponse(const UserSyncResponse& response);
     void                sync();
     void                syncProfile();

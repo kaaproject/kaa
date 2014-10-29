@@ -26,13 +26,13 @@ UserTransport::UserTransport(IRegistrationProcessor & manager, IKaaChannelManage
 
 }
 
-boost::shared_ptr<UserSyncRequest> UserTransport::createUserRequest()
+std::shared_ptr<UserSyncRequest> UserTransport::createUserRequest()
 {
     auto attachUsr = manager_.getUserAttachRequest();
     auto attachEps = manager_.getEndpointsToAttach();
     auto detachEps = manager_.getEndpointsToDetach();
 
-    boost::shared_ptr<UserSyncRequest> request(new UserSyncRequest);
+    std::shared_ptr<UserSyncRequest> request(new UserSyncRequest);
     if (attachUsr.get() == nullptr) {
         request->userAttachRequest.set_null();
     } else {

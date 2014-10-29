@@ -29,11 +29,11 @@ EventTransport::EventTransport(EventManager& eventManager, IKaaChannelManager& c
 
 }
 
-boost::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(boost::int32_t requestId)
+std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_t requestId)
 {
     std::map<std::string, std::list<std::string> > resolveRequests = eventManager_.getPendingListenerRequests();
     std::list<Event> pendingEvents = eventManager_.getPendingEvents();
-    boost::shared_ptr<EventSyncRequest> request(new EventSyncRequest);
+    std::shared_ptr<EventSyncRequest> request(new EventSyncRequest);
 
     if (resolveRequests.empty()) {
         request->eventListenersRequests.set_null();
@@ -48,7 +48,7 @@ boost::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(boost::in
         request->eventListenersRequests.set_array(requests);
     }
 
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, eventsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
     for (auto it = events_.begin(); it != events_.end(); ++it) {
         pendingEvents.insert(pendingEvents.end(), it->second.begin(), it->second.end());
     }
@@ -80,9 +80,9 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
     }
 }
 
-void EventTransport::onSyncResponseId(boost::int32_t requestId)
+void EventTransport::onSyncResponseId(std::int32_t requestId)
 {
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, eventsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
 
     auto it = events_.find(requestId);
     if (it != events_.end()) {

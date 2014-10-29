@@ -18,8 +18,8 @@
 #define IEVENTTRANSPORT_HPP_
 
 #include "kaa/gen/EndpointGen.hpp"
-#include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
+#include <cstdint>
+#include <memory>
 
 namespace kaa {
 
@@ -36,7 +36,7 @@ public:
      * @see EventSyncRequest
      *
      */
-    virtual boost::shared_ptr<EventSyncRequest> createEventRequest(boost::int32_t requestId) = 0;
+    virtual std::shared_ptr<EventSyncRequest> createEventRequest(std::int32_t requestId) = 0;
 
     /**
      * Updates the state of the Event manager according to the given response.
@@ -47,7 +47,7 @@ public:
      */
     virtual void onEventResponse(const EventSyncResponse& response) = 0;
 
-    virtual void onSyncResponseId(boost::int32_t requestId) = 0;
+    virtual void onSyncResponseId(std::int32_t requestId) = 0;
 
     virtual ~IEventTransport() {}
 };
