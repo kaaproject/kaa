@@ -19,7 +19,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.6.0</version>
+		<version>0.6.1-SNAPSHOT</version>
 		<artifactId>server</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.server</groupId>
@@ -169,7 +169,7 @@
         <dependency>
             <groupId>org.kaaproject.kaa.avrogenc</groupId>
             <artifactId>avrogenc</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1-SNAPSHOT</version>
         </dependency>
         <dependency>
         	<groupId>org.apache.velocity</groupId>
