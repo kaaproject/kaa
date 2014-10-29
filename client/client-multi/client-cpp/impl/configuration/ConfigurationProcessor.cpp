@@ -24,10 +24,10 @@
 
 namespace kaa {
 
-void ConfigurationProcessor::processConfigurationData(const boost::uint8_t *data, size_t data_length, bool full_resync)
+void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, std::size_t data_length, bool full_resync)
 {
     KAA_MUTEX_LOCKING("confProcessorMutex_");
-    lock_type lock(confProcessorMutex_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_);
     KAA_MUTEX_LOCKED("confProcessorMutex_");
 
     if (!schema_.get()) {
@@ -85,7 +85,7 @@ void ConfigurationProcessor::removeOnProcessedObserver(IConfigurationProcessedOb
     onProcessedObservers_.disconnect(boost::bind(&IConfigurationProcessedObserver::onConfigurationProcessed, &observer));
 }
 
-void ConfigurationProcessor::onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema)
+void ConfigurationProcessor::onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
 {
     if (!schema.get()) {
         throw KaaException("Empty schema was given");
@@ -94,7 +94,7 @@ void ConfigurationProcessor::onSchemaUpdated(boost::shared_ptr<avro::ValidSchema
     KAA_LOG_DEBUG("Received schema update");
 
     KAA_MUTEX_LOCKING("confProcessorMutex_");
-    lock_type lock(confProcessorMutex_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_);
     KAA_MUTEX_LOCKED("confProcessorMutex_");
 
     schema_ = schema;

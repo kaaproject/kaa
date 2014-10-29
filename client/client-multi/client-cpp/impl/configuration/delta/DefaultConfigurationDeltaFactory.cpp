@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <string>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include <avro/Generic.hh>
 
@@ -153,7 +153,7 @@ IDeltaType::DeltaValue DefaultConfigurationDeltaFactory::createDeltaValue(const 
             break;
         }
         case avro::AVRO_BYTES: {
-            value = datum.value<std::vector<boost::uint8_t> >();
+            value = datum.value<std::vector<std::uint8_t> >();
             break;
         }
         default: throw KaaException("Not a common type");

@@ -33,13 +33,13 @@ void ConfigurationTransport::sync()
     syncByType();
 }
 
-boost::shared_ptr<ConfigurationSyncRequest> ConfigurationTransport::createConfigurationRequest()
+std::shared_ptr<ConfigurationSyncRequest> ConfigurationTransport::createConfigurationRequest()
 {
     if (clientStatus_.get() == nullptr) {
         throw KaaException("Can not generate ConfigurationSyncRequest: Status was not provided");
     }
 
-    boost::shared_ptr<ConfigurationSyncRequest> request(new ConfigurationSyncRequest);
+    std::shared_ptr<ConfigurationSyncRequest> request(new ConfigurationSyncRequest);
     request->appStateSeqNumber = clientStatus_->getConfigurationSequenceNumber();
     request->configurationHash.set_bytes(hashContainer_->getConfigurationHash());
     return request;
@@ -50,12 +50,12 @@ void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResp
     if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
         clientStatus_->setConfigurationSequenceNumber(response.appStateSeqNumber);
         if (!response.confDeltaBody.is_null()) {
-            std::vector<boost::uint8_t> data = response.confDeltaBody.get_bytes();
+            std::vector<std::uint8_t> data = response.confDeltaBody.get_bytes();
             configurationProcessor_->processConfigurationData(data.data(), data.size()
                     , response.responseStatus == SyncResponseStatus::RESYNC);
         }
         if (!response.confSchemaBody.is_null()) {
-            std::vector<boost::uint8_t> schema = response.confSchemaBody.get_bytes();
+            std::vector<std::uint8_t> schema = response.confSchemaBody.get_bytes();
             schemaProcessor_->loadSchema(schema.data(), schema.size());
         }
         syncAck();

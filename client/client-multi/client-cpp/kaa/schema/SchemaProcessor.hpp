@@ -39,7 +39,7 @@ public:
     /**
      * \c ISchemaProcessor implementation
      */
-    void loadSchema(const boost::uint8_t * buffer, size_t size);
+    void loadSchema(const std::uint8_t * buffer, std::size_t size);
 
     /**
      * \c ISchemaObservable implementation
@@ -53,7 +53,7 @@ private:
     typedef avro::ValidSchema Schema;
 
     SchemaPtr schema_;
-    boost::signals2::signal<void (boost::shared_ptr<avro::ValidSchema>)> schemaUpdatesSubscribers_;
+    boost::signals2::signal<void (std::shared_ptr<avro::ValidSchema>)> schemaUpdatesSubscribers_;
 };
 
 }  // namespace kaa

@@ -17,7 +17,7 @@
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
 
 #include <avro/Generic.hh>
-#include <boost/bind.hpp>
+#include <functional>
 #include <vector>
 
 #include "kaa/common/exception/KaaException.hpp"
@@ -50,7 +50,7 @@ void ConfigurationManager::unsubscribeFromConfigurationChanges(IConfigurationRec
 ICommonRecord &ConfigurationManager::getConfiguration()
 {
     KAA_MUTEX_LOCKING("configurationGuard_");
-    lock_type lock(configurationGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
     KAA_MUTEX_LOCKED("configurationGuard_");
 
     if (!root_.get()) {
@@ -62,7 +62,7 @@ ICommonRecord &ConfigurationManager::getConfiguration()
 void ConfigurationManager::onDeltaRecevied(int index, const avro::GenericDatum &datum, bool full_resync)
 {
     KAA_MUTEX_LOCKING("configurationGuard_");
-    lock_type lock(configurationGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
     KAA_MUTEX_LOCKED("configurationGuard_");
 
     const avro::GenericRecord & data = datum.value<avro::GenericRecord>();
@@ -133,9 +133,9 @@ void ConfigurationManager::updateRecord(std::shared_ptr<ICommonRecord> rec, cons
 {
     std::unique_ptr<FieldProcessor> fp(new FieldProcessor(rec, ""));
     fp->setStrategy(static_cast<AbstractStrategy *>(new RecordProcessStrategy(
-              boost::bind(&ConfigurationManager::isSubscribed, this, _1)
-            , boost::bind(&ConfigurationManager::subscribe, this, _1, _2)
-            , boost::bind(&ConfigurationManager::unsubscribe, this, _1)
+              std::bind(&ConfigurationManager::isSubscribed, this, std::placeholders::_1)
+            , std::bind(&ConfigurationManager::subscribe, this, std::placeholders::_1, std::placeholders::_2)
+            , std::bind(&ConfigurationManager::unsubscribe, this, std::placeholders::_1)
             , true)));
     fp->process(datum);
 }

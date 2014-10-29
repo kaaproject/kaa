@@ -31,7 +31,7 @@ public:
 
     void sync();
 
-    virtual boost::shared_ptr<ConfigurationSyncRequest>    createConfigurationRequest();
+    virtual std::shared_ptr<ConfigurationSyncRequest>    createConfigurationRequest();
     virtual void                        onConfigurationResponse(const ConfigurationSyncResponse &response);
 
 private:

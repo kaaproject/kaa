@@ -21,6 +21,7 @@
 #include "kaa/common/types/ICommonValue.hpp"
 
 #include <list>
+#include <memory>
 
 namespace kaa {
 
@@ -44,7 +45,7 @@ public:
     virtual ~ICommonArrayBase() {}
 };
 
-typedef ICommonArrayBase<std::list<boost::shared_ptr<ICommonValue> > > ICommonArray;
+typedef ICommonArrayBase<std::list<std::shared_ptr<ICommonValue> > > ICommonArray;
 
 }  // namespace kaa
 

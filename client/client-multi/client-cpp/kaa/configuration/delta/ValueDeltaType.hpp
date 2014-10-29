@@ -20,6 +20,7 @@
 #include <iomanip>
 #include <sstream>
 #include <vector>
+#include <cstdint>
 
 #include "kaa/configuration/delta/EmptyDeltaType.hpp"
 #include "kaa/configuration/delta/IConfigurationDelta.hpp"
@@ -75,11 +76,11 @@ inline std::string ValueDeltaType::toString() const
             break;
         }
         case avro::AVRO_INT: {
-            ss << boost::any_cast<int32_t>(value_);
+            ss << boost::any_cast<std::int32_t>(value_);
             break;
         }
         case avro::AVRO_LONG: {
-            ss << boost::any_cast<int64_t>(value_);
+            ss << boost::any_cast<std::int64_t>(value_);
             break;
         }
         case avro::AVRO_FLOAT: {
@@ -100,8 +101,8 @@ inline std::string ValueDeltaType::toString() const
         }
         case avro::AVRO_BYTES:
         case avro::AVRO_FIXED: {
-            const std::vector<boost::uint8_t> buffer =
-                    boost::any_cast<std::vector<boost::uint8_t> >(value_);
+            const std::vector<std::uint8_t> buffer =
+                    boost::any_cast<std::vector<std::uint8_t> >(value_);
 
             for (auto it = buffer.begin(); it != buffer.end();) {
                 ss << std::setw(2) << std::setfill('0') << std::hex << (int)*it << std::dec;

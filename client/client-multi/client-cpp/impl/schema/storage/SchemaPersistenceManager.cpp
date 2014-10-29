@@ -38,7 +38,7 @@ void SchemaPersistenceManager::setSchemaStorage(ISchemaStorage *storage)
     }
 }
 
-void SchemaPersistenceManager::onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema)
+void SchemaPersistenceManager::onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
 {
     if (!schema.get()) {
         throw KaaException("Empty schema was given");

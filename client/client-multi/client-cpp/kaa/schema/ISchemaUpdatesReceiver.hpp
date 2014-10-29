@@ -38,7 +38,7 @@ public:
      *
      * @param schema Compiled Avro schema.
      */
-    virtual void onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema) = 0;
+    virtual void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema) = 0;
 };
 
 }  // namespace kaa

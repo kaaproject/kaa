@@ -29,11 +29,11 @@ class ConfigurationProcessorStub : public IConfigurationProcessor
 {
 public:
     ConfigurationProcessorStub() : processConfigurationCalled_(false), schemaUpdatedCalled_(false) {}
-    void processConfigurationData(const boost::uint8_t *data, size_t data_length, bool full_resync)
+    void processConfigurationData(const std::uint8_t *data, std::size_t data_length, bool full_resync)
     {
         processConfigurationCalled_ = true;
     }
-    void onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema)
+    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
     {
         schemaUpdatedCalled_ = true;
     }
@@ -55,12 +55,12 @@ public:
     CoonfigurationStorageStub() : configurationSaveCalled_(false), configurationLoadCalled_(false) {
         configuration_.push_back('0');
     }
-    void saveConfiguration(const std::vector<boost::uint8_t> &bytes)
+    void saveConfiguration(const std::vector<std::uint8_t> &bytes)
     {
         configurationSaveCalled_ = true;
         configuration_ = bytes;
     }
-    std::vector<boost::uint8_t> loadConfiguration()
+    std::vector<std::uint8_t> loadConfiguration()
     {
         configurationLoadCalled_ = true;
         return configuration_;
@@ -71,7 +71,7 @@ public:
 private:
     bool configurationSaveCalled_;
     bool configurationLoadCalled_;
-    std::vector<boost::uint8_t> configuration_;
+    std::vector<std::uint8_t> configuration_;
 };
 
 
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(checkSchemaSetup)
 {
     ConfigurationPersistenceManager cpm;
 
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     BOOST_REQUIRE_THROW(cpm.onSchemaUpdated(schema), KaaException);
 
     schema.reset(new avro::ValidSchema());
@@ -115,10 +115,10 @@ BOOST_AUTO_TEST_CASE(checkSchemaSetup)
 
 BOOST_AUTO_TEST_CASE(checkConfigurationLoad)
 {
-    boost::shared_ptr<avro::ValidSchema> schema(new avro::ValidSchema(
-             avro::compileJsonSchemaFromMemory(reinterpret_cast<const boost::uint8_t *>(sch.c_str()), sch.length())));
+    std::shared_ptr<avro::ValidSchema> schema(new avro::ValidSchema(
+             avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(sch.c_str()), sch.length())));
     uuid_t uuid = {{0,1,2,3,4}};
-    std::vector<boost::uint8_t> uuid_vec = {0,1,2,3,4};
+    std::vector<std::uint8_t> uuid_vec = {0,1,2,3,4};
     CommonRecord rec(uuid, schema->root());
     std::string testField1("string");
     avro::GenericDatum sd(testField1);
@@ -134,8 +134,8 @@ BOOST_AUTO_TEST_CASE(checkConfigurationLoad)
     ConfigurationPersistenceManager cpm;
     BOOST_REQUIRE_THROW(cpm.onConfigurationUpdated(rec), KaaException);
 
-    boost::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
-            avro::compileJsonSchemaFromMemory(reinterpret_cast<const boost::uint8_t *>(root_sch.c_str()), root_sch.length())));
+    std::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
+            avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(root_sch.c_str()), root_sch.length())));
     cpm.onSchemaUpdated(root_schema);
     try {
         ConfigurationProcessorStub cpstub;

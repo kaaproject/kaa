@@ -18,7 +18,7 @@
 #define ABSTRACTSTRATEGY_HPP_
 
 #include <avro/Generic.hh>
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include <memory>
 #include "kaa/common/types/ICommonRecord.hpp"
 
 namespace kaa {

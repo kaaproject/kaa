@@ -17,7 +17,7 @@
 #ifndef DELTAHANDLERID_HPP_
 #define DELTAHANDLERID_HPP_
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/common/types/ICommonRecord.hpp"
 
@@ -50,7 +50,7 @@ public:
      * Constructor
      * @param handlerId inner representation of \ref DeltaHandlerId
      */
-    DeltaHandlerId(const boost::uint64_t& handlerId)
+    DeltaHandlerId(const std::uint64_t& handlerId)
         : handlerId_(handlerId) {}
 
     /**
@@ -110,12 +110,12 @@ public:
     /**
      * Retrieves inner representation value of \ref DeltaHandlerId
      */
-    inline boost::uint64_t getHandlerId() const {
+    inline std::uint64_t getHandlerId() const {
         return handlerId_ ;
     }
 
 private:
-    boost::uint64_t handlerId_;
+    std::uint64_t handlerId_;
 };
 
 } /* namespace kaa */

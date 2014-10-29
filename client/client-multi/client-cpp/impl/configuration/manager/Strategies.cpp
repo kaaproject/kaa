@@ -18,8 +18,8 @@
 
 #include <algorithm>
 #include <avro/Generic.hh>
-#include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/smart_ptr/scoped_ptr.hpp>
+#include <memory>
+#include <cstdint>
 
 #include "kaa/common/AvroGenericUtils.hpp"
 #include "kaa/common/CommonTypesFactory.hpp"
@@ -31,7 +31,7 @@
 
 namespace kaa {
 
-void UuidProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void UuidProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
 {
     avro::GenericFixed uuid_field = datum.value<avro::GenericFixed>();
     uuid_t uuid;
@@ -43,7 +43,7 @@ void UuidProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const std
     if (parent->hasField(field)) {
         ICommonRecord::fields_type uuid_field = parent->getField(field);
         if (uuid_field.get()) {
-            std::vector<boost::uint8_t> prev_uuid = boost::any_cast<std::vector<boost::uint8_t> >(uuid_field->getValue());
+            std::vector<std::uint8_t> prev_uuid = boost::any_cast<std::vector<std::uint8_t> >(uuid_field->getValue());
             if (!prev_uuid.empty()) {
                 uuid_t old_uuid;
                 std::copy(prev_uuid.begin(), prev_uuid.end(), old_uuid.begin());
@@ -65,12 +65,12 @@ void UuidProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const std
     }
 }
 
-void RecordProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void RecordProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
 {
     const avro::GenericRecord &rec = datum.value<avro::GenericRecord>();
-    size_t field_count = rec.fieldCount();
+    std::size_t field_count = rec.fieldCount();
     uuid_t empty_uuid;
-    boost::shared_ptr<ICommonRecord> value;
+    std::shared_ptr<ICommonRecord> value;
 
     if (isRootRecord_) {
         value = parent;
@@ -79,7 +79,7 @@ void RecordProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const s
             if(CommonValueTools::isRecord(parent->getField(field))) {
                 if(CommonValueTools::getRecord(parent->getField(field)).getSchema()->name().fullname()
                         .compare(rec.schema()->name().fullname()) == 0) {
-                    value = boost::dynamic_pointer_cast<ICommonRecord, ICommonValue>(parent->getField(field));
+                    value = std::dynamic_pointer_cast<ICommonRecord, ICommonValue>(parent->getField(field));
                 } else {
                     value = CommonTypesFactory::createCommonRecord(empty_uuid, rec.schema());
                 }
@@ -99,8 +99,8 @@ void RecordProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const s
             continue;
         }
 
-        boost::scoped_ptr<FieldProcessor> fp(new FieldProcessor(value, field_name));
-        AbstractStrategy *strategy = NULL;
+        std::unique_ptr<FieldProcessor> fp(new FieldProcessor(value, field_name));
+        AbstractStrategy *strategy = nullptr;
         switch (innerDatum.type()) {
             case avro::AVRO_RECORD: {
                 strategy = new RecordProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
@@ -157,11 +157,11 @@ void RecordProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const s
     }
 }
 
-void ArrayResetStrategy::run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void ArrayResetStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
 {
     ICommonRecord::fields_type array = parent->getField(field);
     ICommonArray * array_ptr = dynamic_cast<ICommonArray *>(array.get());
-    if (array_ptr != NULL) {
+    if (array_ptr) {
         unregisterArray(*array_ptr);
         array_ptr->getList().clear();
     }
@@ -173,7 +173,7 @@ void ArrayResetStrategy::unregisterRecord(ICommonRecord &record)
     if (record.hasField("__uuid")) {
         uuid_t uuid;
         auto uuid_field = record.getField("__uuid");
-        std::vector<boost::uint8_t> uuid_raw =  boost::any_cast<std::vector<boost::uint8_t> >(uuid_field->getValue());
+        std::vector<std::uint8_t> uuid_raw =  boost::any_cast<std::vector<std::uint8_t> >(uuid_field->getValue());
         std::copy(uuid_raw.begin(), uuid_raw.end(), uuid.begin());
         if (isSubscribedFn_(uuid)) {
             unsubscribeFn_(uuid);
@@ -182,17 +182,17 @@ void ArrayResetStrategy::unregisterRecord(ICommonRecord &record)
 
     for (auto it = map.begin(); it != map.end(); ++it) {
         switch (it->second->getCommonType()) {
-        case CommonValueType::COMMON_RECORD: {
-            unregisterRecord(dynamic_cast<ICommonRecord &>(*(*it).second));
-            break;
-        }
-        case CommonValueType::COMMON_ARRAY: {
-            unregisterArray(dynamic_cast<ICommonArray &>(*(*it).second));
-            break;
-        }
-        default:
-            break;
-        }
+            case CommonValueType::COMMON_RECORD: {
+                unregisterRecord(dynamic_cast<ICommonRecord &>(*(*it).second));
+                break;
+            }
+            case CommonValueType::COMMON_ARRAY: {
+                unregisterArray(dynamic_cast<ICommonArray &>(*(*it).second));
+                break;
+            }
+            default:
+                break;
+            }
     }
 }
 
@@ -217,10 +217,10 @@ void ArrayResetStrategy::unregisterArray(ICommonArray &array)
 
 const std::string ArrayProcessStrategy::array_holder_field = "___array__value___";
 
-void ArrayProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void ArrayProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
 {
-    boost::shared_ptr<ICommonValue> commonValue;
-    boost::shared_ptr<ICommonArray> commonArray;
+    std::shared_ptr<ICommonValue> commonValue;
+    std::shared_ptr<ICommonArray> commonArray;
     if (parent->hasField(field) && CommonValueTools::isArray(parent->getField(field))) {
         commonValue = parent->getField(field);
         commonArray.reset(new CommonArray(*dynamic_cast<CommonArray *>(commonValue.get())));
@@ -242,7 +242,7 @@ void ArrayProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const st
                 for (auto record_it = inner_list.begin(); record_it != inner_list.end(); ++record_it) {
                     ICommonArray::elements_type record = *record_it;
                     ICommonRecord * r_ptr = dynamic_cast<ICommonRecord *>(record.get());
-                    if (r_ptr != NULL) {
+                    if (r_ptr) {
                         if (uuid == r_ptr->getUuid()) {
                             ArrayResetStrategy ars(isSubscribedFn_, unsubscribeFn_);
                             ars.unregisterRecord(*r_ptr);
@@ -256,9 +256,9 @@ void ArrayProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const st
             for (auto it = first_element; it != vec.end(); ++it) {
                 const avro::GenericDatum & innerDatum = *it;
                 uuid_t empty_uuid;
-                boost::shared_ptr<ICommonRecord> record = CommonTypesFactory::createCommonRecord(empty_uuid, datum.value<avro::GenericArray>().schema());
-                boost::scoped_ptr<FieldProcessor> fp(new FieldProcessor(record, array_holder_field));
-                AbstractStrategy *strategy = NULL;
+                std::shared_ptr<ICommonRecord> record = CommonTypesFactory::createCommonRecord(empty_uuid, datum.value<avro::GenericArray>().schema());
+                std::unique_ptr<FieldProcessor> fp(new FieldProcessor(record, array_holder_field));
+                AbstractStrategy *strategy = nullptr;
                 switch (innerDatum.type()) {
                     case avro::AVRO_RECORD: {
                         strategy = new RecordProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
@@ -291,12 +291,12 @@ void ArrayProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const st
     }
 }
 
-void NullProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void NullProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
 {
     parent->setField(field, CommonTypesFactory::createCommon<avro::AVRO_NULL>(datum));
 }
 
-void CommonProcessStrategy::run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void CommonProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
 {
     CommonTypesFactory::return_type result;
     switch (datum.type()) {

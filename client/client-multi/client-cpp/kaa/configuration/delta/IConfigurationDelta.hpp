@@ -19,15 +19,13 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-
 #include "kaa/configuration/delta/IDeltaType.hpp"
 #include "kaa/configuration/delta/DeltaHandlerId.hpp"
 
 namespace kaa {
 
 class IConfigurationDelta;
-typedef boost::shared_ptr<IConfigurationDelta> ConfigurationDeltaPtr;
+typedef std::shared_ptr<IConfigurationDelta> ConfigurationDeltaPtr;
 
 class IConfigurationDelta {
 public:
@@ -56,7 +54,7 @@ public:
      * @return delta type of the field, or null if the field was not changed
      * @see IDeltaType
      */
-    virtual boost::shared_ptr<IDeltaType> getDeltaType(const std::string& field) = 0;
+    virtual DeltaTypePtr getDeltaType(const std::string& field) = 0;
 
     /**
      * Retrieves JSON representation of the inner data

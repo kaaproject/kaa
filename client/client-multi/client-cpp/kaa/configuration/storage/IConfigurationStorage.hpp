@@ -18,7 +18,7 @@
 #define ICONFIGURATIONSTORAGE_HPP_
 
 #include <vector>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace kaa {
 
@@ -30,7 +30,7 @@ namespace kaa {
  */
 class IConfigurationStorage {
 public:
-    typedef std::vector<boost::uint8_t> byte_buffer;
+    typedef std::vector<std::uint8_t> byte_buffer;
     virtual ~IConfigurationStorage() {}
 
     /**

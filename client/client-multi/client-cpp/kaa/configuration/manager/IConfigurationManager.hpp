@@ -59,7 +59,7 @@ public:
     virtual ICommonRecord &getConfiguration() = 0;
 };
 
-typedef boost::shared_ptr<IConfigurationManager> IConfigurationManagerPtr;
+typedef std::shared_ptr<IConfigurationManager> IConfigurationManagerPtr;
 
 }  // namespace kaa
 

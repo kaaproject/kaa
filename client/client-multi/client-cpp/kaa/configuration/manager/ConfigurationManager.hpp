@@ -18,10 +18,10 @@
 #define CONFIGURATION_MANAGER_HPP_
 
 #include "kaa/configuration/manager/IConfigurationManager.hpp"
+#include "kaa/KaaThread.hpp"
 
 #include <memory>
 
-#include <boost/thread/mutex.hpp>
 #include <boost/signals2.hpp>
 
 namespace kaa {
@@ -90,13 +90,10 @@ private:
      */
     void unsubscribe(uuid_t uuid);
 
-    typedef boost::mutex                    mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
-
-    std::map<uuid_t, std::shared_ptr<ICommonRecord> > records_;
+    std::map<uuid_t, std::shared_ptr<ICommonRecord> >   records_;
     std::shared_ptr<ICommonRecord>                      root_;
 
-    mutex_type                                          configurationGuard_;
+    KAA_MUTEX_DECLARE(configurationGuard_);
     boost::signals2::signal<void (ICommonRecord &)>     configurationReceivers_;
 };
 

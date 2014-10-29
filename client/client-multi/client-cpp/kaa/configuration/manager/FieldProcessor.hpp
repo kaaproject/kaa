@@ -28,7 +28,7 @@ class FieldProcessor {
 public:
     FieldProcessor(std::shared_ptr<ICommonRecord> parent, const std::string &field)
     : strategy_(NULL), parentRecord_(parent), field_(field) {}
-    ~FieldProcessor() { if (strategy_ != NULL) delete strategy_;}
+    ~FieldProcessor() { if (strategy_) delete strategy_;}
 
     /**
      * Sets a strategy for processing.

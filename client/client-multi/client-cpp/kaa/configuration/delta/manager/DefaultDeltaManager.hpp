@@ -19,7 +19,7 @@
 
 #include <map>
 
-#include <boost/thread/mutex.hpp>
+#include "kaa/KaaThread.hpp"
 
 #include "kaa/configuration/delta/manager/IDeltaReceiver.hpp"
 #include "kaa/configuration/delta/DeltaHandlerId.hpp"
@@ -66,7 +66,7 @@ public:
 private:
     IDeltaReceiver                              *rootReceiver_;
 
-    boost::mutex                                subscriptionMutex_;
+    KAA_MUTEX_DECLARE(subscriptionMutex_);
     std::map<DeltaHandlerId, IDeltaReceiver*>   subscriptionStorage_;
 };
 

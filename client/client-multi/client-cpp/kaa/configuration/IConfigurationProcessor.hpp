@@ -17,8 +17,8 @@
 #ifndef I_CONFIGURATION_PROCESSOR_HPP_
 #define I_CONFIGURATION_PROCESSOR_HPP_
 
-#include <boost/cstdint.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include <cstdint>
+#include <memory>
 
 #include "kaa/configuration/IConfigurationProcessedObservable.hpp"
 #include "kaa/configuration/IDecodedDeltaObservable.hpp"
@@ -46,10 +46,10 @@ public:
      * @param data_length   Size of configuration data.
      * @param full_resunc   Signals if data contains full configuration resync or partial update
      */
-    virtual void processConfigurationData(const boost::uint8_t *data, size_t data_length, bool full_resync) = 0;
+    virtual void processConfigurationData(const std::uint8_t *data, std::size_t data_length, bool full_resync) = 0;
 };
 
-typedef boost::shared_ptr<IConfigurationProcessor> IConfigurationProcessorPtr;
+typedef std::shared_ptr<IConfigurationProcessor> IConfigurationProcessorPtr;
 
 } /* namespace kaa */
 

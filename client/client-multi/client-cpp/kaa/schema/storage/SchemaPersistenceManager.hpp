@@ -49,7 +49,7 @@ public:
     /**
      * \c ISchemaUpdatesReceiver implementation
      */
-    void onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema);
+    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema);
 
     /**
      * Sets the schema processor (see \c ISchemaProcessor)
