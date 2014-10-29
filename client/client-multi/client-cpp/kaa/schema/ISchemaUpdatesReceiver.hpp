@@ -19,7 +19,6 @@
 
 #include <boost/signals2/trackable.hpp>
 #include <avro/ValidSchema.hh>
-#include <boost/cstdint.hpp>
 
 namespace kaa {
 

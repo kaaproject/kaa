@@ -28,7 +28,7 @@ void SchemaPersistenceManager::setSchemaStorage(ISchemaStorage *storage)
 
     if (storage) {
         KAA_MUTEX_LOCKING("schemaPersistenceGuard_")
-        lock_type lock(schemaPersistenceGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(lock, schemaPersistenceGuard_);
         KAA_MUTEX_LOCKED("schemaPersistenceGuard_");
 
         storage_ = storage;
@@ -44,18 +44,18 @@ void SchemaPersistenceManager::onSchemaUpdated(std::shared_ptr<avro::ValidSchema
         throw KaaException("Empty schema was given");
     }
 
+    if (ignoreSchemaUpdate_) {
+        ignoreSchemaUpdate_ = false;
+        return;
+    }
+
+    KAA_MUTEX_LOCKING("schemaPersistenceGuard_")
+    KAA_MUTEX_UNIQUE_DECLARE(lock, schemaPersistenceGuard_);
+    KAA_MUTEX_LOCKED("schemaPersistenceGuard_");
+
     KAA_LOG_DEBUG(boost::format("Going to pass schema to storage %1%") % storage_);
 
     if (storage_) {
-        if (ignoreSchemaUpdate_) {
-            ignoreSchemaUpdate_ = false;
-            return;
-        }
-
-        KAA_MUTEX_LOCKING("schemaPersistenceGuard_")
-        lock_type lock(schemaPersistenceGuard_);
-        KAA_MUTEX_LOCKED("schemaPersistenceGuard_")
-
         std::ostringstream osstr;
         schema->toJson(osstr);
         const std::string &str = osstr.str();
@@ -89,7 +89,7 @@ void SchemaPersistenceManager::setSchemaProcessor(ISchemaProcessor *processor)
 
 void SchemaPersistenceManager::readStoredSchema()
 {
-    if (storage_ == NULL) {
+    if (!storage_) {
         throw KaaException("Can not read stored schema: reader is missing");
     }
 

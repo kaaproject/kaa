@@ -19,7 +19,7 @@
 
 #include "kaa/schema/storage/ISchemaPersistenceManager.hpp"
 #include "kaa/schema/ISchemaProcessor.hpp"
-#include <boost/thread/mutex.hpp>
+#include "kaa/KaaThread.hpp"
 
 namespace kaa {
 
@@ -59,13 +59,9 @@ public:
      */
     void setSchemaProcessor(ISchemaProcessor *processor);
 private:
-    typedef boost::mutex                    mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
-
     void readStoredSchema();
 
-    mutex_type          schemaGuard_;
-    mutex_type          schemaPersistenceGuard_;
+    KAA_MUTEX_DECLARE(schemaPersistenceGuard_);
 
     ISchemaStorage *    storage_;
     ISchemaProcessor *  processor_;

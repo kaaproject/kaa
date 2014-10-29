@@ -17,14 +17,14 @@
 #ifndef I_PROFILE_LISTENER_HPP_
 #define I_PROFILE_LISTENER_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "kaa/common/EndpointObjectHash.hpp"
 
 namespace kaa {
 
 class IProfileListener;
-typedef boost::shared_ptr<IProfileListener> ProfileListenerPtr;
+typedef std::shared_ptr<IProfileListener> ProfileListenerPtr;
 
 /**
  * Interface for the listener of profile updates.

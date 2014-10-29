@@ -19,7 +19,7 @@
 
 #include <vector>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include <botan/botan.h>
 
@@ -57,7 +57,7 @@ private:
 
 private:
     IProfileManager*               profileManager_;
-    std::vector<boost::uint8_t>    publicKey_;
+    std::vector<std::uint8_t>    publicKey_;
 };
 
 } /* namespace kaa */

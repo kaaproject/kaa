@@ -27,7 +27,7 @@
 
 namespace kaa {
 
-void SchemaProcessor::loadSchema(const boost::uint8_t * buffer, size_t buffer_length)
+void SchemaProcessor::loadSchema(const std::uint8_t * buffer, std::size_t buffer_length)
 {
     KAA_LOG_INFO("Loading schema...");
     const avro::ValidSchema &schema = avro::compileJsonSchemaFromMemory(buffer, buffer_length);

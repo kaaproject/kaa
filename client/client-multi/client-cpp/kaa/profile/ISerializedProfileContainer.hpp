@@ -17,14 +17,14 @@
 #ifndef ISERIALIZEDPROFILECONTAINER_HPP_
 #define ISERIALIZEDPROFILECONTAINER_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "kaa/common/EndpointObjectHash.hpp"
 
 namespace kaa {
 
 class ISerializedProfileContainer;
-typedef boost::shared_ptr<ISerializedProfileContainer> ISerializedProfileContainerPtr;
+typedef std::shared_ptr<ISerializedProfileContainer> ISerializedProfileContainerPtr;
 
 /**
  * Container for the serialized profile

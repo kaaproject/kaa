@@ -20,12 +20,13 @@
 #include <botan/botan.h>
 #include <string>
 #include <utility>
-#include <boost/cstdint.hpp>
+#include <cstdint>
+#include <memory>
 #include <boost/scoped_array.hpp>
 
 namespace kaa {
 
-typedef std::pair<Botan::MemoryVector<boost::uint8_t>, std::string> KeyPair;
+typedef std::pair<Botan::MemoryVector<std::uint8_t>, std::string> KeyPair;
 
 class KeyUtils {
 public:
@@ -35,7 +36,7 @@ public:
      * @param length the length of the key in bits
      * @return the pair of keys. The first element of the pair is a public key and the second one - is a private key.
      */
-    KeyPair generateKeyPair(size_t length);
+    KeyPair generateKeyPair(std::size_t length);
 
     /**
      * Generates symmetric session key
@@ -43,9 +44,9 @@ public:
      * @param length the length of the key in bytes
      * @return the pair of key and initialization vector
      */
-    Botan::SymmetricKey generateSessionKey(size_t length);
+    Botan::SymmetricKey generateSessionKey(std::size_t length);
 
-    static Botan::MemoryVector<boost::uint8_t> loadPublicKey(const std::string& fileName);
+    static Botan::MemoryVector<std::uint8_t> loadPublicKey(const std::string& fileName);
 
     static std::string loadPrivateKey(const std::string& fileName);
 
@@ -53,12 +54,12 @@ public:
 
     static void saveKeyPair(const KeyPair& pair, const std::string& pubFileName, const std::string& privFileName);
 
-    static void savePublicKey(const Botan::MemoryVector<boost::uint8_t>& key, const std::string& pubFileName);
+    static void savePublicKey(const Botan::MemoryVector<std::uint8_t>& key, const std::string& pubFileName);
 
     static void savePrivateKey(const std::string& key, const std::string& privFileName);
 
 private:
-    static void readFile(const std::string& fileName, boost::scoped_array<char>& buf, size_t& len);
+    static void readFile(const std::string& fileName, boost::scoped_array<char>& buf, std::size_t& len);
 
 private:
     Botan::AutoSeeded_RNG     rng_;

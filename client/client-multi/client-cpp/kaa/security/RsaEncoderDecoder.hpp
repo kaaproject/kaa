@@ -20,32 +20,32 @@
 #include "kaa/security/KeyUtils.hpp"
 #include "kaa/security/IEncoderDecoder.hpp"
 #include <botan/rsa.h>
-#include <boost/scoped_ptr.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
+#include <memory>
 
 namespace kaa {
 
 class RsaEncoderDecoder : public IEncoderDecoder {
 public:
-    RsaEncoderDecoder(const Botan::MemoryVector<boost::uint8_t>& pubKey,
+    RsaEncoderDecoder(const Botan::MemoryVector<std::uint8_t>& pubKey,
             const std::string& privKey,
-            const Botan::MemoryVector<boost::uint8_t>& remoteKey);
+            const Botan::MemoryVector<std::uint8_t>& remoteKey);
     ~RsaEncoderDecoder() { }
 
-    Botan::SecureVector<boost::uint8_t> getEncodedSessionKey();
-    std::string encodeData(const boost::uint8_t *data, size_t size);
-    std::string decodeData(const boost::uint8_t *data, size_t size);
-    Botan::SecureVector<boost::uint8_t> signData(const boost::uint8_t *data, size_t size);
-    bool verifySignature(const boost::uint8_t *data, size_t len, const boost::uint8_t *sig, size_t sigLen);
+    Botan::SecureVector<std::uint8_t> getEncodedSessionKey();
+    std::string encodeData(const std::uint8_t *data, std::size_t size);
+    std::string decodeData(const std::uint8_t *data, std::size_t size);
+    Botan::SecureVector<std::uint8_t> signData(const std::uint8_t *data, std::size_t size);
+    bool verifySignature(const std::uint8_t *data, std::size_t len, const std::uint8_t *sig, std::size_t sigLen);
 
 private:
-    std::string cipherPipe(const boost::uint8_t *data, size_t size, Botan::Cipher_Dir dir);
+    std::string cipherPipe(const std::uint8_t *data, std::size_t size, Botan::Cipher_Dir dir);
 
 private:
     Botan::AutoSeeded_RNG rng_;
-    boost::scoped_ptr<Botan::X509_PublicKey>   pubKey_;
-    boost::scoped_ptr<Botan::PKCS8_PrivateKey> privKey_;
-    boost::scoped_ptr<Botan::X509_PublicKey>   remoteKey_;
+    std::unique_ptr<Botan::X509_PublicKey>   pubKey_;
+    std::unique_ptr<Botan::PKCS8_PrivateKey> privKey_;
+    std::unique_ptr<Botan::X509_PublicKey>   remoteKey_;
 
     Botan::SymmetricKey sessionKey_;
 };
