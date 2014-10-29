@@ -18,7 +18,6 @@
 #define IREDIRECTIONTRANSPORT_HPP_
 
 #include "kaa/gen/EndpointGen.hpp"
-#include "boost/shared_ptr.hpp"
 
 namespace kaa {
 

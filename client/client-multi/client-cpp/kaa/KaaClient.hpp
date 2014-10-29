@@ -43,8 +43,8 @@
 
 namespace kaa {
 
-typedef boost::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
-typedef boost::shared_ptr<DefaultDeltaManager> DefaultDeltaManagerPtr;
+typedef std::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
+typedef std::shared_ptr<DefaultDeltaManager> DefaultDeltaManagerPtr;
 
 typedef enum {
     EXTERNAL_TRANSPORT_CONTROL = 0x1
@@ -85,9 +85,9 @@ private:
 private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
-    boost::scoped_ptr<ProfileManager>               profileManager_;
-    boost::scoped_ptr<NotificationManager>          notificationManager_;
-    boost::scoped_ptr<EndpointRegistrationManager>  registrationManager_;
+    std::unique_ptr<ProfileManager>                 profileManager_;
+    std::unique_ptr<NotificationManager>            notificationManager_;
+    std::unique_ptr<EndpointRegistrationManager>    registrationManager_;
 
     KeyPair         clientKeys_;
     std::string     publicKeyHash_;
@@ -98,16 +98,16 @@ private:
     IConfigurationProcessorPtr            configurationProcessor_;
     ISchemaPersistenceManagerPtr          schemaPersistenceManager_;
     IConfigurationPersistenceManagerPtr   configurationPersistenceManager_;
-    boost::scoped_ptr<EventManager>       eventManager_;
-    boost::scoped_ptr<EventFamilyFactory> eventFamilyFactory_;
-    boost::scoped_ptr<IKaaChannelManager> channelManager_;
-    boost::scoped_ptr<BootstrapDataProcessor>   bootstrapProcessor_;
-    boost::scoped_ptr<OperationsDataProcessor>  operationsProcessor_;
+    std::unique_ptr<EventManager>         eventManager_;
+    std::unique_ptr<EventFamilyFactory>   eventFamilyFactory_;
+    std::unique_ptr<IKaaChannelManager>   channelManager_;
+    std::unique_ptr<BootstrapDataProcessor>   bootstrapProcessor_;
+    std::unique_ptr<OperationsDataProcessor>  operationsProcessor_;
 
-    boost::shared_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
-    boost::shared_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
+    std::shared_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
+    std::shared_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
 
-    boost::scoped_ptr<LogCollector>      logCollector_;
+    std::unique_ptr<LogCollector>      logCollector_;
 
     int options_;
 };

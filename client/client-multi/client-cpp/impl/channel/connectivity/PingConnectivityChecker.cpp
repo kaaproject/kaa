@@ -18,6 +18,7 @@
 
 #include <string>
 #include <sstream>
+#include <cstdint>
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/connect.hpp>
@@ -41,7 +42,7 @@ bool PingConnectivityChecker::checkConnectivity()
         boost::asio::ip::tcp::resolver resolver(io_service);
 
         std::string host;
-        boost::uint16_t port;
+        std::uint16_t port;
         IServerInfoPtr si = serverStorage_.getPingServer();
 
         if (si->getServerType() == ServerType::BOOTSTRAP) {

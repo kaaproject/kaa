@@ -36,7 +36,7 @@ namespace kaa {
 
 ConfigurationDeltaPtr DefaultConfigurationDeltaFactory::createDelta(const avro::GenericDatum& genericDelta)
 {
-    DefaultConfigurationDelta *configurationDelta = NULL;
+    DefaultConfigurationDelta *configurationDelta = nullptr;
 
     if (genericDelta.value<avro::GenericRecord>().hasField("__uuid")) {
         DeltaHandlerId handlerId(AvroGenericUtils::getUuidFromDatum(genericDelta));

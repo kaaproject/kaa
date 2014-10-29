@@ -27,7 +27,7 @@ namespace kaa {
 class FieldProcessor {
 public:
     FieldProcessor(std::shared_ptr<ICommonRecord> parent, const std::string &field)
-    : strategy_(NULL), parentRecord_(parent), field_(field) {}
+    : strategy_(nullptr), parentRecord_(parent), field_(field) {}
     ~FieldProcessor() { if (strategy_) delete strategy_;}
 
     /**

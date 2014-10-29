@@ -22,20 +22,20 @@
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/gen/BootstrapGen.hpp"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "kaa/channel/transport/IBootstrapTransport.hpp"
 
 namespace kaa {
 
-typedef boost::shared_ptr<IBootstrapTransport>      IBootstrapTransportPtr;
+typedef std::shared_ptr<IBootstrapTransport>      IBootstrapTransportPtr;
 
 class BootstrapDataProcessor : public IKaaDataMultiplexer, public IKaaDataDemultiplexer
 {
 public:
     BootstrapDataProcessor(IBootstrapTransportPtr);
 
-    virtual std::vector<boost::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes);
-    virtual void processResponse(const std::vector<boost::uint8_t> &response);
+    virtual std::vector<std::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes);
+    virtual void processResponse(const std::vector<std::uint8_t> &response);
 private:
     AvroByteArrayConverter<Resolve>                 requestConverter_;
     AvroByteArrayConverter<OperationsServerList>    responseConverter_;

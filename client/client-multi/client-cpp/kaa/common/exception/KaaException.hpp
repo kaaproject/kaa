@@ -33,7 +33,7 @@ public:
         ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << f
            << "\" Original message: " << std::exception::what();
         void *trace[16];
-        char **messages = (char **)NULL;
+        char **messages = (char **)nullptr;
         int i, trace_size = 0;
         trace_size = backtrace(trace, 16);
         messages = backtrace_symbols(trace, trace_size);
@@ -49,7 +49,7 @@ public:
         ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << message
            << "\" Original message: " << std::exception::what();
         void *trace[16];
-        char **messages = (char **)NULL;
+        char **messages = (char **)nullptr;
         int i, trace_size = 0;
         trace_size = backtrace(trace, 16);
         messages = backtrace_symbols(trace, trace_size);

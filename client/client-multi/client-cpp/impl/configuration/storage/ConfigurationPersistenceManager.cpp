@@ -87,7 +87,7 @@ void ConfigurationPersistenceManager::onConfigurationUpdated(const ICommonRecord
     KAA_MUTEX_UNIQUE_DECLARE(storage_lock, confPersistenceGuard_);
     KAA_MUTEX_LOCKED("confPersistenceGuard_");
 
-    if (storage_ != NULL) {
+    if (storage_) {
         std::vector<std::uint8_t> bytes (buffer.second);
         std::copy(buffer.first.get(), buffer.first.get() + buffer.second, bytes.begin());
         storage_->saveConfiguration(bytes);
@@ -123,7 +123,7 @@ EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()
 
 void ConfigurationPersistenceManager::readStoredConfiugration()
 {
-    if (storage_ == NULL) {
+    if (!storage_) {
         throw KaaException("Can not read stored configuration: Configuration storage is empty.");
     }
 
@@ -132,7 +132,7 @@ void ConfigurationPersistenceManager::readStoredConfiugration()
     std::vector<std::uint8_t> bytes = storage_->loadConfiguration();
 
     if (!bytes.empty()) {
-        if (processor_ != NULL) {
+        if (processor_) {
             ignoreConfigurationUpdate_ = true;
             processor_->processConfigurationData(bytes.data(), bytes.size(), true);
         }

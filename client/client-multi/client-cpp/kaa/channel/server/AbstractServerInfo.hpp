@@ -20,8 +20,8 @@
 #include <string>
 #include <sstream>
 #include <climits>
+#include <cstdint>
 
-#include <boost/cstdint.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <botan/botan.h>
@@ -36,23 +36,23 @@ namespace kaa {
 template<ChannelType Type>
 class AbstractServerInfo : public IServerInfo {
 public:
-    AbstractServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
+    AbstractServerInfo(ServerType type, const std::string& host, const std::int32_t& port
             , const std::string& encodedPublicKey);
 
     AbstractServerInfo(ServerType type, const std::string& hostPort, const std::string& encodedPublicKey);
 
-    AbstractServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
-            , const Botan::MemoryVector<boost::uint8_t>& publicKey);
+    AbstractServerInfo(ServerType type, const std::string& host, const std::int32_t& port
+            , const Botan::MemoryVector<std::uint8_t>& publicKey);
 
     virtual const std::string& getHost() const {
         return host_;
     }
 
-    virtual boost::uint16_t getPort() const {
+    virtual std::uint16_t getPort() const {
         return port_;
     }
 
-    virtual const Botan::MemoryVector<boost::uint8_t>& getPublicKey() const {
+    virtual const Botan::MemoryVector<std::uint8_t>& getPublicKey() const {
         return publicKey_;
     }
 
@@ -74,26 +74,26 @@ public:
 
 private:
     template<typename KeyRepresentation>
-    void verify(const std::string& host, const boost::int32_t& port
+    void verify(const std::string& host, const std::int32_t& port
                                 , const KeyRepresentation& encodedPublicKey);
 
-    void assign(const std::string& host, const boost::int32_t& port
+    void assign(const std::string& host, const std::int32_t& port
                                 , const std::string& encodedPublicKey);
-    void assign(const std::string& host, const boost::int32_t& port
-                    , const Botan::MemoryVector<boost::uint8_t>& decodedPublicKey);
+    void assign(const std::string& host, const std::int32_t& port
+                    , const Botan::MemoryVector<std::uint8_t>& decodedPublicKey);
 
 private:
     const ChannelType channelType_;
     const ServerType  serverType_;
 
     std::string        host_;
-    boost::uint16_t    port_;
+    std::uint16_t    port_;
 
-    Botan::MemoryVector<boost::uint8_t>    publicKey_;
+    Botan::MemoryVector<std::uint8_t>    publicKey_;
 };
 
 template<ChannelType Type>
-AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
+AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string& host, const std::int32_t& port
         , const std::string& encodedPublicKey) : channelType_(Type), serverType_(type)
 {
     verify(host, port, encodedPublicKey);
@@ -107,12 +107,12 @@ AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string&
     if (!hostPort.empty()) {
         std::size_t delimPos = hostPort.find(':');
         std::string host;
-        boost::int32_t port = 0;
+        std::int32_t port = 0;
 
         if (delimPos != std::string::npos) {
             host = hostPort.substr(0, delimPos);
             try {
-                port = boost::lexical_cast<boost::int32_t>(hostPort.substr(delimPos + 1, std::string::npos));
+                port = boost::lexical_cast<std::int32_t>(hostPort.substr(delimPos + 1, std::string::npos));
             } catch (std::exception& e) {
                 throw KaaException(e.what());
             }
@@ -126,8 +126,8 @@ AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string&
 }
 
 template<ChannelType Type>
-AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
-        , const Botan::MemoryVector<boost::uint8_t>& publicKey) : channelType_(Type), serverType_(type)
+AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string& host, const std::int32_t& port
+        , const Botan::MemoryVector<std::uint8_t>& publicKey) : channelType_(Type), serverType_(type)
 {
     verify(host, port, publicKey);
     assign(host, port, publicKey);
@@ -135,7 +135,7 @@ AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string&
 
 template<ChannelType Type>
 template<typename KeyRepresentation>
-void AbstractServerInfo<Type>::verify(const std::string& host, const boost::int32_t& port, const KeyRepresentation& encodedPublicKey)
+void AbstractServerInfo<Type>::verify(const std::string& host, const std::int32_t& port, const KeyRepresentation& encodedPublicKey)
 {
     if (host.empty()) {
         throw KaaException("Empty server host");
@@ -151,7 +151,7 @@ void AbstractServerInfo<Type>::verify(const std::string& host, const boost::int3
 }
 
 template<ChannelType Type>
-void AbstractServerInfo<Type>::assign(const std::string& host, const boost::int32_t& port, const std::string& encodedPublicKey)
+void AbstractServerInfo<Type>::assign(const std::string& host, const std::int32_t& port, const std::string& encodedPublicKey)
 {
     host_ = host;
     port_ = port;
@@ -159,7 +159,7 @@ void AbstractServerInfo<Type>::assign(const std::string& host, const boost::int3
 }
 
 template<ChannelType Type>
-void AbstractServerInfo<Type>::assign(const std::string& host, const boost::int32_t& port, const Botan::MemoryVector<boost::uint8_t>& decodedPublicKey)
+void AbstractServerInfo<Type>::assign(const std::string& host, const std::int32_t& port, const Botan::MemoryVector<std::uint8_t>& decodedPublicKey)
 {
     host_ = host;
     port_ = port;

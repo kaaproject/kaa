@@ -17,8 +17,8 @@
 #ifndef ICLIENTSTATESTORAGE_HPP_
 #define ICLIENTSTATESTORAGE_HPP_
 
-#include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
+#include <cstdint>
+#include <memory>
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 
@@ -28,13 +28,13 @@ typedef struct {
     std::string         topicId;
     std::string         topicName;
     SubscriptionType    subscriptionType;
-    boost::uint32_t     sequenceNumber;
+    std::uint32_t     sequenceNumber;
 } DetailedTopicState;
 
 typedef struct {
-    boost::int32_t  configurationSequenceNumber;
-    boost::int32_t  notificationSequenceNumber;
-    boost::int32_t  eventSequenceNumber;
+    std::int32_t  configurationSequenceNumber;
+    std::int32_t  notificationSequenceNumber;
+    std::int32_t  eventSequenceNumber;
 } SequenceNumber;
 
 typedef std::map<std::string, DetailedTopicState> DetailedTopicStates;
@@ -45,14 +45,14 @@ class IKaaClientStateStorage {
 public:
     virtual ~IKaaClientStateStorage() {}
 
-    virtual boost::int32_t getEventSequenceNumber() const = 0;
-    virtual void setEventSequenceNumber(boost::int32_t sequenceNumber) = 0;
+    virtual std::int32_t getEventSequenceNumber() const = 0;
+    virtual void setEventSequenceNumber(std::int32_t sequenceNumber) = 0;
 
-    virtual boost::int32_t getConfigurationSequenceNumber() const = 0;
-    virtual void setConfigurationSequenceNumber(boost::int32_t sequenceNumber) = 0;
+    virtual std::int32_t getConfigurationSequenceNumber() const = 0;
+    virtual void setConfigurationSequenceNumber(std::int32_t sequenceNumber) = 0;
 
-    virtual boost::int32_t getNotificationSequenceNumber() const = 0;
-    virtual void setNotificationSequenceNumber(boost::int32_t sequenceNumber) = 0;
+    virtual std::int32_t getNotificationSequenceNumber() const = 0;
+    virtual void setNotificationSequenceNumber(std::int32_t sequenceNumber) = 0;
 
     virtual SequenceNumber getAppSeqNumber() const = 0;
     virtual void setAppSeqNumber(SequenceNumber appSeqNumber) = 0;
@@ -82,7 +82,7 @@ public:
     virtual void save() = 0;
 };
 
-typedef boost::shared_ptr<IKaaClientStateStorage> IKaaClientStateStoragePtr;
+typedef std::shared_ptr<IKaaClientStateStorage> IKaaClientStateStoragePtr;
 
 }  // namespace kaa
 

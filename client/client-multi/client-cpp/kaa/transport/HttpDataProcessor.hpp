@@ -27,39 +27,39 @@
 #include "kaa/gen/EndpointGen.hpp"
 
 #include <vector>
+#include <memory>
+#include <cstdint>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/cstdint.hpp>
 #include <botan/base64.h>
 
 namespace kaa {
 
 class HttpDataProcessor : boost::noncopyable {
 public:
-    HttpDataProcessor(const Botan::MemoryVector<boost::uint8_t>& pubKey,
+    HttpDataProcessor(const Botan::MemoryVector<std::uint8_t>& pubKey,
             const std::string& privKey,
-            const Botan::MemoryVector<boost::uint8_t>& remoteKey) :
+            const Botan::MemoryVector<std::uint8_t>& remoteKey) :
             encDec_(new RsaEncoderDecoder(pubKey, privKey, remoteKey)) { }
     HttpDataProcessor() { }
     ~HttpDataProcessor() { }
 
-    boost::shared_ptr<IHttpRequest> createOperationRequest(const HttpUrl& url, const std::vector<boost::uint8_t>& data);
+    std::shared_ptr<IHttpRequest> createOperationRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data);
     std::string retrieveOperationResponse(const IHttpResponse& response);
 
-    boost::shared_ptr<IHttpRequest> createBootstrapRequest(const HttpUrl& url, const std::vector<boost::uint8_t>& data);
+    std::shared_ptr<IHttpRequest> createBootstrapRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data);
     std::string retrieveBootstrapResponse(const IHttpResponse& response);
 
-    void setEncoderDecoder(boost::shared_ptr<IEncoderDecoder> encoderDecoder) { encDec_ = encoderDecoder; }
+    void setEncoderDecoder(std::shared_ptr<IEncoderDecoder> encoderDecoder) { encDec_ = encoderDecoder; }
 
 private:
     void verifyResponse(const IHttpResponse& response);
 
 private:
-    boost::shared_ptr<IEncoderDecoder> encDec_;
+    std::shared_ptr<IEncoderDecoder> encDec_;
 
 };
 
-typedef boost::shared_ptr<HttpDataProcessor> HttpDataProcessorPtr;
+typedef std::shared_ptr<HttpDataProcessor> HttpDataProcessorPtr;
 
 }
 

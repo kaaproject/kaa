@@ -17,7 +17,7 @@
 #ifndef ICONNECTIVITYCHECKER_HPP_
 #define ICONNECTIVITYCHECKER_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace kaa {
 
@@ -36,7 +36,7 @@ public:
     virtual ~IConnectivityChecker() {}
 };
 
-typedef boost::shared_ptr<IConnectivityChecker> ConnectivityCheckerPtr;
+typedef std::shared_ptr<IConnectivityChecker> ConnectivityCheckerPtr;
 
 } /* namespace kaa */
 

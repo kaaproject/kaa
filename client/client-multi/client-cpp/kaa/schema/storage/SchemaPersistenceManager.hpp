@@ -36,8 +36,8 @@ namespace kaa {
 class SchemaPersistenceManager : public ISchemaPersistenceManager {
 public:
     SchemaPersistenceManager()
-        : storage_(NULL)
-        , processor_(NULL)
+        : storage_(nullptr)
+        , processor_(nullptr)
         , ignoreSchemaUpdate_(false)
     {}
 

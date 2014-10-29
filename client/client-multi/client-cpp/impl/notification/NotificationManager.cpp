@@ -203,7 +203,7 @@ void NotificationManager::onSubscriptionInfoUpdated()
     }
 }
 
-void NotificationManager::setTransport(boost::shared_ptr<NotificationTransport> transport) {
+void NotificationManager::setTransport(std::shared_ptr<NotificationTransport> transport) {
        if (transport) {
            transport_ = transport;
            transport_->setNotificationProcessor(this);

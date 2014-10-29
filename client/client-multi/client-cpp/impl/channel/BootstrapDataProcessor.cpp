@@ -26,15 +26,15 @@ BootstrapDataProcessor::BootstrapDataProcessor(
 
 }
 
-std::vector<boost::uint8_t> BootstrapDataProcessor::compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes)
+std::vector<std::uint8_t> BootstrapDataProcessor::compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes)
 {
     auto ptr = bootstrapTransport_->createResolveRequest();
     Resolve r = *ptr;
     SharedDataBuffer buffer = requestConverter_.toByteArray(r);
-    return std::vector<boost::uint8_t>(buffer.first.get(), buffer.first.get() + buffer.second);
+    return std::vector<std::uint8_t>(buffer.first.get(), buffer.first.get() + buffer.second);
 }
 
-void BootstrapDataProcessor::processResponse(const std::vector<boost::uint8_t> &response)
+void BootstrapDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
     OperationsServerList result = responseConverter_.fromByteArray(response.data(), response.size());
     bootstrapTransport_->onResolveResponse(result);

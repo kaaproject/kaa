@@ -115,7 +115,7 @@ constexpr CommonValueType AvroToCommon<avro::AVRO_NULL>::toCommonType()
 std::shared_ptr<ICommonRecord>CommonTypesFactory::createCommonRecord(uuid_t uuid, const avro::NodePtr schema)
 {
     std::shared_ptr<ICommonRecord> record_ptr(new (std::nothrow) CommonRecord(uuid, schema));
-    if (record_ptr.get() == NULL) {
+    if (!record_ptr.get()) {
         throw KaaException("Memory allocation failed while constructing new CommonRecord!");
     }
     return record_ptr;
@@ -124,7 +124,7 @@ std::shared_ptr<ICommonRecord>CommonTypesFactory::createCommonRecord(uuid_t uuid
 std::shared_ptr<ICommonArray> CommonTypesFactory::createCommonArray(const avro::NodePtr &schema)
 {
     std::shared_ptr<ICommonArray> array_ptr(new (std::nothrow) CommonArray(schema));
-    if (array_ptr.get() == NULL) {
+    if (!array_ptr.get()) {
         throw KaaException("Memory allocation failed while constructing new CommonRecord!");
     }
     return array_ptr;

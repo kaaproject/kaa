@@ -17,7 +17,7 @@
 #ifndef IPROFILETRANSPORT_HPP_
 #define IPROFILETRANSPORT_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "kaa/gen/EndpointGen.hpp"
 
@@ -25,7 +25,7 @@ namespace kaa {
 
 class IProfileManager;
 
-typedef boost::shared_ptr<ProfileSyncRequest> ProfileSyncRequestPtr;
+typedef std::shared_ptr<ProfileSyncRequest> ProfileSyncRequestPtr;
 
 /**
  * Updates the Profile manager state.
@@ -64,7 +64,7 @@ public:
     virtual ~IProfileTransport() {}
 };
 
-typedef boost::shared_ptr<IProfileTransport> IProfileTransportPtr;
+typedef std::shared_ptr<IProfileTransport> IProfileTransportPtr;
 
 } /* namespace kaa */
 

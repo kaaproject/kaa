@@ -30,7 +30,7 @@ public:
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
 
 private:
-    virtual boost::shared_ptr<IHttpRequest> createRequest(AbstractServerInfoPtr server, const std::vector<boost::uint8_t>& body)
+    virtual std::shared_ptr<IHttpRequest> createRequest(AbstractServerInfoPtr server, const std::vector<boost::uint8_t>& body)
     {
         return getHttpDataProcessor()->createOperationRequest(server->getUrl(), body);
     }

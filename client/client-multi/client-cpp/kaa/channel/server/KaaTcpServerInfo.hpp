@@ -38,7 +38,7 @@ public:
     }
 };
 
-typedef boost::shared_ptr<KaaTcpServerInfo> OperationServerKaaTcpInfoPtr;
+typedef std::shared_ptr<KaaTcpServerInfo> OperationServerKaaTcpInfoPtr;
 
 }
 

@@ -20,12 +20,14 @@
 #include "kaa/channel/IDataChannel.hpp"
 #include "kaa/channel/server/HttpLPServerInfo.hpp"
 #include "kaa/http/HttpClient.hpp"
-#include <boost/cstdint.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
 #include "kaa/security/KeyUtils.hpp"
 #include "kaa/transport/HttpDataProcessor.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
+#include "kaa/KaaThread.hpp"
+
+#include <cstdint>
+#include <thread>
 
 namespace kaa {
 
@@ -64,7 +66,7 @@ private:
 
     boost::asio::io_service io_;
     boost::asio::io_service::work work_;
-    boost::thread pollThread_;
+    std::thread pollThread_;
     bool stopped_;
     bool connectionInProgress_;
     bool taskPosted_;
@@ -75,8 +77,8 @@ private:
     OperationServerLongPollInfoPtr currentServer_;
     HttpDataProcessor httpDataProcessor_;
     HttpClient httpClient_;
-    boost::condition_variable waitCondition_;
-    boost::mutex channelGuard_;
+    KAA_CONDITION_VARIABLE_DECLARE(waitCondition_);
+    KAA_MUTEX_DECLARE(channelGuard_);
 };
 
 }

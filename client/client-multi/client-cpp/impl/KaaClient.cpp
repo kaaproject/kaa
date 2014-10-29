@@ -116,7 +116,7 @@ void KaaClient::initKaaTransport()
     IBootstrapTransportPtr bootstrapTransport(new BootstrapTransport(*channelManager_, *bootstrapManager_));
     bootstrapProcessor_.reset(new BootstrapDataProcessor(bootstrapTransport));
 
-    bootstrapManager_->setTransport(boost::dynamic_pointer_cast<BootstrapTransport, IBootstrapTransport>(bootstrapTransport).get());
+    bootstrapManager_->setTransport(std::dynamic_pointer_cast<BootstrapTransport, IBootstrapTransport>(bootstrapTransport).get());
     bootstrapManager_->setChannelManager(channelManager_.get());
 
     EndpointObjectHash publicKeyHash(clientKeys_.first.begin(), clientKeys_.first.size());
@@ -150,12 +150,12 @@ void KaaClient::initKaaTransport()
             , redirectionTransport
             , status_));
 
-    eventManager_->setTransport(boost::dynamic_pointer_cast<EventTransport, IEventTransport>(eventTransport).get());
-    registrationManager_->setTransport(boost::dynamic_pointer_cast<UserTransport, IUserTransport>(userTransport).get());
-    logCollector_->setTransport(boost::dynamic_pointer_cast<LoggingTransport, ILoggingTransport>(loggingTransport).get());
+    eventManager_->setTransport(std::dynamic_pointer_cast<EventTransport, IEventTransport>(eventTransport).get());
+    registrationManager_->setTransport(std::dynamic_pointer_cast<UserTransport, IUserTransport>(userTransport).get());
+    logCollector_->setTransport(std::dynamic_pointer_cast<LoggingTransport, ILoggingTransport>(loggingTransport).get());
 
 
-    notificationManager_->setTransport(boost::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
+    notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
 
     bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
     opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
@@ -199,8 +199,8 @@ void KaaClient::setDefaultConfiguration()
 {
     const std::string& schema = getDefaultConfigSchema();
     if (!schema.empty()) {
-        schemaProcessor_->loadSchema(reinterpret_cast<const boost::uint8_t*>(schema.data()), schema.length());
-        const Botan::SecureVector<boost::uint8_t>& config = getDefaultConfigData();
+        schemaProcessor_->loadSchema(reinterpret_cast<const std::uint8_t*>(schema.data()), schema.length());
+        const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
         if (!config.empty()) {
             configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
         }

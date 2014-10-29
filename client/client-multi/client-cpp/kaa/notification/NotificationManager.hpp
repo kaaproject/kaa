@@ -97,7 +97,7 @@ public:
     /**
      * Provide notification transport to manager.
      */
-    virtual void setTransport(boost::shared_ptr<NotificationTransport> transport);
+    virtual void setTransport(std::shared_ptr<NotificationTransport> transport);
 private:
     void updateSubscriptionInfo(const std::string& id, SubscriptionCommandType type);
     void onSubscriptionInfoUpdated();
@@ -109,7 +109,7 @@ private:
                                         , const std::vector<boost::uint8_t>& )> NotificationListeners;
 
 private:
-    boost::shared_ptr<NotificationTransport>                         transport_;
+    std::shared_ptr<NotificationTransport>                         transport_;
     IKaaClientStateStoragePtr                                        clientStatus_;
 
     std::map<std::string/*Topic ID*/, Topic>                         topics_;

@@ -18,11 +18,9 @@
 #define ISERVERINFO_HPP_
 
 #include <string>
+#include <memory>
 
 #include <botan/botan.h>
-
-#include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/channel/ServerType.hpp"
@@ -52,7 +50,7 @@ public:
     virtual ~IServerInfo() {}
 };
 
-typedef boost::shared_ptr<IServerInfo> IServerInfoPtr;
+typedef std::shared_ptr<IServerInfo> IServerInfoPtr;
 
 } /* namespace kaa */
 

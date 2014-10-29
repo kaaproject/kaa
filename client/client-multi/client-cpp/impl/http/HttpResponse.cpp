@@ -60,7 +60,7 @@ void HttpResponse::parseResponse(const char *data, std::size_t len)
     const char *cursor = data;
     cursor += HTTP_VERSION_OFFSET;
     std::string code(cursor, 3);
-    statusCode_ = static_cast<int>(std::strtol(code.c_str(), NULL, 10));
+    statusCode_ = static_cast<int>(std::strtol(code.c_str(), nullptr, 10));
     cursor = strstr(data, "\r\n") + 2;
 
     bool headerProcessed = false;
@@ -79,7 +79,7 @@ void HttpResponse::parseResponse(const char *data, std::size_t len)
     }
     auto it = header_.find("Content-Length");
     if (it != header_.end()) {
-        auto len = std::strtol(it->second.c_str(), NULL, 10);
+        auto len = std::strtol(it->second.c_str(), nullptr, 10);
         if (len > 0) {
             body_.first.reset(new std::uint8_t[len]);
             body_.second = len;
