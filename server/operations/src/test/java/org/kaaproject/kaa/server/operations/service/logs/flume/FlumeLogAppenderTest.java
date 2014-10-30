@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
 import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
 import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
-import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.operations.service.logs.flume.client.FlumeClientManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

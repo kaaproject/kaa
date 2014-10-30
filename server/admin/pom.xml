@@ -189,6 +189,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>log-shared</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.versly</groupId>
             <artifactId>versly-wsdoc</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -756,6 +761,17 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>cdap</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
+                    <artifactId>config</artifactId>
+                    <version>${project.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>

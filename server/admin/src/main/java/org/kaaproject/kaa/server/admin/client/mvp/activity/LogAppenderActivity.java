@@ -16,15 +16,17 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import static org.kaaproject.kaa.server.admin.client.util.Utils.*;
+import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
+import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
@@ -80,6 +82,17 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderDto,
 
     @Override
     protected void onEntityRetrieved() {
+        KaaAdmin.getDataSource().loadAppenderInfos(new AsyncCallback<List<LogAppenderInfoDto>>() {
+            @Override
+            public void onSuccess(List<LogAppenderInfoDto> result) {
+                detailsView.getAppenderInfo().setAcceptableValues(result);
+            }
+            @Override
+            public void onFailure(Throwable caught) {
+                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+            }
+        });
+        
         if (create) {
             KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new AsyncCallback<List<SchemaDto>>() {
 
@@ -106,18 +119,29 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderDto,
             detailsView.setMetadataListBox(entity.getHeaderStructure());
 
             LogAppenderTypeDto type = entity.getType();
-            detailsView.getType().setValue(type);
             switch (type) {
                 case FILE:
                     FileAppenderParametersDto file = (FileAppenderParametersDto) entity.getProperties().getParameters();
                     detailsView.setPublicKey(file.getSshKey());
+                    detailsView.getAppenderInfo().setValue(new LogAppenderInfoDto(type));
                     break;
                 case MONGO:
                     detailsView.hideFileCongurationFields();
+                    detailsView.getAppenderInfo().setValue(new LogAppenderInfoDto(type));
                     break;
                 case FLUME:
                     FlumeAppenderParametersDto flume = (FlumeAppenderParametersDto) entity.getProperties().getParameters();
                     detailsView.showFlumeCongurationFields(flume);
+                    detailsView.getAppenderInfo().setValue(new LogAppenderInfoDto(type));
+                    break;
+                case CUSTOM:
+                    CustomAppenderParametersDto custom = (CustomAppenderParametersDto) entity.getProperties().getParameters();
+                    detailsView.hideFileCongurationFields();
+                    detailsView.showCustomConfigurationFields();
+                    detailsView.setConfiguration(custom.getConfiguration());
+                    LogAppenderInfoDto appenderInfo = 
+                            new LogAppenderInfoDto(type, custom.getName(), custom.getConfiguration(), custom.getAppenderClassName());
+                    detailsView.getAppenderInfo().setValue(appenderInfo);
                     break;
             }
         }
@@ -132,10 +156,10 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderDto,
         entity.setDescription(detailsView.getDescription().getValue());
         entity.setHeaderStructure(detailsView.getHeader());
 
-        LogAppenderTypeDto appenderType = detailsView.getType().getValue();
-        entity.setType(appenderType);
+        LogAppenderInfoDto appenderInfo = detailsView.getAppenderInfo().getValue();
+        entity.setType(appenderInfo.getType());
         LogAppenderParametersDto parameters = new LogAppenderParametersDto();
-        switch (appenderType) {
+        switch (appenderInfo.getType()) {
             case FILE:
                 FileAppenderParametersDto fileDto = new FileAppenderParametersDto();
                 fileDto.setSshKey(detailsView.getPublicKey());
@@ -163,6 +187,13 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderDto,
                 }
                 flume.setHosts(hosts);
                 parameters.setParameters(flume);
+                break;
+            case CUSTOM:
+                CustomAppenderParametersDto customParameters = new CustomAppenderParametersDto();
+                customParameters.setName(appenderInfo.getName());
+                customParameters.setAppenderClassName(appenderInfo.getAppenderClassName());
+                customParameters.setConfiguration(detailsView.getConfiguration());
+                parameters.setParameters(customParameters);
                 break;
         }
         entity.setProperties(parameters);

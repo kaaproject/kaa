@@ -43,6 +43,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
@@ -62,6 +63,8 @@ public class DataSource {
     private List<UserDto> users;
 
     private List<EventClassFamilyDto> ecfs;
+    
+    private List<LogAppenderInfoDto> appenderInfos;
 
     public DataSource(KaaAdminServiceAsync rpcService, EventBus eventBus) {
         this.rpcService = rpcService;
@@ -911,6 +914,23 @@ public class DataSource {
             }
         });
     }
+    
+    public void loadAppenderInfos(
+            final AsyncCallback<List<LogAppenderInfoDto>> callback) {
+        if (appenderInfos == null) {
+            appenderInfos = new ArrayList<LogAppenderInfoDto>();
+            rpcService.getLogAppenderInfos(new DataCallback<List<LogAppenderInfoDto>>(callback) {
+                @Override
+                protected void onResult(List<LogAppenderInfoDto> result) {
+                    appenderInfos.addAll(result);
+                }
+            });
+        } else {
+            if (callback != null) {
+                callback.onSuccess(appenderInfos);
+            }
+        }
+    }    
 
     abstract class DataCallback<T> implements AsyncCallback<T> {
 

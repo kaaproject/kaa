@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
@@ -32,8 +33,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AppenderInfoListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FlumeBalancingTypeListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.LogTypeListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -50,7 +51,7 @@ import com.watopi.chosen.client.event.ChosenChangeEvent;
 import com.watopi.chosen.client.event.ChosenChangeEvent.ChosenChangeHandler;
 import com.watopi.chosen.client.gwt.ChosenListBox;
 
-public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppenderView, ValueChangeHandler<LogAppenderTypeDto>, ChosenChangeHandler {
+public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppenderView, ValueChangeHandler<LogAppenderInfoDto>, ChosenChangeHandler {
 
     private static final int FULL_TABLE_SIZE = 9;
     private static final int DEFAULT_PRIORITIZED_TABLE_ROW_COUNT = 2;
@@ -60,7 +61,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     private SizedTextBox name;
     private CheckBox status;
     private SchemaListBox schema;
-    private LogTypeListBox type;
+    private AppenderInfoListBox appenderInfo;
     private FlumeBalancingTypeListBox flumeBalancingType;
     private SizedTextArea description;
     private SizedTextBox createdUsername;
@@ -78,6 +79,9 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     private Label publicKeyLabel;
     private SizedTextBox sshKey;
 
+    private Label configurationLabel;
+    private SizedTextArea configuration;
+    
     private static final String FULL_WIDTH = "100%";
 
     public LogAppenderViewImpl(boolean create) {
@@ -146,14 +150,13 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         description.addInputHandler(this);
 
         Label typeLabel = new Label(Utils.constants.logAppenderType());
-        type = new LogTypeListBox();
-        type.setValue(LogAppenderTypeDto.FILE, true);
-        type.setAcceptableValues(Arrays.asList(LogAppenderTypeDto.values()));
-        type.setEnabled(create);
-        type.addValueChangeHandler(this);
+        appenderInfo = new AppenderInfoListBox();
+        appenderInfo.setValue(new LogAppenderInfoDto(LogAppenderTypeDto.FILE), true);
+        appenderInfo.setEnabled(create);
+        appenderInfo.addValueChangeHandler(this);
 
         detailsTable.setWidget(7, 0, typeLabel);
-        detailsTable.setWidget(7, 1, type);
+        detailsTable.setWidget(7, 1, appenderInfo);
 
         addHost = new Button(Utils.constants.addHost());
         addHost.addClickHandler(new ClickHandler() {
@@ -211,8 +214,8 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         if (metadatalistBox != null) {
             generateMetadataListBox();
         }
-        if (type != null) {
-            type.setValue(LogAppenderTypeDto.FILE, true);
+        if (appenderInfo != null) {
+            appenderInfo.setValue(new LogAppenderInfoDto(LogAppenderTypeDto.FILE), true);
         }
         getFooter().clear();
         if(sshKey != null) {
@@ -223,7 +226,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     @Override
     protected boolean validate() {
         boolean result = isNotBlank(name.getValue());
-        if (hostTable != null && type != null && LogAppenderTypeDto.FLUME.equals(type.getValue())) {
+        if (hostTable != null && appenderInfo != null && LogAppenderTypeDto.FLUME.equals(appenderInfo.getValue())) {
             for (int i = 1; i < hostTable.getRowCount(); i++) {
                 result &= isNotBlank(((SizedTextBox) hostTable.getWidget(i, 0)).getValue())
                         && isNotBlank(((SizedTextBox) hostTable.getWidget(i, 1)).getValue());
@@ -232,7 +235,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
                 }
             }
         }
-        if (sshKey != null && type != null && LogAppenderTypeDto.FILE.equals(type.getValue())) {
+        if (sshKey != null && appenderInfo != null && LogAppenderTypeDto.FILE.equals(appenderInfo.getValue())) {
             result &= isNotBlank(sshKey.getValue());
         }
         return result;
@@ -254,8 +257,8 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     }
 
     @Override
-    public LogTypeListBox getType() {
-        return type;
+    public AppenderInfoListBox getAppenderInfo() {
+        return appenderInfo;
     }
 
     @Override
@@ -309,21 +312,31 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     }
 
     @Override
-    public void onValueChange(ValueChangeEvent<LogAppenderTypeDto> event) {
-        switch (event.getValue()) {
+    public void onValueChange(ValueChangeEvent<LogAppenderInfoDto> event) {
+        switch (event.getValue().getType()) {
             case FILE:
                 hideFlumeCongurationFields();
+                hideCustomConfigurationFields();
                 showFileCongurationFields();
                 fireChanged();
                 break;
             case MONGO:
                 hideFlumeCongurationFields();
                 hideFileCongurationFields();
+                hideCustomConfigurationFields();
                 fireChanged();
                 break;
             case FLUME:
                 hideFileCongurationFields();
+                hideCustomConfigurationFields();
                 showFlumeCongurationFields();
+                fireChanged();
+                break;
+            case CUSTOM:
+                hideFlumeCongurationFields();
+                hideFileCongurationFields();
+                showCustomConfigurationFields();
+                configuration.setValue(event.getValue().getDefaultConfig());
                 fireChanged();
                 break;
         }
@@ -367,6 +380,44 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         showFlumeBalancingCongurationFields(false, flumeAppenderParametersDto.getBalancingType());
         getFooter().clear();
         getFooter().add(hostTable);
+    }
+    
+    @Override
+    public void showCustomConfigurationFields() {
+        configurationLabel = new Label(Utils.constants.configuration());
+        configurationLabel.addStyleName(REQUIRED);
+        configuration = new SizedTextArea(524288);
+        configuration.setWidth(FULL_WIDTH);
+        configuration.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 300);
+        configuration.addInputHandler(this);
+        detailsTable.setWidget(8, 0, configurationLabel);
+        detailsTable.setWidget(8, 1, configuration);
+    }
+
+    @Override
+    public String getConfiguration() {
+        String configurationString = "";
+        if(configuration != null) {
+            configurationString = configuration.getValue();
+        }
+        return configurationString;
+    }
+
+    @Override
+    public void setConfiguration(String configurationString) {
+        if(configuration != null) {
+            configuration.setValue(configurationString);
+        }
+    }
+
+    @Override
+    public void hideCustomConfigurationFields() {
+        if (configurationLabel != null) {
+            detailsTable.remove(configurationLabel);
+        }
+        if (configuration != null) {
+            detailsTable.remove(configuration);
+        }
     }
 
     private FlexTable generateTable(boolean hasPriority) {
@@ -510,4 +561,5 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     public void onChange(ChosenChangeEvent event) {
         fireChanged();
     }
+
 }

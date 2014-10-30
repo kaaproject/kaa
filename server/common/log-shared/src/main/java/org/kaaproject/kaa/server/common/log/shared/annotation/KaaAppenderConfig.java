@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.operations.service.logs;
+package org.kaaproject.kaa.server.common.log.shared.annotation;
 
-public class LogEvent {
-    
-    private byte[] logData;
-    
-    public byte[] getLogData() {
-        return logData;
-    }
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public void setLogData(byte[] logData) {
-        this.logData = logData;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE) 
+public @interface KaaAppenderConfig {
+
 }

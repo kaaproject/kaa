@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.logs;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 
 public interface LogAppenderBuilder {
 

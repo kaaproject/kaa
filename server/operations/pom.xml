@@ -613,5 +613,16 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>cdap</id>
+            <dependencies>
+		        <dependency>
+		            <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
+		            <artifactId>appender</artifactId>
+		            <version>${project.version}</version>
+		            <scope>runtime</scope>
+		        </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>

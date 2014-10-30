@@ -18,6 +18,9 @@ package org.kaaproject.kaa.server.operations.service.logs;
 
 import java.util.List;
 
+import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+
 /**
  * Service that return appenders list.
  *

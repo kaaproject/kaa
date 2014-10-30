@@ -25,7 +25,7 @@ public class DemoBuildersRegistry {
     
     static {
         //demoBuilders.add(new PlayerDemoBuilder());
-        //demoBuilders.add(new SmartHouseDemoBuilder());
+        demoBuilders.add(new SmartHouseDemoBuilder());
         demoBuilders.add(new RobotRunDemoBuilder());
     }
     

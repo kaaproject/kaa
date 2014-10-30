@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.operations.service.logs;
+package org.kaaproject.kaa.server.common.log.shared.appender;
 
 import java.util.List;
 
