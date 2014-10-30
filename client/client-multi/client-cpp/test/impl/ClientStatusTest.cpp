@@ -65,8 +65,8 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     BOOST_CHECK_EQUAL(cs.isRegistered(), true);
 
     SharedDataBuffer sdb;
-    sdb.first.reset(new boost::uint8_t[5]);
-    boost::uint8_t *temp = sdb.first.get();
+    sdb.first.reset(new std::uint8_t[5]);
+    std::uint8_t *temp = sdb.first.get();
     temp[0] = 1;
     temp[1] = 2;
     temp[2] = 2;

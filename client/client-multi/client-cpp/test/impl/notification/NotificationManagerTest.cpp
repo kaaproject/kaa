@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(BadSubscriber)
     TopicSubscribers subscriptions;
     TopicSubscriberInfo info;
     info.action_ = TopicSubscriberInfo::ADD;
-    info.lisnener_ = NULL;
+    info.lisnener_ = nullptr;
     subscriptions.insert(std::make_pair("someId", info));
 
     BOOST_CHECK_THROW(notificationManager.updateTopicSubscriptions(subscriptions), KaaException);

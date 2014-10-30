@@ -17,7 +17,7 @@
 #ifndef ABSTRACTCONFIGURATIONDELTACREATOR_HPP_
 #define ABSTRACTCONFIGURATIONDELTACREATOR_HPP_
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <avro/Encoder.hh>
 #include <avro/Stream.hh>
 #include <vector>
@@ -32,7 +32,7 @@ public:
     virtual ~AbstractConfigurationDeltaCreator() {}
     virtual std::vector<deltaT> fillDelta() = 0;
 
-    void createDelta(boost::uint8_t *&data, size_t &len)
+    void createDelta(std::uint8_t *&data, size_t &len)
     {
         avro::EncoderPtr encoder = avro::binaryEncoder();
         std::ostringstream os;
@@ -46,7 +46,7 @@ public:
         std::string sdata = os.str();
         len = sdata.length();
 
-        data = new boost::uint8_t[len];
+        data = new std::uint8_t[len];
         for (size_t i =0; i<len; ++i) {
             data[i] = (unsigned char)sdata.at(i);
         }

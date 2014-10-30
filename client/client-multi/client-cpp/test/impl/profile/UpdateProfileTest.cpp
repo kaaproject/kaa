@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(SerializedProfileContainer)
 {
     std::string profileBody("Going to test Default Serialized Profile Container stuff");
     ProfileUpdateManager updateManager;
-    boost::shared_ptr<TestProfileContainer> profileContainer(new TestProfileContainer);
+    std::shared_ptr<TestProfileContainer> profileContainer(new TestProfileContainer);
     SerializedProfileContainer serializedProfileContainer;
 
     serializedProfileContainer.setProfileContainer(static_cast<ProfileContainerPtr>(profileContainer));
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(ProfileManager)
     std::string profileBody("Going to test Default Profile Manager stuff");
     ProfileUpdateManager updateManager;
     ProfileManager profileManager(updateManager);
-    boost::shared_ptr<TestProfileContainer> profileContainer(new TestProfileContainer);
+    std::shared_ptr<TestProfileContainer> profileContainer(new TestProfileContainer);
 
     updateManager.profile.profileBody = profileBody;
     profileManager.setProfileContainer(static_cast<ProfileContainerPtr>(profileContainer));

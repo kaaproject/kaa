@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(checkCreateEmptyResponse)
 {
     std::string empty("");
     BOOST_REQUIRE_THROW(HttpResponse hr(empty), KaaException);
-    BOOST_REQUIRE_THROW(HttpResponse hr(NULL, 100), KaaException);
+    BOOST_REQUIRE_THROW(HttpResponse hr(nullptr, 100), KaaException);
 
     const char *    data = "abc";
     size_t          data_len = 0;

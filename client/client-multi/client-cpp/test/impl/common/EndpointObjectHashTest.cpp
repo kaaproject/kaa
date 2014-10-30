@@ -16,8 +16,6 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <boost/cstdint.hpp>
-
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
@@ -35,7 +33,7 @@ BOOST_AUTO_TEST_CASE(NoData)
     EndpointObjectHash hashObject;
     SharedDataBuffer empty = hashObject.getHash();
 
-    BOOST_CHECK(empty.first.get() == NULL && empty.second == 0);
+    BOOST_CHECK(empty.first.get() == nullptr && empty.second == 0);
 }
 
 BOOST_AUTO_TEST_CASE(SameDataHash)
@@ -82,7 +80,7 @@ BOOST_AUTO_TEST_CASE(EmptyHash)
     BOOST_CHECK(!EndpointObjectHash::isEqual(hash.getHash(), empty.getHash()));
 }
 
-void createInvalidHashObject() { EndpointObjectHash hash(NULL, 0); }
+void createInvalidHashObject() { EndpointObjectHash hash(nullptr, 0); }
 
 BOOST_AUTO_TEST_CASE(InvalidData)
 {
@@ -99,7 +97,7 @@ BOOST_AUTO_TEST_CASE(CompareCalculationWithSample)
      */
     SharedDataBuffer sampleBuffer;
     std::string str("The quick brown fox jumps over the lazy dog");
-    boost::uint8_t* sample = new uint8_t[SHA1_SIZE] {0x2f, 0xd4, 0xe1, 0xc6,
+    std::uint8_t* sample = new uint8_t[SHA1_SIZE] {0x2f, 0xd4, 0xe1, 0xc6,
                                                      0x7a, 0x2d, 0x28, 0xfc,
                                                      0xed, 0x84, 0x9e, 0xe1,
                                                      0xbb, 0x76, 0xe7, 0x39,
@@ -109,7 +107,7 @@ BOOST_AUTO_TEST_CASE(CompareCalculationWithSample)
     sampleBuffer.second = SHA1_SIZE;
 
     SharedDataBuffer calculatedHash = EndpointObjectHash(
-            reinterpret_cast<const boost::uint8_t*>(str.data()), str.length()).getHash();
+            reinterpret_cast<const std::uint8_t*>(str.data()), str.length()).getHash();
 
     BOOST_CHECK(EndpointObjectHash::isEqual(calculatedHash, sampleBuffer));
 }

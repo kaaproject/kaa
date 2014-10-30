@@ -18,7 +18,6 @@
 #define HTTPCLIENT_HPP_
 
 #include "kaa/http/IHttpClient.hpp"
-#include <boost/cstdint.hpp>
 #include <boost/asio.hpp>
 
 #include "kaa/KaaThread.hpp"

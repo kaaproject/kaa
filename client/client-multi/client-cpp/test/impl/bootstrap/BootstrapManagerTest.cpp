@@ -15,9 +15,9 @@
  */
 
 #include <boost/test/unit_test.hpp>
-#include <boost/bind.hpp>
 
 #include <memory>
+#include <functional>
 
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/common/exception/KaaException.hpp"
@@ -56,7 +56,7 @@ public:
         }
     }
 
-    virtual void setOnBootstrapResponseCallback(boost::function<void (const OperationsServerList&)> callback) {
+    virtual void setOnBootstrapResponseCallback(std::function<void (const OperationsServerList&)> callback) {
         callback_ = callback;
     }
 
@@ -68,7 +68,7 @@ public:
     ServerInfo getLastServerInfo() const { return lastServer_; }
 
 private:
-    boost::function<void (const OperationsServerList&)> callback_;
+    std::function<void (const OperationsServerList&)> callback_;
     ServerInfo lastServer_;
 };
 
@@ -92,8 +92,8 @@ BOOST_AUTO_TEST_CASE(EmptyEndpointServerListTest)
 BOOST_AUTO_TEST_CASE(EndpointServerResolvingTest)
 {
     BootstrapManager manager;
-    boost::shared_ptr<BootstrapTransportMock> transport(new BootstrapTransportMock);
-    transport->setOnBootstrapResponseCallback(boost::bind(&BootstrapManager::onResolveResponse, &manager, _1));
+    std::shared_ptr<BootstrapTransportMock> transport(new BootstrapTransportMock);
+    transport->setOnBootstrapResponseCallback(std::bind(&BootstrapManager::onResolveResponse, &manager, std::placeholders::_1));
 
     BOOST_CHECK_THROW(manager.useNextOperationServer(), KaaException);
     BOOST_CHECK_THROW(manager.useOperationServerByName("fake"), KaaException);

@@ -24,7 +24,7 @@ namespace kaa {
 class SchemaUpdatesReceiverStub : public ISchemaUpdatesReceiver
 {
 public:
-    SchemaUpdatesReceiverStub() : schema_(NULL), updateReceived_(false) {}
+    SchemaUpdatesReceiverStub() : schema_(nullptr), updateReceived_(nullptr) {}
 
     void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
     {
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(schemaProcessorTest)
     sp.loadSchema(reinterpret_cast<const std::uint8_t *>(sch), len);
 
     BOOST_CHECK(surstub1.isUpdateReceived());
-    BOOST_CHECK(surstub1.getSchema().get() != NULL);
+    BOOST_CHECK(surstub1.getSchema().get() != nullptr);
 
     SchemaUpdatesReceiverStub surstub2, surstub3;
     sp.subscribeForSchemaUpdates(surstub2);

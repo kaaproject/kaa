@@ -18,7 +18,7 @@
 
 #include <string>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/channel/ServerType.hpp"
 #include "kaa/channel/server/HttpServerInfo.hpp"
@@ -29,7 +29,7 @@ namespace kaa {
 
 class PingServerStorage : public IPingServerStorage {
 public:
-    PingServerStorage(const std::string& host, const boost::uint16_t& port)
+    PingServerStorage(const std::string& host, const std::uint16_t& port)
         : si_(new HttpServerInfo(ServerType::BOOTSTRAP, host, port, "a2V5")) {}
 
     virtual IServerInfoPtr getPingServer() {

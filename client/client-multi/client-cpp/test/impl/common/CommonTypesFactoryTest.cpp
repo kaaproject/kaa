@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(checkBytesCommonValue)
 {
     try {
         std::shared_ptr<ICommonValue> cvp;
-        std::vector<boost::uint8_t> exp = {0,1,2,3,4,5,6};
+        std::vector<std::uint8_t> exp = {0,1,2,3,4,5,6};
         const avro::GenericDatum &d = avro::GenericDatum(exp);
 
         cvp = CommonTypesFactory::createCommon<avro::AVRO_BYTES>(d);
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(checkBytesCommonValue)
         BOOST_CHECK_EQUAL(CommonValueTools::isFixed(cvp), false);
         BOOST_CHECK_NO_THROW(CommonValueTools::getByteArray(cvp));
 
-        const std::vector<boost::uint8_t> & actual = CommonValueTools::getByteArray(cvp);
+        const std::vector<std::uint8_t> & actual = CommonValueTools::getByteArray(cvp);
         BOOST_CHECK_EQUAL(actual.size(), exp.size());
         BOOST_CHECK_EQUAL_COLLECTIONS(exp.begin(), exp.end(), actual.begin(), actual.end());
     } catch (std::exception &e) {
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(checkEnumCommonValue)
         std::shared_ptr<ICommonValue> cvp;
         std::string exp = "SYMBOL";
         avro::ValidSchema vs = avro::compileJsonSchemaFromMemory(
-                        reinterpret_cast<const boost::uint8_t *>(
+                        reinterpret_cast<const std::uint8_t *>(
                                 enum_schema.c_str()
                         ),
                         enum_schema.size()
@@ -149,8 +149,8 @@ BOOST_AUTO_TEST_CASE(checkFixedCommonValue)
     const std::string fixed_schema = "{\"name\":\"foo\", \"namespace\":\"bar\",\"type\":\"fixed\", \"size\":5}";
     try {
         std::shared_ptr<ICommonValue> cvp;
-        std::vector<boost::uint8_t> exp = {0,1,2,3,4};
-        avro::ValidSchema vs = avro::compileJsonSchemaFromMemory(reinterpret_cast<const boost::uint8_t *>(fixed_schema.c_str()), fixed_schema.size());
+        std::vector<std::uint8_t> exp = {0,1,2,3,4};
+        avro::ValidSchema vs = avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(fixed_schema.c_str()), fixed_schema.size());
 
         avro::GenericDatum d(vs.root());
         avro::GenericFixed &f = d.value<avro::GenericFixed>();
@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE(checkFixedCommonValue)
         BOOST_CHECK(cvp.get() != nullptr);
         BOOST_CHECK_EQUAL(CommonValueTools::isByteArray(cvp), true);
         BOOST_CHECK_EQUAL(CommonValueTools::isFixed(cvp), true);
-        std::vector<boost::uint8_t> actual = CommonValueTools::getByteArray(cvp);
+        std::vector<std::uint8_t> actual = CommonValueTools::getByteArray(cvp);
         BOOST_CHECK_EQUAL(actual.size(), exp.size());
         BOOST_CHECK_EQUAL_COLLECTIONS(exp.begin(), exp.end(), actual.begin(), actual.end());
     } catch (const std::exception &e) {
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(checkRecordCommonValue)
         }";
     try {
         avro::ValidSchema vs = avro::compileJsonSchemaFromMemory(
-                        reinterpret_cast<const boost::uint8_t *>(
+                        reinterpret_cast<const std::uint8_t *>(
                                 record_schema.c_str()
                         ),
                         record_schema.size()
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(checkArrayCommonValue)
     const std::string array_schema = "{\"name\":\"foo\", \"namespace\":\"bar\",\"type\":\"array\", \"items\":\"int\"}";
     try {
         avro::ValidSchema vs = avro::compileJsonSchemaFromMemory(
-                        reinterpret_cast<const boost::uint8_t *>(
+                        reinterpret_cast<const std::uint8_t *>(
                                 array_schema.c_str()
                         ),
                         array_schema.size()

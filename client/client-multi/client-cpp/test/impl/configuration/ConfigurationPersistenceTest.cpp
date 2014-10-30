@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(checkConfigurationLoad)
         cpm.onConfigurationUpdated(rec);
         BOOST_CHECK(csstub.isSaveCalled());
 
-        BOOST_CHECK(cpm.getConfigurationHash().getHash().first.get() != NULL);
+        BOOST_CHECK(cpm.getConfigurationHash().getHash().first.get() != nullptr);
         BOOST_CHECK(cpm.getConfigurationHash().getHash().second > 0);
 
     } catch (...) {

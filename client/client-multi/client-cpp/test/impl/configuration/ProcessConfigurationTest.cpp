@@ -39,7 +39,7 @@ class ConfigurationReceiverStub : public IConfigurationReceiver
 {
 public:
     void onConfigurationUpdated(const ICommonRecord &configuration){
-        if (checker_ != NULL) {
+        if (checker_ != nullptr) {
             checker_->checkLoadedConfiguration(configuration);
         }
     }
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(checkRootConfigurationLoad)
     manager.unsubscribeFromConfigurationChanges(receiver);
 }
 
-BOOST_AUTO_TEST_CASE(checkOverrideByUuid)
+ BOOST_AUTO_TEST_CASE(checkOverrideByUuid)
 {
     std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());

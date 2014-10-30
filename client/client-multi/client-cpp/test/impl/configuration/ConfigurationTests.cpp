@@ -29,7 +29,7 @@ std::vector<deltaT> ResetArrayOfDiffTest::fillDelta()
 {
     testArrayRecord2T testArrayRecord2;
     testArrayRecord2.testArray2.set_resetT(resetT::reset);
-    testArrayRecord2.__uuid = {{0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,6}};
+    testArrayRecord2.__uuid = {{1,1,0,2,0,3,0,4,0,5,0,6,0,7,0,9}};
 
     deltaT::delta_t delta;
     delta.set_testArrayRecord2T(testArrayRecord2);
@@ -118,7 +118,7 @@ std::vector<deltaT> ResetArrayAddMoreItemsOfDiffTypeToArrayTest::fillDelta()
     testArray2.push_back(user4);
 
     testArrayRecord2T testArrayRecord2;
-    testArrayRecord2.__uuid = {{0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,6}};
+    testArrayRecord2.__uuid = {{1,1,0,2,0,3,0,4,0,5,0,6,0,7,0,9}};
     testArrayRecord2.testArray2.set_array(testArray2);
 
     deltaT::delta_t delta_2;
@@ -194,7 +194,7 @@ std::vector<deltaT> RemoveTwoArrayItemsAndAddNewItemsToArrayTest::fillDelta()
     testArray2.push_back(user2);
 
     testArrayRecord2T testArrayRecord2;
-    testArrayRecord2.__uuid = {{0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,6}};
+    testArrayRecord2.__uuid = {{1,1,0,2,0,3,0,4,0,5,0,6,0,7,0,9}};
     testArrayRecord2.testArray2.set_array(testArray2);
 
     deltaT::delta_t delta_2;
@@ -342,7 +342,7 @@ std::vector<deltaT> FullResyncTest::fillDelta()
     testArrayRecord1.testArray1 = testArray1;
 
     testArrayRecord2T testArrayRecord2;
-    testArrayRecord2.__uuid = {{0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,6}};
+    testArrayRecord2.__uuid = {{1,1,0,2,0,3,0,4,0,5,0,6,0,7,0,9}};
     testArrayRecord2.testArray2.set_array(testArray2);
 
     testT test;
@@ -350,7 +350,7 @@ std::vector<deltaT> FullResyncTest::fillDelta()
     test.testField2 = testField2;
     test.testArrayRecord1 = testArrayRecord1;
     test.testArrayRecord2 = testArrayRecord2;
-    test.__uuid = {{0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8}};
+    test.__uuid = {{2,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8}};
 
     deltaT::delta_t delta_;
     delta_.set_testT(test);
