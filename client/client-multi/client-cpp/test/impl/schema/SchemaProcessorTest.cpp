@@ -16,7 +16,7 @@
 
 #include "kaa/schema/SchemaProcessor.hpp"
 #include "kaa/schema/ISchemaUpdatesReceiver.hpp"
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <boost/test/unit_test.hpp>
 
 namespace kaa {
@@ -26,21 +26,21 @@ class SchemaUpdatesReceiverStub : public ISchemaUpdatesReceiver
 public:
     SchemaUpdatesReceiverStub() : schema_(NULL), updateReceived_(false) {}
 
-    void onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema)
+    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
     {
         updateReceived_ = true;
         schema_ = schema;
     }
 
     bool isUpdateReceived() { return updateReceived_; }
-    boost::shared_ptr<avro::ValidSchema> getSchema() { return schema_; }
+    std::shared_ptr<avro::ValidSchema> getSchema() { return schema_; }
 
 private:
-    boost::shared_ptr<avro::ValidSchema> schema_;
+    std::shared_ptr<avro::ValidSchema> schema_;
     bool updateReceived_;
 };
 
-static const size_t len = 31;
+static const std::size_t len = 31;
 static const char * sch = "{\"name\":\"field1\", \"type\":\"int\"}";
 
 BOOST_AUTO_TEST_SUITE(SchemaProcessorSuite)
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(schemaProcessorTest)
     SchemaUpdatesReceiverStub surstub1;
     SchemaProcessor sp;
     sp.subscribeForSchemaUpdates(surstub1);
-    sp.loadSchema(reinterpret_cast<const boost::uint8_t *>(sch), len);
+    sp.loadSchema(reinterpret_cast<const std::uint8_t *>(sch), len);
 
     BOOST_CHECK(surstub1.isUpdateReceived());
     BOOST_CHECK(surstub1.getSchema().get() != NULL);
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(schemaProcessorTest)
 
     sp.unsubscribeFromSchemaUpdates(surstub2);
 
-    sp.loadSchema(reinterpret_cast<const boost::uint8_t *>(sch), len);
+    sp.loadSchema(reinterpret_cast<const std::uint8_t *>(sch), len);
     BOOST_CHECK(!surstub2.isUpdateReceived());
     BOOST_CHECK(surstub3.isUpdateReceived());
 }

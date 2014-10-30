@@ -46,11 +46,11 @@ public:
     }
 
     bool isConfigurationProcessedCalled() { return configurationProcessedCalled_; }
-    int32_t receivedDeltasCount() { return deltasCount_; }
+    std::int32_t receivedDeltasCount() { return deltasCount_; }
     void reset() { configurationProcessedCalled_ = false; deltasCount_ = 0; }
 private:
     bool configurationProcessedCalled_;
-    int32_t deltasCount_;
+    std::int32_t deltasCount_;
 };
 
 class DeltaCreator : public AbstractConfigurationDeltaCreator
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_SUITE(ConfigurationProcessorSuite)
 BOOST_AUTO_TEST_CASE(processConfiguration)
 {
     ConfigurationProcessor cp;
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     BOOST_REQUIRE_THROW(cp.onSchemaUpdated(schema), KaaException);
 
     schema.reset(new avro::ValidSchema());
@@ -102,8 +102,8 @@ BOOST_AUTO_TEST_CASE(processConfiguration)
     BOOST_CHECK(!cps.isConfigurationProcessedCalled());
     BOOST_CHECK(cps.receivedDeltasCount() == 0);
 
-    boost::uint8_t *delta;
-    size_t          delta_len;
+    std::uint8_t *delta;
+    std::size_t          delta_len;
 
     DeltaCreator dc;
     dc.createDelta(delta, delta_len);

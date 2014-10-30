@@ -27,10 +27,10 @@
 namespace kaa {
 
 template <typename CType, avro::Type AType>
-boost::shared_ptr<ICommonValue> check(CType exp)
+std::shared_ptr<ICommonValue> check(CType exp)
 {
     try {
-        boost::shared_ptr<ICommonValue> cvp;
+        std::shared_ptr<ICommonValue> cvp;
         const avro::GenericDatum &d = avro::GenericDatum(exp);
 
         cvp = CommonTypesFactory::createCommon<AType>(d);
@@ -54,14 +54,14 @@ BOOST_AUTO_TEST_SUITE(CommonTypesSuite)
 
 BOOST_AUTO_TEST_CASE(checkPrimitiveCommonValue)
 {
-    boost::shared_ptr<ICommonValue> cvp;
-    cvp = check<int32_t, avro::AVRO_INT>(100500);
+    std::shared_ptr<ICommonValue> cvp;
+    cvp = check<std::int32_t, avro::AVRO_INT>(100500);
     BOOST_CHECK_EQUAL(CommonValueTools::isNumeric(cvp), true);
-    cvp = check<int32_t, avro::AVRO_INT>(-100500);
+    cvp = check<std::int32_t, avro::AVRO_INT>(-100500);
     BOOST_CHECK_EQUAL(CommonValueTools::isNumeric(cvp), true);
-    cvp = check<int64_t, avro::AVRO_LONG>(100500L);
+    cvp = check<std::int64_t, avro::AVRO_LONG>(100500L);
     BOOST_CHECK_EQUAL(CommonValueTools::isNumeric(cvp), true);
-    cvp = check<int64_t, avro::AVRO_LONG>(-100500L);
+    cvp = check<std::int64_t, avro::AVRO_LONG>(-100500L);
     BOOST_CHECK_EQUAL(CommonValueTools::isNumeric(cvp), true);
     cvp = check<float, avro::AVRO_FLOAT>(0.0005374);
     BOOST_CHECK_EQUAL(CommonValueTools::isNumeric(cvp), true);
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(checkPrimitiveCommonValue)
 BOOST_AUTO_TEST_CASE(checkBytesCommonValue)
 {
     try {
-        boost::shared_ptr<ICommonValue> cvp;
+        std::shared_ptr<ICommonValue> cvp;
         std::vector<boost::uint8_t> exp = {0,1,2,3,4,5,6};
         const avro::GenericDatum &d = avro::GenericDatum(exp);
 
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(checkBytesCommonValue)
 BOOST_AUTO_TEST_CASE(checkNullCommonValue)
 {
     try {
-        boost::shared_ptr<ICommonValue> cvp;
+        std::shared_ptr<ICommonValue> cvp;
         avro::GenericDatum d;
         cvp = CommonTypesFactory::createCommon<avro::AVRO_NULL>(d);
         BOOST_CHECK(cvp.get() != nullptr);
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(checkEnumCommonValue)
 {
     const std::string enum_schema = "{\"name\":\"foo\", \"namespace\":\"bar\",\"type\":\"enum\", \"symbols\":[\"SYMBOL\"]}";
     try {
-        boost::shared_ptr<ICommonValue> cvp;
+        std::shared_ptr<ICommonValue> cvp;
         std::string exp = "SYMBOL";
         avro::ValidSchema vs = avro::compileJsonSchemaFromMemory(
                         reinterpret_cast<const boost::uint8_t *>(
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(checkFixedCommonValue)
 {
     const std::string fixed_schema = "{\"name\":\"foo\", \"namespace\":\"bar\",\"type\":\"fixed\", \"size\":5}";
     try {
-        boost::shared_ptr<ICommonValue> cvp;
+        std::shared_ptr<ICommonValue> cvp;
         std::vector<boost::uint8_t> exp = {0,1,2,3,4};
         avro::ValidSchema vs = avro::compileJsonSchemaFromMemory(reinterpret_cast<const boost::uint8_t *>(fixed_schema.c_str()), fixed_schema.size());
 
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(checkRecordCommonValue)
                         record_schema.size()
         );
         uuid_t empty_uuid;
-        boost::shared_ptr<ICommonValue> cvp = CommonTypesFactory::createCommonRecord(empty_uuid, vs.root());
+        std::shared_ptr<ICommonValue> cvp = CommonTypesFactory::createCommonRecord(empty_uuid, vs.root());
 
         BOOST_CHECK(cvp.get() != nullptr);
         BOOST_CHECK(cvp->getCommonType() == CommonValueType::COMMON_RECORD);
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(checkArrayCommonValue)
                         array_schema.size()
         );
 
-        boost::shared_ptr<ICommonValue> cvp = CommonTypesFactory::createCommonArray(vs.root());
+        std::shared_ptr<ICommonValue> cvp = CommonTypesFactory::createCommonArray(vs.root());
         BOOST_CHECK(cvp.get() != nullptr);
         BOOST_CHECK(CommonValueTools::isArray(cvp));
         BOOST_REQUIRE_THROW(CommonValueTools::getRecord(cvp), KaaException);

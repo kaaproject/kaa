@@ -114,7 +114,7 @@ public:
 
 private:
     Topics topics_;
-    boost::shared_ptr<UserNotificationListener> voluntaryListener_;
+    std::shared_ptr<UserNotificationListener> voluntaryListener_;
     INotificationManager& notificationManager_;
 };
 
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(BadSubscriber)
 {
     IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
     MockChannelManager channelManager;
-    boost::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
+    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
     NotificationManager notificationManager( status);
     notificationManager.setTransport(transport);
 
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(VoluntarySubscription)
 {
     IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
     MockChannelManager channelManager;
-    boost::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
+    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
     NotificationManager notificationManager(status);
     notificationManager.setTransport(transport);
 
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(NotificationReceiving)
     /* TEST */
     IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
     MockChannelManager channelManager;
-    boost::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
+    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
     NotificationManager notificationManager(status);
     notificationManager.setTransport(transport);
     SystemNotificationListener mandatoryListener(manadatoryTopic.id);
@@ -280,7 +280,7 @@ BOOST_AUTO_TEST_CASE(NotificationReceiving)
 //
 //    ClientStatus restored("fake.txt");
 //    MockChannelManager channelManager;
-//    boost::shared_ptr<NotificationTransport> transport(new NotificationTransport(restored, channelManager));
+//    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(restored, channelManager));
 //    NotificationManager notificationManager(transport, restored);
 //
 //    const auto& topics = notificationManager.getTopics();
