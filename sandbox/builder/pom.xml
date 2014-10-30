@@ -36,7 +36,7 @@
         <base.images.url>http://www.kaaproject.org/Uploads/</base.images.url>
         <ubuntu.image.url>${base.images.url}/kaa-sandbox-ubuntu-64bit.ova</ubuntu.image.url>
         <ubuntu.image.name>Kaa Sandbox Ubuntu 64 bit</ubuntu.image.name>
-        <ubuntu.sandbox.file>${base.path}/kaa-sandbox-ubuntu-64bit-${build.number}-${scm.version}.ova</ubuntu.sandbox.file>
+        <ubuntu.sandbox.file>${base.path}/kaa-sandbox-ubuntu-64bit.ova</ubuntu.sandbox.file>
         <ssh.forward.port>10022</ssh.forward.port>
         <web.admin.forward.port>8899</web.admin.forward.port>
     </properties>
@@ -118,7 +118,6 @@
                                     <groupId>org.kaaproject.kaa.server</groupId>
                                     <artifactId>control</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>${build.number}-${scm.version}</classifier>
                                     <type>deb</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distro.path}</outputDirectory>
@@ -128,7 +127,6 @@
                                     <groupId>org.kaaproject.kaa.server</groupId>
                                     <artifactId>operations</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>${build.number}-${scm.version}</classifier>
                                     <type>deb</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distro.path}</outputDirectory>
@@ -138,7 +136,6 @@
                                     <groupId>org.kaaproject.kaa.server</groupId>
                                     <artifactId>bootstrap</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>${build.number}-${scm.version}</classifier>
                                     <type>deb</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distro.path}</outputDirectory>
@@ -148,7 +145,6 @@
                                     <groupId>org.kaaproject.kaa.server</groupId>
                                     <artifactId>admin</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>${build.number}-${scm.version}</classifier>
                                     <type>deb</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distro.path}</outputDirectory>
@@ -249,7 +245,6 @@
 		                                    <groupId>org.kaaproject.kaa.server</groupId>
 		                                    <artifactId>control</artifactId>
 		                                    <version>${project.version}</version>
-		                                    <classifier>${build.number}-${scm.version}</classifier>
 		                                    <type>deb</type>
 		                                    <overWrite>true</overWrite>
 		                                    <outputDirectory>${distro.path}</outputDirectory>
@@ -259,7 +254,6 @@
 		                                    <groupId>org.kaaproject.kaa.server</groupId>
 		                                    <artifactId>operations</artifactId>
 		                                    <version>${project.version}</version>
-		                                    <classifier>${build.number}-${scm.version}</classifier>
 		                                    <type>deb</type>
 		                                    <overWrite>true</overWrite>
 		                                    <outputDirectory>${distro.path}</outputDirectory>
@@ -269,7 +263,6 @@
 		                                    <groupId>org.kaaproject.kaa.server</groupId>
 		                                    <artifactId>bootstrap</artifactId>
 		                                    <version>${project.version}</version>
-		                                    <classifier>${build.number}-${scm.version}</classifier>
 		                                    <type>deb</type>
 		                                    <overWrite>true</overWrite>
 		                                    <outputDirectory>${distro.path}</outputDirectory>
@@ -279,7 +272,6 @@
 		                                    <groupId>org.kaaproject.kaa.server</groupId>
 		                                    <artifactId>admin</artifactId>
 		                                    <version>${project.version}</version>
-		                                    <classifier>${build.number}-${scm.version}</classifier>
 		                                    <type>deb</type>
 		                                    <overWrite>true</overWrite>
 		                                    <outputDirectory>${distro.path}</outputDirectory>
@@ -289,7 +281,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>control</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>${build.number}-${scm.version}</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -299,7 +290,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>operations</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>${build.number}-${scm.version}</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -309,7 +299,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>bootstrap</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>${build.number}-${scm.version}</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -319,7 +308,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>admin</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>${build.number}-${scm.version}</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
