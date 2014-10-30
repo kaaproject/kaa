@@ -267,7 +267,7 @@ public class DeltaServiceIT {
         endpointProfile.setProfile((DBObject) JSON.parse(PROFILE_JSON));
         endpointProfile.setProfileHash(EndpointObjectHash.fromSHA1(PROFILE_BYTES).getData());
         endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());
-        endpointProfile.setConfigurationVersion(MAJOR_VERSION);
+        endpointProfile.setConfigurationVersion(CONF_SCHEMA_VERSION);
         endpointProfile.setProfileVersion(PROFILE_VERSION);
         endpointProfile.setCfGroupState(Collections.singletonList(egs));
         endpointProfile.setNfGroupState(Collections.singletonList(egs));
@@ -369,6 +369,7 @@ public class DeltaServiceIT {
         newConfDto.setBody(new String(newConfData, UTF_8));
 
         newConfDto = configurationService.saveConfiguration(newConfDto);
+        configurationService.activateConfiguration(newConfDto.getId(), "test");
 
         GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
 
