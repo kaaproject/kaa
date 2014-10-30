@@ -18,11 +18,9 @@
 #define CONFIGURATION_MANAGER_HPP_
 
 #include "kaa/configuration/manager/IConfigurationManager.hpp"
-#include "kaa/KaaThread.hpp"
+#include "kaa/observer/KaaObservable.hpp"
 
 #include <memory>
-
-#include <boost/signals2.hpp>
 
 namespace kaa {
 
@@ -94,7 +92,7 @@ private:
     std::shared_ptr<ICommonRecord>                      root_;
 
     KAA_MUTEX_DECLARE(configurationGuard_);
-    boost::signals2::signal<void (ICommonRecord &)>     configurationReceivers_;
+    KaaObservable<void (ICommonRecord &), IConfigurationReceiver *> configurationReceivers_;
 };
 
 }  // namespace kaa

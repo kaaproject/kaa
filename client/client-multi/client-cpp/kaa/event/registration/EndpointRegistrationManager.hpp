@@ -22,15 +22,13 @@
 #include <string>
 #include <memory>
 
-#include <boost/signals2.hpp>
-
 #include "kaa/IKaaClientStateStorage.hpp"
 
 #include "kaa/event/registration/IRegistrationProcessor.hpp"
 #include "kaa/event/registration/IEndpointRegistrationManager.hpp"
 #include "kaa/event/registration/UserTransport.hpp"
 #include "kaa/common/UuidGenerator.hpp"
-#include "kaa/KaaThread.hpp"
+#include "kaa/observer/KaaObservable.hpp"
 
 namespace kaa {
 
@@ -123,7 +121,7 @@ private:
 
     UserTransport *                                            userTransport_;
 
-    boost::signals2::signal<void (const AttachedEndpoints&)>   attachedEPListListeners;
+    KaaObservable<void (const AttachedEndpoints&), IAttachedEndpointListListener *> attachedEPListListeners_;
     KAA_R_MUTEX_DECLARE(listenerGuard_);
 
     IEndpointAttachStatusListener*                             attachStatusListener_;

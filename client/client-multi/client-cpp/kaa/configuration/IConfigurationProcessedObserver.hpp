@@ -17,8 +17,6 @@
 #ifndef I_CONFIGURATION_PROCESSED_OBSERVER_HPP_
 #define I_CONFIGURATION_PROCESSED_OBSERVER_HPP_
 
-#include <boost/signals2/trackable.hpp>
-
 namespace kaa {
 
 /**
@@ -26,7 +24,7 @@ namespace kaa {
  *
  * Receiver can be subscribed/unsubscribed via @link IConfigurationProcessedObservable @endlink
  */
-class IConfigurationProcessedObserver : public boost::signals2::trackable {
+class IConfigurationProcessedObserver {
 public:
     /**
      * Notify about configuration processing is finished.

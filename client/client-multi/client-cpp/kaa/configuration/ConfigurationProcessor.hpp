@@ -19,9 +19,8 @@
 
 #include <cstdint>
 #include <memory>
-#include <boost/signals2.hpp>
 
-#include "kaa/KaaThread.hpp"
+#include "kaa/observer/KaaObservable.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
 
 namespace kaa {
@@ -70,8 +69,8 @@ public:
 private:
     KAA_R_MUTEX_DECLARE(confProcessorMutex_);
 
-    boost::signals2::signal<void (int, const avro::GenericDatum &, bool)> deltaReceivers_;
-    boost::signals2::signal<void ()>                                onProcessedObservers_;
+    KaaObservable<void (int, const avro::GenericDatum &, bool), IGenericDeltaReceiver *> deltaReceivers_;
+    KaaObservable<void (), IConfigurationProcessedObserver *> onProcessedObservers_;
 
     std::shared_ptr<Schema>                                       schema_;
 };

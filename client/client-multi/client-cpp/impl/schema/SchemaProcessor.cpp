@@ -43,18 +43,16 @@ void SchemaProcessor::loadSchema(const std::uint8_t * buffer, std::size_t buffer
 
 void SchemaProcessor::subscribeForSchemaUpdates(ISchemaUpdatesReceiver &receiver)
 {
-    boost::signals2::connection c =
-            schemaUpdatesSubscribers_.connect(
-            boost::bind(&ISchemaUpdatesReceiver::onSchemaUpdated, &receiver, _1));
-    if (!c.connected()) {
-        throw KaaException("Failed to add a schema updates subscriber.");
+    if (!schemaUpdatesSubscribers_.addCallback(&receiver,
+            std::bind(&ISchemaUpdatesReceiver::onSchemaUpdated, &receiver, std::placeholders::_1))) {
+        throw KaaException(
+                "Failed to add a schema updates subscriber. Already subscribed");
     }
 }
 
 void SchemaProcessor::unsubscribeFromSchemaUpdates(ISchemaUpdatesReceiver &receiver)
 {
-    schemaUpdatesSubscribers_.disconnect(
-                boost::bind(&ISchemaUpdatesReceiver::onSchemaUpdated, &receiver, _1));
+    schemaUpdatesSubscribers_.removeCallback(&receiver);
 }
 
 }  // namespace kaa

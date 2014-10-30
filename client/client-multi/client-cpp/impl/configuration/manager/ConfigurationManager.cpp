@@ -34,17 +34,16 @@ namespace kaa {
 
 void ConfigurationManager::subscribeForConfigurationChanges(IConfigurationReceiver &receiver)
 {
-    boost::signals2::connection c = configurationReceivers_.connect(
-            boost::bind(&IConfigurationReceiver::onConfigurationUpdated, &receiver, _1));
-    if (!c.connected()) {
-        throw KaaException("Failed to add a configuration changes subscriber.");
+    if (!configurationReceivers_.addCallback(&receiver,
+            std::bind(&IConfigurationReceiver::onConfigurationUpdated,
+                    &receiver, std::placeholders::_1))) {
+        throw KaaException("Failed to add a configuration changes subscriber. Already subscribed");
     }
 }
 
 void ConfigurationManager::unsubscribeFromConfigurationChanges(IConfigurationReceiver &receiver)
 {
-    configurationReceivers_.disconnect(
-                boost::bind(&IConfigurationReceiver::onConfigurationUpdated, &receiver, _1));
+    configurationReceivers_.removeCallback(&receiver);
 }
 
 ICommonRecord &ConfigurationManager::getConfiguration()

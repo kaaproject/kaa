@@ -17,9 +17,8 @@
 #ifndef SCHEMA_PROCESSOR_HPP_
 #define SCHEMA_PROCESSOR_HPP_
 
-#include <boost/signals2.hpp>
-
 #include "kaa/schema/ISchemaProcessor.hpp"
+#include "kaa/observer/KaaObservable.hpp"
 
 namespace kaa {
 
@@ -53,7 +52,7 @@ private:
     typedef avro::ValidSchema Schema;
 
     SchemaPtr schema_;
-    boost::signals2::signal<void (std::shared_ptr<avro::ValidSchema>)> schemaUpdatesSubscribers_;
+    KaaObservable<void (std::shared_ptr<avro::ValidSchema>), ISchemaUpdatesReceiver *> schemaUpdatesSubscribers_;
 };
 
 }  // namespace kaa

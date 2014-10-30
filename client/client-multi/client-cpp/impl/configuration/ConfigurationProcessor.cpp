@@ -61,28 +61,32 @@ void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, 
 
 void ConfigurationProcessor::subscribeForUpdates(IGenericDeltaReceiver &receiver)
 {
-    boost::signals2::connection c = deltaReceivers_.connect(boost::bind(&IGenericDeltaReceiver::onDeltaRecevied, &receiver, _1, _2, _3));
-    if (!c.connected()) {
-        throw KaaException("Failed to register new delta receiver.");
+    if (!deltaReceivers_.addCallback(&receiver,
+            std::bind(&IGenericDeltaReceiver::onDeltaRecevied, &receiver,
+                    std::placeholders::_1,
+                    std::placeholders::_2,
+                    std::placeholders::_3))) {
+        throw KaaException("Failed to register new delta receiver. Receiver is already registered");
     }
 }
 
 void ConfigurationProcessor::unsubscribeFromUpdates(IGenericDeltaReceiver &receiver)
 {
-    deltaReceivers_.disconnect(boost::bind(&IGenericDeltaReceiver::onDeltaRecevied, &receiver, _1, _2, _3));
+    deltaReceivers_.removeCallback(&receiver);
 }
 
 void ConfigurationProcessor::addOnProcessedObserver(IConfigurationProcessedObserver &observer)
 {
-    boost::signals2::connection c = onProcessedObservers_.connect(boost::bind(&IConfigurationProcessedObserver::onConfigurationProcessed, &observer));
-    if (!c.connected()) {
-        throw KaaException("Failed to register new IConfigurationProcessedObserver.");
+    if (!onProcessedObservers_.addCallback(&observer,
+            std::bind(&IConfigurationProcessedObserver::onConfigurationProcessed,&observer))) {
+        throw KaaException(
+                "Failed to register new IConfigurationProcessedObserver. Already registered");
     }
 }
 
 void ConfigurationProcessor::removeOnProcessedObserver(IConfigurationProcessedObserver &observer)
 {
-    onProcessedObservers_.disconnect(boost::bind(&IConfigurationProcessedObserver::onConfigurationProcessed, &observer));
+    onProcessedObservers_.removeCallback(&observer);
 }
 
 void ConfigurationProcessor::onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)

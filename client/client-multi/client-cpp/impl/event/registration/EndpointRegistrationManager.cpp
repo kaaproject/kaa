@@ -128,7 +128,7 @@ void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAt
 
     if (hasChanged) {
         status_->setAttachedEndpoints(attachedEndpoints_);
-        attachedEPListListeners(attachedEndpoints_);
+        attachedEPListListeners_(attachedEndpoints_);
     }
 }
 
@@ -170,7 +170,7 @@ void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDe
 
     if (hasChanges) {
         status_->setAttachedEndpoints(attachedEndpoints_);
-        attachedEPListListeners(attachedEndpoints_);
+        attachedEPListListeners_(attachedEndpoints_);
     }
 }
 
@@ -204,8 +204,9 @@ void EndpointRegistrationManager::addAttachedEndpointListListener(IAttachedEndpo
     if (listener) {
         KAA_R_MUTEX_UNIQUE_DECLARE(lock, listenerGuard_);
         /* Disconnecting for case whether listener was already subscribed, no effect otherwise */
-        attachedEPListListeners.disconnect(boost::bind(&IAttachedEndpointListListener::onListUpdated, listener, _1));
-        attachedEPListListeners.connect(boost::bind(&IAttachedEndpointListListener::onListUpdated, listener, _1));
+        attachedEPListListeners_.removeCallback(listener);
+        attachedEPListListeners_.addCallback(listener,
+                std::bind(&IAttachedEndpointListListener::onListUpdated, listener, std::placeholders::_1));
     }
 }
 
@@ -213,7 +214,7 @@ void EndpointRegistrationManager::removeAttachedEndpointListListener(IAttachedEn
 {
     if (listener) {
         KAA_R_MUTEX_UNIQUE_DECLARE(lock, listenerGuard_);
-        attachedEPListListeners.disconnect(boost::bind(&IAttachedEndpointListListener::onListUpdated, listener, _1));
+        attachedEPListListeners_.removeCallback(listener);
     }
 }
 
