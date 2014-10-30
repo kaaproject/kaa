@@ -27,9 +27,10 @@
 #include "kaa/notification/NotificationTransport.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
+#include "kaa/common/exception/UnavailableTopicException.hpp"
 #include "kaa/notification/AbstractNotificationListener.hpp"
 #include "kaa/notification/NotificationManager.hpp"
-#include "kaa/notification/INotificationTopicsListener.hpp"
+#include "kaa/notification/INotificationTopicListListener.hpp"
 
 #include "headers/channel/MockChannelManager.hpp"
 #include "headers/channel/MockDataChannel.hpp"
@@ -76,7 +77,7 @@ private:
     const std::string topicId_;
 };
 
-class TopicListener : public INotificationTopicsListener {
+class TopicListener : public INotificationTopicListListener {
 public:
     TopicListener(INotificationManager& manager)
         : notificationManager_(manager){}
@@ -93,28 +94,20 @@ public:
         topics_ = newList;
         voluntaryListener_.reset(new UserNotificationListener(newList.back().id));
 
-        TopicSubscribers subscriptions;
-        TopicSubscriberInfo info;
-        info.action_ = TopicSubscriberInfo::ADD;
-        info.lisnener_ = voluntaryListener_.get();
-        subscriptions.insert(std::make_pair(newList.back().id, info));
-        notificationManager_.updateTopicSubscriptions(subscriptions);
+        notificationManager_.addNotificationListener(newList.back().id, voluntaryListener_);
+        notificationManager_.subscribeOnTopic(newList.back().id, false);
     }
 
     ~TopicListener() {
         if (voluntaryListener_) {
-            TopicSubscribers subscriptions;
-            TopicSubscriberInfo info;
-            info.action_ = TopicSubscriberInfo::REMOVE;
-            info.lisnener_ = voluntaryListener_.get();
-            subscriptions.insert(std::make_pair(topics_.back().id, info));
-            notificationManager_.updateTopicSubscriptions(subscriptions);
+            notificationManager_.removeNotificationListener(topics_.back().id, voluntaryListener_);
+            notificationManager_.unsubscribeFromTopic(topics_.back().id, false);
         }
     }
 
 private:
     Topics topics_;
-    boost::shared_ptr<UserNotificationListener> voluntaryListener_;
+    std::shared_ptr<UserNotificationListener> voluntaryListener_;
     INotificationManager& notificationManager_;
 };
 
@@ -128,21 +121,10 @@ BOOST_AUTO_TEST_CASE(BadSubscriber)
     NotificationManager notificationManager( status);
     notificationManager.setTransport(transport);
 
-    TopicSubscribers subscriptions;
-    TopicSubscriberInfo info;
-    info.action_ = TopicSubscriberInfo::ADD;
-    info.lisnener_ = NULL;
-    subscriptions.insert(std::make_pair("someId", info));
+    BOOST_CHECK_THROW(notificationManager.addNotificationListener("someId", INotificationListenerPtr()), KaaException);
 
-    BOOST_CHECK_THROW(notificationManager.updateTopicSubscriptions(subscriptions), KaaException);
-
-    SystemNotificationListener mandatoryListener("fake");
-    subscriptions.clear();
-    info.action_ = TopicSubscriberInfo::REMOVE;
-    info.lisnener_ = &mandatoryListener;
-    subscriptions.insert(std::make_pair("unknownId", info));
-
-    BOOST_CHECK_THROW(notificationManager.updateTopicSubscriptions(subscriptions), KaaException);
+    INotificationListenerPtr mandatoryListener(new SystemNotificationListener("fake"));
+    BOOST_CHECK_THROW(notificationManager.removeNotificationListener("unknownId", mandatoryListener), UnavailableTopicException);
 }
 
 BOOST_AUTO_TEST_CASE(VoluntarySubscription)
@@ -170,14 +152,10 @@ BOOST_AUTO_TEST_CASE(VoluntarySubscription)
 
     transport->onNotificationResponse(response);
 
-    UserNotificationListener notificationListener(topic2.id);
-    TopicSubscribers subscriptions;
-    TopicSubscriberInfo info;
-    info.action_ = TopicSubscriberInfo::ADD;
-    info.lisnener_ = &notificationListener;
-    subscriptions.insert(std::make_pair(topic2.id, info));
+    INotificationListenerPtr notificationListener(new UserNotificationListener(topic2.id));
 
-    notificationManager.updateTopicSubscriptions(subscriptions);
+    notificationManager.addNotificationListener(topic2.id, notificationListener);
+    notificationManager.subscribeOnTopic(topic2.id, true);
 
     auto request = transport->createNotificationRequest();
 
@@ -242,62 +220,61 @@ BOOST_AUTO_TEST_CASE(NotificationReceiving)
     boost::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
     NotificationManager notificationManager(status);
     notificationManager.setTransport(transport);
-    SystemNotificationListener mandatoryListener(manadatoryTopic.id);
-    TopicListener topicsListener(notificationManager);
+    INotificationListenerPtr mandatoryListener(new SystemNotificationListener(manadatoryTopic.id));
+    INotificationTopicListListenerPtr topicsListener(new TopicListener(notificationManager));
 
-    notificationManager.addMandatoryTopicsListener(&mandatoryListener);
-    notificationManager.addTopicsListener(&topicsListener);
+    notificationManager.addNotificationListener(mandatoryListener);
+    notificationManager.addTopicListListener(topicsListener);
 
     transport->onNotificationResponse(response);
 
-    notificationManager.removeMandatoryTopicsListener(&mandatoryListener);
-    notificationManager.removeTopicsListener(&topicsListener);
+    notificationManager.removeNotificationListener(mandatoryListener);
+    notificationManager.removeTopicListListener(topicsListener);
 }
 
-//BOOST_AUTO_TEST_CASE(RestorePersistedTopicState)
-//{
-//    DetailedTopicStates dts;
-//    DetailedTopicState topicState1;
-//    topicState1.topicId = "[top1]";
-//    topicState1.topicName = "[Mandatory], Mandatory Topic";
-//    topicState1.sequenceNumber = 1;
-//    topicState1.subscriptionType = SubscriptionType::MANDATORY;
-//
-//    DetailedTopicState topicState2;
-//    topicState2.topicId = "top2";
-//    topicState2.topicName = "Voluntary Topic";
-//    topicState2.sequenceNumber = 10;
-//    topicState2.subscriptionType = SubscriptionType::VOLUNTARY;
-//
-//    dts.insert(std::make_pair(topicState1.topicId, topicState1));
-//    dts.insert(std::make_pair(topicState2.topicId, topicState2));
-//
-//    {
-//        ClientStatus cs("fake.txt");
-//        cs.setTopicStates(dts);
-//        cs.save();
+BOOST_AUTO_TEST_CASE(TopicsPersistence)
+{
+    IKaaClientStateStoragePtr status(new ClientStatus("test_status.txt"));
+    MockChannelManager channelManager;
+    boost::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
+    NotificationManager notificationManager(status);
+    notificationManager.setTransport(transport);
+
+    const std::string topicId1("id1");
+    const std::string topicId2("id2");
+
+    Topic topic1;
+    topic1.id = topicId1;
+    topic1.subscriptionType = MANDATORY;
+
+    Topic topic2;
+    topic2.id = topicId2;
+    topic2.subscriptionType = VOLUNTARY;
+
+    std::vector<Topic> topics = {topic1, topic2};
+    NotificationSyncResponse response;
+    response.availableTopics.set_array(topics);
+
+    transport->onNotificationResponse(response);
+
+    status->save();
+
+    IKaaClientStateStoragePtr newStatus(new ClientStatus("test_status.txt"));
+    boost::shared_ptr<NotificationTransport> newTransport(new NotificationTransport(newStatus, channelManager));
+    NotificationManager newNotificationManager(newStatus);
+    newNotificationManager.setTransport(newTransport);
+
+    const Topics loadedTopics = newNotificationManager.getTopics();
+
+//    for (const auto& expectedTopic : topics) {
+//        if (std::find_if(loadedTopics.begin(), loadedTopics.end(),
+//                [&expectedTopic] (const Topic& topic) { return (expectedTopic.id == topic.id
+//                        && expectedTopic.subscriptionType == topic.subscriptionType); }) == loadedTopics.end())
+//        {
+//            BOOST_CHECK_MESSAGE(false, "Couldn't find topic " + expectedTopic.id);
+//        }
 //    }
-//
-//    ClientStatus restored("fake.txt");
-//    MockChannelManager channelManager;
-//    boost::shared_ptr<NotificationTransport> transport(new NotificationTransport(restored, channelManager));
-//    NotificationManager notificationManager(transport, restored);
-//
-//    const auto& topics = notificationManager.getTopics();
-//
-//    auto topic1 = topics.find("[top1]");
-//    auto topic2 = topics.find("top2");
-//    BOOST_CHECK_MESSAGE(topic1 != topics.end(), "Failed to restore topic");
-//    BOOST_CHECK_MESSAGE(topic2 != topics.end(), "Failed to restore topic");
-//
-//    BOOST_CHECK_EQUAL(topic1->second.id, topicState1.topicId);
-//    BOOST_CHECK_EQUAL(topic1->second.name, topicState1.topicName);
-//    BOOST_CHECK_EQUAL(topic1->second.subscriptionType, topicState1.subscriptionType);
-//
-//    BOOST_CHECK_EQUAL(topic2->second.id, topicState2.topicId);
-//    BOOST_CHECK_EQUAL(topic2->second.name, topicState2.topicName);
-//    BOOST_CHECK_EQUAL(topic2->second.subscriptionType, topicState2.subscriptionType);
-//}
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 

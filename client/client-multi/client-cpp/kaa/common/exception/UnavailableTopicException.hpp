@@ -14,30 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef INOTIFICATIONTOPICSLISTENER_HPP_
-#define INOTIFICATIONTOPICSLISTENER_HPP_
+#ifndef UNAVAILABLETOPICEXCEPTION_HPP_
+#define UNAVAILABLETOPICEXCEPTION_HPP_
 
-#include <list>
-#include <string>
+#include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
-typedef std::vector<Topic> Topics;
-
-/**
- *  Interface for listeners of topic's name list update
- */
-class INotificationTopicsListener {
+class UnavailableTopicException: public KaaException {
 public:
-    /**
-     *  Will be called when new topic's name list are received
-     *  @param newList comprises of names of new topics
-     */
-    virtual void onListUpdated(const Topics& newList) = 0;
-
-    virtual ~INotificationTopicsListener() {}
+    UnavailableTopicException(boost::format f) : KaaException(f) {}
+    UnavailableTopicException(const std::string& message) : KaaException(message) {}
 };
 
 } /* namespace kaa */
 
-#endif /* INOTIFICATIONTOPICSLISTENER_HPP_ */
+#endif /* UNAVAILABLETOPICEXCEPTION_HPP_ */
