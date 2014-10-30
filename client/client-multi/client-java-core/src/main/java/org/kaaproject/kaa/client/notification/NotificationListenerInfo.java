@@ -16,14 +16,28 @@
 
 package org.kaaproject.kaa.client.notification;
 
+/**
+ * <p>Wrapper class for a topic subscription stuff.</p>
+ *
+ * <p><b>This class is deprecated</b>. Use instead:
+ * {@link NotificationManager#subscribeOnTopic(String, boolean)},
+ * {@link NotificationManager#addNotificationListener(String, NotificationListener)},
+ * {@link NotificationManager#subscribeOnTopics(java.util.List, boolean)},
+ * {@link NotificationManager#addTopicListListener(NotificationTopicListListener)}.</p>
+ *
+ * @see NotificationManager#updateTopicSubscriptions(java.util.Map)
+ *
+ */
+@Deprecated
 public class NotificationListenerInfo {
+    @Deprecated
     public enum Action {
         ADD,
         REMOVE
     }
 
-    private NotificationListener listener;
-    private Action action;
+    private final NotificationListener listener;
+    private final Action action;
 
     public NotificationListenerInfo(NotificationListener listener, Action action) {
         this.listener = listener;
