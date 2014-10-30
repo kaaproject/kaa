@@ -105,15 +105,15 @@ public class KaaClientPropertiesState implements KaaClientState {
             try {
                 state.load(storage.openForRead(stateFileLocation));
 
-                BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(state.getProperty(NF_SUBSCRIPTIONS).getBytes(), null);
+                BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(
+                        state.getProperty(NF_SUBSCRIPTIONS).getBytes(), null);
                 SpecificDatumReader<TopicSubscriptionInfo> avroReader =
                         new SpecificDatumReader<TopicSubscriptionInfo>(TopicSubscriptionInfo.class);
 
                 try { //NOSONAR
                     TopicSubscriptionInfo decodedInfo = null;
 
-                    //FIXME: research avro documentation for more convenient approach of iteration through encoded record
-                    while (true) {
+                    while (!decoder.isEnd()) {
                       decodedInfo = avroReader.read(null, decoder);
                       LOG.debug("Loaded {}", decodedInfo);
                       nfSubscriptions.put(decodedInfo.getTopicInfo().getId(), decodedInfo);
@@ -298,11 +298,9 @@ public class KaaClientPropertiesState implements KaaClientState {
     @Override
     public void addTopic(Topic topic) {
         TopicSubscriptionInfo subscriptionInfo = nfSubscriptions.get(topic.getId());
-
         if (subscriptionInfo == null) {
-            subscriptionInfo = TopicSubscriptionInfo.newBuilder().setTopicInfo(topic).setSeqNumber(0).build();
-            nfSubscriptions.put(topic.getId(), subscriptionInfo);
-            LOG.debug("Adding new seqNumber 0 for {} subscription", topic.getId());
+            nfSubscriptions.put(topic.getId(), new TopicSubscriptionInfo(topic, 0));
+            LOG.info("Adding new seqNumber 0 for {} subscription", topic.getId());
         }
     }
 

@@ -28,7 +28,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultNotificationTransport;
-import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationProcessor;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
@@ -75,11 +74,9 @@ public class DefaultNotificationTransportTest {
         Assert.assertNull(transport1.createEmptyNotificationRequest());
 
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        NotificationManager notificationManager = Mockito.mock(NotificationManager.class);
 
         NotificationTransport transport2 = new DefaultNotificationTransport();
 
-        transport2.setNotificationManager(notificationManager);
         Assert.assertNull(transport2.createEmptyNotificationRequest());
         transport2.setClientState(clientState);
 
@@ -93,14 +90,12 @@ public class DefaultNotificationTransportTest {
     @Test
     public void testCreateRequest() {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        NotificationManager notificationManager = Mockito.mock(NotificationManager.class);
         Mockito.when(clientState.getNotificationSeqNumber()).thenReturn(new Integer(5));
 
         NotificationTransport transport = new DefaultNotificationTransport();
         transport.createNotificationRequest();
         transport.setClientState(clientState);
         transport.createNotificationRequest();
-        transport.setNotificationManager(notificationManager);
 
         NotificationSyncRequest request = transport.createNotificationRequest();
         Assert.assertEquals(new Integer(5), request.getAppStateSeqNumber());
@@ -110,7 +105,6 @@ public class DefaultNotificationTransportTest {
     public void testAcceptedUnicastNotification() throws Exception  {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         NotificationProcessor notificationProcessor = Mockito.mock(NotificationProcessor.class);
-        NotificationManager notificationManager = Mockito.mock(NotificationManager.class);
 
         NotificationSyncResponse response1 = new NotificationSyncResponse();
         response1.setAppStateSeqNumber(3);
@@ -122,7 +116,6 @@ public class DefaultNotificationTransportTest {
 
         NotificationTransport transport = new DefaultNotificationTransport();
         transport.setChannelManager(channelManagerMock);
-        transport.setNotificationManager(notificationManager);
         transport.setNotificationProcessor(notificationProcessor);
         transport.setClientState(clientState);
 
@@ -150,7 +143,6 @@ public class DefaultNotificationTransportTest {
     public void onNotificationResponse() throws Exception {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         NotificationProcessor notificationProcessor = Mockito.mock(NotificationProcessor.class);
-        NotificationManager notificationManager = Mockito.mock(NotificationManager.class);
         Mockito.when(clientState.getNotificationSeqNumber()).thenReturn(new Integer(2));
         Mockito.when(clientState.updateTopicSubscriptionInfo(Mockito.anyString(), Mockito.anyInt())).thenReturn(Boolean.TRUE);
 
@@ -168,7 +160,6 @@ public class DefaultNotificationTransportTest {
         NotificationTransport transport = new DefaultNotificationTransport();
         transport.setChannelManager(channelManagerMock);
         transport.onNotificationResponse(response);
-        transport.setNotificationManager(notificationManager);
         transport.onNotificationResponse(response);
         transport.setNotificationProcessor(notificationProcessor);
         transport.onNotificationResponse(response);
@@ -202,7 +193,6 @@ public class DefaultNotificationTransportTest {
     public void testFilterStaleNotification() throws Exception {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         NotificationProcessor notificationProcessor = Mockito.mock(NotificationProcessor.class);
-        NotificationManager notificationManager = Mockito.mock(NotificationManager.class);
         Mockito.when(clientState.updateTopicSubscriptionInfo(Mockito.anyString(), Mockito.anyInt())).thenReturn(Boolean.FALSE);
 
         NotificationSyncResponse response = new NotificationSyncResponse();
@@ -215,7 +205,6 @@ public class DefaultNotificationTransportTest {
 
         NotificationTransport transport = new DefaultNotificationTransport();
         transport.setChannelManager(channelManagerMock);
-        transport.setNotificationManager(notificationManager);
         transport.setNotificationProcessor(notificationProcessor);
         transport.setClientState(clientState);
 
@@ -232,7 +221,6 @@ public class DefaultNotificationTransportTest {
     @Test
     public void testTopicState() {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        NotificationManager notificationManager = Mockito.mock(NotificationManager.class);
 
         Map<String, Integer> nfSubscriptions = new HashMap<String, Integer>();
         nfSubscriptions.put("topic1", 10);
@@ -241,11 +229,10 @@ public class DefaultNotificationTransportTest {
         Mockito.when(clientState.getNfSubscriptions()).thenReturn(nfSubscriptions);
 
         NotificationTransport transport = new DefaultNotificationTransport();
-        transport.setClientState(clientState);
 
         Assert.assertNull(transport.createEmptyNotificationRequest());
 
-        transport.setNotificationManager(notificationManager);
+        transport.setClientState(clientState);
 
         NotificationSyncRequest request = transport.createEmptyNotificationRequest();
 
