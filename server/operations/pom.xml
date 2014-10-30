@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.6.0</version>
+		<version>0.6.1-SNAPSHOT</version>
 		<artifactId>server</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.server</groupId>
@@ -414,8 +414,7 @@
                             <goal>jdeb</goal>
                         </goals>
                         <configuration>
-                            <deb>${project.build.directory}/kaa-${project.artifactId}-${build.number}-${scm.version}.deb</deb>
-                            <classifier>${build.number}-${scm.version}</classifier>
+                            <deb>${project.build.directory}/kaa-${project.artifactId}.deb</deb>
                             <controlDir>${project.basedir}/tmp_deb_control/</controlDir>
                             <dataSet>
                                 <data>
@@ -537,7 +536,6 @@
                         </executions>
                         <configuration>
                             <name>kaa-${project.artifactId}</name>
-                            <classifier>${build.number}-${scm.version}</classifier>
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>
                             <group>Applications/Kaa</group>

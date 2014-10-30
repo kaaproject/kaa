@@ -20,7 +20,7 @@ Copyright 2014 CyberVision, Inc.
 
     <groupId>org.kaaproject</groupId>
     <artifactId>kaa</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kaa</name>
@@ -92,20 +92,12 @@ Copyright 2014 CyberVision, Inc.
     <profiles>
         <profile>
             <id>default</id>
-            <properties>
-                <build.number>local_build</build.number>
-                <scm.version>local_scm</scm.version>
-            </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
         <profile>
             <id>examples</id>
-            <properties>
-                <build.number>local_build</build.number>
-                <scm.version>local_scm</scm.version>
-            </properties>
             <modules>
                 <module>avrogenc</module>
                 <module>common</module>
@@ -117,10 +109,6 @@ Copyright 2014 CyberVision, Inc.
         </profile>
         <profile>
             <id>jenkins</id>
-            <properties>
-                <build.number>${BUILD_NUMBER}</build.number>
-                <scm.version>${GIT_COMMIT}</scm.version>
-            </properties>
             <modules>
                 <module>avrogenc</module>
                 <module>common</module>

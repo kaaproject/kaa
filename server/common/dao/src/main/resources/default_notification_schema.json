@@ -1,11 +1,7 @@
 {
     "type": "record",
     "name": "Notification",
-    "namespace": "org.kaa.config",
+    "namespace": "org.kaa.notification",
     "fields": [
-        {
-            "name": "message",
-            "type": "string"
-        }
     ]
 }
