@@ -16,10 +16,12 @@
 
 package org.kaaproject.kaa.client.channel;
 
-import org.kaaproject.kaa.client.notification.NotificationManager;
+import java.util.List;
+
 import org.kaaproject.kaa.client.notification.NotificationProcessor;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
 
 /**
  * {@link KaaTransport} for the Notification service.
@@ -67,12 +69,13 @@ public interface NotificationTransport extends KaaTransport {
     void setNotificationProcessor(NotificationProcessor processor);
 
     /**
-     * Sets the given Notification manager.
+     * <p>Notify about new subscription info.</p>
      *
-     * @param manager the Notification manager to be set.
-     * @see NotificationManager
+     * <p>Will be called when one either subscribes or unsubscribes
+     * on\from some voluntary topic(s).</p>
      *
+     * @param commands Info about subscription actions (subscribe/unsubscribe).
      */
-    void setNotificationManager(NotificationManager manager);
+    void onSubscriptionChanged(List<SubscriptionCommand> commands);
 
 }

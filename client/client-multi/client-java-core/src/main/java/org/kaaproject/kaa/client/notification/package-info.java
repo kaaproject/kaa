@@ -28,22 +28,21 @@
  *
  *  <h3>Topics - usage examples</h3>
  *
- *  <h5>Getting access to the current topic list</h5>
+ *  <h5>Get access to the available topics</h5>
  *  <pre>
  *  {@code
- *      KaaDesktop kaa = new KaaDesktop();
- *      KaaClient kaaClient = kaa.getClient();
+ *  KaaDesktop kaa = new KaaDesktop();
+ *  KaaClient kaaClient = kaa.getClient();
  *
- *      // Kaa initialization (profile container,
- *      // schema and configuration storages etc.)
+ *  // Kaa initialization (profile container, schema and configuration storages etc.)
  *
- *      NotificationManager notificationManager = kaaClient.getNotificationManager();
- *      List<Topic> topics = notificationManager.getTopics();
+ *  NotificationManager notificationManager = kaaClient.getNotificationManager();
+ *  List<Topic> topics = notificationManager.getTopics();
  *
- *      for (Topic topic : topics) {
- *          System.out.printf("Id: %s, name: %s, type: %s"
- *                  , topic.getId(), topic.getName(), topic.getSubscriptionType());
- *      }
+ *  for (Topic topic : topics) {
+ *  System.out.printf("Id: %s, name: %s, type: %s"
+ *              , topic.getId(), topic.getName(), topic.getSubscriptionType());
+ *  }
  *  }
  *  </pre>
  *
@@ -95,79 +94,105 @@
  *  <p>As mentioned earlier, there is two kind of topics - mandatory and
  *  voluntary. Further it will be discussed dealing with both of them.</p>
  *
- *  <h5>Global listener(s) for mandatory topics</h5>
+ *  <h5>Notification listener(s) for all topics</h5>
  *
- *  <p>Below is an example for receiving notifications for all mandatory
- *  topics:</p>
+ *  <p>Below is an example of receiving notifications relating to all topics
+ *  irrespective whether it is mandatory or voluntary:</p>
  *
  *  <pre>
  *  {@code
- *      public class BasicNotificationListener extends AbstractNotificationListener<BasicNotification> {
- *          \@Override
- *          public void onNotification(String topicId, BasicNotification notification) {
- *              System.out.println("Got notification: " + notification.toString());
- *          }
- *
- *          \@Override
- *          protected Class<BasicNotification> getNotificationClass() {
- *               return BasicNotification.class;
- *           }
+ *  public class BasicNotificationListener extends AbstractNotificationListener<BasicNotification> {
+ *      \@Override
+ *      public void onNotification(String topicId, BasicNotification notification) {
+ *          System.out.println("Got notification: " + notification.toString());
  *      }
  *
- *      ...
+ *      \@Override
+ *      protected Class<BasicNotification> getNotificationClass() {
+ *           return BasicNotification.class;
+ *       }
+ *  }
  *
- *      BasicNotificationListener listener = new BasicNotificationListener();
+ *  ...
  *
- *      // Add listener to receive notifications from all mandatory topics
- *      notificationManager.addMandatoryTopicsListener(listener);
+ *  BasicNotificationListener listener = new BasicNotificationListener();
  *
- *      ...
+ *  // Add listener
+ *  notificationManager.addNotificationListener(listener);
  *
- *      // Remove listener
- *      notificationManager.removeMandatoryTopicsListener(listener);
+ *  ...
+ *
+ *  // Remove listener
+ *  notificationManager.removeNotificationListener(listener);
  *  }
  *  </pre>
  *
- *  <h5>Specific listener(s) for mandatory topic</h5>
+ *  <h5>Notification listener(s) for a specified topic</h5>
  *
- *  <p>To add/remove specific listener(s) for some mandatory topic, do following:</p>
+ *  <p>To add/remove listener(s) to receive notifications relating to
+ *  the specified topic, do following</p>
  *
  *  <pre>
  *  {@code
- *      BasicNotificationListener specificListener = new BasicNotificationListener();
- *      Map<String, List<NotificationListenerInfo>> subscriptions = new HashMap<>();
+ *  BasicNotificationListener specificListener = new BasicNotificationListener();
+ *  Map<String, List<NotificationListenerInfo>> subscriptions = new HashMap<>();
  *
- *      // Add specific listener
- *      subscriptions.put("some_mandatory_topic_id", Arrays.asList(
- *              new NotificationListenerInfo(specificListener, NotificationListenerInfo.Action.ADD)));
+ *  // Add listener
+ *  notificationManager.addNotificationListener("some_mandatory_topic_id", listener);
  *
- *      // Remove specific listener
- *      subscriptions.put("another_mandatory_topic_id", Arrays.asList(
- *                  new NotificationListenerInfo(anotherSpecificListener
- *                              , NotificationListenerInfo.Action.REMOVE)));
+ *  ...
  *
- *      notificationManager.updateTopicSubscriptions(subscriptions);
+ *  // Remove listener
+ *  notificationManager.removeNotificationListener("another_mandatory_topic_id", listener);
  *  }
  *  </pre>
  *
  *  <h5>Voluntary topic (un)subscription</h5>
  *
- *  <p>To subscribe on updates for some voluntary topic, at least one listener
- *  should be added for it. Number of listeners for the same topic is unlimited.
- *  To unsubscribe from some voluntary topic, all listeners for it should be
- *  removed.</p>
+ *  <p>To receive notifications relating to some voluntary topic, firstly you
+ *  should to subscribe on this topic:</p>
+ *  <pre>
+ *  {@code
+ *  BasicNotificationListener listener = new BasicNotificationListener();
+ *  notificationManager.addNotificationListener("voluntary_topic_id", listener);
+ *  notificationManager.subscribeOnTopic("voluntary_topic_id", true);
+ *  }
+ *  </pre>
  *
- *  <p>Steps for (un)subscription are equal to previous example.</p>
+ *  <p>To unsubscribe from some voluntary topic, do following:</p>
+ *  <pre>
+ *  {@code
+ *  // All added listeners will be removed automatically
+ *  notificationManager.unsubscribeFromTopic("voluntary_topic_id", true);
+ *  }
+ *  </pre>
  *
+ *  <p>There is a similar stuff to deal with a group of voluntary topics -
+ *  {@link org.kaaproject.kaa.client.notification.NotificationManager#subscribeOnTopics(java.util.List, boolean)} and
+ *  {@link org.kaaproject.kaa.client.notification.NotificationManager#unsubscribeFromTopics(java.util.List, boolean)}.</p>
+ *
+ *  <h6>Performance</h6>
+ *
+ *  <p>To increase Kaa performance in case of several subsequent subscription
+ *  changes and avoid possible race conditions, we recommend to use following
+ *  approach:</p>
+ *  <pre>
+ *  {@code
+ *  // Make subscription changes
+ *  notificationManager.subscribeOnTopics(Arrays.asList(
+ *          "voluntary_topic1", "voluntary_topic2", "voluntary_topic3"), false);
+ *  notificationManager.unsubscribeFromTopic("voluntary_topic4", false);
+ *
+ *  // Add listeners for voluntary topics (optional)
+ *
+ *  // Commit changes
+ *  notificationManager.sync();
+ *  }
+ *  </pre>
+ *
+ *  @see org.kaaproject.kaa.client.notification.NotificationManager
  *  @see org.kaaproject.kaa.client.notification.AbstractNotificationListener
  *  @see org.kaaproject.kaa.client.notification.NotificationTopicListListener
- *  @see org.kaaproject.kaa.client.notification.NotificationListenerInfo
- *  @see org.kaaproject.kaa.client.notification.NotificationManager
- *  @see org.kaaproject.kaa.common.endpoint.gen.Topic
  *
  */
 package org.kaaproject.kaa.client.notification;
-
-
-
-

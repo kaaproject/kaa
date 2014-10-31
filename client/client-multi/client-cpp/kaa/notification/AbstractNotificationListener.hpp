@@ -23,20 +23,32 @@
 namespace kaa {
 
 /**
- * Implements @link INotificationListener @endlink and ables to convert the raw notification's data to
- * the needed object.
+ * <p>Abstract listener to receive notifications.</p>
  *
- * @author Yaroslav Zeygerman
+ * <p>Responsible for processing notifications either for the specified topic
+ * or for all together.</p>
+ *
+ * @code
+ * // Assume, BasicNotification is a notification class auto-generated according to a predefined Avro schema
+ *  class BasicNotificationListener : public AbstractNotificationListener<BasicNotification> {
+ *      virtual void onNotification(const std::string& id, const BasicNotification& notification) {
+ *          std::cout << "Received notification with body: " << notification.body << std::endl;
+ *      }
+ *  };
+ * @endcode
+ *
+ * @author Denis Kimcherenko
  *
  */
 template<typename T>
 class AbstractNotificationListener : public INotificationListener {
 public:
     /**
-     * Will be called when topic notification is received
+     * <p>Convert raw Avro-encoded data to a specific notification class according
+     * to a predefined Avro schema.</p>
      *
-     * @param id topic's id for which a notification is received
-     * @param notification body of the topic notification
+     * @param topicId Unique topic identifier.
+     * @param notification Raw Avro-encoded notification data.
      *
      */
     virtual void onNotificationRaw(const std::string& id, const std::vector<boost::uint8_t>& notification) {
@@ -44,9 +56,11 @@ public:
     }
 
     /**
-     * User-defined routine for notification processing
-     * @param id topic's id for which a notification is received
-     * @param notification avro-specific body of the topic notification
+     * <p>Call on each received notification.</p>
+     *
+     * @param topicId Unique topic identifier.
+     * @param notification Received notification.
+     *
      */
     virtual void onNotification(const std::string& id, const T& notification) = 0;
 
