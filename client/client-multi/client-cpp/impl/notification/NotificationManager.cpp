@@ -25,8 +25,7 @@
 namespace kaa {
 
 NotificationManager::NotificationManager(IKaaClientStateStoragePtr status)
-    : clientStatus_(status), topicUpdateNotifying_(false)
-    , mandatoryListenersNotifying_(false), voluntaryListenersNotifying_(false)
+    : clientStatus_(status)
 {
     const DetailedTopicStates& topicStates = clientStatus_->getTopicStates();
 
@@ -46,7 +45,7 @@ NotificationManager::NotificationManager(IKaaClientStateStoragePtr status)
 void NotificationManager::topicsListUpdated(const Topics& topicList)
 {
     KAA_MUTEX_LOCKING("topicsGuard_");
-    GuardLock topicsLock(topicsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_)
     KAA_MUTEX_LOCKED("topicsGuard_");
 
     std::unordered_map<std::string/*Topic ID*/, Topic> newTopics;
@@ -58,7 +57,7 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
 
     {
         KAA_MUTEX_LOCKING("voluntaryListenersGuard_");
-        GuardLock voluntaryListenersLock(voluntaryListenersGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(voluntaryListenersLock, voluntaryListenersGuard_);
         KAA_MUTEX_LOCKED("voluntaryListenersGuard_");
 
         for (const auto& pair : topics_) {
@@ -68,7 +67,7 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
 
     topics_ = newTopics;
     KAA_MUTEX_UNLOCKING("topicsGuard_");
-    topicsLock.unlock();
+    KAA_UNLOCK(topicsLock);
     KAA_MUTEX_UNLOCKED("topicsGuard_");
 
     notifyTopicUpdateSubscribers(topicList);
@@ -96,15 +95,8 @@ void NotificationManager::addTopicListListener(INotificationTopicListListenerPtr
         throw KaaException("Bad topic update listener");
     }
 
-    KAA_MUTEX_LOCKING("topicListenersGuard_");
-    GuardLock topicListenersLock(topicListenersGuard_);
-    KAA_MUTEX_LOCKED("topicListenersGuard_");
-
-    if (!topicUpdateNotifying_) {
-        topicListeners_.insert(listener);
-    } else {
-        topicListenersPendingAdd_.insert(listener);
-    }
+    topicListeners_.addCallback(listener,
+            std::bind(&INotificationTopicListListener::onListUpdated, listener, std::placeholders::_1));
 }
 
 void NotificationManager::removeTopicListListener(INotificationTopicListListenerPtr listener)
@@ -114,21 +106,13 @@ void NotificationManager::removeTopicListListener(INotificationTopicListListener
         throw KaaException("Bad topic update listener");
     }
 
-    KAA_MUTEX_LOCKING("topicListenersGuard_");
-    GuardLock topicListenersLock(topicListenersGuard_);
-    KAA_MUTEX_LOCKED("topicListenersGuard_");
-
-    if (!topicUpdateNotifying_) {
-        topicListeners_.erase(listener);
-    } else {
-        topicListenersPendingRemove_.insert(listener);
-    }
+    topicListeners_.removeCallback(listener);
 }
 
 Topics NotificationManager::getTopics()
 {
     KAA_MUTEX_LOCKING("topicsGuard_");
-    GuardLock topicsLock(topicsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
     KAA_MUTEX_LOCKED("topicsGuard_");
 
     std::vector<Topic> topicList;
@@ -149,15 +133,9 @@ void NotificationManager::addNotificationListener(INotificationListenerPtr liste
         throw KaaException("Bad notification listener");
     }
 
-    KAA_MUTEX_LOCKING("mandatoryListenersGuard_");
-    GuardLock notificationListenersLock(mandatoryListenersGuard_);
-    KAA_MUTEX_LOCKED("mandatoryListenersGuard_");
-
-    if (!mandatoryListenersNotifying_) {
-        mandatoryListeners_.insert(listener);
-    } else {
-        mandatoryListenersPendingAdd_.insert(listener);
-    }
+    mandatoryListeners_.addCallback(listener,
+            std::bind(&INotificationListener::onNotificationRaw, listener,
+                    std::placeholders::_1, std::placeholders::_2));
 }
 
 void NotificationManager::addNotificationListener(const std::string& topidId, INotificationListenerPtr listener)
@@ -172,21 +150,17 @@ void NotificationManager::addNotificationListener(const std::string& topidId, IN
         throw UnavailableTopicException(boost::format("Topic '%s' isn't voluntary"));
     }
 
-    KAA_MUTEX_LOCKING("voluntaryListenersGuard_");
-    GuardLock notificationListenersLock(voluntaryListenersGuard_);
-    KAA_MUTEX_LOCKED("voluntaryListenersGuard_");
-
-    if (!voluntaryListenersNotifying_) {
-        auto it = voluntaryListeners_.find(topidId);
-        if (it != voluntaryListeners_.end()) {
-            it->second.insert(listener);
-        } else {
-            std::unordered_set<INotificationListenerPtr> listeners;
-            listeners.insert(listener);
-            voluntaryListeners_.insert(std::make_pair(topidId, listeners));
-        }
+    auto it = voluntaryListeners_.find(topidId);
+    if (it != voluntaryListeners_.end()) {
+        it->second->addCallback(listener,
+                std::bind(&INotificationListener::onNotificationRaw, listener,
+                        std::placeholders::_1, std::placeholders::_2));
     } else {
-        voluntaryListenersPendingAdd_.insert(std::make_pair(topidId, listener));
+        NotificationObservablePtr listeners(new NotificationObservable);
+        listeners->addCallback(listener,
+                std::bind(&INotificationListener::onNotificationRaw, listener,
+                        std::placeholders::_1, std::placeholders::_2));
+        voluntaryListeners_.insert(std::make_pair(topidId, listeners));
     }
 }
 
@@ -197,15 +171,7 @@ void NotificationManager::removeNotificationListener(INotificationListenerPtr li
         throw KaaException("Bad notification listener");
     }
 
-    KAA_MUTEX_LOCKING("mandatoryListenersGuard_");
-    GuardLock notificationListenersLock(mandatoryListenersGuard_);
-    KAA_MUTEX_LOCKED("mandatoryListenersGuard_");
-
-    if (!mandatoryListenersNotifying_) {
-        mandatoryListeners_.erase(listener);
-    } else {
-        mandatoryListenersPendingRemove_.insert(listener);
-    }
+    mandatoryListeners_.removeCallback(listener);
 }
 
 void NotificationManager::removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener)
@@ -221,16 +187,12 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
     }
 
     KAA_MUTEX_LOCKING("voluntaryListenersGuard_");
-    GuardLock notificationListenersLock(voluntaryListenersGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(notificationListenersLock, voluntaryListenersGuard_);
     KAA_MUTEX_LOCKED("voluntaryListenersGuard_");
 
-    if (!voluntaryListenersNotifying_) {
-        auto it = voluntaryListeners_.find(topidId);
-        if (it != voluntaryListeners_.end()) {
-            it->second.erase(listener);
-        }
-    } else {
-        voluntaryListenersPendingRemove_.insert(std::make_pair(topidId, listener));
+    auto it = voluntaryListeners_.find(topidId);
+    if (it != voluntaryListeners_.end()) {
+        it->second->removeCallback(listener);
     }
 }
 
@@ -310,7 +272,7 @@ void NotificationManager::unsubscribeFromTopics(const std::list<std::string>& id
 void NotificationManager::sync()
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    GuardLock subscriptionLock(subscriptionsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
     KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     if (!subscriptions_.empty()) {
@@ -324,7 +286,7 @@ void NotificationManager::sync()
 void NotificationManager::updateSubscriptionInfo(const std::string& id, SubscriptionCommandType type)
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    GuardLock subscriptionLock(subscriptionsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
     KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     SubscriptionCommand cmd;
@@ -336,7 +298,7 @@ void NotificationManager::updateSubscriptionInfo(const std::string& id, Subscrip
 void NotificationManager::updateSubscriptionInfo(const SubscriptionCommands& newSubscriptions)
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    GuardLock subscriptionLock(subscriptionsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
     KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     subscriptions_.insert(subscriptions_.end(), newSubscriptions.begin(), newSubscriptions.end());
@@ -346,7 +308,7 @@ const Topic& NotificationManager::findTopic(const std::string& id)
 {
     try {
         KAA_MUTEX_LOCKING("topicsGuard_");
-        GuardLock topicsLock(topicsGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
         KAA_MUTEX_LOCKED("topicsGuard_");
 
         return topics_.at(id);
@@ -358,129 +320,26 @@ const Topic& NotificationManager::findTopic(const std::string& id)
 
 void NotificationManager::notifyTopicUpdateSubscribers(const Topics& topics)
 {
-    KAA_MUTEX_LOCKING("topicNotifyGuard_");
-    GuardLock topicNotifyLock(topicNotifyGuard_);
-    KAA_MUTEX_LOCKED("topicNotifyGuard_");
-
-    KAA_MUTEX_LOCKING("topicListenersGuard_");
-    GuardLock topicListenersLock(topicListenersGuard_);
-    KAA_MUTEX_LOCKED("topicListenersGuard_");
-
-    topicUpdateNotifying_ = true;
-
-    KAA_MUTEX_UNLOCKING("topicListenersGuard_");
-    topicListenersLock.unlock();
-    KAA_MUTEX_UNLOCKED("topicListenersGuard_");
-
-    for (auto& listener : topicListeners_) {
-        listener->onListUpdated(topics);
-    }
-
-    KAA_MUTEX_LOCKING("topicNotifyGuard_");
-    topicListenersLock.lock();
-    KAA_MUTEX_LOCKED("topicNotifyGuard_");
-
-    topicUpdateNotifying_ = false;
-
-    for (auto l : topicListenersPendingAdd_) {
-        topicListeners_.insert(l);
-    }
-    topicListenersPendingAdd_.clear();
-
-    for (auto l : topicListenersPendingRemove_) {
-        topicListeners_.erase(l);
-    }
-    topicListenersPendingRemove_.clear();
+    topicListeners_(topics);
 }
 
 void NotificationManager::notifyMandatoryNotificationSubscribers(const Notification& notification)
 {
-    KAA_MUTEX_LOCKING("mandatoryListenersNotifyGuard_");
-    GuardLock mandatoryListenersNotifyLock(mandatoryListenersNotifyGuard_);
-    KAA_MUTEX_LOCKED("mandatoryListenersNotifyGuard_");
-
-    KAA_MUTEX_LOCKING("mandatoryListenersGuard_");
-    GuardLock mandatoryListenersLock(mandatoryListenersGuard_);
-    KAA_MUTEX_LOCKED("mandatoryListenersGuard_");
-
-    mandatoryListenersNotifying_ = true;
-
-    KAA_MUTEX_UNLOCKING("mandatoryListenersGuard_");
-    mandatoryListenersLock.unlock();
-    KAA_MUTEX_UNLOCKED("mandatoryListenersGuard_");
-
-    for (auto& listener : mandatoryListeners_) {
-        listener->onNotificationRaw(notification.topicId, notification.body);
-    }
-
-    KAA_MUTEX_LOCKING("mandatoryListenersGuard_");
-    mandatoryListenersLock.lock();
-    KAA_MUTEX_LOCKED("mandatoryListenersGuard_");
-
-    mandatoryListenersNotifying_ = false;
-
-    for (auto l : mandatoryListenersPendingAdd_) {
-        mandatoryListeners_.insert(l);
-    }
-    mandatoryListenersPendingAdd_.clear();
-
-    for (auto l : mandatoryListenersPendingRemove_) {
-        mandatoryListeners_.erase(l);
-    }
-    mandatoryListenersPendingRemove_.clear();
+    mandatoryListeners_(notification.topicId, notification.body);
 }
 
 bool NotificationManager::notifyVoluntaryNotificationSubscribers(const Notification& notification)
 {
     bool notified = false;
-
-    KAA_MUTEX_LOCKING("voluntaryListenersNotifyGuard_");
-    GuardLock voluntaryListenersNotifyLock(voluntaryListenersNotifyGuard_);
-    KAA_MUTEX_LOCKED("voluntaryListenersNotifyGuard_");
-
     KAA_MUTEX_LOCKING("voluntaryListenersGuard_");
-    GuardLock voluntaryListenersLock(voluntaryListenersGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(voluntaryListenersLock, voluntaryListenersGuard_);
     KAA_MUTEX_LOCKED("voluntaryListenersGuard_");
 
     auto it = voluntaryListeners_.find(notification.topicId);
     if (it != voluntaryListeners_.end()) {
         notified = true;
-        voluntaryListenersNotifying_ = true;
-
-        KAA_MUTEX_UNLOCKING("voluntaryListenersGuard_");
-        voluntaryListenersLock.unlock();
-        KAA_MUTEX_UNLOCKED("voluntaryListenersGuard_");
-
-        for (auto& listener : it->second) {
-            listener->onNotificationRaw(notification.topicId, notification.body);
-        }
-
-        KAA_MUTEX_LOCKING("voluntaryListenersGuard_");
-        voluntaryListenersLock.lock();
-        KAA_MUTEX_LOCKED("voluntaryListenersGuard_");
-
-        voluntaryListenersNotifying_ = false;
+        (*it->second)(notification.topicId, notification.body);
     }
-
-    for (auto it : voluntaryListenersPendingAdd_) {
-        auto volIt = voluntaryListeners_.find(it.first);
-        if (volIt != voluntaryListeners_.end()) {
-            volIt->second.insert(it.second);
-        } else {
-            std::unordered_set<INotificationListenerPtr> listeners;
-            listeners.insert(it.second);
-            voluntaryListeners_.insert(std::make_pair(notification.topicId, listeners));
-        }
-    }
-    voluntaryListenersPendingAdd_.clear();
-
-    for (auto it : voluntaryListenersPendingRemove_) {
-        auto volIt = voluntaryListeners_.find(it.first);
-        if (volIt != voluntaryListeners_.end()) {
-            volIt->second.erase(it.second);
-        }
-    }
-    voluntaryListenersPendingRemove_.clear();
 
     return notified;
 }
