@@ -76,5 +76,7 @@ typedef enum kaa_channel_type_t {
  */
 #define KAA_CHANNEL_TYPE_COUNT   3
 
+typedef size_t kaa_trx_id;
+
 CLOSE_EXTERN
 #endif /* KAA_COMMON_H_ */

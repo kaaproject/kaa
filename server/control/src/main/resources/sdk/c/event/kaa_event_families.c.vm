@@ -65,3 +65,18 @@ void kaa_send_${prefix}_${e_name}(${prefix}_${e_name}_t *event, const char *targ
 }
 
 #end
+
+#foreach ($event in $outgoingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+void kaa_add_${prefix}_${e_name}_event_to_transaction(${prefix}_${e_name}_t *event, const char *target, size_t target_len, kaa_trx_id trx_id)
+{
+    size_t event_size = event->get_size(event);
+    char *buffer = KAA_CALLOC(event_size, sizeof(char));
+    avro_writer_t writer = avro_writer_memory(buffer, event_size);
+    event->serialize(writer, event);
+    kaa_event_add_to_transaction(trx_id, "${event}", ${event.length()}, writer->buf, writer->written, target, target_len);
+    avro_writer_free(writer);
+    KAA_FREE(buffer);
+}
+
+#end
