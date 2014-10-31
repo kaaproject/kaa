@@ -80,7 +80,7 @@ private:
     bool notifyVoluntaryNotificationSubscribers(const Notification& notification);
 
 private:
-    using GuardLock = std::unique_lock<std::mutex>;
+    typedef std::unique_lock<std::mutex> GuardLock;
 
     boost::shared_ptr<NotificationTransport>                         transport_;
     IKaaClientStateStoragePtr                                        clientStatus_;
