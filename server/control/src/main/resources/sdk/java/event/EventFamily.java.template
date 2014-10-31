@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.kaaproject.kaa.client.event.EventFamily;
 import org.kaaproject.kaa.client.event.EventManager;
+import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 
 public class ${event_family_class_name} implements EventFamily {

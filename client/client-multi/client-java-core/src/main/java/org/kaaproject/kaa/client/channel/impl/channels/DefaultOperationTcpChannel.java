@@ -79,7 +79,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private static final int PING_TIMEOUT = 100;
     private static final int CHANNEL_TIMEOUT = 200;
-    
+
     private static final String CHANNEL_ID = "default_operation_tcp_channel";
 
     private KaaTcpServerInfo currentServer;
@@ -101,7 +101,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final int RECONNECT_TIMEOUT = 5; // in sec
     private ConnectivityChecker connectivityChecker;
-    
 
     private final List<TransportType> ackTypes = new ArrayList<TransportType>();
 

@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
+import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
@@ -49,11 +50,14 @@ public class DefaultEventManager implements EventManager {
     private final Set<EventFamily>  registeredEventFamilies = new HashSet<EventFamily>();
     private final List<Event>       currentEvents = new LinkedList<Event>();
     private final Object            eventsGuard = new Object();
+    private final Object            trxGuard = new Object();
     private final Map<String, EventListenersRequestBinding> eventListenersRequests = new HashMap<String, EventListenersRequestBinding>();
     private final EventTransport transport;
     private final KaaClientState state;
 
     private Boolean isEngaged = false;
+    private final Map<TransactionId, List<Event>> transactions = new HashMap<>();
+
 
     private class EventListenersRequestBinding {
         private final FetchEventListeners     listener;
@@ -115,13 +119,31 @@ public class DefaultEventManager implements EventManager {
 
     @Override
     public void produceEvent(String eventFqn, byte[] data, String target) throws IOException {
-        LOG.info("Producing event [eventClassFQN: {}, target: {}]"
-                , eventFqn, (target != null ? target : "broadcast")); //NOSONAR
-        synchronized (eventsGuard) {
-            currentEvents.add(new Event(state.getAndIncrementEventSeqNum(), eventFqn, ByteBuffer.wrap(data), null, target));
-        }
-        if (!isEngaged) {
-            transport.sync();
+        produceEvent(eventFqn, data, target, null);
+    }
+
+    @Override
+    public void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId) throws IOException {
+        if (trxId == null) {
+            LOG.info("Producing event [eventClassFQN: {}, target: {}]"
+                    , eventFqn, (target != null ? target : "broadcast")); //NOSONAR
+            synchronized (eventsGuard) {
+                currentEvents.add(new Event(state.getAndIncrementEventSeqNum(), eventFqn, ByteBuffer.wrap(data), null, target));
+            }
+            if (!isEngaged) {
+                transport.sync();
+            }
+        } else {
+            LOG.info("Adding event [eventClassFQN: {}, target: {}] to transaction {}"
+                    , eventFqn, (target != null ? target : "broadcast"), trxId); //NOSONAR
+            synchronized (trxGuard) {
+                List<Event> events = transactions.get(trxId);
+                if (events != null) {
+                    events.add(new Event(-1, eventFqn, ByteBuffer.wrap(data), null, target));
+                } else {
+                    LOG.warn("Transaction with id {} is missing. Ignoring event");
+                }
+            }
         }
     }
 
@@ -181,6 +203,51 @@ public class DefaultEventManager implements EventManager {
             currentEvents.clear();
         }
         return pendingEvents;
+    }
+
+    @Override
+    public TransactionId beginTransaction() {
+        TransactionId trxId = new TransactionId();
+        synchronized (trxGuard) {
+            if (!transactions.containsKey(trxId)) {
+                LOG.debug("Creating events transaction with id {}", trxId);
+                transactions.put(trxId, new LinkedList<Event>());
+            }
+        }
+        return trxId;
+    }
+
+    @Override
+    public void commit(TransactionId trxId) {
+        LOG.debug("Commiting events transaction with id {}", trxId);
+        synchronized (trxGuard) {
+            List<Event> eventsToCommit = transactions.remove(trxId);
+            synchronized (eventsGuard) {
+                for (Event e : eventsToCommit) {
+                    e.setSeqNum(state.getAndIncrementEventSeqNum());
+                    currentEvents.add(e);
+                }
+            }
+            if (!isEngaged) {
+                transport.sync();
+            }
+
+        }
+    }
+
+    @Override
+    public void rollback(TransactionId trxId) {
+        LOG.debug("Rolling back events transaction with id {}", trxId);
+        synchronized (trxGuard) {
+            List<Event> eventsToRemove = transactions.remove(trxId);
+            if (eventsToRemove != null) {
+                for (Event e : eventsToRemove) {
+                    LOG.trace("Removing event {}", e);
+                }
+            } else {
+                LOG.debug("Transaction with id {} was not created", trxId);
+            }
+        }
     }
 
     @Override
