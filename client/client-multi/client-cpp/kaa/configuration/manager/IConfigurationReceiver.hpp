@@ -17,6 +17,10 @@
 #ifndef I_CONFIGURATION_RECEIVER_HPP_
 #define I_CONFIGURATION_RECEIVER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonRecord.hpp"
 
 namespace kaa {
@@ -42,5 +46,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_CONFIGURATION_RECEIVER_HPP_ */

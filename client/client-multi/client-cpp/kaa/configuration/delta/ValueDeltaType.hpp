@@ -17,6 +17,10 @@
 #ifndef VALUEDELTATYPE_HPP_
 #define VALUEDELTATYPE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <iomanip>
 #include <sstream>
 #include <vector>
@@ -122,5 +126,7 @@ inline std::string ValueDeltaType::toString() const
 }
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* VALUEDELTATYPE_HPP_ */

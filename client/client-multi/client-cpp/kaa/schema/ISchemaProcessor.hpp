@@ -17,6 +17,10 @@
 #ifndef I_SCHEMA_PROCESSOR_HPP_
 #define I_SCHEMA_PROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <cstdint>
 #include <memory>
 #include <avro/ValidSchema.hh>
@@ -48,5 +52,6 @@ typedef std::shared_ptr<ISchemaProcessor> ISchemaProcessorPtr;
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_SCHEMA_PROCESSOR_HPP_ */

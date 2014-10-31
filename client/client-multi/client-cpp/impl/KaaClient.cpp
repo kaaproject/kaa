@@ -57,10 +57,12 @@ void KaaClient::init(int options)
     options_ = options;
     initClientKeys();
 
+#ifdef KAA_USE_CONFIGURATION
     schemaProcessor_.reset(new SchemaProcessor);
     configurationProcessor_.reset(new ConfigurationProcessor);
     deltaManager_.reset(new DefaultDeltaManager);
     configurationManager_.reset(new ConfigurationManager);
+#endif
 
     bootstrapManager_.reset(new BootstrapManager);
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getServerInfoList()));
@@ -79,12 +81,14 @@ void KaaClient::init(int options)
 
 void KaaClient::start()
 {
+#ifdef KAA_USE_CONFIGURATION
     auto configHash = configurationPersistenceManager_->getConfigurationHash().getHash();
     if (!configHash.first || !configHash.second || !schemaProcessor_->getSchema()) {
         SequenceNumber sn = { 0, 0, 1 };
         status_->setAppSeqNumber(sn);
         setDefaultConfiguration();
     }
+#endif
     bootstrapManager_->receiveOperationsServerList();
 }
 
@@ -94,6 +98,7 @@ void KaaClient::stop()
 
 void KaaClient::initKaaConfiguration()
 {
+#ifdef KAA_USE_CONFIGURATION
     ConfigurationPersistenceManager *cpm = new ConfigurationPersistenceManager;
     cpm->setConfigurationProcessor(configurationProcessor_.get());
     configurationPersistenceManager_.reset(cpm);
@@ -109,6 +114,7 @@ void KaaClient::initKaaConfiguration()
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*deltaManager_);
     configurationManager_->subscribeForConfigurationChanges(*configurationPersistenceManager_);
+#endif
 }
 
 void KaaClient::initKaaTransport()
@@ -122,12 +128,14 @@ void KaaClient::initKaaTransport()
     EndpointObjectHash publicKeyHash(clientKeys_.first.begin(), clientKeys_.first.size());
     IMetaDataTransportPtr metaDataTransport(new MetaDataTransport(status_, publicKeyHash, 60000L));
     IProfileTransportPtr profileTransport(new ProfileTransport(*channelManager_, clientKeys_.first));
+#ifdef KAA_USE_CONFIGURATION
     IConfigurationTransportPtr configurationTransport(new ConfigurationTransport(
             *channelManager_
             , configurationProcessor_.get()
             , schemaProcessor_.get()
             , configurationPersistenceManager_.get()
             , status_));
+#endif
     INotificationTransportPtr notificationTransport(new NotificationTransport(status_, *channelManager_));
     IUserTransportPtr userTransport(new UserTransport(*registrationManager_, *channelManager_));
     IEventTransportPtr eventTransport(new EventTransport(*eventManager_, *channelManager_));
@@ -142,7 +150,11 @@ void KaaClient::initKaaTransport()
             new OperationsDataProcessor(
               metaDataTransport
             , profileTransport
+#ifdef KAA_USE_CONFIGURATION
             , configurationTransport
+#else
+            , nullptr
+#endif
             , notificationTransport
             , userTransport
             , eventTransport
@@ -199,6 +211,7 @@ void KaaClient::initClientKeys()
 
 void KaaClient::setDefaultConfiguration()
 {
+#ifdef KAA_USE_CONFIGURATION
     const std::string& schema = getDefaultConfigSchema();
     if (!schema.empty()) {
         schemaProcessor_->loadSchema(reinterpret_cast<const std::uint8_t*>(schema.data()), schema.length());
@@ -207,6 +220,7 @@ void KaaClient::setDefaultConfiguration()
             configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
         }
     }
+#endif
 }
 
 }

@@ -16,6 +16,8 @@
 
 #include "kaa/configuration/delta/DefaultConfigurationDeltaFactory.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <cstdint>
 #include <string>
 
@@ -163,3 +165,5 @@ IDeltaType::DeltaValue DefaultConfigurationDeltaFactory::createDeltaValue(const 
 }
 
 } /* namespace kaa */
+
+#endif

@@ -44,7 +44,10 @@
 namespace kaa {
 
 typedef std::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
+
+#ifdef KAA_USE_CONFIGURATION
 typedef std::shared_ptr<DefaultDeltaManager> DefaultDeltaManagerPtr;
+#endif
 
 typedef enum {
     EXTERNAL_TRANSPORT_CONTROL = 0x1
@@ -60,10 +63,12 @@ public:
     void stop();
 
     virtual IProfileManager&                    getProfileManager() { return *profileManager_; }
+#ifdef KAA_USE_CONFIGURATION
     virtual ISchemaPersistenceManager&          getSchemaPersistenceManager() { return *schemaPersistenceManager_; }
     virtual IConfigurationPersistenceManager&   getConfigurationPersistenceManager() { return *configurationPersistenceManager_; }
     virtual IDeltaManager&                      getDeltaManager() { return *deltaManager_; }
     virtual IConfigurationManager&              getConfigurationManager() { return *configurationManager_; }
+#endif
     virtual INotificationManager&               getNotificationManager() { return *notificationManager_; }
     virtual IEndpointRegistrationManager&       getEndpointRegistrationManager() { return *registrationManager_; }
     virtual EventFamilyFactory&                 getEventFamilyFactory() { return *eventFamilyFactory_; }
@@ -92,12 +97,14 @@ private:
     KeyPair         clientKeys_;
     std::string     publicKeyHash_;
 
+#ifdef KAA_USE_CONFIGURATION
     ISchemaProcessorPtr                   schemaProcessor_;
     DefaultDeltaManagerPtr                deltaManager_;
     IConfigurationManagerPtr              configurationManager_;
     IConfigurationProcessorPtr            configurationProcessor_;
     ISchemaPersistenceManagerPtr          schemaPersistenceManager_;
     IConfigurationPersistenceManagerPtr   configurationPersistenceManager_;
+#endif
     std::unique_ptr<EventManager>         eventManager_;
     std::unique_ptr<EventFamilyFactory>   eventFamilyFactory_;
     std::unique_ptr<IKaaChannelManager>   channelManager_;

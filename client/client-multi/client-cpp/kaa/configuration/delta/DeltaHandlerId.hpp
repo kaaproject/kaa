@@ -17,6 +17,10 @@
 #ifndef DELTAHANDLERID_HPP_
 #define DELTAHANDLERID_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <cstdint>
 
 #include "kaa/common/types/ICommonRecord.hpp"
@@ -119,5 +123,7 @@ private:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* DELTAHANDLERID_HPP_ */

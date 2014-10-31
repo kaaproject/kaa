@@ -16,6 +16,8 @@
 
 #include "kaa/configuration/ConfigurationProcessor.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
@@ -105,3 +107,5 @@ void ConfigurationProcessor::onSchemaUpdated(std::shared_ptr<avro::ValidSchema> 
 }
 
 }  // namespace kaa
+
+#endif

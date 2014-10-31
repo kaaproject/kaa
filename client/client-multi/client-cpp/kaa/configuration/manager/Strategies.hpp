@@ -17,6 +17,10 @@
 #ifndef STRATEGIES_HPP_
 #define STRATEGIES_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/configuration/manager/AbstractStrategy.hpp"
 #include <functional>
 #include <list>
@@ -135,5 +139,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* STRATEGIES_HPP_ */

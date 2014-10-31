@@ -17,6 +17,10 @@
 #ifndef SCHEMAPERSISTENCEMANAGER_HPP_
 #define SCHEMAPERSISTENCEMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/schema/storage/ISchemaPersistenceManager.hpp"
 #include "kaa/schema/ISchemaProcessor.hpp"
 #include "kaa/KaaThread.hpp"
@@ -70,5 +74,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* SCHEMAPErsistenCEMANAGER_HPP_ */

@@ -16,6 +16,8 @@
 
 #include "kaa/schema/SchemaProcessor.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <sstream>
 
 #include <avro/AvroParse.hh>
@@ -56,3 +58,5 @@ void SchemaProcessor::unsubscribeFromSchemaUpdates(ISchemaUpdatesReceiver &recei
 }
 
 }  // namespace kaa
+
+#endif

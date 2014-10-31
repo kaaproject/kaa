@@ -17,6 +17,10 @@
 #ifndef DEFAULTCONFIGURATIONDELTA_HPP_
 #define DEFAULTCONFIGURATIONDELTA_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <map>
 #include <string>
 #include <memory>
@@ -110,5 +114,7 @@ inline std::string DefaultConfigurationDelta::toString() const
 }
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* DEFAULTCONFIGURATIONDELTA_HPP_ */

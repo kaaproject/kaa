@@ -17,6 +17,10 @@
 #ifndef RESETDELTATYPE_HPP_
 #define RESETDELTATYPE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/configuration/delta/EmptyDeltaType.hpp"
 
 namespace kaa {
@@ -41,5 +45,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* RESETDELTATYPE_HPP_ */

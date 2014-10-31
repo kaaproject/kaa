@@ -16,6 +16,8 @@
 
 #include "kaa/configuration/delta/manager/DefaultDeltaManager.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/logging/Log.hpp"
 
 namespace kaa {
@@ -70,3 +72,6 @@ void DefaultDeltaManager::unsubscribeFromDeltaUpdates(const DeltaHandlerId& hand
 }
 
 } /* namespace kaa */
+
+#endif
+

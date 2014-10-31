@@ -17,6 +17,10 @@
 #ifndef I_SCHEMA_UPDATES_RECEIVER_HPP_
 #define I_SCHEMA_UPDATES_RECEIVER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/ValidSchema.hh>
 
 namespace kaa {
@@ -41,5 +45,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_SCHEMA_UPDATES_RECEIVER_HPP_ */

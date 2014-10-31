@@ -16,6 +16,8 @@
 
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 #include <functional>
 #include <vector>
@@ -140,3 +142,6 @@ void ConfigurationManager::updateRecord(std::shared_ptr<ICommonRecord> rec, cons
 }
 
 }  // namespace kaa
+
+#endif
+

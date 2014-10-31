@@ -17,8 +17,11 @@
 #ifndef DEFAULTDELTAMANAGER_HPP_
 #define DEFAULTDELTAMANAGER_HPP_
 
-#include <map>
+#include "kaa/KaaDefaults.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
+#include <map>
 #include "kaa/KaaThread.hpp"
 
 #include "kaa/configuration/delta/manager/IDeltaReceiver.hpp"
@@ -71,5 +74,7 @@ private:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* DEFAULTDELTAMANAGER_HPP_ */

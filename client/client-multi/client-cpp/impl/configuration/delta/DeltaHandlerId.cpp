@@ -16,6 +16,8 @@
 
 #include "kaa/configuration/delta/DeltaHandlerId.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 namespace kaa {
 
 DeltaHandlerId::DeltaHandlerId(const uuid_t& uuid)
@@ -51,3 +53,5 @@ DeltaHandlerId::DeltaHandlerId(const uuid_t& uuid)
 }
 
 }
+
+#endif

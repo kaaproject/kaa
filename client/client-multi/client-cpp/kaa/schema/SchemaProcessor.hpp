@@ -17,6 +17,10 @@
 #ifndef SCHEMA_PROCESSOR_HPP_
 #define SCHEMA_PROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/schema/ISchemaProcessor.hpp"
 #include "kaa/observer/KaaObservable.hpp"
 
@@ -57,5 +61,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* SCHEMA_PROCESSOR_HPP_ */

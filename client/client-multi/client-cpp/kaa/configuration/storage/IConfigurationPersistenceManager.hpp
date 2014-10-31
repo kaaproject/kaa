@@ -17,6 +17,10 @@
 #ifndef ICONFIGURATIONPERSISTENCEMANAGER_HPP_
 #define ICONFIGURATIONPERSISTENCEMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <memory>
 
 #include "kaa/configuration/storage/IConfigurationStorage.hpp"
@@ -50,5 +54,6 @@ typedef std::shared_ptr<IConfigurationPersistenceManager> IConfigurationPersiste
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ICONFIGURATIONPERSISTENCEMANAGER_HPP_ */

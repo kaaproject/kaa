@@ -17,6 +17,10 @@
 #ifndef ISCHEMAPERSISTENCEMANAGER_HPP_
 #define ISCHEMAPERSISTENCEMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <memory>
 
 #include "kaa/schema/storage/ISchemaStorage.hpp"
@@ -44,5 +48,6 @@ typedef std::shared_ptr<ISchemaPersistenceManager> ISchemaPersistenceManagerPtr;
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ISCHEMAPERSISTENCEMANAGER_HPP_ */

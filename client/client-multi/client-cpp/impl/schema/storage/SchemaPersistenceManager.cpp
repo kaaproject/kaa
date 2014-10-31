@@ -16,6 +16,8 @@
 
 #include "kaa/schema/storage/SchemaPersistenceManager.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/logging/Log.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
@@ -106,3 +108,5 @@ void SchemaPersistenceManager::readStoredSchema()
 }
 
 }  // namespace kaa
+
+#endif

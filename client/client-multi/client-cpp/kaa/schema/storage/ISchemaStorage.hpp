@@ -17,6 +17,10 @@
 #ifndef ISCHEMASTORAGE_HPP_
 #define ISCHEMASTORAGE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <vector>
 #include <cstdint>
 
@@ -50,5 +54,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ISCHEMASTORAGE_HPP_ */

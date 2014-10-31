@@ -15,6 +15,9 @@
  */
 
 #include "kaa/configuration/ConfigurationTransport.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/logging/Log.hpp"
 
 namespace kaa {
@@ -64,3 +67,4 @@ void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResp
 
 }  // namespace kaa
 
+#endif

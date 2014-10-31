@@ -17,6 +17,10 @@
 #ifndef DEFAULTDELTATYPE_HPP_
 #define DEFAULTDELTATYPE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/configuration/delta/EmptyDeltaType.hpp"
 
 namespace kaa {
@@ -44,5 +48,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* DEFAULTDELTATYPE_HPP_ */

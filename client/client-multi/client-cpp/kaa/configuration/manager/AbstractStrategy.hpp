@@ -17,6 +17,10 @@
 #ifndef ABSTRACTSTRATEGY_HPP_
 #define ABSTRACTSTRATEGY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 #include <memory>
 #include "kaa/common/types/ICommonRecord.hpp"
@@ -42,5 +46,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ABSTRACTSTRATEGY_HPP_ */

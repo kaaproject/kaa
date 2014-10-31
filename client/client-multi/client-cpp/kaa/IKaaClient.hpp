@@ -18,6 +18,7 @@
 #define IKAACLIENT_HPP_
 
 #include "kaa/security/KeyUtils.hpp"
+#include "kaa/KaaDefaults.hpp"
 
 namespace kaa {
 
@@ -47,6 +48,7 @@ class IKaaDataDemultiplexer;
 class IKaaClient {
 public:
 
+#ifdef KAA_USE_CONFIGURATION
     /**
      * Retrieves Kaa delta manager.
      *
@@ -54,6 +56,7 @@ public:
      *
      */
     virtual IDeltaManager&                    getDeltaManager() = 0;
+#endif
 
     /**
      * Retrieves Kaa profile manager.
@@ -79,6 +82,7 @@ public:
      */
     virtual INotificationManager&             getNotificationManager() = 0;
 
+#ifdef KAA_USE_CONFIGURATION
     /**
      * Retrieves Kaa configuration manager.
      *
@@ -102,6 +106,7 @@ public:
      *
      */
     virtual IConfigurationPersistenceManager& getConfigurationPersistenceManager() = 0;
+#endif
 
     /**
      * Retrieves Kaa endpoint registration manager

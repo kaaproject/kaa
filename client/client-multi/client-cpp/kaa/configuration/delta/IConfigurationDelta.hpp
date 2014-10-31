@@ -17,6 +17,10 @@
 #ifndef ICONFIGURATIONDELTA_HPP_
 #define ICONFIGURATIONDELTA_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <string>
 
 #include "kaa/configuration/delta/IDeltaType.hpp"
@@ -67,5 +71,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* ICONFIGURATIONDELTA_HPP_ */

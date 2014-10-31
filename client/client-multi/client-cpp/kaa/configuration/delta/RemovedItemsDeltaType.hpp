@@ -17,6 +17,10 @@
 #ifndef REMOVEDITEMSDELTATYPE_HPP_
 #define REMOVEDITEMSDELTATYPE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <list>
 #include <sstream>
 
@@ -89,5 +93,7 @@ inline std::string RemovedItemsDeltaType::toString() const {
 }
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* REMOVEDITEMSDELTATYPE_HPP_ */

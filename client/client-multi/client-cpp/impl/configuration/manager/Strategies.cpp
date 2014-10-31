@@ -16,6 +16,8 @@
 
 #include "kaa/configuration/manager/Strategies.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <algorithm>
 #include <avro/Generic.hh>
 #include <memory>
@@ -342,3 +344,5 @@ void CommonProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std
 }
 
 }  // namespace kaa
+
+#endif

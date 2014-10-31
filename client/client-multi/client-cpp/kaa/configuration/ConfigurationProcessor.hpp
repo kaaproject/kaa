@@ -17,6 +17,10 @@
 #ifndef CONFIGURATION_PROCESSOR_HPP_
 #define CONFIGURATION_PROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <cstdint>
 #include <memory>
 
@@ -76,5 +80,7 @@ private:
 };
 
 } // namespace kaa
+
+#endif
 
 #endif /* CONFIGURATION_PROCESSOR_HPP_ */

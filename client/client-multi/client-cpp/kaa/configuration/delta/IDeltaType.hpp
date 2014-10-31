@@ -17,6 +17,10 @@
 #ifndef IDELTATYPE_HPP_
 #define IDELTATYPE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <list>
 #include <memory>
 #include <boost/any.hpp>
@@ -89,5 +93,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IDELTATYPE_HPP_ */

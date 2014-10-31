@@ -17,6 +17,10 @@
 #ifndef FIELDPROCESSOR_HPP_
 #define FIELDPROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/configuration/manager/AbstractStrategy.hpp"
 
 namespace kaa {
@@ -47,5 +51,7 @@ private:
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* FIELDPROCESSOR_HPP_ */
