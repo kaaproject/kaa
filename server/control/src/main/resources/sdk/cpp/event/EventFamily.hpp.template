@@ -30,6 +30,7 @@
 #include "kaa/event/IEventFamily.hpp"
 #include "kaa/event/IEventManager.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
+#include "kaa/transact/TransactionId.hpp"
 
 #include "kaa/event/gen/${event_family_class_name}Gen.hpp"
 

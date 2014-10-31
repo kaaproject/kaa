@@ -42,6 +42,18 @@ public:
         return *concreteEventFamily_;
     }
 
+    TransactionIdPtr startEventsBlock() {
+        return eventManager_.beginTransaction();
+    }
+
+    void submitEventsBlock(TransactionIdPtr trxId) {
+        eventManager_.commit(trxId);
+    }
+
+    void removeEventsBlock(TransactionIdPtr trxId) {
+        eventManager_.rollback(trxId);
+    }
+
 private:
     IEventManager& eventManager_;
     std::set<std::string> efcNames_;

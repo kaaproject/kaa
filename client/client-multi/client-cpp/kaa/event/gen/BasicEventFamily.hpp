@@ -77,7 +77,18 @@ public:
         converter.toByteArray(e, stream);
         const auto& encodedData = stream.str();
         std::vector<std::uint8_t> buffer(encodedData.begin(), encodedData.end());
-        eventManager_.produceEvent("{event.event_name}", buffer, target);
+        static const TransactionIdPtr empty;
+        eventManager_.produceEvent("{event.event_name}", buffer, target, empty);
+    }
+
+    void addEventToBlock(TransactionIdPtr trxId, const Topic& e, const std::string& target)
+    {
+        std::ostringstream stream;
+        AvroByteArrayConverter<Topic> converter;
+        converter.toByteArray(e, stream);
+        const auto& encodedData = stream.str();
+        std::vector<std::uint8_t> buffer(encodedData.begin(), encodedData.end());
+        eventManager_.produceEvent("{event.event_name}", buffer, target, trxId);
     }
 
     virtual const FQNList& getSupportedEventClassFQNs() {

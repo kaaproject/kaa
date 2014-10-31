@@ -19,9 +19,10 @@
 
 #include "boost/shared_ptr.hpp"
 
-#include "kaa/event/IEventManager.hpp"
-#include <set>
 #include <map>
+#include <set>
+#include "kaa/event/IEventManager.hpp"
+#include "kaa/transact/TransactionId.hpp"
 
 ${include_event_family_headers}
 
@@ -33,6 +34,18 @@ public:
         : eventManager_(manager) {
             ${event_family_factory_set_concrete_event_family_names}
         }
+
+    TransactionIdPtr startEventsBlock() {
+        return eventManager_.beginTransaction();
+    }
+
+    void submitEventsBlock(TransactionIdPtr trxId) {
+        eventManager_.commit(trxId);
+    }
+
+    void removeEventsBlock(TransactionIdPtr trxId) {
+        eventManager_.rollback(trxId);
+    }
 
     ${event_family_factory_get_concrete_event_family}
 

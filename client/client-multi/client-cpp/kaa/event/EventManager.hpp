@@ -55,7 +55,8 @@ public:
 
     virtual void produceEvent(const std::string& fqn
                             , const std::vector<std::uint8_t>& data
-                            , const std::string& target);
+                            , const std::string& target
+                            , TransactionIdPtr trxId);
 
     virtual void onEventsReceived(const EventSyncResponse::events_t& events);
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners);
@@ -78,6 +79,8 @@ public:
             eventTransport_->sync();
         }
     }
+
+    virtual void commit(TransactionIdPtr trxId);
 private:
     struct EventListenersInfo {
         std::list<std::string> eventFQNs_;
