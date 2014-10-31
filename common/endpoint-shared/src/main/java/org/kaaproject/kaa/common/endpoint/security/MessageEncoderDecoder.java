@@ -37,13 +37,12 @@ import org.slf4j.LoggerFactory;
 /**
  * The Class MessageEncoderDecoder is responsible for encoding/decoding logic of
  * endpoint - operations server communication.
- *
+ * 
  * @author Andrew Shvayka
  */
 public class MessageEncoderDecoder {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(MessageEncoderDecoder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MessageEncoderDecoder.class);
 
     private static final String SESSION_CRYPT_ALGORITHM = "AES/ECB/PKCS5PADDING";
     private static final String SESSION_KEY_ALGORITHM = "AES";
@@ -55,18 +54,34 @@ public class MessageEncoderDecoder {
     private final PublicKey publicKey;
     private PublicKey remotePublicKey;
     private SecretKey sessionKey;
+    private CipherPair sessionCipherPair;
+
+    /**
+     * Cipher Pair holds references for encoding and decoding Ciphers that are initialized with the same key
+     * 
+     */
+    public static class CipherPair {
+        private Cipher decCipher;
+        private Cipher encCipher;
+
+        /**
+         * Creates enc/dec ciphers based on cipher algorithm and secret key 
+         * @param algorithm - Cipher algorithm
+         * @param secretKey - Secret key
+         * @throws InvalidKeyException
+         */
+        private CipherPair(String algorithm, SecretKey secretKey) throws InvalidKeyException {
+            this.decCipher = cipherForAlgorithm(algorithm);
+            this.decCipher.init(Cipher.DECRYPT_MODE, secretKey);
+            this.encCipher = cipherForAlgorithm(algorithm);
+            this.encCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        }
+    }
 
     private static final ThreadLocal<Cipher> RSA_CIPHER = new ThreadLocal<Cipher>() {
         @Override
         protected Cipher initialValue() {
             return cipherForAlgorithm(RSA);
-        }
-    };
-
-    private static final ThreadLocal<Cipher> AES_CIPHER = new ThreadLocal<Cipher>() {
-        @Override
-        protected Cipher initialValue() {
-            return cipherForAlgorithm(SESSION_CRYPT_ALGORITHM);
         }
     };
 
@@ -84,7 +99,7 @@ public class MessageEncoderDecoder {
         }
     };
 
-    static Cipher cipherForAlgorithm(String algorithm){
+    static Cipher cipherForAlgorithm(String algorithm) {
         try {
             return Cipher.getInstance(algorithm);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -93,7 +108,7 @@ public class MessageEncoderDecoder {
         }
     }
 
-    static KeyGenerator keyGeneratorForAlgorithm(String algorithm, int size){
+    static KeyGenerator keyGeneratorForAlgorithm(String algorithm, int size) {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
             keyGen.init(size);
@@ -104,7 +119,7 @@ public class MessageEncoderDecoder {
         }
     }
 
-    static Signature signatureForAlgorithm(String algorithm){
+    static Signature signatureForAlgorithm(String algorithm) {
         try {
             return Signature.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
@@ -115,7 +130,7 @@ public class MessageEncoderDecoder {
 
     /**
      * Instantiates a new message encoder decoder.
-     *
+     * 
      * @param privateKey
      *            the private key
      * @param publicKey
@@ -129,7 +144,7 @@ public class MessageEncoderDecoder {
 
     /**
      * Instantiates a new message encoder decoder.
-     *
+     * 
      * @param privateKey
      *            the private key
      * @param publicKey
@@ -144,15 +159,15 @@ public class MessageEncoderDecoder {
         this.remotePublicKey = remotePublicKey;
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating MessageEncoderDecoder with\nPublicKey {};\nRemotePublicKey {}"
-                    , this.publicKey != null ? bytesToHex(this.publicKey.getEncoded()) : "empty"
-                    , this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
+            LOG.trace("Creating MessageEncoderDecoder with\nPublicKey {};\nRemotePublicKey {}",
+                    this.publicKey != null ? bytesToHex(this.publicKey.getEncoded()) : "empty",
+                    this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
         }
     }
 
     /**
      * Gets the encoded session key.
-     *
+     * 
      * @return the encoded session key
      * @throws GeneralSecurityException
      *             the general security exception
@@ -164,17 +179,9 @@ public class MessageEncoderDecoder {
         return keyCipher.doFinal(key.getEncoded());
     }
 
-    public SecretKey getDecodedSessionKey(){
-        return sessionKey;
-    }
-
-    public void setDecodedSessionKey(SecretKey secretKey){
-        this.sessionKey = secretKey;
-    }
-
     /**
      * Encode data using sessionKey.
-     *
+     * 
      * @param message
      *            the message
      * @return the byte[]
@@ -182,15 +189,15 @@ public class MessageEncoderDecoder {
      *             the general security exception
      */
     public byte[] encodeData(byte[] message) throws GeneralSecurityException {
-        SecretKey key = getSessionKey();
-        Cipher sessionDataCipher = AES_CIPHER.get();
-        sessionDataCipher.init(Cipher.ENCRYPT_MODE, key);
-        return sessionDataCipher.doFinal(message);
+        if (sessionCipherPair == null) {
+            sessionCipherPair = new CipherPair(SESSION_CRYPT_ALGORITHM, getSessionKey());
+        }
+        return sessionCipherPair.encCipher.doFinal(message);
     }
 
     /**
      * Decode data using session key then is decoded using private key.
-     *
+     * 
      * @param message
      *            the message
      * @param encodedKey
@@ -201,11 +208,11 @@ public class MessageEncoderDecoder {
      */
     public byte[] decodeData(byte[] message, byte[] encodedKey) throws GeneralSecurityException {
         decodeSessionKey(encodedKey);
-
         return decodeData(message);
     }
 
-    public void decodeSessionKey(byte[] encodedKey) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    private void decodeSessionKey(byte[] encodedKey) throws InvalidKeyException, IllegalBlockSizeException,
+            BadPaddingException {
         Cipher sessionKeyCipher = RSA_CIPHER.get();
         sessionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] sessionKeyBytes = sessionKeyCipher.doFinal(encodedKey);
@@ -214,7 +221,7 @@ public class MessageEncoderDecoder {
 
     /**
      * Decode data using session key.
-     *
+     * 
      * @param message
      *            the message
      * @return the byte[]
@@ -222,14 +229,15 @@ public class MessageEncoderDecoder {
      *             the general security exception
      */
     public byte[] decodeData(byte[] message) throws GeneralSecurityException {
-        Cipher sessionDataCipher = AES_CIPHER.get();
-        sessionDataCipher.init(Cipher.DECRYPT_MODE, sessionKey);
-        return sessionDataCipher.doFinal(message);
+        if (sessionCipherPair == null) {
+            sessionCipherPair = new CipherPair(SESSION_CRYPT_ALGORITHM, sessionKey);
+        }
+        return sessionCipherPair.decCipher.doFinal(message);
     }
 
     /**
      * Sign message using private key.
-     *
+     * 
      * @param message
      *            the message
      * @return the byte[]
@@ -245,7 +253,7 @@ public class MessageEncoderDecoder {
 
     /**
      * Verify message using signature and remote public key.
-     *
+     * 
      * @param message
      *            the message
      * @param signature
@@ -267,7 +275,7 @@ public class MessageEncoderDecoder {
 
     /**
      * Gets the public key.
-     *
+     * 
      * @return the public key
      */
     public PublicKey getPublicKey() {
@@ -276,7 +284,7 @@ public class MessageEncoderDecoder {
 
     /**
      * Gets the remote public key.
-     *
+     * 
      * @return the remote public key
      */
     public PublicKey getRemotePublicKey() {
@@ -285,7 +293,7 @@ public class MessageEncoderDecoder {
 
     /**
      * Gets the session key.
-     *
+     * 
      * @return the session key
      * @throws NoSuchAlgorithmException
      *             the no such algorithm exception
@@ -299,7 +307,7 @@ public class MessageEncoderDecoder {
 
     /**
      * Sets the remote public key.
-     *
+     * 
      * @param remotePublicKey
      *            the new remote public key
      * @throws GeneralSecurityException
@@ -308,13 +316,14 @@ public class MessageEncoderDecoder {
     public void setRemotePublicKey(byte[] remotePublicKey) throws GeneralSecurityException {
         this.remotePublicKey = KeyUtil.getPublic(remotePublicKey);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("RemotePublicKey {}", this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
+            LOG.trace("RemotePublicKey {}",
+                    this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
         }
     }
 
     /**
      * Sets the remote public key.
-     *
+     * 
      * @param remotePublicKey
      *            the new remote public key
      * @throws GeneralSecurityException
@@ -323,11 +332,20 @@ public class MessageEncoderDecoder {
     public void setRemotePublicKey(PublicKey remotePublicKey) throws GeneralSecurityException {
         this.remotePublicKey = remotePublicKey;
         if (LOG.isTraceEnabled()) {
-            LOG.trace("RemotePublicKey {}", this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
+            LOG.trace("RemotePublicKey {}",
+                    this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
         }
     }
 
-    protected static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray(); //NOSONAR
+    public CipherPair getSessionCipherPair() {
+        return sessionCipherPair;
+    }
+
+    public void setSessionCipherPair(CipherPair sessionCipher) {
+        this.sessionCipherPair = sessionCipher;
+    }
+
+    protected static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray(); // NOSONAR
 
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 3];

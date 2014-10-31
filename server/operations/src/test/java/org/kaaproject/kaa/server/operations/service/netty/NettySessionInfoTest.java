@@ -15,14 +15,23 @@
  */
 package org.kaaproject.kaa.server.operations.service.netty;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
+import java.util.UUID;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class NettySessionInfoTest {
 
     @Test
     public void equalsHashCode(){
-        EqualsVerifier.forClass(NettySessionInfo.class).verify();
+        UUID uuid1 = UUID.randomUUID();
+        UUID uuid2 = UUID.randomUUID();
+        NettySessionInfo info1 = new NettySessionInfo(uuid1, null, null, null, null, null, 0, false);
+        NettySessionInfo info2 = new NettySessionInfo(uuid1, null, null, null, null, null, 0, false);
+        NettySessionInfo info3 = new NettySessionInfo(uuid2, null, null, null, null, null, 0, false);
+        Assert.assertEquals(info1, info2);
+        Assert.assertEquals(info1.hashCode(), info2.hashCode());
+        Assert.assertNotEquals(info1, info3);
+        Assert.assertNotEquals(info1.hashCode(), info3.hashCode());
     }
 }
