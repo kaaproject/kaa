@@ -17,6 +17,10 @@
 #ifndef COMMONVALUETOOLS_HPP_
 #define COMMONVALUETOOLS_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <memory>
 #include <cstdint>
 #include "kaa/common/types/ICommonValue.hpp"
@@ -97,5 +101,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* COMMONVALUETOOLS_HPP_ */

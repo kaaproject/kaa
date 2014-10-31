@@ -16,6 +16,8 @@
 
 #include "kaa/common/types/CommonEnum.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <sstream>
 
 namespace kaa {
@@ -47,3 +49,5 @@ void CommonEnum::setValue(const std::string &value)
 }
 
 }  // namespace kaa
+
+#endif

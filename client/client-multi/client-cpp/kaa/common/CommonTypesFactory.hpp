@@ -17,6 +17,10 @@
 #ifndef COMMONTYPESFACTORY_HPP_
 #define COMMONTYPESFACTORY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 
 #include "kaa/common/types/ICommonValue.hpp"
@@ -41,5 +45,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* COMMONTYPESFACTORY_HPP_ */

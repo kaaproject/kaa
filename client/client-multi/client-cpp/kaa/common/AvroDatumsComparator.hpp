@@ -17,6 +17,10 @@
 #ifndef AVRODATUMSCOMPARATOR_HPP_
 #define AVRODATUMSCOMPARATOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 #include <cstdint>
 
@@ -129,5 +133,6 @@ bool compareDatumsLess(const avro::GenericDatum &left, const avro::GenericDatum 
 
 }  // namespace kaa
 
+#endif
 
 #endif /* AVRODATUMSCOMPARATOR_HPP_ */

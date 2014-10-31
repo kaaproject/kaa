@@ -15,6 +15,9 @@
  */
 
 #include "kaa/common/types/SetValueHelper.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <cstdint>
 #include <vector>
 
@@ -162,4 +165,7 @@ bool SetAvroValueHelper::setValue(avro::Type t, avro::GenericDatum &indatum, con
 }
 
 }  // namespace kaa
+
+#endif
+
 

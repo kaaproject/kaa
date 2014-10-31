@@ -17,6 +17,10 @@
 #ifndef AVROGENERICUTILS_HPP_
 #define AVROGENERICUTILS_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <algorithm>
 #include <stdexcept>
 
@@ -152,7 +156,6 @@ public:
         return uuid;
     }
 
-#ifdef KAA_USE_CONFIGURATION
     /**
      * Convert UUID from the given GenericDatum object to @link DeltaHandlerId @endlink.
      *
@@ -172,7 +175,6 @@ public:
         DeltaHandlerId deltaId(uuid);
         return deltaId;
     }
-#endif
 
 private:
     static const std::string RESETT;
@@ -182,5 +184,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* AVROGENERICUTILS_HPP_ */

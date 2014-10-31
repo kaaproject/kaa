@@ -16,6 +16,8 @@
 
 #include "kaa/common/types/CommonFixed.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 namespace kaa {
 
 CommonFixed::CommonFixed(const avro::NodePtr &schema)
@@ -51,3 +53,6 @@ std::string CommonFixed::toString() const
 }
 
 }  // namespace kaa
+
+#endif
+

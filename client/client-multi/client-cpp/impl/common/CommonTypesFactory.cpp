@@ -16,6 +16,8 @@
 
 #include "kaa/common/CommonTypesFactory.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 #include "kaa/common/types/CommonValue.hpp"
 #include "kaa/common/types/CommonRecord.hpp"
@@ -207,3 +209,5 @@ CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_NULL
 }
 
 }  // namespace kaa
+
+#endif

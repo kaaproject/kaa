@@ -17,6 +17,10 @@
 #ifndef COMMONVALUE_HPP_
 #define COMMONVALUE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonValue.hpp"
 
 #include <boost/ref.hpp>
@@ -140,5 +144,7 @@ std::string CommonValue<std::uint8_t *, CommonValueType::COMMON_BYTES>::toString
 }
 
 }  // namespace kaa
+
+#endif
 
 #endif /* COMMONVALUE_HPP_ */

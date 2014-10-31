@@ -17,6 +17,10 @@
 #ifndef COMMONNULL_HPP_
 #define COMMONNULL_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonValue.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include <sstream>
@@ -43,5 +47,7 @@ public:
 };
 
 }
+
+#endif
 
 #endif /* COMMONNULL_HPP_ */

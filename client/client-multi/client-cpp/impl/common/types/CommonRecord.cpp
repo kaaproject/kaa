@@ -15,6 +15,9 @@
  */
 
 #include "kaa/common/types/CommonRecord.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/exception/KaaException.hpp"
 
 #include <algorithm>
@@ -153,3 +156,5 @@ std::string CommonRecord::toString() const
 }
 
 }  // namespace kaa
+
+#endif

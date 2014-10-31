@@ -17,6 +17,10 @@
 #ifndef I_COMMON_ARRAY_HPP_
 #define I_COMMON_ARRAY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ISchemaDependent.hpp"
 #include "kaa/common/types/ICommonValue.hpp"
 
@@ -49,5 +53,6 @@ typedef ICommonArrayBase<std::list<std::shared_ptr<ICommonValue> > > ICommonArra
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_COMMON_ARRAY_HPP_ */

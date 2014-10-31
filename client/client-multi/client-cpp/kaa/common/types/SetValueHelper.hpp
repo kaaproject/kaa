@@ -17,6 +17,10 @@
 #ifndef SETVALUEHELPER_HPP_
 #define SETVALUEHELPER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 
 namespace kaa {
@@ -27,5 +31,6 @@ struct SetAvroValueHelper {
 
 }  // namespace kaa
 
+#endif
 
 #endif /* SETVALUEHELPER_HPP_ */

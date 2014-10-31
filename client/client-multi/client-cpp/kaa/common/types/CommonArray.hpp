@@ -17,6 +17,10 @@
 #ifndef COMMONARRAY_HPP_
 #define COMMONARRAY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonArray.hpp"
 #include <boost/ref.hpp>
 
@@ -39,5 +43,7 @@ private:
 };
 
 } // namespace kaa
+
+#endif
 
 #endif /* COMMONARRAY_HPP_ */
