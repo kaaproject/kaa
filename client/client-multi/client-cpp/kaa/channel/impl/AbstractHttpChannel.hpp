@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
+
+
 #ifndef ABSTRACTHTTPCHANNEL_HPP_
 #define ABSTRACTHTTPCHANNEL_HPP_
+
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || defined (KAA_DEFAULT_OPERATION_HTTP_CHANNEL)
 
 
 #include "kaa/channel/IDataChannel.hpp"
@@ -213,4 +219,7 @@ void AbstractHttpChannel<Type>::setServer(IServerInfoPtr server)
 
 }
 
+#endif
+
 #endif /* ABSTRACTHTTPCHANNEL_HPP_ */
+

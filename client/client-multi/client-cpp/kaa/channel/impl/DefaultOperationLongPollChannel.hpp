@@ -17,6 +17,10 @@
 #ifndef DEFAULTOPERATIONLONGPOLLCHANNEL_HPP_
 #define DEFAULTOPERATIONLONGPOLLCHANNEL_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
+
 #include "kaa/channel/IDataChannel.hpp"
 #include "kaa/channel/server/HttpLPServerInfo.hpp"
 #include "kaa/http/HttpClient.hpp"
@@ -83,6 +87,6 @@ private:
 
 }
 
-
+#endif
 
 #endif /* DEFAULTOPERATIONLONGPOLLCHANNEL_HPP_ */

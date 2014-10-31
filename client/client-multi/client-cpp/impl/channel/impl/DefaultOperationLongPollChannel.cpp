@@ -15,6 +15,9 @@
  */
 
 #include "kaa/channel/impl/DefaultOperationLongPollChannel.hpp"
+
+#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
+
 #include "kaa/logging/Log.hpp"
 #include "kaa/security/RsaEncoderDecoder.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
@@ -239,3 +242,4 @@ void DefaultOperationLongPollChannel::syncAck(TransportType type)
 
 }
 
+#endif

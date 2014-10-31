@@ -85,8 +85,8 @@ set (KAA_SOURCE_FILES
         impl/event/EventManager.cpp
         impl/event/EventTransport.cpp
         impl/log/LoggingTransport.cpp
-        #impl/channel/impl/DefaultOperationLongPollChannel.cpp
-        #impl/channel/impl/DefaultOperationHttpChannel.cpp
+        impl/channel/impl/DefaultOperationLongPollChannel.cpp
+        impl/channel/impl/DefaultOperationHttpChannel.cpp
         impl/channel/impl/DefaultBootstrapChannel.cpp
         impl/channel/impl/DefaultOperationTcpChannel.cpp
         impl/channel/OperationsDataProcessor.cpp

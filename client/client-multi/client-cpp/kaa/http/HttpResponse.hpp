@@ -17,6 +17,12 @@
 #ifndef HTTPRESPONSE_HPP_
 #define HTTPRESPONSE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include "kaa/http/IHttpResponse.hpp"
 
 #include <map>
@@ -46,6 +52,6 @@ private:
 
 }
 
-
+#endif
 
 #endif /* HTTPRESPONSE_HPP_ */

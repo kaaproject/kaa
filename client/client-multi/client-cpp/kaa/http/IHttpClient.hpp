@@ -17,6 +17,12 @@
 #ifndef IHTTPCLIENT_HPP_
 #define IHTTPCLIENT_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include <memory>
 #include "kaa/http/IHttpResponse.hpp"
 #include "kaa/http/IHttpRequest.hpp"
@@ -34,6 +40,6 @@ public:
 
 }
 
-
+#endif
 
 #endif /* IHTTPCLIENT_HPP_ */

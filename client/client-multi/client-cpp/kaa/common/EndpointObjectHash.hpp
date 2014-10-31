@@ -85,7 +85,7 @@ public:
     operator std::vector<std::uint8_t>();
 
 private:
-    void clone(const std::uint8_t* data, const std::uint32_t& dataSize);
+    void cloneHash(const std::uint8_t* data, const std::uint32_t& dataSize);
 
 private:
     /**

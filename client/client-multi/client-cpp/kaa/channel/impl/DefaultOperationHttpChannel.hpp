@@ -17,6 +17,10 @@
 #ifndef DEFAULTOPERATIONHTTPCHANNEL_HPP_
 #define DEFAULTOPERATIONHTTPCHANNEL_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
+
 #include "kaa/channel/impl/AbstractHttpChannel.hpp"
 
 namespace kaa {
@@ -54,6 +58,6 @@ private:
 
 }
 
-
+#endif
 
 #endif /* DEFAULTOPERATIONHTTPCHANNEL_HPP_ */

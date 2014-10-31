@@ -17,8 +17,16 @@
 #ifndef HTTPUTILS_HPP_
 #define HTTPUTILS_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)      || \
+    defined(KAA_DEFAULT_TCP_CHANNEL)
+
 #include <cstdint>
 #include <boost/noncopyable.hpp>
+#include <boost/asio.hpp>
 
 namespace kaa {
 
@@ -40,5 +48,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif /* HTTPUTILS_HPP_ */

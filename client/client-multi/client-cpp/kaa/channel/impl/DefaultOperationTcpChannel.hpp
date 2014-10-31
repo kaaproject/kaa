@@ -17,6 +17,9 @@
 #ifndef DEFAULTOPERATIONTCPCHANNEL_HPP_
 #define DEFAULTOPERATIONTCPCHANNEL_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_DEFAULT_TCP_CHANNEL
 
 #include "kaa/channel/IDataChannel.hpp"
 #include "kaa/channel/server/KaaTcpServerInfo.hpp"
@@ -122,5 +125,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif /* DEFAULTOPERATIONTCPCHANNEL_HPP_ */

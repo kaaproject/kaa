@@ -16,6 +16,8 @@
 
 #include "kaa/channel/connectivity/PingConnectivityChecker.hpp"
 
+#ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
+
 #include <string>
 #include <sstream>
 #include <cstdint>
@@ -98,3 +100,5 @@ bool PingConnectivityChecker::checkConnectivity()
 }
 
 } /* namespace kaa */
+
+#endif

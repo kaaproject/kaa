@@ -15,6 +15,9 @@
  */
 
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
+
+#ifdef KAA_DEFAULT_TCP_CHANNEL
+
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 #include "kaa/security/RsaEncoderDecoder.hpp"
@@ -447,3 +450,5 @@ void DefaultOperationTcpChannel::syncAck(TransportType type)
 }
 
 }
+
+#endif

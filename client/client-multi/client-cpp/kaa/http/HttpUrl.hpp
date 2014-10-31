@@ -17,6 +17,8 @@
 #ifndef HTTPURL_HPP_
 #define HTTPURL_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
 #include <string>
 #include <cstdint>
 
@@ -45,5 +47,6 @@ private:
 };
 
 } /* namespace kaa */
+
 
 #endif /* HTTPURL_HPP_ */

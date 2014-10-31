@@ -156,23 +156,25 @@ void KaaClient::initKaaTransport()
 
 
     notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
-
+#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
-    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
-
     bootstrapChannel_->setDemultiplexer(bootstrapProcessor_.get());
     bootstrapChannel_->setMultiplexer(bootstrapProcessor_.get());
-    opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
-    opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
-
     KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
     channelManager_->addChannel(bootstrapChannel_.get());
+#endif
+#ifdef KAA_DEFAULT_TCP_CHANNEL
+    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
+    opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
+    opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
     channelManager_->addChannel(opsTcpChannel_.get());
-
+#endif
+#ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
     ConnectivityCheckerPtr connectivityChecker(new PingConnectivityChecker(
             *static_cast<KaaChannelManager*>(channelManager_.get())));
     channelManager_->setConnectivityChecker(connectivityChecker);
+#endif
 }
 
 void KaaClient::initClientKeys()

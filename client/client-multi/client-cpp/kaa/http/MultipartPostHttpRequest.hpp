@@ -17,6 +17,12 @@
 #ifndef MULTIPARTPOSTHTTPREQUEST_HPP_
 #define MULTIPARTPOSTHTTPREQUEST_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include "kaa/http/IHttpRequest.hpp"
 #include "kaa/http/HttpUrl.hpp"
 
@@ -50,6 +56,6 @@ private:
 
 }
 
-
+#endif
 
 #endif /* MULTIPARTPOSTHTTPREQUEST_HPP_ */

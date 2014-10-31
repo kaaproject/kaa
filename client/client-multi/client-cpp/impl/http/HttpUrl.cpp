@@ -15,6 +15,8 @@
  */
 
 #include "kaa/http/HttpUrl.hpp"
+
+
 #include <cstring>
 #include <cctype>
 #include <cstdlib>
@@ -92,3 +94,4 @@ void HttpUrl::parseUrl()
 }
 
 } /* namespace kaa */
+

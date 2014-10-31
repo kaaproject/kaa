@@ -16,6 +16,10 @@
 
 #include "kaa/http/HttpResponse.hpp"
 
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include <cstring>
 #include <cstdlib>
 #include <cstdint>
@@ -90,4 +94,5 @@ void HttpResponse::parseResponse(const char *data, std::size_t len)
 
 }
 
+#endif
 

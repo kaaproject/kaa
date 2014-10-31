@@ -16,6 +16,10 @@
 
 #include "kaa/transport/HttpDataProcessor.hpp"
 
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 namespace kaa {
 
 void HttpDataProcessor::verifyResponse(const IHttpResponse& response)
@@ -72,4 +76,5 @@ std::string HttpDataProcessor::retrieveBootstrapResponse(const IHttpResponse& re
 
 }
 
+#endif
 

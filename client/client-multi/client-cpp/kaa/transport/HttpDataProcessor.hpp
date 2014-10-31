@@ -17,6 +17,12 @@
 #ifndef HTTPDATAPROCESSOR_HPP_
 #define HTTPDATAPROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include "kaa/security/RsaEncoderDecoder.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/http/IHttpResponse.hpp"
@@ -62,5 +68,7 @@ private:
 typedef std::shared_ptr<HttpDataProcessor> HttpDataProcessorPtr;
 
 }
+
+#endif
 
 #endif /* HTTPDATAPROCESSOR_HPP_ */

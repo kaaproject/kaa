@@ -27,7 +27,7 @@ EndpointObjectHash::EndpointObjectHash()
 EndpointObjectHash::EndpointObjectHash(const std::uint8_t* data, const std::uint32_t& dataSize)
     : Botan::SHA_160(), withData_(true)
 {
-    clone(data, dataSize);
+    cloneHash(data, dataSize);
 }
 
 EndpointObjectHash::EndpointObjectHash(const std::string& str)
@@ -39,7 +39,7 @@ EndpointObjectHash::EndpointObjectHash(const std::string& str)
 EndpointObjectHash::EndpointObjectHash(const SharedDataBuffer& endpointHash)
     : Botan::SHA_160(), withData_(true)
 {
-    clone(endpointHash.first.get(), endpointHash.second);
+    cloneHash(endpointHash.first.get(), endpointHash.second);
 }
 
 EndpointObjectHash::EndpointObjectHash(EndpointObjectHash& endpointHash)
@@ -76,7 +76,7 @@ SharedDataBuffer EndpointObjectHash::getHash()
     return hashBuffer_;
 }
 
-void EndpointObjectHash::clone(const std::uint8_t* data, const std::uint32_t& dataSize)
+void EndpointObjectHash::cloneHash(const std::uint8_t* data, const std::uint32_t& dataSize)
 {
     if (!data || dataSize == 0) {
         throw KaaException("empty raw data or null size");

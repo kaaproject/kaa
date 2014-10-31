@@ -104,9 +104,12 @@ private:
     std::unique_ptr<BootstrapDataProcessor>   bootstrapProcessor_;
     std::unique_ptr<OperationsDataProcessor>  operationsProcessor_;
 
+#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::shared_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
+#endif
+#ifdef KAA_DEFAULT_TCP_CHANNEL
     std::shared_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
-
+#endif
     std::unique_ptr<LogCollector>      logCollector_;
 
     int options_;

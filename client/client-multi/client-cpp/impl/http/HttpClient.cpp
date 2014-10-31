@@ -15,6 +15,11 @@
  */
 
 #include "kaa/http/HttpClient.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include "kaa/logging/Log.hpp"
 #include "kaa/transport/TransportException.hpp"
 #include "kaa/http/HttpUtils.hpp"
@@ -77,3 +82,4 @@ void HttpClient::doSocketClose()
 
 }
 
+#endif
