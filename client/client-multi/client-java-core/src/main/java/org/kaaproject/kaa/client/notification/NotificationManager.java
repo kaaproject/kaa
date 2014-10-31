@@ -19,48 +19,55 @@ package org.kaaproject.kaa.client.notification;
 import java.util.List;
 import java.util.Map;
 
-import org.kaaproject.kaa.client.channel.NotificationTransport;
-import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 /**
- * <p>Interface for the notifications delivery system.</p>
+ * <p>Interface for the notification delivery system.</p>
  *
  * <p>Responsible for processing received topic/notification updates,
  * subscribing for voluntary topic updates and unsubscribing from them.</p>
  *
  * @author Yaroslav Zeygerman
+ * @author Denis Kimcherenko
  *
  * @see AbstractNotificationListener
- * @see NotificationListenerInfo
  * @see NotificationTopicListListener
+ * @see NotificationListenerInfo
  *
  */
 public interface NotificationManager {
-
     /**
      * <p>Add listener for all mandatory topics' updates.</p>
      *
+     * <p><b>Use {@link #addNotificationListener(NotificationListener)} instead.</b></p>
+     *
      * <p>If specific listener is needed for some mandatory topic, use
-     * {@link NotificationManager#updateTopicSubscriptions}.</p>
+     * {@link NotificationManager#addNotificationListener(String, NotificationListener)}.</p>
      *
      * @param listener the listener to receive notification.
+     *
      * @see AbstractNotificationListener
      *
      */
+    @Deprecated
     void addMandatoryTopicsListener(NotificationListener listener);
 
     /**
-     * <p>Removes listener of mandatory topics' updates.</p>
+     * <p>Remove listener for mandatory topics' updates.</p>
+     *
+     * <p><b>Use {@link #removeNotificationListener(NotificationListener)} instead.</b></p>
      *
      * @param listener the listener which is no longer needs updates.
+     *
      * @see AbstractNotificationListener
+     * @see NotificationManager#removeNotificationListener(NotificationListener)
      *
      */
+    @Deprecated
     void removeMandatoryTopicsListener(NotificationListener listener);
 
     /**
-     * Adds listener of topics' list updates.
+     * <p>Add listener for topics' list updates.</p>
      *
      * @param listener the listener to receive updates.
      * @see NotificationTopicListListener
@@ -69,7 +76,7 @@ public interface NotificationManager {
     void addTopicListListener(NotificationTopicListListener listener);
 
     /**
-     * Removes listener of topics' list updates.
+     * <p>Remove listener of topics' list updates.</p>
      *
      * @param listener listener the listener which is no longer needs updates.
      * @see NotificationTopicListListener
@@ -78,7 +85,7 @@ public interface NotificationManager {
     void removeTopicListListener(NotificationTopicListListener listener);
 
     /**
-     * <p>Updates (subscribe/unsubscribe) info about topic's subscriptions.</p>
+     * <p>Update (subscribe/unsubscribe) info about topic's subscriptions.</p>
      *
      * <p>Basic usage is to subscribe for voluntary topic updates and unsubscribe
      * from them. More than one listener may be used for the same topic.</p>
@@ -116,44 +123,171 @@ public interface NotificationManager {
      * }
      * </pre>
      *
-     * @throws KaaException when topic isn't found or bad subscription info
-     * was passed (empty id or null subscriber).
-     *
      * @param subscribers collections of pairs topic id/subscriber info.
-     * @see NotificationListenerInfo
+     *
+     * @throws UnavailableTopicException Throw if unknown topic id is provided.
+     *
+     * @see #subscribeOnTopic(String, boolean)
+     * @see #subscribeOnTopics(List, boolean)
+     * @see #addNotificationListener(NotificationListener)
+     * @see #addNotificationListener(String, NotificationListener)
      *
      */
+    @Deprecated
     void updateTopicSubscriptions(Map<String, List<NotificationListenerInfo>> subscribers)
                                                             throws UnavailableTopicException;
 
     /**
-     * Retrieves the current topics' list.
+     * <p>Retrieve a list of available topics.</p>
      *
-     * @return the list of topics' names.
-     * @see Topic
+     * @return List of available topics
      *
      */
     List<Topic> getTopics();
 
     /**
-     * <p>Retrieves and clears the current list of Subscription commands.</p>
+     * <p>Add listener to receive all notifications (both for mandatory and
+     * voluntary topics).</p>
      *
-     * <p><b>NOTE:</b>DO NOT call method explicitly.</p>
+     * @param listener Listener to receive notifications
      *
-     * @return the list of Subscription commands.
-     * @see SubscriptionCommand
-     *
+     * @see AbstractNotificationListener
      */
-    List<SubscriptionCommand> releaseSubscriptionCommands();
+    void addNotificationListener(NotificationListener listener);
 
     /**
-     * <p>Sets the transport to Notification manager.</p>
+     * <p>Add listener to receive notifications relating to the specified topic.</p>
      *
-     * <p><b>NOTE:</b>DO NOT call method explicitly.</p>
+     * <p>Listener(s) for voluntary topics may be added/removed irrespective to
+     * whether subscription was already or not.</p>
      *
-     * @param transport the transport object to be set.
-     * @see NotificationTransport
+     * @param topicId  Id of topic (both mandatory and voluntary).
+     * @param listener Listener to receive notifications.
      *
+     * @throws UnavailableTopicException Throw if unknown topic id is provided.
+     *
+     * @see AbstractNotificationListener
      */
-    void setTransport(NotificationTransport transport);
+    void addNotificationListener(String topicId, NotificationListener listener)
+                                            throws UnavailableTopicException;
+
+    /**
+     * <p>Remove listener receiving all notifications (both for mandatory and
+     * voluntary topics).</p>
+     *
+     * @param listener Listener to receive notifications
+     *
+     * @see AbstractNotificationListener
+     */
+    void removeNotificationListener(NotificationListener listener);
+
+   /**
+    * <p>Remove listener receiving notifications for the specified topic.</p>
+    *
+    * <p>Listener(s) for voluntary topics may be added/removed irrespective to
+    * whether subscription was already or not.</p>
+    *
+    * @param topicId Id of topic (both mandatory and voluntary).
+    * @param listener Listener to receive notifications.
+    *
+    * @throws UnavailableTopicException Throw if unknown topic id is provided.
+    *
+    * @see AbstractNotificationListener
+    */
+   void removeNotificationListener(String topicId, NotificationListener listener)
+                                           throws UnavailableTopicException;
+
+    /**
+     * <p>Subscribe for notifications relating to the specified voluntary topic.</p>
+     *
+     * @param topicId Id of a voluntary topic.
+     * @param forceSync Define whether current subscription update should be
+     * accepted immediately (see {@link #sync()}).
+     *
+     * @throws UnavailableTopicException Throw if unknown topic id is provided or
+     * topic isn't voluntary.
+     *
+     * @see #sync()
+     */
+    void subscribeOnTopic(String topicId, boolean forceSync)
+                                            throws UnavailableTopicException;
+
+    /**
+     * <p>Subscribe for notifications relating to the specified list of
+     * voluntary topics.</p>
+     *
+     * @param topicIds List of voluntary topic id.
+     * @param forceSync Define whether current subscription update should be
+     * accepted immediately (see {@link #sync()}).
+     *
+     * @throws UnavailableTopicException Throw if unknown topic id is provided or
+     * topic isn't voluntary.
+     *
+     * @see #sync()
+     */
+    void subscribeOnTopics(List<String> topicIds, boolean forceSync)
+                                            throws UnavailableTopicException;
+
+    /**
+     * <p>Unsubscribe from notifications relating to the specified voluntary topic.</p>
+     *
+     * <p>All previously added listeners will be removed automatically.</p>
+     *
+     * @param topicId Id of a voluntary topic.
+     * @param forceSync Define whether current subscription update should be
+     * accepted immediately (see {@link #sync()}).
+     *
+     * @throws UnavailableTopicException Throw if unknown topic id is provided or
+     * topic isn't voluntary.
+     *
+     * @see #sync()
+     */
+    void unsubscribeFromTopic(String topicId, boolean forceSync)
+                                            throws UnavailableTopicException;
+
+    /**
+     * <p>Unsubscribe from notifications relating to the specified list of
+     * voluntary topics.</p>
+     *
+     * <p>All previously added listeners will be removed automatically.</p>
+     *
+     * @param topicIds List of voluntary topic id.
+     * @param forceSync Define whether current subscription update should be
+     * accepted immediately (see {@link #sync()}).
+     *
+     * @throws UnavailableTopicException Throw if unknown topic id is provided or
+     * topic isn't voluntary.
+     *
+     * @see #sync()
+     */
+    void unsubscribeFromTopics(List<String> topicIds, boolean forceSync)
+                                            throws UnavailableTopicException;
+
+    /**
+     * <p>Accept voluntary subscription changes.</p>
+     *
+     * <p>Should be used after all {@link #subscribeOnTopic(String, boolean)},
+     * {@link #subscribeOnTopics(List, boolean)}, {@link #unsubscribeFromTopic(String, boolean)},
+     * {@link #unsubscribeFromTopics(List, boolean)} calls with parameter
+     * {@code forceSync} set to {@code false}.</p>
+     *
+     * <p>Use it as a convenient way to make different consequent changes in
+     * the voluntary subscription:</p>
+     * <pre>
+     * {@code
+     *  NotificationManager notificationManager = kaaClient.getNotificationManager();
+     *
+     *  // Make subscription changes
+     *  notificationManager.subscribeOnTopics(Arrays.asList(
+     *          "voluntary_topic1", "voluntary_topic2", "voluntary_topic3"), false);
+     *  notificationManager.unsubscribeFromTopic("voluntary_topic4", false);
+     *
+     *  // Add listeners for voluntary topics (optional)
+     *
+     *  // Commit changes
+     *  notificationManager.sync();
+     * }
+     * </pre>
+     */
+    void sync();
 }

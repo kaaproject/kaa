@@ -17,82 +17,53 @@
 #ifndef DEFAULTNOTIFICATONMANAGER_HPP_
 #define DEFAULTNOTIFICATONMANAGER_HPP_
 
-#include <map>
+#include <mutex>
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
-#include <boost/signals2.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/shared_ptr.hpp>
-
-#include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/gen/EndpointGen.hpp"
+#include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/notification/INotificationManager.hpp"
 #include "kaa/notification/NotificationTransport.hpp"
 #include "kaa/notification/INotificationListener.hpp"
 #include "kaa/notification/INotificationProcessor.hpp"
-#include "kaa/notification/INotificationTopicsListener.hpp"
+#include "kaa/notification/INotificationTopicListListener.hpp"
 
 namespace kaa {
 
 class NotificationManager : public INotificationManager, public INotificationProcessor {
 public:
-    /**
-     * Constructor
-     * \param manager link to an instance of the Update Manager (\ref IUpdateManager)
-     */
     NotificationManager(IKaaClientStateStoragePtr status);
 
-    /**
-     * Update (subscribe/unsubscribe) info about topic's subscriptions_
-     * \throw KaaException when topic isn't found or bad subscription info was passed (empty id or null subscriber).
-     * \param subscribers collections of pairs topic id/subscriber info.
-     * May consist several subscribers for the same topic.
-     */
-    virtual void updateTopicSubscriptions(const TopicSubscribers& subscribers);
-
-    /**
-     * Subscribe mandatory listener for all topics.
-     * Will be called if no specific (per-topic) exists
-     * \param listener mandatory topic listener
-     */
-    virtual void addMandatoryTopicsListener(INotificationListener* listener);
-
-    /**
-     * Unsubscribe mandatory listener for all topics
-     * \param listener mandatory topic listener
-     */
-    virtual void removeMandatoryTopicsListener(INotificationListener* listener);
-
-    /**
-     * Subscribe listener on notification updates of topics
-     * \param listener notification topic listener
-     */
-    virtual void addTopicsListener(INotificationTopicsListener* listener);
-
-    /**
-     * Unsubscribe listener on notification updates of topics
-     * \param listener notification topic listener
-     */
-    virtual void removeTopicsListener(INotificationTopicsListener* listener);
-
-    /**
-     *  Will be called when new topic list are received
-     *  \param topics comprises of new topics
-     */
     virtual void topicsListUpdated(const Topics& topics);
 
-    /**
-     *  Will be called when new topic list are received
-     *  \param notifications comprises of new notifications
-     */
     virtual void notificationReceived(const Notifications& notifications);
 
-    /**
-     * Returns currently available topics mapped by topic id
-     */
-    virtual const std::map<std::string, Topic>& getTopics() {
-        return topics_;
-    }
+    virtual void addTopicListListener(INotificationTopicListListenerPtr listener);
+
+    virtual void removeTopicListListener(INotificationTopicListListenerPtr listener);
+
+    virtual Topics getTopics();
+
+    virtual void addNotificationListener(INotificationListenerPtr listener);
+
+    virtual void addNotificationListener(const std::string& topidId, INotificationListenerPtr listener);
+
+    virtual void removeNotificationListener(INotificationListenerPtr listener);
+
+    virtual void removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener);
+
+    virtual void subscribeOnTopic(const std::string& id, bool forceSync);
+
+    virtual void subscribeOnTopics(const std::list<std::string>& idList, bool forceSync);
+
+    virtual void unsubscribeFromTopic(const std::string& id, bool forceSync);
+
+    virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync);
+
+    virtual void sync();
 
     /**
      * Provide notification transport to manager.
@@ -100,28 +71,49 @@ public:
     virtual void setTransport(std::shared_ptr<NotificationTransport> transport);
 private:
     void updateSubscriptionInfo(const std::string& id, SubscriptionCommandType type);
-    void onSubscriptionInfoUpdated();
+    void updateSubscriptionInfo(const SubscriptionCommands& newSubscriptions);
+
+    const Topic& findTopic(const std::string& id);
+
+    void notifyTopicUpdateSubscribers(const Topics& topics);
+    void notifyMandatoryNotificationSubscribers(const Notification& notification);
+    bool notifyVoluntaryNotificationSubscribers(const Notification& notification);
 
 private:
-    typedef boost::signals2::signal<void (const Topics&)> TopicListeners;
+    typedef std::unique_lock<std::mutex> GuardLock;
 
-    typedef boost::signals2::signal<void (const std::string&
-                                        , const std::vector<boost::uint8_t>& )> NotificationListeners;
-
-private:
-    std::shared_ptr<NotificationTransport>                         transport_;
+    std::shared_ptr<NotificationTransport>                           transport_;
     IKaaClientStateStoragePtr                                        clientStatus_;
 
-    std::map<std::string/*Topic ID*/, Topic>                         topics_;
-    boost::mutex                                                     topicsGuard_;
+    std::unordered_map<std::string/*Topic ID*/, Topic>               topics_;
+    std::mutex                                                       topicsGuard_;
 
-    TopicListeners                                                   topicListeners_;
-    NotificationListeners                                            mandatoryListeners_;
+    bool                                                             topicUpdateNotifying_;
+    bool                                                             mandatoryListenersNotifying_;
+    bool                                                             voluntaryListenersNotifying_;
 
-    std::map<std::string/*Topic ID*/, boost::shared_ptr<NotificationListeners> > notificationListeners_;
-    boost::mutex                                                     notificationListenersGuard_;
+    std::mutex                                                       topicNotifyGuard_;
+    std::mutex                                                       mandatoryListenersNotifyGuard_;
+    std::mutex                                                       voluntaryListenersNotifyGuard_;
 
-    SubscriptionCommands subscriptions_;
+    std::unordered_set<INotificationTopicListListenerPtr>            topicListeners_;
+    std::unordered_set<INotificationTopicListListenerPtr>            topicListenersPendingAdd_;
+    std::unordered_set<INotificationTopicListListenerPtr>            topicListenersPendingRemove_;
+    std::mutex                                                       topicListenersGuard_;
+
+    std::unordered_set<INotificationListenerPtr>                     mandatoryListeners_;
+    std::unordered_set<INotificationListenerPtr>                     mandatoryListenersPendingAdd_;
+    std::unordered_set<INotificationListenerPtr>                     mandatoryListenersPendingRemove_;
+    std::mutex                                                       mandatoryListenersGuard_;
+
+    std::unordered_map<std::string/*Topic ID*/,
+                std::unordered_set<INotificationListenerPtr>>        voluntaryListeners_;
+    std::unordered_multimap<std::string, INotificationListenerPtr>   voluntaryListenersPendingAdd_;
+    std::unordered_multimap<std::string, INotificationListenerPtr>   voluntaryListenersPendingRemove_;
+    std::mutex                                                       voluntaryListenersGuard_;
+
+    SubscriptionCommands                                             subscriptions_;
+    std::mutex                                                       subscriptionsGuard_;
 };
 
 } /* namespace kaa */

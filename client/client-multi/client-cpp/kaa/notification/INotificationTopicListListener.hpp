@@ -14,40 +14,37 @@
  * limitations under the License.
  */
 
-#ifndef INOTIFICATIONLISTENER_HPP_
-#define INOTIFICATIONLISTENER_HPP_
+#ifndef INOTIFICATIONTOPICLISTLISTENER_HPP_
+#define INOTIFICATIONTOPICLISTLISTENER_HPP_
 
-#include <string>
-#include <vector>
 #include <memory>
-
-#include <boost/cstdint.hpp>
 
 namespace kaa {
 
+typedef std::vector<Topic> Topics;
+
 /**
- * The listener of raw notifications' data.
+ * <p>The listener to receive updates of available topics.</p>
  *
  * @author Denis Kimcherenko
+ * @see INotificationManager
  *
  */
-class INotificationListener {
+class INotificationTopicListListener {
 public:
     /**
-     * Call on each received notification.
+     * <p>Call on each updates of available topic list.</p>
      *
-     * @param topicId The topic's id to which notification is received.
-     * @param notification The raw notification's data.
-     *
+     * @param list The new list of available topics.
+     * @see Topic
      */
-    virtual void onNotificationRaw(const std::string& topicId
-                                 , const std::vector<boost::uint8_t>& notification) = 0;
+    virtual void onListUpdated(const Topics& list) = 0;
 
-    virtual ~INotificationListener() {}
+    virtual ~INotificationTopicListListener() {}
 };
 
-typedef std::shared_ptr<INotificationListener> INotificationListenerPtr;
+typedef std::shared_ptr<INotificationTopicListListener> INotificationTopicListListenerPtr;
 
 } /* namespace kaa */
 
-#endif /* INOTIFICATIONLISTENER_HPP_ */
+#endif /* INOTIFICATIONTOPICLISTLISTENER_HPP_ */
