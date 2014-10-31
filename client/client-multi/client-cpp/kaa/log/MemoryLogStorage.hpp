@@ -17,6 +17,10 @@
 #ifndef MEMORYLOGSTORAGE_HPP_
 #define MEMORYLOGSTORAGE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include <list>
 #include <cstdint>
 
@@ -82,5 +86,7 @@ private:
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* MEMORYLOGSTORAGE_HPP_ */

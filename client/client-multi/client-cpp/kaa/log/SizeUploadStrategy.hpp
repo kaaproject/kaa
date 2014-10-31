@@ -17,6 +17,10 @@
 #ifndef SIZEUPLOADSTRATEGY_HPP_
 #define SIZEUPLOADSTRATEGY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/log/ILogUploadStrategy.hpp"
 
 namespace kaa {
@@ -40,5 +44,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* SIZEUPLOADSTRATEGY_HPP_ */

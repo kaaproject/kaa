@@ -17,6 +17,10 @@
 #ifndef LOGRECORD_HPP_
 #define LOGRECORD_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include <vector>
 #include <cstdint>
 #include "kaa/common/AvroByteArrayConverter.hpp"
@@ -46,5 +50,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* LOGRECORD_HPP_ */

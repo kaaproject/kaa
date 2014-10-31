@@ -16,6 +16,8 @@
 
 #include "kaa/log/LogCollector.hpp"
 
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/common/UuidGenerator.hpp"
 #include "kaa/logging/Log.hpp"
@@ -207,3 +209,6 @@ void LogCollector::setTransport(LoggingTransport *transport)
 }
 
 }  // namespace kaa
+
+#endif
+

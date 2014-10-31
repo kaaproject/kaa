@@ -17,6 +17,10 @@
 #ifndef ILOGUPLOADCONFIGURATION_HPP_
 #define ILOGUPLOADCONFIGURATION_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include <cstdint>
 
 namespace kaa {
@@ -58,5 +62,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ILOGUPLOADCONFIGURATION_HPP_ */

@@ -73,7 +73,9 @@ void KaaClient::init(int options)
 
     eventManager_.reset(new EventManager(status_));
     eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_));
+#ifdef KAA_USE_LOGGING
     logCollector_.reset(new LogCollector());
+#endif
 
     initKaaConfiguration();
     initKaaTransport();
@@ -139,7 +141,9 @@ void KaaClient::initKaaTransport()
     INotificationTransportPtr notificationTransport(new NotificationTransport(status_, *channelManager_));
     IUserTransportPtr userTransport(new UserTransport(*registrationManager_, *channelManager_));
     IEventTransportPtr eventTransport(new EventTransport(*eventManager_, *channelManager_));
+#ifdef KAA_USE_LOGGING
     ILoggingTransportPtr loggingTransport(new LoggingTransport(*channelManager_, *logCollector_));
+#endif
     IRedirectionTransportPtr redirectionTransport(new RedirectionTransport(*bootstrapManager_));
 
     profileTransport->setProfileManager(profileManager_.get());
@@ -158,14 +162,19 @@ void KaaClient::initKaaTransport()
             , notificationTransport
             , userTransport
             , eventTransport
+#ifdef KAA_USE_LOGGING
             , loggingTransport
+#else
+            , nullptr
+#endif
             , redirectionTransport
             , status_));
 
     eventManager_->setTransport(std::dynamic_pointer_cast<EventTransport, IEventTransport>(eventTransport).get());
     registrationManager_->setTransport(std::dynamic_pointer_cast<UserTransport, IUserTransport>(userTransport).get());
+#ifdef KAA_USE_LOGGING
     logCollector_->setTransport(std::dynamic_pointer_cast<LoggingTransport, ILoggingTransport>(loggingTransport).get());
-
+#endif
 
     notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL

@@ -17,6 +17,10 @@
 #ifndef LOGGINGTRANSPORT_HPP_
 #define LOGGINGTRANSPORT_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/ILoggingTransport.hpp"
 
@@ -37,5 +41,7 @@ private:
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* LOGGINGTRANSPORT_HPP_ */

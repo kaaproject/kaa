@@ -17,6 +17,10 @@
 #ifndef ILOGSTORAGE_HPP_
 #define ILOGSTORAGE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/log/LogRecord.hpp"
 #include <list>
 #include <cstdint>
@@ -74,5 +78,6 @@ typedef std::shared_ptr<ILogStorage> LogStoragePtr;
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ILOGSTORAGE_HPP_ */

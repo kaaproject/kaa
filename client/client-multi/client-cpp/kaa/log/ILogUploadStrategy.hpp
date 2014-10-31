@@ -17,6 +17,10 @@
 #ifndef ILOGUPLOADSTRATEGY_HPP_
 #define ILOGUPLOADSTRATEGY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/log/ILogUploadConfiguration.hpp"
 #include "kaa/log/ILogStorageStatus.hpp"
 
@@ -55,5 +59,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ILOGUPLOADSTRATEGY_HPP_ */

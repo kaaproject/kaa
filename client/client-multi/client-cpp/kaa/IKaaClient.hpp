@@ -142,12 +142,14 @@ public:
      */
     virtual const KeyPair&                    getClientKeyPair() = 0;
 
+#ifdef KAA_USE_LOGGING
     /**
      * Retrieves Kaa log collector
      *
      * @return @link LogCollector @endlink object
      */
     virtual ILogCollector&                    getLogCollector() = 0;
+#endif
 
     /**
      * Retrieves Kaa operations data multiplexer

@@ -17,6 +17,10 @@
 #ifndef ILOGSTORAGESTATUS_HPP_
 #define ILOGSTORAGESTATUS_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include <cstdint>
 
 namespace kaa {
@@ -51,5 +55,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ILOGSTORAGESTATUS_HPP_ */

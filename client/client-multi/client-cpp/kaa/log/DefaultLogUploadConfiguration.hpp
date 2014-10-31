@@ -17,6 +17,10 @@
 #ifndef DEFAULTLOGUPLOADCONFIGURATION_HPP_
 #define DEFAULTLOGUPLOADCONFIGURATION_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include <cstdint>
 #include "kaa/log/ILogUploadConfiguration.hpp"
 
@@ -49,5 +53,7 @@ private:
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* DEFAULTLOGUPLOADCONFIGURATION_HPP_ */

@@ -17,6 +17,10 @@
 #ifndef LOGCOLLECTOR_HPP_
 #define LOGCOLLECTOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/log/ILogCollector.hpp"
 
 #include <memory>
@@ -76,5 +80,7 @@ private:
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* LOGCOLLECTOR_HPP_ */

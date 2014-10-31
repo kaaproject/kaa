@@ -15,6 +15,9 @@
  */
 
 #include "kaa/log/LoggingTransport.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/log/LogCollector.hpp"
 
 #include "kaa/logging/Log.hpp"
@@ -51,3 +54,4 @@ void LoggingTransport::onLogSyncResponse(const LogSyncResponse& response)
 
 }  // namespace kaa
 
+#endif

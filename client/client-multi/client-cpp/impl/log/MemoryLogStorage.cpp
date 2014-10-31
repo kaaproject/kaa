@@ -15,6 +15,9 @@
  */
 
 #include "kaa/log/MemoryLogStorage.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/logging/Log.hpp"
 
 namespace kaa {
@@ -159,5 +162,7 @@ void MemoryLogStorage::resize(std::size_t blockSize)
 }
 
 }  // namespace kaa
+
+#endif
 
 

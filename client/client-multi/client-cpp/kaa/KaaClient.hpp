@@ -75,7 +75,9 @@ public:
     virtual IEventListenersResolver&            getEventListenersResolver() { return *eventManager_; }
     virtual IKaaChannelManager&                 getChannelManager()  { return *channelManager_; }
     virtual const KeyPair&                      getClientKeyPair() { return clientKeys_; }
+#ifdef KAA_USE_LOGGING
     virtual ILogCollector&                      getLogCollector() { return *logCollector_; }
+#endif
     virtual IKaaDataMultiplexer&                getOperationMultiplexer() { return *operationsProcessor_; }
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer() { return *operationsProcessor_; }
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer() { return *bootstrapProcessor_; }
@@ -117,7 +119,9 @@ private:
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     std::shared_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
 #endif
+#ifdef KAA_USE_LOGGING
     std::unique_ptr<LogCollector>      logCollector_;
+#endif
 
     int options_;
 };
