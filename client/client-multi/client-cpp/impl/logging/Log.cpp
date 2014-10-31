@@ -16,6 +16,8 @@
 
 #include "kaa/logging/Log.hpp"
 
+#if KAA_LOG_LEVEL > 0
+
 #include <boost/format.hpp>
 
 namespace kaa {
@@ -39,3 +41,5 @@ void kaa_log(const ILogger & logger, LogLevel level, boost::format message, cons
 }
 
 }  // namespace kaa
+
+#endif

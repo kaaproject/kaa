@@ -17,18 +17,16 @@
 #ifndef ILOGGER_HPP_
 #define ILOGGER_HPP_
 
-#include <boost/smart_ptr/shared_ptr.hpp>
-
 namespace kaa {
 
 enum class LogLevel {
-    FINE_TRACE = 0,
-    DEBUG,
-    TRACE,
-    INFO,
-    WARNING,
-    ERROR,
-    FATAL
+    FATAL = 1,
+    ERROR = 2,
+    WARNING = 3,
+    INFO = 4,
+    DEBUG = 5,
+    TRACE = 6,
+    FINE_TRACE = 7
 };
 
 class ILogger {

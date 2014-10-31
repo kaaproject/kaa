@@ -39,6 +39,8 @@
 #define KAA_USE_LOGGING
 #define KAA_USE_NOTIFICATIONS
 
+#define KAA_LOG_LEVEL  7
+
 namespace kaa {
 
 /**

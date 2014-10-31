@@ -16,6 +16,8 @@
 
 #include "kaa/logging/LoggerFactory.hpp"
 
+#if KAA_LOG_LEVEL > 0
+
 #include "kaa/logging/DefaultLogger.hpp"
 
 #include <sstream>
@@ -95,4 +97,6 @@ void LoggerFactory::initLogger(LoggerPtr logger) {
 }
 
 }  // namespace kaa
+
+#endif
 

@@ -17,6 +17,10 @@
 #ifndef LOGGERFACTORY_HPP_
 #define LOGGERFACTORY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if KAA_LOG_LEVEL > 0
+
 #include "kaa/logging/ILogger.hpp"
 
 namespace kaa {
@@ -30,5 +34,7 @@ private:
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* LOGGERFACTORY_HPP_ */

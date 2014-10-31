@@ -17,6 +17,10 @@
 #ifndef DEFAULTLOGGER_HPP_
 #define DEFAULTLOGGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if KAA_LOG_LEVEL > 0
+
 #include "kaa/logging/ILogger.hpp"
 
 #include <boost/log/trivial.hpp>
@@ -63,5 +67,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* DEFAULTLOGGER_HPP_ */
