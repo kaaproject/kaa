@@ -618,6 +618,7 @@
 		            <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
 		            <artifactId>appender</artifactId>
 		            <version>${project.version}</version>
+		            <classifier>cdap</classifier>
 		            <scope>runtime</scope>
 		        </dependency>
             </dependencies>

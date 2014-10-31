@@ -267,6 +267,12 @@
             </resource>
         </resources>
         <plugins>
+<!-- 		      <plugin> -->
+<!-- 		        <artifactId>maven-war-plugin</artifactId> -->
+<!-- 		        <configuration> -->
+<!-- 		          <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@-@{version}@.@{extension}@</outputFileNameMapping> -->
+<!-- 		        </configuration> -->
+<!-- 		      </plugin> -->
             <!-- REST documentation parse -->
             <plugin>
                 <groupId>org.bsc.maven</groupId>
@@ -767,6 +773,7 @@
                     <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
                     <artifactId>config</artifactId>
                     <version>${project.version}</version>
+                    <classifier>cdap</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

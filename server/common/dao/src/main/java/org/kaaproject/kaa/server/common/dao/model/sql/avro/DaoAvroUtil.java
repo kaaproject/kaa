@@ -21,12 +21,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
 import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
 import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.MongoAppenderParametersDto;
+import org.kaaproject.kaa.server.common.dao.model.sql.avro.gen.CustomAppenderParameters;
 import org.kaaproject.kaa.server.common.dao.model.sql.avro.gen.FileAppenderParameters;
 import org.kaaproject.kaa.server.common.dao.model.sql.avro.gen.FlumeAppenderParameters;
 import org.kaaproject.kaa.server.common.dao.model.sql.avro.gen.FlumeBalancingType;
@@ -75,6 +77,13 @@ public class DaoAvroUtil {
                     fileDto.setUsername(fileParameters.getUsername());
                     fileDto.setSshKey(fileParameters.getSshKey());
                     dto.setParameters(fileDto);
+                } else if (parameters instanceof CustomAppenderParameters) {
+                    CustomAppenderParameters customParameters = (CustomAppenderParameters) parameters;
+                    CustomAppenderParametersDto customDto = new CustomAppenderParametersDto();
+                    customDto.setName(customParameters.getName());
+                    customDto.setAppenderClassName(customParameters.getAppenderClassName());
+                    customDto.setConfiguration(customParameters.getConfiguration());
+                    dto.setParameters(customDto);
                 }
             }
 
@@ -108,6 +117,9 @@ public class DaoAvroUtil {
             } else if (params instanceof FileAppenderParametersDto) {
                 FileAppenderParametersDto fileDto = (FileAppenderParametersDto) params;
                 avroParameters.setAppenderParameters(new FileAppenderParameters(fileDto.getLogDirectoryPath(), fileDto.getUsername(), fileDto.getSshKey()));
+            } else if (params instanceof CustomAppenderParametersDto) {
+                CustomAppenderParametersDto customDto = (CustomAppenderParametersDto) params;
+                avroParameters.setAppenderParameters(new CustomAppenderParameters(customDto.getName(), customDto.getAppenderClassName(), customDto.getConfiguration()));
             }
             AvroByteArrayConverter<LogAppenderParameters> converter = new AvroByteArrayConverter<LogAppenderParameters>(LogAppenderParameters.class);
             try {

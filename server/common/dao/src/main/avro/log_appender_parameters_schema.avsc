@@ -94,6 +94,39 @@
                         }
                     ]
                 },
+                {
+                    "name":"CustomAppenderParameters",
+                    "type":"record",
+                    "fields":[
+                        {
+                            "name":"name",
+                            "type":[
+                                {
+                                    "type":"string"
+                                },
+                                "null"
+                            ]
+                        },
+                        {
+                            "name":"appenderClassName",
+                            "type":[
+                                {
+                                    "type":"string"
+                                },
+                                "null"
+                            ]
+                        },
+                        {
+                            "name":"configuration",
+                            "type":[
+                                {
+                                    "type":"string"
+                                },
+                                "null"
+                            ]
+                        }
+                    ]
+                },                
                 "null"
             ]
         }
