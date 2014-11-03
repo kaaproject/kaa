@@ -68,7 +68,9 @@ void KaaClient::init(int options)
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getServerInfoList()));
     registrationManager_.reset(new EndpointRegistrationManager(status_));
 
+#ifdef KAA_USE_NOTIFICATIONS
     notificationManager_.reset(new NotificationManager(status_));
+#endif
     profileManager_.reset(new ProfileManager());
 
     eventManager_.reset(new EventManager(status_));
@@ -138,7 +140,9 @@ void KaaClient::initKaaTransport()
             , configurationPersistenceManager_.get()
             , status_));
 #endif
+#ifdef KAA_USE_NOTIFICATIONS
     INotificationTransportPtr notificationTransport(new NotificationTransport(status_, *channelManager_));
+#endif
     IUserTransportPtr userTransport(new UserTransport(*registrationManager_, *channelManager_));
     IEventTransportPtr eventTransport(new EventTransport(*eventManager_, *channelManager_));
 #ifdef KAA_USE_LOGGING
@@ -159,7 +163,11 @@ void KaaClient::initKaaTransport()
 #else
             , nullptr
 #endif
+#ifdef KAA_USE_NOTIFICATIONS
             , notificationTransport
+#else
+            , nullptr
+#endif
             , userTransport
             , eventTransport
 #ifdef KAA_USE_LOGGING
@@ -175,8 +183,9 @@ void KaaClient::initKaaTransport()
 #ifdef KAA_USE_LOGGING
     logCollector_->setTransport(std::dynamic_pointer_cast<LoggingTransport, ILoggingTransport>(loggingTransport).get());
 #endif
-
+#ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
+#endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
     bootstrapChannel_->setDemultiplexer(bootstrapProcessor_.get());

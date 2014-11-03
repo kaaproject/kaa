@@ -17,11 +17,13 @@
 #ifndef INOTIFICATIONLISTENER_HPP_
 #define INOTIFICATIONLISTENER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_NOTIFICATIONS
+
 #include <string>
 #include <vector>
 #include <memory>
-
-#include <boost/cstdint.hpp>
 
 namespace kaa {
 
@@ -41,7 +43,7 @@ public:
      *
      */
     virtual void onNotificationRaw(const std::string& topicId
-                                 , const std::vector<boost::uint8_t>& notification) = 0;
+                                 , const std::vector<std::uint8_t>& notification) = 0;
 
     virtual ~INotificationListener() {}
 };

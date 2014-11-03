@@ -17,11 +17,13 @@
 #ifndef DEFAULTNOTIFICATIONTRANSPORT_HPP_
 #define DEFAULTNOTIFICATIONTRANSPORT_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_NOTIFICATIONS
+
 #include <map>
 #include <set>
 #include <string>
-
-#include <boost/cstdint.hpp>
 
 #include "kaa/channel/transport/IKaaTransport.hpp"
 #include "kaa/channel/transport/INotificationTransport.hpp"
@@ -68,10 +70,12 @@ private:
     INotificationProcessor*   notificationProcessor_;
 
     std::set<std::string>                    acceptedUnicastNotificationIds_;
-    std::map<std::string, boost::int32_t>    notificationSubscriptions_;
+    std::map<std::string, std::int32_t>    notificationSubscriptions_;
     SubscriptionCommands                     subscriptions_;
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* DEFAULTNOTIFICATIONTRANSPORT_HPP_ */

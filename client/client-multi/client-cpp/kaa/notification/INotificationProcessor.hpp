@@ -17,6 +17,10 @@
 #ifndef INOTIFICATIONPROCESSOR_HPP_
 #define INOTIFICATIONPROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_NOTIFICATIONS
+
 #include <vector>
 
 #include "kaa/gen/EndpointGen.hpp"
@@ -48,5 +52,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* INOTIFICATIONPROCESSOR_HPP_ */

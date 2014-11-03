@@ -69,7 +69,9 @@ public:
     virtual IDeltaManager&                      getDeltaManager() { return *deltaManager_; }
     virtual IConfigurationManager&              getConfigurationManager() { return *configurationManager_; }
 #endif
+#ifdef KAA_USE_NOTIFICATIONS
     virtual INotificationManager&               getNotificationManager() { return *notificationManager_; }
+#endif
     virtual IEndpointRegistrationManager&       getEndpointRegistrationManager() { return *registrationManager_; }
     virtual EventFamilyFactory&                 getEventFamilyFactory() { return *eventFamilyFactory_; }
     virtual IEventListenersResolver&            getEventListenersResolver() { return *eventManager_; }
@@ -93,7 +95,9 @@ private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
     std::unique_ptr<ProfileManager>                 profileManager_;
+#ifdef KAA_USE_NOTIFICATIONS
     std::unique_ptr<NotificationManager>            notificationManager_;
+#endif
     std::unique_ptr<EndpointRegistrationManager>    registrationManager_;
 
     KeyPair         clientKeys_;

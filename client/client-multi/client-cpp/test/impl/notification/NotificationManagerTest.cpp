@@ -37,6 +37,8 @@
 
 namespace kaa {
 
+const std::string STATUS_FILE_NAME("test_status.txt");
+
 class SystemNotificationListener : public AbstractNotificationListener<BasicSystemNotification>
 {
 public:
@@ -234,9 +236,9 @@ BOOST_AUTO_TEST_CASE(NotificationReceiving)
 
 BOOST_AUTO_TEST_CASE(TopicsPersistence)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("test_status.txt"));
+    IKaaClientStateStoragePtr status(new ClientStatus(STATUS_FILE_NAME));
     MockChannelManager channelManager;
-    boost::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
+    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
     NotificationManager notificationManager(status);
     notificationManager.setTransport(transport);
 
@@ -259,21 +261,23 @@ BOOST_AUTO_TEST_CASE(TopicsPersistence)
 
     status->save();
 
-    IKaaClientStateStoragePtr newStatus(new ClientStatus("test_status.txt"));
-    boost::shared_ptr<NotificationTransport> newTransport(new NotificationTransport(newStatus, channelManager));
+    IKaaClientStateStoragePtr newStatus(new ClientStatus(STATUS_FILE_NAME));
+    std::shared_ptr<NotificationTransport> newTransport(new NotificationTransport(newStatus, channelManager));
     NotificationManager newNotificationManager(newStatus);
     newNotificationManager.setTransport(newTransport);
 
     const Topics loadedTopics = newNotificationManager.getTopics();
 
-//    for (const auto& expectedTopic : topics) {
-//        if (std::find_if(loadedTopics.begin(), loadedTopics.end(),
-//                [&expectedTopic] (const Topic& topic) { return (expectedTopic.id == topic.id
-//                        && expectedTopic.subscriptionType == topic.subscriptionType); }) == loadedTopics.end())
-//        {
-//            BOOST_CHECK_MESSAGE(false, "Couldn't find topic " + expectedTopic.id);
-//        }
-//    }
+    for (const auto& expectedTopic : topics) {
+        if (std::find_if(loadedTopics.begin(), loadedTopics.end(),
+                [&expectedTopic] (const Topic& topic) { return (expectedTopic.id == topic.id
+                        && expectedTopic.subscriptionType == topic.subscriptionType); }) == loadedTopics.end())
+        {
+            BOOST_CHECK_MESSAGE(false, "Couldn't find topic " + expectedTopic.id);
+        }
+    }
+
+    std::remove(STATUS_FILE_NAME.c_str());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -16,6 +16,8 @@
 
 #include "kaa/notification/NotificationManager.hpp"
 
+#ifdef KAA_USE_NOTIFICATIONS
+
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 #include "kaa/ClientStatus.hpp"
@@ -120,7 +122,7 @@ Topics NotificationManager::getTopics()
 
     size_t i = 0;
     for (const auto& it : topics_) {
-        topicList[i] = it.second;
+        topicList[i++] = it.second;
     }
 
     return topicList;
@@ -352,3 +354,5 @@ void NotificationManager::setTransport(std::shared_ptr<NotificationTransport> tr
    }
 
 } /* namespace kaa */
+
+#endif

@@ -74,6 +74,7 @@ public:
      */
     virtual EventFamilyFactory&               getEventFamilyFactory() = 0;
 
+#ifdef KAA_USE_NOTIFICATIONS
     /**
      * Retrieves Kaa notification manager.
      *
@@ -81,6 +82,7 @@ public:
      *
      */
     virtual INotificationManager&             getNotificationManager() = 0;
+#endif
 
 #ifdef KAA_USE_CONFIGURATION
     /**
