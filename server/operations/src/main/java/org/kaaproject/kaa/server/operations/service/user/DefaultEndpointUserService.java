@@ -76,7 +76,8 @@ public class DefaultEndpointUserService implements EndpointUserService {
         ApplicationDto appDto = applicationService.findAppById(profile.getApplicationId());
         if (endpointService.checkAccessToken(appDto, userAttachRequest.getUserExternalId(), userAttachRequest.getUserAccessToken())) {
             LOG.debug("[{}] received valid attachUserRequest. Assigning endpoint to user.", userAttachRequest.getUserExternalId());
-            endpointService.attachEndpointToUser(userAttachRequest.getUserExternalId(), appDto.getTenantId(), profile);
+            endpointService.attachEndpointToUser(userAttachRequest.getUserExternalId(), appDto.getTenantId(), userAttachRequest.getUserAccessToken(),
+                    profile);
             return new UserAttachResponse(SyncResponseResultType.SUCCESS);
         } else {
             LOG.warn("[{}] received invalid attachUserRequest.", userAttachRequest.getUserExternalId());
