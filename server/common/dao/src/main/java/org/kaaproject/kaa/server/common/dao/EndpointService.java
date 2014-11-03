@@ -149,10 +149,11 @@ public interface EndpointService {
      *
      * @param userExternalId the user external id
      * @param tenantId the tenant id
+     * @param userAccessToken the userAccessToken
      * @param profile the profile
      * @return the endpoint profile dto
      */
-    EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile);
+    EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, String userAccessToken, EndpointProfileDto profile);
 
     /**
      * Attach endpoint profile to user.

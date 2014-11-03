@@ -82,9 +82,11 @@ public class TypeConverter {
             case ARRAY:
                 result += "_";
                 result += StyleUtils.toUpperUnderScore(branchSchema.getElementType().getName());
+                break;
             case ENUM:
                 result += "_";
                 result += StyleUtils.toUpperUnderScore(branchSchema.getName());
+                break;
             default:
                 break;
             }
