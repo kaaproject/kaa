@@ -17,6 +17,10 @@
 #ifndef IEVENTMANAGER_HPP_
 #define IEVENTMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <string>
 #include <vector>
 #include <cstdint>
@@ -54,5 +58,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IEVENTMANAGER_HPP_ */

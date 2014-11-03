@@ -16,6 +16,8 @@
 
 #include "kaa/event/EventManager.hpp"
 
+#ifdef KAA_USE_EVENTS
+
 #include <algorithm>
 
 #include "kaa/common/UuidGenerator.hpp"
@@ -187,3 +189,6 @@ std::string EventManager::findEventListeners(const std::list<std::string>& event
 }
 
 } /* namespace kaa */
+
+#endif
+

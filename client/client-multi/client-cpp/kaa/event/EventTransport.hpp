@@ -17,6 +17,10 @@
 #ifndef EVENTTRANSPORT_HPP_
 #define EVENTTRANSPORT_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include "kaa/channel/transport/IEventTransport.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
@@ -45,5 +49,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* EVENTTRANSPORT_HPP_ */

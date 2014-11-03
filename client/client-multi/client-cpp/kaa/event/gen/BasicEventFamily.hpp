@@ -17,6 +17,10 @@
 #ifndef CONCRETEEVENTFAMILY_HPP_
 #define CONCRETEEVENTFAMILY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <set>
 #include <list>
 #include <string>
@@ -110,5 +114,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif /* CONCRETEEVENTFAMILY_HPP_ */

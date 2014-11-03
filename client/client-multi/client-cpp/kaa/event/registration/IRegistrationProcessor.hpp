@@ -17,6 +17,10 @@
 #ifndef IREGISTRATIONPROCESSOR_HPP_
 #define IREGISTRATIONPROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <vector>
 
 #include "kaa/gen/EndpointGen.hpp"
@@ -43,5 +47,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IREGISTRATIONPROCESSOR_HPP_ */

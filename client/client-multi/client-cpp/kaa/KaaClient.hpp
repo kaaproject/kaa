@@ -72,9 +72,11 @@ public:
 #ifdef KAA_USE_NOTIFICATIONS
     virtual INotificationManager&               getNotificationManager() { return *notificationManager_; }
 #endif
+#ifdef KAA_USE_EVENTS
     virtual IEndpointRegistrationManager&       getEndpointRegistrationManager() { return *registrationManager_; }
     virtual EventFamilyFactory&                 getEventFamilyFactory() { return *eventFamilyFactory_; }
     virtual IEventListenersResolver&            getEventListenersResolver() { return *eventManager_; }
+#endif
     virtual IKaaChannelManager&                 getChannelManager()  { return *channelManager_; }
     virtual const KeyPair&                      getClientKeyPair() { return clientKeys_; }
 #ifdef KAA_USE_LOGGING
@@ -98,7 +100,6 @@ private:
 #ifdef KAA_USE_NOTIFICATIONS
     std::unique_ptr<NotificationManager>            notificationManager_;
 #endif
-    std::unique_ptr<EndpointRegistrationManager>    registrationManager_;
 
     KeyPair         clientKeys_;
     std::string     publicKeyHash_;
@@ -111,8 +112,11 @@ private:
     ISchemaPersistenceManagerPtr          schemaPersistenceManager_;
     IConfigurationPersistenceManagerPtr   configurationPersistenceManager_;
 #endif
+#ifdef KAA_USE_EVENTS
     std::unique_ptr<EventManager>         eventManager_;
     std::unique_ptr<EventFamilyFactory>   eventFamilyFactory_;
+    std::unique_ptr<EndpointRegistrationManager>    registrationManager_;
+#endif
     std::unique_ptr<IKaaChannelManager>   channelManager_;
     std::unique_ptr<BootstrapDataProcessor>   bootstrapProcessor_;
     std::unique_ptr<OperationsDataProcessor>  operationsProcessor_;

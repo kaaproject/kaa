@@ -17,6 +17,10 @@
 #ifndef IATTACHEDENDPOINTLISTLISTENER_HPP_
 #define IATTACHEDENDPOINTLISTLISTENER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <map>
 #include <string>
 
@@ -38,5 +42,7 @@ public:
 };
 
 }
+
+#endif
 
 #endif /* IATTACHEDENDPOINTLISTLISTENER_HPP_ */

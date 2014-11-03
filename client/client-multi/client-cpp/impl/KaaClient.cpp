@@ -66,15 +66,17 @@ void KaaClient::init(int options)
 
     bootstrapManager_.reset(new BootstrapManager);
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getServerInfoList()));
+#ifdef KAA_USE_EVENTS
     registrationManager_.reset(new EndpointRegistrationManager(status_));
+    eventManager_.reset(new EventManager(status_));
+    eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_));
+#endif
 
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_.reset(new NotificationManager(status_));
 #endif
     profileManager_.reset(new ProfileManager());
 
-    eventManager_.reset(new EventManager(status_));
-    eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_));
 #ifdef KAA_USE_LOGGING
     logCollector_.reset(new LogCollector());
 #endif
@@ -143,8 +145,10 @@ void KaaClient::initKaaTransport()
 #ifdef KAA_USE_NOTIFICATIONS
     INotificationTransportPtr notificationTransport(new NotificationTransport(status_, *channelManager_));
 #endif
+#ifdef KAA_USE_EVENTS
     IUserTransportPtr userTransport(new UserTransport(*registrationManager_, *channelManager_));
     IEventTransportPtr eventTransport(new EventTransport(*eventManager_, *channelManager_));
+#endif
 #ifdef KAA_USE_LOGGING
     ILoggingTransportPtr loggingTransport(new LoggingTransport(*channelManager_, *logCollector_));
 #endif
@@ -168,8 +172,13 @@ void KaaClient::initKaaTransport()
 #else
             , nullptr
 #endif
+#ifdef KAA_USE_EVENTS
             , userTransport
             , eventTransport
+#else
+            , nullptr
+            , nullptr
+#endif
 #ifdef KAA_USE_LOGGING
             , loggingTransport
 #else
@@ -178,8 +187,10 @@ void KaaClient::initKaaTransport()
             , redirectionTransport
             , status_));
 
+#ifdef KAA_USE_EVENTS
     eventManager_->setTransport(std::dynamic_pointer_cast<EventTransport, IEventTransport>(eventTransport).get());
     registrationManager_->setTransport(std::dynamic_pointer_cast<UserTransport, IUserTransport>(userTransport).get());
+#endif
 #ifdef KAA_USE_LOGGING
     logCollector_->setTransport(std::dynamic_pointer_cast<LoggingTransport, ILoggingTransport>(loggingTransport).get());
 #endif

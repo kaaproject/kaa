@@ -66,6 +66,7 @@ public:
      */
     virtual IProfileManager&                  getProfileManager() = 0;
 
+#ifdef KAA_USE_EVENTS
     /**
      * Retrieves Kaa event family factory.
      *
@@ -73,6 +74,7 @@ public:
      *
      */
     virtual EventFamilyFactory&               getEventFamilyFactory() = 0;
+#endif
 
 #ifdef KAA_USE_NOTIFICATIONS
     /**
@@ -110,6 +112,7 @@ public:
     virtual IConfigurationPersistenceManager& getConfigurationPersistenceManager() = 0;
 #endif
 
+#ifdef KAA_USE_EVENTS
     /**
      * Retrieves Kaa endpoint registration manager
      *
@@ -123,6 +126,7 @@ public:
      * @return @link IEventListenersResolver @endlink object
      */
     virtual IEventListenersResolver&          getEventListenersResolver() = 0;
+#endif
 
     /**
      * Retrieves Kaa channel manager

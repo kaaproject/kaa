@@ -15,6 +15,9 @@
  */
 
 #include "kaa/event/EventTransport.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include "kaa/event/EventManager.hpp"
 #include "kaa/logging/Log.hpp"
 
@@ -96,5 +99,8 @@ void EventTransport::sync()
 }
 
 }  // namespace kaa
+
+#endif
+
 
 

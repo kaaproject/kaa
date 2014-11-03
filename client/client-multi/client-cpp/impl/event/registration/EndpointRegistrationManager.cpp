@@ -16,6 +16,8 @@
 
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
 
+#ifdef KAA_USE_EVENTS
+
 #include <ctime>
 #include <cstdlib>
 
@@ -346,3 +348,6 @@ UserAttachRequestPtr EndpointRegistrationManager::getUserAttachRequest()
 }
 
 }
+
+#endif
+

@@ -17,6 +17,10 @@
 #ifndef EVENTFAMILYFACTORY_HPP_
 #define EVENTFAMILYFACTORY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <memory>
 #include "kaa/event/IEventManager.hpp"
 #include "kaa/event/gen/BasicEventFamily.hpp"
@@ -74,5 +78,7 @@ private:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* EVENTFAMILYFACTORY_HPP_ */

@@ -17,6 +17,10 @@
 #ifndef IENDPOINTREGISTRATIONMANAGER_HPP_
 #define IENDPOINTREGISTRATIONMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <list>
 #include <string>
 
@@ -120,5 +124,7 @@ public:
 };
 
 }
+
+#endif
 
 #endif /* IENDPOINTREGISTRATIONMANAGER_HPP_ */

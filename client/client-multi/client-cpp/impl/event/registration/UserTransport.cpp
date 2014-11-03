@@ -15,6 +15,9 @@
  */
 
 #include "kaa/event/registration/UserTransport.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include "kaa/logging/Log.hpp"
 
 namespace kaa {
@@ -102,4 +105,7 @@ void UserTransport::syncProfile()
 }
 
 }  // namespace kaa
+
+#endif
+
 
