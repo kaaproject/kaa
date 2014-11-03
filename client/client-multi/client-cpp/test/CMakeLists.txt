@@ -25,6 +25,17 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++11 -stdlib=libc++ -g --coverage")
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_EVENTS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_NOTIFICATIONS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_CONFIGURATION")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_LOGGING")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_TCP_CHANNEL")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_LONG_POLL_CHANNEL")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_OPERATION_HTTP_CHANNEL")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
+
 set ( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Modules/)
 
 add_definitions (-DBOOST_TEST_DYN_LINK -DBOOST_LOG_DYN_LINK -DRESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/resources")
@@ -32,7 +43,7 @@ add_definitions (-DBOOST_TEST_DYN_LINK -DBOOST_LOG_DYN_LINK -DRESOURCE_DIR="${CM
 find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
 find_package (Boost 1.55 REQUIRED
-    COMPONENTS unit_test_framework log system thread signals)
+    COMPONENTS unit_test_framework log system)
 
 include_directories (
         ${CMAKE_CURRENT_SOURCE_DIR}
@@ -94,7 +105,6 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/OperationsDataProcessor.cpp
         ../impl/channel/BootstrapDataProcessor.cpp
         ../impl/channel/RedirectionTransport.cpp
-        ../impl/channel/server/AbstractServerInfo.cpp
         ../impl/channel/KaaChannelManager.cpp
         ../impl/notification/NotificationTransport.cpp
         ../impl/notification/NotificationManager.cpp

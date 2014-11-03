@@ -52,4 +52,6 @@ typedef std::shared_ptr<INotificationListener> INotificationListenerPtr;
 
 } /* namespace kaa */
 
+#endif
+
 #endif /* INOTIFICATIONLISTENER_HPP_ */
