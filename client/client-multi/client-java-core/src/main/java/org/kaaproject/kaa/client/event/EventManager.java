@@ -47,7 +47,6 @@ public interface EventManager extends EventListenersResolver, Transactable {
      * @param eventFqn  Fully qualified name of the Event
      * @param data      Event data
      * @param target    Event target, null for event broadcasting.
-     * @param trxId     Transaction Id of event
      */
     void produceEvent(String eventFqn, byte[] data, String target) throws IOException;
 
