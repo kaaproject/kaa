@@ -287,7 +287,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile) {
+    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, String userAccessToken, EndpointProfileDto profile) {
         validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
         EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(userExternalId, tenantId);
         if(endpointUser == null){
@@ -296,6 +296,7 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUserDto.setTenantId(tenantId);
             endpointUserDto.setExternalId(userExternalId);
             endpointUserDto.setUsername(userExternalId);
+            endpointUserDto.setAccessToken(userAccessToken);
             endpointUser = endpointUserDao.save(new EndpointUser(endpointUserDto));
         }
 
