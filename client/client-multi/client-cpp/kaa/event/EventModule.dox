@@ -62,14 +62,42 @@
         nsExampleClassFamily::TestEvent event;
         classFamily.sendEventToAll(event);
     @endcode
-    
+
     Sending event to a concrete target:
     @code
         std::string target = "lZjEzq4E/D5aWjXYuG1N2sKYt/U="; // Target's public key hash.
         nsExampleClassFamily::TestEvent event;
         classFamily.sendEvent(event, target);
     @endcode
+
+    Sending bulk of events.<br>
+    Event blocks in sdk are identified by TransactionId key.<br>
+
+    Create new empty events block:
+    @code
+        TransactionIdPtr blockId = Kaa::getKaaClient().getEventFamilyFactory().startEventsBlock();
+    @endcode
+
+    Events block can contain events from different event class families.<br>
+    Add events to a block:
+    @code
+        nsExampleClassFamily::TestEvent event1, event2;
+        // Sending event1 to a concrete target and broadcasting event2 to all endpoints.
+        std::string target = "lZjEzq4E/D5aWjXYuG1N2sKYt/U="; // Target's public key hash.
+        classFamily.addEventToBlock(blockId, event1, target);
+        classFamily.addEventToBlock(blockId, event2);
+    @endcode
     
+    If events block is completed use next call to send events:
+    @code
+        Kaa::getKaaClient().getEventFamilyFactory().submitEventsBlock(blockId);
+    @endcode
+
+    In order to remove events block (events will not be sent) use:
+    @code
+        Kaa::getKaaClient().getEventFamilyFactory().removeEventsBlock(blockId);
+    @endcode
+
     \subsection receiving Receiving an event
 
     Define event listener:
@@ -81,15 +109,15 @@
             }
         };
     @endcode
-    
+
     Register event listener:
     @code
         ExampleClassFamily::ExampleClassFamilyListener * listener = new ExampleEventsListener();
         classFamily.addEventFamilyListener(&listener);
     @endcode
-    
+
     \subsection find_recepients Searching for event recipients
-    
+
     @code
         class EventRecipientsResolveListener : public IFetchEventListeners {
         public:

@@ -81,7 +81,7 @@ public:
         eventManager_.produceEvent("{event.event_name}", buffer, target, empty);
     }
 
-    void addEventToBlock(TransactionIdPtr trxId, const Topic& e, const std::string& target)
+    void addEventToBlock(TransactionIdPtr trxId, const Topic& e, const std::string& target = "")
     {
         std::ostringstream stream;
         AvroByteArrayConverter<Topic> converter;
