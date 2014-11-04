@@ -15,7 +15,10 @@
  */
 
 #include "kaa/common/types/SetValueHelper.hpp"
-#include <boost/cstdint.hpp>
+
+#ifdef KAA_USE_CONFIGURATION
+
+#include <cstdint>
 #include <vector>
 
 namespace kaa {
@@ -70,14 +73,14 @@ bool avro_traits<avro::AVRO_BOOL>::copyValueToDatum(avro::GenericDatum &indatum,
 template <>
 bool avro_traits<avro::AVRO_INT>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
-    indatum.value<int32_t>() = field.value<int32_t>();
+    indatum.value<std::int32_t>() = field.value<std::int32_t>();
     return true;
 }
 
 template <>
 bool avro_traits<avro::AVRO_LONG>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
-    indatum.value<int64_t>() = field.value<int64_t>();
+    indatum.value<std::int64_t>() = field.value<std::int64_t>();
     return true;
 }
 
@@ -105,7 +108,7 @@ bool avro_traits<avro::AVRO_STRING>::copyValueToDatum(avro::GenericDatum &indatu
 template <>
 bool avro_traits<avro::AVRO_BYTES>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
-    indatum.value<std::vector<boost::uint8_t> >() = field.value<std::vector<boost::uint8_t> >();
+    indatum.value<std::vector<std::uint8_t> >() = field.value<std::vector<std::uint8_t> >();
     return true;
 }
 
@@ -162,4 +165,7 @@ bool SetAvroValueHelper::setValue(avro::Type t, avro::GenericDatum &indatum, con
 }
 
 }  // namespace kaa
+
+#endif
+
 

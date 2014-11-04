@@ -16,6 +16,8 @@
 
 #include "kaa/notification/NotificationTransport.hpp"
 
+#ifdef KAA_USE_NOTIFICATIONS
+
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -162,7 +164,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
                     % LoggingUtils::SingleNotificationToString(n)
                     % notificationSubscriptions_[n.topicId]);
             auto& sequenceNumber = notificationSubscriptions_[n.topicId];
-            boost::int32_t notificationSequenceNumber =
+            std::int32_t notificationSequenceNumber =
                         (n.seqNumber.is_null()) ? 0 : n.seqNumber.get_int();
             if (notificationSequenceNumber > sequenceNumber) {
                 newNotifications.push_back(n);
@@ -217,3 +219,6 @@ void NotificationTransport::onSubscriptionChanged(const SubscriptionCommands& co
 }
 
 } /* namespace kaa */
+
+#endif
+

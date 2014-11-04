@@ -16,6 +16,8 @@
 
 #include "kaa/configuration/ConfigurationProcessor.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
@@ -24,10 +26,10 @@
 
 namespace kaa {
 
-void ConfigurationProcessor::processConfigurationData(const boost::uint8_t *data, size_t data_length, bool full_resync)
+void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, std::size_t data_length, bool full_resync)
 {
     KAA_MUTEX_LOCKING("confProcessorMutex_");
-    lock_type lock(confProcessorMutex_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_);
     KAA_MUTEX_LOCKED("confProcessorMutex_");
 
     if (!schema_.get()) {
@@ -61,31 +63,35 @@ void ConfigurationProcessor::processConfigurationData(const boost::uint8_t *data
 
 void ConfigurationProcessor::subscribeForUpdates(IGenericDeltaReceiver &receiver)
 {
-    boost::signals2::connection c = deltaReceivers_.connect(boost::bind(&IGenericDeltaReceiver::onDeltaRecevied, &receiver, _1, _2, _3));
-    if (!c.connected()) {
-        throw KaaException("Failed to register new delta receiver.");
+    if (!deltaReceivers_.addCallback(&receiver,
+            std::bind(&IGenericDeltaReceiver::onDeltaRecevied, &receiver,
+                    std::placeholders::_1,
+                    std::placeholders::_2,
+                    std::placeholders::_3))) {
+        throw KaaException("Failed to register new delta receiver. Receiver is already registered");
     }
 }
 
 void ConfigurationProcessor::unsubscribeFromUpdates(IGenericDeltaReceiver &receiver)
 {
-    deltaReceivers_.disconnect(boost::bind(&IGenericDeltaReceiver::onDeltaRecevied, &receiver, _1, _2, _3));
+    deltaReceivers_.removeCallback(&receiver);
 }
 
 void ConfigurationProcessor::addOnProcessedObserver(IConfigurationProcessedObserver &observer)
 {
-    boost::signals2::connection c = onProcessedObservers_.connect(boost::bind(&IConfigurationProcessedObserver::onConfigurationProcessed, &observer));
-    if (!c.connected()) {
-        throw KaaException("Failed to register new IConfigurationProcessedObserver.");
+    if (!onProcessedObservers_.addCallback(&observer,
+            std::bind(&IConfigurationProcessedObserver::onConfigurationProcessed,&observer))) {
+        throw KaaException(
+                "Failed to register new IConfigurationProcessedObserver. Already registered");
     }
 }
 
 void ConfigurationProcessor::removeOnProcessedObserver(IConfigurationProcessedObserver &observer)
 {
-    onProcessedObservers_.disconnect(boost::bind(&IConfigurationProcessedObserver::onConfigurationProcessed, &observer));
+    onProcessedObservers_.removeCallback(&observer);
 }
 
-void ConfigurationProcessor::onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema)
+void ConfigurationProcessor::onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
 {
     if (!schema.get()) {
         throw KaaException("Empty schema was given");
@@ -94,10 +100,12 @@ void ConfigurationProcessor::onSchemaUpdated(boost::shared_ptr<avro::ValidSchema
     KAA_LOG_DEBUG("Received schema update");
 
     KAA_MUTEX_LOCKING("confProcessorMutex_");
-    lock_type lock(confProcessorMutex_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_);
     KAA_MUTEX_LOCKED("confProcessorMutex_");
 
     schema_ = schema;
 }
 
 }  // namespace kaa
+
+#endif

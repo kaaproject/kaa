@@ -17,8 +17,6 @@
 #ifndef ABSTRACTPROFILECONTAINER_HPP_
 #define ABSTRACTPROFILECONTAINER_HPP_
 
-#include <boost/shared_ptr.hpp>
-
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/profile/IProfileListener.hpp"

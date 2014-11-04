@@ -35,26 +35,26 @@ BOOST_AUTO_TEST_CASE(testCreateBasicHeader)
     char header[6];
     std::fill_n(header, 6, 0);
     BOOST_CHECK_EQUAL(2, KaaTcpCommon::createBasicHeader(0x01, 0, header));
-    BOOST_CHECK_EQUAL(0x10, (boost::uint8_t) header[0]);
-    BOOST_CHECK_EQUAL(0, (boost::uint8_t) header[1]);
+    BOOST_CHECK_EQUAL(0x10, (std::uint8_t) header[0]);
+    BOOST_CHECK_EQUAL(0, (std::uint8_t) header[1]);
 
     std::fill_n(header, 6, 0);
     BOOST_CHECK_EQUAL(2, KaaTcpCommon::createBasicHeader(0x01, 0x7F, header));
-    BOOST_CHECK_EQUAL(0x10, (boost::uint8_t) header[0]);
-    BOOST_CHECK_EQUAL(0x7F, (boost::uint8_t) header[1]);
+    BOOST_CHECK_EQUAL(0x10, (std::uint8_t) header[0]);
+    BOOST_CHECK_EQUAL(0x7F, (std::uint8_t) header[1]);
 
     std::fill_n(header, 6, 0);
     BOOST_CHECK_EQUAL(3, KaaTcpCommon::createBasicHeader(0x01, 0xFF, header));
-    BOOST_CHECK_EQUAL(0x10, (boost::uint8_t) header[0]);
-    BOOST_CHECK_EQUAL(0xFF, (boost::uint8_t) header[1]);
-    BOOST_CHECK_EQUAL(0x01, (boost::uint8_t) header[2]);
+    BOOST_CHECK_EQUAL(0x10, (std::uint8_t) header[0]);
+    BOOST_CHECK_EQUAL(0xFF, (std::uint8_t) header[1]);
+    BOOST_CHECK_EQUAL(0x01, (std::uint8_t) header[2]);
 
     std::fill_n(header, 6, 0);
     BOOST_CHECK_EQUAL(4, KaaTcpCommon::createBasicHeader(0x01, 0xFFFF, header));
-    BOOST_CHECK_EQUAL(0x10, (boost::uint8_t) header[0]);
-    BOOST_CHECK_EQUAL(0xFF, (boost::uint8_t) header[1]);
-    BOOST_CHECK_EQUAL(0xFF, (boost::uint8_t) header[2]);
-    BOOST_CHECK_EQUAL(0x03, (boost::uint8_t) header[3]);
+    BOOST_CHECK_EQUAL(0x10, (std::uint8_t) header[0]);
+    BOOST_CHECK_EQUAL(0xFF, (std::uint8_t) header[1]);
+    BOOST_CHECK_EQUAL(0xFF, (std::uint8_t) header[2]);
+    BOOST_CHECK_EQUAL(0x03, (std::uint8_t) header[3]);
 
 }
 
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(testTcpParser)
 
     const auto& messages1 = parser.releaseMessages();
     BOOST_CHECK_EQUAL(false, messages1.empty());
-    BOOST_CHECK_EQUAL((boost::uint8_t)  KaaTcpMessageType::MESSAGE_CONNECT, (boost::uint8_t) messages1.begin()->first);
+    BOOST_CHECK_EQUAL((std::uint8_t)  KaaTcpMessageType::MESSAGE_CONNECT, (std::uint8_t) messages1.begin()->first);
     BOOST_CHECK_EQUAL(1, messages1.begin()->second.second);
     BOOST_CHECK_EQUAL(0x05,  messages1.begin()->second.first.get()[0]);
 
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(testTcpParser)
     parser.parseBuffer((const char*) buffer2, 4);
     const auto& messages2 = parser.releaseMessages();
     BOOST_CHECK_EQUAL(true, messages2.empty());
-    BOOST_CHECK_EQUAL((boost::uint8_t)  KaaTcpMessageType::MESSAGE_CONNACK, (boost::uint8_t) parser.getCurrentMessageType());
+    BOOST_CHECK_EQUAL((std::uint8_t)  KaaTcpMessageType::MESSAGE_CONNACK, (std::uint8_t) parser.getCurrentMessageType());
     BOOST_CHECK_EQUAL(0xFFFF, parser.getCurrentPayloadLength());
 
     parser.resetParser();
@@ -85,15 +85,15 @@ BOOST_AUTO_TEST_CASE(testTcpParser)
     parser.parseBuffer((const char*) buffer3, 2);
     const auto& messages3 = parser.releaseMessages();
     BOOST_CHECK_EQUAL(false, messages3.empty());
-    BOOST_CHECK_EQUAL((boost::uint8_t)  KaaTcpMessageType::MESSAGE_CONNACK, (boost::uint8_t) messages3.begin()->first);
+    BOOST_CHECK_EQUAL((std::uint8_t)  KaaTcpMessageType::MESSAGE_CONNACK, (std::uint8_t) messages3.begin()->first);
     BOOST_CHECK_EQUAL(0, messages3.begin()->second.second);
-    BOOST_CHECK_EQUAL((const char *) NULL, messages3.begin()->second.first.get());
+    BOOST_CHECK_EQUAL((const char *) nullptr, messages3.begin()->second.first.get());
 
     unsigned char buffer4[] = { 0xE0, 0x02, 0x00, 0x02 };
     parser.parseBuffer((const char *)buffer4, 4);
     const auto& message4 = parser.releaseMessages();
     BOOST_CHECK_EQUAL(false, message4.empty());
-    BOOST_CHECK_EQUAL((boost::uint8_t)  KaaTcpMessageType::MESSAGE_DISCONNECT, (boost::uint8_t) message4.begin()->first);
+    BOOST_CHECK_EQUAL((std::uint8_t)  KaaTcpMessageType::MESSAGE_DISCONNECT, (std::uint8_t) message4.begin()->first);
     BOOST_CHECK_EQUAL(2, message4.begin()->second.second);
     BOOST_CHECK_EQUAL(0, message4.begin()->second.first[0]);
     BOOST_CHECK_EQUAL(0x02, message4.begin()->second.first[1]);
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(testResponseProcessor)
     processor.registerConnackReceiver(
             [&checker](const ConnackMessage& message)
             {
-                BOOST_CHECK_EQUAL((boost::uint8_t)ConnackReturnCode::IDENTIFIER_REJECTED, (boost::uint8_t)message.getReturnCode());
+                BOOST_CHECK_EQUAL((std::uint8_t)ConnackReturnCode::IDENTIFIER_REJECTED, (std::uint8_t)message.getReturnCode());
                 checker.onConnack(message);
             });
     processor.registerPingResponseReceiver(
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(testResponseProcessor)
     processor.registerDisconnectReceiver(
                 [&checker](const DisconnectMessage& response)
                 {
-                    BOOST_CHECK_EQUAL((boost::uint8_t) DisconnectReason::BAD_REQUEST, (boost::uint8_t)response.getReason());
+                    BOOST_CHECK_EQUAL((std::uint8_t) DisconnectReason::BAD_REQUEST, (std::uint8_t)response.getReason());
                     checker.onDisconnect(response);
                 });
     processor.processResponseBuffer((const char *)disconnectMessage, 4);
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(testResponseProcessor)
 
 BOOST_AUTO_TEST_CASE(testKaaSyncRequest)
 {
-    KaaSyncRequest request(false, true, 0x07, std::vector<boost::uint8_t>({ 0xFF }), KaaSyncMessageType::SYNC);
+    KaaSyncRequest request(false, true, 0x07, std::vector<std::uint8_t>({ 0xFF }), KaaSyncMessageType::SYNC);
     unsigned char checkKaaSync[] = { 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x07, 0x15, 0xFF };
     const auto& rawMessage = request.getRawMessage();
     BOOST_CHECK_EQUAL(15, rawMessage.size());
@@ -197,10 +197,10 @@ BOOST_AUTO_TEST_CASE(testKaaSyncRequest)
 
 BOOST_AUTO_TEST_CASE(testConnectMessage)
 {
-    Botan::SecureVector<boost::uint8_t> signature(32);
+    Botan::SecureVector<std::uint8_t> signature(32);
     *(signature.end() - 1) = 0x01;
 
-    Botan::SecureVector<boost::uint8_t> sessionKey(16);
+    Botan::SecureVector<std::uint8_t> sessionKey(16);
     *(sessionKey.end() - 1) = 0x02;
 
     std::string payload = { (char) 0xFF, 0x01, 0x02, 0x03 };
@@ -217,8 +217,8 @@ BOOST_AUTO_TEST_CASE(testConnectMessage)
     BOOST_CHECK_EQUAL_COLLECTIONS(sessionKey.begin(), sessionKey.end(), rawMessage.begin() + 16, rawMessage.begin() + 32);
     BOOST_CHECK_EQUAL_COLLECTIONS(signature.begin(), signature.end(), rawMessage.begin() + 32, rawMessage.begin() + 64);
     BOOST_CHECK_EQUAL_COLLECTIONS(
-            reinterpret_cast<const boost::uint8_t*>(payload.data()),
-            reinterpret_cast<const boost::uint8_t*>(payload.data() + payload.size()),
+            reinterpret_cast<const std::uint8_t*>(payload.data()),
+            reinterpret_cast<const std::uint8_t*>(payload.data() + payload.size()),
             rawMessage.begin() + 64,
             rawMessage.end());
 }
@@ -237,8 +237,8 @@ BOOST_AUTO_TEST_CASE(testConnectMessageWithoutKey)
     BOOST_CHECK_EQUAL_COLLECTIONS(checkConnectHeader, checkConnectHeader + 16, rawMessage.begin(), rawMessage.begin() + 16);
 
     BOOST_CHECK_EQUAL_COLLECTIONS(
-            reinterpret_cast<const boost::uint8_t*>(payload.data()),
-            reinterpret_cast<const boost::uint8_t*>(payload.data() + payload.size()),
+            reinterpret_cast<const std::uint8_t*>(payload.data()),
+            reinterpret_cast<const std::uint8_t*>(payload.data() + payload.size()),
             rawMessage.begin() + 16,
             rawMessage.end());
 }
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE(testDisconnectRequest)
 
     unsigned char buffer[] = { 0xE0, 0x02, 0x00, 0x02 };
     DisconnectMessage response((const char *)buffer, 4);
-    BOOST_CHECK_EQUAL((boost::uint8_t)DisconnectReason::INTERNAL_ERROR, (boost::uint8_t)response.getReason());
+    BOOST_CHECK_EQUAL((std::uint8_t)DisconnectReason::INTERNAL_ERROR, (std::uint8_t)response.getReason());
 }
 
 

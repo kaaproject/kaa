@@ -17,12 +17,15 @@
 #ifndef EVENTTRANSPORT_HPP_
 #define EVENTTRANSPORT_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include "kaa/channel/transport/IEventTransport.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/gen/EndpointGen.hpp"
-
-#include <boost/thread/mutex.hpp>
+#include "kaa/KaaThread.hpp"
 
 namespace kaa {
 
@@ -32,23 +35,20 @@ class EventTransport : public AbstractKaaTransport<TransportType::EVENT>, public
 public:
     EventTransport(EventManager& eventManager, IKaaChannelManager& channelManager);
 
-    boost::shared_ptr<EventSyncRequest>    createEventRequest(boost::int32_t requestId);
+    std::shared_ptr<EventSyncRequest>    createEventRequest(std::int32_t requestId);
     void                onEventResponse(const EventSyncResponse& response);
-    void                onSyncResponseId(boost::int32_t requestId);
+    void                onSyncResponseId(std::int32_t requestId);
 
     void sync();
 private:
-
-    typedef boost::mutex                    mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
-
-    mutex_type  eventsGuard_;
+    KAA_MUTEX_DECLARE(eventsGuard_);
 
     EventManager & eventManager_;
-    std::map<boost::uint32_t, std::list<Event> >    events_;
+    std::map<std::uint32_t, std::list<Event> >    events_;
 };
 
 }  // namespace kaa
 
+#endif
 
 #endif /* EVENTTRANSPORT_HPP_ */

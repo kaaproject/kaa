@@ -39,7 +39,7 @@ class ConfigurationReceiverStub : public IConfigurationReceiver
 {
 public:
     void onConfigurationUpdated(const ICommonRecord &configuration){
-        if (checker_ != NULL) {
+        if (checker_ != nullptr) {
             checker_->checkLoadedConfiguration(configuration);
         }
     }
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_SUITE(ProcessConfigurationSuite)
 
 BOOST_AUTO_TEST_CASE(checkRootConfigurationLoad)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -81,19 +81,21 @@ BOOST_AUTO_TEST_CASE(checkRootConfigurationLoad)
     processor.addOnProcessedObserver(manager);
     processor.subscribeForUpdates(manager);
 
-    boost::shared_ptr<AbstractProcessConfigurationTest> frtest(new FullResyncTest);
+    std::shared_ptr<AbstractProcessConfigurationTest> frtest(new FullResyncTest);
 
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
     frtest->createDelta(data, len);
     receiver.setConfigurationChecker(frtest.get());
     processor.processConfigurationData(data, len, true);
     delete[] data;
+    manager.unsubscribeFromConfigurationChanges(cpm);
+    manager.unsubscribeFromConfigurationChanges(receiver);
 }
 
-BOOST_AUTO_TEST_CASE(checkOverrideByUuid)
+ BOOST_AUTO_TEST_CASE(checkOverrideByUuid)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -109,19 +111,21 @@ BOOST_AUTO_TEST_CASE(checkOverrideByUuid)
     processor.addOnProcessedObserver(manager);
     processor.subscribeForUpdates(manager);
 
-    boost::shared_ptr<AbstractProcessConfigurationTest> frtest(new OverrideItemByUuidTest);
+    std::shared_ptr<AbstractProcessConfigurationTest> frtest(new OverrideItemByUuidTest);
 
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
     frtest->createDelta(data, len);
     receiver.setConfigurationChecker(frtest.get());
     processor.processConfigurationData(data, len, false);
     delete[] data;
+    manager.unsubscribeFromConfigurationChanges(cpm);
+    manager.unsubscribeFromConfigurationChanges(receiver);
 }
 
 BOOST_AUTO_TEST_CASE(removeTwoArrayItemsAndAddNewItemsToArray)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -137,19 +141,21 @@ BOOST_AUTO_TEST_CASE(removeTwoArrayItemsAndAddNewItemsToArray)
     processor.addOnProcessedObserver(manager);
     processor.subscribeForUpdates(manager);
 
-    boost::shared_ptr<AbstractProcessConfigurationTest> frtest(new RemoveTwoArrayItemsAndAddNewItemsToArrayTest);
+    std::shared_ptr<AbstractProcessConfigurationTest> frtest(new RemoveTwoArrayItemsAndAddNewItemsToArrayTest);
 
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
     frtest->createDelta(data, len);
     receiver.setConfigurationChecker(frtest.get());
     processor.processConfigurationData(data, len, false);
     delete[] data;
+    manager.unsubscribeFromConfigurationChanges(cpm);
+    manager.unsubscribeFromConfigurationChanges(receiver);
 }
 
 BOOST_AUTO_TEST_CASE(resetArrayAddMoreItemsOfDiffTypeToArray)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -165,19 +171,21 @@ BOOST_AUTO_TEST_CASE(resetArrayAddMoreItemsOfDiffTypeToArray)
     processor.addOnProcessedObserver(manager);
     processor.subscribeForUpdates(manager);
 
-    boost::shared_ptr<AbstractProcessConfigurationTest> frtest(new ResetArrayAddMoreItemsOfDiffTypeToArrayTest);
+    std::shared_ptr<AbstractProcessConfigurationTest> frtest(new ResetArrayAddMoreItemsOfDiffTypeToArrayTest);
 
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
     frtest->createDelta(data, len);
     receiver.setConfigurationChecker(frtest.get());
     processor.processConfigurationData(data, len, false);
     delete[] data;
+    manager.unsubscribeFromConfigurationChanges(cpm);
+    manager.unsubscribeFromConfigurationChanges(receiver);
 }
 
 BOOST_AUTO_TEST_CASE(resetArrayOfDiff)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -193,14 +201,16 @@ BOOST_AUTO_TEST_CASE(resetArrayOfDiff)
     processor.addOnProcessedObserver(manager);
     processor.subscribeForUpdates(manager);
 
-    boost::shared_ptr<AbstractProcessConfigurationTest> frtest(new ResetArrayOfDiffTest);
+    std::shared_ptr<AbstractProcessConfigurationTest> frtest(new ResetArrayOfDiffTest);
 
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
     frtest->createDelta(data, len);
     receiver.setConfigurationChecker(frtest.get());
     processor.processConfigurationData(data, len, false);
     delete[] data;
+    manager.unsubscribeFromConfigurationChanges(cpm);
+    manager.unsubscribeFromConfigurationChanges(receiver);
 }
 
 BOOST_AUTO_TEST_CASE(getConfiguration)

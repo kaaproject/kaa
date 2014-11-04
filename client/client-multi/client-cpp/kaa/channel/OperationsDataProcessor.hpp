@@ -34,14 +34,13 @@
 
 namespace kaa {
 
-typedef boost::shared_ptr<IMetaDataTransport>       IMetaDataTransportPtr;
-typedef boost::shared_ptr<IProfileTransport>        IProfileTransportPtr;
-typedef boost::shared_ptr<IConfigurationTrasnport>  IConfigurationTransportPtr;
-typedef boost::shared_ptr<INotificationTransport>   INotificationTransportPtr;
-typedef boost::shared_ptr<IUserTransport>           IUserTransportPtr;
-typedef boost::shared_ptr<IEventTransport>          IEventTransportPtr;
-typedef boost::shared_ptr<ILoggingTransport>        ILoggingTransportPtr;
-typedef boost::shared_ptr<IRedirectionTransport>    IRedirectionTransportPtr;
+typedef std::shared_ptr<IMetaDataTransport>       IMetaDataTransportPtr;
+typedef std::shared_ptr<IConfigurationTrasnport>  IConfigurationTransportPtr;
+typedef std::shared_ptr<INotificationTransport>   INotificationTransportPtr;
+typedef std::shared_ptr<IUserTransport>           IUserTransportPtr;
+typedef std::shared_ptr<IEventTransport>          IEventTransportPtr;
+typedef std::shared_ptr<ILoggingTransport>        ILoggingTransportPtr;
+typedef std::shared_ptr<IRedirectionTransport>    IRedirectionTransportPtr;
 
 class OperationsDataProcessor : public IKaaDataMultiplexer, public IKaaDataDemultiplexer {
 public:
@@ -56,8 +55,8 @@ public:
                         , IKaaClientStateStoragePtr
     );
 
-    virtual std::vector<boost::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes);
-    virtual void processResponse(const std::vector<boost::uint8_t> &response);
+    virtual std::vector<std::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes);
+    virtual void processResponse(const std::vector<std::uint8_t> &response);
 private:
     AvroByteArrayConverter<SyncRequest>     requestConverter_;
     AvroByteArrayConverter<SyncResponse>    responseConverter_;
@@ -73,7 +72,7 @@ private:
 
     IKaaClientStateStoragePtr   clientStatus_;
 
-    boost::int32_t              requestId;
+    std::int32_t              requestId;
 };
 
 }  // namespace kaa

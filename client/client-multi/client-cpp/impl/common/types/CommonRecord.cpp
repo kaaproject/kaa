@@ -15,13 +15,15 @@
  */
 
 #include "kaa/common/types/CommonRecord.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/exception/KaaException.hpp"
 
 #include <algorithm>
 #include <exception>
 #include <sstream>
 
-#include <boost/cstdint.hpp>
 #include <avro/Generic.hh>
 #include "kaa/common/types/SetValueHelper.hpp"
 
@@ -154,3 +156,5 @@ std::string CommonRecord::toString() const
 }
 
 }  // namespace kaa
+
+#endif

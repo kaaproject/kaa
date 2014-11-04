@@ -17,14 +17,18 @@
 #ifndef ICONFIGURATIONHASHCONTAINER_HPP_
 #define ICONFIGURATIONHASHCONTAINER_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
+#include <memory>
 
 #include "kaa/common/EndpointObjectHash.hpp"
 
 namespace kaa {
 
 class IConfigurationHashContainer;
-typedef boost::shared_ptr<IConfigurationHashContainer> IConfigurationHashContainerPtr;
+typedef std::shared_ptr<IConfigurationHashContainer> IConfigurationHashContainerPtr;
 
 /**
  * Container for the configuration data hash.
@@ -45,5 +49,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ICONFIGURATIONHASHCONTAINER_HPP_ */

@@ -17,6 +17,10 @@
 #ifndef COMMONENUM_HPP_
 #define COMMONENUM_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonValue.hpp"
 #include "kaa/common/types/ISchemaDependent.hpp"
 
@@ -42,5 +46,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* COMMONENUM_HPP_ */

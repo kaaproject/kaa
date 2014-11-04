@@ -17,6 +17,10 @@
 #ifndef DEFAULTBOOTSTRAPCHANNEL_HPP_
 #define DEFAULTBOOTSTRAPCHANNEL_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
+
 #include "kaa/channel/impl/AbstractHttpChannel.hpp"
 
 namespace kaa {
@@ -30,10 +34,10 @@ public:
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
 
 private:
-    virtual boost::shared_ptr<IHttpRequest> createRequest(AbstractServerInfoPtr server, const std::vector<boost::uint8_t>& body)
+    virtual std::shared_ptr<IHttpRequest> createRequest(AbstractServerInfoPtr server, const std::vector<std::uint8_t>& body)
     {
         HttpDataProcessor *processor = getHttpDataProcessor();
-        boost::shared_ptr<IHttpRequest> request = processor->createBootstrapRequest(server->getUrl(), body);
+        auto request = processor->createBootstrapRequest(server->getUrl(), body);
         return request;
     }
 
@@ -53,6 +57,6 @@ private:
 
 }
 
-
+#endif
 
 #endif /* DEFAULTBOOTSTRAPCHANNEL_HPP_ */

@@ -34,7 +34,7 @@ public:
      * @return new Meta data  request.
      *
      */
-    virtual boost::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData() = 0;
+    virtual std::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData() = 0;
 
     virtual ~IMetaDataTransport() {}
 };

@@ -16,6 +16,8 @@
 
 #include "kaa/common/CommonTypesFactory.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 #include "kaa/common/types/CommonValue.hpp"
 #include "kaa/common/types/CommonRecord.hpp"
@@ -25,8 +27,6 @@
 #include "kaa/common/types/CommonNull.hpp"
 
 #include "kaa/common/exception/KaaException.hpp"
-
-#include <boost/cstdint.hpp>
 
 namespace kaa {
 
@@ -114,19 +114,19 @@ constexpr CommonValueType AvroToCommon<avro::AVRO_NULL>::toCommonType()
     return CommonValueType::COMMON_NULL;
 }
 
-boost::shared_ptr<ICommonRecord>CommonTypesFactory::createCommonRecord(uuid_t uuid, const avro::NodePtr schema)
+std::shared_ptr<ICommonRecord>CommonTypesFactory::createCommonRecord(uuid_t uuid, const avro::NodePtr schema)
 {
-    boost::shared_ptr<ICommonRecord> record_ptr(new (std::nothrow) CommonRecord(uuid, schema));
-    if (record_ptr.get() == NULL) {
+    std::shared_ptr<ICommonRecord> record_ptr(new (std::nothrow) CommonRecord(uuid, schema));
+    if (!record_ptr.get()) {
         throw KaaException("Memory allocation failed while constructing new CommonRecord!");
     }
     return record_ptr;
 }
 
-boost::shared_ptr<ICommonArray> CommonTypesFactory::createCommonArray(const avro::NodePtr &schema)
+std::shared_ptr<ICommonArray> CommonTypesFactory::createCommonArray(const avro::NodePtr &schema)
 {
-    boost::shared_ptr<ICommonArray> array_ptr(new (std::nothrow) CommonArray(schema));
-    if (array_ptr.get() == NULL) {
+    std::shared_ptr<ICommonArray> array_ptr(new (std::nothrow) CommonArray(schema));
+    if (!array_ptr.get()) {
         throw KaaException("Memory allocation failed while constructing new CommonRecord!");
     }
     return array_ptr;
@@ -163,7 +163,7 @@ CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_DOUB
 template<>
 CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_BYTES>(const avro::GenericDatum & d)
 {
-    return_type result = return_type(new CommonValue<std::vector<boost::uint8_t>, AvroToCommon<avro::AVRO_BYTES>::toCommonType() >(d.value<std::vector<boost::uint8_t> >()));
+    return_type result = return_type(new CommonValue<std::vector<std::uint8_t>, AvroToCommon<avro::AVRO_BYTES>::toCommonType() >(d.value<std::vector<std::uint8_t> >()));
     return result;
 }
 
@@ -209,3 +209,5 @@ CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_NULL
 }
 
 }  // namespace kaa
+
+#endif

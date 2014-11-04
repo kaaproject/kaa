@@ -22,9 +22,20 @@
 #include <string>
 
 #include <botan/base64.h>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/channel/server/IServerInfo.hpp"
+
+#define KAA_LOG_LEVEL_NONE        0
+#define KAA_LOG_LEVEL_FATAL       1
+#define KAA_LOG_LEVEL_ERROR       2
+#define KAA_LOG_LEVEL_WARNING     3
+#define KAA_LOG_LEVEL_INFO        4
+#define KAA_LOG_LEVEL_DEBUG       5
+#define KAA_LOG_LEVEL_TRACE       6
+#define KAA_LOG_LEVEL_FINE_TRACE  7
+
+#define KAA_LOG_LEVEL  KAA_LOG_LEVEL_FINE_TRACE
 
 namespace kaa {
 
@@ -34,17 +45,17 @@ namespace kaa {
 
 extern const char * const APPLICATION_TOKEN;
 
-extern const boost::uint32_t PROFILE_VERSION;
+extern const std::uint32_t PROFILE_VERSION;
 
-extern const boost::uint32_t CONFIG_VERSION;
+extern const std::uint32_t CONFIG_VERSION;
 
-extern const boost::uint32_t SYSTEM_NF_VERSION;
+extern const std::uint32_t SYSTEM_NF_VERSION;
 
-extern const boost::uint32_t USER_NF_VERSION;
+extern const std::uint32_t USER_NF_VERSION;
 
-extern const boost::uint32_t LOG_SCHEMA_VERSION;
+extern const std::uint32_t LOG_SCHEMA_VERSION;
 
-extern const boost::uint32_t POLLING_PERIOD_SECONDS;
+extern const std::uint32_t POLLING_PERIOD_SECONDS;
 
 extern const char * const CLIENT_PUB_KEY_LOCATION;
 
@@ -55,10 +66,10 @@ extern const char * const CLIENT_STATUS_FILE_LOCATION;
 typedef std::vector<IServerInfoPtr> BootstrapServers;
 const BootstrapServers& getServerInfoList();
 
-const Botan::SecureVector<boost::uint8_t>& getDefaultConfigData();
+const Botan::SecureVector<std::uint8_t>& getDefaultConfigData();
 const std::string& getDefaultConfigSchema();
 
-typedef std::map<std::string, boost::int32_t> EventClassFamilyVersionInfos;
+typedef std::map<std::string, std::int32_t> EventClassFamilyVersionInfos;
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo();
 
 }

@@ -17,12 +17,12 @@
 #ifndef CONNACKMESSAGE_HPP_
 #define CONNACKMESSAGE_HPP_
 
-#include <boost/shared_array.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
+#include <string>
 
 namespace kaa {
 
-enum class ConnackReturnCode : boost::uint8_t
+enum class ConnackReturnCode : std::uint8_t
 {
     UNKNOWN = 0x00,
     SUCCESS = 0x01,
@@ -36,7 +36,7 @@ enum class ConnackReturnCode : boost::uint8_t
 class ConnackMessage
 {
 public:
-    ConnackMessage(const char *payload, boost::uint16_t size);
+    ConnackMessage(const char *payload, std::uint16_t size);
     ~ConnackMessage() { }
 
     static std::string returnCodeToString(ConnackReturnCode code);
@@ -45,7 +45,7 @@ public:
     ConnackReturnCode getReturnCode() const { return returnCode_; }
 
 private:
-    void parseMessage(const char *payload, boost::uint16_t size);
+    void parseMessage(const char *payload, std::uint16_t size);
 
 private:
     ConnackReturnCode returnCode_;

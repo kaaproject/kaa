@@ -16,6 +16,8 @@
 
 #include "kaa/event/EventManager.hpp"
 
+#ifdef KAA_USE_EVENTS
+
 #include <algorithm>
 
 #include "kaa/common/UuidGenerator.hpp"
@@ -40,7 +42,7 @@ void EventManager::registerEventFamily(IEventFamily* eventFamily)
 }
 
 void EventManager::produceEvent(const std::string& fqn
-                              , const std::vector<boost::uint8_t>& data
+                              , const std::vector<std::uint8_t>& data
                               , const std::string& target)
 {
     if (fqn.empty() || data.empty()) {
@@ -53,11 +55,11 @@ void EventManager::produceEvent(const std::string& fqn
 
     Event event;
 
-    boost::mutex::scoped_lock lock(sequenceGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceGuard_);
     event.seqNum = eventSequenceNumber_++;
     status_->setEventSequenceNumber(event.seqNum);
 
-    lock.unlock();
+    KAA_UNLOCK(lock);
 
     event.eventClassFQN = fqn;
     event.eventData.assign(data.begin(), data.end());
@@ -70,7 +72,7 @@ void EventManager::produceEvent(const std::string& fqn
 
     KAA_LOG_TRACE(boost::format("New event %1% is produced for %2%") % fqn % target);
     {
-        KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, pendingEventsGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(internal_lock, pendingEventsGuard_);
         pendingEvents_.push_back(event);
     }
     if (eventTransport_ != nullptr) {
@@ -82,7 +84,7 @@ void EventManager::produceEvent(const std::string& fqn
 
 std::list<Event> EventManager::getPendingEvents()
 {
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, pendingEventsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceGuard_);
     std::list<Event> copy;
     copy.assign(pendingEvents_.begin(), pendingEvents_.end());
     pendingEvents_.clear();
@@ -90,7 +92,7 @@ std::list<Event> EventManager::getPendingEvents()
 }
 
 void EventManager::onEventFromServer(const std::string& eventClassFQN
-                                   , const std::vector<boost::uint8_t>& data
+                                   , const std::vector<std::uint8_t>& data
                                    , const std::string& source)
 {
     if (eventClassFQN.empty() || data.empty()) {
@@ -169,7 +171,7 @@ std::string EventManager::findEventListeners(const std::list<std::string>& event
     std::string requestId;
     UuidGenerator::generateUuid(requestId);
 
-    boost::shared_ptr<EventListenersInfo> info(new EventListenersInfo);
+    std::shared_ptr<EventListenersInfo> info(new EventListenersInfo);
     info->eventFQNs_ = eventFQNs;
     info->listener_ = listener;
 
@@ -187,3 +189,6 @@ std::string EventManager::findEventListeners(const std::list<std::string>& event
 }
 
 } /* namespace kaa */
+
+#endif
+

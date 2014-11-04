@@ -17,6 +17,10 @@
 #ifndef I_COMMON_VALUE_HPP_
 #define I_COMMON_VALUE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 #include <boost/any.hpp>
 
@@ -59,5 +63,6 @@ protected:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_COMMON_VALUE_HPP_ */

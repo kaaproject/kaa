@@ -17,7 +17,13 @@
 #ifndef IHTTPCLIENT_HPP_
 #define IHTTPCLIENT_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
+#include <memory>
 #include "kaa/http/IHttpResponse.hpp"
 #include "kaa/http/IHttpRequest.hpp"
 
@@ -26,7 +32,7 @@ namespace kaa {
 class IHttpClient
 {
 public:
-    virtual boost::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request) = 0;
+    virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request) = 0;
     virtual void closeConnection() = 0;
 
     virtual ~IHttpClient() { }
@@ -34,6 +40,6 @@ public:
 
 }
 
-
+#endif
 
 #endif /* IHTTPCLIENT_HPP_ */

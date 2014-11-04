@@ -16,14 +16,18 @@
 
 #include "kaa/http/HttpResponse.hpp"
 
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include <cstring>
 #include <cstdlib>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
-HttpResponse::HttpResponse(const char *data, size_t len) : statusCode_(0)
+HttpResponse::HttpResponse(const char *data, std::size_t len) : statusCode_(0)
 {
     if (data == nullptr || len < HTTP_VERSION_OFFSET + 5) {
         throw KaaException("Empty response was given");
@@ -55,12 +59,12 @@ int HttpResponse::getStatusCode() const
     return statusCode_;
 }
 
-void HttpResponse::parseResponse(const char *data, size_t len)
+void HttpResponse::parseResponse(const char *data, std::size_t len)
 {
     const char *cursor = data;
     cursor += HTTP_VERSION_OFFSET;
     std::string code(cursor, 3);
-    statusCode_ = static_cast<int>(std::strtol(code.c_str(), NULL, 10));
+    statusCode_ = static_cast<int>(std::strtol(code.c_str(), nullptr, 10));
     cursor = strstr(data, "\r\n") + 2;
 
     bool headerProcessed = false;
@@ -79,9 +83,9 @@ void HttpResponse::parseResponse(const char *data, size_t len)
     }
     auto it = header_.find("Content-Length");
     if (it != header_.end()) {
-        auto len = std::strtol(it->second.c_str(), NULL, 10);
+        auto len = std::strtol(it->second.c_str(), nullptr, 10);
         if (len > 0) {
-            body_.first.reset(new boost::uint8_t[len]);
+            body_.first.reset(new std::uint8_t[len]);
             body_.second = len;
             memcpy(body_.first.get(), cursor, len);
         }
@@ -90,4 +94,5 @@ void HttpResponse::parseResponse(const char *data, size_t len)
 
 }
 
+#endif
 

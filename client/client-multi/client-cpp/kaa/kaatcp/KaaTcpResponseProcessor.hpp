@@ -22,7 +22,7 @@
 #include "kaa/kaatcp/ConnackMessage.hpp"
 #include "kaa/kaatcp/DisconnectMessage.hpp"
 #include "kaa/kaatcp/KaaTcpParser.hpp"
-#include <boost/function.hpp>
+#include <functional>
 
 namespace kaa
 {
@@ -33,20 +33,20 @@ public:
     KaaTcpResponseProcessor() { }
     ~KaaTcpResponseProcessor() { }
 
-    void processResponseBuffer(const char *buf, boost::uint32_t size);
+    void processResponseBuffer(const char *buf, std::uint32_t size);
 
-    void registerConnackReceiver(boost::function<void (const ConnackMessage&)> onConnack) { onConnack_ = onConnack; }
-    void registerKaaSyncReceiver(boost::function<void (const KaaSyncResponse&)> onKaaSync) { onKaaSyncResponse_ = onKaaSync; }
-    void registerDisconnectReceiver(boost::function<void (const DisconnectMessage&)> onDisconnect) { onDisconnect_ = onDisconnect; }
-    void registerPingResponseReceiver(boost::function<void ()> onPing) { onPingResp_ = onPing; }
+    void registerConnackReceiver(std::function<void (const ConnackMessage&)> onConnack) { onConnack_ = onConnack; }
+    void registerKaaSyncReceiver(std::function<void (const KaaSyncResponse&)> onKaaSync) { onKaaSyncResponse_ = onKaaSync; }
+    void registerDisconnectReceiver(std::function<void (const DisconnectMessage&)> onDisconnect) { onDisconnect_ = onDisconnect; }
+    void registerPingResponseReceiver(std::function<void ()> onPing) { onPingResp_ = onPing; }
 
     void flush() { parser_.resetParser(); }
 
 private:
-    boost::function<void (const ConnackMessage&)> onConnack_;
-    boost::function<void (const KaaSyncResponse&)> onKaaSyncResponse_;
-    boost::function<void (const DisconnectMessage&)> onDisconnect_;
-    boost::function<void ()> onPingResp_;
+    std::function<void (const ConnackMessage&)> onConnack_;
+    std::function<void (const KaaSyncResponse&)> onKaaSyncResponse_;
+    std::function<void (const DisconnectMessage&)> onDisconnect_;
+    std::function<void ()> onPingResp_;
 
     KaaTcpParser parser_;
 };

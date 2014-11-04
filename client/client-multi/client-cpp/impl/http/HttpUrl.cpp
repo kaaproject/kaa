@@ -15,6 +15,8 @@
  */
 
 #include "kaa/http/HttpUrl.hpp"
+
+
 #include <cstring>
 #include <cctype>
 #include <cstdlib>
@@ -37,7 +39,7 @@ HttpUrl::HttpUrl(const char *url) {
 
 void HttpUrl::parseUrl()
 {
-    boost::uint16_t default_port = HTTP_DEFAULT_PORT;
+    std::uint16_t default_port = HTTP_DEFAULT_PORT;
     auto cursor = url_.c_str();
     if (strncmp(cursor, "http", 4) == 0) {
         if (*(cursor + 4) == ':') {
@@ -51,17 +53,17 @@ void HttpUrl::parseUrl()
         }
     }
     const char *host_begin = cursor;
-    const char *host_end   = NULL;
-    const char *port_begin = NULL;
-    const char *port_end   = NULL;
-    const char *uri_begin  = NULL;
+    const char *host_end   = nullptr;
+    const char *port_begin = nullptr;
+    const char *port_end   = nullptr;
+    const char *uri_begin  = nullptr;
     auto c = cursor;
     for (; *c != '\0'; ++c) {
         if (*c == ':') {
             port_begin = c + 1;
             host_end = c;
-        } else if (*c == '/' && uri_begin == NULL) {
-            if (port_begin != NULL) {
+        } else if (*c == '/' && uri_begin == nullptr) {
+            if (port_begin != nullptr) {
                 port_end = c;
             } else {
                 host_end = c;
@@ -80,7 +82,7 @@ void HttpUrl::parseUrl()
     if (port_begin) {
         std::string port_str = std::string(port_begin, port_end - port_begin);
         // TODO: check correctness
-        port_ = static_cast<unsigned short>(std::strtoul(port_str.c_str(), NULL, 10));
+        port_ = static_cast<unsigned short>(std::strtoul(port_str.c_str(), nullptr, 10));
     } else {
         port_ = default_port;
     }
@@ -92,3 +94,4 @@ void HttpUrl::parseUrl()
 }
 
 } /* namespace kaa */
+

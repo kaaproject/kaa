@@ -25,7 +25,7 @@ namespace kaa {
 
 ProfileListener::ProfileListener(IProfileTransportPtr transport)
 {
-    transport_ = boost::dynamic_pointer_cast<ProfileTransport, IProfileTransport>(transport);
+    transport_ = std::dynamic_pointer_cast<ProfileTransport, IProfileTransport>(transport);
 }
 
 

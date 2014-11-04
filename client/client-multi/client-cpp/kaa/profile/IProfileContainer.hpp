@@ -23,7 +23,7 @@
 namespace kaa {
 
 class IProfileContainer;
-typedef boost::shared_ptr<IProfileContainer> ProfileContainerPtr;
+typedef std::shared_ptr<IProfileContainer> ProfileContainerPtr;
 
 /**
  * Interface for the profile container.

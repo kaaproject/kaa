@@ -22,12 +22,12 @@
 
 #include <botan/sha160.h>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <boost/shared_array.hpp>
 
 namespace kaa {
 
-typedef std::pair<boost::shared_array<boost::uint8_t>, boost::uint32_t> SharedDataBuffer;
+typedef std::pair<boost::shared_array<std::uint8_t>, std::uint32_t> SharedDataBuffer;
 
 /**
  * Used to calculate SHA-1 hash
@@ -44,7 +44,7 @@ public:
      * Throws \ref KaaException when invalid data was passed (zero-sized or null buffer)
      */
     EndpointObjectHash(const std::string& str);
-    EndpointObjectHash(const boost::uint8_t* data, const boost::uint32_t& dataSize);
+    EndpointObjectHash(const std::uint8_t* data, const std::uint32_t& dataSize);
     EndpointObjectHash(const SharedDataBuffer& endpointHash);
     EndpointObjectHash(EndpointObjectHash& endpointHash);
 
@@ -82,10 +82,10 @@ public:
      */
     static bool isEqual(SharedDataBuffer left, SharedDataBuffer right);
 
-    operator std::vector<boost::uint8_t>();
+    operator std::vector<std::uint8_t>();
 
 private:
-    void clone(const boost::uint8_t* data, const boost::uint32_t& dataSize);
+    void cloneHash(const std::uint8_t* data, const std::uint32_t& dataSize);
 
 private:
     /**

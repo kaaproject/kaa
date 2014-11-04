@@ -19,7 +19,6 @@
 #include <botan/pk_keys.h>
 #include <botan/pubkey.h>
 #include <sstream>
-#include <boost/cstdint.hpp>
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
@@ -27,10 +26,10 @@
 namespace kaa {
 
 RsaEncoderDecoder::RsaEncoderDecoder(
-        const Botan::MemoryVector<boost::uint8_t>& pubKey,
+        const Botan::MemoryVector<std::uint8_t>& pubKey,
         const std::string& privKey,
-        const Botan::MemoryVector<boost::uint8_t>& remoteKey)
-    : pubKey_(NULL), privKey_(NULL), remoteKey_(NULL), sessionKey_(KeyUtils().generateSessionKey(16))
+        const Botan::MemoryVector<std::uint8_t>& remoteKey)
+    : pubKey_(nullptr), privKey_(nullptr), remoteKey_(nullptr), sessionKey_(KeyUtils().generateSessionKey(16))
 {
     KAA_LOG_TRACE("Creating MessageEncoderDecoder with following parameters: ");
 
@@ -56,13 +55,13 @@ RsaEncoderDecoder::RsaEncoderDecoder(
             remoteKey_->x509_subject_public_key().begin(), remoteKey_->x509_subject_public_key().size()) : "empty"));
 }
 
-Botan::SecureVector<boost::uint8_t> RsaEncoderDecoder::getEncodedSessionKey()
+Botan::SecureVector<std::uint8_t> RsaEncoderDecoder::getEncodedSessionKey()
 {
     Botan::PK_Encryptor_EME enc(*remoteKey_, "EME-PKCS1-v1_5");
     return enc.encrypt(sessionKey_.bits_of(), rng_);
 }
 
-std::string RsaEncoderDecoder::cipherPipe(const boost::uint8_t *data, size_t size, Botan::Cipher_Dir dir)
+std::string RsaEncoderDecoder::cipherPipe(const std::uint8_t *data, std::size_t size, Botan::Cipher_Dir dir)
 {
     Botan::Pipe pipe(Botan::get_cipher("AES-128/ECB/PKCS7", sessionKey_, dir));
     std::ostringstream stream;
@@ -71,23 +70,23 @@ std::string RsaEncoderDecoder::cipherPipe(const boost::uint8_t *data, size_t siz
     return stream.str();
 }
 
-std::string RsaEncoderDecoder::encodeData(const boost::uint8_t *data, size_t size)
+std::string RsaEncoderDecoder::encodeData(const std::uint8_t *data, std::size_t size)
 {
     return cipherPipe(data, size, Botan::ENCRYPTION);
 }
 
-std::string RsaEncoderDecoder::decodeData(const boost::uint8_t *data, size_t size)
+std::string RsaEncoderDecoder::decodeData(const std::uint8_t *data, std::size_t size)
 {
     return cipherPipe(data, size, Botan::DECRYPTION);
 }
 
-Botan::SecureVector<boost::uint8_t> RsaEncoderDecoder::signData(const boost::uint8_t *data, size_t size)
+Botan::SecureVector<std::uint8_t> RsaEncoderDecoder::signData(const std::uint8_t *data, std::size_t size)
 {
     Botan::PK_Signer signer(*privKey_, "EMSA3(SHA-1)");
     return signer.sign_message(data, size, rng_);
 }
 
-bool RsaEncoderDecoder::verifySignature(const boost::uint8_t *data, size_t len, const boost::uint8_t *sig, size_t sigLen)
+bool RsaEncoderDecoder::verifySignature(const std::uint8_t *data, std::size_t len, const std::uint8_t *sig, std::size_t sigLen)
 {
     Botan::PK_Verifier verifier(*remoteKey_, "EMSA3(SHA-1)");
     return verifier.verify_message(data, len, sig, sigLen);

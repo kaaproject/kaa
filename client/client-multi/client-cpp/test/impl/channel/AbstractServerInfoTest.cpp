@@ -20,7 +20,7 @@
 #include <climits>
 #include <sstream>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/common/exception/KaaException.hpp"
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(BadServerInfoTest)
     BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, ":", ""), KaaException);
     BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, ":55", ""), KaaException);
 
-    Botan::MemoryVector<boost::uint8_t> emptyDecodedKey;
+    Botan::MemoryVector<std::uint8_t> emptyDecodedKey;
     BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host", 55, emptyDecodedKey), KaaException);
 }
 
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(CheckServerInfoTest)
     const ChannelType channelType = HTTP_LP;
     const ServerType serverType = ServerType::OPERATIONS;
     std::string host = "superhost.com";
-    boost::int32_t port = 7955;
+    std::int32_t port = 7955;
     std::string encodedPublicKey = "rfewjkvalcxkjczxjvjfdlsfa";
     auto decodedPubKey = Botan::base64_decode(encodedPublicKey);
 

@@ -17,7 +17,7 @@
 #ifndef IKAADATAMULTIPLEXER_HPP_
 #define IKAADATAMULTIPLEXER_HPP_
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <map>
 #include <vector>
 #include "kaa/common/TransportType.hpp"
@@ -45,7 +45,7 @@ public:
      * @see ChannelDirection
      *
      */
-    virtual std::vector<boost::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes) = 0;
+    virtual std::vector<std::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes) = 0;
 
     virtual ~IKaaDataMultiplexer() {}
 };

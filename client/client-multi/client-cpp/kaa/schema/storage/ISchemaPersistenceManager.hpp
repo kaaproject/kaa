@@ -17,7 +17,11 @@
 #ifndef ISCHEMAPERSISTENCEMANAGER_HPP_
 #define ISCHEMAPERSISTENCEMANAGER_HPP_
 
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
+#include <memory>
 
 #include "kaa/schema/storage/ISchemaStorage.hpp"
 #include "kaa/schema/ISchemaUpdatesReceiver.hpp"
@@ -40,9 +44,10 @@ public:
     virtual void setSchemaStorage(ISchemaStorage *storage) = 0;
 };
 
-typedef boost::shared_ptr<ISchemaPersistenceManager> ISchemaPersistenceManagerPtr;
+typedef std::shared_ptr<ISchemaPersistenceManager> ISchemaPersistenceManagerPtr;
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ISCHEMAPERSISTENCEMANAGER_HPP_ */

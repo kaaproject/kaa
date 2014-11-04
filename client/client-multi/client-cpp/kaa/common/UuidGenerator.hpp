@@ -17,6 +17,10 @@
 #ifndef UUIDGENERATOR_HPP_
 #define UUIDGENERATOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_USE_EVENTS) || defined(KAA_USE_LOGGING)
+
 #include <string>
 #include <sstream>
 #include <boost/uuid/uuid.hpp>
@@ -57,5 +61,7 @@ public:
 };
 
 } // namespace kaa
+
+#endif
 
 #endif /* UUIDGENERATOR_HPP_ */

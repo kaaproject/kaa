@@ -18,7 +18,7 @@
 #define ILOGGINGTRANSPORT_HPP_
 
 #include "kaa/gen/EndpointGen.hpp"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace kaa {
 
@@ -34,7 +34,7 @@ public:
      * @return new Log request
      * @see LogSyncRequest
      */
-    virtual boost::shared_ptr<LogSyncRequest> createLogSyncRequest() = 0;
+    virtual std::shared_ptr<LogSyncRequest> createLogSyncRequest() = 0;
 
     /**
      * Updates the state of the Log collector according to the given response.

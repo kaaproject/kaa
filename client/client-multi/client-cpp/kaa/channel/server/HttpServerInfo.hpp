@@ -30,14 +30,14 @@ public:
         constructURL(type);
     }
 
-    HttpServerInfo(ServerType type, const std::string& host, const boost::int32_t& port, const std::string& publicKey)
+    HttpServerInfo(ServerType type, const std::string& host, const std::int32_t& port, const std::string& publicKey)
         : AbstractServerInfo(type, host, port, publicKey)
     {
         constructURL(type);
     }
 
-    HttpServerInfo(ServerType type, const std::string& host, const boost::int32_t& port
-            , const Botan::MemoryVector<boost::uint8_t>& publicKey)
+    HttpServerInfo(ServerType type, const std::string& host, const std::int32_t& port
+            , const Botan::MemoryVector<std::uint8_t>& publicKey)
         : AbstractServerInfo(type, host, port, publicKey)
     {
         constructURL(type);
@@ -63,7 +63,7 @@ private:
     std::string url_;
 };
 
-typedef boost::shared_ptr<HttpServerInfo> OperationServerHttpInfoPtr;
+typedef std::shared_ptr<HttpServerInfo> OperationServerHttpInfoPtr;
 
 }
 

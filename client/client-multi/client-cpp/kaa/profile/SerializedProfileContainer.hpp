@@ -57,7 +57,7 @@ inline SharedDataBuffer SerializedProfileContainer::getSerializedProfile()
     return buffer;
 }
 
-typedef boost::shared_ptr<SerializedProfileContainer>   SerializedProfileContainerPtr;
+typedef std::shared_ptr<SerializedProfileContainer>   SerializedProfileContainerPtr;
 
 } /* namespace kaa */
 

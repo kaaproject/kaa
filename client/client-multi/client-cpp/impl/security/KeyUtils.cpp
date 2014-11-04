@@ -21,18 +21,18 @@
 
 namespace kaa {
 
-KeyPair KeyUtils::generateKeyPair(size_t length)
+KeyPair KeyUtils::generateKeyPair(std::size_t length)
 {
     Botan::RSA_PrivateKey key(rng_, length);
     return std::make_pair(Botan::X509::BER_encode(key), Botan::PKCS8::PEM_encode(key));
 }
 
-Botan::SymmetricKey KeyUtils::generateSessionKey(size_t length)
+Botan::SymmetricKey KeyUtils::generateSessionKey(std::size_t length)
 {
     return Botan::SymmetricKey(rng_, length);
 }
 
-void KeyUtils::readFile(const std::string& fileName, boost::scoped_array<char>& buf, size_t& len)
+void KeyUtils::readFile(const std::string& fileName, boost::scoped_array<char>& buf, std::size_t& len)
 {
     std::ifstream file(fileName, std::ifstream::binary);
     if (file.good()) {
@@ -53,17 +53,17 @@ void KeyUtils::readFile(const std::string& fileName, boost::scoped_array<char>& 
     }
 }
 
-Botan::MemoryVector<boost::uint8_t> KeyUtils::loadPublicKey(const std::string& fileName)
+Botan::MemoryVector<std::uint8_t> KeyUtils::loadPublicKey(const std::string& fileName)
 {
-    size_t length = 0;
+    std::size_t length = 0;
     boost::scoped_array<char> buf;
     readFile(fileName, buf, length);
-    return Botan::MemoryVector<boost::uint8_t>(reinterpret_cast<const boost::uint8_t *>(buf.get()), length);
+    return Botan::MemoryVector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(buf.get()), length);
 }
 
 std::string KeyUtils::loadPrivateKey(const std::string& fileName)
 {
-    size_t length = 0;
+    std::size_t length = 0;
     boost::scoped_array<char> buf;
     readFile(fileName, buf, length);
     return std::string(buf.get(), length);
@@ -71,12 +71,12 @@ std::string KeyUtils::loadPrivateKey(const std::string& fileName)
 
 KeyPair KeyUtils::loadKeyPair(const std::string& pubFileName, const std::string& privFileName)
 {
-    const Botan::MemoryVector<boost::uint8_t>& pub = loadPublicKey(pubFileName);
+    const Botan::MemoryVector<std::uint8_t>& pub = loadPublicKey(pubFileName);
     const std::string& priv = loadPrivateKey(privFileName);
     return std::make_pair(pub, priv);
 }
 
-void KeyUtils::savePublicKey(const Botan::MemoryVector<boost::uint8_t>& key, const std::string& pubFileName)
+void KeyUtils::savePublicKey(const Botan::MemoryVector<std::uint8_t>& key, const std::string& pubFileName)
 {
     std::ofstream file(pubFileName, std::ofstream::binary);
     file.write(reinterpret_cast<const char *>(key.begin()), key.size());

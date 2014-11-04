@@ -15,6 +15,9 @@
  */
 
 #include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonRecord.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
@@ -28,7 +31,7 @@ void ConfigurationPersistenceManager::setConfigurationStorage(IConfigurationStor
 {
     if (storage) {
         KAA_MUTEX_LOCKING("confPersistenceGuard_");
-        lock_type lock(confPersistenceGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(lock, confPersistenceGuard_);
         KAA_MUTEX_LOCKED("confPersistenceGuard_");
 
         storage_ = storage;
@@ -52,7 +55,7 @@ void ConfigurationPersistenceManager::onConfigurationUpdated(const ICommonRecord
     }
 
     KAA_MUTEX_LOCKING("schemaGuard_");
-    lock_type schema_lock(schemaGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(schema_lock, schemaGuard_);
     KAA_MUTEX_LOCKED("schemaGuard_");
 
     if (!schema_.get()) {
@@ -78,23 +81,23 @@ void ConfigurationPersistenceManager::onConfigurationUpdated(const ICommonRecord
     SharedDataBuffer buffer = converter.toByteArray(datum);
 
     KAA_MUTEX_UNLOCKING("schemaGuard_");
-    schema_lock.unlock();
+    KAA_UNLOCK(schema_lock);
     KAA_MUTEX_UNLOCKED("schemaGuard_");
 
     KAA_LOG_INFO(boost::format("Going to store configuration using configuration storage %1%") % storage_);
 
     KAA_MUTEX_LOCKING("confPersistenceGuard_");
-    lock_type storage_lock(confPersistenceGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(storage_lock, confPersistenceGuard_);
     KAA_MUTEX_LOCKED("confPersistenceGuard_");
 
-    if (storage_ != NULL) {
-        std::vector<boost::uint8_t> bytes (buffer.second);
+    if (storage_) {
+        std::vector<std::uint8_t> bytes (buffer.second);
         std::copy(buffer.first.get(), buffer.first.get() + buffer.second, bytes.begin());
         storage_->saveConfiguration(bytes);
     }
 
     KAA_MUTEX_UNLOCKING("confPersistenceGuard_");
-    storage_lock.unlock();
+    KAA_UNLOCK(storage_lock);
     KAA_MUTEX_UNLOCKED("confPersistenceGuard_");
 
     EndpointObjectHash temp(buffer);
@@ -103,14 +106,14 @@ void ConfigurationPersistenceManager::onConfigurationUpdated(const ICommonRecord
     KAA_LOG_INFO(boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(configurationHash_.getHash()));
 }
 
-void ConfigurationPersistenceManager::onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema)
+void ConfigurationPersistenceManager::onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
 {
     if (!schema.get()) {
         throw KaaException("Empty schema was given");
     }
 
     KAA_MUTEX_LOCKING("schemaGuard_");
-    lock_type lock(schemaGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, schemaGuard_);
     KAA_MUTEX_LOCKED("schemaGuard_");
 
     schema_ = schema;
@@ -123,16 +126,16 @@ EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()
 
 void ConfigurationPersistenceManager::readStoredConfiugration()
 {
-    if (storage_ == NULL) {
+    if (!storage_) {
         throw KaaException("Can not read stored configuration: Configuration storage is empty.");
     }
 
     KAA_LOG_DEBUG("Going to read stored confguration.");
 
-    std::vector<boost::uint8_t> bytes = storage_->loadConfiguration();
+    std::vector<std::uint8_t> bytes = storage_->loadConfiguration();
 
     if (!bytes.empty()) {
-        if (processor_ != NULL) {
+        if (processor_) {
             ignoreConfigurationUpdate_ = true;
             processor_->processConfigurationData(bytes.data(), bytes.size(), true);
         }
@@ -145,3 +148,6 @@ void ConfigurationPersistenceManager::readStoredConfiugration()
 }
 
 }  // namespace kaa
+
+#endif
+

@@ -17,6 +17,10 @@
 #ifndef IENDPOINTATTACHSTATUSLISTENER_HPP_
 #define IENDPOINTATTACHSTATUSLISTENER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <string>
 
 namespace kaa {
@@ -59,5 +63,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IENDPOINTATTACHSTATUSLISTENER_HPP_ */

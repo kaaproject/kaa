@@ -17,9 +17,11 @@
 #ifndef I_SCHEMA_UPDATES_RECEIVER_HPP_
 #define I_SCHEMA_UPDATES_RECEIVER_HPP_
 
-#include <boost/signals2/trackable.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/ValidSchema.hh>
-#include <boost/cstdint.hpp>
 
 namespace kaa {
 
@@ -27,7 +29,7 @@ namespace kaa {
  * Interface for schema updates listeners.
  * Listeners can be subscribed/unsubscribed for updates via \v ISchemaProcessor.
  */
-class ISchemaUpdatesReceiver : public boost::signals2::trackable {
+class ISchemaUpdatesReceiver {
 public:
     typedef avro::ValidSchema Schema;
 
@@ -38,10 +40,11 @@ public:
      *
      * @param schema Compiled Avro schema.
      */
-    virtual void onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema) = 0;
+    virtual void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema) = 0;
 };
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_SCHEMA_UPDATES_RECEIVER_HPP_ */

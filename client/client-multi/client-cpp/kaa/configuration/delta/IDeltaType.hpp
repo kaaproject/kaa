@@ -17,8 +17,12 @@
 #ifndef IDELTATYPE_HPP_
 #define IDELTATYPE_HPP_
 
-#include <list>
+#include "kaa/KaaDefaults.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
+#include <list>
+#include <memory>
 #include <boost/any.hpp>
 
 #include "kaa/configuration/delta/DeltaHandlerId.hpp"
@@ -26,7 +30,7 @@
 namespace kaa {
 
 class IDeltaType;
-typedef boost::shared_ptr<IDeltaType> DeltaTypePtr;
+typedef std::shared_ptr<IDeltaType> DeltaTypePtr;
 
 /**
  * Interface of delta type object
@@ -89,5 +93,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IDELTATYPE_HPP_ */

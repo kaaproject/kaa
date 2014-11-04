@@ -18,7 +18,7 @@
 #define IUSERTRANSPORT_HPP_
 
 #include "kaa/gen/EndpointGen.hpp"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace kaa {
 
@@ -36,7 +36,7 @@ public:
      * @see UserSyncRequest
      *
      */
-    virtual boost::shared_ptr<UserSyncRequest> createUserRequest() = 0;
+    virtual std::shared_ptr<UserSyncRequest> createUserRequest() = 0;
 
     /**
      * Updates the state of the Endpoint manager according to the given response.

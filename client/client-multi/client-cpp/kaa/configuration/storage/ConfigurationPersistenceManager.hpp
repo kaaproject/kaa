@@ -17,9 +17,12 @@
 #ifndef CONFIGURATIONPERSISTENCEMANAGER_HPP_
 #define CONFIGURATIONPERSISTENCEMANAGER_HPP_
 
-#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
+#include "kaa/KaaDefaults.hpp"
 
-#include <boost/thread/mutex.hpp>
+#ifdef KAA_USE_CONFIGURATION
+
+#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
+#include "kaa/KaaThread.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
 
 namespace kaa {
@@ -37,8 +40,8 @@ namespace kaa {
 class ConfigurationPersistenceManager : public IConfigurationPersistenceManager {
 public:
     ConfigurationPersistenceManager()
-        : storage_(NULL)
-        , processor_(NULL)
+        : storage_(nullptr)
+        , processor_(nullptr)
         , ignoreConfigurationUpdate_(false)
     {}
     ~ConfigurationPersistenceManager() {}
@@ -56,7 +59,7 @@ public:
     /**
      * @link ISchemaUpdatesReceiver @endlink implementation
      */
-    void onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema);
+    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema);
 
     /**
      * @link IConfigurationHashContainer @endlink implementation
@@ -71,23 +74,21 @@ public:
      */
     void setConfigurationProcessor(IConfigurationProcessor *processor);
 private:
-    typedef boost::mutex                    mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
-
     void readStoredConfiugration();
 
-    mutex_type                              schemaGuard_;
-    mutex_type                              confPersistenceGuard_;
+    KAA_MUTEX_DECLARE(schemaGuard_);
+    KAA_MUTEX_DECLARE(confPersistenceGuard_);
 
     IConfigurationStorage *                 storage_;
     IConfigurationProcessor *               processor_;
 
-    boost::shared_ptr<avro::ValidSchema>    schema_;
+    std::shared_ptr<avro::ValidSchema>      schema_;
     EndpointObjectHash                      configurationHash_;
     bool                                    ignoreConfigurationUpdate_;
 };
 
 }  // namespace kaa
 
+#endif
 
 #endif /* CONFIGURATIONPERSISTENCEMANAGER_HPP_ */

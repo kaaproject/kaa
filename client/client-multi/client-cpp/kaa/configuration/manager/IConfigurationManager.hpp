@@ -17,7 +17,9 @@
 #ifndef I_CONFIGURATION_MANAGER_HPP_
 #define I_CONFIGURATION_MANAGER_HPP_
 
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
 
 #include "kaa/configuration/IGenericDeltaReceiver.hpp"
 #include "kaa/configuration/IConfigurationProcessedObserver.hpp"
@@ -59,8 +61,10 @@ public:
     virtual ICommonRecord &getConfiguration() = 0;
 };
 
-typedef boost::shared_ptr<IConfigurationManager> IConfigurationManagerPtr;
+typedef std::shared_ptr<IConfigurationManager> IConfigurationManagerPtr;
 
 }  // namespace kaa
+
+#endif
 
 #endif /* I_CONFIGURATION_MANAGER_HPP_ */

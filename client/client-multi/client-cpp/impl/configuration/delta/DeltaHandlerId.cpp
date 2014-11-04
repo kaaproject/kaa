@@ -16,6 +16,8 @@
 
 #include "kaa/configuration/delta/DeltaHandlerId.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 namespace kaa {
 
 DeltaHandlerId::DeltaHandlerId(const uuid_t& uuid)
@@ -24,8 +26,8 @@ DeltaHandlerId::DeltaHandlerId(const uuid_t& uuid)
      * For more details about UUID format, please, see RFC 4122
      */
     if (uuid.version() == boost::uuids::uuid::version_time_based) {
-        boost::uint16_t node = 0;
-        boost::uint64_t timestamp = 0;
+        std::uint16_t node = 0;
+        std::uint64_t timestamp = 0;
 
         for (int i = 0; i < 6; ++i) {
             /* time_low + time_mid*/
@@ -39,7 +41,7 @@ DeltaHandlerId::DeltaHandlerId(const uuid_t& uuid)
 
         handlerId_ = (timestamp << 16) | node;
     } else {
-        boost::uint64_t high = 0, low = 0;
+        std::uint64_t high = 0, low = 0;
 
         for (int i = 0; i < 8; ++i) {
             high = (high << 8) | (uuid.data[i] & 0xFF);
@@ -51,3 +53,5 @@ DeltaHandlerId::DeltaHandlerId(const uuid_t& uuid)
 }
 
 }
+
+#endif

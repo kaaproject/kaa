@@ -36,10 +36,10 @@ void KaaTcpParser::processByte(char byte)
             state_ = KaaTcpParserState::PROCESSING_LENGTH;
             break;
         case KaaTcpParserState::PROCESSING_LENGTH:
-            messageLength_ += ((boost::uint8_t)byte & ~KaaTcpCommon::FIRST_BIT) * lenghtMultiplier_;
+            messageLength_ += ((std::uint8_t)byte & ~KaaTcpCommon::FIRST_BIT) * lenghtMultiplier_;
             lenghtMultiplier_ *= KaaTcpCommon::FIRST_BIT;
-            if (!((boost::uint8_t)byte & KaaTcpCommon::FIRST_BIT)) {
-                KAA_LOG_DEBUG(boost::format("KaaTcp: retrieved message's size %1%") % (boost::uint32_t) messageLength_);
+            if (!((std::uint8_t)byte & KaaTcpCommon::FIRST_BIT)) {
+                KAA_LOG_DEBUG(boost::format("KaaTcp: retrieved message's size %1%") % (std::uint32_t) messageLength_);
                 if (messageLength_) {
                     messagePayload_.reset(new char[messageLength_]);
                     state_ = KaaTcpParserState::PROCESSING_PAYLOAD;
@@ -55,17 +55,17 @@ void KaaTcpParser::processByte(char byte)
 
 void KaaTcpParser::retrieveMessageType(char byte)
 {
-    messageType_ = (KaaTcpMessageType) ((boost::uint8_t)(byte) >> 4);
+    messageType_ = (KaaTcpMessageType) ((std::uint8_t)(byte) >> 4);
 }
 
-void KaaTcpParser::parseBuffer(const char *buffer, boost::uint32_t size)
+void KaaTcpParser::parseBuffer(const char *buffer, std::uint32_t size)
 {
     auto cursor = buffer;
     while (cursor != buffer + size) {
         if (state_ == KaaTcpParserState::PROCESSING_PAYLOAD) {
-            boost::uint32_t remainingSize = messageLength_ - processedPayloadLength_;
-            boost::uint32_t bufferRemainingSize = buffer + size - cursor;
-            boost::uint32_t bytesToRead = (remainingSize > bufferRemainingSize) ? bufferRemainingSize : remainingSize;
+            std::uint32_t remainingSize = messageLength_ - processedPayloadLength_;
+            std::uint32_t bufferRemainingSize = buffer + size - cursor;
+            std::uint32_t bytesToRead = (remainingSize > bufferRemainingSize) ? bufferRemainingSize : remainingSize;
             std::copy(cursor, cursor + bytesToRead, messagePayload_.get() + processedPayloadLength_);
             cursor += bytesToRead;
             processedPayloadLength_ += bytesToRead;

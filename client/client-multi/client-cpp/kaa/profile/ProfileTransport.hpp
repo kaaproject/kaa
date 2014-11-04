@@ -19,7 +19,7 @@
 
 #include <vector>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include <botan/botan.h>
 
@@ -35,7 +35,7 @@ class ProfileTransport: public AbstractKaaTransport<TransportType::PROFILE>,
 {
 public:
     ProfileTransport(IKaaChannelManager& channelManager,
-                     const Botan::MemoryVector<boost::uint8_t>& publicKey);
+                     const Botan::MemoryVector<std::uint8_t>& publicKey);
 
     virtual void sync() {
         syncAll();
@@ -57,7 +57,7 @@ private:
 
 private:
     IProfileManager*               profileManager_;
-    std::vector<boost::uint8_t>    publicKey_;
+    std::vector<std::uint8_t>      publicKey_;
 };
 
 } /* namespace kaa */

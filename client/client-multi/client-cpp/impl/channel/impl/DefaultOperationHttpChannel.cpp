@@ -32,6 +32,8 @@
 
 #include "kaa/channel/impl/DefaultOperationHttpChannel.hpp"
 
+#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
+
 namespace kaa {
 
 const std::string DefaultOperationHttpChannel::CHANNEL_ID = "default_operation_http_channel";
@@ -43,3 +45,4 @@ const std::map<TransportType, ChannelDirection> DefaultOperationHttpChannel::SUP
 
 }
 
+#endif

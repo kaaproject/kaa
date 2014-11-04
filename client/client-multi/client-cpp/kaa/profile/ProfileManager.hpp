@@ -17,7 +17,7 @@
 #ifndef DEFAULTPROFILEMANAGER_HPP_
 #define DEFAULTPROFILEMANAGER_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "kaa/channel/transport/IProfileTransport.hpp"
 #include "kaa/profile/IProfileManager.hpp"

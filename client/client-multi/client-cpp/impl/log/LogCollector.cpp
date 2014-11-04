@@ -16,7 +16,7 @@
 
 #include "kaa/log/LogCollector.hpp"
 
-#include <boost/bind.hpp>
+#ifdef KAA_USE_LOGGING
 
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/common/UuidGenerator.hpp"
@@ -29,6 +29,7 @@ LogCollector::LogCollector()
     , status_(nullptr)
     , configuration_(nullptr)
     , strategy_(nullptr)
+    , transport_(nullptr)
     , isUploading_(false)
 {
     defaultConfiguration_.reset(new DefaultLogUploadConfiguration);
@@ -58,7 +59,7 @@ LogCollector::LogCollector  ( ILogStorage* storage
 void LogCollector::makeLogRecord(const LogRecord& record)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    lock_type lock(storageGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
     KAA_MUTEX_LOCKED("storageGuard_");
 
     if (storage_ != nullptr) {
@@ -96,7 +97,7 @@ void LogCollector::makeLogRecord(const LogRecord& record)
 void LogCollector::setStorage(ILogStorage * storage)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    lock_type lock(storageGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
     KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log storage from %1% to %2%") % storage_ % storage);
@@ -106,7 +107,7 @@ void LogCollector::setStorage(ILogStorage * storage)
 void LogCollector::setStorageStatus(ILogStorageStatus * status)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    lock_type lock(storageGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
     KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log storage status from %1% to %2%") % status_ % status);
@@ -116,7 +117,7 @@ void LogCollector::setStorageStatus(ILogStorageStatus * status)
 void LogCollector::setConfiguration(ILogUploadConfiguration * configuration)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    lock_type lock(storageGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
     KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log upload configurations from %1% to %2%") % configuration_ % configuration);
@@ -126,7 +127,7 @@ void LogCollector::setConfiguration(ILogUploadConfiguration * configuration)
 void LogCollector::setUploadStrategy(ILogUploadStrategy * strategy)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    lock_type lock(storageGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
     KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log upload strategy from %1% to %2%") % strategy_ % strategy);
@@ -150,7 +151,7 @@ void LogCollector::doUpload()
             entry.data.assign(it->getData().begin(), it->getData().end());
             request.logEntries.get_array().push_back(entry);
         }
-        lock_type lock(requestsGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(lock, requestsGuard_);
         KAA_LOG_INFO(boost::format("Generated log upload request: id= %1%") % request.requestId.get_string());
         requests_.insert(std::make_pair(request.requestId.get_string(), request));
     }
@@ -173,7 +174,7 @@ void LogCollector::doCleanup()
 
 LogSyncRequest LogCollector::getLogUploadRequest()
 {
-    lock_type lock(requestsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, requestsGuard_);
     LogSyncRequest request;
     request.requestId.set_null();
     KAA_LOG_INFO(boost::format("Trying to populate log upload request. Have %1% requests") % requests_.size());
@@ -208,3 +209,6 @@ void LogCollector::setTransport(LoggingTransport *transport)
 }
 
 }  // namespace kaa
+
+#endif
+

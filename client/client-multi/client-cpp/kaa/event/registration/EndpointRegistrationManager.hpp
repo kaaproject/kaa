@@ -17,13 +17,14 @@
 #ifndef ENDPOINTREGISTRATIONMANAGER_HPP_
 #define ENDPOINTREGISTRATIONMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <map>
 #include <list>
 #include <string>
-
-#include <boost/signals2.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <memory>
 
 #include "kaa/IKaaClientStateStorage.hpp"
 
@@ -31,6 +32,7 @@
 #include "kaa/event/registration/IEndpointRegistrationManager.hpp"
 #include "kaa/event/registration/UserTransport.hpp"
 #include "kaa/common/UuidGenerator.hpp"
+#include "kaa/observer/KaaObservable.hpp"
 
 namespace kaa {
 
@@ -109,9 +111,6 @@ private:
 
 
 private:
-    typedef boost::recursive_mutex              mutex_type;
-    typedef boost::unique_lock<mutex_type>      lock_type;
-
     IKaaClientStateStoragePtr     status_;
 
     std::string endpointAccessToken_;
@@ -122,16 +121,18 @@ private:
     std::map<std::string/*requestId*/, EndpointOperationInfo>  attachingEndpoints_;
     std::map<std::string/*requestId*/, EndpointOperationInfo>  detachingEndpoints_;
     std::map<std::string/*epToken*/, std::string/*epHash*/>    attachedEndpoints_;
-    mutex_type                                                 endpointsGuard_;
+    KAA_R_MUTEX_DECLARE(endpointsGuard_);
 
     UserTransport *                                            userTransport_;
 
-    boost::signals2::signal<void (const AttachedEndpoints&)>   attachedEPListListeners;
-    mutex_type                                                 listenerGuard_;
+    KaaObservable<void (const AttachedEndpoints&), IAttachedEndpointListListener *> attachedEPListListeners_;
+    KAA_R_MUTEX_DECLARE(listenerGuard_);
 
     IEndpointAttachStatusListener*                             attachStatusListener_;
 };
 
 }
+
+#endif
 
 #endif /* ENDPOINTREGISTRATIONMANAGER_HPP_ */

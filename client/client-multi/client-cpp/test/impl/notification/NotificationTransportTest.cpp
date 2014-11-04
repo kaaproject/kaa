@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
         BOOST_CHECK(topicInfo.second.sequenceNumber == 0);
     }
 
-    boost::uint32_t seqNm1 = 1;
-    boost::uint32_t seqNm2 = 5;
+    std::uint32_t seqNm1 = 1;
+    std::uint32_t seqNm2 = 5;
 
     Notification nf1;
     nf1.topicId = topicId1;

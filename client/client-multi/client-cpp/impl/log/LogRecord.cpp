@@ -16,9 +16,11 @@
 
 #include "kaa/log/LogRecord.hpp"
 
+#ifdef KAA_USE_LOGGING
+
 namespace kaa {
 
-    const std::vector<boost::uint8_t>& LogRecord::getData() {
+    const std::vector<std::uint8_t>& LogRecord::getData() {
     return logData_;
 }
 
@@ -27,3 +29,5 @@ size_t LogRecord::getSize() const {
 }
 
 }  // namespace kaa
+
+#endif

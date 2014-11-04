@@ -36,7 +36,7 @@ public:
     void onProfileUpdated(SharedDataBuffer serializedProfile);
 
 private:
-    boost::shared_ptr<ProfileTransport> transport_;
+    std::shared_ptr<ProfileTransport> transport_;
 };
 
 } /* namespace kaa */

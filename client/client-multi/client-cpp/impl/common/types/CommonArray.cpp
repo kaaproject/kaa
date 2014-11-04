@@ -15,6 +15,9 @@
  */
 
 #include "kaa/common/types/CommonArray.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <sstream>
 
 #include "kaa/common/AvroDatumsComparator.hpp"
@@ -100,3 +103,5 @@ std::string CommonArray::toString() const
 }
 
 }  // namespace kaa
+
+#endif

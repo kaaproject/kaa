@@ -17,14 +17,11 @@
 #ifndef ILOGGER_HPP_
 #define ILOGGER_HPP_
 
-#include <boost/smart_ptr/shared_ptr.hpp>
-
 namespace kaa {
 
 enum class LogLevel {
-    FINE_TRACE = 0,
+    TRACE = 0,
     DEBUG,
-    TRACE,
     INFO,
     WARNING,
     ERROR,
@@ -35,18 +32,10 @@ class ILogger {
 public:
     virtual ~ILogger() {}
 
-    virtual void ftrace (const char *message) const = 0;
-    virtual void debug  (const char *message) const = 0;
-    virtual void trace  (const char *message) const = 0;
-    virtual void info   (const char *message) const = 0;
-    virtual void warn   (const char *message) const = 0;
-    virtual void error  (const char *message) const = 0;
-    virtual void fatal  (const char *message) const = 0;
-
     virtual void log(LogLevel level, const char *message) const = 0;
 };
 
-typedef boost::shared_ptr<ILogger> LoggerPtr;
+typedef std::shared_ptr<ILogger> LoggerPtr;
 
 }  // namespace kaa
 

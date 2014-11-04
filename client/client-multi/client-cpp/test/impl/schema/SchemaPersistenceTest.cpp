@@ -40,7 +40,7 @@ class SchemaProcessorStub : public ISchemaProcessor
 {
 public:
     SchemaProcessorStub() : loadSchemaCalled_(false) {}
-    void loadSchema(const boost::uint8_t * buffer, size_t size)
+    void loadSchema(const std::uint8_t * buffer, std::size_t size)
     {
         loadSchemaCalled_ = true;
     }
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(testEmptySchemaSet)
 {
     SchemaPersistenceManager spm;
 
-    boost::shared_ptr<avro::ValidSchema> root_schema;
+    std::shared_ptr<avro::ValidSchema> root_schema;
     BOOST_REQUIRE_THROW(spm.onSchemaUpdated(root_schema), KaaException);
 }
 
@@ -107,8 +107,8 @@ BOOST_AUTO_TEST_CASE(testSchemaPersistence)
         BOOST_CHECK(!ssstub.isSaveSchemaCalled());
         BOOST_CHECK(spstub.isLoadSchemaCalled());
 
-        boost::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
-                        avro::compileJsonSchemaFromMemory(reinterpret_cast<const boost::uint8_t *>(root_sch.c_str()), root_sch.length())));
+        std::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
+                        avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(root_sch.c_str()), root_sch.length())));
         // here one schema update should be ignored as it has to be called when non-empty schema is read from storage
         spm.onSchemaUpdated(root_schema);
         BOOST_CHECK(!ssstub.isSaveSchemaCalled());

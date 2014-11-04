@@ -17,6 +17,10 @@
 #ifndef I_SCHEMA_OBSERVABLE_HPP_
 #define I_SCHEMA_OBSERVABLE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/schema/ISchemaUpdatesReceiver.hpp"
 
 namespace kaa {
@@ -45,5 +49,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_SCHEMA_OBSERVABLE_HPP_ */

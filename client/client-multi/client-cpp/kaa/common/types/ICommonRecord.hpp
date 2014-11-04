@@ -17,6 +17,10 @@
 #ifndef I_COMMON_RECORD_HPP_
 #define I_COMMON_RECORD_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ISchemaDependent.hpp"
 #include "kaa/common/types/ICommonValue.hpp"
 
@@ -86,9 +90,10 @@ public:
     virtual const container_type &  getFields   () const = 0;
 };
 
-typedef ICommonRecordBase<std::map<std::string, boost::shared_ptr<ICommonValue> > > ICommonRecord;
+typedef ICommonRecordBase<std::map<std::string, std::shared_ptr<ICommonValue> > > ICommonRecord;
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_COMMON_RECORD_HPP_ */

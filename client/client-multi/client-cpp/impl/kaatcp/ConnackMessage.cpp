@@ -19,7 +19,7 @@
 
 namespace kaa {
 
-ConnackMessage::ConnackMessage(const char *payload, boost::uint16_t size) : returnCode_(ConnackReturnCode::UNKNOWN)
+ConnackMessage::ConnackMessage(const char *payload, std::uint16_t size) : returnCode_(ConnackReturnCode::UNKNOWN)
 {
     parseMessage(payload, size);
 }
@@ -42,7 +42,7 @@ std::string ConnackMessage::returnCodeToString(ConnackReturnCode code)
         case ConnackReturnCode::NOT_AUTHORIZED:
             return "Connection Refused: not authorized";
         default:
-            return (boost::format("Invalid response code %1%") % (boost::uint8_t) code).str();
+            return (boost::format("Invalid response code %1%") % (std::uint8_t) code).str();
     }
 }
 
@@ -51,7 +51,7 @@ std::string ConnackMessage::getMessage() const
     return returnCodeToString(returnCode_);
 }
 
-void ConnackMessage::parseMessage(const char *payload, boost::uint16_t size)
+void ConnackMessage::parseMessage(const char *payload, std::uint16_t size)
 {
     returnCode_ = (ConnackReturnCode) *(payload + 1);
 }

@@ -17,6 +17,10 @@
 #ifndef USERTRANSPORT_HPP_
 #define USERTRANSPORT_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IUserTransport.hpp"
 #include "kaa/event/registration/IRegistrationProcessor.hpp"
@@ -26,7 +30,7 @@ namespace kaa {
 class UserTransport : public AbstractKaaTransport<TransportType::USER>, public IUserTransport {
 public:
     UserTransport(IRegistrationProcessor & manager, IKaaChannelManager& channelManager);
-    boost::shared_ptr<UserSyncRequest>     createUserRequest();
+    std::shared_ptr<UserSyncRequest>     createUserRequest();
     void                onUserResponse(const UserSyncResponse& response);
     void                sync();
     void                syncProfile();
@@ -37,5 +41,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* USERTRANSPORT_HPP_ */

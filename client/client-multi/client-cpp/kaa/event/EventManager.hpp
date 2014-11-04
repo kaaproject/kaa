@@ -17,14 +17,17 @@
 #ifndef EVENTMANAGER_HPP_
 #define EVENTMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <set>
 #include <list>
 
-#include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/thread/mutex.hpp>
+#include <cstdint>
+#include <memory>
 
+#include "kaa/KaaThread.hpp"
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/event/IEventManager.hpp"
 #include "kaa/event/IEventListenersResolver.hpp"
@@ -51,7 +54,7 @@ public:
     virtual void registerEventFamily(IEventFamily* eventFamily);
 
     virtual void produceEvent(const std::string& fqn
-                            , const std::vector<boost::uint8_t>& data
+                            , const std::vector<std::uint8_t>& data
                             , const std::string& target);
 
     virtual void onEventsReceived(const EventSyncResponse::events_t& events);
@@ -82,28 +85,27 @@ private:
     };
 
     void onEventFromServer(const std::string& eventClassFQN
-                         , const std::vector<boost::uint8_t>& data
+                         , const std::vector<std::uint8_t>& data
                          , const std::string& source);
 
 
     void generateUniqueRequestId(std::string& requstId);
 private:
-    typedef boost::mutex                    mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
-
     std::set<IEventFamily*>   eventFamilies_;
     std::list<Event>          pendingEvents_;
-    mutex_type                pendingEventsGuard_;
+    KAA_MUTEX_DECLARE(pendingEventsGuard_);
 
-    boost::int32_t            eventSequenceNumber_;
-    mutex_type                sequenceGuard_;
+    std::int32_t            eventSequenceNumber_;
+    KAA_MUTEX_DECLARE(sequenceGuard_);
 
     EventTransport *          eventTransport_;
     IKaaClientStateStoragePtr status_;
 
-    std::map<std::string/*request id*/, boost::shared_ptr<EventListenersInfo> > eventListenersRequests_;
+    std::map<std::string/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* EVENTMANAGER_HPP_ */

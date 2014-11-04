@@ -51,7 +51,7 @@ public:
     virtual ~IKaaTransport() {}
 };
 
-typedef boost::shared_ptr<IKaaTransport> IKaaTransportPtr;
+typedef std::shared_ptr<IKaaTransport> IKaaTransportPtr;
 
 }  // namespace kaa
 

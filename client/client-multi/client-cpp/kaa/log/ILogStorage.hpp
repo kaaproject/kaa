@@ -17,9 +17,14 @@
 #ifndef ILOGSTORAGE_HPP_
 #define ILOGSTORAGE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include "kaa/log/LogRecord.hpp"
 #include <list>
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include <cstdint>
+#include <memory>
 
 namespace kaa {
 
@@ -45,7 +50,7 @@ public:
      * \param blockId       Unique identifier of the log record block.
      * \return  Container of records
      */
-    virtual container_type  getRecordBlock(size_t blockSize, const std::string& blockId)        = 0;
+    virtual container_type  getRecordBlock(std::size_t blockSize, const std::string& blockId)        = 0;
 
     /**
      * Called when log block was successfully uploaded.
@@ -64,14 +69,15 @@ public:
     /**
      * Shrink storage to fit allowed volume size.
      */
-    virtual void            removeOldestRecords(size_t allowedVolume)   = 0;
+    virtual void            removeOldestRecords(std::size_t allowedVolume)   = 0;
 
     virtual ~ILogStorage() {}
 };
 
-typedef boost::shared_ptr<ILogStorage> LogStoragePtr;
+typedef std::shared_ptr<ILogStorage> LogStoragePtr;
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ILOGSTORAGE_HPP_ */

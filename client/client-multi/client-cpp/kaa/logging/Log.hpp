@@ -17,12 +17,13 @@
 #ifndef LOG_HPP_
 #define LOG_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
 #include "kaa/logging/LoggerFactory.hpp"
 
 #include <string.h>
 #include <boost/format.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/lock_options.hpp>
 
 
 #ifdef _WIN32
@@ -33,21 +34,54 @@
 
 #define __LOGFILE (strrchr(__FILE__, PATH_SEPARATOR) ? strrchr(__FILE__, PATH_SEPARATOR) + 1 : __FILE__)
 
+#endif
+
 namespace kaa {
 
+#if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
 void kaa_log(const ILogger & logger, LogLevel level, const char *message, const char *file, size_t lineno);
 void kaa_log(const ILogger & logger, LogLevel level, const std::string &message, const char *file, size_t lineno);
-void kaa_log(const ILogger & logger, LogLevel level, boost::format message, const char *file, size_t lineno);
+void kaa_log(const ILogger & logger, LogLevel level, const boost::format& message, const char *file, size_t lineno);
 
-#define KAA_LOG_FTRACE(message) kaa_log(LoggerFactory::getLogger(), LogLevel::FINE_TRACE, (message), __LOGFILE, __LINE__);
-#define KAA_LOG_DEBUG(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG,      (message), __LOGFILE, __LINE__);
-#define KAA_LOG_TRACE(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
-#define KAA_LOG_INFO(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::INFO,       (message), __LOGFILE, __LINE__);
-#define KAA_LOG_WARN(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::WARNING,    (message), __LOGFILE, __LINE__);
-#define KAA_LOG_ERROR(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::ERROR,      (message), __LOGFILE, __LINE__);
-#define KAA_LOG_FATAL(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::FATAL,      (message), __LOGFILE, __LINE__);
+#endif
 
-#ifdef KAA_MUTEX_LOGGING_ENABLED
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FINE_TRACE
+    #define KAA_LOG_FTRACE(message) kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
+#else
+    #define KAA_LOG_FTRACE(message)
+#endif
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE
+    #define KAA_LOG_TRACE(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
+#else
+    #define KAA_LOG_TRACE(message)
+#endif
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_DEBUG
+    #define KAA_LOG_DEBUG(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG,      (message), __LOGFILE, __LINE__);
+#else
+    #define KAA_LOG_DEBUG(message)
+#endif
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_INFO
+    #define KAA_LOG_INFO(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::INFO,       (message), __LOGFILE, __LINE__);
+#else
+    #define KAA_LOG_INFO(message)
+#endif
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_WARNING
+    #define KAA_LOG_WARN(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::WARNING,    (message), __LOGFILE, __LINE__);
+#else
+    #define KAA_LOG_WARN(message)
+#endif
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_ERROR
+    #define KAA_LOG_ERROR(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::ERROR,      (message), __LOGFILE, __LINE__);
+#else
+    #define KAA_LOG_ERROR(message)
+#endif
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL
+    #define KAA_LOG_FATAL(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::FATAL,      (message), __LOGFILE, __LINE__);
+#else
+    #define KAA_LOG_FATAL(message)
+#endif
+
+#if defined(KAA_MUTEX_LOGGING_ENABLED) && KAA_LOG_LEVEL > 4
 template <typename LockType, typename MutableObject>
 class MutexScopedLockLogger {
 public:

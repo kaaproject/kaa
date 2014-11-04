@@ -17,6 +17,10 @@
 #ifndef PINGCONNECTIVITYCHECKER_HPP_
 #define PINGCONNECTIVITYCHECKER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
+
 #include "kaa/channel/connectivity/IConnectivityChecker.hpp"
 
 namespace kaa {
@@ -39,5 +43,7 @@ private:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* PINGCONNECTIVITYCHECKER_HPP_ */

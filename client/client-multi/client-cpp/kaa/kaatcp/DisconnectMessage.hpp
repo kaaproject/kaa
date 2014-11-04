@@ -24,7 +24,7 @@
 namespace kaa
 {
 
-enum class DisconnectReason : boost::uint8_t
+enum class DisconnectReason : std::uint8_t
 {
     NONE = 0x00,
     BAD_REQUEST = 0x01,
@@ -44,22 +44,22 @@ public:
             case DisconnectReason::INTERNAL_ERROR:
                 return "Internal error has been occurred";
             default:
-                return (boost::format("Invalid Disconnect reason %1%") % (boost::uint8_t) reason).str();
+                return (boost::format("Invalid Disconnect reason %1%") % (std::uint8_t) reason).str();
         }
     }
 
     DisconnectMessage(DisconnectReason reason) : message_(4), reason_(reason)
     {
         char header[2];
-        KaaTcpCommon::createBasicHeader((boost::uint8_t) KaaTcpMessageType::MESSAGE_DISCONNECT, 2, header);
-        std::copy(reinterpret_cast<const boost::uint8_t *>(header),
-                reinterpret_cast<const boost::uint8_t *>(header + 2),
+        KaaTcpCommon::createBasicHeader((std::uint8_t) KaaTcpMessageType::MESSAGE_DISCONNECT, 2, header);
+        std::copy(reinterpret_cast<const std::uint8_t *>(header),
+                reinterpret_cast<const std::uint8_t *>(header + 2),
                 message_.begin());
         message_[2] = 0;
-        message_[3] = (boost::uint8_t) reason_;
+        message_[3] = (std::uint8_t) reason_;
     }
 
-    DisconnectMessage(const char *payload, boost::uint16_t size)
+    DisconnectMessage(const char *payload, std::uint16_t size)
     {
         parseMessage(payload, size);
     }
@@ -69,16 +69,16 @@ public:
     DisconnectReason getReason() const { return reason_; }
     std::string getMessage() const { return reasonToString(reason_); }
 
-    const std::vector<boost::uint8_t>& getRawMessage() const { return message_; }
+    const std::vector<std::uint8_t>& getRawMessage() const { return message_; }
 
 private:
-    void parseMessage(const char *payload, boost::uint16_t size)
+    void parseMessage(const char *payload, std::uint16_t size)
     {
         reason_ = (DisconnectReason) *(payload + 1);
     }
 
 private:
-    std::vector<boost::uint8_t> message_;
+    std::vector<std::uint8_t> message_;
     DisconnectReason reason_;
 
 };

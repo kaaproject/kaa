@@ -20,13 +20,13 @@ namespace kaa {
 
 const char * const KaaTcpCommon::KAA_TCP_NAME = "Kaatcp";
 
-boost::uint8_t KaaTcpCommon::createBasicHeader(boost::uint8_t messageType, boost::uint32_t length, char *message)
+std::uint8_t KaaTcpCommon::createBasicHeader(std::uint8_t messageType, std::uint32_t length, char *message)
 {
     if (length <= MAX_MESSAGE_LENGTH && messageType <= MAX_MESSAGE_TYPE_LENGTH) {
-        boost::uint8_t size = 1;
+        std::uint8_t size = 1;
         *(message++) = (char) (messageType << 4);
         do {
-            boost::uint8_t byte = length % FIRST_BIT;
+            std::uint8_t byte = length % FIRST_BIT;
             length /= FIRST_BIT;
             if (length) {
                 byte |= FIRST_BIT;

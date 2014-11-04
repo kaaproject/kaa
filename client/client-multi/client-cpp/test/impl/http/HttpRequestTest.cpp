@@ -19,14 +19,13 @@
 #include "kaa/http/MultipartPostHttpRequest.hpp"
 
 #include <vector>
-#include <boost/cstdint.hpp>
 
 namespace kaa {
 
 static std::string test_url0 = "http://test.com:1234/path?par1=val1&par2=val2";
 
 static std::string body_name = "SimpleBody";
-static const std::vector<boost::uint8_t> body_data = {'0','1','2','3','4','5','6','7','8','9'};
+static const std::vector<std::uint8_t> body_data = {'0','1','2','3','4','5','6','7','8','9'};
 
 static std::string header_name  = "MyHttpHeader";
 static std::string header_value = "MyHttpHeaderValue";

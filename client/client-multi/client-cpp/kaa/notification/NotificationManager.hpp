@@ -17,7 +17,12 @@
 #ifndef DEFAULTNOTIFICATONMANAGER_HPP_
 #define DEFAULTNOTIFICATONMANAGER_HPP_
 
-#include <mutex>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_NOTIFICATIONS
+
+#include "kaa/KaaThread.hpp"
+
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -30,6 +35,8 @@
 #include "kaa/notification/INotificationListener.hpp"
 #include "kaa/notification/INotificationProcessor.hpp"
 #include "kaa/notification/INotificationTopicListListener.hpp"
+
+#include "kaa/observer/KaaObservable.hpp"
 
 namespace kaa {
 
@@ -68,7 +75,7 @@ public:
     /**
      * Provide notification transport to manager.
      */
-    virtual void setTransport(boost::shared_ptr<NotificationTransport> transport);
+    virtual void setTransport(std::shared_ptr<NotificationTransport> transport);
 private:
     void updateSubscriptionInfo(const std::string& id, SubscriptionCommandType type);
     void updateSubscriptionInfo(const SubscriptionCommands& newSubscriptions);
@@ -80,42 +87,31 @@ private:
     bool notifyVoluntaryNotificationSubscribers(const Notification& notification);
 
 private:
-    typedef std::unique_lock<std::mutex> GuardLock;
-
-    boost::shared_ptr<NotificationTransport>                         transport_;
+    std::shared_ptr<NotificationTransport>                           transport_;
     IKaaClientStateStoragePtr                                        clientStatus_;
 
     std::unordered_map<std::string/*Topic ID*/, Topic>               topics_;
-    std::mutex                                                       topicsGuard_;
 
-    bool                                                             topicUpdateNotifying_;
-    bool                                                             mandatoryListenersNotifying_;
-    bool                                                             voluntaryListenersNotifying_;
+    KAA_MUTEX_DECLARE(topicsGuard_);
+    KAA_MUTEX_DECLARE(voluntaryListenersGuard_);
 
-    std::mutex                                                       topicNotifyGuard_;
-    std::mutex                                                       mandatoryListenersNotifyGuard_;
-    std::mutex                                                       voluntaryListenersNotifyGuard_;
+    typedef KaaObservable<
+            void(const std::string& topicId,
+                    const std::vector<std::uint8_t>& notification),
+            INotificationListenerPtr> NotificationObservable;
 
-    std::unordered_set<INotificationTopicListListenerPtr>            topicListeners_;
-    std::unordered_set<INotificationTopicListListenerPtr>            topicListenersPendingAdd_;
-    std::unordered_set<INotificationTopicListListenerPtr>            topicListenersPendingRemove_;
-    std::mutex                                                       topicListenersGuard_;
+    typedef std::shared_ptr<NotificationObservable> NotificationObservablePtr;
 
-    std::unordered_set<INotificationListenerPtr>                     mandatoryListeners_;
-    std::unordered_set<INotificationListenerPtr>                     mandatoryListenersPendingAdd_;
-    std::unordered_set<INotificationListenerPtr>                     mandatoryListenersPendingRemove_;
-    std::mutex                                                       mandatoryListenersGuard_;
-
-    std::unordered_map<std::string/*Topic ID*/,
-                std::unordered_set<INotificationListenerPtr>>        voluntaryListeners_;
-    std::unordered_multimap<std::string, INotificationListenerPtr>   voluntaryListenersPendingAdd_;
-    std::unordered_multimap<std::string, INotificationListenerPtr>   voluntaryListenersPendingRemove_;
-    std::mutex                                                       voluntaryListenersGuard_;
+    KaaObservable<void (const Topics& list), INotificationTopicListListenerPtr> topicListeners_;
+    NotificationObservable                                                     mandatoryListeners_;
+    std::unordered_map<std::string/*Topic ID*/, NotificationObservablePtr>     voluntaryListeners_;
 
     SubscriptionCommands                                             subscriptions_;
-    std::mutex                                                       subscriptionsGuard_;
+    KAA_MUTEX_DECLARE(subscriptionsGuard_);
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* DEFAULTNOTIFICATONMANAGER_HPP_ */

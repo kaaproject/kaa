@@ -17,6 +17,10 @@
 #ifndef EMPTYDELTATYPE_HPP_
 #define EMPTYDELTATYPE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <list>
 
 #include <avro/Generic.hh>
@@ -80,5 +84,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* EMPTYDELTATYPE_HPP_ */

@@ -20,14 +20,13 @@
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/bootstrap/BootstrapTransport.hpp"
 #include "kaa/gen/BootstrapGen.hpp"
-
-#include <boost/thread/recursive_mutex.hpp>
+#include "kaa/KaaThread.hpp"
 
 namespace kaa {
 
 class BootstrapManager : public IBootstrapManager, public boost::noncopyable {
 public:
-    BootstrapManager() { }
+    BootstrapManager() : bootstrapTransport_(nullptr), channelManager_(nullptr) { }
     ~BootstrapManager() { }
 
     virtual void receiveOperationsServerList();
@@ -47,13 +46,14 @@ private:
 
     std::vector<OperationsServer> operationServerList_;
     std::map<ChannelType, std::vector<OperationsServer> > operationServers_;
-    std::map<ChannelType, /*std::vector<OperationsServer>::const_iterator*/ size_t  > operationServersIterators_;
+    std::map<ChannelType, /*std::vector<OperationsServer>::const_iterator*/ std::size_t  > operationServersIterators_;
 
     BootstrapTransport *bootstrapTransport_;
     IKaaChannelManager *channelManager_;
 
     std::string serverToApply;
-    mutable boost::recursive_mutex guard_;
+
+    KAA_R_MUTEX_MUTABLE_DECLARE(guard_);
 };
 
 }

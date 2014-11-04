@@ -17,14 +17,20 @@
 #ifndef IHTTPRESPONSE_HPP_
 #define IHTTPRESPONSE_HPP_
 
-#include <boost/cstdint.hpp>
+#include  "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
+#include <cstdint>
 #include <boost/shared_array.hpp>
 #include <string>
 #include <vector>
 
 namespace kaa {
 
-typedef std::pair<boost::shared_array<boost::uint8_t>, size_t> SharedBody;
+typedef std::pair<boost::shared_array<std::uint8_t>, size_t> SharedBody;
 
 class IHttpResponse {
 public:
@@ -36,6 +42,6 @@ public:
 
 }
 
-
+#endif
 
 #endif /* IHTTPRESPONSE_HPP_ */

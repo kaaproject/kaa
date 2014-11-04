@@ -17,13 +17,17 @@
 #ifndef IREGISTRATIONPROCESSOR_HPP_
 #define IREGISTRATIONPROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <vector>
 
 #include "kaa/gen/EndpointGen.hpp"
 
 namespace kaa {
 
-typedef boost::shared_ptr<UserAttachRequest> UserAttachRequestPtr;
+typedef std::shared_ptr<UserAttachRequest> UserAttachRequestPtr;
 
 class IRegistrationProcessor {
 public:
@@ -43,5 +47,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IREGISTRATIONPROCESSOR_HPP_ */

@@ -16,6 +16,10 @@
 
 #include "kaa/transport/HttpDataProcessor.hpp"
 
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 namespace kaa {
 
 void HttpDataProcessor::verifyResponse(const IHttpResponse& response)
@@ -25,28 +29,28 @@ void HttpDataProcessor::verifyResponse(const IHttpResponse& response)
     }
     SharedBody rawResponse = response.getBody();
     const std::string& signature = response.getHeaderField("X-SIGNATURE");
-    boost::scoped_array<boost::uint8_t> decodedSignature(new boost::uint8_t[signature.length() / 3 * 4]);
+    boost::scoped_array<std::uint8_t> decodedSignature(new std::uint8_t[signature.length() / 3 * 4]);
     size_t sigLength = Botan::base64_decode(decodedSignature.get(), signature);
     if (!encDec_->verifySignature(rawResponse.first.get(), rawResponse.second, decodedSignature.get(), sigLength)) {
         throw TransportException("Failed to verify signature");
     }
 }
 
-boost::shared_ptr<IHttpRequest> HttpDataProcessor::createOperationRequest(const HttpUrl& url, const std::vector<boost::uint8_t>& data)
+std::shared_ptr<IHttpRequest> HttpDataProcessor::createOperationRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data)
 {
-    const Botan::SecureVector<boost::uint8_t>& encodedSessionKey = encDec_->getEncodedSessionKey();
+    const Botan::SecureVector<std::uint8_t>& encodedSessionKey = encDec_->getEncodedSessionKey();
     const std::string& bodyEncoded = encDec_->encodeData(data.data(), data.size());
-    const Botan::SecureVector<boost::uint8_t>& clientSignature =
-            encDec_->signData(reinterpret_cast<const boost::uint8_t *>(
+    const Botan::SecureVector<std::uint8_t>& clientSignature =
+            encDec_->signData(reinterpret_cast<const std::uint8_t *>(
                     encodedSessionKey.begin()), encodedSessionKey.size());
 
-    boost::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
+    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
     post->setBodyField("signature",
-            std::vector<boost::uint8_t>(
-                    reinterpret_cast<const boost::uint8_t *>(clientSignature.begin()),
-                    reinterpret_cast<const boost::uint8_t *>(clientSignature.end())));
-    post->setBodyField("requestKey", std::vector<boost::uint8_t>(encodedSessionKey.begin(), encodedSessionKey.end()));
-    post->setBodyField("requestData", std::vector<boost::uint8_t>(bodyEncoded.begin(), bodyEncoded.end()));
+            std::vector<std::uint8_t>(
+                    reinterpret_cast<const std::uint8_t *>(clientSignature.begin()),
+                    reinterpret_cast<const std::uint8_t *>(clientSignature.end())));
+    post->setBodyField("requestKey", std::vector<std::uint8_t>(encodedSessionKey.begin(), encodedSessionKey.end()));
+    post->setBodyField("requestData", std::vector<std::uint8_t>(bodyEncoded.begin(), bodyEncoded.end()));
     return post;
 }
 
@@ -56,9 +60,9 @@ std::string HttpDataProcessor::retrieveOperationResponse(const IHttpResponse& re
     return encDec_->decodeData(rawResponse.first.get(), rawResponse.second);
 }
 
-boost::shared_ptr<IHttpRequest> HttpDataProcessor::createBootstrapRequest(const HttpUrl& url, const std::vector<boost::uint8_t>& data)
+std::shared_ptr<IHttpRequest> HttpDataProcessor::createBootstrapRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data)
 {
-    boost::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
+    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
     post->setBodyField("Application-Token", data);
     return post;
 }
@@ -72,4 +76,5 @@ std::string HttpDataProcessor::retrieveBootstrapResponse(const IHttpResponse& re
 
 }
 
+#endif
 

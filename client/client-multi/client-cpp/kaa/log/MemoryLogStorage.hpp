@@ -17,7 +17,12 @@
 #ifndef MEMORYLOGSTORAGE_HPP_
 #define MEMORYLOGSTORAGE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
 #include <list>
+#include <cstdint>
 
 #include "kaa/log/ILogStorage.hpp"
 #include "kaa/log/ILogStorageStatus.hpp"
@@ -42,13 +47,13 @@ private:
 
         std::string                 blockId;
         ILogStorage::container_type logs_;
-        size_t                      actualSize_;
-        size_t                      blockSize_;
+        std::size_t                 actualSize_;
+        std::size_t                 blockSize_;
         bool                        finalized_;
     } LogBlock;
 
 public:
-    MemoryLogStorage(size_t blockSize) : blockSize_(blockSize), occupiedSize_(0) {
+    MemoryLogStorage(std::size_t blockSize) : blockSize_(blockSize), occupiedSize_(0) {
         LogBlock initialBlock(blockSize);
         initialBlock.actualSize_ = 0;
         initialBlock.finalized_ = false;
@@ -60,26 +65,28 @@ public:
      * \c ILogStorage public interface implementation
      */
     void            addLogRecord(const LogRecord & record);
-    container_type  getRecordBlock(size_t blockSize, const std::string& blockId);
+    container_type  getRecordBlock(std::size_t blockSize, const std::string& blockId);
     void            removeRecordBlock(const std::string& blockId);
     void            notifyUploadFailed(const std::string& blockId);
-    void            removeOldestRecords(size_t allowedVolume);
+    void            removeOldestRecords(std::size_t allowedVolume);
 
     /**
      * \c ILogStorageStatus public interface implementation
      */
-    size_t          getConsumedVolume() const;
-    size_t          getRecordsCount() const;
+    std::size_t          getConsumedVolume() const;
+    std::size_t          getRecordsCount() const;
 
 private:
-    void            resize(size_t blockSize);
+    void            resize(std::size_t blockSize);
 
 private:
-    size_t          blockSize_;
-    size_t          occupiedSize_;
+    std::size_t          blockSize_;
+    std::size_t          occupiedSize_;
     std::list<LogBlock> logBlocks_;
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* MEMORYLOGSTORAGE_HPP_ */

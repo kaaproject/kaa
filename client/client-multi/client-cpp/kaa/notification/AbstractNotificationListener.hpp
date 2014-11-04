@@ -17,6 +17,10 @@
 #ifndef ABSTRACTNOTIFICATIONLISTENER_HPP_
 #define ABSTRACTNOTIFICATIONLISTENER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_NOTIFICATIONS
+
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/notification/INotificationListener.hpp"
 
@@ -51,7 +55,7 @@ public:
      * @param notification Raw Avro-encoded notification data.
      *
      */
-    virtual void onNotificationRaw(const std::string& id, const std::vector<boost::uint8_t>& notification) {
+    virtual void onNotificationRaw(const std::string& id, const std::vector<std::uint8_t>& notification) {
         onNotification(id, converter_.fromByteArray(notification.data(), notification.size()));
     }
 
@@ -69,5 +73,7 @@ private:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* ABSTRACTNOTIFICATIONLISTENER_HPP_ */

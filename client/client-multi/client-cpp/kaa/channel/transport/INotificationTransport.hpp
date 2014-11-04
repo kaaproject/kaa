@@ -18,14 +18,14 @@
 #define INOTIFICATIONTRANSPORT_HPP_
 
 #include <list>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "kaa/gen/EndpointGen.hpp"
 
 namespace kaa {
 
 typedef std::list<SubscriptionCommand>             SubscriptionCommands;
-typedef boost::shared_ptr<NotificationSyncRequest> NotificationSyncRequestPtr;
+typedef std::shared_ptr<NotificationSyncRequest>   NotificationSyncRequestPtr;
 
 class INotificationManager;
 class INotificationProcessor;

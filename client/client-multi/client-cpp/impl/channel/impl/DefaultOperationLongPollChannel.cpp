@@ -15,6 +15,9 @@
  */
 
 #include "kaa/channel/impl/DefaultOperationLongPollChannel.hpp"
+
+#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
+
 #include "kaa/logging/Log.hpp"
 #include "kaa/security/RsaEncoderDecoder.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
@@ -51,11 +54,11 @@ void DefaultOperationLongPollChannel::startPoll()
     KAA_LOG_INFO("Starting poll scheduler..");
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    boost::unique_lock<boost::mutex> lock(channelGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
     if (firstStart_) {
         KAA_LOG_INFO(boost::format("First start for channel %1%. Creating a thread...") % getId());
-        pollThread_ = boost::thread([this](){ this->io_.run(); });
+        pollThread_ = std::thread([this](){ this->io_.run(); });
         firstStart_ = false;
     }
     if (stopped_) {
@@ -72,13 +75,13 @@ void DefaultOperationLongPollChannel::stopPoll()
     KAA_LOG_INFO("Stopping poll future..");
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    boost::unique_lock<boost::mutex> lock(channelGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
     if (!stopped_) {
         stopped_ = true;
         if (connectionInProgress_) {
             httpClient_.closeConnection();
-            waitCondition_.wait(lock, [this](){ return !this->connectionInProgress_; });
+            KAA_CONDITION_WAIT_PRED(waitCondition_, lock, [this](){ return !this->connectionInProgress_; });
         }
     }
 }
@@ -92,7 +95,7 @@ void DefaultOperationLongPollChannel::postTask()
 void DefaultOperationLongPollChannel::executeTask()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    boost::unique_lock<boost::mutex> lock(channelGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
     taskPosted_ = false;
     if (stopped_) {
@@ -104,30 +107,30 @@ void DefaultOperationLongPollChannel::executeTask()
 
     const auto& bodyRaw = multiplexer_->compileRequest(getSupportedTransportTypes());
     // Creating HTTP request using the given data
-    boost::shared_ptr<IHttpRequest> postRequest = httpDataProcessor_.createOperationRequest(server->getUrl(), bodyRaw);
+    std::shared_ptr<IHttpRequest> postRequest = httpDataProcessor_.createOperationRequest(server->getUrl(), bodyRaw);
 
     KAA_MUTEX_UNLOCKING("channelGuard_");
-    lock.unlock();
+    KAA_UNLOCK(lock);
     KAA_MUTEX_UNLOCKED("channelGuard_");
     try {
         // Sending http request
         auto response = httpClient_.sendRequest(*postRequest);
         KAA_MUTEX_LOCKING("channelGuard_");
-        boost::unique_lock<boost::mutex> lockInternal(channelGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
         // Retrieving the avro data from the HTTP response
         connectionInProgress_ = false;
         const std::string& processedResponse = httpDataProcessor_.retrieveOperationResponse(*response);
         KAA_MUTEX_UNLOCKING("channelGuard_");
-        lockInternal.unlock();
+        KAA_UNLOCK(lockInternal);
         KAA_MUTEX_UNLOCKED("channelGuard_");
         demultiplexer_->processResponse(
-                std::vector<boost::uint8_t>(reinterpret_cast<const boost::uint8_t *>(processedResponse.data()),
-                                            reinterpret_cast<const boost::uint8_t *>(processedResponse.data() + processedResponse.size())));
-        waitCondition_.notify_all();
+                std::vector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(processedResponse.data()),
+                                            reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
+        KAA_CONDITION_NOTIFY_ALL(waitCondition_);
     } catch (std::exception& e) {
         KAA_MUTEX_LOCKING("channelGuard_");
-        boost::unique_lock<boost::mutex> lockException(channelGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(lockException, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
 
         bool isServerFailed = false;
@@ -140,7 +143,7 @@ void DefaultOperationLongPollChannel::executeTask()
             stopped_ = true;
         }
         KAA_MUTEX_UNLOCKING("channelGuard_");
-        lockException.unlock();
+        KAA_UNLOCK(lockException);
         KAA_MUTEX_UNLOCKED("channelGuard_");
 
         waitCondition_.notify_all();
@@ -151,7 +154,7 @@ void DefaultOperationLongPollChannel::executeTask()
     }
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    lock.lock();
+    KAA_UNLOCK(lock);
     KAA_MUTEX_LOCKED("channelGuard_");
     if (!stopped_ && !taskPosted_) {
         postTask();
@@ -163,11 +166,11 @@ void DefaultOperationLongPollChannel::sync(TransportType type)
     auto it = SUPPORTED_TYPES.find(type);
     if (it != SUPPORTED_TYPES.end() && (it->second == ChannelDirection::UP || it->second == ChannelDirection::BIDIRECTIONAL)) {
         KAA_MUTEX_LOCKING("channelGuard_");
-        boost::unique_lock<boost::mutex> lock(channelGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
         if (currentServer_) {
             KAA_MUTEX_UNLOCKING("channelGuard_");
-            lock.unlock();
+            KAA_UNLOCK(lock);
             KAA_MUTEX_UNLOCKED("channelGuard_");
 
             stopPoll();
@@ -183,11 +186,11 @@ void DefaultOperationLongPollChannel::sync(TransportType type)
 void DefaultOperationLongPollChannel::syncAll()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    boost::unique_lock<boost::mutex> lock(channelGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
     if (currentServer_) {
         KAA_MUTEX_UNLOCKING("channelGuard_");
-        lock.unlock();
+        KAA_UNLOCK(lock);
         KAA_MUTEX_UNLOCKED("channelGuard_");
 
         stopPoll();
@@ -200,7 +203,7 @@ void DefaultOperationLongPollChannel::syncAll()
 void DefaultOperationLongPollChannel::setMultiplexer(IKaaDataMultiplexer *multiplexer)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    boost::unique_lock<boost::mutex> lock(channelGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
     multiplexer_ = multiplexer;
 }
@@ -208,7 +211,7 @@ void DefaultOperationLongPollChannel::setMultiplexer(IKaaDataMultiplexer *multip
 void DefaultOperationLongPollChannel::setDemultiplexer(IKaaDataDemultiplexer *demultiplexer)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    boost::unique_lock<boost::mutex> lock(channelGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
     demultiplexer_ = demultiplexer;
 }
@@ -218,13 +221,13 @@ void DefaultOperationLongPollChannel::setServer(IServerInfoPtr server)
     if (server->getChannelType() == ChannelType::HTTP_LP) {
         stopPoll();
         KAA_MUTEX_LOCKING("channelGuard_");
-        boost::unique_lock<boost::mutex> lock(channelGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
-        currentServer_ = boost::dynamic_pointer_cast<HttpLPServerInfo, IServerInfo>(server);
-        boost::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.first, clientKeys_.second, currentServer_->getPublicKey()));
+        currentServer_ = std::dynamic_pointer_cast<HttpLPServerInfo, IServerInfo>(server);
+        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.first, clientKeys_.second, currentServer_->getPublicKey()));
         httpDataProcessor_.setEncoderDecoder(encDec);
         KAA_MUTEX_UNLOCKING("channelGuard_");
-        lock.unlock();
+        KAA_UNLOCK(lock);
         KAA_MUTEX_UNLOCKED("channelGuard_");
         startPoll();
     } else {
@@ -239,3 +242,4 @@ void DefaultOperationLongPollChannel::syncAck(TransportType type)
 
 }
 
+#endif

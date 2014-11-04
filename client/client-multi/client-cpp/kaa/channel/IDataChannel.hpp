@@ -17,8 +17,6 @@
 #ifndef IDATACHANNEL_HPP_
 #define IDATACHANNEL_HPP_
 
-#include <boost/shared_ptr.hpp>
-
 #include <vector>
 #include <map>
 

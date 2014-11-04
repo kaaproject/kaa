@@ -17,15 +17,19 @@
 #ifndef I_SCHEMA_PROCESSOR_HPP_
 #define I_SCHEMA_PROCESSOR_HPP_
 
-#include <boost/cstdint.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
+#include <cstdint>
+#include <memory>
 #include <avro/ValidSchema.hh>
 
 #include "kaa/schema/ISchemaObservable.hpp"
 
 namespace kaa {
 
-typedef boost::shared_ptr<avro::ValidSchema> SchemaPtr;
+typedef std::shared_ptr<avro::ValidSchema> SchemaPtr;
 
 /**
  * Interface for data schema processor.
@@ -40,13 +44,14 @@ public:
      * @param buffer    Pointer to a memory block where data schema is placed.
      * @param size      Size of buffer.
      */
-    virtual void loadSchema(const boost::uint8_t * buffer, size_t size) = 0;
+    virtual void loadSchema(const std::uint8_t * buffer, std::size_t size) = 0;
     virtual SchemaPtr getSchema() const = 0;
 };
 
-typedef boost::shared_ptr<ISchemaProcessor> ISchemaProcessorPtr;
+typedef std::shared_ptr<ISchemaProcessor> ISchemaProcessorPtr;
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_SCHEMA_PROCESSOR_HPP_ */

@@ -32,6 +32,8 @@
 
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
 
+#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
+
 namespace kaa {
 
 const std::string DefaultBootstrapChannel::CHANNEL_ID = "default_bootstrap_channel";
@@ -42,3 +44,4 @@ const std::map<TransportType, ChannelDirection> DefaultBootstrapChannel::SUPPORT
 
 }
 
+#endif

@@ -17,6 +17,10 @@
 #ifndef ICONFIGURATIONDELTAFACTORY_HPP_
 #define ICONFIGURATIONDELTAFACTORY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 
 #include "kaa/configuration/delta/IConfigurationDelta.hpp"
@@ -39,5 +43,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* ICONFIGURATIONDELTAFACTORY_HPP_ */

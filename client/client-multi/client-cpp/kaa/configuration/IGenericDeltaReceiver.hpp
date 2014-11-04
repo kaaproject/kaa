@@ -17,7 +17,10 @@
 #ifndef I_GENERIC_DELTA_RECEIVER_HPP_
 #define I_GENERIC_DELTA_RECEIVER_HPP_
 
-#include <boost/signals2/trackable.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
 
 namespace kaa {
@@ -25,7 +28,7 @@ namespace kaa {
 /**
  * Interface for subscriber to receive deltas in avro generic objects
  */
-class IGenericDeltaReceiver : public boost::signals2::trackable {
+class IGenericDeltaReceiver {
 public:
     /**
      * Will be called on each deserialized delta
@@ -42,5 +45,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_GENERIC_DELTA_RECEIVER_HPP_ */

@@ -17,6 +17,10 @@
 #ifndef IFETCHEVENTLISTENERS_HPP_
 #define IFETCHEVENTLISTENERS_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <vector>
 #include <string>
 
@@ -49,5 +53,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IFETCHEVENTLISTENERS_HPP_ */

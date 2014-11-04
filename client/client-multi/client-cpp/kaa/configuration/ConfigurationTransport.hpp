@@ -17,6 +17,10 @@
 #ifndef CONFIGURATIONTRANSPORT_HPP_
 #define CONFIGURATIONTRANSPORT_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IConfigurationTransport.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
@@ -31,7 +35,7 @@ public:
 
     void sync();
 
-    virtual boost::shared_ptr<ConfigurationSyncRequest>    createConfigurationRequest();
+    virtual std::shared_ptr<ConfigurationSyncRequest>    createConfigurationRequest();
     virtual void                        onConfigurationResponse(const ConfigurationSyncResponse &response);
 
 private:
@@ -42,5 +46,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* CONFIGURATIONTRANSPORT_HPP_ */

@@ -31,9 +31,9 @@ void BootstrapTransport::sync()
     syncByType();
 }
 
-boost::shared_ptr<Resolve> BootstrapTransport::createResolveRequest()
+std::shared_ptr<Resolve> BootstrapTransport::createResolveRequest()
 {
-    boost::shared_ptr<Resolve> request(new Resolve);
+    std::shared_ptr<Resolve> request(new Resolve);
 
     request->Application_Token = APPLICATION_TOKEN;
 

@@ -17,7 +17,7 @@
 #ifndef KAATCPPARSER_HPP_
 #define KAATCPPARSER_HPP_
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_array.hpp>
 #include "kaa/kaatcp/KaaTcpCommon.hpp"
@@ -25,10 +25,10 @@
 
 namespace kaa {
 
-typedef std::pair<KaaTcpMessageType, std::pair<boost::shared_array<char>, boost::uint32_t>> MessageRecord;
+typedef std::pair<KaaTcpMessageType, std::pair<boost::shared_array<char>, std::uint32_t>> MessageRecord;
 typedef std::list<MessageRecord> MessageRecordList;
 
-enum class KaaTcpParserState : boost::uint8_t
+enum class KaaTcpParserState : std::uint8_t
 {
     NONE = 0x00,
     PROCESSING_LENGTH = 0x01,
@@ -43,10 +43,10 @@ public:
           , lenghtMultiplier_(1), messageType_(KaaTcpMessageType::MESSAGE_UNKNOWN) { }
     ~KaaTcpParser() { }
 
-    void parseBuffer(const char *buffer, boost::uint32_t size);
+    void parseBuffer(const char *buffer, std::uint32_t size);
 
     boost::shared_array<char> getCurrentPayload() const { return messagePayload_; }
-    boost::uint32_t getCurrentPayloadLength() const { return messageLength_; }
+    std::uint32_t getCurrentPayloadLength() const { return messageLength_; }
     KaaTcpMessageType getCurrentMessageType() const { return messageType_; }
 
     MessageRecordList releaseMessages();
@@ -61,9 +61,9 @@ private:
 private:
 
     KaaTcpParserState state_;
-    boost::uint32_t messageLength_;
-    boost::uint32_t processedPayloadLength_;
-    boost::uint32_t lenghtMultiplier_;
+    std::uint32_t messageLength_;
+    std::uint32_t processedPayloadLength_;
+    std::uint32_t lenghtMultiplier_;
     KaaTcpMessageType messageType_;
     boost::shared_array<char> messagePayload_;
     MessageRecordList messages_;

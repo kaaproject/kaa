@@ -17,10 +17,15 @@
 #ifndef COMMONVALUE_HPP_
 #define COMMONVALUE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonValue.hpp"
 
-#include <boost/cstdint.hpp>
 #include <boost/ref.hpp>
+#include <memory>
+#include <cstdint>
 #include <iomanip>
 #include <sstream>
 
@@ -34,9 +39,9 @@ public:
     typedef T &                     value_ref;
     typedef const T &               value_cref;
 
-    typedef boost::shared_ptr<T>    shared_ptr;
+    typedef std::shared_ptr<T>    shared_ptr;
 
-    CommonValue(value_cref value, size_t len = 0);
+    CommonValue(value_cref value, std::size_t len = 0);
     CommonValue(const CommonValue<T, CVT> &r);
     ~CommonValue();
 
@@ -45,25 +50,24 @@ public:
     std::string         toString()  const;
 private:
     T value_;
-    size_t valLength_;
+    std::size_t valLength_;
 };
 
 template <>
-CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES>::~CommonValue()
+CommonValue<std::uint8_t *, CommonValueType::COMMON_BYTES>::~CommonValue()
 {
     delete[] value_;
 }
 
 template <typename T, CommonValueType CVT>
-CommonValue<T, CVT>::CommonValue(value_cref value, size_t len) : ICommonValue(CVT)
+CommonValue<T, CVT>::CommonValue(value_cref value, std::size_t len) : ICommonValue(CVT), value_(value), valLength_(len)
 {
-    value_ = value;
+
 }
 
 template <typename T, CommonValueType CVT>
-CommonValue<T, CVT>::CommonValue(const CommonValue<T, CVT> &r) : ICommonValue(CVT)
+CommonValue<T, CVT>::CommonValue(const CommonValue<T, CVT> &r) : ICommonValue(CVT), value_(r.value_), valLength_(r.valLength_)
 {
-    value_ = r.value_;
 }
 
 template <typename T, CommonValueType CVT>
@@ -89,7 +93,7 @@ std::string CommonValue<std::string, CommonValueType::COMMON_STRING>::toString()
 }
 
 template <>
-std::string CommonValue<std::vector<boost::uint8_t>, CommonValueType::COMMON_BYTES>::toString() const
+std::string CommonValue<std::vector<std::uint8_t>, CommonValueType::COMMON_BYTES>::toString() const
 {
     std::stringstream ss;
     for (auto it = value_.begin(); it != value_.end();) {
@@ -109,26 +113,28 @@ avro::GenericDatum CommonValue<T, CVT>::toAvro() const
 }
 
 template <>
-CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES>::CommonValue(value_cref value, size_t len) : ICommonValue(CommonValueType::COMMON_BYTES)
+CommonValue<std::uint8_t *, CommonValueType::COMMON_BYTES>::CommonValue(value_cref value, std::size_t len)
+    : ICommonValue(CommonValueType::COMMON_BYTES)
+    , value_(new std::uint8_t[len])
+    , valLength_(len)
 {
-    valLength_ = len;
-    value_ = new boost::uint8_t[valLength_];
     std::copy(value, value + len, value_);
 }
 
 template <>
-CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES>::CommonValue(const CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES> &r) : ICommonValue(CommonValueType::COMMON_BYTES)
+CommonValue<std::uint8_t *, CommonValueType::COMMON_BYTES>::CommonValue(const CommonValue<std::uint8_t *, CommonValueType::COMMON_BYTES> &r)
+    : ICommonValue(CommonValueType::COMMON_BYTES)
+    , value_(new std::uint8_t[r.valLength_])
+    , valLength_(r.valLength_)
 {
-    valLength_ = r.valLength_;
-    value_ = new boost::uint8_t[valLength_];
     std::copy(r.value_, r.value_ + valLength_, value_);
 }
 
 template <>
-std::string CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES>::toString() const
+std::string CommonValue<std::uint8_t *, CommonValueType::COMMON_BYTES>::toString() const
 {
     std::stringstream ss;
-    for (size_t i = 0; i < valLength_; ) {
+    for (std::size_t i = 0; i < valLength_; ) {
         ss << std::setw(2) << std::setfill('0') << std::hex << (int)value_[i] << std::dec;
         if (++i != valLength_) {
             ss << "-";
@@ -138,5 +144,7 @@ std::string CommonValue<boost::uint8_t *, CommonValueType::COMMON_BYTES>::toStri
 }
 
 }  // namespace kaa
+
+#endif
 
 #endif /* COMMONVALUE_HPP_ */

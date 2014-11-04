@@ -17,8 +17,8 @@
 #ifndef IBOOTSTRAPTRANSPORT_HPP_
 #define IBOOTSTRAPTRANSPORT_HPP_
 
+#include <memory>
 #include "kaa/gen/BootstrapGen.hpp"
-#include "boost/shared_ptr.hpp"
 
 namespace kaa {
 
@@ -34,7 +34,7 @@ public:
      * @return Resovle request.
      * @see Resolve
      */
-    virtual boost::shared_ptr<Resolve> createResolveRequest() = 0;
+    virtual std::shared_ptr<Resolve> createResolveRequest() = 0;
 
     /**
      * Updates the state of the Bootstrap manager according the given response.

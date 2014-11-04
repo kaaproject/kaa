@@ -17,6 +17,12 @@
 #ifndef HTTPRESPONSE_HPP_
 #define HTTPRESPONSE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include "kaa/http/IHttpResponse.hpp"
 
 #include <map>
@@ -25,7 +31,7 @@ namespace kaa {
 
 class HttpResponse : public IHttpResponse {
 public:
-    HttpResponse(const char *data, size_t len);
+    HttpResponse(const char *data, std::size_t len);
     HttpResponse(const std::string& data);
     ~HttpResponse() { }
 
@@ -34,7 +40,7 @@ public:
     virtual int getStatusCode() const;
 
 private:
-    static const boost::uint8_t  HTTP_VERSION_OFFSET = 9;
+    static const std::uint8_t  HTTP_VERSION_OFFSET = 9;
 
     void parseResponse(const char *data, size_t len);
 
@@ -46,6 +52,6 @@ private:
 
 }
 
-
+#endif
 
 #endif /* HTTPRESPONSE_HPP_ */

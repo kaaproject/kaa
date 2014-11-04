@@ -17,6 +17,12 @@
 #ifndef MULTIPARTPOSTHTTPREQUEST_HPP_
 #define MULTIPARTPOSTHTTPREQUEST_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
+    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
+
 #include "kaa/http/IHttpRequest.hpp"
 #include "kaa/http/HttpUrl.hpp"
 
@@ -31,12 +37,12 @@ public:
     virtual ~MultipartPostHttpRequest();
 
     virtual std::string getHost() const;
-    virtual uint16_t getPort() const;
+    virtual std::uint16_t getPort() const;
     virtual std::string getRequestData() const;
     virtual void setHeaderField(const std::string& name, const std::string& value);
     virtual void removeHeaderField(const std::string& name);
 
-    void setBodyField(const std::string& name, const std::vector<boost::uint8_t>& value);
+    void setBodyField(const std::string& name, const std::vector<std::uint8_t>& value);
     void removeBodyField(const std::string& name);
 
 private:
@@ -45,11 +51,11 @@ private:
 private:
     HttpUrl url_;
     std::map<std::string, std::string> headerFields_;
-    std::map<std::string, std::vector<boost::uint8_t>> bodyFields_;
+    std::map<std::string, std::vector<std::uint8_t>> bodyFields_;
 };
 
 }
 
-
+#endif
 
 #endif /* MULTIPARTPOSTHTTPREQUEST_HPP_ */

@@ -17,6 +17,10 @@
 #ifndef IDELTAMANAGER_HPP_
 #define IDELTAMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/configuration/delta/DeltaHandlerId.hpp"
 #include "kaa/configuration/delta/manager/IDeltaReceiver.hpp"
 
@@ -61,5 +65,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IDELTAMANAGER_HPP_ */

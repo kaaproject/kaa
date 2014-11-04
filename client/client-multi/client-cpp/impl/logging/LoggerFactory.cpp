@@ -16,6 +16,8 @@
 
 #include "kaa/logging/LoggerFactory.hpp"
 
+#if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
+
 #include "kaa/logging/DefaultLogger.hpp"
 
 #include <sstream>
@@ -24,60 +26,8 @@
 
 namespace kaa {
 
-class KaaLogger : public ILogger {
-public:
-    KaaLogger(LoggerPtr userLog) : logger_(userLog) {}
-
-    void ftrace (const char *message) const { log(LogLevel::FINE_TRACE, message); }
-    void debug  (const char *message) const { log(LogLevel::DEBUG, message); }
-    void trace  (const char *message) const { log(LogLevel::TRACE, message); }
-    void info   (const char *message) const { log(LogLevel::INFO, message); }
-    void warn   (const char *message) const { log(LogLevel::WARNING, message); }
-    void error  (const char *message) const { log(LogLevel::ERROR, message); }
-    void fatal  (const char *message) const { log(LogLevel::FATAL, message); }
-
-    void log    (LogLevel level, const char *message) const;
-
-    void resetLogger(LoggerPtr logger) {
-        logger_ = logger;
-    }
-private:
-    LoggerPtr       logger_;
-};
-
-void KaaLogger::log(LogLevel level, const char *message) const
-{
-    if (logger_.get() != nullptr) {
-        switch (level) {
-        case LogLevel::FINE_TRACE:
-            logger_->ftrace(message);
-            break;
-        case LogLevel::DEBUG:
-            logger_->debug(message);
-            break;
-        case LogLevel::TRACE:
-            logger_->trace(message);
-            break;
-        case LogLevel::INFO:
-            logger_->info(message);
-            break;
-        case LogLevel::WARNING:
-            logger_->warn(message);
-            break;
-        case LogLevel::ERROR:
-            logger_->error(message);
-            break;
-        case LogLevel::FATAL:
-            logger_->fatal(message);
-            break;
-        default:
-            break;
-        }
-    }
-}
-
 static LoggerPtr getDefaultLogger() {
-    return LoggerPtr(new KaaLogger(LoggerPtr(new DefaultLogger())));
+    return LoggerPtr(new DefaultLogger());
 }
 
 LoggerPtr LoggerFactory::logger_ = getDefaultLogger();
@@ -91,8 +41,10 @@ const ILogger & LoggerFactory::getLogger() {
 }
 
 void LoggerFactory::initLogger(LoggerPtr logger) {
-    dynamic_cast<KaaLogger *>(logger_.get())->resetLogger(logger);
+    logger_ = logger;
 }
 
 }  // namespace kaa
+
+#endif
 

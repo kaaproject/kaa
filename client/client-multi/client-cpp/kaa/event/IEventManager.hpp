@@ -17,10 +17,13 @@
 #ifndef IEVENTMANAGER_HPP_
 #define IEVENTMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <string>
 #include <vector>
-
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include "kaa/gen/EndpointGen.hpp"
 
 namespace kaa {
@@ -48,12 +51,14 @@ public:
      * @param target    Event target, null for event broadcasting.
      */
     virtual void produceEvent(const std::string& fqn
-                            , const std::vector<boost::uint8_t>& data
+                            , const std::vector<std::uint8_t>& data
                             , const std::string& target) = 0;
 
     virtual ~IEventManager() {}
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IEVENTMANAGER_HPP_ */

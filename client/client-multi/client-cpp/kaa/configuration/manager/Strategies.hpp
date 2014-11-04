@@ -17,8 +17,12 @@
 #ifndef STRATEGIES_HPP_
 #define STRATEGIES_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/configuration/manager/AbstractStrategy.hpp"
-#include <boost/function.hpp>
+#include <functional>
 #include <list>
 #include "kaa/common/types/ICommonArray.hpp"
 #include "kaa/common/types/ICommonRecord.hpp"
@@ -32,21 +36,21 @@ namespace kaa {
 class UuidProcessStrategy : public AbstractStrategy {
 public:
     UuidProcessStrategy(
-                  boost::function<bool (uuid_t)> isSubscribed
-                , boost::function<void (uuid_t, boost::shared_ptr<ICommonRecord>)> subscribe
-                , boost::function<void (uuid_t)> unsubscribe)
+                  std::function<bool (uuid_t)> isSubscribed
+                , std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribe
+                , std::function<void (uuid_t)> unsubscribe)
+            : isSubscribedFn_(isSubscribed)
+            , subscribeFn_(subscribe)
+            , unsubscribeFn_(unsubscribe)
         {
-            isSubscribedFn_ = isSubscribed;
-            subscribeFn_ = subscribe;
-            unsubscribeFn_ = unsubscribe;
         }
 
-    void run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
+    void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 
 private:
-    boost::function<bool (uuid_t)> isSubscribedFn_;
-    boost::function<void (uuid_t, boost::shared_ptr<ICommonRecord>)> subscribeFn_;
-    boost::function<void (uuid_t)> unsubscribeFn_;
+    std::function<bool (uuid_t)> isSubscribedFn_;
+    std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
+    std::function<void (uuid_t)> unsubscribeFn_;
 };
 
 /**
@@ -57,21 +61,21 @@ private:
 class RecordProcessStrategy : public AbstractStrategy {
 public:
     RecordProcessStrategy(
-              boost::function<bool (uuid_t)> isSubscribed
-            , boost::function<void (uuid_t, boost::shared_ptr<ICommonRecord>)> subscribe
-            , boost::function<void (uuid_t)> unsubscribe, bool isRootRecord = false)
+              std::function<bool (uuid_t)> isSubscribed
+            , std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribe
+            , std::function<void (uuid_t)> unsubscribe, bool isRootRecord = false)
+        : isSubscribedFn_(isSubscribed)
+        , subscribeFn_(subscribe)
+        , unsubscribeFn_(unsubscribe)
+        , isRootRecord_(isRootRecord)
     {
-        isSubscribedFn_ = isSubscribed;
-        subscribeFn_ = subscribe;
-        unsubscribeFn_ = unsubscribe;
-        isRootRecord_ = isRootRecord;
     }
-    void run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
+    void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 private:
-    boost::function<bool (uuid_t)> isSubscribedFn_;
-    boost::function<void (uuid_t, boost::shared_ptr<ICommonRecord>)> subscribeFn_;
-    boost::function<void (uuid_t)> unsubscribeFn_;
-    std::list<std::pair<uuid_t, boost::shared_ptr<ICommonRecord> > > recordToSubscribe;
+    std::function<bool (uuid_t)> isSubscribedFn_;
+    std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
+    std::function<void (uuid_t)> unsubscribeFn_;
+    std::list<std::pair<uuid_t, std::shared_ptr<ICommonRecord> > > recordToSubscribe;
     std::list<uuid_t> recordToUnSubscribe;
 
     bool isRootRecord_;
@@ -82,20 +86,20 @@ private:
  */
 class ArrayProcessStrategy : public AbstractStrategy {
 public:
-    ArrayProcessStrategy(boost::function<bool (uuid_t)> isSubscribed
-            , boost::function<void (uuid_t, boost::shared_ptr<ICommonRecord>)> subscribe
-            , boost::function<void (uuid_t)> unsubscribe)
+    ArrayProcessStrategy(std::function<bool (uuid_t)> isSubscribed
+            , std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribe
+            , std::function<void (uuid_t)> unsubscribe)
+        : isSubscribedFn_(isSubscribed)
+        , subscribeFn_(subscribe)
+        , unsubscribeFn_(unsubscribe)
     {
-        isSubscribedFn_ = isSubscribed;
-        subscribeFn_ = subscribe;
-        unsubscribeFn_ = unsubscribe;
     }
-    void run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
+    void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 private:
     static const std::string array_holder_field;
-    boost::function<bool (uuid_t)> isSubscribedFn_;
-    boost::function<void (uuid_t, boost::shared_ptr<ICommonRecord>)> subscribeFn_;
-    boost::function<void (uuid_t)> unsubscribeFn_;
+    std::function<bool (uuid_t)> isSubscribedFn_;
+    std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
+    std::function<void (uuid_t)> unsubscribeFn_;
 };
 
 /**
@@ -103,18 +107,18 @@ private:
  */
 class ArrayResetStrategy : public AbstractStrategy {
 public:
-    ArrayResetStrategy(boost::function<bool (uuid_t)> isSubscribed
-            , boost::function<void (uuid_t)> unsubscribe)
+    ArrayResetStrategy(std::function<bool (uuid_t)> isSubscribed
+            , std::function<void (uuid_t)> unsubscribe)
+        : isSubscribedFn_(isSubscribed)
+        , unsubscribeFn_(unsubscribe)
     {
-        isSubscribedFn_ = isSubscribed;
-        unsubscribeFn_ = unsubscribe;
     }
-    void run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
+    void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
     void unregisterRecord(ICommonRecord &record);
     void unregisterArray(ICommonArray &record);
 private:
-    boost::function<bool (uuid_t)> isSubscribedFn_;
-    boost::function<void (uuid_t)> unsubscribeFn_;
+    std::function<bool (uuid_t)> isSubscribedFn_;
+    std::function<void (uuid_t)> unsubscribeFn_;
 };
 
 /**
@@ -122,7 +126,7 @@ private:
  */
 class NullProcessStrategy : public AbstractStrategy {
 public:
-    void run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
+    void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 };
 
 /**
@@ -130,10 +134,11 @@ public:
  */
 class CommonProcessStrategy : public AbstractStrategy {
 public:
-    void run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
+    void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 };
 
 }  // namespace kaa
 
+#endif
 
 #endif /* STRATEGIES_HPP_ */

@@ -17,6 +17,10 @@
 #ifndef COMMON_RECORD_HPP_
 #define COMMON_RECORD_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonRecord.hpp"
 
 #include <avro/Schema.hh>
@@ -50,5 +54,7 @@ private:
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* COMMON_RECORD_HPP_ */

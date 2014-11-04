@@ -16,19 +16,21 @@
 
 #include "kaa/configuration/delta/manager/DefaultDeltaManager.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/logging/Log.hpp"
 
 namespace kaa {
 
 DefaultDeltaManager::DefaultDeltaManager()
-    : rootReceiver_(NULL) {}
+    : rootReceiver_(nullptr) {}
 
 void DefaultDeltaManager::onDeltaRecevied(int index, const avro::GenericDatum &data, bool full_resync) {
     DefaultConfigurationDeltaFactory deltaFactory;
     ConfigurationDeltaPtr deltaResult = deltaFactory.createDelta(data);
 
     KAA_MUTEX_LOCKING("subscriptionMutex_");
-    boost::mutex::scoped_lock lock(subscriptionMutex_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, subscriptionMutex_);
     KAA_MUTEX_LOCKED("subscriptionMutex_");
 
     if (full_resync) {
@@ -45,7 +47,7 @@ void DefaultDeltaManager::onDeltaRecevied(int index, const avro::GenericDatum &d
 
 void DefaultDeltaManager::registerRootReceiver(IDeltaReceiver* rootReceiver) {
     KAA_MUTEX_LOCKING("subscriptionMutex_");
-    boost::mutex::scoped_lock lock(subscriptionMutex_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, subscriptionMutex_);
     KAA_MUTEX_LOCKED("subscriptionMutex_");
 
     rootReceiver_ = rootReceiver;
@@ -54,7 +56,7 @@ void DefaultDeltaManager::registerRootReceiver(IDeltaReceiver* rootReceiver) {
 void DefaultDeltaManager::subscribeForDeltaUpdates(const DeltaHandlerId& handlerId, IDeltaReceiver* receiver) {
     if (receiver) {
         KAA_MUTEX_LOCKING("subscriptionMutex_");
-        boost::mutex::scoped_lock lock(subscriptionMutex_);
+        KAA_MUTEX_UNIQUE_DECLARE(lock, subscriptionMutex_);
         KAA_MUTEX_LOCKED("subscriptionMutex_");
 
         subscriptionStorage_[handlerId] = receiver;
@@ -63,10 +65,13 @@ void DefaultDeltaManager::subscribeForDeltaUpdates(const DeltaHandlerId& handler
 
 void DefaultDeltaManager::unsubscribeFromDeltaUpdates(const DeltaHandlerId& handlerId) {
     KAA_MUTEX_LOCKING("subscriptionMutex_");
-    boost::mutex::scoped_lock lock(subscriptionMutex_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, subscriptionMutex_);
     KAA_MUTEX_LOCKED("subscriptionMutex_");
 
     subscriptionStorage_.erase(handlerId);
 }
 
 } /* namespace kaa */
+
+#endif
+

@@ -17,7 +17,7 @@
 #ifndef IKAADATADEMULTIPLEXER_HPP_
 #define IKAADATADEMULTIPLEXER_HPP_
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <vector>
 
 namespace kaa {
@@ -38,7 +38,7 @@ public:
      * @param response buffer which to be processed.
      *
      */
-    virtual void processResponse(const std::vector<boost::uint8_t> &response) = 0;
+    virtual void processResponse(const std::vector<std::uint8_t> &response) = 0;
 
     virtual ~IKaaDataDemultiplexer() {}
 };

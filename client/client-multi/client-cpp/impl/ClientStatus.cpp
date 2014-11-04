@@ -71,7 +71,7 @@ const std::string           ClientStatus::endpointKeyHashDefault_;
 
 static std::string convertToByteArrayString(const std::string & str)
 {
-    const boost::uint8_t * bytes = reinterpret_cast<const boost::uint8_t *>(str.data());
+    const std::uint8_t * bytes = reinterpret_cast<const std::uint8_t *>(str.data());
     std::size_t length = str.length();
 
     std::stringstream ss;
@@ -316,7 +316,7 @@ template<>
 void ClientParameter<SharedDataBuffer>::read(const std::string &strValue)
 {
     value_.second = strValue.length() / 2;
-    value_.first.reset(new boost::uint8_t[value_.second]);
+    value_.first.reset(new std::uint8_t[value_.second]);
 
     for (size_t i = 0; i < value_.second; ++i) {
         value_.first[i] = std::stoi(strValue.substr(2*i, 2), nullptr, 16);
@@ -327,49 +327,49 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistentParameter> appSeqNumber(
+        std::shared_ptr<IPersistentParameter> appSeqNumber(
                 new ClientParameter<SequenceNumber>(appseqntoken->second, appSeqNumberDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::APPSEQUENCENUMBER, appSeqNumber));
     }
     auto isregisteredtoken = parameterToToken_.left.find(ClientParameterT::ISREGISTERED);
     if (isregisteredtoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistentParameter> isRegistered(new ClientParameter<bool>(
+        std::shared_ptr<IPersistentParameter> isRegistered(new ClientParameter<bool>(
                 isregisteredtoken->second, isRegisteredDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::ISREGISTERED, isRegistered));
     }
     auto topicstatestoken = parameterToToken_.left.find(ClientParameterT::TOPICLIST);
     if (topicstatestoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistentParameter> topicStates(new ClientParameter<DetailedTopicStates>(
+        std::shared_ptr<IPersistentParameter> topicStates(new ClientParameter<DetailedTopicStates>(
                 topicstatestoken->second, topicStatesDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::TOPICLIST, topicStates));
     }
     auto endpointhashtoken = parameterToToken_.left.find(ClientParameterT::PROFILEHASH);
     if (endpointhashtoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistentParameter> endpointHash(new ClientParameter<SharedDataBuffer>(
+        std::shared_ptr<IPersistentParameter> endpointHash(new ClientParameter<SharedDataBuffer>(
                 endpointhashtoken->second, endpointHashDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::PROFILEHASH, endpointHash));
     }
     auto attachedendpoints = parameterToToken_.left.find(ClientParameterT::ATTACHED_ENDPOINTS);
     if (attachedendpoints != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistentParameter> attachedEndpoints(new ClientParameter<AttachedEndpoints>(
+        std::shared_ptr<IPersistentParameter> attachedEndpoints(new ClientParameter<AttachedEndpoints>(
                 attachedendpoints->second, attachedEndpoints_));
         parameters_.insert(std::make_pair(ClientParameterT::ATTACHED_ENDPOINTS, attachedEndpoints));
     }
     auto endpointaccesstoken = parameterToToken_.left.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (endpointaccesstoken != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistentParameter> endpointAccessToken(new ClientParameter<std::string>(
+        std::shared_ptr<IPersistentParameter> endpointAccessToken(new ClientParameter<std::string>(
                 endpointaccesstoken->second, endpointAccessToken_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_ACCESS_TOKEN, endpointAccessToken));
     }
     auto endpointattachstatus = parameterToToken_.left.find(ClientParameterT::EP_ATTACH_STATUS);
     if (endpointattachstatus != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistentParameter> isEndpointAttached(new ClientParameter<bool>(
+        std::shared_ptr<IPersistentParameter> isEndpointAttached(new ClientParameter<bool>(
                 endpointattachstatus->second, endpointDefaultAttachStatus_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_ATTACH_STATUS, isEndpointAttached));
     }
     auto endpointkeyhash = parameterToToken_.left.find(ClientParameterT::EP_KEY_HASH);
     if (endpointkeyhash != parameterToToken_.left.end()) {
-        boost::shared_ptr<IPersistentParameter> endpointKeyHash(new ClientParameter<std::string>(
+        std::shared_ptr<IPersistentParameter> endpointKeyHash(new ClientParameter<std::string>(
                 endpointkeyhash->second, endpointKeyHashDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_KEY_HASH, endpointKeyHash));
     }
@@ -531,43 +531,43 @@ void ClientStatus::save()
     stateFile.close();
 }
 
-boost::int32_t ClientStatus::getEventSequenceNumber() const
+std::int32_t ClientStatus::getEventSequenceNumber() const
 {
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, sequenceNumberGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
     return getAppSeqNumber().eventSequenceNumber;
 }
 
-void ClientStatus::setEventSequenceNumber(boost::int32_t sequenceNumber)
+void ClientStatus::setEventSequenceNumber(std::int32_t sequenceNumber)
 {
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, sequenceNumberGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
     SequenceNumber sn = getAppSeqNumber();
     sn.eventSequenceNumber = sequenceNumber;
     setAppSeqNumber(sn);
 }
 
-boost::int32_t ClientStatus::getConfigurationSequenceNumber() const
+std::int32_t ClientStatus::getConfigurationSequenceNumber() const
 {
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, sequenceNumberGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
     return getAppSeqNumber().configurationSequenceNumber;
 }
 
-void ClientStatus::setConfigurationSequenceNumber(boost::int32_t sequenceNumber)
+void ClientStatus::setConfigurationSequenceNumber(std::int32_t sequenceNumber)
 {
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, sequenceNumberGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
     SequenceNumber sn = getAppSeqNumber();
     sn.configurationSequenceNumber = sequenceNumber;
     setAppSeqNumber(sn);
 }
 
-boost::int32_t ClientStatus::getNotificationSequenceNumber() const
+std::int32_t ClientStatus::getNotificationSequenceNumber() const
 {
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, sequenceNumberGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
     return getAppSeqNumber().notificationSequenceNumber;
 }
 
-void ClientStatus::setNotificationSequenceNumber(boost::int32_t sequenceNumber)
+void ClientStatus::setNotificationSequenceNumber(std::int32_t sequenceNumber)
 {
-    KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, sequenceNumberGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
     SequenceNumber sn = getAppSeqNumber();
     sn.notificationSequenceNumber = sequenceNumber;
     setAppSeqNumber(sn);

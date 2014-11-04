@@ -17,6 +17,10 @@
 #ifndef ADDEDITEMSDELTATYPE_HPP_
 #define ADDEDITEMSDELTATYPE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <list>
 
 #include <boost/any.hpp>
@@ -119,5 +123,7 @@ inline std::string AddedItemsDeltaType::toString() const
 }
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* ADDEDITEMSDELTATYPE_HPP_ */

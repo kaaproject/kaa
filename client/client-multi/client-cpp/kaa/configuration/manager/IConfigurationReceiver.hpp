@@ -17,7 +17,10 @@
 #ifndef I_CONFIGURATION_RECEIVER_HPP_
 #define I_CONFIGURATION_RECEIVER_HPP_
 
-#include <boost/signals2/trackable.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/common/types/ICommonRecord.hpp"
 
 namespace kaa {
@@ -27,7 +30,7 @@ namespace kaa {
  * Derived objects can be subscribed/unsubscribed
  * using @link IConfigurationManager @endlink.
  */
-class IConfigurationReceiver : public boost::signals2::trackable {
+class IConfigurationReceiver {
 public:
     virtual ~IConfigurationReceiver() {};
 
@@ -43,5 +46,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* I_CONFIGURATION_RECEIVER_HPP_ */

@@ -17,7 +17,11 @@
 #ifndef ICONFIGURATIONPERSISTENCEMANAGER_HPP_
 #define ICONFIGURATIONPERSISTENCEMANAGER_HPP_
 
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
+#include <memory>
 
 #include "kaa/configuration/storage/IConfigurationStorage.hpp"
 #include "kaa/configuration/manager/IConfigurationReceiver.hpp"
@@ -46,9 +50,10 @@ public:
     virtual void setConfigurationStorage(IConfigurationStorage *storage) = 0;
 };
 
-typedef boost::shared_ptr<IConfigurationPersistenceManager> IConfigurationPersistenceManagerPtr;
+typedef std::shared_ptr<IConfigurationPersistenceManager> IConfigurationPersistenceManagerPtr;
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ICONFIGURATIONPERSISTENCEMANAGER_HPP_ */

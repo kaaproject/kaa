@@ -17,6 +17,10 @@
 #ifndef FIELDPROCESSOR_HPP_
 #define FIELDPROCESSOR_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/configuration/manager/AbstractStrategy.hpp"
 
 namespace kaa {
@@ -26,9 +30,9 @@ namespace kaa {
  */
 class FieldProcessor {
 public:
-    FieldProcessor(boost::shared_ptr<ICommonRecord> parent, const std::string &field)
-    : strategy_(NULL), parentRecord_(parent), field_(field) {}
-    ~FieldProcessor() { if (strategy_ != NULL) delete strategy_;}
+    FieldProcessor(std::shared_ptr<ICommonRecord> parent, const std::string &field)
+    : strategy_(nullptr), parentRecord_(parent), field_(field) {}
+    ~FieldProcessor() { if (strategy_) delete strategy_;}
 
     /**
      * Sets a strategy for processing.
@@ -42,10 +46,12 @@ public:
 
 private:
     AbstractStrategy * strategy_;
-    boost::shared_ptr<ICommonRecord> parentRecord_;
+    std::shared_ptr<ICommonRecord> parentRecord_;
     const std::string &field_;
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* FIELDPROCESSOR_HPP_ */

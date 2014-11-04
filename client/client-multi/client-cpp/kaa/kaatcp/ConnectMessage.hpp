@@ -29,30 +29,30 @@ class ConnectMessage : public IKaaTcpRequest
 {
 public:
     template<class T, class U, class V>
-    ConnectMessage(boost::uint16_t timer,
+    ConnectMessage(std::uint16_t timer,
             const T& signature,
             const U& sessionKey,
             const V& payload) : message_(0)
     {
         char header[6];
-        boost::uint8_t size = KaaTcpCommon::createBasicHeader(
-                (boost::uint8_t) KaaTcpMessageType::MESSAGE_CONNECT,
+        std::uint8_t size = KaaTcpCommon::createBasicHeader(
+                (std::uint8_t) KaaTcpMessageType::MESSAGE_CONNECT,
                 payload.size() + KaaTcpCommon::KAA_CONNECT_HEADER_LENGTH + sessionKey.size() + signature.size(), header);
 
         message_.resize(payload.size() + KaaTcpCommon::KAA_CONNECT_HEADER_LENGTH + sessionKey.size() + signature.size() + size);
 
-        std::copy(reinterpret_cast<const boost::uint8_t *>(header),
-                reinterpret_cast<const boost::uint8_t *>(header + size),
+        std::copy(reinterpret_cast<const std::uint8_t *>(header),
+                reinterpret_cast<const std::uint8_t *>(header + size),
                 message_.begin());
 
         auto messageIt = message_.begin() + size;
 
-        boost::uint16_t nameLengthNetworkOrder = htons(KaaTcpCommon::KAA_TCP_NAME_LENGTH);
-        std::copy(reinterpret_cast<boost::uint8_t *>(&nameLengthNetworkOrder), reinterpret_cast<boost::uint8_t *>(&nameLengthNetworkOrder) + 2, messageIt);
+        std::uint16_t nameLengthNetworkOrder = htons(KaaTcpCommon::KAA_TCP_NAME_LENGTH);
+        std::copy(reinterpret_cast<std::uint8_t *>(&nameLengthNetworkOrder), reinterpret_cast<std::uint8_t *>(&nameLengthNetworkOrder) + 2, messageIt);
         messageIt += 2;
 
-        std::copy((const boost::uint8_t * const ) KaaTcpCommon::KAA_TCP_NAME,
-                (const boost::uint8_t * const ) (KaaTcpCommon::KAA_TCP_NAME + KaaTcpCommon::KAA_TCP_NAME_LENGTH), messageIt);
+        std::copy((const std::uint8_t * const ) KaaTcpCommon::KAA_TCP_NAME,
+                (const std::uint8_t * const ) (KaaTcpCommon::KAA_TCP_NAME + KaaTcpCommon::KAA_TCP_NAME_LENGTH), messageIt);
         messageIt += KaaTcpCommon::KAA_TCP_NAME_LENGTH;
 
         *(messageIt++) = KaaTcpCommon::PROTOCOL_VERSION;
@@ -60,8 +60,8 @@ public:
         *(messageIt++) = sessionKey.size() > 0 ? KaaTcpCommon::KAA_CONNECT_SESSION_KEY_FLAGS : 0;
         *(messageIt++) = signature.size() > 0 ? KaaTcpCommon::KAA_CONNECT_SIGNATURE_FLAGS : 0;
 
-        boost::uint16_t timerNetworkOrder = htons(timer);
-        std::copy(reinterpret_cast<boost::uint8_t *>(&timerNetworkOrder), reinterpret_cast<boost::uint8_t *>(&timerNetworkOrder) + 2, messageIt);
+        std::uint16_t timerNetworkOrder = htons(timer);
+        std::copy(reinterpret_cast<std::uint8_t *>(&timerNetworkOrder), reinterpret_cast<std::uint8_t *>(&timerNetworkOrder) + 2, messageIt);
         messageIt += 2;
 
         std::copy(sessionKey.begin(), sessionKey.end(), messageIt);
@@ -74,10 +74,10 @@ public:
     }
     ~ConnectMessage() { }
 
-    const std::vector<boost::uint8_t>& getRawMessage() const { return message_; }
+    const std::vector<std::uint8_t>& getRawMessage() const { return message_; }
 
 private:
-    std::vector<boost::uint8_t> message_;
+    std::vector<std::uint8_t> message_;
 };
 
 }

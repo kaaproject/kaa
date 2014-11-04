@@ -21,8 +21,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <cstdint>
 
-#include <boost/cstdint.hpp>
 #include <boost/shared_array.hpp>
 
 #include "kaa/gen/BootstrapGen.hpp"
@@ -317,7 +317,7 @@ public:
         return ss.str();
     }
 
-    static std::string ByteArrayToString(const boost::uint8_t* vec, const size_t& length) {
+    static std::string ByteArrayToString(const std::uint8_t* vec, const size_t& length) {
         std::stringstream ss;
         ss << "[ ";
         if (vec != nullptr && length > 0) {
@@ -329,11 +329,11 @@ public:
         return ss.str();
     }
 
-    static std::string ByteArrayToString(const std::vector<boost::uint8_t>& vec) {
+    static std::string ByteArrayToString(const std::vector<std::uint8_t>& vec) {
         return ByteArrayToString(vec.data(), vec.size());
     }
 
-    static std::string ByteArrayToString(const boost::shared_array<boost::uint8_t>& vec, const size_t&length) {
+    static std::string ByteArrayToString(const boost::shared_array<std::uint8_t>& vec, const size_t&length) {
         return ByteArrayToString(vec.get(), length);
     }
 
@@ -342,7 +342,7 @@ public:
     }
 
     static std::string ByteArrayToString(const std::string& data) {
-        return ByteArrayToString(reinterpret_cast<const boost::uint8_t*>(data.data()), data.length());
+        return ByteArrayToString(reinterpret_cast<const std::uint8_t*>(data.data()), data.length());
     }
 
     static std::string SyncResponseStatusToString(SyncResponseStatus status) {

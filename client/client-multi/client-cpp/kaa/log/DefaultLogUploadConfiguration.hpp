@@ -17,6 +17,11 @@
 #ifndef DEFAULTLOGUPLOADCONFIGURATION_HPP_
 #define DEFAULTLOGUPLOADCONFIGURATION_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_LOGGING
+
+#include <cstdint>
 #include "kaa/log/ILogUploadConfiguration.hpp"
 
 namespace kaa {
@@ -33,20 +38,22 @@ public:
         , maxStorageVolume_(maxStorageVolume)
         , volumeThreshold_(volumeThreshold) {}
 
-    size_t  getBlockSize()          const { return blockSize_; }
-    size_t  getMaxStorageVolume()   const { return maxStorageVolume_; }
-    size_t  getVolumeThreshold()    const { return volumeThreshold_; }
+    std::size_t  getBlockSize()          const { return blockSize_; }
+    std::size_t  getMaxStorageVolume()   const { return maxStorageVolume_; }
+    std::size_t  getVolumeThreshold()    const { return volumeThreshold_; }
 
 private:
-    size_t blockSize_;
-    size_t maxStorageVolume_;
-    size_t volumeThreshold_;
+    std::size_t blockSize_;
+    std::size_t maxStorageVolume_;
+    std::size_t volumeThreshold_;
 
-    static const size_t DEFAULT_BLOCK_SIZE          = 8192;                     //8 Kb
-    static const size_t DEFAULT_MAX_STORAGE_VOLUME  = 1024*1024;                //1 Mb
-    static const size_t DEFAULT_VOLUME_THRESHOLD    = DEFAULT_BLOCK_SIZE * 4;   // 32 Kb
+    static const std::size_t DEFAULT_BLOCK_SIZE          = 8192;                     //8 Kb
+    static const std::size_t DEFAULT_MAX_STORAGE_VOLUME  = 1024*1024;                //1 Mb
+    static const std::size_t DEFAULT_VOLUME_THRESHOLD    = DEFAULT_BLOCK_SIZE * 4;   // 32 Kb
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* DEFAULTLOGUPLOADCONFIGURATION_HPP_ */

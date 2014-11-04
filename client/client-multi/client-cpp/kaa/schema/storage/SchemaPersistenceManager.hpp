@@ -17,9 +17,13 @@
 #ifndef SCHEMAPERSISTENCEMANAGER_HPP_
 #define SCHEMAPERSISTENCEMANAGER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/schema/storage/ISchemaPersistenceManager.hpp"
 #include "kaa/schema/ISchemaProcessor.hpp"
-#include <boost/thread/mutex.hpp>
+#include "kaa/KaaThread.hpp"
 
 namespace kaa {
 
@@ -36,8 +40,8 @@ namespace kaa {
 class SchemaPersistenceManager : public ISchemaPersistenceManager {
 public:
     SchemaPersistenceManager()
-        : storage_(NULL)
-        , processor_(NULL)
+        : storage_(nullptr)
+        , processor_(nullptr)
         , ignoreSchemaUpdate_(false)
     {}
 
@@ -49,7 +53,7 @@ public:
     /**
      * \c ISchemaUpdatesReceiver implementation
      */
-    void onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema);
+    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema);
 
     /**
      * Sets the schema processor (see \c ISchemaProcessor)
@@ -59,13 +63,9 @@ public:
      */
     void setSchemaProcessor(ISchemaProcessor *processor);
 private:
-    typedef boost::mutex                    mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
-
     void readStoredSchema();
 
-    mutex_type          schemaGuard_;
-    mutex_type          schemaPersistenceGuard_;
+    KAA_MUTEX_DECLARE(schemaPersistenceGuard_);
 
     ISchemaStorage *    storage_;
     ISchemaProcessor *  processor_;
@@ -74,5 +74,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* SCHEMAPErsistenCEMANAGER_HPP_ */

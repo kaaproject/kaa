@@ -19,10 +19,11 @@
 
 #include <string>
 #include <map>
-#include <boost/cstdint.hpp>
+#include <cstdint>
+#include <memory>
 #include <boost/bimap.hpp>
-#include <boost/thread/mutex.hpp>
 
+#include "kaa/KaaThread.hpp"
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
@@ -44,14 +45,14 @@ public:
     ClientStatus(const std::string& filename);
     ~ClientStatus() { }
 
-    boost::int32_t getEventSequenceNumber() const;
-    void setEventSequenceNumber(boost::int32_t sequenceNumber);
+    std::int32_t getEventSequenceNumber() const;
+    void setEventSequenceNumber(std::int32_t sequenceNumber);
 
-    boost::int32_t getConfigurationSequenceNumber() const;
-    void setConfigurationSequenceNumber(boost::int32_t sequenceNumber);
+    std::int32_t getConfigurationSequenceNumber() const;
+    void setConfigurationSequenceNumber(std::int32_t sequenceNumber);
 
-    boost::int32_t getNotificationSequenceNumber() const;
-    void setNotificationSequenceNumber(boost::int32_t sequenceNumber);
+    std::int32_t getNotificationSequenceNumber() const;
+    void setNotificationSequenceNumber(std::int32_t sequenceNumber);
 
     SequenceNumber getAppSeqNumber() const;
     void setAppSeqNumber(SequenceNumber appSeqNumber);
@@ -81,13 +82,10 @@ public:
     void save();
 
 private:
-    typedef boost::mutex                            mutex_type;
-    typedef boost::unique_lock<mutex_type>          lock_type;
-
     std::string filename_;
-    std::map<ClientParameterT, boost::shared_ptr<IPersistentParameter> > parameters_;
+    std::map<ClientParameterT, std::shared_ptr<IPersistentParameter> > parameters_;
 
-    mutable mutex_type                      sequenceNumberGuard_;
+    KAA_MUTEX_MUTABLE_DECLARE(sequenceNumberGuard_);
 
     static const bimap                      parameterToToken_;
     static const SequenceNumber             appSeqNumberDefault_;

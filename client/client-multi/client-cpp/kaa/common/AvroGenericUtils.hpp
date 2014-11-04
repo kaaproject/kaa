@@ -17,6 +17,10 @@
 #ifndef AVROGENERICUTILS_HPP_
 #define AVROGENERICUTILS_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <algorithm>
 #include <stdexcept>
 
@@ -180,5 +184,6 @@ private:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* AVROGENERICUTILS_HPP_ */

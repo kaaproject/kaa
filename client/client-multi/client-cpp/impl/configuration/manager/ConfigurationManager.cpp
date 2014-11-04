@@ -16,8 +16,10 @@
 
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
-#include <boost/bind.hpp>
+#include <functional>
 #include <vector>
 
 #include "kaa/common/exception/KaaException.hpp"
@@ -34,26 +36,25 @@ namespace kaa {
 
 void ConfigurationManager::subscribeForConfigurationChanges(IConfigurationReceiver &receiver)
 {
-    boost::signals2::connection c = configurationReceivers_.connect(
-            boost::bind(&IConfigurationReceiver::onConfigurationUpdated, &receiver, _1));
-    if (!c.connected()) {
-        throw KaaException("Failed to add a configuration changes subscriber.");
+    if (!configurationReceivers_.addCallback(&receiver,
+            std::bind(&IConfigurationReceiver::onConfigurationUpdated,
+                    &receiver, std::placeholders::_1))) {
+        throw KaaException("Failed to add a configuration changes subscriber. Already subscribed");
     }
 }
 
 void ConfigurationManager::unsubscribeFromConfigurationChanges(IConfigurationReceiver &receiver)
 {
-    configurationReceivers_.disconnect(
-                boost::bind(&IConfigurationReceiver::onConfigurationUpdated, &receiver, _1));
+    configurationReceivers_.removeCallback(&receiver);
 }
 
 ICommonRecord &ConfigurationManager::getConfiguration()
 {
     KAA_MUTEX_LOCKING("configurationGuard_");
-    lock_type lock(configurationGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
     KAA_MUTEX_LOCKED("configurationGuard_");
 
-    if (root_.get() == NULL) {
+    if (!root_.get()) {
         throw KaaException("Attempting to get empty configuration.");
     }
     return *root_;
@@ -62,7 +63,7 @@ ICommonRecord &ConfigurationManager::getConfiguration()
 void ConfigurationManager::onDeltaRecevied(int index, const avro::GenericDatum &datum, bool full_resync)
 {
     KAA_MUTEX_LOCKING("configurationGuard_");
-    lock_type lock(configurationGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
     KAA_MUTEX_LOCKED("configurationGuard_");
 
     const avro::GenericRecord & data = datum.value<avro::GenericRecord>();
@@ -93,7 +94,7 @@ void ConfigurationManager::onDeltaRecevied(int index, const avro::GenericDatum &
 
 void ConfigurationManager::onConfigurationProcessed()
 {
-    if (root_.get() == NULL) {
+    if (!root_.get()) {
         throw KaaException("Configuration processed but no record was created.");
     }
     ICommonRecord &record = *root_;
@@ -106,7 +107,7 @@ bool ConfigurationManager::isSubscribed(uuid_t uuid)
     return (it != records_.end());
 }
 
-void ConfigurationManager::subscribe(uuid_t uuid, boost::shared_ptr<ICommonRecord> record)
+void ConfigurationManager::subscribe(uuid_t uuid, std::shared_ptr<ICommonRecord> record)
 {
     KAA_LOG_DEBUG(boost::format("Going to subscribe object with UUID %1%") % LoggingUtils::ByteArrayToString(uuid.data, uuid.size()));
     uuid_t root_uuid = root_->getUuid();
@@ -129,15 +130,18 @@ void ConfigurationManager::unsubscribe(uuid_t uuid)
     records_.erase(uuid);
 }
 
-void ConfigurationManager::updateRecord(boost::shared_ptr<ICommonRecord> rec, const avro::GenericDatum &datum)
+void ConfigurationManager::updateRecord(std::shared_ptr<ICommonRecord> rec, const avro::GenericDatum &datum)
 {
-    boost::scoped_ptr<FieldProcessor> fp(new FieldProcessor(rec, ""));
+    std::unique_ptr<FieldProcessor> fp(new FieldProcessor(rec, ""));
     fp->setStrategy(static_cast<AbstractStrategy *>(new RecordProcessStrategy(
-              boost::bind(&ConfigurationManager::isSubscribed, this, _1)
-            , boost::bind(&ConfigurationManager::subscribe, this, _1, _2)
-            , boost::bind(&ConfigurationManager::unsubscribe, this, _1)
+              std::bind(&ConfigurationManager::isSubscribed, this, std::placeholders::_1)
+            , std::bind(&ConfigurationManager::subscribe, this, std::placeholders::_1, std::placeholders::_2)
+            , std::bind(&ConfigurationManager::unsubscribe, this, std::placeholders::_1)
             , true)));
     fp->process(datum);
 }
 
 }  // namespace kaa
+
+#endif
+

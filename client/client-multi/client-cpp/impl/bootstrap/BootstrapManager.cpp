@@ -18,6 +18,7 @@
 
 #include <ctime>
 #include <cstdlib>
+#include <cstdint>
 #include <algorithm>
 
 #include "kaa/KaaDefaults.hpp"
@@ -52,7 +53,7 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
     switch (channel.channelType) {
         case ChannelType::HTTP: {
             HTTPComunicationParameters params = channel.communicationParameters.get_HTTPComunicationParameters();
-            Botan::MemoryVector<boost::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
+            Botan::MemoryVector<std::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
             KAA_LOG_DEBUG(boost::format("Server name: %1%, Parameters: %2%:%3%")
                      % server.name % params.hostName % params.port);
             IServerInfoPtr info(new HttpServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
@@ -60,7 +61,7 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
         }
         case ChannelType::HTTP_LP: {
             HTTPLPComunicationParameters params = channel.communicationParameters.get_HTTPLPComunicationParameters();
-            Botan::MemoryVector<boost::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
+            Botan::MemoryVector<std::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
             KAA_LOG_DEBUG(boost::format("Server name: %1%, Parameters: %2%:%3%")
                      % server.name % params.hostName % params.port);
             IServerInfoPtr info(new HttpLPServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
@@ -68,7 +69,7 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
         }
         case ChannelType::KAATCP: {
             KaaTCPComunicationParameters params = channel.communicationParameters.get_KaaTCPComunicationParameters();
-            Botan::MemoryVector<boost::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
+            Botan::MemoryVector<std::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
             IServerInfoPtr info(new KaaTcpServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
             return info;
         }
@@ -91,7 +92,7 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannelType(const OperationsServ
 
 void BootstrapManager::useNextOperationsServer(ChannelType type)
 {
-    boost::recursive_mutex::scoped_lock lock(guard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
     auto it = operationServersIterators_.find(type);
     auto collectionIt = operationServers_.find(type);
     if (it != operationServersIterators_.end() && collectionIt != operationServers_.end()) {
@@ -115,7 +116,7 @@ void BootstrapManager::useNextOperationsServer(ChannelType type)
 
 void BootstrapManager::useNextOperationsServerByDnsName(const std::string& name)
 {
-    boost::recursive_mutex::scoped_lock lock(guard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
     KAA_LOG_DEBUG(boost::format("Going to use new operations server: %1%") % name);
     const OperationsServer * ops = getOPSByDnsName(name);
     if (ops != nullptr) {
@@ -128,7 +129,7 @@ void BootstrapManager::useNextOperationsServerByDnsName(const std::string& name)
 
 void BootstrapManager::setTransport(IBootstrapTransport* transport)
 {
-    boost::recursive_mutex::scoped_lock lock(guard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
     bootstrapTransport_ = dynamic_cast<BootstrapTransport *>(transport);
     if (bootstrapTransport_ != nullptr) {
         return;
@@ -138,13 +139,13 @@ void BootstrapManager::setTransport(IBootstrapTransport* transport)
 
 void BootstrapManager::setChannelManager(IKaaChannelManager* manager)
 {
-    boost::recursive_mutex::scoped_lock lock(guard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
     channelManager_ = manager;
 }
 
 void BootstrapManager::onServerListUpdated(const OperationsServerList& list)
 {
-    boost::recursive_mutex::scoped_lock lock(guard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
     KAA_LOG_INFO(boost::format("Received new operations servers list: %1%")
         % LoggingUtils::OperationServerListToString(list));
@@ -215,7 +216,7 @@ void BootstrapManager::onServerListUpdated(const OperationsServerList& list)
 
 const std::vector<OperationsServer>& BootstrapManager::getOperationsServerList()
 {
-    boost::recursive_mutex::scoped_lock lock(guard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
     return operationServerList_;
 }
 

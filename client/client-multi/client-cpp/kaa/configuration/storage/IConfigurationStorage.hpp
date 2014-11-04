@@ -17,8 +17,12 @@
 #ifndef ICONFIGURATIONSTORAGE_HPP_
 #define ICONFIGURATIONSTORAGE_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <vector>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace kaa {
 
@@ -30,7 +34,7 @@ namespace kaa {
  */
 class IConfigurationStorage {
 public:
-    typedef std::vector<boost::uint8_t> byte_buffer;
+    typedef std::vector<std::uint8_t> byte_buffer;
     virtual ~IConfigurationStorage() {}
 
     /**
@@ -50,5 +54,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ICONFIGURATIONSTORAGE_HPP_ */

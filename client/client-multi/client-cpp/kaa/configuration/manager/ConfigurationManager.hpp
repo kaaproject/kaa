@@ -17,11 +17,14 @@
 #ifndef CONFIGURATION_MANAGER_HPP_
 #define CONFIGURATION_MANAGER_HPP_
 
-#include "kaa/configuration/manager/IConfigurationManager.hpp"
+#include "kaa/KaaDefaults.hpp"
 
-#include <boost/thread/mutex.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/signals2.hpp>
+#ifdef KAA_USE_CONFIGURATION
+
+#include "kaa/configuration/manager/IConfigurationManager.hpp"
+#include "kaa/observer/KaaObservable.hpp"
+
+#include <memory>
 
 namespace kaa {
 
@@ -65,7 +68,7 @@ private:
      * @param rec   Record where avro data will be loaded to.
      * @param data  Avro object containing deserialized data.
      */
-    void updateRecord(boost::shared_ptr<ICommonRecord> rec, const avro::GenericDatum &data);
+    void updateRecord(std::shared_ptr<ICommonRecord> rec, const avro::GenericDatum &data);
 
     /**
      * Checks if object with given uuid was already registered.
@@ -80,7 +83,7 @@ private:
      * @param uuid      UUID of a new object
      * @param record    Record which must be referenced by given UUID
      */
-    void subscribe(uuid_t uuid, boost::shared_ptr<ICommonRecord> record);
+    void subscribe(uuid_t uuid, std::shared_ptr<ICommonRecord> record);
 
     /**
      * Unsubscribes an object by given UUID
@@ -89,17 +92,15 @@ private:
      */
     void unsubscribe(uuid_t uuid);
 
-    typedef boost::mutex                    mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
+    std::map<uuid_t, std::shared_ptr<ICommonRecord> >   records_;
+    std::shared_ptr<ICommonRecord>                      root_;
 
-    std::map<uuid_t, boost::shared_ptr<ICommonRecord> > records_;
-    boost::shared_ptr<ICommonRecord>                    root_;
-
-    mutex_type                                          configurationGuard_;
-    boost::signals2::signal<void (ICommonRecord &)>     configurationReceivers_;
+    KAA_MUTEX_DECLARE(configurationGuard_);
+    KaaObservable<void (ICommonRecord &), IConfigurationReceiver *> configurationReceivers_;
 };
 
 }  // namespace kaa
 
+#endif
 
 #endif /* CONFIGURATION_MANAGER_HPP_ */

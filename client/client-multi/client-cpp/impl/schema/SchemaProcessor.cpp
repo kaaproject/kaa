@@ -16,6 +16,8 @@
 
 #include "kaa/schema/SchemaProcessor.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <sstream>
 
 #include <avro/AvroParse.hh>
@@ -27,7 +29,7 @@
 
 namespace kaa {
 
-void SchemaProcessor::loadSchema(const boost::uint8_t * buffer, size_t buffer_length)
+void SchemaProcessor::loadSchema(const std::uint8_t * buffer, std::size_t buffer_length)
 {
     KAA_LOG_INFO("Loading schema...");
     const avro::ValidSchema &schema = avro::compileJsonSchemaFromMemory(buffer, buffer_length);
@@ -43,18 +45,18 @@ void SchemaProcessor::loadSchema(const boost::uint8_t * buffer, size_t buffer_le
 
 void SchemaProcessor::subscribeForSchemaUpdates(ISchemaUpdatesReceiver &receiver)
 {
-    boost::signals2::connection c =
-            schemaUpdatesSubscribers_.connect(
-            boost::bind(&ISchemaUpdatesReceiver::onSchemaUpdated, &receiver, _1));
-    if (!c.connected()) {
-        throw KaaException("Failed to add a schema updates subscriber.");
+    if (!schemaUpdatesSubscribers_.addCallback(&receiver,
+            std::bind(&ISchemaUpdatesReceiver::onSchemaUpdated, &receiver, std::placeholders::_1))) {
+        throw KaaException(
+                "Failed to add a schema updates subscriber. Already subscribed");
     }
 }
 
 void SchemaProcessor::unsubscribeFromSchemaUpdates(ISchemaUpdatesReceiver &receiver)
 {
-    schemaUpdatesSubscribers_.disconnect(
-                boost::bind(&ISchemaUpdatesReceiver::onSchemaUpdated, &receiver, _1));
+    schemaUpdatesSubscribers_.removeCallback(&receiver);
 }
 
 }  // namespace kaa
+
+#endif

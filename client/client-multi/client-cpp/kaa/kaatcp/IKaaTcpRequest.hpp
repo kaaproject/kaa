@@ -18,14 +18,14 @@
 #define IKAATCPREQUEST_HPP_
 
 #include <vector>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace kaa {
 
 class IKaaTcpRequest
 {
 public:
-    virtual const std::vector<boost::uint8_t>& getRawMessage() const = 0;
+    virtual const std::vector<std::uint8_t>& getRawMessage() const = 0;
     virtual ~IKaaTcpRequest() { }
 };
 

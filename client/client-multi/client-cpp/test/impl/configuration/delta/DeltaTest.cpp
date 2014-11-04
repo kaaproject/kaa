@@ -77,7 +77,7 @@ public:
 
         BOOST_CHECK_MESSAGE(!testField3toJson.empty(),"Delta representation of 'testField3' in JSON is empty");
 
-        BOOST_CHECK_MESSAGE(100500 == boost::any_cast<boost::int32_t>(testField3->getNewValue())
+        BOOST_CHECK_MESSAGE(100500 == boost::any_cast<std::int32_t>(testField3->getNewValue())
                 ,"Field 'testField3' isn't equal to 100500");
 
         DeltaTypePtr testArray1 = (boost::any_cast<ConfigurationDeltaPtr>(testArrayRecord1->getNewValue()))->
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_SUITE(DeltaTestSuite)
 
 BOOST_AUTO_TEST_CASE(FullResyncDelta)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -179,8 +179,8 @@ BOOST_AUTO_TEST_CASE(FullResyncDelta)
     processor.subscribeForUpdates(deltaManager);
 
     FullResyncTest frt;
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
 
     frt.createDelta(data, len);
     processor.processConfigurationData(data, len, true);
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(FullResyncDelta)
 
 BOOST_AUTO_TEST_CASE(OverrideItemByUuid)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -207,8 +207,8 @@ BOOST_AUTO_TEST_CASE(OverrideItemByUuid)
     processor.subscribeForUpdates(deltaManager);
 
     OverrideItemByUuidTest frt;
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
 
     frt.createDelta(data, len);
     processor.processConfigurationData(data, len, false);
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(OverrideItemByUuid)
 
 BOOST_AUTO_TEST_CASE(RemoveTwoArrayItemsAndAddNewItemsToArray)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -237,8 +237,8 @@ BOOST_AUTO_TEST_CASE(RemoveTwoArrayItemsAndAddNewItemsToArray)
     processor.subscribeForUpdates(deltaManager);
 
     RemoveTwoArrayItemsAndAddNewItemsToArrayTest frt;
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
 
     frt.createDelta(data, len);
     processor.processConfigurationData(data, len, false);
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(RemoveTwoArrayItemsAndAddNewItemsToArray)
 
 BOOST_AUTO_TEST_CASE(ResetArrayOfDiff)
 {
-    boost::shared_ptr<avro::ValidSchema> schema;
+    std::shared_ptr<avro::ValidSchema> schema;
     schema.reset(new avro::ValidSchema());
     std::ifstream is(schema_path);
 
@@ -267,8 +267,8 @@ BOOST_AUTO_TEST_CASE(ResetArrayOfDiff)
     processor.subscribeForUpdates(deltaManager);
 
     ResetArrayOfDiffTest frt;
-    boost::uint8_t *data;
-    size_t len;
+    std::uint8_t *data;
+    std::size_t len;
 
     frt.createDelta(data, len);
     processor.processConfigurationData(data, len, false);

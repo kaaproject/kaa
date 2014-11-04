@@ -43,8 +43,11 @@
 
 namespace kaa {
 
-typedef boost::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
-typedef boost::shared_ptr<DefaultDeltaManager> DefaultDeltaManagerPtr;
+typedef std::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
+
+#ifdef KAA_USE_CONFIGURATION
+typedef std::shared_ptr<DefaultDeltaManager> DefaultDeltaManagerPtr;
+#endif
 
 typedef enum {
     EXTERNAL_TRANSPORT_CONTROL = 0x1
@@ -60,17 +63,25 @@ public:
     void stop();
 
     virtual IProfileManager&                    getProfileManager() { return *profileManager_; }
+#ifdef KAA_USE_CONFIGURATION
     virtual ISchemaPersistenceManager&          getSchemaPersistenceManager() { return *schemaPersistenceManager_; }
     virtual IConfigurationPersistenceManager&   getConfigurationPersistenceManager() { return *configurationPersistenceManager_; }
     virtual IDeltaManager&                      getDeltaManager() { return *deltaManager_; }
     virtual IConfigurationManager&              getConfigurationManager() { return *configurationManager_; }
+#endif
+#ifdef KAA_USE_NOTIFICATIONS
     virtual INotificationManager&               getNotificationManager() { return *notificationManager_; }
+#endif
+#ifdef KAA_USE_EVENTS
     virtual IEndpointRegistrationManager&       getEndpointRegistrationManager() { return *registrationManager_; }
     virtual EventFamilyFactory&                 getEventFamilyFactory() { return *eventFamilyFactory_; }
     virtual IEventListenersResolver&            getEventListenersResolver() { return *eventManager_; }
+#endif
     virtual IKaaChannelManager&                 getChannelManager()  { return *channelManager_; }
     virtual const KeyPair&                      getClientKeyPair() { return clientKeys_; }
+#ifdef KAA_USE_LOGGING
     virtual ILogCollector&                      getLogCollector() { return *logCollector_; }
+#endif
     virtual IKaaDataMultiplexer&                getOperationMultiplexer() { return *operationsProcessor_; }
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer() { return *operationsProcessor_; }
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer() { return *bootstrapProcessor_; }
@@ -85,29 +96,40 @@ private:
 private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
-    boost::scoped_ptr<ProfileManager>               profileManager_;
-    boost::scoped_ptr<NotificationManager>          notificationManager_;
-    boost::scoped_ptr<EndpointRegistrationManager>  registrationManager_;
+    std::unique_ptr<ProfileManager>                 profileManager_;
+#ifdef KAA_USE_NOTIFICATIONS
+    std::unique_ptr<NotificationManager>            notificationManager_;
+#endif
 
     KeyPair         clientKeys_;
     std::string     publicKeyHash_;
 
+#ifdef KAA_USE_CONFIGURATION
     ISchemaProcessorPtr                   schemaProcessor_;
     DefaultDeltaManagerPtr                deltaManager_;
     IConfigurationManagerPtr              configurationManager_;
     IConfigurationProcessorPtr            configurationProcessor_;
     ISchemaPersistenceManagerPtr          schemaPersistenceManager_;
     IConfigurationPersistenceManagerPtr   configurationPersistenceManager_;
-    boost::scoped_ptr<EventManager>       eventManager_;
-    boost::scoped_ptr<EventFamilyFactory> eventFamilyFactory_;
-    boost::scoped_ptr<IKaaChannelManager> channelManager_;
-    boost::scoped_ptr<BootstrapDataProcessor>   bootstrapProcessor_;
-    boost::scoped_ptr<OperationsDataProcessor>  operationsProcessor_;
+#endif
+#ifdef KAA_USE_EVENTS
+    std::unique_ptr<EventManager>         eventManager_;
+    std::unique_ptr<EventFamilyFactory>   eventFamilyFactory_;
+    std::unique_ptr<EndpointRegistrationManager>    registrationManager_;
+#endif
+    std::unique_ptr<IKaaChannelManager>   channelManager_;
+    std::unique_ptr<BootstrapDataProcessor>   bootstrapProcessor_;
+    std::unique_ptr<OperationsDataProcessor>  operationsProcessor_;
 
-    boost::shared_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
-    boost::shared_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
-
-    boost::scoped_ptr<LogCollector>      logCollector_;
+#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
+    std::shared_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
+#endif
+#ifdef KAA_DEFAULT_TCP_CHANNEL
+    std::shared_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
+#endif
+#ifdef KAA_USE_LOGGING
+    std::unique_ptr<LogCollector>      logCollector_;
+#endif
 
     int options_;
 };

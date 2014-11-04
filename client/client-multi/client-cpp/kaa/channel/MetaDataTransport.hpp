@@ -30,13 +30,13 @@ public:
     MetaDataTransport(IKaaClientStateStoragePtr status, EndpointObjectHash& keyHash, long timeout)
         : clientStatus_(status), publicKeyHash_(keyHash), timeout_(timeout) {}
 
-    boost::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData() {
-        boost::shared_ptr<SyncRequestMetaData> request(new SyncRequestMetaData);
+    std::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData() {
+        std::shared_ptr<SyncRequestMetaData> request(new SyncRequestMetaData);
 
         request->applicationToken = APPLICATION_TOKEN;
         request->endpointPublicKeyHash = publicKeyHash_;
         SharedDataBuffer buffer = clientStatus_->getProfileHash();
-        std::vector<boost::uint8_t> profileHash;
+        std::vector<std::uint8_t> profileHash;
         for (size_t i =0; i < buffer.second; ++i) {
             profileHash.push_back(buffer.first[i]);
         }

@@ -16,6 +16,8 @@
 
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
 
+#ifdef KAA_USE_EVENTS
+
 #include <ctime>
 #include <cstdlib>
 
@@ -61,7 +63,7 @@ void EndpointRegistrationManager::regenerateEndpointAccessToken()
 
 void EndpointRegistrationManager::onUserAttach(const UserSyncResponse::userAttachResponse_t& response)
 {
-    lock_type endpointLock(endpointsGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(endpointLock, endpointsGuard_);
 
     if (!response.is_null()) {
         if (response.get_UserAttachResponse().result == SyncResponseResultType::SUCCESS) {
@@ -91,7 +93,7 @@ void EndpointRegistrationManager::onUserAttach(const UserSyncResponse::userAttac
 
 void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAttachResponse>& endpoints)
 {
-    lock_type endpointLock(endpointsGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(endpointLock, endpointsGuard_);
 
     bool hasChanged = false;
 
@@ -128,13 +130,13 @@ void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAt
 
     if (hasChanged) {
         status_->setAttachedEndpoints(attachedEndpoints_);
-        attachedEPListListeners(attachedEndpoints_);
+        attachedEPListListeners_(attachedEndpoints_);
     }
 }
 
 void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDetachResponse>& endpoints)
 {
-    lock_type endpointLock(endpointsGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(endpointLock, endpointsGuard_);
     bool hasChanges = false;
     for (EndpointDetachResponse endpoint : endpoints) {
         auto requestIt = detachingEndpoints_.find(endpoint.requestId);
@@ -170,7 +172,7 @@ void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDe
 
     if (hasChanges) {
         status_->setAttachedEndpoints(attachedEndpoints_);
-        attachedEPListListeners(attachedEndpoints_);
+        attachedEPListListeners_(attachedEndpoints_);
     }
 }
 
@@ -202,18 +204,19 @@ const AttachedEndpoints& EndpointRegistrationManager::getAttachedEndpoints() {
 void EndpointRegistrationManager::addAttachedEndpointListListener(IAttachedEndpointListListener *listener)
 {
     if (listener) {
-        lock_type lock(listenerGuard_);
+        KAA_R_MUTEX_UNIQUE_DECLARE(lock, listenerGuard_);
         /* Disconnecting for case whether listener was already subscribed, no effect otherwise */
-        attachedEPListListeners.disconnect(boost::bind(&IAttachedEndpointListListener::onListUpdated, listener, _1));
-        attachedEPListListeners.connect(boost::bind(&IAttachedEndpointListListener::onListUpdated, listener, _1));
+        attachedEPListListeners_.removeCallback(listener);
+        attachedEPListListeners_.addCallback(listener,
+                std::bind(&IAttachedEndpointListListener::onListUpdated, listener, std::placeholders::_1));
     }
 }
 
 void EndpointRegistrationManager::removeAttachedEndpointListListener(IAttachedEndpointListListener *listener)
 {
     if (listener) {
-        lock_type lock(listenerGuard_);
-        attachedEPListListeners.disconnect(boost::bind(&IAttachedEndpointListListener::onListUpdated, listener, _1));
+        KAA_R_MUTEX_UNIQUE_DECLARE(lock, listenerGuard_);
+        attachedEPListListeners_.removeCallback(listener);
     }
 }
 
@@ -224,7 +227,7 @@ void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAcce
         return;
     }
 
-    lock_type lock(endpointsGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
     std::string requestId;
     UuidGenerator::generateUuid(requestId, endpointAccessToken);
 
@@ -257,7 +260,7 @@ void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyH
         return;
     }
 
-    lock_type lock(endpointsGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
 
     std::string requestId;
     UuidGenerator::generateUuid(requestId, endpointKeyHash);
@@ -321,7 +324,7 @@ void EndpointRegistrationManager::onEndpointAccessTokenChanged(const std::string
 
 std::map<std::string, std::string>  EndpointRegistrationManager::getEndpointsToAttach()
 {
-    lock_type lock(endpointsGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
     std::map<std::string, std::string> resultingMap;
     for (const auto& idToTokenPair : attachingEndpoints_) {
         resultingMap.insert(std::make_pair(idToTokenPair.first, idToTokenPair.second.endpointData_));
@@ -331,7 +334,7 @@ std::map<std::string, std::string>  EndpointRegistrationManager::getEndpointsToA
 
 std::map<std::string, std::string>  EndpointRegistrationManager::getEndpointsToDetach()
 {
-    lock_type lock(endpointsGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
     std::map<std::string, std::string> resultingMap;
     for (const auto& idToHashPair : detachingEndpoints_) {
         resultingMap.insert(std::make_pair(idToHashPair.first, idToHashPair.second.endpointData_));
@@ -345,3 +348,6 @@ UserAttachRequestPtr EndpointRegistrationManager::getUserAttachRequest()
 }
 
 }
+
+#endif
+

@@ -26,14 +26,14 @@ BOOST_AUTO_TEST_SUITE(AvroDatumsComparatorSuite)
 
 BOOST_AUTO_TEST_CASE(comparePrimitives)
 {
-    avro::GenericDatum intDatum1((boost::int32_t) 10);
-    avro::GenericDatum intDatum2((boost::int32_t) 11);
+    avro::GenericDatum intDatum1((std::int32_t) 10);
+    avro::GenericDatum intDatum2((std::int32_t) 11);
     BOOST_CHECK_EQUAL(avro_comparator()(intDatum1, intDatum1), false);
     BOOST_CHECK_EQUAL(avro_comparator()(intDatum1, intDatum2), true);
     BOOST_CHECK_EQUAL(avro_comparator()(intDatum2, intDatum1), false);
 
-    avro::GenericDatum longDatum1((boost::int64_t) 10);
-    avro::GenericDatum longDatum2((boost::int64_t) 11);
+    avro::GenericDatum longDatum1((std::int64_t) 10);
+    avro::GenericDatum longDatum2((std::int64_t) 11);
     BOOST_CHECK_EQUAL(avro_comparator()(longDatum1, longDatum1), false);
     BOOST_CHECK_EQUAL(avro_comparator()(longDatum1, longDatum2), true);
     BOOST_CHECK_EQUAL(avro_comparator()(longDatum2, longDatum1), false);
@@ -62,9 +62,9 @@ BOOST_AUTO_TEST_CASE(comparePrimitives)
     BOOST_CHECK_EQUAL(avro_comparator()(stringDatum1, stringDatum2), true);
     BOOST_CHECK_EQUAL(avro_comparator()(stringDatum2, stringDatum1), false);
 
-    avro::GenericDatum bytesDatum1((std::vector<boost::uint8_t>) {1,2,3,4,5});
-    avro::GenericDatum bytesDatum2((std::vector<boost::uint8_t>) {1,2,3,4,6});
-    avro::GenericDatum bytesDatum3((std::vector<boost::uint8_t>) {1,2,3,4});
+    avro::GenericDatum bytesDatum1((std::vector<std::uint8_t>) {1,2,3,4,5});
+    avro::GenericDatum bytesDatum2((std::vector<std::uint8_t>) {1,2,3,4,6});
+    avro::GenericDatum bytesDatum3((std::vector<std::uint8_t>) {1,2,3,4});
     BOOST_CHECK_EQUAL(avro_comparator()(bytesDatum1, bytesDatum1), false);
     BOOST_CHECK_EQUAL(avro_comparator()(bytesDatum1, bytesDatum2), true);
     BOOST_CHECK_EQUAL(avro_comparator()(bytesDatum2, bytesDatum1), false);
@@ -81,13 +81,13 @@ BOOST_AUTO_TEST_CASE(compareRecords)
     avro::GenericDatum record2(recordSchema);
     avro::GenericDatum record3(recordSchema);
 
-    record1.value<avro::GenericRecord>().field("f1").value<boost::int32_t>() = 10;
+    record1.value<avro::GenericRecord>().field("f1").value<std::int32_t>() = 10;
     record1.value<avro::GenericRecord>().field("f2").value<std::string>() = "foobar1";
 
-    record2.value<avro::GenericRecord>().field("f1").value<boost::int32_t>() = 10;
+    record2.value<avro::GenericRecord>().field("f1").value<std::int32_t>() = 10;
     record2.value<avro::GenericRecord>().field("f2").value<std::string>() = "foobar2";
 
-    record3.value<avro::GenericRecord>().field("f1").value<boost::int32_t>() = 11;
+    record3.value<avro::GenericRecord>().field("f1").value<std::int32_t>() = 11;
     record3.value<avro::GenericRecord>().field("f2").value<std::string>() = "foobar2";
 
     BOOST_CHECK_EQUAL(avro_comparator()(record1, record1), false);

@@ -18,7 +18,6 @@
 #define KAASYNCRESPONSE_HPP_
 
 #include "kaa/kaatcp/KaaTcpCommon.hpp"
-#include <boost/shared_array.hpp>
 #include <vector>
 
 namespace kaa {
@@ -27,22 +26,22 @@ namespace kaa {
 class KaaSyncResponse
 {
 public:
-    KaaSyncResponse(const char * payload, boost::uint32_t size);
+    KaaSyncResponse(const char * payload, std::uint32_t size);
 
-    const std::vector<boost::uint8_t>& getPayload() const { return payload_; }
+    const std::vector<std::uint8_t>& getPayload() const { return payload_; }
     bool isZipped() const { return isZipped_; }
     bool isEncrypted() const { return isEncrypted_; }
-    boost::uint16_t getMessageId() const { return messageId_; }
+    std::uint16_t getMessageId() const { return messageId_; }
 
 private:
-    void parseMessage(const char * payload, boost::uint32_t size);
+    void parseMessage(const char * payload, std::uint32_t size);
 
 private:
     bool isZipped_;
     bool isEncrypted_;
-    boost::uint16_t messageId_;
+    std::uint16_t messageId_;
 
-    std::vector<boost::uint8_t> payload_;
+    std::vector<std::uint8_t> payload_;
 };
 
 }

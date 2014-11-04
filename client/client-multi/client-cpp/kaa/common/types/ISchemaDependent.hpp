@@ -17,6 +17,10 @@
 #ifndef I_SCHEMA_DEPENDENT_HPP_
 #define I_SCHEMA_DEPENDENT_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Schema.hh>
 
 namespace kaa {
@@ -36,5 +40,7 @@ public:
 };
 
 }  // namespace kaa
+
+#endif
 
 #endif /* I_SCHEMA_DEPENDENT_HPP_ */

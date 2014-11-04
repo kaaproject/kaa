@@ -57,21 +57,29 @@ void KaaClient::init(int options)
     options_ = options;
     initClientKeys();
 
+#ifdef KAA_USE_CONFIGURATION
     schemaProcessor_.reset(new SchemaProcessor);
     configurationProcessor_.reset(new ConfigurationProcessor);
     deltaManager_.reset(new DefaultDeltaManager);
     configurationManager_.reset(new ConfigurationManager);
+#endif
 
     bootstrapManager_.reset(new BootstrapManager);
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getServerInfoList()));
+#ifdef KAA_USE_EVENTS
     registrationManager_.reset(new EndpointRegistrationManager(status_));
-
-    notificationManager_.reset(new NotificationManager(status_));
-    profileManager_.reset(new ProfileManager());
-
     eventManager_.reset(new EventManager(status_));
     eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_));
+#endif
+
+#ifdef KAA_USE_NOTIFICATIONS
+    notificationManager_.reset(new NotificationManager(status_));
+#endif
+    profileManager_.reset(new ProfileManager());
+
+#ifdef KAA_USE_LOGGING
     logCollector_.reset(new LogCollector());
+#endif
 
     initKaaConfiguration();
     initKaaTransport();
@@ -79,12 +87,14 @@ void KaaClient::init(int options)
 
 void KaaClient::start()
 {
+#ifdef KAA_USE_CONFIGURATION
     auto configHash = configurationPersistenceManager_->getConfigurationHash().getHash();
     if (!configHash.first || !configHash.second || !schemaProcessor_->getSchema()) {
         SequenceNumber sn = { 0, 0, 1 };
         status_->setAppSeqNumber(sn);
         setDefaultConfiguration();
     }
+#endif
     bootstrapManager_->receiveOperationsServerList();
 }
 
@@ -94,6 +104,7 @@ void KaaClient::stop()
 
 void KaaClient::initKaaConfiguration()
 {
+#ifdef KAA_USE_CONFIGURATION
     ConfigurationPersistenceManager *cpm = new ConfigurationPersistenceManager;
     cpm->setConfigurationProcessor(configurationProcessor_.get());
     configurationPersistenceManager_.reset(cpm);
@@ -109,6 +120,7 @@ void KaaClient::initKaaConfiguration()
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*deltaManager_);
     configurationManager_->subscribeForConfigurationChanges(*configurationPersistenceManager_);
+#endif
 }
 
 void KaaClient::initKaaTransport()
@@ -116,22 +128,30 @@ void KaaClient::initKaaTransport()
     IBootstrapTransportPtr bootstrapTransport(new BootstrapTransport(*channelManager_, *bootstrapManager_));
     bootstrapProcessor_.reset(new BootstrapDataProcessor(bootstrapTransport));
 
-    bootstrapManager_->setTransport(boost::dynamic_pointer_cast<BootstrapTransport, IBootstrapTransport>(bootstrapTransport).get());
+    bootstrapManager_->setTransport(std::dynamic_pointer_cast<BootstrapTransport, IBootstrapTransport>(bootstrapTransport).get());
     bootstrapManager_->setChannelManager(channelManager_.get());
 
     EndpointObjectHash publicKeyHash(clientKeys_.first.begin(), clientKeys_.first.size());
     IMetaDataTransportPtr metaDataTransport(new MetaDataTransport(status_, publicKeyHash, 60000L));
     IProfileTransportPtr profileTransport(new ProfileTransport(*channelManager_, clientKeys_.first));
+#ifdef KAA_USE_CONFIGURATION
     IConfigurationTransportPtr configurationTransport(new ConfigurationTransport(
             *channelManager_
             , configurationProcessor_.get()
             , schemaProcessor_.get()
             , configurationPersistenceManager_.get()
             , status_));
+#endif
+#ifdef KAA_USE_NOTIFICATIONS
     INotificationTransportPtr notificationTransport(new NotificationTransport(status_, *channelManager_));
+#endif
+#ifdef KAA_USE_EVENTS
     IUserTransportPtr userTransport(new UserTransport(*registrationManager_, *channelManager_));
     IEventTransportPtr eventTransport(new EventTransport(*eventManager_, *channelManager_));
+#endif
+#ifdef KAA_USE_LOGGING
     ILoggingTransportPtr loggingTransport(new LoggingTransport(*channelManager_, *logCollector_));
+#endif
     IRedirectionTransportPtr redirectionTransport(new RedirectionTransport(*bootstrapManager_));
 
     profileTransport->setProfileManager(profileManager_.get());
@@ -142,37 +162,60 @@ void KaaClient::initKaaTransport()
             new OperationsDataProcessor(
               metaDataTransport
             , profileTransport
+#ifdef KAA_USE_CONFIGURATION
             , configurationTransport
+#else
+            , nullptr
+#endif
+#ifdef KAA_USE_NOTIFICATIONS
             , notificationTransport
+#else
+            , nullptr
+#endif
+#ifdef KAA_USE_EVENTS
             , userTransport
             , eventTransport
+#else
+            , nullptr
+            , nullptr
+#endif
+#ifdef KAA_USE_LOGGING
             , loggingTransport
+#else
+            , nullptr
+#endif
             , redirectionTransport
             , status_));
 
-    eventManager_->setTransport(boost::dynamic_pointer_cast<EventTransport, IEventTransport>(eventTransport).get());
-    registrationManager_->setTransport(boost::dynamic_pointer_cast<UserTransport, IUserTransport>(userTransport).get());
-    logCollector_->setTransport(boost::dynamic_pointer_cast<LoggingTransport, ILoggingTransport>(loggingTransport).get());
-
-
-    notificationManager_->setTransport(boost::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
-
+#ifdef KAA_USE_EVENTS
+    eventManager_->setTransport(std::dynamic_pointer_cast<EventTransport, IEventTransport>(eventTransport).get());
+    registrationManager_->setTransport(std::dynamic_pointer_cast<UserTransport, IUserTransport>(userTransport).get());
+#endif
+#ifdef KAA_USE_LOGGING
+    logCollector_->setTransport(std::dynamic_pointer_cast<LoggingTransport, ILoggingTransport>(loggingTransport).get());
+#endif
+#ifdef KAA_USE_NOTIFICATIONS
+    notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
+#endif
+#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
-    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
-
     bootstrapChannel_->setDemultiplexer(bootstrapProcessor_.get());
     bootstrapChannel_->setMultiplexer(bootstrapProcessor_.get());
-    opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
-    opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
-
     KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
     channelManager_->addChannel(bootstrapChannel_.get());
+#endif
+#ifdef KAA_DEFAULT_TCP_CHANNEL
+    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
+    opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
+    opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
     channelManager_->addChannel(opsTcpChannel_.get());
-
+#endif
+#ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
     ConnectivityCheckerPtr connectivityChecker(new PingConnectivityChecker(
             *static_cast<KaaChannelManager*>(channelManager_.get())));
     channelManager_->setConnectivityChecker(connectivityChecker);
+#endif
 }
 
 void KaaClient::initClientKeys()
@@ -197,14 +240,16 @@ void KaaClient::initClientKeys()
 
 void KaaClient::setDefaultConfiguration()
 {
+#ifdef KAA_USE_CONFIGURATION
     const std::string& schema = getDefaultConfigSchema();
     if (!schema.empty()) {
-        schemaProcessor_->loadSchema(reinterpret_cast<const boost::uint8_t*>(schema.data()), schema.length());
-        const Botan::SecureVector<boost::uint8_t>& config = getDefaultConfigData();
+        schemaProcessor_->loadSchema(reinterpret_cast<const std::uint8_t*>(schema.data()), schema.length());
+        const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
         if (!config.empty()) {
             configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
         }
     }
+#endif
 }
 
 }

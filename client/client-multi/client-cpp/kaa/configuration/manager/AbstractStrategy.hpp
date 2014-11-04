@@ -17,8 +17,12 @@
 #ifndef ABSTRACTSTRATEGY_HPP_
 #define ABSTRACTSTRATEGY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include <avro/Generic.hh>
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include <memory>
 #include "kaa/common/types/ICommonRecord.hpp"
 
 namespace kaa {
@@ -35,12 +39,13 @@ public:
      * @param field     Name of a field in a given record.
      * @param datum     Avro datum containing data to be converted.
      */
-    virtual void run(boost::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum) = 0;
+    virtual void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum) = 0;
 
     virtual ~AbstractStrategy() {}
 };
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ABSTRACTSTRATEGY_HPP_ */

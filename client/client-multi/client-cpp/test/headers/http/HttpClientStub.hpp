@@ -30,7 +30,7 @@ class HttpClientStub : public IHttpClient {
 public:
     HttpClientStub() : shift(0) {}
 
-    boost::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request) {
+    std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request) {
         AvroByteArrayConverter<T> converter;
         SharedDataBuffer buffer = converter.toByteArray(element);
 
@@ -41,7 +41,7 @@ public:
             ss << (unsigned char) buffer.first[i];
         }
         ss << "\r\n\r\n";
-        boost::shared_ptr<IHttpResponse> response(new HttpResponse(ss.str()));
+        std::shared_ptr<IHttpResponse> response(new HttpResponse(ss.str()));
 
         return response;
     }

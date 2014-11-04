@@ -16,10 +16,12 @@
 
 #include "kaa/configuration/delta/DefaultConfigurationDeltaFactory.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 #include <cstdint>
 #include <string>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include <avro/Generic.hh>
 
@@ -36,7 +38,7 @@ namespace kaa {
 
 ConfigurationDeltaPtr DefaultConfigurationDeltaFactory::createDelta(const avro::GenericDatum& genericDelta)
 {
-    DefaultConfigurationDelta *configurationDelta = NULL;
+    DefaultConfigurationDelta *configurationDelta = nullptr;
 
     if (genericDelta.value<avro::GenericRecord>().hasField("__uuid")) {
         DeltaHandlerId handlerId(AvroGenericUtils::getUuidFromDatum(genericDelta));
@@ -153,7 +155,7 @@ IDeltaType::DeltaValue DefaultConfigurationDeltaFactory::createDeltaValue(const 
             break;
         }
         case avro::AVRO_BYTES: {
-            value = datum.value<std::vector<boost::uint8_t> >();
+            value = datum.value<std::vector<std::uint8_t> >();
             break;
         }
         default: throw KaaException("Not a common type");
@@ -163,3 +165,5 @@ IDeltaType::DeltaValue DefaultConfigurationDeltaFactory::createDeltaValue(const 
 }
 
 } /* namespace kaa */
+
+#endif

@@ -17,11 +17,11 @@
 #ifndef KAATCPCOMMON_HPP_
 #define KAATCPCOMMON_HPP_
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace kaa {
 
-enum class KaaTcpMessageType: boost::uint8_t
+enum class KaaTcpMessageType: std::uint8_t
 {
     MESSAGE_UNKNOWN = 0x00,
     MESSAGE_CONNECT = 0x01,
@@ -35,24 +35,24 @@ enum class KaaTcpMessageType: boost::uint8_t
 class KaaTcpCommon
 {
 public:
-    static const boost::uint8_t FIRST_BIT = 0x80;
-    static const boost::uint8_t MAX_MESSAGE_TYPE_LENGTH = 0x0F;
-    static const boost::uint32_t MAX_MESSAGE_LENGTH = 0x0FFFFFFF;
-    static const boost::uint8_t PROTOCOL_VERSION = 0x01;
+    static const std::uint8_t FIRST_BIT = 0x80;
+    static const std::uint8_t MAX_MESSAGE_TYPE_LENGTH = 0x0F;
+    static const std::uint32_t MAX_MESSAGE_LENGTH = 0x0FFFFFFF;
+    static const std::uint8_t PROTOCOL_VERSION = 0x01;
 
-    static const boost::uint8_t KAA_SYNC_HEADER_LENGTH = 12;
-    static const boost::uint8_t KAA_SYNC_ZIPPED_BIT = 0x02;
-    static const boost::uint8_t KAA_SYNC_ENCRYPTED_BIT = 0x04;
-    static const boost::uint8_t KAA_SYNC_REQUEST_BIT = 0x01;
+    static const std::uint8_t KAA_SYNC_HEADER_LENGTH = 12;
+    static const std::uint8_t KAA_SYNC_ZIPPED_BIT = 0x02;
+    static const std::uint8_t KAA_SYNC_ENCRYPTED_BIT = 0x04;
+    static const std::uint8_t KAA_SYNC_REQUEST_BIT = 0x01;
 
-    static const boost::uint8_t KAA_CONNECT_HEADER_LENGTH = 14;
-    static const boost::uint8_t KAA_CONNECT_SESSION_KEY_FLAGS = 0x11;
-    static const boost::uint8_t KAA_CONNECT_SIGNATURE_FLAGS = 0x01;
+    static const std::uint8_t KAA_CONNECT_HEADER_LENGTH = 14;
+    static const std::uint8_t KAA_CONNECT_SESSION_KEY_FLAGS = 0x11;
+    static const std::uint8_t KAA_CONNECT_SIGNATURE_FLAGS = 0x01;
 
     static const char * const KAA_TCP_NAME;
-    static const boost::uint16_t KAA_TCP_NAME_LENGTH = 6;
+    static const std::uint16_t KAA_TCP_NAME_LENGTH = 6;
 
-    static boost::uint8_t createBasicHeader(boost::uint8_t messageType, boost::uint32_t length, char *message);
+    static std::uint8_t createBasicHeader(std::uint8_t messageType, std::uint32_t length, char *message);
 
 };
 

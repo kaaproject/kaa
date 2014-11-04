@@ -18,7 +18,7 @@
 #define ICONFIGURATIONTRANSPORT_HPP_
 
 #include "kaa/gen/EndpointGen.hpp"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace kaa {
 
@@ -34,7 +34,7 @@ public:
      * @return the configuration request object.
      * @see ConfigurationSyncRequest
      */
-    virtual boost::shared_ptr<ConfigurationSyncRequest> createConfigurationRequest() = 0;
+    virtual std::shared_ptr<ConfigurationSyncRequest> createConfigurationRequest() = 0;
 
     /**
      * Updates the state of the Configuration manager according to the given response.

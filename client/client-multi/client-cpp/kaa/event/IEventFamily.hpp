@@ -17,11 +17,15 @@
 #ifndef IEVENTFAMILY_HPP_
 #define IEVENTFAMILY_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_EVENTS
+
 #include <list>
 #include <string>
 #include <vector>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace kaa {
 
@@ -48,12 +52,14 @@ public:
      * @param source    Event source
      */
     virtual void onGenericEvent(const std::string& fqn
-                              , const std::vector<boost::uint8_t>& data
+                              , const std::vector<std::uint8_t>& data
                               , const std::string& source) = 0;
 
     virtual ~IEventFamily() {}
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IEVENTFAMILY_HPP_ */

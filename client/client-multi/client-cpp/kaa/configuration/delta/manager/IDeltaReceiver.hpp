@@ -17,6 +17,10 @@
 #ifndef IDELTARECEIVER_HPP_
 #define IDELTARECEIVER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_CONFIGURATION
+
 #include "kaa/configuration/delta/IConfigurationDelta.hpp"
 
 namespace kaa {
@@ -38,5 +42,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* IDELTARECEIVER_HPP_ */

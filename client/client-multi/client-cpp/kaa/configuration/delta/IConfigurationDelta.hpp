@@ -17,9 +17,11 @@
 #ifndef ICONFIGURATIONDELTA_HPP_
 #define ICONFIGURATIONDELTA_HPP_
 
-#include <string>
+#include "kaa/KaaDefaults.hpp"
 
-#include <boost/shared_ptr.hpp>
+#ifdef KAA_USE_CONFIGURATION
+
+#include <string>
 
 #include "kaa/configuration/delta/IDeltaType.hpp"
 #include "kaa/configuration/delta/DeltaHandlerId.hpp"
@@ -27,7 +29,7 @@
 namespace kaa {
 
 class IConfigurationDelta;
-typedef boost::shared_ptr<IConfigurationDelta> ConfigurationDeltaPtr;
+typedef std::shared_ptr<IConfigurationDelta> ConfigurationDeltaPtr;
 
 class IConfigurationDelta {
 public:
@@ -56,7 +58,7 @@ public:
      * @return delta type of the field, or null if the field was not changed
      * @see IDeltaType
      */
-    virtual boost::shared_ptr<IDeltaType> getDeltaType(const std::string& field) = 0;
+    virtual DeltaTypePtr getDeltaType(const std::string& field) = 0;
 
     /**
      * Retrieves JSON representation of the inner data
@@ -69,5 +71,7 @@ public:
 };
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* ICONFIGURATIONDELTA_HPP_ */

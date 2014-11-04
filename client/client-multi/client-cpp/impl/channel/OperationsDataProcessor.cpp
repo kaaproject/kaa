@@ -44,7 +44,7 @@ OperationsDataProcessor::OperationsDataProcessor(
 
 }
 
-std::vector<boost::uint8_t> OperationsDataProcessor::compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes)
+std::vector<std::uint8_t> OperationsDataProcessor::compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes)
 {
     SyncRequest request;
     request.requestId.set_int(++requestId);
@@ -175,13 +175,13 @@ std::vector<boost::uint8_t> OperationsDataProcessor::compileRequest(const std::m
         }
     }
     SharedDataBuffer buffer = requestConverter_.toByteArray(request);
-    return std::vector<boost::uint8_t>(buffer.first.get(), buffer.first.get() + buffer.second);
+    return std::vector<std::uint8_t>(buffer.first.get(), buffer.first.get() + buffer.second);
 }
 
-void OperationsDataProcessor::processResponse(const std::vector<boost::uint8_t> &response)
+void OperationsDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
     SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
-    boost::int32_t requestId = syncResponse.requestId.is_null() ? -1 : syncResponse.requestId.get_int();
+    std::int32_t requestId = syncResponse.requestId.is_null() ? -1 : syncResponse.requestId.get_int();
     KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%")
         % requestId );
 

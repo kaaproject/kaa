@@ -22,7 +22,7 @@
 #include <cstring>
 #include <algorithm>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include <avro/ValidSchema.hh>
 #include <avro/Generic.hh>
@@ -51,7 +51,7 @@ static void binaryEncodeDataTo(std::ostream& stream, const Data& data)
 }
 
 template<typename Data>
-static Data decodeBinaryData(const boost::uint8_t* data, const boost::uint32_t& dataSize)
+static Data decodeBinaryData(const std::uint8_t* data, const std::uint32_t& dataSize)
 {
     std::unique_ptr<avro::InputStream> in = avro::memoryInputStream(data, dataSize);
     avro::DecoderPtr d = avro::binaryDecoder();
@@ -70,8 +70,8 @@ BOOST_AUTO_TEST_CASE(InvalidDecodingData)
     avro::GenericDatum datum;
     AvroByteArrayConverter<avro::GenericDatum> converter;
 
-    BOOST_CHECK_THROW(converter.fromByteArray(NULL, 0), KaaException);
-    BOOST_CHECK_THROW(converter.fromByteArray(NULL, 0, datum), KaaException);
+    BOOST_CHECK_THROW(converter.fromByteArray(nullptr, 0), KaaException);
+    BOOST_CHECK_THROW(converter.fromByteArray(nullptr, 0, datum), KaaException);
 }
 
 BOOST_AUTO_TEST_CASE(AvroBinaryEncodingToBuffer)
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(AvroBinaryEncodingToBuffer)
     const std::string& encodedData2 = stream.str();
 
     int res = ::memcmp(encodedData1.first.get(), encodedData2.data(),
-            std::min(encodedData1.second, static_cast<boost::uint32_t>(encodedData2.length())));
+            std::min(encodedData1.second, static_cast<std::uint32_t>(encodedData2.length())));
 
     BOOST_CHECK_MESSAGE (res == 0, "Encoded datas aren't equal");
 }
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(AvroJSONEncoding)
 
         converter.switchToJson(schema);
 
-        converter.fromByteArray(reinterpret_cast<const boost::uint8_t*>(jsonData.data())
+        converter.fromByteArray(reinterpret_cast<const std::uint8_t*>(jsonData.data())
                                                         , jsonData.length(), decodedDatum);
 
         const std::string& decodedProfileBody = decodedDatum.value<avro::GenericRecord>()

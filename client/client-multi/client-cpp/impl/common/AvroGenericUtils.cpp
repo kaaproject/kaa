@@ -16,6 +16,8 @@
 
 #include "kaa/common/AvroGenericUtils.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
 namespace kaa {
 
 const std::string AvroGenericUtils::RESETT = "org.kaaproject.configuration.resetT";
@@ -23,3 +25,5 @@ const std::string AvroGenericUtils::UNCHANGEDT = "org.kaaproject.configuration.u
 const std::string AvroGenericUtils::UUIDT = "org.kaaproject.configuration.uuidT";
 
 }  // namespace kaa
+
+#endif

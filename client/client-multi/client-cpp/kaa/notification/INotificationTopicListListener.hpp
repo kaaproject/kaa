@@ -17,6 +17,10 @@
 #ifndef INOTIFICATIONTOPICLISTLISTENER_HPP_
 #define INOTIFICATIONTOPICLISTLISTENER_HPP_
 
+#include "kaa/KaaDefaults.hpp"
+
+#ifdef KAA_USE_NOTIFICATIONS
+
 #include <memory>
 
 namespace kaa {
@@ -46,5 +50,7 @@ public:
 typedef std::shared_ptr<INotificationTopicListListener> INotificationTopicListListenerPtr;
 
 } /* namespace kaa */
+
+#endif
 
 #endif /* INOTIFICATIONTOPICLISTLISTENER_HPP_ */

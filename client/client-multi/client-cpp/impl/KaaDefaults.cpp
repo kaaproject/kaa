@@ -18,7 +18,7 @@
 
 #include <algorithm>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/channel/server/HttpServerInfo.hpp"
 #include "kaa/channel/server/HttpLPServerInfo.hpp"
@@ -28,17 +28,17 @@ namespace kaa {
 
 const char * const APPLICATION_TOKEN = "999739850901241";
 
-const boost::uint32_t PROFILE_VERSION = 1;
+const std::uint32_t PROFILE_VERSION = 1;
 
-const boost::uint32_t CONFIG_VERSION = 1;
+const std::uint32_t CONFIG_VERSION = 1;
 
-const boost::uint32_t SYSTEM_NF_VERSION = 1;
+const std::uint32_t SYSTEM_NF_VERSION = 1;
 
-const boost::uint32_t USER_NF_VERSION = 1;
+const std::uint32_t USER_NF_VERSION = 1;
 
-const boost::uint32_t LOG_SCHEMA_VERSION = 1;
+const std::uint32_t LOG_SCHEMA_VERSION = 1;
 
-const boost::uint32_t POLLING_PERIOD_SECONDS = 5;
+const std::uint32_t POLLING_PERIOD_SECONDS = 5;
 
 const char * const CLIENT_PUB_KEY_LOCATION = "key.public";
 
@@ -48,7 +48,7 @@ const char * const CLIENT_STATUS_FILE_LOCATION = "kaa.status";
 
 static IServerInfoPtr createServerInfo(const int& channelType
                                      , const std::string host
-                                     , const boost::uint16_t& port
+                                     , const std::uint16_t& port
                                      , const std::string& encodedPublicKey)
 {
     IServerInfoPtr serverInfo;
@@ -81,8 +81,8 @@ const BootstrapServers& getServerInfoList() {
     return listOfServers;
 }
 
-const Botan::SecureVector<boost::uint8_t>& getDefaultConfigData() {
-    static const Botan::SecureVector<boost::uint8_t> configData = Botan::base64_decode("");
+const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() {
+    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("");
     return configData;
 }
 

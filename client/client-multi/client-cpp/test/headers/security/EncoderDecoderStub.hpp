@@ -33,14 +33,14 @@ public:
 
     }
 
-    Botan::SecureVector<boost::uint8_t> getEncodedSessionKey() {
+    Botan::SecureVector<std::uint8_t> getEncodedSessionKey() {
         return encodedSessionKey_;
     }
-    void setEncodedSessionKey(Botan::SecureVector<boost::uint8_t> key) {
+    void setEncodedSessionKey(Botan::SecureVector<std::uint8_t> key) {
         encodedSessionKey_ = key;
     }
 
-    std::string encodeData(const boost::uint8_t *data, size_t size) {
+    std::string encodeData(const std::uint8_t *data, size_t size) {
         data_.assign(reinterpret_cast<const char *>(data), size);
         return data_;
     }
@@ -48,7 +48,7 @@ public:
         data_ = data;
     }
 
-    std::string decodeData(const boost::uint8_t *data, size_t size) {
+    std::string decodeData(const std::uint8_t *data, size_t size) {
         data_.assign(reinterpret_cast<const char *>(data), size);
         return data_;
     }
@@ -56,14 +56,14 @@ public:
         data_ = data;
     }
 
-    Botan::SecureVector<boost::uint8_t> signData(const boost::uint8_t *data, size_t size) {
+    Botan::SecureVector<std::uint8_t> signData(const std::uint8_t *data, size_t size) {
         return signData_;
     }
-    void setSignData(Botan::SecureVector<boost::uint8_t> data) {
+    void setSignData(Botan::SecureVector<std::uint8_t> data) {
         signData_ = data;
     }
 
-    bool verifySignature(const boost::uint8_t *data, size_t len, const boost::uint8_t *sig, size_t sigLen) {
+    bool verifySignature(const std::uint8_t *data, size_t len, const std::uint8_t *sig, size_t sigLen) {
         return signatureVerified_;
     }
     void setSignatureVerified(bool signatureVerified) {
@@ -71,10 +71,10 @@ public:
     }
 
 private:
-    Botan::SecureVector<boost::uint8_t> encodedSessionKey_;
+    Botan::SecureVector<std::uint8_t> encodedSessionKey_;
     std::string                         encodeData_;
     std::string                         decodeData_;
-    Botan::SecureVector<boost::uint8_t> signData_;
+    Botan::SecureVector<std::uint8_t> signData_;
     bool                                signatureVerified_;
     std::string                         data_;
 };

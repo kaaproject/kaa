@@ -17,11 +17,14 @@
 #ifndef CONFIGURATION_PROCESSOR_HPP_
 #define CONFIGURATION_PROCESSOR_HPP_
 
-#include <boost/cstdint.hpp>
-#include <boost/signals2.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include "kaa/KaaDefaults.hpp"
 
+#ifdef KAA_USE_CONFIGURATION
+
+#include <cstdint>
+#include <memory>
+
+#include "kaa/observer/KaaObservable.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
 
 namespace kaa {
@@ -42,13 +45,13 @@ public:
     typedef avro::ValidSchema Schema;
 
     ConfigurationProcessor() {}
-    ConfigurationProcessor(boost::shared_ptr<avro::ValidSchema> schema) { schema_ = schema; }
+    ConfigurationProcessor(std::shared_ptr<avro::ValidSchema> schema) { schema_ = schema; }
     ~ConfigurationProcessor() { schema_.reset(); }
 
     /**
      * \c IConfigurationProcessor implementation
      */
-    void processConfigurationData(const boost::uint8_t *data, size_t data_length, bool full_resync);
+    void processConfigurationData(const std::uint8_t *data, std::size_t data_length, bool full_resync);
 
     /**
      * \c IDecodedDeltaObservable implementation
@@ -65,20 +68,19 @@ public:
     /**
      * \c ISchemaUpdatesReceiver implementation
      */
-    void onSchemaUpdated(boost::shared_ptr<avro::ValidSchema> schema);
+    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema);
 
 private:
-    typedef boost::recursive_mutex          mutex_type;
-    typedef boost::unique_lock<mutex_type>  lock_type;
+    KAA_R_MUTEX_DECLARE(confProcessorMutex_);
 
-    mutex_type                                                      confProcessorMutex_;
+    KaaObservable<void (int, const avro::GenericDatum &, bool), IGenericDeltaReceiver *> deltaReceivers_;
+    KaaObservable<void (), IConfigurationProcessedObserver *> onProcessedObservers_;
 
-    boost::signals2::signal<void (int, const avro::GenericDatum &, bool)> deltaReceivers_;
-    boost::signals2::signal<void ()>                                onProcessedObservers_;
-
-    boost::shared_ptr<Schema>                                       schema_;
+    std::shared_ptr<Schema>                                       schema_;
 };
 
 } // namespace kaa
+
+#endif
 
 #endif /* CONFIGURATION_PROCESSOR_HPP_ */
