@@ -39,15 +39,16 @@ public abstract class CustomLogAppender extends AbstractLogAppender {
         Properties properties = new Properties();
         try {
             properties.load(new StringReader(configurationString));
+            if (LOG.isDebugEnabled()) {
+                StringWriter writer = new StringWriter();
+                PrintWriter printWriter = new PrintWriter(writer, true);
+                properties.list(printWriter);
+                LOG.debug("Initializing appender [{}] with the following configuration:", getName());
+                LOG.debug(writer.toString());
+            }
+            initFromProperties(properties);
         } catch (IOException e) {
             LOG.error("Unable to parse configuration for appender '" + getName() + "'", e);
-        }
-        if (LOG.isDebugEnabled()) {
-            StringWriter writer = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(writer, true);
-            properties.list(printWriter);
-            LOG.debug("Initializing appender [{}] with the following configuration:", getName());
-            LOG.debug(writer.toString());
         }
     }
     
