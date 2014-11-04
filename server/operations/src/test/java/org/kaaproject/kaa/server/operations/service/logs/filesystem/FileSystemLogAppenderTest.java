@@ -19,6 +19,7 @@ import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.operations.service.logs.filesystem.loggers.FileSystemLogger;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -35,7 +36,9 @@ public class FileSystemLogAppenderTest {
     public void testAppend() throws IOException {
         FileSystemLogAppender appender = new FileSystemLogAppender("test");
         FileSystemLogEventService service = Mockito.mock(FileSystemLogEventService.class);
+        FileSystemLogger logger = Mockito.mock(FileSystemLogger.class);
         ReflectionTestUtils.setField(appender, "fileSystemLogEventService", service);
+        ReflectionTestUtils.setField(appender, "logger", logger);
         ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
         GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
         BasicEndpointProfile theLog = new BasicEndpointProfile("test");
@@ -46,17 +49,19 @@ public class FileSystemLogAppenderTest {
         LogEvent logEvent = new LogEvent();
 
         logEvent.setLogData(converter.encode(theLog));
-        LogEventPack logEventPack = new LogEventPack("endpointKey", System.currentTimeMillis(), schema, Collections.singletonList(logEvent));
+        LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
         appender.doAppend(logEventPack);
 
-        Mockito.verify(service).save(Mockito.anyListOf(LogEventDto.class), Mockito.any(Logger.class), Mockito.any(WriterAppender.class));
+        Mockito.verify(logger).append(Mockito.anyString());
     }
 
     @Test
     public void initTest() {
         FileSystemLogAppender appender = new FileSystemLogAppender();
         fileSystemLogEventService = mock(FileSystemLogEventService.class);
+        FileSystemLogger logger = Mockito.mock(FileSystemLogger.class);
         ReflectionTestUtils.setField(appender, "fileSystemLogEventService", fileSystemLogEventService);
+        ReflectionTestUtils.setField(appender, "logger", logger);
         appender.setName(APPENDER_NAME);
         appender.setAppenderId(APPENDER_ID);
 

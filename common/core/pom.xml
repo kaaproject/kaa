@@ -14,72 +14,77 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.6.1-SNAPSHOT</version>
-		<artifactId>common</artifactId>
-	</parent>
-	<groupId>org.kaaproject.kaa.common</groupId>
-	<artifactId>core</artifactId>
- 	<packaging>jar</packaging>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.kaaproject.kaa</groupId>
+        <version>0.6.1-SNAPSHOT</version>
+        <artifactId>common</artifactId>
+    </parent>
+    <groupId>org.kaaproject.kaa.common</groupId>
+    <artifactId>core</artifactId>
+    <packaging>jar</packaging>
 
-	<name>Kaa Core</name>
-	<url>http://kaaproject.org</url>
+    <name>Kaa Core</name>
+    <url>http://kaaproject.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<main.dir>${basedir}/../../..</main.dir>
-	</properties>
-		
-	<dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.dir>${basedir}/../../..</main.dir>
+    </properties>
+
+    <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>endpoint-shared</artifactId>
-        </dependency>	
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>        
+            <artifactId>log4j-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>            
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
-            <version>1.4.1</version>
             <scope>test</scope>
-        </dependency>        
-	</dependencies>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -91,8 +96,8 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>			
-		</plugins>
-	</build>
-	
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

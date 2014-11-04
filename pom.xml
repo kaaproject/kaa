@@ -41,18 +41,21 @@ Copyright 2014 CyberVision, Inc.
         <h2.driver.ver>1.4.179</h2.driver.ver>
         <gwt.version>2.6.0</gwt.version>
         <aspectj.version>1.7.4</aspectj.version>
+        <twitter.common.thrift.version>0.0.64</twitter.common.thrift.version>
 
         <hadoop.version>2.4.1</hadoop.version>
         <flume.version>1.5.0.1</flume.version>
 
         <netty.version>4.0.20.Final</netty.version>
         <avro.version>1.7.5</avro.version>
+        <apache.velocity>1.7</apache.velocity>
         <zookeeper.version>3.4.5</zookeeper.version>
         <curator.version>2.3.0</curator.version>
         <libthrift.version>0.9.1</libthrift.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-io.version>2.4</commons-io.version>
         <commons-codec.version>1.9</commons-codec.version>
+        <commons-compress.version>1.8</commons-compress.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-digester3.version>3.2</commons-digester3.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
@@ -64,14 +67,18 @@ Copyright 2014 CyberVision, Inc.
         <embed.mongo.version>1.42</embed.mongo.version>
         <mockito.version>1.9.5</mockito.version>
         <equalsverifier.version>1.4.1</equalsverifier.version>
+        <jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
+        <jline.version>2.11</jline.version>
 
-        <slf4j.version>1.7.6</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
+        <slf4j.version>1.7.7</slf4j.version>
+        <logback.version>1.1.2</logback.version>
+
         <metrics.version>3.1.0</metrics.version>
 
         <findbugs.version>2.5.2</findbugs.version>
         <checkstyle.version>2.9.1</checkstyle.version>
         <rat.version>0.10</rat.version>
+        <javassist.version>3.18.1-GA</javassist.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -409,9 +416,96 @@ Copyright 2014 CyberVision, Inc.
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>thrift</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>thrift-cli-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>thrift-cli-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>dto</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.common</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>netty-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>log-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>zk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.client</groupId>
+                <artifactId>client-java-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server</groupId>
+                <artifactId>operations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.common</groupId>
                 <artifactId>endpoint-shared</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.avrogenc</groupId>
+                <artifactId>avrogenc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>dao</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-actor_2.10</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flume</groupId>
+                <artifactId>flume-ng-core</artifactId>
+                <version>${flume.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -443,6 +537,41 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons-compress.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>${commons-cli.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-compiler</artifactId>
+                <version>${avro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>${apache.velocity}</version>
+            </dependency>
+            <dependency>
+                <groupId>jline</groupId>
+                <artifactId>jline</artifactId>
+                <version>${jline.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -477,9 +606,24 @@ Copyright 2014 CyberVision, Inc.
                 <version>${commons.pool.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpcomponents.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${httpcomponents.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-jaxrs</artifactId>
+                <version>${jackson-jaxrs.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
@@ -522,9 +666,26 @@ Copyright 2014 CyberVision, Inc.
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-test</artifactId>
+                <version>${curator.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.flume</groupId>
                 <artifactId>flume-ng-clients</artifactId>
                 <version>${flume.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.twitter.common</groupId>
+                <artifactId>thrift</artifactId>
+                <version>${twitter.common.thrift.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -533,8 +694,28 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
+                <artifactId>log4j-over-slf4j</artifactId>
                 <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
