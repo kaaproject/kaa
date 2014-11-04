@@ -198,16 +198,15 @@ void EventManager::commit(TransactionIdPtr trxId)
 {
     auto it = transactions_.find(trxId);
     if (it != transactions_.end()) {
+        KAA_LOCK(pendingEventsGuard_);
         std::list<Event> & events = it->second;
-        {
-            KAA_MUTEX_LOG_AND_LOCK(lock_type, mutex_type, pendingEventsGuard_);
-            for (Event &e : events) {
-                e.seqNum = eventSequenceNumber_++;
-                pendingEvents_.push_back(e);
-                status_->setEventSequenceNumber(e.seqNum);
-            }
+        for (Event &e : events) {
+            e.seqNum = eventSequenceNumber_++;
+            pendingEvents_.push_back(e);
+            status_->setEventSequenceNumber(e.seqNum);
         }
         transactions_.erase(it);
+        KAA_UNLOCK(pendingEventsGuard_);
         if (eventTransport_ != nullptr) {
             eventTransport_->sync();
         }

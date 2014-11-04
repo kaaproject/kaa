@@ -18,6 +18,8 @@
 #define ABSTRACTTRANSACTABLE_HPP_
 
 #include <map>
+#include "kaa/KaaThread.hpp"
+#include "kaa/logging/Log.hpp"
 #include "kaa/transact/ITransactable.hpp"
 
 namespace kaa {
@@ -27,11 +29,9 @@ class AbstractTransactable : public ITransactable {
 public:
     virtual TransactionIdPtr beginTransaction() {
         TransactionIdPtr trxId(new TransactionId);
-        do {
-            KAA_LOCK(transactionsGuard_);
-            transactions_.insert(std::make_pair(trxId, Container()));
-            KAA_UNLOCK(transactionsGuard_);
-        } while (0);
+        KAA_LOCK(transactionsGuard_);
+        transactions_.insert(std::make_pair(trxId, Container()));
+        KAA_UNLOCK(transactionsGuard_);
         return trxId;
     }
 
@@ -45,14 +45,21 @@ public:
     }
 
     Container & getContainerByTrxId(TransactionIdPtr trxId) {
-        return transactions_[trxId];
+        KAA_LOCK(transactionsGuard_);
+        auto it = transactions_.find(trxId);
+        KAA_UNLOCK(transactionsGuard_);
+        if (it != transactions_.end()) {
+            return it->second;
+        } else {
+            KAA_LOG_DEBUG(boost::format("Transaction with id %1% was not found. Creating new instance") % trxId->getId());
+            return transactions_[trxId];
+        }
     }
 
     virtual ~AbstractTransactable() {}
-
 protected:
-    KAA_R_MUTEX_DECLARE(pendingEventsGuard_);
     std::map<TransactionIdPtr, Container> transactions_;
+    KAA_MUTEX_DECLARE(transactionsGuard_);
 };
 
 }
