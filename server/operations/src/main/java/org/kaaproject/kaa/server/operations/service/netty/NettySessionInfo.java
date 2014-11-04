@@ -15,12 +15,11 @@
  */
 package org.kaaproject.kaa.server.operations.service.netty;
 
-import java.util.UUID;
-
 import io.netty.channel.ChannelHandlerContext;
 
-import javax.crypto.SecretKey;
+import java.util.UUID;
 
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 
@@ -28,19 +27,19 @@ public final class NettySessionInfo {
     private final UUID uuid;
     private final ChannelHandlerContext ctx;
     private final ChannelType channelType;
-    private final SecretKey sessionKey;
+    private final CipherPair cipherPair;
     private final EndpointObjectHash key;
     private final String applicationToken;
     private final int keepAlive;
     private final boolean isEncrypted;
 
-    public NettySessionInfo(UUID uuid, ChannelHandlerContext ctx, ChannelType channelType, SecretKey sessionKey, EndpointObjectHash key,
+    public NettySessionInfo(UUID uuid, ChannelHandlerContext ctx, ChannelType channelType, CipherPair cipherPair, EndpointObjectHash key,
             String applicationToken, int keepAlive, boolean isEncrypted) {
         super();
         this.uuid = uuid;
         this.ctx = ctx;
         this.channelType = channelType;
-        this.sessionKey = sessionKey;
+        this.cipherPair = cipherPair;
         this.key = key;
         this.applicationToken = applicationToken;
         this.keepAlive = keepAlive;
@@ -59,8 +58,8 @@ public final class NettySessionInfo {
         return channelType;
     }
 
-    public SecretKey getSessionKey() {
-        return sessionKey;
+    public CipherPair getCipherPair() {
+        return cipherPair;
     }
 
     public EndpointObjectHash getKey() {
@@ -109,16 +108,16 @@ public final class NettySessionInfo {
         return true;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("KaaTcpSessionInfo [sessionKey=");
-        builder.append(sessionKey);
-        builder.append(", key=");
-        builder.append(key);
-        builder.append(", applicationToken=");
-        builder.append(applicationToken);
-        builder.append("]");
-        return builder.toString();
-    }
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("NettySessionInfo [uuid=");
+		builder.append(uuid);
+		builder.append(", key=");
+		builder.append(key);
+		builder.append(", applicationToken=");
+		builder.append(applicationToken);
+		builder.append("]");
+		return builder.toString();
+	}
 }

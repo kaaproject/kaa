@@ -19,12 +19,11 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.UUID;
 
-import javax.crypto.SecretKey;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpConnectMessage;
@@ -45,7 +44,7 @@ public class NettyTcpMessageTest {
         UUID channelId = UUID.randomUUID();
         ChannelHandlerContext ctx = Mockito.mock(ChannelHandlerContext.class);
         ChannelType channelType = ChannelType.TCP;
-        SecretKey sessionKey = Mockito.mock(SecretKey.class);
+        CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
         int keepAlive = 100;
@@ -81,7 +80,7 @@ public class NettyTcpMessageTest {
         UUID channelId = UUID.randomUUID();
         ChannelHandlerContext ctx = Mockito.mock(ChannelHandlerContext.class);
         ChannelType channelType = ChannelType.TCP;
-        SecretKey sessionKey = Mockito.mock(SecretKey.class);
+        CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
         int keepAlive = 100;
@@ -102,7 +101,7 @@ public class NettyTcpMessageTest {
         UUID channelId = UUID.randomUUID();
         ChannelHandlerContext ctx = Mockito.mock(ChannelHandlerContext.class);
         ChannelType channelType = ChannelType.TCP;
-        SecretKey sessionKey = Mockito.mock(SecretKey.class);
+        CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
         int keepAlive = 100;
@@ -122,7 +121,7 @@ public class NettyTcpMessageTest {
         UUID channelId = UUID.randomUUID();
         ChannelHandlerContext ctx = Mockito.mock(ChannelHandlerContext.class);
         ChannelType channelType = ChannelType.TCP;
-        SecretKey sessionKey = Mockito.mock(SecretKey.class);
+        CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
         int keepAlive = 100;

@@ -21,8 +21,6 @@ import io.netty.channel.ChannelHandlerContext;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
-import javax.crypto.SecretKey;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
@@ -34,6 +32,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingRequest;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.server.kaatcp.AbstractKaaTcpCommandProcessor;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -208,7 +207,7 @@ public class AkkaKaaTcpHandlerTest {
     }
 
     protected NettySessionInfo buildSessionInfo(UUID uuid) {
-        return new NettySessionInfo(uuid, Mockito.mock(ChannelHandlerContext.class), ChannelType.TCP, Mockito.mock(SecretKey.class),
+        return new NettySessionInfo(uuid, Mockito.mock(ChannelHandlerContext.class), ChannelType.TCP, Mockito.mock(CipherPair.class),
                 EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
     }
 }

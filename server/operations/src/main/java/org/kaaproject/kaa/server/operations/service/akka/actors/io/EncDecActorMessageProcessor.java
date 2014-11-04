@@ -129,7 +129,7 @@ public class EncDecActorMessageProcessor {
 
             EndpointObjectHash key = getEndpointObjectHash(request);
             String appToken = getAppToken(request);
-            NettySessionInfo sessionInfo = new NettySessionInfo(message.getChannelUuid(), message.getChannelContext(), message.getChannelType(), crypt.getDecodedSessionKey(),
+            NettySessionInfo sessionInfo = new NettySessionInfo(message.getChannelUuid(), message.getChannelContext(), message.getChannelType(), crypt.getSessionCipherPair(),
                     key, appToken, message.getKeepAlive(), message.isEncrypted());
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getResponseBuilder(), message.getErrorBuilder());
             LOG.debug("Redirect Response: {}", response);
@@ -167,7 +167,7 @@ public class EncDecActorMessageProcessor {
             IOException {
         SyncRequest request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
-        NettySessionInfo session = new NettySessionInfo(message.getChannelUuid(), message.getChannelContext(), message.getChannelType(), crypt.getDecodedSessionKey(),
+        NettySessionInfo session = new NettySessionInfo(message.getChannelUuid(), message.getChannelContext(), message.getChannelType(), crypt.getSessionCipherPair(),
                 key, request.getSyncRequestMetaData().getApplicationToken(), message.getKeepAlive(), message.isEncrypted());
         message.onSessionCreated(session);
         forwardToOpsActor(context, session, request, message);
@@ -190,7 +190,7 @@ public class EncDecActorMessageProcessor {
         byte[] responseData = responseConverter.toByteArray(message.getResponse());
         LOG.trace("Response data serialized");
         if (session.isEncrypted()) {
-            crypt.setDecodedSessionKey(session.getSessionKey());
+            crypt.setSessionCipherPair(session.getCipherPair());
             responseData = crypt.encodeData(responseData);
             LOG.trace("Response data crypted");
         }
@@ -257,7 +257,7 @@ public class EncDecActorMessageProcessor {
 
     private SyncRequest decodeEncryptedRequest(SessionAwareRequest message) throws GeneralSecurityException, IOException {
         NettySessionInfo session = message.getSessionInfo();
-        crypt.setDecodedSessionKey(session.getSessionKey());
+        crypt.setSessionCipherPair(session.getCipherPair());
         byte[] requestRaw = crypt.decodeData(message.getEncodedRequestData());
         LOG.trace("Request data decrypted");
         SyncRequest request = requestConverter.fromByteArray(requestRaw);
