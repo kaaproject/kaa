@@ -26,7 +26,16 @@
 
 #include "kaa/channel/server/IServerInfo.hpp"
 
-#define KAA_LOG_LEVEL  7
+#define KAA_LOG_LEVEL_NONE        0
+#define KAA_LOG_LEVEL_FATAL       1
+#define KAA_LOG_LEVEL_ERROR       2
+#define KAA_LOG_LEVEL_WARNING     3
+#define KAA_LOG_LEVEL_INFO        4
+#define KAA_LOG_LEVEL_DEBUG       5
+#define KAA_LOG_LEVEL_TRACE       6
+#define KAA_LOG_LEVEL_FINE_TRACE  7
+
+#define KAA_LOG_LEVEL  KAA_LOG_LEVEL_FINE_TRACE
 
 namespace kaa {
 

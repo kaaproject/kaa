@@ -20,26 +20,17 @@
 namespace kaa {
 
 enum class LogLevel {
-    FATAL = 1,
-    ERROR = 2,
-    WARNING = 3,
-    INFO = 4,
-    DEBUG = 5,
-    TRACE = 6,
-    FINE_TRACE = 7
+    TRACE = 0,
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR,
+    FATAL
 };
 
 class ILogger {
 public:
     virtual ~ILogger() {}
-
-    virtual void ftrace (const char *message) const = 0;
-    virtual void debug  (const char *message) const = 0;
-    virtual void trace  (const char *message) const = 0;
-    virtual void info   (const char *message) const = 0;
-    virtual void warn   (const char *message) const = 0;
-    virtual void error  (const char *message) const = 0;
-    virtual void fatal  (const char *message) const = 0;
 
     virtual void log(LogLevel level, const char *message) const = 0;
 };

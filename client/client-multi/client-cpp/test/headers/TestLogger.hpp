@@ -31,22 +31,12 @@ public:
         std::ofstream of(filename_, std::ios::openmode::_S_trunc);
         of.close();
     }
-    void ftrace (const char *message) const { log(LogLevel::FINE_TRACE, message); }
-    void debug  (const char *message) const { log(LogLevel::DEBUG, message); }
-    void trace  (const char *message) const { log(LogLevel::TRACE, message); }
-    void info   (const char *message) const { log(LogLevel::INFO, message); }
-    void warn   (const char *message) const { log(LogLevel::WARNING, message); }
-    void error  (const char *message) const { log(LogLevel::ERROR, message); }
-    void fatal  (const char *message) const { log(LogLevel::FATAL, message); }
 
 private:
     void log    (LogLevel level, const char *message) const {
         std::ofstream of(filename_, std::ios::openmode::_S_app);
         // TODO: timestamps...
         switch (level) {
-        case LogLevel::FINE_TRACE:
-            of << "[FTRACE]\t" << message << std::endl;
-            break;
         case LogLevel::TRACE:
             of << "[TRACE]\t" << message << std::endl;
             break;

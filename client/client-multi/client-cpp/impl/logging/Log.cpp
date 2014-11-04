@@ -16,7 +16,7 @@
 
 #include "kaa/logging/Log.hpp"
 
-#if KAA_LOG_LEVEL > 0
+#if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
 
 #include <boost/format.hpp>
 
@@ -35,9 +35,9 @@ void kaa_log(const ILogger & logger, LogLevel level, const std::string &message,
     kaa_log(logger, level, message.c_str(), file, lineno);
 }
 
-void kaa_log(const ILogger & logger, LogLevel level, boost::format message, const char *file, size_t lineno)
+void kaa_log(const ILogger & logger, LogLevel level, const boost::format& message, const char *file, size_t lineno)
 {
-    kaa_log(logger, level, message.str(), file, lineno);
+    kaa_log(logger, level, message.str().c_str(), file, lineno);
 }
 
 }  // namespace kaa

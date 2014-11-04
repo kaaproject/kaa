@@ -19,7 +19,7 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#if KAA_LOG_LEVEL > 0
+#if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
 #include "kaa/logging/LoggerFactory.hpp"
 
 #include <string.h>
@@ -38,43 +38,44 @@
 
 namespace kaa {
 
-#if KAA_LOG_LEVEL > 0
+#if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
 void kaa_log(const ILogger & logger, LogLevel level, const char *message, const char *file, size_t lineno);
 void kaa_log(const ILogger & logger, LogLevel level, const std::string &message, const char *file, size_t lineno);
-void kaa_log(const ILogger & logger, LogLevel level, boost::format message, const char *file, size_t lineno);
+void kaa_log(const ILogger & logger, LogLevel level, const boost::format& message, const char *file, size_t lineno);
+
 #endif
 
-#if KAA_LOG_LEVEL > 6
-    #define KAA_LOG_FTRACE(message) kaa_log(LoggerFactory::getLogger(), LogLevel::FINE_TRACE, (message), __LOGFILE, __LINE__);
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FINE_TRACE
+    #define KAA_LOG_FTRACE(message) kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_FTRACE(message)
 #endif
-#if KAA_LOG_LEVEL > 5
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE
     #define KAA_LOG_TRACE(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_TRACE(message)
 #endif
-#if KAA_LOG_LEVEL > 4
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_DEBUG
     #define KAA_LOG_DEBUG(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_DEBUG(message)
 #endif
-#if KAA_LOG_LEVEL > 3
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_INFO
     #define KAA_LOG_INFO(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::INFO,       (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_INFO(message)
 #endif
-#if KAA_LOG_LEVEL > 2
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_WARNING
     #define KAA_LOG_WARN(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::WARNING,    (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_WARN(message)
 #endif
-#if KAA_LOG_LEVEL > 1
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_ERROR
     #define KAA_LOG_ERROR(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::ERROR,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_ERROR(message)
 #endif
-#if KAA_LOG_LEVEL > 0
+#if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL
     #define KAA_LOG_FATAL(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::FATAL,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_FATAL(message)

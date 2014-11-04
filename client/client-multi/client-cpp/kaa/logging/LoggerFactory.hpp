@@ -19,7 +19,7 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#if KAA_LOG_LEVEL > 0
+#if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
 
 #include "kaa/logging/ILogger.hpp"
 
