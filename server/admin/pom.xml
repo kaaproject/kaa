@@ -145,7 +145,19 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -186,6 +198,11 @@
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>log-shared</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -262,6 +279,12 @@
             </resource>
         </resources>
         <plugins>
+<!-- 		      <plugin> -->
+<!-- 		        <artifactId>maven-war-plugin</artifactId> -->
+<!-- 		        <configuration> -->
+<!-- 		          <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@-@{version}@.@{extension}@</outputFileNameMapping> -->
+<!-- 		        </configuration> -->
+<!-- 		      </plugin> -->
             <!-- REST documentation parse -->
             <plugin>
                 <groupId>org.bsc.maven</groupId>
@@ -754,6 +777,18 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>cdap</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
+                    <artifactId>config</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>cdap</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.operations.service.logs;
+package org.kaaproject.kaa.server.common.log.shared.appender;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,10 +34,10 @@ import org.slf4j.LoggerFactory;
 /**
  * The Class LogAppender.
  */
-public abstract class LogAppender {
+public abstract class AbstractLogAppender implements LogAppender {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(LogAppender.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractLogAppender.class);
 
     /** The Constant LOG_HEADER_VERSION. */
     private static final int LOG_HEADER_VERSION = 1;
@@ -58,11 +58,6 @@ public abstract class LogAppender {
     Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
 
     /**
-     * Release any resources allocated within the appender such as file handles, network connections, etc.
-     */
-    public abstract void close();
-
-    /**
      * Log in <code>LogAppender</code> specific way.
      *
      * @param logEventPack the pack of Log Events
@@ -77,38 +72,22 @@ public abstract class LogAppender {
      */
     public abstract void initLogAppender(LogAppenderDto appender);
 
-    /**
-     * Set the name of this appender.
-     *
-     * @param name the name of this appender
-     */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Return the name of this appender.
-     *
-     * @return the name of this appender
-     */
+    @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Gets the id.
-     *
-     * @return the id
-     */
+    @Override
     public String getAppenderId() {
         return appenderId;
     }
 
-    /**
-     * Set the id of appender.
-     *
-     * @param appenderId the id of this appender
-     */
+    @Override
     public void setAppenderId(String appenderId) {
         this.appenderId = appenderId;
     }
@@ -122,11 +101,7 @@ public abstract class LogAppender {
         return applicationToken;
     }
 
-    /**
-     * Sets the application token.
-     *
-     * @param applicationToken the applicationToken to set
-     */
+    @Override
     public void setApplicationToken(String applicationToken) {
         this.applicationToken = applicationToken;
     }
@@ -149,21 +124,13 @@ public abstract class LogAppender {
         this.header = header;
     }
 
-    /**
-     * Inits the.
-     *
-     * @param appender the appender
-     */
+    @Override
     public void init(LogAppenderDto appender) {
         this.header = appender.getHeaderStructure();
         initLogAppender(appender);
     }
 
-    /**
-     * Do append.
-     *
-     * @param logEventPack the log event pack
-     */
+    @Override
     public void doAppend(LogEventPack logEventPack) {
         if (logEventPack != null) {
             doAppend(logEventPack, generateHeader(logEventPack));

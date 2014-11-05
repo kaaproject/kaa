@@ -41,6 +41,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -203,6 +204,8 @@ public interface KaaAdminService extends RemoteService {
 
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException;
 
+    public List<LogAppenderInfoDto> getLogAppenderInfos() throws KaaAdminServiceException;
+    
     public List<SchemaDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException;
 
     public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;

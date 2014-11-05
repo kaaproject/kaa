@@ -27,12 +27,12 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import net.iharder.Base64;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
-import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -62,6 +62,8 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderInfoDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -75,17 +77,22 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
-import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
+import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
+import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service("kaaAdminService")
-public class KaaAdminServiceImpl implements KaaAdminService {
+public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
@@ -103,9 +110,34 @@ public class KaaAdminServiceImpl implements KaaAdminService {
     private CacheService cacheService;
 
     private PasswordEncoder passwordEncoder;
-
+    
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+    
+    private List<LogAppenderInfoDto> appenders = new ArrayList<>();
+    
+    private List<AppenderConfig> appenderConfigs = new ArrayList<>();
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        for (LogAppenderTypeDto type : LogAppenderTypeDto.values()) {
+            if (type != LogAppenderTypeDto.CUSTOM) {
+                appenders.add(new LogAppenderInfoDto(type));
+            }
+        }
+        ClassPathScanningCandidateComponentProvider scanner =
+                new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(KaaAppenderConfig.class));
+        Set<BeanDefinition> beans = scanner.findCandidateComponents("org.kaaproject.kaa.server.appenders");
+        for (BeanDefinition bean : beans) {
+            Class<?> clazz = Class.forName(bean.getBeanClassName());
+            AppenderConfig appenderConfig = (AppenderConfig)clazz.newInstance();
+            appenderConfigs.add(appenderConfig);
+            LogAppenderInfoDto appender = new LogAppenderInfoDto(LogAppenderTypeDto.CUSTOM,
+                    appenderConfig.getName(), appenderConfig.getDefaultConfig(), appenderConfig.getLogAppenderClass());
+            appenders.add(appender);
+        }
     }
 
     @Override
@@ -1098,6 +1130,13 @@ public class KaaAdminServiceImpl implements KaaAdminService {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+    
+    @Override
+    public List<LogAppenderInfoDto> getLogAppenderInfos()
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        return appenders;
     }
 
     @Override

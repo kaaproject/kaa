@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.logs;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 
 public class LogEventTest {
     

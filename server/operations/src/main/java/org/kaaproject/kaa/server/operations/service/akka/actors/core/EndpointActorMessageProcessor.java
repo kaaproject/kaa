@@ -50,6 +50,8 @@ import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
@@ -79,8 +81,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Syn
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.NettySessionResponseMessage;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
-import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
-import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FlumeBalancingTypeListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.LogTypeListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AppenderInfoListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 
 import com.google.gwt.user.client.ui.Button;
@@ -38,7 +38,7 @@ public interface LogAppenderView extends BaseDetailsView {
 
     CheckBox getStatus();
 
-    LogTypeListBox getType();
+    AppenderInfoListBox getAppenderInfo();
 
     SizedTextArea getDescription();
 
@@ -65,4 +65,12 @@ public interface LogAppenderView extends BaseDetailsView {
     void setPublicKey(String publicKey);
 
     void hideFileCongurationFields();
+    
+    void showCustomConfigurationFields();
+    
+    String getConfiguration();
+    
+    void setConfiguration(String configuration);
+    
+    void hideCustomConfigurationFields();
 }

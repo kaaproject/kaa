@@ -67,6 +67,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
@@ -691,6 +692,9 @@ public class AbstractTest {
                 break;
             case MONGO:
                 parameters.setParameters(new MongoAppenderParametersDto("testCollections"));
+                break;
+            case CUSTOM:
+                parameters.setParameters(new CustomAppenderParametersDto("CustomAppender", "org.kaaproject.TestAppender", "config"));
                 break;
         }
         logAppender.setProperties(parameters);

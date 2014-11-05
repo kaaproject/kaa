@@ -16,12 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.logs.filesystem;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.WriterAppender;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 
 /**
  * The interface FileSystemLogEventService service.
@@ -43,14 +38,6 @@ public interface FileSystemLogEventService {
      * @param path the path to logs directory
      */
     public void createUserAndGroup(LogAppenderDto appender, String path);
-
-    /**
-     * Save LogEventPacks.
-     *
-     * @param logEventPackDtos the domain objects
-     * @param logger the logger which will save logs
-     */
-    void save(List<LogEventDto> logEventPackDtos, Logger logger, WriterAppender fileAppender);
 
     /**
      * Remove all objects from directory.
