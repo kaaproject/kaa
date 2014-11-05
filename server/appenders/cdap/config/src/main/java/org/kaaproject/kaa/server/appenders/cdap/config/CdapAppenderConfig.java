@@ -32,7 +32,7 @@ public class CdapAppenderConfig implements AppenderConfig{
     
     public CdapAppenderConfig() {
         try {
-            defaultConfig = FileUtils.readResource("defaultConfig.properties");
+            defaultConfig = FileUtils.readResource("cdap-appender-default.properties");
         } catch (IOException e) {
             LOG.error("Unable to load default config!", e);
         }
