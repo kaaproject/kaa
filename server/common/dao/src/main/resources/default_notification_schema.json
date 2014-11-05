@@ -1,7 +1,6 @@
 {
     "type": "record",
     "name": "Notification",
-    "namespace": "org.kaa.notification",
-    "fields": [
-    ]
+    "namespace": "org.kaaproject.kaa.schema.base",
+    "fields": []
 }

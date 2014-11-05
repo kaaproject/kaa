@@ -33,6 +33,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.schema.base.Profile;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
@@ -63,18 +64,20 @@ public class ProfileServiceIT extends AbstractTest {
 
     private static final int CONFIGURATION_SCHEMA_VERSION = 1;
     private static final int PROFILE_SCHEMA_VERSION = 1;
+    private static final int NEW_PROFILE_SCHEMA_VERSION = 2;
 
     private static final String ENDPOINT_KEY = "ENDPOINT_KEY";
     private static final String CUSTOMER_NAME = "CUSTOMER_NAME";
     private static final String APP_NAME = "APP_NAME";
     private static final String APP_TOKEN = "APP_TOKEN";
 
-    private static final BasicEndpointProfile ENDPOINT_PROFILE = new BasicEndpointProfile("dummyprofile1");
-    private static final BasicEndpointProfile NEW_ENDPOINT_PROFILE = new BasicEndpointProfile("dummyprofile2");
+    private static final Profile ENDPOINT_PROFILE = new Profile();
+    private static final BasicEndpointProfile NEW_ENDPOINT_PROFILE = new BasicEndpointProfile("newprofile");
 
     protected static final Logger logger = LoggerFactory.getLogger(DeltaServiceIT.class);
 
-    private final GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
+    private final GenericAvroConverter<GenericRecord> baseAvroConverter = new GenericAvroConverter<GenericRecord>(ENDPOINT_PROFILE.SCHEMA$);
+    private final GenericAvroConverter<GenericRecord> newAvroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
 
     @Autowired
     protected ProfileService profileService;
@@ -94,6 +97,7 @@ public class ProfileServiceIT extends AbstractTest {
     private Tenant tenant;
     private Application application;
     private ProfileSchema profileSchema;
+    private ProfileSchema profileSchema2;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -108,7 +112,6 @@ public class ProfileServiceIT extends AbstractTest {
     @Before
     public void beforeTest() throws IOException, SQLException {
         clearDBData();
-
         tenant = new Tenant();
         tenant.setName(CUSTOMER_NAME);
         tenant = customerDao.save(tenant);
@@ -122,9 +125,16 @@ public class ProfileServiceIT extends AbstractTest {
         profileSchema = new ProfileSchema();
         profileSchema.setMajorVersion(PROFILE_SCHEMA_VERSION);
         profileSchema.setMinorVersion(0);
-        profileSchema.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        profileSchema.setSchema(Profile.SCHEMA$.toString());
         profileSchema.setApplication(application);
         profileSchema = profileSchemaDao.save(profileSchema);
+        
+        profileSchema2 = new ProfileSchema();
+        profileSchema2.setMajorVersion(NEW_PROFILE_SCHEMA_VERSION);
+        profileSchema2.setMinorVersion(0);
+        profileSchema2.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        profileSchema2.setApplication(application);
+        profileSchema2 = profileSchemaDao.save(profileSchema2);       
     }
 
     @After
@@ -134,7 +144,7 @@ public class ProfileServiceIT extends AbstractTest {
 
     @Test
     public void registerProfileServiceTest() throws IOException {
-        byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
+        byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
         RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
                 ENDPOINT_KEY.getBytes(),
                 new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
@@ -145,13 +155,13 @@ public class ProfileServiceIT extends AbstractTest {
         Assert.assertTrue(Arrays.equals(ENDPOINT_KEY.getBytes(), dto.getEndpointKey()));
         Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(ENDPOINT_KEY.getBytes()).getData(),
                 dto.getEndpointKeyHash()));
-        Assert.assertEquals(avroConverter.endcodeToJson(ENDPOINT_PROFILE), dto.getProfile().replaceAll(" ", ""));
+        Assert.assertEquals(baseAvroConverter.endcodeToJson(ENDPOINT_PROFILE), dto.getProfile().replaceAll(" ", ""));
         Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(profile).getData(), dto.getProfileHash()));
     }
 
     @Test
     public void updateProfileServiceTest() throws IOException {
-        byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
+        byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
         RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
                 ENDPOINT_KEY.getBytes(),
                 new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
@@ -159,18 +169,18 @@ public class ProfileServiceIT extends AbstractTest {
 
         EndpointProfileDto oldDto = profileService.registerProfile(request);
 
-        byte[] newProfile = avroConverter.encode(NEW_ENDPOINT_PROFILE);
+        byte[] newProfile = newAvroConverter.encode(NEW_ENDPOINT_PROFILE);
         UpdateProfileRequest updateRequest = new UpdateProfileRequest(APP_TOKEN,
                 EndpointObjectHash.fromSHA1(ENDPOINT_KEY.getBytes()),
                 null,
                 newProfile,
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1));
+                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, NEW_PROFILE_SCHEMA_VERSION, 1, 1, null, 1));
         EndpointProfileDto newDto = profileService.updateProfile(updateRequest);
 
         Assert.assertNotNull(newDto);
         Assert.assertNotNull(newDto.getId());
         Assert.assertEquals(oldDto.getId(), newDto.getId());
-        Assert.assertEquals(avroConverter.endcodeToJson(NEW_ENDPOINT_PROFILE), newDto.getProfile().replaceAll(" ", ""));
+        Assert.assertEquals(newAvroConverter.endcodeToJson(NEW_ENDPOINT_PROFILE), newDto.getProfile().replaceAll(" ", ""));
         Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(newProfile).getData(),
                 newDto.getProfileHash()));
     }
