@@ -34,6 +34,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
@@ -458,7 +459,7 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         dto.setEndpointKeyHash(endpointKeyHash);
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setProfile(profile != null ? profile.toString() : null);
+        dto.setProfile(profile != null ? profile.toString() : "");
         dto.setProfileHash(profileHash);
         dto.setProfileVersion(profileVersion);
         dto.setProfileSchemaId(profileSchemaId);

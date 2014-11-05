@@ -69,5 +69,11 @@
      },
      {"name": "nullableRecordField", "type": ["org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild", "null"]}
  ]
+},
+{
+    "type": "record",
+    "name": "Profile",
+    "namespace": "org.kaaproject.kaa.schema.base",
+    "fields": []
 }
 ]

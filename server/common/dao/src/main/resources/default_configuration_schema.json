@@ -1,7 +1,6 @@
 {
     "type": "record",
     "name": "Configuration",
-    "namespace": "org.kaa.config",
-    "fields": [
-    ]
+    "namespace": "org.kaaproject.kaa.schema.base",
+    "fields": []
 }
