@@ -52,9 +52,11 @@ KaaClient::KaaClient()
 
 }
 
-void KaaClient::init(int options)
+void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 {
     options_ = options;
+    KAA_LOG_INFO(boost::format("Initializing Kaa with options %1%") % options_);
+
     initClientKeys();
 
 #ifdef KAA_USE_CONFIGURATION
@@ -198,23 +200,47 @@ void KaaClient::initKaaTransport()
     notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
-    bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
-    bootstrapChannel_->setDemultiplexer(bootstrapProcessor_.get());
-    bootstrapChannel_->setMultiplexer(bootstrapProcessor_.get());
-    KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
-    channelManager_->addChannel(bootstrapChannel_.get());
+    if (options_ & KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) {
+        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
+        bootstrapChannel_->setDemultiplexer(bootstrapProcessor_.get());
+        bootstrapChannel_->setMultiplexer(bootstrapProcessor_.get());
+        KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
+        channelManager_->addChannel(bootstrapChannel_.get());
+    }
+#endif
+#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
+    if (options_ & KaaOption::USE_DEFAULT_OPERATION_HTTP_CHANNEL) {
+        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), clientKeys_));
+        opsHttpChannel_->setMultiplexer(operationsProcessor_.get());
+        opsHttpChannel_->setDemultiplexer(operationsProcessor_.get());
+        KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP channel: %1%") % opsHttpChannel_.get());
+        channelManager_->addChannel(opsHttpChannel_.get());
+    }
+#endif
+#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
+    if (options_ & KaaOption::USE_DEFAULT_OPERATION_LONG_POLL_CHANNEL) {
+        opsLongPollChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), clientKeys_));
+        opsLongPollChannel_->setMultiplexer(operationsProcessor_.get());
+        opsLongPollChannel_->setDemultiplexer(operationsProcessor_.get());
+        KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP Long Poll channel: %1%") % opsLongPollChannel_.get());
+        channelManager_->addChannel(opsLongPollChannel_.get());
+    }
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
-    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
-    opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
-    opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
-    KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
-    channelManager_->addChannel(opsTcpChannel_.get());
+    if (options_ & KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL) {
+        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
+        opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
+        opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
+        KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
+        channelManager_->addChannel(opsTcpChannel_.get());
+    }
 #endif
 #ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
-    ConnectivityCheckerPtr connectivityChecker(new PingConnectivityChecker(
-            *static_cast<KaaChannelManager*>(channelManager_.get())));
-    channelManager_->setConnectivityChecker(connectivityChecker);
+    if (options_ & KaaOption::USE_DEFAULT_CONNECTIVITY_CHECKER) {
+        ConnectivityCheckerPtr connectivityChecker(new PingConnectivityChecker(
+                *static_cast<KaaChannelManager*>(channelManager_.get())));
+        channelManager_->setConnectivityChecker(connectivityChecker);
+    }
 #endif
 }
 
