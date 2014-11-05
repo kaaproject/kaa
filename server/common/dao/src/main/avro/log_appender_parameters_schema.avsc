@@ -101,28 +101,22 @@
                         {
                             "name":"name",
                             "type":[
-                                {
-                                    "type":"string"
-                                },
-                                "null"
+                                    "string", 
+                                    "null"
                             ]
                         },
                         {
                             "name":"appenderClassName",
                             "type":[
-                                {
-                                    "type":"string"
-                                },
-                                "null"
+                                    "string", 
+                                    "null"
                             ]
                         },
                         {
                             "name":"configuration",
                             "type":[
-                                {
-                                    "type":"string"
-                                },
-                                "null"
+                                    "string", 
+                                    "null"
                             ]
                         }
                     ]

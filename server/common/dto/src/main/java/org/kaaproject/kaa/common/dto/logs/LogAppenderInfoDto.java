@@ -81,28 +81,36 @@ public class LogAppenderInfoDto implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((appenderClassName == null) ? 0 : appenderClassName.hashCode());
+        result = prime
+                * result
+                + ((appenderClassName == null) ? 0 : appenderClassName
+                        .hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LogAppenderInfoDto other = (LogAppenderInfoDto) obj;
         if (appenderClassName == null) {
-            if (other.appenderClassName != null)
+            if (other.appenderClassName != null) {
                 return false;
-        } else if (!appenderClassName.equals(other.appenderClassName))
+            }
+        } else if (!appenderClassName.equals(other.appenderClassName)) {
             return false;
-        if (type != other.type)
+        }
+        if (type != other.type) {
             return false;
+        }
         return true;
     }
 
