@@ -67,7 +67,7 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
                 new StringValueProvider<LogAppenderDto>() {
             @Override
             public String getValue(LogAppenderDto item) {
-                if (item.getType()==LogAppenderTypeDto.CUSTOM) {
+                if (item.getType() == LogAppenderTypeDto.CUSTOM) {
                     return ((CustomAppenderParametersDto)item.getProperties().getParameters()).getName();
                 }
                 else {
