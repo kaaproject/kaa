@@ -224,7 +224,6 @@ public abstract class AbstractKaaClient implements KaaClient {
         transports.put(TransportType.PROFILE, profileTransport);
         eventTransport.setEventManager(eventManager);
         transports.put(TransportType.EVENT, eventTransport);
-        notificationTransport.setNotificationManager(notificationManager);
         notificationTransport.setNotificationProcessor(notificationManager);
         transports.put(TransportType.NOTIFICATION, notificationTransport);
         configurationTransport.setConfigurationHashContainer(configurationPersistenceManager);
