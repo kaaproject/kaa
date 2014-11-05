@@ -50,7 +50,7 @@ public class CdapLogAppender extends CustomLogAppender {
     private static final String HOST = "host";
     private static final String PORT = "port";
     private static final String SSL = "ssl";
-    private static final String VERIFY_SSL_CERT = "verify_SSL_CERT";
+    private static final String VERIFY_SSL_CERT = "verify_ssl_cert";
     private static final String VERSION = "version";
     private static final String AUTH_CLIENT = "auth_client";
     private static final String CALLBACK_THREAD_POOL_SIZE = "callback_thread_pool_size";
@@ -63,7 +63,6 @@ public class CdapLogAppender extends CustomLogAppender {
     private static final String DEFAULT_PORT = "10000";
     private static final String DEFAULT_SSL = "false";
     private static final String DEFAULT_CALLBACK_THREAD_POOL_SIZE = "2";
-    private static final String DEFAULT_WRITER_POOL_SIZE = "10";
 
     /**
      * Max values for security purposes
@@ -119,10 +118,6 @@ public class CdapLogAppender extends CustomLogAppender {
         }
     }
 
-    private static int getPropertyValue(Properties properties, String propertyName, String defaultValue, int maxValue) {
-        return Math.min(Integer.parseInt(properties.getProperty(propertyName, defaultValue)), maxValue);
-    }
-
     @Override
     public void close() {
         closed = true;
@@ -134,15 +129,25 @@ public class CdapLogAppender extends CustomLogAppender {
         LOG.debug("Stopped Cdap log appender.");
     }
 
+    private static int getPropertyValue(Properties properties, String propertyName, int maxValue) {
+        return Math.min(Integer.parseInt(properties.getProperty(propertyName)), maxValue);
+    }
+
+    private static int getPropertyValue(Properties properties, String propertyName, String defaultValue, int maxValue) {
+        return Math.min(Integer.parseInt(properties.getProperty(propertyName, defaultValue)), maxValue);
+    }
+
     private StreamClient initStreamClient(Properties properties) throws Exception {
         String host = properties.getProperty(HOST, DEFAULT_HOST);
         int port = Integer.valueOf(properties.getProperty(PORT, DEFAULT_PORT));
         boolean ssl = Boolean.parseBoolean(properties.getProperty(SSL, DEFAULT_SSL));
-        RestStreamClient.Builder builder = RestStreamClient.builder(host, port).ssl(ssl);
+        RestStreamClient.Builder builder = RestStreamClient.builder(host, port);
 
-        if(properties.containsKey(WRITER_POOL_SIZE)){
-            builder.writerPoolSize(getPropertyValue(properties, WRITER_POOL_SIZE, DEFAULT_WRITER_POOL_SIZE,
-                    MAX_WRITER_POOL_SIZE));
+        if (properties.containsKey(SSL)) {
+            builder.ssl(ssl);
+        }
+        if (properties.containsKey(WRITER_POOL_SIZE)) {
+            builder.writerPoolSize(getPropertyValue(properties, WRITER_POOL_SIZE, MAX_WRITER_POOL_SIZE));
         }
         if (properties.containsKey(VERSION)) {
             builder.version(properties.getProperty(VERSION));
