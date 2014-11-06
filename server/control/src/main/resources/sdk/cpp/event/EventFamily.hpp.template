@@ -25,7 +25,7 @@
 #include <vector>
 #include <sstream>
 
-#include <cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/gen/EndpointGen.hpp"
