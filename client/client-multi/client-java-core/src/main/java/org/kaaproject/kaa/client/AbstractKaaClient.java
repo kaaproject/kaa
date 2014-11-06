@@ -33,6 +33,7 @@ import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.ConfigurationTransport;
 import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
 import org.kaaproject.kaa.client.channel.KaaTransport;
@@ -48,7 +49,9 @@ import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
+import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
+import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultBootstrapTransport;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultConfigurationTransport;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultEventTransport;
@@ -148,8 +151,7 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     private final EndpointObjectHash publicKeyHash;
 
-    private final DefaultBootstrapChannel defaultBootstrapChannel;
-    private final DefaultOperationTcpChannel defaultOperationTcpChannel;
+    private final Map<ChannelType, KaaDataChannel> defaultChannels = new HashMap<ChannelType, KaaDataChannel>();
 
     AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         this(new KaaClientProperties());
@@ -189,12 +191,6 @@ public abstract class AbstractKaaClient implements KaaClient {
 
         bootstrapDataProcessor.setBootstrapTransport(bootstratpTransport);
 
-
-        defaultBootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
-
-        defaultBootstrapChannel.setMultiplexer(bootstrapDataProcessor);
-        defaultBootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
-
         profileManager = new DefaultProfileManager(profileTransport);
         bootstrapManager = new DefaultBootstrapManager(bootstratpTransport);
         notificationManager = new DefaultNotificationManager(this.kaaClientState, notificationTransport);
@@ -204,12 +200,22 @@ public abstract class AbstractKaaClient implements KaaClient {
         logCollector = new DefaultLogCollector(logTransport);
 
         channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
-        defaultOperationTcpChannel = new DefaultOperationTcpChannel(kaaClientState, channelManager);
-        defaultOperationTcpChannel.setMultiplexer(operationsDataProcessor);
-        defaultOperationTcpChannel.setDemultiplexer(operationsDataProcessor);
 
-        channelManager.addChannel(defaultBootstrapChannel);
-        channelManager.addChannel(defaultOperationTcpChannel);
+        defaultChannels.put(ChannelType.KAATCP, new DefaultOperationTcpChannel(kaaClientState, channelManager));
+        defaultChannels.put(ChannelType.BOOTSTRAP, new DefaultBootstrapChannel(this, kaaClientState));
+        defaultChannels.put(ChannelType.HTTP, new DefaultOperationHttpChannel(this, kaaClientState));
+        defaultChannels.put(ChannelType.HTTP_LP, new DefaultOperationsChannel(this, kaaClientState));
+        for (Map.Entry<ChannelType, KaaDataChannel> channel : defaultChannels.entrySet()) {
+            if (channel.getKey().equals(ChannelType.BOOTSTRAP)) {
+                channel.getValue().setMultiplexer(bootstrapDataProcessor);
+                channel.getValue().setDemultiplexer(bootstrapDataProcessor);
+            } else {
+                channel.getValue().setMultiplexer(operationsDataProcessor);
+                channel.getValue().setDemultiplexer(operationsDataProcessor);
+            }
+        }
+        channelManager.addChannel(defaultChannels.get(ChannelType.BOOTSTRAP));
+        channelManager.addChannel(defaultChannels.get(ChannelType.KAATCP));
         bootstrapManager.setChannelManager(channelManager);
 
         publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
@@ -301,17 +307,25 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     void stop() {
         kaaClientState.persist();
-        defaultBootstrapChannel.shutdown();
-        defaultOperationTcpChannel.shutdown();
+        DefaultBootstrapChannel bootstrap = (DefaultBootstrapChannel) defaultChannels.get(ChannelType.BOOTSTRAP);
+        bootstrap.shutdown();
+        DefaultOperationTcpChannel opsTcp = (DefaultOperationTcpChannel) defaultChannels.get(ChannelType.KAATCP);
+        opsTcp.shutdown();
+        DefaultOperationHttpChannel opsHttp = (DefaultOperationHttpChannel) defaultChannels.get(ChannelType.HTTP);
+        opsHttp.shutdown();
+        DefaultOperationsChannel opsLp = (DefaultOperationsChannel) defaultChannels.get(ChannelType.HTTP_LP);
+        opsLp.shutdown();
     }
 
     void pause() {
         kaaClientState.persist();
-        defaultBootstrapChannel.pause();
+        DefaultBootstrapChannel bootstrap = (DefaultBootstrapChannel) defaultChannels.get(ChannelType.BOOTSTRAP);
+        bootstrap.pause();
     }
 
     void resume() {
-        defaultBootstrapChannel.resume();
+        DefaultBootstrapChannel bootstrap = (DefaultBootstrapChannel) defaultChannels.get(ChannelType.BOOTSTRAP);
+        bootstrap.resume();
     }
 
     @Override
@@ -402,5 +416,10 @@ public abstract class AbstractKaaClient implements KaaClient {
     @Override
     public LogCollector getLogCollector() {
         return logCollector;
+    }
+
+    @Override
+    public KaaDataChannel getDefaultChannel(ChannelType type) {
+        return defaultChannels.get(type);
     }
 }

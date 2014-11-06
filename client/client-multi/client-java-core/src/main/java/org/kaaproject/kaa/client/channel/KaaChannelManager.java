@@ -97,6 +97,18 @@ import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 public interface KaaChannelManager {
 
     /**
+     * Updates the manager by setting the channel to specified {@link TransportType}.
+     *
+     * @param transport
+     *            transport type which is going to receive updates using the specified channel.
+     * @param channel
+     *            channel to be added.
+     * @see KaaDataChannel
+     *
+     */
+    void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException;
+
+    /**
      * Updates the manager by adding the channel.
      *
      * @param channel
@@ -114,6 +126,15 @@ public interface KaaChannelManager {
      *
      */
     void removeChannel(KaaDataChannel channel);
+
+    /**
+     * Updates the manager by removing the channel from the manager.
+     *
+     * @param id the channel's id.
+     * @see KaaDataChannel
+     *
+     */
+    void removeChannel(String id);
 
     /**
      * Retrieves the list of current channels.

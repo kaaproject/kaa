@@ -20,6 +20,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
 import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
@@ -32,6 +33,7 @@ import org.kaaproject.kaa.client.logging.LogCollector;
 import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 /**
  * <p>Interface for the Kaa client.</p>
@@ -55,6 +57,7 @@ import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
  * @see PublicKey
  * @see PrivateKey
  * @see LogCollector
+ * @see KaaDataChannel
  */
 public interface KaaClient {
 
@@ -203,9 +206,18 @@ public interface KaaClient {
     PrivateKey getClientPrivateKey();
 
     /**
-     * Retrieves Kaa log collector
+     * <p>Retrieves Kaa log collector.</p>
      *
      * @return LogCollector object
      */
     LogCollector getLogCollector();
+
+    /**
+     * <p>Retrieves default channel implementation for the specified {@link ChannelType}.</p>
+     *
+     * @param type
+     *          the channel's type (HTTP, KAATCP, etc.)
+     * @return KaaDataChannel default implementation for the specified {@link ChannelType}
+     */
+    KaaDataChannel getDefaultChannel(ChannelType type);
 }

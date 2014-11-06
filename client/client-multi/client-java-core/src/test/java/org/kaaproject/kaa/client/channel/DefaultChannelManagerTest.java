@@ -238,7 +238,7 @@ public class DefaultChannelManagerTest {
     }
 
     @Test
-    public void testConnectivityChacker() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public void testConnectivityChecker() throws NoSuchAlgorithmException, InvalidKeySpecException {
         Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
         bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
                 (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
@@ -267,6 +267,61 @@ public class DefaultChannelManagerTest {
 
         channelManager.addChannel(channel3);
         Mockito.verify(channel3, Mockito.times(1)).setConnectivityChecker(checker);
+    }
+
+    @Test
+    public void testUpdateForSpecifiedTransport() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
+        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
+        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
+                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+
+        BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+
+        Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
+        types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
+        types.put(TransportType.LOGGING, ChannelDirection.UP);
+        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
+        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
+        Mockito.when(channel.getId()).thenReturn("channel1");
+
+        KaaDataChannel channel2 = Mockito.mock(KaaDataChannel.class);
+        Mockito.when(channel2.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel2.getSupportedTransportTypes()).thenReturn(types);
+        Mockito.when(channel2.getId()).thenReturn("channel2");
+
+        channelManager.addChannel(channel2);
+        assertEquals(channel2, channelManager.getChannelByTransportType(TransportType.LOGGING));
+        assertEquals(channel2, channelManager.getChannelByTransportType(TransportType.CONFIGURATION));
+
+        channelManager.setChannel(TransportType.LOGGING, channel);
+        channelManager.setChannel(TransportType.LOGGING, null);
+
+        assertEquals(channel, channelManager.getChannelByTransportType(TransportType.LOGGING));
+        assertEquals(channel2, channelManager.getChannelByTransportType(TransportType.CONFIGURATION));
+
+        channelManager.removeChannel(channel2.getId());
+        assertEquals(channel, channelManager.getChannelByTransportType(TransportType.CONFIGURATION));
+    }
+
+    @Test(expected=KaaInvalidChannelException.class)
+    public void testNegativeUpdateForSpecifiedTransport() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
+        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
+        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
+                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+
+        BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+
+        Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
+        types.put(TransportType.CONFIGURATION, ChannelDirection.DOWN);
+        types.put(TransportType.LOGGING, ChannelDirection.UP);
+        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
+        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
+
+        channelManager.setChannel(TransportType.CONFIGURATION, channel);
     }
 
 }
