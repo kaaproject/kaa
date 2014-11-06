@@ -17,13 +17,15 @@
 #ifndef ${event_family_class_name}_HPP_
 #define ${event_family_class_name}_HPP_
 
+#ifdef KAA_USE_EVENTS
+
 #include <set>
 #include <list>
 #include <string>
 #include <vector>
 #include <sstream>
 
-#include <boost/cstdint.hpp>
+#include <cstdint.hpp>
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/gen/EndpointGen.hpp"
@@ -55,7 +57,7 @@ public:
     }
 
     virtual void onGenericEvent(const std::string& fqn
-                              , const std::vector<boost::uint8_t>& data
+                              , const std::vector<std::uint8_t>& data
                               , const std::string& source)
     {
         if (fqn.empty() || data.empty()) {
@@ -103,5 +105,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif /* ${event_family_class_name}_HPP_ */

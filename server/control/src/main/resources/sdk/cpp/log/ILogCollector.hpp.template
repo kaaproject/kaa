@@ -17,6 +17,10 @@
 #ifndef ILOGCOLLECTOR_HPP_
 #define ILOGCOLLECTOR_HPP_
 
+#ifdef KAA_USE_LOGGING
+
+#include "kaa/KaaDefaults.hpp"
+
 #include "kaa/log/LogRecord.hpp"
 #include "kaa/log/ILogStorage.hpp"
 #include "kaa/log/ILogStorageStatus.hpp"
@@ -80,5 +84,6 @@ public:
 
 }  // namespace kaa
 
+#endif
 
 #endif /* ILOGCOLLECTOR_HPP_ */
