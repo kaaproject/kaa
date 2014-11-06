@@ -83,11 +83,11 @@ public class EndpointConfigurationDto implements HasId, Serializable {
         }
 
         EndpointConfigurationDto that = (EndpointConfigurationDto) o;
-        if (!Arrays.equals(configuration, that.configuration)) {
+        if (!Arrays.equals(configurationHash, that.configurationHash)) {
             return false;
         }
 
-        return Arrays.equals(configurationHash, that.configurationHash);
+        return Arrays.equals(configuration, that.configuration);
     }
 
     @Override
