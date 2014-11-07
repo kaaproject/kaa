@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.server.operations;
 
-import java.nio.charset.Charset;
-
+import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,8 @@ public class OperationsServerApplication {
      * @param args the arguments
      */
     public static void main(String[] args) {
-        LOG.info("Application starting.. " + Charset.defaultCharset().name());
+        LOG.info("Operations Server application starting...");
+        Environment.logState();
 
         String applicationContextXml = DEFAULT_APPLICATION_CONTEXT_XML;
         if (args.length>0) {
@@ -52,6 +52,7 @@ public class OperationsServerApplication {
 
         operationsService.start();
         ctx.close();
+        
         LOG.info("Operations Server Application stopped.");
     }
 }
