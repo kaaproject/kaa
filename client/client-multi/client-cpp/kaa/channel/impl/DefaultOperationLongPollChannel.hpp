@@ -55,12 +55,11 @@ public:
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
-    void executeTask();
-
 private:
     void startPoll();
     void stopPoll();
     void postTask();
+    void executeTask();
 
 private:
     static const std::string CHANNEL_ID;

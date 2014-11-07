@@ -163,8 +163,9 @@ void DefaultOperationLongPollChannel::executeTask()
 
 void DefaultOperationLongPollChannel::sync(TransportType type)
 {
-    auto it = SUPPORTED_TYPES.find(type);
-    if (it != SUPPORTED_TYPES.end() && (it->second == ChannelDirection::UP || it->second == ChannelDirection::BIDIRECTIONAL)) {
+    const auto& types = getSupportedTransportTypes();
+    auto it = types.find(type);
+    if (it != types.end() && (it->second == ChannelDirection::UP || it->second == ChannelDirection::BIDIRECTIONAL)) {
         KAA_MUTEX_LOCKING("channelGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");

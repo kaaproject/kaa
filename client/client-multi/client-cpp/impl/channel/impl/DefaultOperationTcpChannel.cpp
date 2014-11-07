@@ -233,7 +233,7 @@ boost::system::error_code DefaultOperationTcpChannel::sendConnect()
     KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
     KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Sending CONNECT message") % getId());
-    const auto& requestBody = multiplexer_->compileRequest(SUPPORTED_TYPES);
+    const auto& requestBody = multiplexer_->compileRequest(getSupportedTransportTypes());
     const auto& requestEncoded = encDec_->encodeData(requestBody.data(), requestBody.size());
     const auto& sessionKey = encDec_->getEncodedSessionKey();
     const auto& signature = encDec_->signData(sessionKey.begin(), sessionKey.size());
@@ -377,8 +377,9 @@ void DefaultOperationTcpChannel::setServer(IServerInfoPtr server)
 
 void DefaultOperationTcpChannel::sync(TransportType type)
 {
-    auto it = SUPPORTED_TYPES.find(type);
-    if (it != SUPPORTED_TYPES.end() && (it->second == ChannelDirection::UP || it->second == ChannelDirection::BIDIRECTIONAL)) {
+    const auto& types = getSupportedTransportTypes();
+    auto it = types.find(type);
+    if (it != types.end() && (it->second == ChannelDirection::UP || it->second == ChannelDirection::BIDIRECTIONAL)) {
         KAA_MUTEX_LOCKING("channelGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
@@ -390,7 +391,7 @@ void DefaultOperationTcpChannel::sync(TransportType type)
 
                 std::map<TransportType, ChannelDirection> types;
                 types.insert(std::make_pair(type, it->second));
-                for (auto typeIt = SUPPORTED_TYPES.begin(); typeIt != SUPPORTED_TYPES.end(); ++typeIt) {
+                for (auto typeIt = types.begin(); typeIt != types.end(); ++typeIt) {
                     if (typeIt->first != type) {
                         types.insert(std::make_pair(typeIt->first, ChannelDirection::DOWN));
                     }
@@ -424,7 +425,7 @@ void DefaultOperationTcpChannel::syncAll()
             KAA_UNLOCK(lock);
             KAA_MUTEX_UNLOCKED("channelGuard_");
 
-            boost::system::error_code errorCode = sendKaaSync(SUPPORTED_TYPES);
+            boost::system::error_code errorCode = sendKaaSync(getSupportedTransportTypes());
             if (errorCode) {
                 KAA_LOG_ERROR(boost::format("Channel \"%1%\". Failed to sync: %2%") % getId() % errorCode.message());
                 onServerFailed();

@@ -35,6 +35,16 @@ class IKaaChannelManager {
 public:
 
     /**
+     * Updates the manager by setting the channel to the specified transport type.
+     *
+     * @param type transport type which is going to receive updates using the specified channel.
+     * @param channel channel to be added.
+     * @see IDataChannel
+     *
+     */
+    virtual void setChannel(TransportType type, IDataChannelPtr channel) = 0;
+
+    /**
      * Updates the manager by adding the channel.
      *
      * @param channel channel to be added.
@@ -42,6 +52,15 @@ public:
      *
      */
     virtual void addChannel(IDataChannelPtr channel) = 0;
+
+    /**
+     * Updates the manager by removing the channel from the manager.
+     *
+     * @param id the channel's id.
+     * @see KaaDataChannel
+     *
+     */
+    virtual void removeChannel(const std::string& id) = 0;
 
     /**
      * Updates the manager by removing the channel from the manager.

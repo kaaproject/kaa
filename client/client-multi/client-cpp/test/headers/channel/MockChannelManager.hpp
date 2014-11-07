@@ -25,8 +25,10 @@ namespace kaa {
 
 class MockChannelManager: public IKaaChannelManager {
 public:
+    virtual void setChannel(TransportType type, IDataChannelPtr channel) {}
     virtual void addChannel(IDataChannelPtr channel) {}
     virtual void removeChannel(IDataChannelPtr channel) {}
+    virtual void removeChannel(const std::string& id) {}
 
     virtual std::list<IDataChannelPtr> getChannels() {
         static std::list<IDataChannelPtr> channels;
