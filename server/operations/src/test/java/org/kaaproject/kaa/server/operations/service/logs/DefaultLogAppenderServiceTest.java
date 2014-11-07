@@ -36,6 +36,8 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogEventService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender;
 import org.springframework.test.util.ReflectionTestUtils;
 

@@ -16,6 +16,8 @@
 package org.kaaproject.kaa.server.operations.service.logs;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogAppender;
 import org.kaaproject.kaa.server.operations.service.logs.flume.FlumeLogAppender;
 import org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender;
@@ -49,6 +51,19 @@ public class DefaultLogAppenderBuilder implements LogAppenderBuilder {
                     break;
                 case MONGO:
                     logAppender = applicationContext.getBean(MongoDBLogAppender.class);
+                    break;
+                case CUSTOM:
+                    CustomAppenderParametersDto customParameters = 
+                        (CustomAppenderParametersDto)appenderConfig.getProperties().getParameters();
+                    try {
+                        @SuppressWarnings("unchecked")
+                        Class<LogAppender> appenderClass = (Class<LogAppender>) Class.forName(customParameters.getAppenderClassName());
+                        logAppender = appenderClass.newInstance();
+                    } catch (ClassNotFoundException e) {
+                        LOG.error("Unable to find custom appender class " + customParameters.getAppenderClassName(), e);
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        LOG.error("Unable to instantiate custom appender from class " + customParameters.getAppenderClassName(), e);
+                    } 
                     break;
                 default:
                     LOG.debug("Incorrect type of log appender [{}].", appenderConfig.getType());

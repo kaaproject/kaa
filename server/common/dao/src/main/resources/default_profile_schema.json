@@ -1,7 +1,6 @@
 {
     "type": "record",
     "name": "Profile",
-    "namespace": "org.kaa.profile",
-    "fields": [
-    ]
+    "namespace": "org.kaaproject.kaa.schema.base",
+    "fields": []
 }

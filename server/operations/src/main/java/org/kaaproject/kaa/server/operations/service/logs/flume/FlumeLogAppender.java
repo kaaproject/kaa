@@ -18,9 +18,9 @@ import org.apache.flume.EventDeliveryException;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
+import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
-import org.kaaproject.kaa.server.operations.service.logs.LogAppender;
-import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
 import org.kaaproject.kaa.server.operations.service.logs.flume.client.FlumeClientManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
-public class FlumeLogAppender extends LogAppender {
+public class FlumeLogAppender extends AbstractLogAppender {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlumeLogAppender.class);
 

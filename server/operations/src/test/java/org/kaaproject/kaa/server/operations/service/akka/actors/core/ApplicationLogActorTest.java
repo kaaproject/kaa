@@ -31,13 +31,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
-import org.kaaproject.kaa.server.operations.service.logs.LogAppender;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
-import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
-import org.kaaproject.kaa.server.operations.service.logs.LogSchema;
 import org.kaaproject.kaa.server.operations.service.logs.flume.FlumeLogAppender;
 import org.springframework.test.util.ReflectionTestUtils;
 

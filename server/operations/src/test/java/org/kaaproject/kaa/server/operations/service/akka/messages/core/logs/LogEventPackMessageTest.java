@@ -22,9 +22,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
-import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
-import org.kaaproject.kaa.server.operations.service.logs.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 
 public class LogEventPackMessageTest {
     

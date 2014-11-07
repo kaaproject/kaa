@@ -41,6 +41,48 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>thrift</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>thrift-cli-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>thrift-cli-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>zk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.client</groupId>
+            <artifactId>client-java-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server</groupId>
+            <artifactId>operations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.common</groupId>
+            <artifactId>endpoint-shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.avrogenc</groupId>
+            <artifactId>avrogenc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>dao</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
@@ -62,37 +104,19 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>log4j-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>thrift</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>thrift-cli-server</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>thrift-cli-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>dao</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>zk</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -101,38 +125,18 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>${commons-codec.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-compiler</artifactId>
-            <version>${avro.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.client</groupId>
-            <artifactId>client-java-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.common</groupId>
-            <artifactId>endpoint-shared</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server</groupId>
-            <artifactId>operations</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>dao</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -147,13 +151,13 @@
             <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>        
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -163,18 +167,7 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
-            <version>${curator.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.avrogenc</groupId>
-            <artifactId>avrogenc</artifactId>
-            <version>0.6.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-        	<groupId>org.apache.velocity</groupId>
-        	<artifactId>velocity</artifactId>
-        	<version>1.7</version>
         </dependency>
     </dependencies>
 
@@ -367,7 +360,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>

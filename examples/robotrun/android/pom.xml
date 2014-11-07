@@ -55,21 +55,4 @@
         </profile>
     </profiles>
 
-   <build>
-       <plugins>
-           <plugin>
-               <groupId>org.apache.rat</groupId>
-               <artifactId>apache-rat-plugin</artifactId>
-               <version>${rat.version}</version>
-               <configuration>
-                   <excludes>
-                       <exclude>appcompat-v7/**</exclude>
-                       <exclude>**/.readme</exclude>
-                       <exclude>**/*.properties</exclude>
-                   </excludes>
-               </configuration>
-           </plugin>
-       </plugins>
-   </build>
-
 </project>

@@ -18,9 +18,9 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
 
 import java.util.List;
 
-import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
-import org.kaaproject.kaa.server.operations.service.logs.LogEventPack;
-import org.kaaproject.kaa.server.operations.service.logs.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 
 /**
  * The Class LogEventPackMessage.
