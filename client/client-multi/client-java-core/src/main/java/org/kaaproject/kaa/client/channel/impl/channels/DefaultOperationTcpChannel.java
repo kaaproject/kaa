@@ -79,7 +79,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private static final int PING_TIMEOUT = 100;
     private static final int CHANNEL_TIMEOUT = 200;
-    
+
     private static final String CHANNEL_ID = "default_operation_tcp_channel";
 
     private KaaTcpServerInfo currentServer;
@@ -101,7 +101,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final int RECONNECT_TIMEOUT = 5; // in sec
     private ConnectivityChecker connectivityChecker;
-    
+
 
     private final List<TransportType> ackTypes = new ArrayList<TransportType>();
 
@@ -298,7 +298,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private void sendConnect() throws Exception {
         LOG.debug("Sending Connect from channel [{}]", getId());
-        byte [] body = multiplexer.compileRequest(SUPPORTED_TYPES);
+        byte [] body = multiplexer.compileRequest(getSupportedTransportTypes());
         byte [] requestBodyEncoded = encDec.encodeData(body);
         byte [] sessionKey = encDec.getEncodedSessionKey();
         byte [] signature = encDec.sign(sessionKey);
@@ -366,7 +366,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private void schedulePingTask() {
         if (executor != null) {
             LOG.debug("Scheduling a ping task ({} seconds) for channel [{}]", PING_TIMEOUT, getId());
-            pingTaskFuture = executor.schedule(pingTask, PING_TIMEOUT, TimeUnit.SECONDS);   
+            pingTaskFuture = executor.schedule(pingTask, PING_TIMEOUT, TimeUnit.SECONDS);
         }
     }
 
@@ -429,7 +429,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null && socket != null) {
                 try {
-                    sendKaaSyncRequest(SUPPORTED_TYPES);
+                    sendKaaSyncRequest(getSupportedTransportTypes());
                 } catch (Exception e) {
                     LOG.error("Failed to sync channel [{}]: {}", getId(), e);
                     onServerFailed();

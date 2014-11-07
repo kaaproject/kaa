@@ -99,7 +99,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
                 if (!stopped) {
                     currentCommand = new PollCommand(httpClient,
                             DefaultOperationsChannel.this,
-                            SUPPORTED_TYPES,
+                            getSupportedTransportTypes(),
                             currentServer);
                     if (!Thread.currentThread().isInterrupted()) {
                         currentCommand.execute();
@@ -222,7 +222,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         LOG.info("Processing sync {} for channel [{}]", type, getId());
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null) {
-                if (SUPPORTED_TYPES.get(type) != null) {
+                if (getSupportedTransportTypes().get(type) != null) {
                     stopPoll();
                     startPoll();
                 } else {
