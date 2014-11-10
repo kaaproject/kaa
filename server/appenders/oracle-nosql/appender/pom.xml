@@ -31,7 +31,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <main.dir>${basedir}/../..</main.dir>
+        <main.dir>${basedir}/../../../..</main.dir>
     </properties>
 
     <dependencies>
@@ -39,11 +39,11 @@
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
         </dependency>
-<dependency>
-	<groupId>com.oracle.kv</groupId>
-	<artifactId>oracle-nosql-client</artifactId>
-	<version>3.0.14</version>
-</dependency>
+        <dependency>
+        	<groupId>com.oracle.kv</groupId>
+        	<artifactId>oracle-nosql-client</artifactId>
+        	<version>3.0.14</version>
+        </dependency>
     </dependencies>
 
     <build>
