@@ -313,6 +313,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {}
 
+    @Override
     public void shutdown() {
         isShutdown = true;
         stopPoll();
@@ -321,6 +322,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         }
     }
 
+    @Override
     public void pause() {
         isPaused = true;
         stopPoll();
@@ -330,6 +332,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         }
     }
 
+    @Override
     public void resume() {
         isPaused = false;
         startPoll();

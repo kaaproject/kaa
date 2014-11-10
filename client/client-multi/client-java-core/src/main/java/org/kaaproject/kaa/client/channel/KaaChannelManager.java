@@ -211,4 +211,22 @@ public interface KaaChannelManager {
      *
      */
     void setConnectivityChecker(ConnectivityChecker checker);
+
+    /**
+     * Shutdowns manager and all registered channels. Instance can no longer be used.
+     *
+     */
+    void shutdown();
+
+    /**
+     * Pauses all active channels.
+     *
+     */
+    void pause();
+
+    /**
+     * Restores channels' activity.
+     *
+     */
+    void resume();
 }

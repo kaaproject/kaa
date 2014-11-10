@@ -140,6 +140,21 @@ public class DefaultBootstrapManagerTest {
         public void removeChannel(String id) {
 
         }
+
+        @Override
+        public void shutdown() {
+
+        }
+
+        @Override
+        public void pause() {
+
+        }
+
+        @Override
+        public void resume() {
+
+        }
     }
 
     @Test

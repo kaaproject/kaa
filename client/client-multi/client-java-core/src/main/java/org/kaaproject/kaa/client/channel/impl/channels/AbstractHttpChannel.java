@@ -153,6 +153,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {}
 
+    @Override
     public void shutdown() {
         isShutdown = true;
         if (executor != null) {
@@ -160,6 +161,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
         }
     }
 
+    @Override
     public void pause() {
         isPaused = true;
         if (executor != null) {
@@ -168,6 +170,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
         }
     }
 
+    @Override
     public void resume() {
         isPaused = false;
         if (lastConnectionFailed) {

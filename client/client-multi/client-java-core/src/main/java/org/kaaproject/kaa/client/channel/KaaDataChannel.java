@@ -125,4 +125,22 @@ public interface KaaDataChannel {
      *
      */
     Map<TransportType, ChannelDirection> getSupportedTransportTypes();
+
+    /**
+     * Shutdowns channel instance. All connections and threads should be terminated. Instance can no longer be used.
+     *
+     */
+    void shutdown();
+
+    /**
+     * Pauses channel's workflow. Channel should stop all network activity.
+     *
+     */
+    void pause();
+
+    /**
+     * Resumes channel's workflow. Channel should restore previous connection.
+     *
+     */
+    void resume();
 }

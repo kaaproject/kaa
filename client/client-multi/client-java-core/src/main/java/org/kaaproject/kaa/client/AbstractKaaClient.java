@@ -307,25 +307,16 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     void stop() {
         kaaClientState.persist();
-        DefaultBootstrapChannel bootstrap = (DefaultBootstrapChannel) defaultChannels.get(ChannelType.BOOTSTRAP);
-        bootstrap.shutdown();
-        DefaultOperationTcpChannel opsTcp = (DefaultOperationTcpChannel) defaultChannels.get(ChannelType.KAATCP);
-        opsTcp.shutdown();
-        DefaultOperationHttpChannel opsHttp = (DefaultOperationHttpChannel) defaultChannels.get(ChannelType.HTTP);
-        opsHttp.shutdown();
-        DefaultOperationsChannel opsLp = (DefaultOperationsChannel) defaultChannels.get(ChannelType.HTTP_LP);
-        opsLp.shutdown();
+        channelManager.shutdown();
     }
 
     void pause() {
         kaaClientState.persist();
-        DefaultBootstrapChannel bootstrap = (DefaultBootstrapChannel) defaultChannels.get(ChannelType.BOOTSTRAP);
-        bootstrap.pause();
+        channelManager.pause();
     }
 
     void resume() {
-        DefaultBootstrapChannel bootstrap = (DefaultBootstrapChannel) defaultChannels.get(ChannelType.BOOTSTRAP);
-        bootstrap.resume();
+        channelManager.resume();
     }
 
     @Override
