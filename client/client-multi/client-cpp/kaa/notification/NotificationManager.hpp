@@ -62,9 +62,9 @@ public:
 
     virtual void removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener);
 
-    virtual void subscribeOnTopic(const std::string& id, bool forceSync);
+    virtual void subscribeToTopic(const std::string& id, bool forceSync);
 
-    virtual void subscribeOnTopics(const std::list<std::string>& idList, bool forceSync);
+    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync);
 
     virtual void unsubscribeFromTopic(const std::string& id, bool forceSync);
 

@@ -33,7 +33,7 @@ namespace kaa {
  * <p>Interface for the notification delivery system.</p>
  *
  * <p>Responsible for processing received topic/notification updates,
- * subscribing for voluntary topic updates and unsubscribing from them.</p>
+ * subscription to voluntary topic updates and unsubscribtion from them.</p>
  *
  * @author Denis Kimcherenko
  *
@@ -121,7 +121,7 @@ public:
     virtual void removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener) = 0;
 
     /**
-     * <p>Subscribe for notifications relating to the specified voluntary topic.</p>
+     * <p>Subscribe to notifications relating to the specified voluntary topic.</p>
      *
      * @param topicId Id of a voluntary topic.
      * @param forceSync Define whether current subscription update should be
@@ -132,10 +132,10 @@ public:
      *
      * @see sync()
      */
-    virtual void subscribeOnTopic(const std::string& id, bool forceSync) = 0;
+    virtual void subscribeToTopic(const std::string& id, bool forceSync) = 0;
 
     /**
-     * <p>Subscribe for notifications relating to the specified list of
+     * <p>Subscribe to notifications relating to the specified list of
      * voluntary topics.</p>
      *
      * @param topicIds List of voluntary topic id.
@@ -147,7 +147,7 @@ public:
      *
      * @see sync()
      */
-    virtual void subscribeOnTopics(const std::list<std::string>& idList, bool forceSync) = 0;
+    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync) = 0;
 
     /**
      * <p>Unsubscribe from notifications relating to the specified voluntary topic.</p>
@@ -185,8 +185,8 @@ public:
     /**
      * <p>Accept voluntary subscription changes.</p>
      *
-     * <p>Should be used after all @link subscribeOnTopic() @endlink,
-     * @link subscribeOnTopics() @endlink, @link unsubscribeFromTopic() @endlink,
+     * <p>Should be used after all @link subscribeToTopic() @endlink,
+     * @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink,
      * @link unsubscribeFromTopics() @endlink calls with parameter
      * <i>forceSync</i> set to <i>false</i>.</p>
      *
@@ -196,7 +196,7 @@ public:
      *  NotificationManager notificationManager = kaaClient.getNotificationManager();
      *
      *  // Make subscription changes
-     *  notificationManager.subscribeOnTopics(Arrays.asList(
+     *  notificationManager.subscribeToTopics(Arrays.asList(
      *          "voluntary_topic1", "voluntary_topic2", "voluntary_topic3"), false);
      *  notificationManager.unsubscribeFromTopic("voluntary_topic4", false);
      *

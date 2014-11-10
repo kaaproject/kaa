@@ -200,7 +200,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void subscribeOnTopic(String topicId, boolean forceSync)
+    public void subscribeToTopic(String topicId, boolean forceSync)
             throws UnavailableTopicException
     {
         Topic topic = findTopicById(topicId);
@@ -218,7 +218,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void subscribeOnTopics(List<String> topicIds, boolean forceSync)
+    public void subscribeToTopics(List<String> topicIds, boolean forceSync)
             throws UnavailableTopicException
     {
         List<SubscriptionCommand> subscriptionUpdate = new LinkedList<>();

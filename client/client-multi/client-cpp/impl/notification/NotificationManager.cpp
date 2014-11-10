@@ -198,7 +198,7 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
     }
 }
 
-void NotificationManager::subscribeOnTopic(const std::string& id, bool forceSync)
+void NotificationManager::subscribeToTopic(const std::string& id, bool forceSync)
 {
     if (findTopic(id).subscriptionType != VOLUNTARY) {
         KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%s' isn't voluntary") % id);
@@ -212,7 +212,7 @@ void NotificationManager::subscribeOnTopic(const std::string& id, bool forceSync
     }
 }
 
-void NotificationManager::subscribeOnTopics(const std::list<std::string>& idList, bool forceSync)
+void NotificationManager::subscribeToTopics(const std::list<std::string>& idList, bool forceSync)
 {
     SubscriptionCommands subscriptions;
 
