@@ -28,7 +28,7 @@
  *
  *  <h3>Topics - usage examples</h3>
  *
- *  <h5>Access to the available topics</h5>
+ *  <h5>Access to available topics</h5>
  *  <pre>
  *  {@code
  *  KaaDesktop kaa = new KaaDesktop();

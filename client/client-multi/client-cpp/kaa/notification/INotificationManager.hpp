@@ -33,7 +33,7 @@ namespace kaa {
  * <p>Interface for the notification delivery system.</p>
  *
  * <p>Responsible for processing received topic/notification updates,
- * subscription to voluntary topic updates and unsubscribtion from them.</p>
+ * subscription to voluntary topic updates and unsubscription from them.</p>
  *
  * @author Denis Kimcherenko
  *
