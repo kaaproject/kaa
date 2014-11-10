@@ -15,18 +15,18 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.kaaproject.kaa</groupId>
+        <groupId>org.kaaproject.kaa.server</groupId>
         <version>0.6.1-SNAPSHOT</version>
-        <artifactId>server</artifactId>
+        <artifactId>appenders</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server</groupId>
-    <artifactId>appenders</artifactId>
+    <groupId>org.kaaproject.kaa.server.appenders</groupId>
+    <artifactId>oracle-nosql</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa Custom Appenders</name>
+    <name>Kaa Oracle NoSQL Appender</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -34,19 +34,9 @@
         <main.dir>${basedir}/../..</main.dir>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>cdap</id>
-            <modules>
-                <module>cdap</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>oracle-nosql</id>
-            <modules>
-                <module>oracle-nosql</module>
-            </modules>
-        </profile>
-    </profiles>
+    <modules>
+        <module>config</module>
+        <module>appender</module>
+    </modules>
 
 </project>

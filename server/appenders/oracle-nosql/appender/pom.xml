@@ -18,15 +18,15 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.kaaproject.kaa</groupId>
+        <groupId>org.kaaproject.kaa.server.appenders</groupId>
         <version>0.6.1-SNAPSHOT</version>
-        <artifactId>server</artifactId>
+        <artifactId>oracle-nosql</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server</groupId>
-    <artifactId>appenders</artifactId>
-    <packaging>pom</packaging>
+    <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
+    <artifactId>appender</artifactId>
+    <packaging>jar</packaging>
 
-    <name>Kaa Custom Appenders</name>
+    <name>Kaa Oracle NoSQL Appender Implementation</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -34,19 +34,27 @@
         <main.dir>${basedir}/../..</main.dir>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>cdap</id>
-            <modules>
-                <module>cdap</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>oracle-nosql</id>
-            <modules>
-                <module>oracle-nosql</module>
-            </modules>
-        </profile>
-    </profiles>
+    <dependencies>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>log-shared</artifactId>
+        </dependency>
+<dependency>
+	<groupId>com.oracle.kv</groupId>
+	<artifactId>oracle-nosql-client</artifactId>
+	<version>3.0.14</version>
+</dependency>
+    </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <classifier>oracle-nosql</classifier>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
