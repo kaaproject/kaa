@@ -169,9 +169,9 @@
     \subsection voluntary_topics Voluntary topic (un)subscription
 
     To receive notifications relating to some voluntary topic, firstly you
-    should to subscribe on this topic:
+    should to subscribe to this topic:
     @code
-        notificationManager.subscribeOnTopic("voluntary_topic_id", true);
+        notificationManager.subscribeToTopic("voluntary_topic_id", true);
     @endcode
     
     Unsubscription:
@@ -180,7 +180,7 @@
     @endcode
 
     There is a similar stuff to deal with a group of voluntary topics -
-    @link kaa::INotificationManager::subscribeOnTopics() @endlink and
+    @link kaa::INotificationManager::subscribeToTopics() @endlink and
     @link kaa::INotificationManager#unsubscribeFromTopics() @endlink .
     
     \subsection subscription_performance Performance
@@ -190,7 +190,7 @@
     approach:
     @code
     // Make subscription changes with parameter forceSync set to false
-    notificationManager.subscribeOnTopics({"voluntary_topic1", "voluntary_topic2", "voluntary_topic3"}, false);
+    notificationManager.subscribeToTopics({"voluntary_topic1", "voluntary_topic2", "voluntary_topic3"}, false);
     notificationManager.unsubscribeFromTopic("voluntary_topic4", false);
 
     // Add listener(s) (optional)
