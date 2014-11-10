@@ -297,7 +297,7 @@ public class DefaultNotificationManagerTest {
               , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeOnTopic("unknown_id", true);
+        notificationManager.subscribeToTopic("unknown_id", true);
     }
 
     @Test(expected=UnavailableTopicException.class)
@@ -312,7 +312,7 @@ public class DefaultNotificationManagerTest {
               , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeOnTopics(Arrays.asList("id1", "id2", "unknown_id"), true);
+        notificationManager.subscribeToTopics(Arrays.asList("id1", "id2", "unknown_id"), true);
     }
 
     @Test(expected=UnavailableTopicException.class)
@@ -357,7 +357,7 @@ public class DefaultNotificationManagerTest {
               , new Topic("id2", "topic_name1", SubscriptionType.MANDATORY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeOnTopic("id2", true);
+        notificationManager.subscribeToTopic("id2", true);
     }
 
     @Test(expected=UnavailableTopicException.class)
@@ -372,7 +372,7 @@ public class DefaultNotificationManagerTest {
               , new Topic("id2", "topic_name1", SubscriptionType.MANDATORY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeOnTopics(Arrays.asList("id1", "id2"), true);
+        notificationManager.subscribeToTopics(Arrays.asList("id1", "id2"), true);
     }
 
     @Test(expected=UnavailableTopicException.class)
@@ -418,11 +418,11 @@ public class DefaultNotificationManagerTest {
               , new Topic("id3", "topic_name1", SubscriptionType.VOLUNTARY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeOnTopic("id1", true);
+        notificationManager.subscribeToTopic("id1", true);
 
         Mockito.verify(transport, Mockito.times(1)).sync();
 
-        notificationManager.subscribeOnTopics(Arrays.asList("id1", "id2"), false);
+        notificationManager.subscribeToTopics(Arrays.asList("id1", "id2"), false);
         notificationManager.unsubscribeFromTopic("id1", false);
 
         Mockito.verify(transport, Mockito.times(1)).sync();
