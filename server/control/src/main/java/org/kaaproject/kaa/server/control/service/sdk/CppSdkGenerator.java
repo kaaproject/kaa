@@ -37,6 +37,7 @@ import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
+import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
@@ -124,6 +125,11 @@ public class CppSdkGenerator extends SdkGenerator {
     /** The Constant LOG_SCHEMA_VERSION_VAR. */
     private static final String LOG_SCHEMA_VERSION_VAR = "%{log_schema_version}";
 
+    /** The Constant BUILD_VERSION. */
+    private static final String BUILD_VERSION = "%{build.version}";
+
+    /** The Constant BUILD_COMMIT_HASH. */
+    private static final String BUILD_COMMIT_HASH = "%{build.commit_hash}";
 
     private static final String LOG_RECORD_SCHEMA_AVRO_SRC = "avro/log.avsc";
     private static final String LOG_RECORD_TEMPLATE = "sdk/cpp/log/LogRecord.hpp.template";
@@ -310,6 +316,9 @@ public class CppSdkGenerator extends SdkGenerator {
         String kaaDefaultsString = writer.toString();
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
+
+        kaaDefaultsString = replaceVar(kaaDefaultsString, BUILD_VERSION, Version.PROJECT_VERSION);
+        kaaDefaultsString = replaceVar(kaaDefaultsString, BUILD_COMMIT_HASH, Version.COMMIT_HASH);
 
         kaaDefaultsString = replaceVar(kaaDefaultsString, APPLICATION_TOKEN_VAR, appToken);
         kaaDefaultsString = replaceVar(kaaDefaultsString, PROFILE_VERSION_VAR, profileSchemaVersion+"");
