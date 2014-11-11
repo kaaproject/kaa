@@ -33,7 +33,7 @@ public:
     /**
      * Initialize Kaa library
      */
-    static void init(int options = 0);
+    static void init(int options = KaaClient::KAA_DEFAULT_OPTIONS);
 
     /**
      * Starts Kaa's work flow.

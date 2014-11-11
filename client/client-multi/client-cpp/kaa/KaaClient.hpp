@@ -101,11 +101,11 @@ private:
 
     void setDefaultConfiguration();
 
-private:
+public:
     static const int KAA_DEFAULT_OPTIONS = KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL   |
                                            KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL |
                                            KaaOption::USE_DEFAULT_CONNECTIVITY_CHECKER;
-
+private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
     std::unique_ptr<ProfileManager>                 profileManager_;
