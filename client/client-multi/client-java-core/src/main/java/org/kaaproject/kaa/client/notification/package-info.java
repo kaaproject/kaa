@@ -28,7 +28,7 @@
  *
  *  <h3>Topics - usage examples</h3>
  *
- *  <h5>Get access to the available topics</h5>
+ *  <h5>Access to available topics</h5>
  *  <pre>
  *  {@code
  *  KaaDesktop kaa = new KaaDesktop();
@@ -150,12 +150,12 @@
  *  <h5>Voluntary topic (un)subscription</h5>
  *
  *  <p>To receive notifications relating to some voluntary topic, firstly you
- *  should to subscribe on this topic:</p>
+ *  should to subscribe to this topic:</p>
  *  <pre>
  *  {@code
  *  BasicNotificationListener listener = new BasicNotificationListener();
  *  notificationManager.addNotificationListener("voluntary_topic_id", listener);
- *  notificationManager.subscribeOnTopic("voluntary_topic_id", true);
+ *  notificationManager.subscribeToTopic("voluntary_topic_id", true);
  *  }
  *  </pre>
  *
@@ -168,7 +168,7 @@
  *  </pre>
  *
  *  <p>There is a similar stuff to deal with a group of voluntary topics -
- *  {@link org.kaaproject.kaa.client.notification.NotificationManager#subscribeOnTopics(java.util.List, boolean)} and
+ *  {@link org.kaaproject.kaa.client.notification.NotificationManager#subscribeToTopics(java.util.List, boolean)} and
  *  {@link org.kaaproject.kaa.client.notification.NotificationManager#unsubscribeFromTopics(java.util.List, boolean)}.</p>
  *
  *  <h6>Performance</h6>
@@ -179,7 +179,7 @@
  *  <pre>
  *  {@code
  *  // Make subscription changes
- *  notificationManager.subscribeOnTopics(Arrays.asList(
+ *  notificationManager.subscribeToTopics(Arrays.asList(
  *          "voluntary_topic1", "voluntary_topic2", "voluntary_topic3"), false);
  *  notificationManager.unsubscribeFromTopic("voluntary_topic4", false);
  *

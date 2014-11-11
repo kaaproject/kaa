@@ -20,13 +20,13 @@
     <parent>
         <groupId>org.kaaproject.kaa.server.appenders</groupId>
         <version>0.6.1-SNAPSHOT</version>
-        <artifactId>cdap</artifactId>
+        <artifactId>oracle-nosql</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
+    <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
     <artifactId>appender</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa Cdap Appender Implementation</name>
+    <name>Kaa Oracle NoSQL Appender Implementation</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -40,9 +40,9 @@
             <artifactId>log-shared</artifactId>
         </dependency>
         <dependency>
-            <groupId>co.cask.cdap</groupId>
-            <artifactId>cdap-stream-client</artifactId>
-            <version>1.0.1</version>            
+        	<groupId>com.oracle.kv</groupId>
+        	<artifactId>oracle-nosql-client</artifactId>
+        	<version>3.0.14</version>
         </dependency>
     </dependencies>
 
@@ -52,17 +52,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <classifier>cdap</classifier>
+                    <classifier>oracle-nosql</classifier>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>apache.snapshots</id>
-            <url>https://repository.apache.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
-
 </project>

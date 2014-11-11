@@ -621,5 +621,17 @@
              	</dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>oracle-nosql</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
+                    <artifactId>appender</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>oracle-nosql</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>
