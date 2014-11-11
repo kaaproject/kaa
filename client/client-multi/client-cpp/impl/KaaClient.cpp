@@ -102,6 +102,17 @@ void KaaClient::start()
 
 void KaaClient::stop()
 {
+    channelManager_->shutdown();
+}
+
+void KaaClient::pause()
+{
+    channelManager_->pause();
+}
+
+void KaaClient::resume()
+{
+    channelManager_->resume();
 }
 
 void KaaClient::initKaaConfiguration()

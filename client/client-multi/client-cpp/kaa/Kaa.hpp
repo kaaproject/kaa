@@ -53,6 +53,16 @@ public:
      */
     static IKaaClient& getKaaClient();
 
+    /**
+     * Pauses Kaa's work flow.
+     */
+    static void pause();
+
+    /**
+     * Resumes Kaa's work flow.
+     */
+    static void resume();
+
 private:
     Kaa();
     ~Kaa();

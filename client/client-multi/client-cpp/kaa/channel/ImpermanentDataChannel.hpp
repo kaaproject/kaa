@@ -14,41 +14,24 @@
  * limitations under the License.
  */
 
-#include "kaa/Kaa.hpp"
+#ifndef KAA_CHANNEL_IMPERMANENTDATACHANNEL_HPP_
+#define KAA_CHANNEL_IMPERMANENTDATACHANNEL_HPP_
+
+#include "kaa/channel/IDataChannel.hpp"
 
 namespace kaa {
 
-Botan::LibraryInitializer Kaa::botanInit_("thread_safe=true");
-KaaClient Kaa::client_;
+class ImpermanentDataChannel : public IDataChannel {
+public:
+    virtual ~ImpermanentDataChannel() { }
 
-void Kaa::init(int options)
-{
-    client_.init(options);
-}
-
-void Kaa::start()
-{
-    client_.start();
-}
-
-void Kaa::stop()
-{
-    client_.stop();
-}
-
-IKaaClient& Kaa::getKaaClient()
-{
-    return client_;
-}
-
-void Kaa::pause()
-{
-    client_.pause();
-}
-
-void Kaa::resume()
-{
-    client_.resume();
-}
+    virtual void resume() { }
+    virtual void pause() { }
+    virtual void shutdown() { }
+};
 
 }
+
+
+
+#endif /* KAA_CHANNEL_IMPERMANENTDATACHANNEL_HPP_ */

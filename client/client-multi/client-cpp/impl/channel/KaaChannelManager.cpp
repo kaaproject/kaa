@@ -28,7 +28,7 @@
 namespace kaa {
 
 KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers)
-    : bootstrapManager_(manager)
+    : bootstrapManager_(manager), isShutdown_(false), isPaused_(false)
 {
     for (const auto& si : servers) {
         auto& list = bootstrapServers_[si->getChannelType()];
@@ -37,6 +37,10 @@ KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const Bootstrap
 }
 
 void KaaChannelManager::onServerFailed(IServerInfoPtr server) {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't update server. Channel manager is down");
+        return;
+    }
     if (!server) {
         KAA_LOG_WARN("Failed to process server failure: bad input data")
         throw KaaException("empty server pointer");
@@ -50,6 +54,10 @@ void KaaChannelManager::onServerFailed(IServerInfoPtr server) {
 }
 
 void KaaChannelManager::onServerUpdated(IServerInfoPtr server) {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't update server. Channel manager is down");
+        return;
+    }
     if (!server) {
         KAA_LOG_WARN("Failed to update server: bad input data")
         throw KaaException("empty server pointer");
@@ -100,6 +108,10 @@ void KaaChannelManager::addChannelToList(IDataChannelPtr channel)
 
 void KaaChannelManager::setChannel(TransportType type, IDataChannelPtr channel)
 {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't set channel. Channel manager is down");
+        return;
+    }
     if (!channel) {
         KAA_LOG_WARN("Failed to set channel: bad input data")
         throw KaaException("empty channel pointer");
@@ -112,16 +124,25 @@ void KaaChannelManager::setChannel(TransportType type, IDataChannelPtr channel)
                         % LoggingUtils::TransportTypeToString(type));
         throw KaaException("invalid channel or transport type");
     }
+    if (isPaused_) {
+        channel->pause();
+    }
     addChannelToList(channel);
 }
 
 void KaaChannelManager::addChannel(IDataChannelPtr channel)
 {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't set channel. Channel manager is down");
+        return;
+    }
     if (!channel) {
         KAA_LOG_WARN("Failed to add channel: bad input data")
         throw KaaException("empty channel pointer");
     }
-
+    if (isPaused_) {
+        channel->pause();
+    }
     addChannelToList(channel);
     useNewChannel(channel);
 }
@@ -152,6 +173,7 @@ void KaaChannelManager::replaceChannel(IDataChannelPtr channel)
             useNewChannelForType(channelInfo.first);
         }
     }
+    channel->shutdown();
 }
 
 void KaaChannelManager::removeChannel(IDataChannelPtr channel)
@@ -280,9 +302,56 @@ IServerInfoPtr KaaChannelManager::getNextBootstrapServer(IServerInfoPtr currentS
 }
 
 void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker) {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't set connectivity checker. Channel manager is down");
+        return;
+    }
     connectivityChecker_ = checker;
     for (auto& channel : channels_) {
         channel->setConnectivityChecker(connectivityChecker_);
+    }
+}
+
+void KaaChannelManager::doShutdown()
+{
+    if (!isShutdown_) {
+        isShutdown_ = true;
+        for (auto& channel : mappedChannels_) {
+            channel.second->shutdown();
+        }
+    }
+}
+
+void KaaChannelManager::shutdown()
+{
+    doShutdown();
+}
+
+void KaaChannelManager::pause()
+{
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't pause. Channel manager is down");
+        return;
+    }
+    if (!isPaused_) {
+        isPaused_ = true;
+        for (auto& channel : mappedChannels_) {
+            channel.second->pause();
+        }
+    }
+}
+
+void KaaChannelManager::resume()
+{
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't resume. Channel manager is down");
+        return;
+    }
+    if (isPaused_) {
+        isPaused_ = false;
+        for (auto& channel : mappedChannels_) {
+            channel.second->resume();
+        }
     }
 }
 

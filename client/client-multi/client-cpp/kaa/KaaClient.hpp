@@ -67,6 +67,8 @@ public:
     void init(int options = KAA_DEFAULT_OPTIONS);
     void start();
     void stop();
+    void pause();
+    void resume();
 
     virtual IProfileManager&                    getProfileManager() { return *profileManager_; }
 #ifdef KAA_USE_CONFIGURATION

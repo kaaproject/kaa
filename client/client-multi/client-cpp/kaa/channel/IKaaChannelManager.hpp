@@ -148,6 +148,24 @@ public:
      */
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) = 0;
 
+    /**
+     * Shutdowns manager and all registered channels. Instance can no longer be used.
+     *
+     */
+    virtual void shutdown() = 0;
+
+    /**
+     * Pauses all active channels.
+     *
+     */
+    virtual void pause() = 0;
+
+    /**
+     * Restores channels' activity.
+     *
+     */
+    virtual void resume() = 0;
+
     virtual ~IKaaChannelManager() {}
 };
 

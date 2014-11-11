@@ -296,7 +296,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             return;
         }
         if (server != null) {
-            stopPoll();
+            if (!isPaused) {
+                stopPoll();
+            }
             this.currentServer = (HttpLongPollServerInfo) server;
             synchronized (httpClientLock) {
                 LOG.debug("Channel [{}]: creating HTTP client..", getId());
@@ -306,7 +308,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
                 }
                 LOG.debug("Channel [{}]: HTTP client created", getId());
             }
-            startPoll();
+            if (!isPaused) {
+                startPoll();
+            }
         }
     }
 
@@ -314,28 +318,42 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     public void setConnectivityChecker(ConnectivityChecker checker) {}
 
     @Override
-    public void shutdown() {
-        isShutdown = true;
-        stopPoll();
-        if (scheduler != null) {
-            scheduler.shutdownNow();
+    public synchronized void shutdown() {
+        if (!isShutdown) {
+            isShutdown = true;
+            stopPoll();
+            if (scheduler != null) {
+                scheduler.shutdownNow();
+            }
         }
     }
 
     @Override
-    public void pause() {
-        isPaused = true;
-        stopPoll();
-        if (scheduler != null) {
-            scheduler.shutdownNow();
-            scheduler = null;
+    public synchronized void pause() {
+        if (isShutdown) {
+            LOG.info("Can't pause channel. Channel [{}] is down", getId());
+            return;
+        }
+        if (!isPaused) {
+            isPaused = true;
+            stopPoll();
+            if (scheduler != null) {
+                scheduler.shutdownNow();
+                scheduler = null;
+            }
         }
     }
 
     @Override
-    public void resume() {
-        isPaused = false;
-        startPoll();
+    public synchronized void resume() {
+        if (isShutdown) {
+            LOG.info("Can't resume channel. Channel [{}] is down", getId());
+            return;
+        }
+        if (isPaused) {
+            isPaused = false;
+            startPoll();
+        }
     }
 
     @Override

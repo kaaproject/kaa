@@ -93,6 +93,7 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
                 useNewChannelForType(entry.getKey());
             }
         }
+        channel.shutdown();
     }
 
     private void addChannelToList(KaaDataChannel channel) {
@@ -290,14 +291,20 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
 
     @Override
     public synchronized void shutdown() {
-        isShutdown = true;
-        for (KaaDataChannel channel : channels) {
-            channel.shutdown();
+        if (!isShutdown) {
+            isShutdown = true;
+            for (KaaDataChannel channel : channels) {
+                channel.shutdown();
+            }
         }
     }
 
     @Override
     public synchronized void pause() {
+        if (isShutdown) {
+            LOG.warn("Can't pause. Channel manager is down");
+            return;
+        }
         if (!isPaused) {
             isPaused = true;
             for (KaaDataChannel channel : upChannels.values()) {
@@ -308,6 +315,10 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
 
     @Override
     public synchronized void resume() {
+        if (isShutdown) {
+            LOG.warn("Can't resume. Channel manager is down");
+            return;
+        }
         if (isPaused) {
             isPaused = false;
             for (KaaDataChannel channel : upChannels.values()) {

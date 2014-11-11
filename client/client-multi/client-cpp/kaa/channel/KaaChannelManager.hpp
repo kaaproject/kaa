@@ -34,6 +34,7 @@ class IBootstrapManager;
 class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage {
 public:
     KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers);
+    ~KaaChannelManager() { doShutdown(); }
 
     virtual void setChannel(TransportType type, IDataChannelPtr channel);
     virtual void addChannel(IDataChannelPtr channel);
@@ -58,6 +59,10 @@ public:
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker);
 
+    void shutdown();
+    void pause();
+    void resume();
+
 private:
     bool useChannelForType(const std::pair<TransportType, ChannelDirection>& type, IDataChannelPtr channel);
     void useNewChannel(IDataChannelPtr channel);
@@ -66,11 +71,16 @@ private:
 
     void addChannelToList(IDataChannelPtr channel);
 
+    void doShutdown();
+
     IServerInfoPtr getCurrentBootstrapServer(ChannelType type);
     IServerInfoPtr getNextBootstrapServer(IServerInfoPtr currentServer);
 
 private:
     IBootstrapManager&   bootstrapManager_;
+
+    bool isShutdown_;
+    bool isPaused_;
 
     std::map<ChannelType, std::list<IServerInfoPtr>> bootstrapServers_;
 

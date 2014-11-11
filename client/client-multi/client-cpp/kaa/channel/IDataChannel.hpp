@@ -133,6 +133,24 @@ public:
      */
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) = 0;
 
+    /**
+     * Shutdowns channel instance. All connections and threads should be terminated. Instance can no longer be used.
+     *
+     */
+    virtual void shutdown() = 0;
+
+    /**
+     * Pauses channel's workflow. Channel should stop all network activity.
+     *
+     */
+    virtual void pause() = 0;
+
+    /**
+     * Resumes channel's workflow. Channel should restore previous connection.
+     *
+     */
+    virtual void resume() = 0;
+
     virtual ~IDataChannel() {}
 
 };

@@ -57,6 +57,12 @@ public:
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
+    virtual void shutdown() {}
+
+    virtual void pause() {}
+
+    virtual void resume() {}
+
     virtual ~MockChannelManager() {}
 };
 
