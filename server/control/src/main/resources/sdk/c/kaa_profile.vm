@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef KAA_PROFILE_H_
-\#define KAA_PROFILE_H_
+# ifndef KAA_PROFILE_H_
+# define KAA_PROFILE_H_
 
-#ifdef __cplusplus
-extern "C" {
-\#define CLOSE_EXTERN }
-\#else
-\#define CLOSE_EXTERN
+# ifdef __cplusplus
+    extern "C" {
+# define CLOSE_EXTERN }
+# else
+# define CLOSE_EXTERN
 # endif
 
-\#include "kaa_error.h"
-\#include "gen/kaa_profile_gen.h"
-\#include "gen/kaa_endpoint_gen.h"
+# include "kaa_error.h"
+# include "gen/kaa_profile_gen.h"
+# include "gen/kaa_endpoint_gen.h"
 
 typedef kaa_profile_${profileName}_t kaa_profile_t;
 typedef struct kaa_profile_manager_t kaa_profile_manager_t;

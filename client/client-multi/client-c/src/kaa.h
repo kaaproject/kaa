@@ -28,8 +28,9 @@ extern "C" {
 #include "kaa_external.h"
 #include "kaa_error.h"
 #include "kaa_profile.h"
-#include "gen/kaa_endpoint_gen.h"
+#include "kaa_logging.h"
 
+#include "gen/kaa_endpoint_gen.h"
 #include <stddef.h>
 
 /**
@@ -189,6 +190,25 @@ void    kaa_serialize_request(kaa_sync_request_t *request, char *buffer, size_t 
  * Process data received from Operations server.
  */
 void    kaa_response_received(const char *buffer, size_t buffer_size);
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+/**
+ * Log management
+ */
+
+/**
+ * TODO: doc me
+ */
+void   kaa_set_log_storage(
+                    kaa_log_storage_t *
+                  , kaa_storage_status_t *
+                  , log_upload_decision_fn
+                  );
+/**
+ * TODO: doc me
+ */
+void    kaa_add_log(kaa_user_log_record_t *entry);
+#endif
 
 CLOSE_EXTERN
 #endif /* KAA_H_ */

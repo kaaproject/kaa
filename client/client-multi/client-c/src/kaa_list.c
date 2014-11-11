@@ -24,7 +24,7 @@ struct kaa_list_t {
 
 void kaa_list_push_back(kaa_list_t * head, void *data)
 {
-    while (kaa_list_has_next(head)) {
+    while (head->next != NULL) {
         head = head->next;
     }
     head->next = kaa_list_create(data);
@@ -167,4 +167,17 @@ kaa_list_t * kaa_list_find_last_occurance(kaa_list_t * from, match_predicate pre
         from = from->next;
     }
     return it;
+}
+
+kaa_list_t * kaa_list_split_after(kaa_list_t * head, kaa_list_t * after, kaa_list_t **tail)
+{
+    while (head != NULL && head != after) {
+        head = head->next;
+    }
+    kaa_list_t *ret_val = head->next;
+    head->next = NULL;
+    if (tail) {
+        *tail = ret_val;
+    }
+    return ret_val;
 }
