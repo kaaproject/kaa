@@ -97,7 +97,7 @@ public:
         voluntaryListener_.reset(new UserNotificationListener(newList.back().id));
 
         notificationManager_.addNotificationListener(newList.back().id, voluntaryListener_);
-        notificationManager_.subscribeOnTopic(newList.back().id, false);
+        notificationManager_.subscribeToTopic(newList.back().id, false);
     }
 
     ~TopicListener() {
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(VoluntarySubscription)
     INotificationListenerPtr notificationListener(new UserNotificationListener(topic2.id));
 
     notificationManager.addNotificationListener(topic2.id, notificationListener);
-    notificationManager.subscribeOnTopic(topic2.id, true);
+    notificationManager.subscribeToTopic(topic2.id, true);
 
     auto request = transport->createNotificationRequest();
 

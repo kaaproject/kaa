@@ -83,9 +83,8 @@ Copyright 2014 CyberVision, Inc.
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <!-- sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis -->
         <sonar.exclusions>**/gen/**</sonar.exclusions>
-        <sonar.skippedModules>admin</sonar.skippedModules>
+        <sonar.skippedModules>admin,admin-rest-client,client-java-android</sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
     </properties>

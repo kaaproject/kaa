@@ -18,7 +18,7 @@
 
 #include <algorithm>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include "kaa/channel/server/HttpServerInfo.hpp"
 #include "kaa/channel/server/HttpLPServerInfo.hpp"
@@ -32,9 +32,9 @@ const char * const BUILD_COMMIT_HASH = "%{build.commit_hash}";
 
 const char * const APPLICATION_TOKEN = "%{application.token}";
 
-const boost::uint32_t PROFILE_VERSION = %{application.profile_version};
+const std::uint32_t PROFILE_VERSION = %{application.profile_version};
 
-const boost::uint32_t CONFIG_VERSION = %{application.config_version};
+const std::uint32_t CONFIG_VERSION = %{application.config_version};
 
 const char * const CLIENT_PUB_KEY_LOCATION = "%{application.public_key_location}";
 
@@ -42,17 +42,17 @@ const char * const CLIENT_PRIV_KEY_LOCATION = "%{application.private_key_locatio
 
 const char * const CLIENT_STATUS_FILE_LOCATION = "%{application.status_file_location}";
 
-const boost::uint32_t POLLING_PERIOD_SECONDS = %{application.polling_period_seconds};
+const std::uint32_t POLLING_PERIOD_SECONDS = %{application.polling_period_seconds};
 
-const boost::uint32_t SYSTEM_NF_VERSION = %{system_notification_version};
+const std::uint32_t SYSTEM_NF_VERSION = %{system_notification_version};
 
-const boost::uint32_t USER_NF_VERSION = %{user_notification_version};
+const std::uint32_t USER_NF_VERSION = %{user_notification_version};
 
-const boost::uint32_t LOG_SCHEMA_VERSION = %{log_schema_version};
+const std::uint32_t LOG_SCHEMA_VERSION = %{log_schema_version};
 
 static IServerInfoPtr createServerInfo(const int& channelType
                                      , const std::string& host
-                                     , const boost::uint16_t& port
+                                     , const std::uint16_t& port
                                      , const std::string& encodedPublicKey)
 {
     IServerInfoPtr serverInfo;
@@ -84,8 +84,8 @@ const BootstrapServers& getServerInfoList() {
     return listOfServers;
 }
 
-const Botan::SecureVector<boost::uint8_t>& getDefaultConfigData() {
-    static const Botan::SecureVector<boost::uint8_t> configData = Botan::base64_decode("%{config.data.default}");
+const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() {
+    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("%{config.data.default}");
     return configData;
 }
 

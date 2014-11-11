@@ -127,8 +127,8 @@ public interface NotificationManager {
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided.
      *
-     * @see #subscribeOnTopic(String, boolean)
-     * @see #subscribeOnTopics(List, boolean)
+     * @see #subscribeToTopic(String, boolean)
+     * @see #subscribeToTopics(List, boolean)
      * @see #addNotificationListener(NotificationListener)
      * @see #addNotificationListener(String, NotificationListener)
      *
@@ -198,7 +198,7 @@ public interface NotificationManager {
                                            throws UnavailableTopicException;
 
     /**
-     * <p>Subscribe for notifications relating to the specified voluntary topic.</p>
+     * <p>Subscribe to notifications relating to the specified voluntary topic.</p>
      *
      * @param topicId Id of a voluntary topic.
      * @param forceSync Define whether current subscription update should be
@@ -209,11 +209,11 @@ public interface NotificationManager {
      *
      * @see #sync()
      */
-    void subscribeOnTopic(String topicId, boolean forceSync)
+    void subscribeToTopic(String topicId, boolean forceSync)
                                             throws UnavailableTopicException;
 
     /**
-     * <p>Subscribe for notifications relating to the specified list of
+     * <p>Subscribe to notifications relating to the specified list of
      * voluntary topics.</p>
      *
      * @param topicIds List of voluntary topic id.
@@ -225,7 +225,7 @@ public interface NotificationManager {
      *
      * @see #sync()
      */
-    void subscribeOnTopics(List<String> topicIds, boolean forceSync)
+    void subscribeToTopics(List<String> topicIds, boolean forceSync)
                                             throws UnavailableTopicException;
 
     /**
@@ -266,8 +266,8 @@ public interface NotificationManager {
     /**
      * <p>Accept voluntary subscription changes.</p>
      *
-     * <p>Should be used after all {@link #subscribeOnTopic(String, boolean)},
-     * {@link #subscribeOnTopics(List, boolean)}, {@link #unsubscribeFromTopic(String, boolean)},
+     * <p>Should be used after all {@link #subscribeToTopic(String, boolean)},
+     * {@link #subscribeToTopics(List, boolean)}, {@link #unsubscribeFromTopic(String, boolean)},
      * {@link #unsubscribeFromTopics(List, boolean)} calls with parameter
      * {@code forceSync} set to {@code false}.</p>
      *
