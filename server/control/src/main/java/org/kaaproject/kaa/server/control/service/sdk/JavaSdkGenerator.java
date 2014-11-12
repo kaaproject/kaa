@@ -40,6 +40,7 @@ import org.apache.avro.compiler.specific.SpecificCompiler.FieldVisibility;
 import org.apache.avro.generic.GenericData.StringType;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
@@ -87,6 +88,12 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant CLIENT_PROPERTIES. */
     private static final String CLIENT_PROPERTIES = "client.properties";
+
+    /** The Constant BUILD_VERSION. */
+    private static final String BUILD_VERSION = "build.version";
+
+    /** The Constant BUILD_COMMIT_HASH. */
+    private static final String BUILD_COMMIT_HASH = "build.commit_hash";
 
     /** The Constant BOOTSTRAP_SERVERS_PROPERTY. */
     private static final String BOOTSTRAP_SERVERS_PROPERTY = "transport.bootstrap.servers";
@@ -475,6 +482,8 @@ public class JavaSdkGenerator extends SdkGenerator {
             }
         }
 
+        clientProperties.put(BUILD_VERSION, Version.PROJECT_VERSION);
+        clientProperties.put(BUILD_COMMIT_HASH, Version.COMMIT_HASH);
         clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, bootstrapServers);
         clientProperties.put(APP_TOKEN_PROPERTY, appToken);
         clientProperties.put(CONFIG_VERSION_PROPERTY, ""+configurationSchemaVersion);

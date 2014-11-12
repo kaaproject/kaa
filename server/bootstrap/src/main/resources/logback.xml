@@ -31,6 +31,8 @@
             <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+    
+    <logger name="org.kaaproject.kaa.server.common.Environment" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="console"/>

@@ -54,6 +54,9 @@ KaaClient::KaaClient()
 
 void KaaClient::init(int options)
 {
+    KAA_LOG_INFO(boost::format("Starting Kaa C++ sdk version %1%, commit hash %2%. Start options: %3%")
+        % BUILD_VERSION % BUILD_COMMIT_HASH % options);
+
     options_ = options;
     initClientKeys();
 
