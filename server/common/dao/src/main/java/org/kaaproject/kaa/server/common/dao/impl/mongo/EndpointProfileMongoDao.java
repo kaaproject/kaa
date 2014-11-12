@@ -22,8 +22,9 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Repository;
 import com.mongodb.DBObject;
 
 @Repository
-public class EndpointProfileMongoDao extends AbstractMongoDao<EndpointProfile> implements EndpointProfileDao<EndpointProfile> {
+public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfile> implements EndpointProfileDao<MongoEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDao.class);
 
@@ -41,19 +42,19 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<EndpointProfile> i
 
     @Override
     protected String getCollectionName() {
-        return EndpointProfile.COLLECTION_NAME;
+        return MongoEndpointProfile.COLLECTION_NAME;
     }
 
     @Override
-    protected Class<EndpointProfile> getDocumentClass() {
-        return EndpointProfile.class;
+    protected Class<MongoEndpointProfile> getDocumentClass() {
+        return MongoEndpointProfile.class;
     }
 
     @Override
-    public EndpointProfile findByKeyHash(byte[] endpointKeyHash) {
+    public MongoEndpointProfile findByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Find endpoint profile by endpoint key hash [{}] ", endpointKeyHash);
         DBObject dbObject = query(where(ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
-        DBObject result = mongoTemplate.getDb().getCollection(EndpointProfile.COLLECTION_NAME).findOne(dbObject);
+        DBObject result = mongoTemplate.getDb().getCollection(MongoEndpointProfile.COLLECTION_NAME).findOne(dbObject);
         return mongoTemplate.getConverter().read(getDocumentClass(), result);
     }
 
@@ -61,7 +62,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<EndpointProfile> i
     public long getCountByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Get count of endpoint profiles by endpoint key hash [{}] ", endpointKeyHash);
         DBObject dbObject = query(where(ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
-        return mongoTemplate.getDb().getCollection(EndpointProfile.COLLECTION_NAME).count(dbObject);
+        return mongoTemplate.getDb().getCollection(MongoEndpointProfile.COLLECTION_NAME).count(dbObject);
     }
 
     @Override
@@ -77,16 +78,21 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<EndpointProfile> i
     }
 
     @Override
-    public EndpointProfile findByAccessToken(String endpointAccessToken) {
+    public MongoEndpointProfile findByAccessToken(String endpointAccessToken) {
         LOG.debug("Find endpoint profile by access token [{}] ", endpointAccessToken);
         DBObject dbObject = query(where(ACCESS_TOKEN).is(endpointAccessToken)).getQueryObject();
-        DBObject result = mongoTemplate.getDb().getCollection(EndpointProfile.COLLECTION_NAME).findOne(dbObject);
+        DBObject result = mongoTemplate.getDb().getCollection(MongoEndpointProfile.COLLECTION_NAME).findOne(dbObject);
         return mongoTemplate.getConverter().read(getDocumentClass(), result);
     }
 
     @Override
-    public List<EndpointProfile> findByEndpointUserId(String endpointUserId) {
+    public List<MongoEndpointProfile> findByEndpointUserId(String endpointUserId) {
         LOG.debug("Find endpoint profiles by endpoint user id [{}] ", endpointUserId);
         return find(query(where(ENDPOINT_USER_ID).is(endpointUserId)));
+    }
+
+    @Override
+    public MongoEndpointProfile save(EndpointProfileDto dto) {
+        return save(new MongoEndpointProfile(dto));
     }
 }

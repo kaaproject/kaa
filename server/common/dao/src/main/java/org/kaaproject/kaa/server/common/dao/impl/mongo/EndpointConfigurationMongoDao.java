@@ -18,8 +18,9 @@ package org.kaaproject.kaa.server.common.dao.impl.mongo;
 
 import com.mongodb.DBObject;
 
+import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -28,7 +29,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
-public class EndpointConfigurationMongoDao extends AbstractMongoDao<EndpointConfiguration> implements EndpointConfigurationDao<EndpointConfiguration> {
+public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpointConfiguration> implements EndpointConfigurationDao<MongoEndpointConfiguration> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationMongoDao.class);
 
@@ -36,20 +37,20 @@ public class EndpointConfigurationMongoDao extends AbstractMongoDao<EndpointConf
 
     @Override
     protected String getCollectionName() {
-        return EndpointConfiguration.COLLECTION_NAME;
+        return MongoEndpointConfiguration.COLLECTION_NAME;
     }
 
     @Override
-    protected Class<EndpointConfiguration> getDocumentClass() {
-        return EndpointConfiguration.class;
+    protected Class<MongoEndpointConfiguration> getDocumentClass() {
+        return MongoEndpointConfiguration.class;
     }
 
     // These methods use mongo template directly because we had problems with bytes array.
     @Override
-    public EndpointConfiguration findByHash(final byte[] hash) {
+    public MongoEndpointConfiguration findByHash(final byte[] hash) {
         LOG.debug("Find endpoint configuration by hash [{}] ", hash);
         DBObject dbObject = query(where(CONFIGURATION_HASH).is(hash)).getQueryObject();
-        DBObject result = mongoTemplate.getDb().getCollection(EndpointConfiguration.COLLECTION_NAME).findOne(dbObject);
+        DBObject result = mongoTemplate.getDb().getCollection(MongoEndpointConfiguration.COLLECTION_NAME).findOne(dbObject);
         return mongoTemplate.getConverter().read(getDocumentClass(), result);
     }
 
@@ -57,5 +58,10 @@ public class EndpointConfigurationMongoDao extends AbstractMongoDao<EndpointConf
     public void removeByHash(final byte[] hash) {
         LOG.debug("Remove endpoint configuration by hash [{}] ", hash);
         mongoTemplate.remove(query(where(CONFIGURATION_HASH).is(hash)), getCollectionName());
+    }
+
+    @Override
+    public MongoEndpointConfiguration save(EndpointConfigurationDto dto) {
+        return save(new MongoEndpointConfiguration(dto));
     }
 }

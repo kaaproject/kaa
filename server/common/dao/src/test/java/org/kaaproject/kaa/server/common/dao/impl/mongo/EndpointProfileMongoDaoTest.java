@@ -24,7 +24,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
@@ -63,22 +63,22 @@ public class EndpointProfileMongoDaoTest extends AbstractTest {
 
     @Test
     public void testFindByKeyHash() {
-        EndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
+        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
         Assert.assertNotNull(endpointProfile);
-        EndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
+        MongoEndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertNotNull(found);
         Assert.assertEquals(endpointProfile, found);
     }
 
     @Test
     public void testFindById() {
-        EndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
+        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
         Assert.assertNotNull(endpointProfile);
     }
 
     @Test
     public void testRemoveByKeyHash() {
-        EndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
+        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
         Assert.assertNotNull(endpointProfile);
         endpointProfileDao.removeByKeyHash(endpointProfile.getEndpointKeyHash());
         endpointProfile = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
@@ -90,7 +90,7 @@ public class EndpointProfileMongoDaoTest extends AbstractTest {
         EndpointProfileDto epDto = generateEndpointprofile(null, null);
         Assert.assertNotNull(epDto);
         endpointProfileDao.removeById(epDto.getId());
-        EndpointProfile endpointProfile = endpointProfileDao.findById(epDto.getId());
+        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(epDto.getId());
         Assert.assertNull(endpointProfile);
     }
 
@@ -99,7 +99,7 @@ public class EndpointProfileMongoDaoTest extends AbstractTest {
         EndpointProfileDto endpointProfile = generateEndpointprofile(null, null);
         Assert.assertNotNull(endpointProfile);
         endpointProfile.setId(null);
-        EndpointProfile saved = endpointProfileDao.save(new EndpointProfile(endpointProfile));
+        MongoEndpointProfile saved = endpointProfileDao.save(new MongoEndpointProfile(endpointProfile));
         Assert.assertNotNull(saved);
         Assert.assertEquals(endpointProfile, saved.toDto());
     }
@@ -108,7 +108,7 @@ public class EndpointProfileMongoDaoTest extends AbstractTest {
     public void convertToDtoTest() {
         EndpointProfileDto endpointProfile = generateEndpointprofile(null, null);
         Assert.assertNotNull(endpointProfile);
-        EndpointProfile converted = new EndpointProfile(endpointProfile);
+        MongoEndpointProfile converted = new MongoEndpointProfile(endpointProfile);
         Assert.assertEquals(endpointProfile, converted.toDto());
     }
 
@@ -126,7 +126,7 @@ public class EndpointProfileMongoDaoTest extends AbstractTest {
         Assert.assertNotNull(endpointProfile);
         byte[] keyHash = endpointProfile.getEndpointKeyHash();
         endpointProfileDao.removeByAppId(endpointProfile.getApplicationId());
-        EndpointProfile found = endpointProfileDao.findByKeyHash(keyHash);
+        MongoEndpointProfile found = endpointProfileDao.findByKeyHash(keyHash);
         Assert.assertNull(found);
     }
 }

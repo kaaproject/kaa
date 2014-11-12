@@ -22,9 +22,10 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.NotificationSchema;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoNotificationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -32,22 +33,22 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class NotificationSchemaMongoDao extends AbstractMongoDao<NotificationSchema> implements NotificationSchemaDao<NotificationSchema> {
+public class NotificationSchemaMongoDao extends AbstractMongoDao<MongoNotificationSchema> implements NotificationSchemaDao<MongoNotificationSchema> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationSchemaMongoDao.class);
 
     @Override
     protected String getCollectionName() {
-        return NotificationSchema.COLLECTION_NAME;
+        return MongoNotificationSchema.COLLECTION_NAME;
     }
 
     @Override
-    protected Class<NotificationSchema> getDocumentClass() {
-        return NotificationSchema.class;
+    protected Class<MongoNotificationSchema> getDocumentClass() {
+        return MongoNotificationSchema.class;
     }
 
     @Override
-    public List<NotificationSchema> findNotificationSchemasByAppId(String appId) {
+    public List<MongoNotificationSchema> findNotificationSchemasByAppId(String appId) {
         LOG.debug("Find notification schemas by application id [{}]", appId);
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Direction.ASC, MAJOR_VERSION));
@@ -63,22 +64,27 @@ public class NotificationSchemaMongoDao extends AbstractMongoDao<NotificationSch
     }
 
     @Override
-    public List<NotificationSchema> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type) {
+    public List<MongoNotificationSchema> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type) {
         LOG.debug("Find notification schemas by application id [{}] and type [{}]", appId, type);
         return find(query(where(APPLICATION_ID).is(appId).and(NOTIFICATION_TYPE).is(type.name())));
     }
 
     @Override
-    public NotificationSchema findNotificationSchemasByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int majorVersion) {
+    public MongoNotificationSchema findNotificationSchemasByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int majorVersion) {
         LOG.debug("Find notification schema by application id [{}] type [{}] and major version", appId, type, majorVersion);
         return findOne(query(where(APPLICATION_ID).is(appId).and(NOTIFICATION_TYPE).is(type.name()).and(MAJOR_VERSION).is(majorVersion)));
     }
 
     @Override
-    public NotificationSchema findLatestNotificationSchemaByAppId(String applicationId, NotificationTypeDto type) {
+    public MongoNotificationSchema findLatestNotificationSchemaByAppId(String applicationId, NotificationTypeDto type) {
         LOG.debug("Find latest notification schema  by application id [{}] and type [{}] ", applicationId, type);
         Sort sort = new Sort(Direction.DESC, MAJOR_VERSION);
         return findOne(query(where(APPLICATION_ID).is(applicationId).and(NOTIFICATION_TYPE).is(type.name())).with(sort));
+    }
+
+    @Override
+    public MongoNotificationSchema save(NotificationSchemaDto dto) {
+        return save(new MongoNotificationSchema(dto));
     }
 
 }

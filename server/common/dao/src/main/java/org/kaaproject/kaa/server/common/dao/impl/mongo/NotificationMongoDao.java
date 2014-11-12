@@ -22,15 +22,16 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.Notification;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class NotificationMongoDao extends AbstractMongoDao<Notification> implements NotificationDao<Notification> {
+public class NotificationMongoDao extends AbstractMongoDao<MongoNotification> implements NotificationDao<MongoNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationMongoDao.class);
     private static final String TOPIC_ID = "topic_id";
@@ -38,12 +39,12 @@ public class NotificationMongoDao extends AbstractMongoDao<Notification> impleme
 
     @Override
     protected String getCollectionName() {
-        return Notification.COLLECTION_NAME;
+        return MongoNotification.COLLECTION_NAME;
     }
 
     @Override
-    protected Class<Notification> getDocumentClass() {
-        return Notification.class;
+    protected Class<MongoNotification> getDocumentClass() {
+        return MongoNotification.class;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class NotificationMongoDao extends AbstractMongoDao<Notification> impleme
     }
 
     @Override
-    public List<Notification> findNotificationsBySchemaId(String schemaId) {
+    public List<MongoNotification> findNotificationsBySchemaId(String schemaId) {
         LOG.debug("Find notifications by schema id [{}]", schemaId);
         return find(query(where(NOTIFICATION_SCHEMA_ID).is(new ObjectId(schemaId))));
     }
@@ -65,7 +66,7 @@ public class NotificationMongoDao extends AbstractMongoDao<Notification> impleme
     }
 
     @Override
-    public List<Notification> findNotificationsByAppId(String appId) {
+    public List<MongoNotification> findNotificationsByAppId(String appId) {
         LOG.debug("Find notifications by application id [{}]", appId);
         return find(query(where(APPLICATION_ID).is(appId)));
     }
@@ -77,7 +78,7 @@ public class NotificationMongoDao extends AbstractMongoDao<Notification> impleme
     }
 
     @Override
-    public List<Notification> findNotificationsByTopicId(String topicId) {
+    public List<MongoNotification> findNotificationsByTopicId(String topicId) {
         LOG.debug("Find notifications by topic id [{}]", topicId);
         return find(query(where(TOPIC_ID).is(topicId)));
     }
@@ -89,17 +90,22 @@ public class NotificationMongoDao extends AbstractMongoDao<Notification> impleme
     }
 
     @Override
-    public List<Notification> findNotificationsBySchemaIdAndType(String schemaId, NotificationTypeDto type) {
+    public List<MongoNotification> findNotificationsBySchemaIdAndType(String schemaId, NotificationTypeDto type) {
         LOG.debug("Find notifications by schema id [{}] and type [{}]", schemaId, type);
         return find(query(where(NOTIFICATION_SCHEMA_ID).is(new ObjectId(schemaId)).and(NOTIFICATION_TYPE).is(type.name())));
     }
 
     @Override
-    public List<Notification> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNumber, int sysNfVersion, int userNfVersion) {
+    public List<MongoNotification> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNumber, int sysNfVersion, int userNfVersion) {
         LOG.debug("Find notifications by topic id [{}], sequence number start [{}], system schema version [{}], user schema version [{}]",
                 topicId, seqNumber, sysNfVersion, userNfVersion);
         return find(query(where(TOPIC_ID).is(topicId).and(SEQUENCE_NUMBER).gt(seqNumber)
                 .orOperator(where(VERSION).is(sysNfVersion).and(NOTIFICATION_TYPE).is(NotificationTypeDto.SYSTEM),
                         where(VERSION).is(userNfVersion).and(NOTIFICATION_TYPE).is(NotificationTypeDto.USER))));
+    }
+
+    @Override
+    public MongoNotification save(NotificationDto notification) {
+        return save(new MongoNotification(notification));
     }
 }

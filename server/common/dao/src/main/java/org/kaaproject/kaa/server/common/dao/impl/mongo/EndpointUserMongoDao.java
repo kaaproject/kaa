@@ -21,29 +21,30 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.UUID;
 
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointUser;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EndpointUserMongoDao extends AbstractMongoDao<EndpointUser> implements EndpointUserDao<EndpointUser>, EndpointUserVerifier {
+public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser> implements EndpointUserDao<MongoEndpointUser>, EndpointUserVerifier {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserMongoDao.class);
 
     @Override
     protected String getCollectionName() {
-        return EndpointUser.COLLECTION_NAME;
+        return MongoEndpointUser.COLLECTION_NAME;
     }
 
     @Override
-    protected Class<EndpointUser> getDocumentClass() {
-        return EndpointUser.class;
+    protected Class<MongoEndpointUser> getDocumentClass() {
+        return MongoEndpointUser.class;
     }
 
     @Override
-    public EndpointUser findByExternalIdAndTenantId(String externalId, String tenantId) {
+    public MongoEndpointUser findByExternalIdAndTenantId(String externalId, String tenantId) {
         LOG.debug("Find user by external uid [{}] and tenant id [{}] ", externalId, tenantId);
         return findOne(query(where(EXTERNAL_ID).is(externalId).and(TENANT_ID).is(tenantId)));
     }
@@ -56,7 +57,7 @@ public class EndpointUserMongoDao extends AbstractMongoDao<EndpointUser> impleme
 
     @Override
     public String generateAccessToken(String externalUid, String tenantId) {
-        EndpointUser endpointUser = findByExternalIdAndTenantId(externalUid, tenantId);
+        MongoEndpointUser endpointUser = findByExternalIdAndTenantId(externalUid, tenantId);
         String accessToken = UUID.randomUUID().toString();
         endpointUser.setAccessToken(accessToken);
         save(endpointUser);
@@ -65,7 +66,7 @@ public class EndpointUserMongoDao extends AbstractMongoDao<EndpointUser> impleme
 
     @Override
     public boolean checkAccessToken(String tenantId, String externalId, String accessToken) {
-        EndpointUser endpointUser = findByExternalIdAndTenantId(externalId, tenantId);
+        MongoEndpointUser endpointUser = findByExternalIdAndTenantId(externalId, tenantId);
         if(endpointUser == null){
             LOG.debug("Can't find user with external id {}", externalId);
             return false;
@@ -75,4 +76,8 @@ public class EndpointUserMongoDao extends AbstractMongoDao<EndpointUser> impleme
         }
     }
 
+    @Override
+    public MongoEndpointUser save(EndpointUserDto dto) {
+        return save(new MongoEndpointUser(dto));
+    }
 }

@@ -18,12 +18,13 @@ package org.kaaproject.kaa.server.common.dao.model.mongo;
 
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.dao.model.NotificationSchema;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = NotificationSchema.COLLECTION_NAME)
-public final class NotificationSchema extends AbstractSchema<NotificationSchemaDto> {
+@Document(collection = MongoNotificationSchema.COLLECTION_NAME)
+public final class MongoNotificationSchema extends AbstractSchema<NotificationSchemaDto> implements NotificationSchema{
 
     private static final long serialVersionUID = 6585856417466958172L;
 
@@ -33,10 +34,10 @@ public final class NotificationSchema extends AbstractSchema<NotificationSchemaD
     @Field("notification_type")
     private NotificationTypeDto type;
 
-    public NotificationSchema() {
+    public MongoNotificationSchema() {
     }
 
-    public NotificationSchema(NotificationSchemaDto dto) {
+    public MongoNotificationSchema(NotificationSchemaDto dto) {
         super(dto);
         this.type = dto.getType();
     }
@@ -50,8 +51,8 @@ public final class NotificationSchema extends AbstractSchema<NotificationSchemaD
         if (this == other) {
             return true;
         }
-        if (other instanceof NotificationSchema) {
-            NotificationSchema that = (NotificationSchema) other;
+        if (other instanceof MongoNotificationSchema) {
+            MongoNotificationSchema that = (MongoNotificationSchema) other;
             if (type != that.type) {
                 return false;
             }
@@ -90,8 +91,8 @@ public final class NotificationSchema extends AbstractSchema<NotificationSchemaD
         return new NotificationSchemaDto();
     }
 
+    @Override
     public int incrementVersion() {
         return ++majorVersion;
     }
-
 }

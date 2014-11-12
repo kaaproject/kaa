@@ -17,19 +17,19 @@
 package org.kaaproject.kaa.server.common.dao.model.mongo;
 
 
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.server.common.dao.model.ToDto;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = EndpointNotification.COLLECTION_NAME)
-public final class EndpointNotification implements Serializable, ToDto<EndpointNotificationDto> {
+@Document(collection = MongoEndpointNotification.COLLECTION_NAME)
+public final class MongoEndpointNotification implements EndpointNotification, Serializable {
 
     private static final long serialVersionUID = -6770166693195322360L;
 
@@ -39,22 +39,22 @@ public final class EndpointNotification implements Serializable, ToDto<EndpointN
     private String id;
     @Field("endpoint_key_hash")
     private byte[] endpointKeyHash;
-    private Notification notification;
+    private MongoNotification notification;
 
-    public EndpointNotification() {
+    public MongoEndpointNotification() {
     }
 
-    public EndpointNotification(EndpointNotificationDto dto) {
+    public MongoEndpointNotification(EndpointNotificationDto dto) {
         this.id = dto.getId();
         this.endpointKeyHash = getArrayCopy(dto.getEndpointKeyHash());
-        this.notification = dto.getNotificationDto() != null ? new Notification(dto.getNotificationDto()) : null;
+        this.notification = dto.getNotificationDto() != null ? new MongoNotification(dto.getNotificationDto()) : null;
     }
 
     public String getId() {
         return id;
     }
 
-    public Notification getNotification() {
+    public MongoNotification getNotification() {
         return notification;
     }
 
@@ -67,11 +67,11 @@ public final class EndpointNotification implements Serializable, ToDto<EndpointN
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EndpointNotification)) {
+        if (!(o instanceof MongoEndpointNotification)) {
             return false;
         }
 
-        EndpointNotification that = (EndpointNotification) o;
+        MongoEndpointNotification that = (MongoEndpointNotification) o;
 
         if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
             return false;

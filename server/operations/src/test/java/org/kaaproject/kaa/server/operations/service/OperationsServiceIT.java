@@ -88,9 +88,9 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointUser;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -179,7 +179,7 @@ public class OperationsServiceIT extends AbstractTest {
     protected EndpointService endpointService;
 
     @Autowired
-    protected EndpointUserDao<EndpointUser> endpointUserDao;
+    protected EndpointUserDao<MongoEndpointUser> endpointUserDao;
 
     @Autowired
     protected TenantDao<Tenant> customerDao;
@@ -194,10 +194,10 @@ public class OperationsServiceIT extends AbstractTest {
     protected ConfigurationDao<Configuration> configurationDao;
 
     @Autowired
-    protected EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
+    protected EndpointConfigurationDao<MongoEndpointConfiguration> endpointConfigurationDao;
 
     @Autowired
-    protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
+    protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
 
     @Autowired
     protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;

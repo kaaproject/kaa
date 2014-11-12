@@ -28,7 +28,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
-import org.kaaproject.kaa.server.common.dao.model.ToDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -37,8 +37,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
-@Document(collection = EndpointProfile.COLLECTION_NAME)
-public final class EndpointProfile implements ToDto<EndpointProfileDto>, Serializable {
+@Document(collection = MongoEndpointProfile.COLLECTION_NAME)
+public class MongoEndpointProfile implements EndpointProfile, Serializable {
 
     private static final long serialVersionUID = -3227246639864687299L;
 
@@ -97,10 +97,10 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
     private String serverHash;
 
 
-    public EndpointProfile() {
+    public MongoEndpointProfile() {
     }
 
-    public EndpointProfile(EndpointProfileDto dto) {
+    public MongoEndpointProfile(EndpointProfileDto dto) {
         this.id = dto.getId();
         this.applicationId = dto.getApplicationId();
         this.endpointKey = dto.getEndpointKey();
@@ -128,10 +128,11 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         this.serverHash = dto.getServerHash();
     }
 
+    @Override
     public String getId() {
         return id;
     }
-
+    
     public void setId(String id) {
         this.id = id;
     }
@@ -264,6 +265,7 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         this.notificationVersion = notificationVersion;
     }
 
+    @Override
     public List<String> getSubscriptions() {
         return subscriptions;
     }
@@ -325,11 +327,11 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EndpointProfile)) {
+        if (!(o instanceof MongoEndpointProfile)) {
             return false;
         }
 
-        EndpointProfile that = (EndpointProfile) o;
+        MongoEndpointProfile that = (MongoEndpointProfile) o;
 
         if (configurationVersion != that.configurationVersion) {
             return false;

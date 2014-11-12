@@ -19,7 +19,6 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -35,57 +34,16 @@
             http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <context:annotation-config/>
-
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
     <context:property-placeholder location="classpath:dao_test.properties" />
 
-    <mongo:mongo id="mongoClient" replica-set="${servers}" write-concern="${write.concern}">
-        <mongo:options
-                connections-per-host="${connections.per.host}"
-                threads-allowed-to-block-for-connection-multiplier="5"
-                connect-timeout="${connection.timeout}"
-                max-wait-time="${max.wait.time}"
-                auto-connect-retry="${auto.connect.retry}"
-                socket-keep-alive="${socket.keepalive}"
-                socket-timeout="${socket.timeout}"
-                slave-ok="${slaveOk}"
-                write-number="1"
-                write-timeout="0"
-                write-fsync="true"/>
-    </mongo:mongo>
-
-    <mongo:db-factory dbname="${db.name}" mongo-ref="mongoClient"/>
-
-    <mongo:auditing />
-
-    <bean id="mongoTypeMapper" class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
-        <constructor-arg name="typeKey">
-            <null/>
-        </constructor-arg>
-    </bean>
-
-    <bean id="mongoMappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext"/>
-
-    <bean id="mongoConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
-        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
-        <constructor-arg name="mappingContext" ref="mongoMappingContext"/>
-        <property name="typeMapper" ref="mongoTypeMapper" />
-    </bean>
-
-    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
-        <constructor-arg name="mongoConverter" ref="mongoConverter"/>
-        <property name="writeResultChecking" value="EXCEPTION"/>
-    </bean>
+    <import resource="classpath:common-dao-nosql-test-context.xml" />
 
     <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
 
     <bean id="overrideAlgorithmFactory" class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory"/>
 
     <bean id="eventSchemaProcessor" class="org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessorImpl" />
-
-    <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointUserMongoDao" />
-    <alias name="endpointUserDao" alias="kaaEndpointUserVerifier" />
 
     <bean id="dummyEndpointUserVerifier" class="org.kaaproject.kaa.server.common.dao.DummyEndpointUserVerifier"/>
 
@@ -113,18 +71,7 @@
         <property name="password" value="${jdbc.password}" />
     </bean>
 
-    <!--aop:config>
-        <aop:pointcut id="hibernateServiceMethods" expression="execution(* org.kaaproject.kaa.server.common.dao.service.*ServiceImpl.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="hibernateServiceMethods"/>
-    </aop:config-->
-
     <tx:annotation-driven transaction-manager="transactionManager"/>
-
-    <!--tx:advice id="txAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="REQUIRED"/>
-        </tx:attributes>
-    </tx:advice-->
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
@@ -132,17 +79,23 @@
 
     <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
+    <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl">
+        <property name="endpointProfileDao" ref="endpointProfileDao"/>
+        <property name="endpointConfigurationDao" ref="endpointConfigurationDao"/>
+        <property name="endpointUserDao" ref="endpointUserDao"/>
+    </bean>
+
+    <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl">
+        <property name="notificationDao" ref="notificationDao"/>
+        <property name="unicastNotificationDao" ref="unicastNotificationDao"/>
+        <property name="notificationSchemaDao" ref="notificationSchemaDao"/>
+        <property name="endpointProfileDao" ref="endpointProfileDao"/>
+    </bean>
+
+    <alias name="endpointUserDao" alias="kaaEndpointUserVerifier" />
+
     <util:map id="verifierMap">
         <entry key="dummyEndpointUserVerifier" value-ref="dummyEndpointUserVerifier" />
         <entry key="kaaEndpointUserVerifier" value-ref="kaaEndpointUserVerifier" />
     </util:map>
-
-    <!-- provides a H2 console to look into the db if necessary -->
-    <!-- Connection instructions : go to http://localhost:11111 -->
-    <!-- jdbc url : jdbc:h2:mem:dataSource -->
-    <!--bean id="org.h2.tools.Server-WebServer" class="org.h2.tools.Server"
-          factory-method="createWebServer" depends-on="dataSource"
-          init-method="start" lazy-init="false" destroy-method="stop">
-        <constructor-arg value="-web,-webPort,11111"/>
-    </bean-->
 </beans>

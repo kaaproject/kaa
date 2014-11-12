@@ -40,7 +40,7 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
@@ -83,7 +83,7 @@ public class ProfileServiceIT extends AbstractTest {
     protected ProfileService profileService;
 
     @Autowired
-    protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
+    protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
 
     @Autowired
     protected TenantDao<Tenant> customerDao;

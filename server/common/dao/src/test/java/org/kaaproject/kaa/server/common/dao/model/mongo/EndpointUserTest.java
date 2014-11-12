@@ -20,13 +20,13 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
 import org.junit.Test;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointUser;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointUser;
 
 public class EndpointUserTest {
 
     @Test
     public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(EndpointUser.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
+        EqualsVerifier.forClass(MongoEndpointUser.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
     }
 
 }

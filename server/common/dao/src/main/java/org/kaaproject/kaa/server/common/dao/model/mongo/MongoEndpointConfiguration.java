@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.dao.model.mongo;
 
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -28,8 +29,8 @@ import java.util.Arrays;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 
-@Document(collection = EndpointConfiguration.COLLECTION_NAME)
-public final class EndpointConfiguration implements ToDto<EndpointConfigurationDto>, Serializable {
+@Document(collection = MongoEndpointConfiguration.COLLECTION_NAME)
+public final class MongoEndpointConfiguration implements EndpointConfiguration, Serializable {
 
     private static final long serialVersionUID = -5646769700581347085L;
 
@@ -42,10 +43,10 @@ public final class EndpointConfiguration implements ToDto<EndpointConfigurationD
     private byte[] configurationHash;
     private byte[] configuration;
 
-    public EndpointConfiguration() {
+    public MongoEndpointConfiguration() {
     }
 
-    public EndpointConfiguration(EndpointConfigurationDto dto) {
+    public MongoEndpointConfiguration(EndpointConfigurationDto dto) {
         this.id = dto.getId();
         this.configuration = dto.getConfiguration();
         this.configurationHash = dto.getConfigurationHash();
@@ -80,11 +81,11 @@ public final class EndpointConfiguration implements ToDto<EndpointConfigurationD
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EndpointConfiguration)) {
+        if (!(o instanceof MongoEndpointConfiguration)) {
             return false;
         }
 
-        EndpointConfiguration that = (EndpointConfiguration) o;
+        MongoEndpointConfiguration that = (MongoEndpointConfiguration) o;
 
         if (!Arrays.equals(configuration, that.configuration)) {
             return false;

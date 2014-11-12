@@ -20,11 +20,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.server.common.dao.model.ToDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public final class EndpointUser implements ToDto<EndpointUserDto>, Serializable {
+public final class MongoEndpointUser implements EndpointUser, Serializable {
 
     private static final long serialVersionUID = 3766947955702551264L;
 
@@ -43,10 +43,10 @@ public final class EndpointUser implements ToDto<EndpointUserDto>, Serializable 
     @Field("endpoint_ids")
     private List<String> endpointIds;
 
-    public EndpointUser() {
+    public MongoEndpointUser() {
     }
 
-    public EndpointUser(EndpointUserDto dto) {
+    public MongoEndpointUser(EndpointUserDto dto) {
         this.id = dto.getId();
         this.username = dto.getUsername();
         this.externalId = dto.getExternalId();
@@ -123,7 +123,7 @@ public final class EndpointUser implements ToDto<EndpointUserDto>, Serializable 
         if (getClass() != obj.getClass()) {
             return false;
         }
-        EndpointUser other = (EndpointUser) obj;
+        MongoEndpointUser other = (MongoEndpointUser) obj;
         if (externalId == null) {
             if (other.externalId != null) {
                 return false;

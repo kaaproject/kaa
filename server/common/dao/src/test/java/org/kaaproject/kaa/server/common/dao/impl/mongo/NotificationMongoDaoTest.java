@@ -27,7 +27,7 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.Notification;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -56,14 +56,14 @@ public class NotificationMongoDaoTest extends AbstractTest {
     }
 
     @Autowired
-    private NotificationDao<Notification> notificationDao;
+    private NotificationDao<MongoNotification> notificationDao;
 
     @Test
     public void testRemoveById() {
         NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
         Assert.assertNotNull(notification.getId());
         notificationDao.removeById(notification.getId());
-        Notification found = notificationDao.findById(notification.getId());
+        MongoNotification found = notificationDao.findById(notification.getId());
         Assert.assertNull(found);
     }
 
@@ -71,7 +71,7 @@ public class NotificationMongoDaoTest extends AbstractTest {
     public void testFindNotificationsBySchemaId() {
         NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
         Assert.assertNotNull(notification.getId());
-        List<Notification> found = notificationDao.findNotificationsBySchemaId(notification.getSchemaId());
+        List<MongoNotification> found = notificationDao.findNotificationsBySchemaId(notification.getSchemaId());
         Assert.assertEquals(notification, found.get(0).toDto());
     }
 
@@ -80,7 +80,7 @@ public class NotificationMongoDaoTest extends AbstractTest {
         NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
         Assert.assertNotNull(notification.getId());
         String schemaId = notification.getSchemaId();
-        List<Notification> found = notificationDao.findNotificationsBySchemaId(schemaId);
+        List<MongoNotification> found = notificationDao.findNotificationsBySchemaId(schemaId);
         Assert.assertEquals(notification, found.get(0).toDto());
         notificationDao.removeNotificationsBySchemaId(schemaId);;
         found = notificationDao.findNotificationsBySchemaId(schemaId);
@@ -91,7 +91,7 @@ public class NotificationMongoDaoTest extends AbstractTest {
     public void findNotificationsByAppId() {
         NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
         Assert.assertNotNull(notification.getId());
-        List<Notification> found = notificationDao.findNotificationsByAppId(notification.getApplicationId());
+        List<MongoNotification> found = notificationDao.findNotificationsByAppId(notification.getApplicationId());
         Assert.assertEquals(notification, found.get(0).toDto());
     }
 
@@ -99,7 +99,7 @@ public class NotificationMongoDaoTest extends AbstractTest {
     public void findNotificationsBySchemaIdAndType() {
         NotificationDto notification = generateNotifications(null, null, 1, NotificationTypeDto.USER).get(0);
         Assert.assertNotNull(notification.getId());
-        List<Notification> found = notificationDao.findNotificationsBySchemaIdAndType(notification.getSchemaId(), NotificationTypeDto.USER);
+        List<MongoNotification> found = notificationDao.findNotificationsBySchemaIdAndType(notification.getSchemaId(), NotificationTypeDto.USER);
         Assert.assertEquals(notification, found.get(0).toDto());
     }
 }

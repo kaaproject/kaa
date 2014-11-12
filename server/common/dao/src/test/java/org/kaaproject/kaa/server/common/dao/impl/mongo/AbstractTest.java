@@ -106,8 +106,8 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.mongo.LogEvent;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
@@ -190,9 +190,9 @@ public class AbstractTest {
     @Autowired
     protected ConfigurationSchemaDao<ConfigurationSchema> configurationSchemaDao;
     @Autowired
-    protected EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
+    protected EndpointConfigurationDao<MongoEndpointConfiguration> endpointConfigurationDao;
     @Autowired
-    protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
+    protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
     @Autowired
     protected EndpointGroupDao<EndpointGroup> endpointGroupDao;
     @Autowired
@@ -641,7 +641,7 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        return endpointProfileDao.save(new EndpointProfile(profileDto)).toDto();
+        return endpointProfileDao.save(new MongoEndpointProfile(profileDto)).toDto();
     }
 
     protected EndpointUserDto generateEndpointUser(String tenantId) {

@@ -32,7 +32,7 @@ import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.Notification;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoNotification;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class TopicServiceImpl implements TopicService {
     private TopicDao<Topic> topicDao;
 
     @Autowired
-    private NotificationDao<Notification> notificationDao;
+    private NotificationDao<MongoNotification> notificationDao;
 
     @Override
     public TopicDto saveTopic(TopicDto topicDto) {

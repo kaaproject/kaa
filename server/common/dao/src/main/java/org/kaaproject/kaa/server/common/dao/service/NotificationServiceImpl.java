@@ -51,10 +51,10 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointNotification;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.model.mongo.Notification;
-import org.kaaproject.kaa.server.common.dao.model.mongo.NotificationSchema;
+import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.Notification;
+import org.kaaproject.kaa.server.common.dao.model.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,18 +73,11 @@ public class NotificationServiceImpl implements NotificationService {
     private int waitSeconds;
 
     @Autowired
-    private NotificationDao<Notification> notificationDao;
-
-    @Autowired
     private TopicDao<Topic> topicDao;
 
-    @Autowired
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
-
-    @Autowired
+    private NotificationDao<Notification> notificationDao;
     private EndpointNotificationDao<EndpointNotification> unicastNotificationDao;
-
-    @Autowired
     private NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
 
     // 7 days
@@ -119,7 +112,7 @@ public class NotificationServiceImpl implements NotificationService {
                 throw new IncorrectParameterException("Invalid notification schema id: " + id);
             }
         }
-        return getDto(notificationSchemaDao.save(new NotificationSchema(notificationSchemaDto)));
+        return getDto(notificationSchemaDao.save(notificationSchemaDto));
     }
 
     @Override
@@ -166,7 +159,7 @@ public class NotificationServiceImpl implements NotificationService {
         Topic topic = topicDao.getNextSeqNumber(dto.getTopicId());
         if (topic != null) {
             dto.setSecNum(topic.getSequenceNumber());
-            Notification savedDto = notificationDao.save(new Notification(dto));
+            Notification savedDto = notificationDao.save(dto);
             notificationDto = savedDto != null ? savedDto.toDto() : null;
         } else {
             LOG.warn("Can't find topic by id.");
@@ -313,7 +306,7 @@ public class NotificationServiceImpl implements NotificationService {
             notificationDto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + TTL));
             notificationDto.setLastTimeModify(new Date(currentTime));
 
-            EndpointNotificationDto unicast = getDto(unicastNotificationDao.save(new EndpointNotification(dto)));
+            EndpointNotificationDto unicast = getDto(unicastNotificationDao.save(dto));
             if (unicast != null && unicast.getNotificationDto() != null) {
                 LOG.trace("Saved unicast notifications {}", unicast);
                 updateNotificationDto = new UpdateNotificationDto<EndpointNotificationDto>();
@@ -351,4 +344,19 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
+    public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
+        this.endpointProfileDao = endpointProfileDao;
+    }
+
+    public void setNotificationDao(NotificationDao<Notification> notificationDao) {
+        this.notificationDao = notificationDao;
+    }
+
+    public void setUnicastNotificationDao(EndpointNotificationDao<EndpointNotification> unicastNotificationDao) {
+        this.unicastNotificationDao = unicastNotificationDao;
+    }
+
+    public void setNotificationSchemaDao(NotificationSchemaDao<NotificationSchema> notificationSchemaDao) {
+        this.notificationSchemaDao = notificationSchemaDao;
+    }
 }

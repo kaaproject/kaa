@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 CyberVision, Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/data/mongo
+            http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <!-- In order to implement support of custom NoSQL platform, one should declare following mandatory beans -->
+
+    <bean id="notificationDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.NotificationMongoDao"/>
+    <bean id="unicastNotificationDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointNotificationMongoDao"/>
+    <bean id="notificationSchemaDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.NotificationSchemaMongoDao"/>
+    <bean id="endpointProfileDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointProfileMongoDao"/>
+    <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointConfigurationMongoDao"/>
+    <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointUserMongoDao"/>
+    
+    <!-- End of mandatory beans declaration -->
+
+    <mongo:mongo id="mongoClient" replica-set="${servers}" write-concern="${write.concern}">
+        <mongo:options
+                connections-per-host="${connections.per.host}"
+                threads-allowed-to-block-for-connection-multiplier="5"
+                connect-timeout="${connection.timeout}"
+                max-wait-time="${max.wait.time}"
+                auto-connect-retry="${auto.connect.retry}"
+                socket-keep-alive="${socket.keepalive}"
+                socket-timeout="${socket.timeout}"
+                slave-ok="${slaveOk}"
+                write-number="1"
+                write-timeout="0"
+                write-fsync="true"/>
+    </mongo:mongo>
+
+    <mongo:db-factory dbname="${db.name}" mongo-ref="mongoClient"/>
+
+    <mongo:auditing />
+
+    <bean id="mongoTypeMapper" class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
+        <constructor-arg name="typeKey">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mongoMappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext"/>
+
+    <bean id="mongoConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+        <constructor-arg name="mappingContext" ref="mongoMappingContext"/>
+        <property name="typeMapper" ref="mongoTypeMapper"></property>
+    </bean>
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+        <constructor-arg name="mongoConverter" ref="mongoConverter"/>
+        <property name="writeResultChecking" value="EXCEPTION"/>
+    </bean>
+</beans>

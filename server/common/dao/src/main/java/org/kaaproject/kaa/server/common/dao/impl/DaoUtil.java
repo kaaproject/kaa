@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointGroupState;
-import org.kaaproject.kaa.server.common.dao.model.mongo.Notification;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoNotification;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
@@ -240,12 +240,12 @@ public abstract class DaoUtil {
      * @param notificationList the notification list
      * @return converted list of model objects
      */
-    public static List<Notification> convertToModelList(List<NotificationDto> notificationList) {
-        List<Notification> notifications = null;
+    public static List<MongoNotification> convertToModelList(List<NotificationDto> notificationList) {
+        List<MongoNotification> notifications = null;
         if (notificationList != null && !notificationList.isEmpty()) {
             notifications = new ArrayList<>();
             for (NotificationDto dto : notificationList) {
-                notifications.add(new Notification(dto));
+                notifications.add(new MongoNotification(dto));
             }
         }
         return notifications;

@@ -27,15 +27,15 @@ import java.util.Date;
 import org.bson.types.ObjectId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.model.ToDto;
+import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = Notification.COLLECTION_NAME)
-public final class Notification implements ToDto<NotificationDto>, Serializable {
+@Document(collection = MongoNotification.COLLECTION_NAME)
+public final class MongoNotification implements Notification, Serializable {
 
     private static final long serialVersionUID = 348872010210481058L;
 
@@ -62,10 +62,10 @@ public final class Notification implements ToDto<NotificationDto>, Serializable 
     @Field("seq_num")
     private int secNum;
 
-    public Notification() {
+    public MongoNotification() {
     }
 
-    public Notification(NotificationDto dto) {
+    public MongoNotification(NotificationDto dto) {
         this.id = dto.getId();
         this.applicationId = dto.getApplicationId();
         this.schemaId = idToObjectId(dto.getSchemaId());
@@ -123,11 +123,11 @@ public final class Notification implements ToDto<NotificationDto>, Serializable 
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Notification)) {
+        if (!(o instanceof MongoNotification)) {
             return false;
         }
 
-        Notification that = (Notification) o;
+        MongoNotification that = (MongoNotification) o;
 
         if (secNum != that.secNum) {
             return false;

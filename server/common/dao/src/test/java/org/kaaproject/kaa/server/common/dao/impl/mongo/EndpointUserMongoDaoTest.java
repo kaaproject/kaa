@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointUser;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class EndpointUserMongoDaoTest extends AbstractTest {
     protected static final String PASSWORD = "Password";
 
     @Autowired
-    private EndpointUserDao<EndpointUser> endpointUserDao;
+    private EndpointUserDao<MongoEndpointUser> endpointUserDao;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -73,7 +73,7 @@ public class EndpointUserMongoDaoTest extends AbstractTest {
     public void findById() {
         TenantDto tenant = generateTenant();
         EndpointUserDto dto = generateEndpointUser(tenant.getId());
-        EndpointUser user = endpointUserDao.findById(dto.getId());
+        MongoEndpointUser user = endpointUserDao.findById(dto.getId());
         Assert.assertNotNull(user);
         Assert.assertEquals(dto, user.toDto());
     }
@@ -82,7 +82,7 @@ public class EndpointUserMongoDaoTest extends AbstractTest {
     public void removeById() {
         TenantDto tenant = generateTenant();
         EndpointUserDto dto = generateEndpointUser(tenant.getId());
-        EndpointUser user = endpointUserDao.findById(dto.getId());
+        MongoEndpointUser user = endpointUserDao.findById(dto.getId());
         Assert.assertNotNull(user);
 
         endpointUserDao.removeById(user.getId());
@@ -95,9 +95,9 @@ public class EndpointUserMongoDaoTest extends AbstractTest {
         TenantDto tenant = generateTenant();
         EndpointUserDto dto = generateEndpointUser(tenant.getId());
         Assert.assertNotNull(dto);
-        EndpointUser foundUser = endpointUserDao.findById(dto.getId());
+        MongoEndpointUser foundUser = endpointUserDao.findById(dto.getId());
         Assert.assertNotNull(foundUser);
-        EndpointUser found = endpointUserDao.findByExternalIdAndTenantId(foundUser.getExternalId(), foundUser.getTenantId().toString());
+        MongoEndpointUser found = endpointUserDao.findByExternalIdAndTenantId(foundUser.getExternalId(), foundUser.getTenantId().toString());
         Assert.assertEquals(foundUser, found);
     }
 
@@ -106,7 +106,7 @@ public class EndpointUserMongoDaoTest extends AbstractTest {
         TenantDto tenant = generateTenant();
         EndpointUserDto dto = generateEndpointUser(tenant.getId());
         Assert.assertNotNull(dto);
-        EndpointUser found = endpointUserDao.findById(dto.getId());
+        MongoEndpointUser found = endpointUserDao.findById(dto.getId());
         Assert.assertNotNull(found);
         endpointUserDao.removeByExternalIdAndTenantId(found.getExternalId(), found.getTenantId());
         found = endpointUserDao.findById(dto.getId());
@@ -119,7 +119,7 @@ public class EndpointUserMongoDaoTest extends AbstractTest {
         EndpointUserDto dto = generateEndpointUser(tenant.getId());
         Assert.assertNotNull(dto);
         String accessToken = endpointUserDao.generateAccessToken(dto.getExternalId(), dto.getTenantId().toString());
-        EndpointUser found = endpointUserDao.findById(dto.getId());
+        MongoEndpointUser found = endpointUserDao.findById(dto.getId());
         Assert.assertEquals(accessToken, found.getAccessToken());
         Assert.assertTrue(endpointUserDao.checkAccessToken(found.getTenantId().toString(), found.getExternalId(), accessToken));
         Assert.assertFalse(endpointUserDao.checkAccessToken(found.getTenantId().toString(), found.getExternalId(), "invalid"));
@@ -130,10 +130,10 @@ public class EndpointUserMongoDaoTest extends AbstractTest {
         TenantDto tenant = generateTenant();
         EndpointUserDto dto = generateEndpointUser(tenant.getId());
         Assert.assertNotNull(dto);
-        EndpointUser user = endpointUserDao.findById(dto.getId());
+        MongoEndpointUser user = endpointUserDao.findById(dto.getId());
         Assert.assertNotNull(user);
         dto = user.toDto();
-        EndpointUser converted = new EndpointUser(dto);
+        MongoEndpointUser converted = new MongoEndpointUser(dto);
         Assert.assertEquals(user, converted);
     }
 }

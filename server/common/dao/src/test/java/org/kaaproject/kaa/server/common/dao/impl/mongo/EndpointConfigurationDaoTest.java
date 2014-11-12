@@ -24,7 +24,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
@@ -62,24 +62,24 @@ public class EndpointConfigurationDaoTest extends AbstractTest {
 
     @Test
     public void saveEndpointConfigurationTest() {
-        EndpointConfiguration found = endpointConfigurationDao.findById(endConf.get(0));
+        MongoEndpointConfiguration found = endpointConfigurationDao.findById(endConf.get(0));
         Assert.assertNotNull(found);
         found.setId(null);
-        EndpointConfiguration savedDto = endpointConfigurationDao.save(found);
+        MongoEndpointConfiguration savedDto = endpointConfigurationDao.save(found);
         Assert.assertNotNull(savedDto);
         Assert.assertEquals(savedDto, found);
     }
 
     @Test
     public void findEndpointConfigurationByIdTest() {
-        EndpointConfiguration found = endpointConfigurationDao.findById(endConf.get(0));
+        MongoEndpointConfiguration found = endpointConfigurationDao.findById(endConf.get(0));
         Assert.assertNotNull(found);
     }
 
     @Test
     public void removeEndpointConfigurationByIdTest() {
         String id = endConf.get(0);
-        EndpointConfiguration endpointConfiguration = endpointConfigurationDao.findById(id);
+        MongoEndpointConfiguration endpointConfiguration = endpointConfigurationDao.findById(id);
         Assert.assertNotNull(endpointConfiguration);
         endpointConfigurationDao.removeById(id);
 
@@ -90,7 +90,7 @@ public class EndpointConfigurationDaoTest extends AbstractTest {
     @Test
     public void removeEndpointConfigurationByHashTest() {
         String id = endConf.get(0);
-        EndpointConfiguration endpointConfiguration = endpointConfigurationDao.findById(id);
+        MongoEndpointConfiguration endpointConfiguration = endpointConfigurationDao.findById(id);
         Assert.assertNotNull(endpointConfiguration);
         byte[] bytes = endpointConfiguration.getConfigurationHash();
         endpointConfiguration = endpointConfigurationDao.findByHash(bytes);
@@ -104,10 +104,10 @@ public class EndpointConfigurationDaoTest extends AbstractTest {
     @Test
     public void convertToDtoTest() {
         String id = endConf.get(0);
-        EndpointConfiguration endpointConfiguration = endpointConfigurationDao.findById(id);
+        MongoEndpointConfiguration endpointConfiguration = endpointConfigurationDao.findById(id);
         Assert.assertNotNull(endpointConfiguration);
         EndpointConfigurationDto dto = endpointConfiguration.toDto();
-        EndpointConfiguration converted = new EndpointConfiguration(dto);
+        MongoEndpointConfiguration converted = new MongoEndpointConfiguration(dto);
         Assert.assertEquals(endpointConfiguration, converted);
     }
 
