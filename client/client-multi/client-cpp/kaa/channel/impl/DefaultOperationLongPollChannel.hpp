@@ -53,14 +53,18 @@ public:
 
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
 
-    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
+    virtual void shutdown();
+    virtual void pause();
+    virtual void resume();
 
-    void executeTask();
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
 private:
     void startPoll();
     void stopPoll();
     void postTask();
+    void executeTask();
+    void doShutdown();
 
 private:
     static const std::string CHANNEL_ID;
@@ -72,6 +76,8 @@ private:
     boost::asio::io_service::work work_;
     std::thread pollThread_;
     bool stopped_;
+    bool isShutdown_;
+    bool isPaused_;
     bool connectionInProgress_;
     bool taskPosted_;
     bool firstStart_;
@@ -82,6 +88,7 @@ private:
     HttpDataProcessor httpDataProcessor_;
     HttpClient httpClient_;
     KAA_CONDITION_VARIABLE_DECLARE(waitCondition_);
+    KAA_MUTEX_DECLARE(conditionMutex_);
     KAA_MUTEX_DECLARE(channelGuard_);
 };
 

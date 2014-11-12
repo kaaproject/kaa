@@ -29,6 +29,9 @@ namespace kaa {
 
 class UserDataChannel : public MockDataChannel {
 public:
+    UserDataChannel() : isShutdown_(false), isPaused_(false), channelType_(ChannelType::HTTP)
+                      , transportType_(TransportType::BOOTSTRAP), serverType_(ServerType::BOOTSTRAP) { }
+
     virtual const std::string& getId() const {
         return id_;
     }
@@ -55,7 +58,28 @@ public:
         server_ = server;
     }
 
+    virtual void shutdown()
+    {
+        isShutdown_ = true;
+    }
+
+    virtual void pause()
+    {
+        isPaused_ = true;
+    }
+
+    virtual void resume()
+    {
+        isPaused_ = false;
+    }
+
+    bool isPaused() const { return isPaused_; }
+    bool isShutdown() const { return isShutdown_; }
+
 public:
+    bool isShutdown_;
+    bool isPaused_;
+
     std::string       id_;
     ChannelType       channelType_;
     TransportType     transportType_;
@@ -318,8 +342,7 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
 
     channelManager.addChannel(ch1);
     channelManager.addChannel(ch2);
-
-    BOOST_CHECK_THROW(channelManager.addChannel(ch2), KaaException);
+    channelManager.addChannel(ch2);
 
     BOOST_CHECK(userCh1->server_);
     channelManager.onServerFailed(servers[0]);
@@ -332,6 +355,165 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
     channelManager.onServerFailed(servers[2]);
     BOOST_CHECK(static_cast<HttpServerInfo*>(userCh1->server_.get())->getPort() == 80);
 }
+
+class ConfLogDataChannel : public UserDataChannel {
+public:
+    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
+        return SUPPORTED_TYPES;
+    }
+private:
+    static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
+};
+
+const std::map<TransportType, ChannelDirection> ConfLogDataChannel::SUPPORTED_TYPES =
+{
+        { TransportType::CONFIGURATION, ChannelDirection::BIDIRECTIONAL },
+        { TransportType::LOGGING, ChannelDirection::UP },
+        { TransportType::EVENT, ChannelDirection::DOWN }
+};
+
+BOOST_AUTO_TEST_CASE(SetChannelTest)
+{
+    MockBootstrapManager BootstrapManager;
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
+
+    const std::string ch1Id("id1");
+    ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
+    userCh1->id_ = ch1Id;
+    userCh1->channelType_ = ChannelType::HTTP;
+    userCh1->serverType_ = ServerType::OPERATIONS;
+
+    const std::string ch2Id("id2");
+    ConfLogDataChannel* userCh2 = new ConfLogDataChannel;
+    userCh2->id_ = ch2Id;
+    userCh2->channelType_ = ChannelType::HTTP;
+    userCh2->serverType_ = ServerType::OPERATIONS;
+
+    channelManager.addChannel(userCh2);
+    BOOST_CHECK_EQUAL(userCh2, channelManager.getChannelByTransportType(TransportType::CONFIGURATION));
+    BOOST_CHECK_EQUAL(userCh2, channelManager.getChannelByTransportType(TransportType::LOGGING));
+
+    channelManager.setChannel(TransportType::LOGGING, userCh1);
+    BOOST_CHECK_EQUAL(userCh2, channelManager.getChannelByTransportType(TransportType::CONFIGURATION));
+    BOOST_CHECK_EQUAL(userCh1, channelManager.getChannelByTransportType(TransportType::LOGGING));
+
+    channelManager.removeChannel("id1");
+    BOOST_CHECK_EQUAL(userCh2, channelManager.getChannelByTransportType(TransportType::LOGGING));
+    BOOST_CHECK(userCh1->isShutdown());
+
+    delete userCh1;
+    delete userCh2;
+}
+
+BOOST_AUTO_TEST_CASE(SetChannelNegativeTest)
+{
+    MockBootstrapManager BootstrapManager;
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
+
+    const std::string ch1Id("id1");
+    ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
+    userCh1->id_ = ch1Id;
+    userCh1->channelType_ = ChannelType::HTTP;
+    userCh1->serverType_ = ServerType::OPERATIONS;
+
+    BOOST_CHECK_THROW(channelManager.setChannel(TransportType::EVENT, nullptr), KaaException);
+    BOOST_CHECK_THROW(channelManager.setChannel(TransportType::EVENT, userCh1), KaaException);
+
+    delete userCh1;
+}
+
+BOOST_AUTO_TEST_CASE(ShutdownTest)
+{
+    MockBootstrapManager BootstrapManager;
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
+
+    const std::string ch1Id("id1");
+    ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
+    userCh1->id_ = ch1Id;
+    userCh1->channelType_ = ChannelType::HTTP;
+    userCh1->serverType_ = ServerType::OPERATIONS;
+
+    channelManager.addChannel(userCh1);
+    channelManager.shutdown();
+    BOOST_CHECK(userCh1->isShutdown());
+
+    delete userCh1;
+}
+
+BOOST_AUTO_TEST_CASE(PauseBeforeAddTest)
+{
+    MockBootstrapManager BootstrapManager;
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
+
+    const std::string ch1Id("id1");
+    ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
+    userCh1->id_ = ch1Id;
+    userCh1->channelType_ = ChannelType::HTTP;
+    userCh1->serverType_ = ServerType::OPERATIONS;
+
+    channelManager.pause();
+    channelManager.addChannel(userCh1);
+    BOOST_CHECK(userCh1->isPaused());
+
+    delete userCh1;
+}
+
+BOOST_AUTO_TEST_CASE(PauseAfterAddTest)
+{
+    MockBootstrapManager BootstrapManager;
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
+
+    const std::string ch1Id("id1");
+    ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
+    userCh1->id_ = ch1Id;
+    userCh1->channelType_ = ChannelType::HTTP;
+    userCh1->serverType_ = ServerType::OPERATIONS;
+
+    channelManager.addChannel(userCh1);
+    channelManager.pause();
+    BOOST_CHECK(userCh1->isPaused());
+
+    delete userCh1;
+}
+
+BOOST_AUTO_TEST_CASE(PauseBeforeSetTest)
+{
+    MockBootstrapManager BootstrapManager;
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
+
+    const std::string ch1Id("id1");
+    ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
+    userCh1->id_ = ch1Id;
+    userCh1->channelType_ = ChannelType::HTTP;
+    userCh1->serverType_ = ServerType::OPERATIONS;
+
+    channelManager.pause();
+    channelManager.setChannel(TransportType::CONFIGURATION, userCh1);
+    BOOST_CHECK(userCh1->isPaused());
+
+    delete userCh1;
+}
+
+BOOST_AUTO_TEST_CASE(ResumetTest)
+{
+    MockBootstrapManager BootstrapManager;
+    KaaChannelManager channelManager(BootstrapManager, getServerInfoList());
+
+    const std::string ch1Id("id1");
+    ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
+    userCh1->id_ = ch1Id;
+    userCh1->channelType_ = ChannelType::HTTP;
+    userCh1->serverType_ = ServerType::OPERATIONS;
+
+    channelManager.addChannel(userCh1);
+    channelManager.pause();
+    BOOST_CHECK(userCh1->isPaused());
+    channelManager.resume();
+    BOOST_CHECK(!userCh1->isPaused());
+
+    delete userCh1;
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

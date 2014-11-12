@@ -99,7 +99,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
                 if (!stopped) {
                     currentCommand = new PollCommand(httpClient,
                             DefaultOperationsChannel.this,
-                            SUPPORTED_TYPES,
+                            getSupportedTransportTypes(),
                             currentServer);
                     if (!Thread.currentThread().isInterrupted()) {
                         currentCommand.execute();
@@ -222,7 +222,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         LOG.info("Processing sync {} for channel [{}]", type, getId());
         if (multiplexer != null && demultiplexer != null) {
             if (currentServer != null) {
-                if (SUPPORTED_TYPES.get(type) != null) {
+                if (getSupportedTransportTypes().get(type) != null) {
                     stopPoll();
                     startPoll();
                 } else {
@@ -296,7 +296,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             return;
         }
         if (server != null) {
-            stopPoll();
+            if (!isPaused) {
+                stopPoll();
+            }
             this.currentServer = (HttpLongPollServerInfo) server;
             synchronized (httpClientLock) {
                 LOG.debug("Channel [{}]: creating HTTP client..", getId());
@@ -306,33 +308,52 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
                 }
                 LOG.debug("Channel [{}]: HTTP client created", getId());
             }
-            startPoll();
+            if (!isPaused) {
+                startPoll();
+            }
         }
     }
 
     @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {}
 
-    public void shutdown() {
-        isShutdown = true;
-        stopPoll();
-        if (scheduler != null) {
-            scheduler.shutdownNow();
+    @Override
+    public synchronized void shutdown() {
+        if (!isShutdown) {
+            isShutdown = true;
+            stopPoll();
+            if (scheduler != null) {
+                scheduler.shutdownNow();
+            }
         }
     }
 
-    public void pause() {
-        isPaused = true;
-        stopPoll();
-        if (scheduler != null) {
-            scheduler.shutdownNow();
-            scheduler = null;
+    @Override
+    public synchronized void pause() {
+        if (isShutdown) {
+            LOG.info("Can't pause channel. Channel [{}] is down", getId());
+            return;
+        }
+        if (!isPaused) {
+            isPaused = true;
+            stopPoll();
+            if (scheduler != null) {
+                scheduler.shutdownNow();
+                scheduler = null;
+            }
         }
     }
 
-    public void resume() {
-        isPaused = false;
-        startPoll();
+    @Override
+    public synchronized void resume() {
+        if (isShutdown) {
+            LOG.info("Can't resume channel. Channel [{}] is down", getId());
+            return;
+        }
+        if (isPaused) {
+            isPaused = false;
+            startPoll();
+        }
     }
 
     @Override

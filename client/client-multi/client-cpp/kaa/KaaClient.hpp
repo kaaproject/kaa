@@ -39,6 +39,8 @@
 #include "kaa/channel/OperationsDataProcessor.hpp"
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
+#include "kaa/channel/impl/DefaultOperationHttpChannel.hpp"
+#include "kaa/channel/impl/DefaultOperationLongPollChannel.hpp"
 #include "kaa/log/LogCollector.hpp"
 
 namespace kaa {
@@ -49,18 +51,24 @@ typedef std::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
 typedef std::shared_ptr<DefaultDeltaManager> DefaultDeltaManagerPtr;
 #endif
 
-typedef enum {
-    EXTERNAL_TRANSPORT_CONTROL = 0x1
-} kaa_options_t;
+typedef enum KaaOption {
+    USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL      = 0x01,
+    USE_DEFAULT_OPERATION_KAATCP_CHANNEL    = 0x02,
+    USE_DEFAULT_OPERATION_HTTP_CHANNEL      = 0x04,
+    USE_DEFAULT_OPERATION_LONG_POLL_CHANNEL = 0x08,
+    USE_DEFAULT_CONNECTIVITY_CHECKER        = 0x10
+} KaaOption;
 
 class KaaClient : public IKaaClient {
 public:
     KaaClient();
     virtual ~KaaClient() { }
 
-    void init(int options);
+    void init(int options = KAA_DEFAULT_OPTIONS);
     void start();
     void stop();
+    void pause();
+    void resume();
 
     virtual IProfileManager&                    getProfileManager() { return *profileManager_; }
 #ifdef KAA_USE_CONFIGURATION
@@ -93,6 +101,10 @@ private:
 
     void setDefaultConfiguration();
 
+public:
+    static const int KAA_DEFAULT_OPTIONS = KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL   |
+                                           KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL |
+                                           KaaOption::USE_DEFAULT_CONNECTIVITY_CHECKER;
 private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
@@ -122,10 +134,16 @@ private:
     std::unique_ptr<OperationsDataProcessor>  operationsProcessor_;
 
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
-    std::shared_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
+    std::unique_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
-    std::shared_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
+    std::unique_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
+#endif
+#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
+    std::unique_ptr<DefaultOperationHttpChannel>      opsHttpChannel_;
+#endif
+#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
+    std::unique_ptr<DefaultOperationLongPollChannel>  opsLongPollChannel_;
 #endif
 #ifdef KAA_USE_LOGGING
     std::unique_ptr<LogCollector>      logCollector_;

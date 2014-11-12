@@ -56,6 +56,12 @@ public:
         return types;
     }
 
+    virtual void shutdown() { }
+
+    virtual void pause() { }
+
+    virtual void resume() { }
+
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 };
 

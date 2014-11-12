@@ -91,7 +91,7 @@ public abstract class Kaa {
     protected abstract AbstractKaaClient createClient() throws Exception;
 
     /**
-     * <p>Starts Kaa's work flow.</p>
+     * <p>Starts Kaa's workflow.</p>
      *
      * <p>Should be called after each call to {@link Kaa#init()}.</p>
      *
@@ -104,7 +104,7 @@ public abstract class Kaa {
     }
 
     /**
-     * Stops Kaa's work flow.
+     * Stops Kaa's workflow.
      *
      * @see AbstractKaaClient#stop()
      */
@@ -115,7 +115,7 @@ public abstract class Kaa {
     }
 
     /**
-     * Pauses Kaa's work flow.
+     * Pauses Kaa's workflow.
      */
     public void pause() {
         if (client != null) {
@@ -124,7 +124,7 @@ public abstract class Kaa {
     }
 
     /**
-     * Resumes Kaa's work flow.
+     * Resumes Kaa's workflow.
      */
     public void resume() {
         if (client != null) {

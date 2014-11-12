@@ -14,41 +14,13 @@
  * limitations under the License.
  */
 
-#include "kaa/Kaa.hpp"
+package org.kaaproject.kaa.client.channel;
 
-namespace kaa {
+public class KaaInvalidChannelException extends Exception {
 
-Botan::LibraryInitializer Kaa::botanInit_("thread_safe=true");
-KaaClient Kaa::client_;
+    private static final long serialVersionUID = -8871850288946945423L;
 
-void Kaa::init(int options)
-{
-    client_.init(options);
-}
-
-void Kaa::start()
-{
-    client_.start();
-}
-
-void Kaa::stop()
-{
-    client_.stop();
-}
-
-IKaaClient& Kaa::getKaaClient()
-{
-    return client_;
-}
-
-void Kaa::pause()
-{
-    client_.pause();
-}
-
-void Kaa::resume()
-{
-    client_.resume();
-}
-
+    public KaaInvalidChannelException(String message) {
+        super(message);
+    }
 }

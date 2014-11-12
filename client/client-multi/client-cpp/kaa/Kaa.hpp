@@ -33,15 +33,15 @@ public:
     /**
      * Initialize Kaa library
      */
-    static void init(int options = 0);
+    static void init(int options = KaaClient::KAA_DEFAULT_OPTIONS);
 
     /**
-     * Starts Kaa's work flow.
+     * Starts Kaa's workflow.
      */
     static void start();
 
     /**
-     * Stops Kaa's work flow.
+     * Stops Kaa's workflow.
      */
     static void stop();
 
@@ -52,6 +52,16 @@ public:
      *
      */
     static IKaaClient& getKaaClient();
+
+    /**
+     * Pauses Kaa's workflow.
+     */
+    static void pause();
+
+    /**
+     * Resumes Kaa's workflow.
+     */
+    static void resume();
 
 private:
     Kaa();
