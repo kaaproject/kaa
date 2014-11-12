@@ -172,11 +172,8 @@ void kaa_add_event(void *ctx, const char * fqn, size_t fqn_length, const char * 
     kaa_context_t * context = (kaa_context_t*)ctx;
     kaa_event_manager_t * event_manager = context->event_manager;
 
-    if (event_manager->pending_events != NULL) {
-        kaa_list_push_back(event_manager->pending_events, event);
-    } else {
-        event_manager->pending_events = kaa_list_create(event);
-    }
+    kaa_list_push_back(&event_manager->pending_events, event); // FIXME: check return value
+
     kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context, event_sync_services[0]);
     if (sync) {
         (*sync)(1, event_sync_services);
@@ -232,11 +229,8 @@ kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId)
         }
         event_copy->source = kaa_create_string_null_union_null_branch();
 
-        if (new_events_copy == NULL) {
-            new_events_copy = kaa_list_create(event_copy);
-        } else {
-            kaa_list_push_back(new_events_copy, event_copy);
-        }
+        kaa_list_push_back(&new_events_copy, event_copy); // FIXME: check return value
+
         new_events = kaa_list_next(new_events);
     }
 
@@ -301,7 +295,7 @@ void kaa_add_on_event_callback(kaa_event_manager_t *event_manager, const char *f
                     }
                     head = kaa_list_next(head);
                 }
-                kaa_list_push_back(event_manager->event_callbacks, pair);
+                kaa_list_push_back(&event_manager->event_callbacks, pair);
             }
         } else {
             event_manager->global_event_callback = callback;
