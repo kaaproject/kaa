@@ -149,7 +149,7 @@ public interface KaaChannelManager {
      * Retrieves a list of channels by the specific type (HTTP, HTTP_LP etc.).
      *
      * @param type type of the channel.
-     * @return a channels' list.
+     * @return a list of channels.
      *
      * @see ChannelType
      * @see KaaDataChannel
@@ -158,10 +158,10 @@ public interface KaaChannelManager {
     List<KaaDataChannel> getChannelsByType(ChannelType type);
 
     /**
-     * Retrieves the list of channels by the specific transport type.
+     * Retrieves a list of channels by the specific transport type.
      *
      * @param type the transport's type.
-     * @return the channels' list.
+     * @return a list of channels.
      *
      * @see TransportType
      * @see KaaDataChannel

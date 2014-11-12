@@ -74,18 +74,18 @@ public:
     /**
      * Retrieves a list of current channels.
      *
-     * @return the channels' list.
+     * @return a list of channels.
      * @see IDataChannel
      *
      */
     virtual std::list<IDataChannelPtr> getChannels() = 0;
 
     /**
-     * Retrieves the list of channels by the specific type (HTTP, HTTP_LP,
+     * Retrieves a list of channels by the specific type (HTTP, HTTP_LP,
      * BOOTSTRAP and etc.).
      *
      * @param type type of the channel.
-     * @return the channels' list.
+     * @return a list of channels.
      *
      * @see ChannelType
      * @see IDataChannel
