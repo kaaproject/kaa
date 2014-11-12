@@ -23,6 +23,12 @@
 #include <stdint.h>
 #include <string.h>
 
+static kaa_log_upload_properties_t kaa_memory_log_upload_properties = {
+          /* .max_log_block_size = */       128
+        , /* .max_log_upload_threshold = */ 256
+        , /* .max_log_storage_volume = */   1024
+};
+
 typedef struct kaa_memory_log_storage_t {
     size_t          occupied_size;
     kaa_list_t *    logs;               // list of kaa_log_entry_t
@@ -211,13 +217,18 @@ kaa_storage_status_t * get_memory_log_storage_status()
     return &public_log_storage_status_interface;
 }
 
+kaa_log_upload_properties_t * get_memory_log_upload_properties()
+{
+    return &kaa_memory_log_upload_properties;
+}
+
 kaa_log_upload_decision_t memory_log_storage_is_upload_needed(kaa_storage_status_t *status)
 {
     if (status != NULL) {
-        if ((*status->get_total_size)() > KAA_MAX_LOG_STORAGE_VOLUME) {
+        if ((*status->get_total_size)() > kaa_memory_log_upload_properties.max_log_storage_volume) {
             return CLEANUP;
         }
-        if ((*status->get_total_size)() >= KAA_LOG_UPLOAD_THRESHOLD) {
+        if ((*status->get_total_size)() >= kaa_memory_log_upload_properties.max_log_upload_threshold) {
             return UPLOAD;
         }
     }

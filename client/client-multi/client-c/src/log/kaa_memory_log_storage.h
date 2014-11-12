@@ -28,8 +28,9 @@ extern "C" {
 
 #include "kaa_logging.h"
 
-kaa_log_storage_t       * get_memory_log_storage();
-kaa_storage_status_t    * get_memory_log_storage_status();
+kaa_log_storage_t           * get_memory_log_storage();
+kaa_storage_status_t        * get_memory_log_storage_status();
+kaa_log_upload_properties_t * get_memory_log_upload_properties();
 
 kaa_log_upload_decision_t memory_log_storage_is_upload_needed(kaa_storage_status_t *);
 

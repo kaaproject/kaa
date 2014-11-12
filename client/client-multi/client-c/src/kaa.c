@@ -272,10 +272,11 @@ void kaa_set_profile(kaa_profile_t *profile_body)
 void kaa_set_log_storage(
                     kaa_log_storage_t * storage
                   , kaa_storage_status_t * status
+                  , kaa_log_upload_properties_t *properties
                   , log_upload_decision_fn need_upl
                   )
 {
-    kaa_init_log_collector(kaa_context_->log_collector, storage, status, need_upl);
+    kaa_init_log_collector(kaa_context_->log_collector, storage, properties, status, need_upl);
 }
 
 void kaa_add_log(kaa_user_log_record_t *entry)

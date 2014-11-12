@@ -197,15 +197,27 @@ void    kaa_response_received(const char *buffer, size_t buffer_size);
  */
 
 /**
- * TODO: doc me
+ * Provide log storage to Kaa.<br>
+ * <br>
+ *
+ *
  */
 void   kaa_set_log_storage(
                     kaa_log_storage_t *
                   , kaa_storage_status_t *
+                  , kaa_log_upload_properties_t *
                   , log_upload_decision_fn
                   );
+
 /**
- * TODO: doc me
+ * Add log record to log storage.<br>
+ * <br>
+ * Use this to add the log entry to the predefined log storage.<br>
+ * Log record will be serialized and pushed to a log storage interface via
+ * <pre>
+ * void            (* add_log_record)  (kaa_log_entry_t * record);
+ * </pre>
+ * See also \see kaa_log_storage_t
  */
 void    kaa_add_log(kaa_user_log_record_t *entry);
 #endif

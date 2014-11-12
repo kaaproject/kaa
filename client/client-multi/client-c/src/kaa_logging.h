@@ -23,11 +23,6 @@
 #include <stddef.h>
 #include "kaa_uuid.h"
 
-// TODO: need log upload properties!
-#define KAA_MAX_LOG_BLOCK_SIZE      128
-#define KAA_LOG_UPLOAD_THRESHOLD    256
-#define KAA_MAX_LOG_STORAGE_VOLUME  1024
-
 #ifdef __cplusplus
 extern "C" {
 #define CLOSE_EXTERN }
@@ -54,6 +49,12 @@ typedef struct kaa_storage_status_t {
     size_t          (* get_records_count)();
 } kaa_storage_status_t;
 
+typedef struct kaa_log_upload_properties_t {
+    uint32_t    max_log_block_size;
+    uint32_t    max_log_upload_threshold;
+    uint32_t    max_log_storage_volume;
+} kaa_log_upload_properties_t;
+
 typedef enum kaa_log_upload_decision_t {
     NOOP        = 0,
     UPLOAD      = 1,
@@ -70,6 +71,7 @@ void                        kaa_destroy_log_collector(kaa_log_collector_t *);
 kaa_error_t                 kaa_init_log_collector(
                                                     kaa_log_collector_t *
                                                   , kaa_log_storage_t *
+                                                  , kaa_log_upload_properties_t *
                                                   , kaa_storage_status_t *
                                                   , log_upload_decision_fn
                                                   );
