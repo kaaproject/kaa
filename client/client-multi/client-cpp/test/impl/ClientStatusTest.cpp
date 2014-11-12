@@ -20,6 +20,7 @@
 #include "kaa/KaaDefaults.hpp"
 
 #include <map>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <utility>
@@ -30,10 +31,8 @@ const char * const filename = RESOURCE_DIR"/kaa_status.file";
 const char * const filename = "kaa_status.file";
 #endif
 
-void cleanfile()
-{
-    std::ofstream of(filename);
-    of.close();
+void cleanfile() {
+    std::remove(filename);
 }
 
 namespace kaa {
@@ -57,6 +56,7 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
     cleanfile();
+    std::cout << "TEST" << std::endl;
     ClientStatus cs(filename);
     cs.setAppSeqNumber({1,2,3});
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 1);

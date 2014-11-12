@@ -25,6 +25,7 @@
 #include <cstdint>
 
 #include "kaa/channel/server/IServerInfo.hpp"
+#include "kaa/common/EndpointObjectHash.hpp"
 
 #define KAA_LOG_LEVEL_NONE        0
 #define KAA_LOG_LEVEL_FATAL       1
@@ -72,6 +73,7 @@ const std::string& getDefaultConfigSchema();
 typedef std::map<std::string, std::int32_t> EventClassFamilyVersionInfos;
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo();
 
+SharedDataBuffer getPropertiesHash();
 }
 
 #endif /* KAADEFAULTS_HPP_ */

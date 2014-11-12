@@ -23,10 +23,12 @@ import java.io.OutputStream;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.avro.io.BinaryDecoder;
@@ -75,14 +77,15 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     private static final String EVENT_SEQ_NUM = "event.seq.num";
 
+    private static final String PROPERTIES_HASH = "properties.hash";
+
     private final PersistentStorage storage;
-    private final KaaClientProperties state;
+    private final Properties state;
     private final String stateFileLocation;
     private final String clientPrivateKeyFileLocation;
     private final String clientPublicKeyFileLocation;
     private final Map<String, TopicSubscriptionInfo> nfSubscriptions = new HashMap<String, TopicSubscriptionInfo>();
     private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
-    private final String endpointAccessToken = new String();
     private final AtomicInteger eventSequence = new AtomicInteger();
 
     public KaaClientPropertiesState(PersistentStorage storage, KaaClientProperties properties) {
@@ -100,10 +103,18 @@ public class KaaClientPropertiesState implements KaaClientState {
                 properties.getProperty(CLIENT_PUBLIC_KEY_FILE_LOCATION) :
                 CLIENT_PUBLIC_KEY_DEFAULT;
 
-        state = new KaaClientProperties(properties);
+        state = new Properties();
         if (storage.exists(stateFileLocation)) {
             try {
                 state.load(storage.openForRead(stateFileLocation));
+
+                if (isSDKPropertiesUpdated(properties, state)) {
+                    LOG.info("SDK properties were updated");
+                    setRegistered(false);
+                    setPropertiesHash(properties.getPropertiesHash());
+                } else {
+                    LOG.info("SDK properties are up to date");
+                }
 
                 BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(
                         state.getProperty(NF_SUBSCRIPTIONS).getBytes(), null);
@@ -144,7 +155,21 @@ public class KaaClientPropertiesState implements KaaClientState {
             } catch (IOException e) {
                 LOG.error("Can't load state file", e);
             }
+        } else {
+            LOG.info("First SDK start");
+            setPropertiesHash(properties.getPropertiesHash());
         }
+    }
+
+    private boolean isSDKPropertiesUpdated(KaaClientProperties sdkProperties, Properties stateProperties) {
+        byte[] hashFromSDK = sdkProperties.getPropertiesHash();
+        byte[] hashFromStateFile = Base64.decodeBase64(state.getProperty(PROPERTIES_HASH, new String(Base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8));
+
+        return !Arrays.equals(hashFromSDK, hashFromStateFile);
+    }
+
+    private void setPropertiesHash(byte[] hash) {
+        state.setProperty(PROPERTIES_HASH, new String(Base64.encodeBase64(hash), Charsets.UTF_8));
     }
 
     @Override
