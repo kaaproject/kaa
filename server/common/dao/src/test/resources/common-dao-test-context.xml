@@ -37,6 +37,7 @@
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
     <context:property-placeholder location="classpath:dao_test.properties" />
 
+    <import resource="classpath:common-dao-sql-test-context.xml" />
     <import resource="classpath:common-dao-nosql-test-context.xml" />
 
     <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
@@ -51,33 +52,7 @@
         <constructor-arg name="verifierMap" ref="verifierMap"></constructor-arg>
     </bean>
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql" />
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
-                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
-                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
-                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="${jdbc.driver.className}" />
-        <property name="url" value="${jdbc.url}" />
-        <property name="username" value="${jdbc.username}" />
-        <property name="password" value="${jdbc.password}" />
-    </bean>
-
     <tx:annotation-driven transaction-manager="transactionManager"/>
-
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
     <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl">
         <property name="endpointProfileDao" ref="endpointProfileDao"/>

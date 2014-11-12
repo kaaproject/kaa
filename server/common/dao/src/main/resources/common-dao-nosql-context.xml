@@ -42,7 +42,7 @@
     <bean id="endpointProfileDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointProfileMongoDao"/>
     <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointConfigurationMongoDao"/>
     <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.dao.impl.mongo.EndpointUserMongoDao"/>
-    
+
     <!-- End of mandatory beans declaration -->
 
     <mongo:mongo id="mongoClient" replica-set="${servers}" write-concern="${write.concern}">
