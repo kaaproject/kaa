@@ -213,7 +213,7 @@ public interface KaaClient {
     LogCollector getLogCollector();
 
     /**
-     * <p>Retrieves default channel implementation for the specified {@link ChannelType}.</p>
+     * <p>Retrieves the default channel implementation for the specified {@link ChannelType}.</p>
      *
      * @param type
      *          the channel's type (HTTP, KAATCP, etc.)

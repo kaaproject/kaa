@@ -37,8 +37,8 @@ public:
     /**
      * Updates the manager by setting the channel to the specified transport type.
      *
-     * @param type transport type which is going to receive updates using the specified channel.
-     * @param channel channel to be added.
+     * @param type the type of the transport which is going to receive updates using the specified channel.
+     * @param channel the channel to be added.
      * @see IDataChannel
      *
      */
@@ -47,7 +47,7 @@ public:
     /**
      * Updates the manager by adding the channel.
      *
-     * @param channel channel to be added.
+     * @param channel the channel to be added.
      * @see IDataChannel
      *
      */
@@ -65,14 +65,14 @@ public:
     /**
      * Updates the manager by removing the channel from the manager.
      *
-     * @param channel channel to be removed.
+     * @param channel the channel to be removed.
      * @see IDataChannel
      *
      */
     virtual void removeChannel(IDataChannelPtr channel) = 0;
 
     /**
-     * Retrieves the list of current channels.
+     * Retrieves a list of current channels.
      *
      * @return the channels' list.
      * @see IDataChannel
@@ -149,7 +149,7 @@ public:
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) = 0;
 
     /**
-     * Shutdowns manager and all registered channels. Instance can no longer be used.
+     * Shuts down the manager and all registered channels. The instance can no longer be used.
      *
      */
     virtual void shutdown() = 0;
