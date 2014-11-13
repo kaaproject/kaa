@@ -192,6 +192,7 @@ void    kaa_serialize_request(kaa_sync_request_t *request, char *buffer, size_t 
 void    kaa_response_received(const char *buffer, size_t buffer_size);
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
+
 /**
  * Log management
  */
@@ -200,13 +201,20 @@ void    kaa_response_received(const char *buffer, size_t buffer_size);
  * Provide log storage to Kaa.<br>
  * <br>
  *
- *
+ * \param i_storage     Structure containing pointers to functions which are used
+ * to manage log storage.
+ * \param i_status      Structure containing pointers to functions describing
+ * state of the storage (occupied size, records count etc.)
+ * \param upload_properties     Properties which are used to control log storage
+ * size and log upload neediness.
+ * \param is_upload_needed  Pointer to function which will be used to decide
+ * which operation (NO_OPERATION, UPLOAD or CLEANUP) should be performed on log storage.
  */
-void   kaa_set_log_storage(
-                    kaa_log_storage_t *
-                  , kaa_storage_status_t *
-                  , kaa_log_upload_properties_t *
-                  , log_upload_decision_fn
+void   kaa_init_log_storage(
+                    kaa_log_storage_t * i_storage
+                  , kaa_storage_status_t * i_status
+                  , kaa_log_upload_properties_t * upload_properties
+                  , log_upload_decision_fn is_upload_needed
                   );
 
 /**

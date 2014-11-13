@@ -79,7 +79,8 @@ void test_response()
     ASSERT_EQUAL(stub_upload_uuid_check_call_count,1);
 }
 
-#if 0
+#define DEAFULT_LOG_RECORD 0
+#if DEAFULT_LOG_RECORD
 static kaa_log_upload_decision_t decision(kaa_storage_status_t *status)
 {
     if ((* status->get_records_count)() == 2) {
@@ -106,7 +107,7 @@ void test_add_log()
 {
     kaa_init();
     kaa_set_sync_handler(&handler, 4, services);
-    kaa_set_log_storage(get_memory_log_storage(), get_memory_log_storage_status(), get_memory_log_upload_properties(), &decision);
+    kaa_init_log_storage(get_memory_log_storage(), get_memory_log_storage_status(), get_memory_log_upload_properties(), &decision);
 
     kaa_user_log_record_t *record = kaa_create_test_log_record();
     for (int i = 1000000; i--; ) {
@@ -123,7 +124,7 @@ int main(int argc, char ** argv)
     test_create_log_collector();
     test_create_request();
     test_response();
-#if 0
+#if DEAFULT_LOG_RECORD
     test_add_log();
 #endif
     return 0;

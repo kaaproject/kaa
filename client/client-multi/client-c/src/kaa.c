@@ -269,7 +269,7 @@ void kaa_set_profile(kaa_profile_t *profile_body)
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-void kaa_set_log_storage(
+void kaa_init_log_storage(
                     kaa_log_storage_t * storage
                   , kaa_storage_status_t * status
                   , kaa_log_upload_properties_t *properties
