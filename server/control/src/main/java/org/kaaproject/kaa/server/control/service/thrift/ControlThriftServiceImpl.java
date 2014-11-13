@@ -57,6 +57,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculationAlgorithm;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
@@ -98,7 +99,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -167,10 +167,6 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     @Autowired
     private LogAppendersService logAppenderService;
-
-    /** The thrift host. */
-    @Value("#{properties[build_version]}")
-    private String buildVersion;
 
     /*
      * (non-Javadoc)
@@ -921,7 +917,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             }
 
             SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPlatform);
-            return generator.generateSdk(buildVersion,
+            return generator.generateSdk(Version.PROJECT_VERSION,
                     controlZKService.getCurrentBootstrapNodes(),
                     appToken,
                     profileSchemaVersion,

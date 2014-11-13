@@ -35,9 +35,19 @@ class IKaaChannelManager {
 public:
 
     /**
+     * Updates the manager by setting the channel to the specified transport type.
+     *
+     * @param type the type of the transport which is going to receive updates using the specified channel.
+     * @param channel the channel to be added.
+     * @see IDataChannel
+     *
+     */
+    virtual void setChannel(TransportType type, IDataChannelPtr channel) = 0;
+
+    /**
      * Updates the manager by adding the channel.
      *
-     * @param channel channel to be added.
+     * @param channel the channel to be added.
      * @see IDataChannel
      *
      */
@@ -46,27 +56,36 @@ public:
     /**
      * Updates the manager by removing the channel from the manager.
      *
-     * @param channel channel to be removed.
+     * @param id the channel's id.
+     * @see KaaDataChannel
+     *
+     */
+    virtual void removeChannel(const std::string& id) = 0;
+
+    /**
+     * Updates the manager by removing the channel from the manager.
+     *
+     * @param channel the channel to be removed.
      * @see IDataChannel
      *
      */
     virtual void removeChannel(IDataChannelPtr channel) = 0;
 
     /**
-     * Retrieves the list of current channels.
+     * Retrieves a list of current channels.
      *
-     * @return the channels' list.
+     * @return a list of channels.
      * @see IDataChannel
      *
      */
     virtual std::list<IDataChannelPtr> getChannels() = 0;
 
     /**
-     * Retrieves the list of channels by the specific type (HTTP, HTTP_LP,
+     * Retrieves a list of channels by the specific type (HTTP, HTTP_LP,
      * BOOTSTRAP and etc.).
      *
      * @param type type of the channel.
-     * @return the channels' list.
+     * @return a list of channels.
      *
      * @see ChannelType
      * @see IDataChannel
@@ -128,6 +147,24 @@ public:
      *
      */
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) = 0;
+
+    /**
+     * Shuts down the manager and all registered channels. The instance can no longer be used.
+     *
+     */
+    virtual void shutdown() = 0;
+
+    /**
+     * Pauses all active channels.
+     *
+     */
+    virtual void pause() = 0;
+
+    /**
+     * Restores channels' activity.
+     *
+     */
+    virtual void resume() = 0;
 
     virtual ~IKaaChannelManager() {}
 };

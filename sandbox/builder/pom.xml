@@ -14,19 +14,20 @@
   limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.6.1-SNAPSHOT</version>
-		<artifactId>sandbox</artifactId>
-	</parent>
-	<groupId>org.kaaproject.kaa.sandbox</groupId>
-	<artifactId>sandbox-builder</artifactId>
-	<packaging>jar</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.kaaproject.kaa</groupId>
+        <version>0.6.1-SNAPSHOT</version>
+        <artifactId>sandbox</artifactId>
+    </parent>
+    <groupId>org.kaaproject.kaa.sandbox</groupId>
+    <artifactId>sandbox-builder</artifactId>
+    <packaging>jar</packaging>
 
-	<name>Kaa Sandbox Builder</name>
-	<url>http://kaaproject.org</url>
+    <name>Kaa Sandbox Builder</name>
+    <url>http://kaaproject.org</url>
 
     <properties>
         <main.dir>${basedir}/../..</main.dir>
@@ -45,13 +46,12 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>utils</artifactId>
-            <version>${project.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.sandbox</groupId>
             <artifactId>sandbox-demo</artifactId>
             <version>${project.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -63,13 +63,21 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
-		<dependency>
-		    <groupId>org.apache.ant</groupId>
-		    <artifactId>ant-jsch</artifactId>
-		    <version>1.9.4</version>
-		</dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-jsch</artifactId>
+            <version>1.9.4</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -92,14 +100,14 @@
                                     <version>${project.version}</version>
                                     <classifier>demo-projects</classifier>
                                     <type>tar.gz</type>
-                                </artifactItem>                            
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.sandbox</groupId>
                                     <artifactId>sandbox-web</artifactId>
                                     <version>${project.version}</version>
                                     <classifier>sandbox</classifier>
                                     <type>tar.gz</type>
-                                </artifactItem>                            
+                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${base.path}</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>
@@ -140,7 +148,7 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distro.path}</outputDirectory>
                                     <destFileName>bootstrap.deb</destFileName>
-                                </artifactItem>                            
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.server</groupId>
                                     <artifactId>admin</artifactId>
@@ -149,7 +157,7 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distro.path}</outputDirectory>
                                     <destFileName>admin.deb</destFileName>
-                                </artifactItem>  
+                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -158,7 +166,8 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <!--This plugin's configuration is used to store Eclipse 
+                    m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -180,7 +189,7 @@
                                         <goals>
                                             <goal>copy</goal>
                                             <goal>
-                                            	unpack
+                                                unpack
                                             </goal>
                                         </goals>
                                     </pluginExecutionFilter>
@@ -200,83 +209,83 @@
             <id>build-rpm</id>
             <build>
                 <plugins>
-		            <plugin>
-		                <groupId>org.apache.maven.plugins</groupId>
-		                <artifactId>maven-dependency-plugin</artifactId>
-		                <version>2.8</version>
-		                <executions>
-		                    <execution>
-		                        <id>unpack</id>
-		                        <phase>compile</phase>
-		                        <goals>
-		                            <goal>unpack</goal>
-		                        </goals>
-		                        <configuration>
-		                            <artifactItems>
-		                                <artifactItem>
-		                                    <groupId>org.kaaproject.kaa.sandbox</groupId>
-		                                    <artifactId>sandbox-demo</artifactId>
-		                                    <version>${project.version}</version>
-		                                    <classifier>demo-projects</classifier>
-		                                    <type>tar.gz</type>
-		                                </artifactItem>                            
-		                                <artifactItem>
-		                                    <groupId>org.kaaproject.kaa.sandbox</groupId>
-		                                    <artifactId>sandbox-web</artifactId>
-		                                    <version>${project.version}</version>
-		                                    <classifier>sandbox</classifier>
-		                                    <type>tar.gz</type>
-		                                </artifactItem>                            
-		                            </artifactItems>
-		                            <outputDirectory>${base.path}</outputDirectory>
-		                            <overWriteReleases>true</overWriteReleases>
-		                            <overWriteSnapshots>true</overWriteSnapshots>
-		                        </configuration>
-		                    </execution>
-		                    <execution>
-		                        <id>copy</id>
-		                        <phase>compile</phase>
-		                        <goals>
-		                            <goal>copy</goal>
-		                        </goals>
-		                        <configuration>
-		                            <artifactItems>
-		                                <artifactItem>
-		                                    <groupId>org.kaaproject.kaa.server</groupId>
-		                                    <artifactId>control</artifactId>
-		                                    <version>${project.version}</version>
-		                                    <type>deb</type>
-		                                    <overWrite>true</overWrite>
-		                                    <outputDirectory>${distro.path}</outputDirectory>
-		                                    <destFileName>control.deb</destFileName>
-		                                </artifactItem>
-		                                <artifactItem>
-		                                    <groupId>org.kaaproject.kaa.server</groupId>
-		                                    <artifactId>operations</artifactId>
-		                                    <version>${project.version}</version>
-		                                    <type>deb</type>
-		                                    <overWrite>true</overWrite>
-		                                    <outputDirectory>${distro.path}</outputDirectory>
-		                                    <destFileName>operations.deb</destFileName>
-		                                </artifactItem>
-		                                <artifactItem>
-		                                    <groupId>org.kaaproject.kaa.server</groupId>
-		                                    <artifactId>bootstrap</artifactId>
-		                                    <version>${project.version}</version>
-		                                    <type>deb</type>
-		                                    <overWrite>true</overWrite>
-		                                    <outputDirectory>${distro.path}</outputDirectory>
-		                                    <destFileName>bootstrap.deb</destFileName>
-		                                </artifactItem>                            
-		                                <artifactItem>
-		                                    <groupId>org.kaaproject.kaa.server</groupId>
-		                                    <artifactId>admin</artifactId>
-		                                    <version>${project.version}</version>
-		                                    <type>deb</type>
-		                                    <overWrite>true</overWrite>
-		                                    <outputDirectory>${distro.path}</outputDirectory>
-		                                    <destFileName>admin.deb</destFileName>
-		                                </artifactItem>  
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.8</version>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.kaaproject.kaa.sandbox</groupId>
+                                            <artifactId>sandbox-demo</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>demo-projects</classifier>
+                                            <type>tar.gz</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.kaaproject.kaa.sandbox</groupId>
+                                            <artifactId>sandbox-web</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>sandbox</classifier>
+                                            <type>tar.gz</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${base.path}</outputDirectory>
+                                    <overWriteReleases>true</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.kaaproject.kaa.server</groupId>
+                                            <artifactId>control</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>deb</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${distro.path}</outputDirectory>
+                                            <destFileName>control.deb</destFileName>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.kaaproject.kaa.server</groupId>
+                                            <artifactId>operations</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>deb</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${distro.path}</outputDirectory>
+                                            <destFileName>operations.deb</destFileName>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.kaaproject.kaa.server</groupId>
+                                            <artifactId>bootstrap</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>deb</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${distro.path}</outputDirectory>
+                                            <destFileName>bootstrap.deb</destFileName>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.kaaproject.kaa.server</groupId>
+                                            <artifactId>admin</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>deb</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${distro.path}</outputDirectory>
+                                            <destFileName>admin.deb</destFileName>
+                                        </artifactItem>
                                         <artifactItem>
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>control</artifactId>
@@ -306,7 +315,7 @@
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
                                             <destFileName>bootstrap.rpm</destFileName>
-                                        </artifactItem>                            
+                                        </artifactItem>
                                         <artifactItem>
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>admin</artifactId>
@@ -316,12 +325,12 @@
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
                                             <destFileName>admin.rpm</destFileName>
-                                        </artifactItem>  		                                
-		                            </artifactItems>
-		                        </configuration>
-		                    </execution>
-		                </executions>
-		            </plugin>                    
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -329,34 +338,34 @@
             <id>build-sandbox</id>
             <build>
                 <plugins>
-		            <plugin>
-		              <groupId>org.codehaus.mojo</groupId>
-		              <artifactId>exec-maven-plugin</artifactId>
-		              <version>1.2.1</version>
-		              <executions>
-		                <execution>
-		                  <phase>install</phase>
-		                  <goals>
-		                    <goal>java</goal>
-		                  </goals>
-		                </execution>
-		              </executions>
-		              <configuration>
-		                <mainClass>org.kaaproject.kaa.sandbox.SandboxMain</mainClass>
-		                <arguments>
-		                  <argument>${base.path}</argument>
-		                  <argument>vbox</argument>
-		                  <argument>debian</argument>
-		                  <argument>${ubuntu.image.url}</argument>
-		                  <argument>${ubuntu.image.name}</argument>
-                          <argument>${ubuntu.sandbox.file}</argument>
-		                  <argument>${ssh.forward.port}</argument>
-		                  <argument>${web.admin.forward.port}</argument>
-		                </arguments>
-		              </configuration>
-		            </plugin>            
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>org.kaaproject.kaa.sandbox.SandboxMain</mainClass>
+                            <arguments>
+                                <argument>${base.path}</argument>
+                                <argument>vbox</argument>
+                                <argument>debian</argument>
+                                <argument>${ubuntu.image.url}</argument>
+                                <argument>${ubuntu.image.name}</argument>
+                                <argument>${ubuntu.sandbox.file}</argument>
+                                <argument>${ssh.forward.port}</argument>
+                                <argument>${web.admin.forward.port}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
-    </profiles>    
+    </profiles>
 </project>

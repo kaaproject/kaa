@@ -42,6 +42,9 @@ namespace kaa {
 /**
  * Base endpoint configuration
  */
+extern const char * const BUILD_VERSION;
+
+extern const char * const BUILD_COMMIT_HASH;
 
 extern const char * const APPLICATION_TOKEN;
 

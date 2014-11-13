@@ -19,14 +19,9 @@ package org.kaaproject.kaa.server.operations.service.logs.filesystem;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.WriterAppender;
-import org.apache.log4j.spi.LoggingEvent;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
 import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
 import org.slf4j.Logger;
@@ -110,26 +105,6 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
         } catch (IOException | InterruptedException e) {
             LOG.error("Can't execute create_root_log_dir script.", e);
         }
-    }
-
-    @Override
-    public void save(List<LogEventDto> logEventPackDtos,
-            org.apache.log4j.Logger logger, WriterAppender fileAppender) {
-        LOG.debug("Starting saving {} logs", logEventPackDtos.size());
-        List<String> events = new ArrayList<>();
-        for (LogEventDto logEventDto : logEventPackDtos) {
-            String event = new StringBuilder("{\"Log Header\": \"")
-                    .append(logEventDto.getHeader())
-                    .append("\", \"Event\": ")
-                    .append(logEventDto.getEvent())
-                    .append("}").toString();
-            events.add(event);
-        }
-        LOG.debug("Starting writing {} logs to file", logEventPackDtos.size());
-        for (String event : events) {
-            fileAppender.doAppend(new LoggingEvent(null, logger, null, event, null));
-        }
-        LOG.debug("{} logs already saved to file", logEventPackDtos.size());
     }
 
     @Override

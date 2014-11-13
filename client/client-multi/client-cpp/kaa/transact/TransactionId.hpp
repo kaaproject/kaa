@@ -18,8 +18,8 @@
 #define TRANSACTIONID_HPP_
 
 #include "kaa/common/UuidGenerator.hpp"
-#include <boost/shared_ptr.hpp>
 #include <string>
+#include <memory>
 
 namespace kaa {
 
@@ -38,7 +38,7 @@ private:
     std::string id_;
 };
 
-typedef boost::shared_ptr<TransactionId> TransactionIdPtr;
+typedef std::shared_ptr<TransactionId> TransactionIdPtr;
 
 }
 

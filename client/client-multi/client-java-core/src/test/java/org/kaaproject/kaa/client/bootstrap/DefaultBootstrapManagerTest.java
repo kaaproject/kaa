@@ -40,6 +40,7 @@ import org.kaaproject.kaa.client.channel.HttpLongPollServerInfo;
 import org.kaaproject.kaa.client.channel.HttpServerInfo;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
 import org.kaaproject.kaa.client.channel.ServerInfo;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.transport.TransportException;
@@ -126,6 +127,32 @@ public class DefaultBootstrapManagerTest {
 
         @Override
         public void clearChannelList() {
+
+        }
+
+        @Override
+        public void setChannel(TransportType transport, KaaDataChannel channel)
+                throws KaaInvalidChannelException {
+
+        }
+
+        @Override
+        public void removeChannel(String id) {
+
+        }
+
+        @Override
+        public void shutdown() {
+
+        }
+
+        @Override
+        public void pause() {
+
+        }
+
+        @Override
+        public void resume() {
 
         }
     }

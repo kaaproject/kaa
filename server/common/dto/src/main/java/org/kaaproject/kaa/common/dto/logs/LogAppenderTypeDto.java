@@ -18,7 +18,7 @@ package org.kaaproject.kaa.common.dto.logs;
 
 public enum LogAppenderTypeDto {
 
-    FILE("File"), MONGO("Mongo"), FLUME("Flume");
+    FILE("File"), MONGO("Mongo"), FLUME("Flume"), CUSTOM("Custom");
 
     private String label;
 

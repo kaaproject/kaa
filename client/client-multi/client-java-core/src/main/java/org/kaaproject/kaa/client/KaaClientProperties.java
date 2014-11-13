@@ -55,6 +55,8 @@ public class KaaClientProperties extends Properties {
      */
     private static final long serialVersionUID = 8793954229852581418L;
 
+    public static final String BUILD_VERSION = "build.version";
+    public static final String BUILD_COMMIT_HASH = "build.commit_hash";
     public static final String TRANSPORT_POLL_DELAY = "transport.poll.initial_delay";
     public static final String TRANSPORT_POLL_PERIOD = "transport.poll.period";
     public static final String TRANSPORT_POLL_UNIT = "transport.poll.unit";
@@ -89,6 +91,14 @@ public class KaaClientProperties extends Properties {
         properties
                 .load(classLoader.getResourceAsStream(propertiesLocation));
         return properties;
+    }
+
+    public String getBuildVersion() {
+        return getProperty(BUILD_VERSION);
+    }
+
+    public String getCommitHash() {
+        return getProperty(BUILD_COMMIT_HASH);
     }
 
     public int getSupportedConfigVersion() {

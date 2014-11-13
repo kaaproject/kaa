@@ -17,8 +17,12 @@
 #ifndef LOGRECORD_HPP_
 #define LOGRECORD_HPP_
 
+#ifdef KAA_USE_LOGGING
+
+#include "kaa/KaaDefaults.hpp"
+
 #include <vector>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/log/gen/LogGen.hpp"
 
@@ -35,15 +39,16 @@ public:
     }
     ~LogRecord() {}
 
-    const std::vector<boost::uint8_t>&  getData();
+    const std::vector<std::uint8_t>&  getData();
     size_t                              getSize() const;
 
 private:
     AvroByteArrayConverter<%{log_record_class_name}> converter_;
-    std::vector<boost::uint8_t> logData_;
+    std::vector<std::uint8_t> logData_;
 };
 
 }  // namespace kaa
 
+#endif
 
 #endif /* LOGRECORD_HPP_ */

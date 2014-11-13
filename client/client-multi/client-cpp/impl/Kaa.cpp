@@ -41,4 +41,14 @@ IKaaClient& Kaa::getKaaClient()
     return client_;
 }
 
+void Kaa::pause()
+{
+    client_.pause();
+}
+
+void Kaa::resume()
+{
+    client_.resume();
+}
+
 }

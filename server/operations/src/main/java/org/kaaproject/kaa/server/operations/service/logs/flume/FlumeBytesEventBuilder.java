@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.flume.Event;
 import org.apache.flume.event.EventBuilder;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
-import org.kaaproject.kaa.server.operations.service.logs.LogEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

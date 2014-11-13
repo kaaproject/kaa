@@ -62,7 +62,7 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-public class KaaHdfsSink extends AbstractSink implements Configurable, ConfigurationConstants, 
+public class KaaHdfsSink extends AbstractSink implements Configurable, ConfigurationConstants,
                                                            RemovalListener<HdfsSinkKey, BucketWriter> {
 
       private static final Logger logger = LoggerFactory.getLogger(KaaHdfsSink.class);
@@ -82,24 +82,24 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       private ScheduledExecutorService statisticsPool;
       private volatile ScheduledFuture<?> statisticsFuture;
       private long cacheCleanupStartInterval;
-      
+
       /**
        * Singleton credential manager that manages static credentials for the
        * entire JVM
        */
       private static final AtomicReference<KerberosUser> staticLogin
           = new AtomicReference<KerberosUser>();
-      
+
       private String kerbConfPrincipal;
       private String kerbKeytab;
       private String proxyUserName;
       private UserGroupInformation proxyTicket;
-      
+
       //configurable part
-      
+
       private String rootHdfsPath;
       private long txnEventMax;
-      
+
       // writers configuration
       private long callTimeout;
       private int threadsPoolSize;
@@ -114,24 +114,24 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       private long defaultBlockSize;
       private String filePrefix;
       private long statisticsInterval;
-      
+
       public KaaHdfsSink() {
       }
 
       @Override
       public void configure(Context context) {
-        this.context = context;       
+        this.context = context;
         rootHdfsPath = context.getString(CONFIG_ROOT_HDFS_PATH, DEFAULT_ROOT_HDFS_PATH);
         Preconditions.checkNotNull(rootHdfsPath, "rootHdfsPath is required");
         txnEventMax = context.getLong(CONFIG_HDFS_TXN_EVENT_MAX, DEFAULT_HDFS_TXN_EVENT_MAX);
         statisticsInterval = context.getLong(CONFIG_STATISTICS_INTERVAL, DEFAULT_STATISTICS_INTERVAL);
-        
+
         // writers
         threadsPoolSize = context.getInteger(CONFIG_HDFS_THREAD_POOL_SIZE, DEFAULT_HDFS_THREAD_POOL_SIZE);
         rollTimerPoolSize = context.getInteger(CONFIG_HDFS_ROLL_TIMER_POOL_SIZE, DEFAULT_HDFS_ROLL_TIMER_POOL_SIZE);
         maxOpenFiles = context.getInteger(CONFIG_HDFS_MAX_OPEN_FILES, DEFAULT_HDFS_MAX_OPEN_FILES);
         cacheCleanupInterval = context.getInteger(CONFIG_HDFS_CACHE_CLEANUP_INTERVAL, DEFAULT_HDFS_CACHE_CLEANUP_INTERVAL) * 1000;
-        writerExpirationInterval = context.getInteger(CONFIG_HDFS_WRITER_EXPIRATION_INTERVAL, DEFAULT_HDFS_WRITER_EXPIRATION_INTERVAL);       
+        writerExpirationInterval = context.getInteger(CONFIG_HDFS_WRITER_EXPIRATION_INTERVAL, DEFAULT_HDFS_WRITER_EXPIRATION_INTERVAL);
         callTimeout = context.getLong(CONFIG_HDFS_CALL_TIMEOUT, DEFAULT_HDFS_CALL_TIMEOUT);
 
         rollInterval = context.getLong(CONFIG_HDFS_ROLL_INTERVAL, DEFAULT_HDFS_ROLL_INTERVAL);
@@ -139,14 +139,14 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         rollCount = context.getLong(CONFIG_HDFS_ROLL_COUNT, DEFAULT_HDFS_ROLL_COUNT);
         batchSize = context.getLong(CONFIG_HDFS_BATCH_SIZE, DEFAULT_HDFS_BATCH_SIZE);
         defaultBlockSize = context.getLong(CONFIG_HDFS_DEFAULT_BLOCK_SIZE, DEFAULT_HDFS_DEFAULT_BLOCK_SIZE);
-        
+
         filePrefix = context.getString(CONFIG_HDFS_FILE_PREFIX, DEFAULT_HDFS_FILE_PREFIX);
-        
+
         Preconditions.checkArgument(batchSize > 0,
                 "batchSize must be greater than 0");
         Preconditions.checkArgument(txnEventMax > 0,
             "txnEventMax must be greater than 0");
-        
+
         kerbConfPrincipal = context.getString(CONFIG_HDFS_KERBEROS_PRINCIPAL, "");
         kerbKeytab = context.getString(CONFIG_HDFS_KERBEROS_KEYTAB, "");
         proxyUserName = context.getString(CONFIG_HDFS_PROXY_USER, "");
@@ -154,7 +154,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         if (!authenticate(rootHdfsPath)) {
             logger.error("Failed to authenticate!");
         }
-        
+
         if (sinkCounter == null) {
             sinkCounter = new SinkCounter(getName());
         }
@@ -200,7 +200,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
           logger.warn("Unexpected Exception " + ex.getMessage(), ex);
           throw ex;
         }
-      }   
+      }
 
       @Override
       public Status process() throws EventDeliveryException {
@@ -225,7 +225,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
                 //else{
                 //  cacheCleanupStartInterval = System.currentTimeMillis();
                 //}
-                
+
                 Map<KaaSinkKey, List<KaaRecordEvent>> incomingEventsMap = eventFactory.processIncomingFlumeEvent(event);
                 if (incomingEventsMap == null || incomingEventsMap.isEmpty()) {
                       if (logger.isWarnEnabled()) {
@@ -258,7 +258,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
               for (BucketWriter bucketWriter : writerFlushMap.values()) {
                   flush(bucketWriter);
               }
-              
+
               writerFlushMap.clear();
 
               transaction.commit();
@@ -275,7 +275,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
               transaction.rollback();
               logger.warn("HDFS IO error", eIO);
               return Status.BACKOFF;
-            } catch (Throwable th) {
+            } catch (Throwable th) { //NOSONAR
               transaction.rollback();
               logger.error("process failed", th);
               if (th instanceof Error) {
@@ -293,32 +293,32 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         logger.info("Starting {}...", this);
 
         eventFactory = new KaaEventFactory();
-        
+
         String timeoutName = "hdfs-" + getName() + "-call-runner-%d";
         callTimeoutPool = Executors.newFixedThreadPool(threadsPoolSize,
             new ThreadFactoryBuilder().setNameFormat(timeoutName).build());
-        
+
         String rollerName = "hdfs-" + getName() + "-roll-timer-%d";
         timedRollerPool = (ScheduledThreadPoolExecutor)Executors.newScheduledThreadPool(rollTimerPoolSize,
-            new ThreadFactoryBuilder().setNameFormat(rollerName).build());      
+            new ThreadFactoryBuilder().setNameFormat(rollerName).build());
 
         if (statisticsInterval > 0) {
             String statisticsName = "hdfs-" + getName() + "-statistics-%d";
             statisticsPool = Executors.newScheduledThreadPool(1,
                 new ThreadFactoryBuilder().setNameFormat(statisticsName).build());
-            
+
               Runnable action = new Runnable() {
                   @Override
                   public void run() {
                       logger.info("Statistics: Drain attempt events: " + sinkCounter.getEventDrainAttemptCount() + "; " +
-                                              "Drain success events: " + sinkCounter.getEventDrainSuccessCount());      
+                                              "Drain success events: " + sinkCounter.getEventDrainSuccessCount());
                   }
                 };
                 statisticsFuture = statisticsPool.scheduleWithFixedDelay(action, 0, statisticsInterval, TimeUnit.SECONDS);
         }
-        
+
         cacheCleanupStartInterval = System.currentTimeMillis();
-        
+
         bucketWriterLoader = new BucketWriterLoader(rollInterval,
                      rollSize,
                      rollCount,
@@ -329,15 +329,15 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
                      timedRollerPool,
                      proxyTicket,
                      sinkCounter);
-        
+
         writerCache = CacheBuilder.newBuilder().
                 maximumSize(maxOpenFiles).
                 expireAfterWrite(writerExpirationInterval, TimeUnit.SECONDS).
                 removalListener(this).
                 build(bucketWriterLoader);
-        
+
         writerFlushMap = new HashMap<HdfsSinkKey, BucketWriter>();
-        
+
         sinkCounter.start();
         started = true;
         super.start();
@@ -347,10 +347,10 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
 
       @Override
       public void stop() {
-          
+
         started = false;
        // do not constrain close() calls with a timeout
-        Map<HdfsSinkKey, BucketWriter> writers = writerCache.asMap();  
+        Map<HdfsSinkKey, BucketWriter> writers = writerCache.asMap();
         for (Entry<HdfsSinkKey, BucketWriter> entry : writers.entrySet()) {
           logger.info("Closing {}", entry.getKey());
 
@@ -371,7 +371,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         // shut down all our thread pools
         ExecutorService toShutdown[] = { callTimeoutPool, timedRollerPool, statisticsPool };
         for (ExecutorService execService : toShutdown) {
-         if (execService != null) { 
+         if (execService != null) {
           execService.shutdown();
           try {
             while (execService.isTerminated() == false) {
@@ -399,11 +399,11 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
            return "{ Sink type:" + getClass().getSimpleName() + ", name:" + getName() +
                     " }";
       }
-      
+
       public long getEventDrainSuccessCount () {
           return sinkCounter.getEventDrainSuccessCount();
       }
-      
+
         @Override
         public void onRemoval(
                 RemovalNotification<HdfsSinkKey, BucketWriter> entry) {
@@ -423,7 +423,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
                  }
             }
         }
-        
+
           private boolean authenticate(String hdfsPath) {
 
                 // logic for kerberos login
@@ -562,7 +562,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
 
                 return true;
               }
-          
+
           /**
            * Static synchronized method for static Kerberos login. <br/>
            * Static synchronized due to a thundering herd problem when multiple Sinks
@@ -611,8 +611,8 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
 
             return curUser;
           }
-          
-          
+
+
           /**
            * Append to bucket writer with timeout enforced
            */
@@ -657,21 +657,21 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
               }
             });
           }
-      
-      static class BucketWriterLoader extends CacheLoader<HdfsSinkKey, BucketWriter> 
+
+      static class BucketWriterLoader extends CacheLoader<HdfsSinkKey, BucketWriter>
       {
-        
-          private long rollInterval;
-          private long rollSize;
-          private long rollCount;
-          private long batchSize;
-          private long defaultBlockSize;
-          private Context context;
-          private String filePrefix;
-          private ScheduledThreadPoolExecutor timedRollerPool;
-          private UserGroupInformation proxyTicket;
-          private SinkCounter sinkCounter;
-          
+
+          private final long rollInterval;
+          private final long rollSize;
+          private final long rollCount;
+          private final long batchSize;
+          private final long defaultBlockSize;
+          private final Context context;
+          private final String filePrefix;
+          private final ScheduledThreadPoolExecutor timedRollerPool;
+          private final UserGroupInformation proxyTicket;
+          private final SinkCounter sinkCounter;
+
           public BucketWriterLoader (long rollInterval,
                                      long rollSize,
                                      long rollCount,
@@ -693,23 +693,23 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
               this.proxyTicket = proxyTicket;
               this.sinkCounter = sinkCounter;
           }
-          
+
 
         @Override
         public BucketWriter load(HdfsSinkKey key) throws Exception {
-            
+
             HDFSWriter hdfsWriter = new HDFSDataStream();
             String path = key.getPath() + Path.SEPARATOR + filePrefix;
-            
+
             context.put("serializer", AvroKaaEventSerializer.Builder.class.getName());
-            
+
             logger.info("Creating new writer for key: " + key);
-            
+
             return new BucketWriter(rollInterval, rollSize, rollCount,
                       batchSize, defaultBlockSize, context, path, hdfsWriter,
                       timedRollerPool, proxyTicket, sinkCounter);
         }
-        
+
       }
 
     }

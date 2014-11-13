@@ -29,14 +29,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.instrumentation.SinkCounter;
-import org.apache.flume.sink.hdfs.HDFSCompressedDataStream;
 import org.apache.flume.sink.hdfs.HDFSWriter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
-import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +76,7 @@ class BucketWriter {
   private volatile long batchCounter;
   private volatile boolean isOpen;
   private volatile ScheduledFuture<Void> timedRollFuture;
-  private SinkCounter sinkCounter;
+  private final SinkCounter sinkCounter;
 
   BucketWriter(long rollInterval, long rollSize, long rollCount, long batchSize, long defaultBlockSize,
       Context context, String filePath, HDFSWriter writer,
@@ -97,7 +94,7 @@ class BucketWriter {
     this.sinkCounter = sinkCounter;
 
     isOpen = false;
-    
+
     writer.configure(context);
   }
 
@@ -164,7 +161,7 @@ class BucketWriter {
     Configuration config = new Configuration();
     // disable FileSystem JVM shutdown hook
     config.setBoolean("fs.automatic.close", false);
-    
+
     long blockSize = DFSConfigKeys.DFS_BLOCK_SIZE_DEFAULT;
     if (defaultBlockSize > 0) {
     	blockSize = defaultBlockSize;
@@ -206,7 +203,7 @@ class BucketWriter {
               bucketPath + IN_USE_EXT, rollInterval);
           try {
             close();
-          } catch(Throwable t) {
+          } catch(Throwable t) { //NOSONAR
             LOG.error("Unexpected error", t);
           }
           return null;
@@ -375,7 +372,7 @@ class BucketWriter {
     }
 
     // update statistics
-    
+
     eventCounter += events.size();
     batchCounter += events.size();
 
@@ -423,7 +420,7 @@ class BucketWriter {
   private boolean isBatchComplete() {
     return (batchCounter == 0);
   }
-  
+
   private long generateSerial (Event event) {
 	  long timestamp = System.currentTimeMillis();
 	  return Arrays.hashCode(event.getBody()) + ManagementFactory.getRuntimeMXBean().getName().hashCode() + (int)(timestamp ^ (timestamp >>> 32));

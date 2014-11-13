@@ -458,7 +458,7 @@ public final class EndpointProfile implements ToDto<EndpointProfileDto>, Seriali
         dto.setEndpointKeyHash(endpointKeyHash);
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setProfile(profile != null ? profile.toString() : null);
+        dto.setProfile(profile != null ? profile.toString() : "");
         dto.setProfileHash(profileHash);
         dto.setProfileVersion(profileVersion);
         dto.setProfileSchemaId(profileSchemaId);

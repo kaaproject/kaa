@@ -35,18 +35,28 @@
     <main.dir>${basedir}/../../..</main.dir>
   </properties>
 
-  <dependencies>
-    <dependency>
-        <groupId>org.apache.avro</groupId>
-        <artifactId>avro</artifactId>
-        <version>${avro.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.kaaproject.kaa.server.common</groupId>
-        <artifactId>utils</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kaaproject.kaa.server.common</groupId>
+			<artifactId>utils</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kaaproject.kaa.common</groupId>
+			<artifactId>endpoint-shared</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kaaproject.kaa.server.common</groupId>
+			<artifactId>dto</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 
     <build>
         <plugins>
