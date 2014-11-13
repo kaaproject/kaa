@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
     cleanfile();
-    std::cout << "TEST" << std::endl;
+
     ClientStatus cs(filename);
     cs.setAppSeqNumber({1,2,3});
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 1);
