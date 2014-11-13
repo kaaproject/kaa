@@ -38,7 +38,7 @@
     <context:property-placeholder location="classpath:dao_test.properties" />
 
     <import resource="classpath:common-dao-sql-test-context.xml" />
-    <import resource="classpath:common-dao-nosql-test-context.xml" />
+    <!--import resource="classpath:common-dao-nosql-test-context.xml" /-->
 
     <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
 
@@ -54,23 +54,13 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl">
-        <property name="endpointProfileDao" ref="endpointProfileDao"/>
-        <property name="endpointConfigurationDao" ref="endpointConfigurationDao"/>
-        <property name="endpointUserDao" ref="endpointUserDao"/>
-    </bean>
+    <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl"/>
 
-    <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl">
-        <property name="notificationDao" ref="notificationDao"/>
-        <property name="unicastNotificationDao" ref="unicastNotificationDao"/>
-        <property name="notificationSchemaDao" ref="notificationSchemaDao"/>
-        <property name="endpointProfileDao" ref="endpointProfileDao"/>
-    </bean>
-
-    <alias name="endpointUserDao" alias="kaaEndpointUserVerifier" />
+    <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl"/>
+    
+    <bean id="topicService" class="org.kaaproject.kaa.server.common.dao.service.TopicServiceImpl"/>
 
     <util:map id="verifierMap">
         <entry key="dummyEndpointUserVerifier" value-ref="dummyEndpointUserVerifier" />
-        <entry key="kaaEndpointUserVerifier" value-ref="kaaEndpointUserVerifier" />
     </util:map>
 </beans>

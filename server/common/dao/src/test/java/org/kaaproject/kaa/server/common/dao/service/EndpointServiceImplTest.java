@@ -16,60 +16,23 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/common-dao-test-context.xml")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class EndpointServiceImplTest extends AbstractTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EndpointServiceImplTest.class);
-
     private static final String INCORRECT_ID = "incorrect id";
-
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
-
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.getDB().dropDatabase();
-        MongoDBTestRunner.tearDown();
-    }
-
-    @Before
-    public void beforeTest() throws IOException {
-        MongoDataLoader.loadData();
-    }
-
-    @After
-    public void afterTest() {
-        MongoDBTestRunner.getDB().dropDatabase();
-    }
 
     @Test
     public void findEndpointGroupsByAppIdTest() {
@@ -187,54 +150,4 @@ public class EndpointServiceImplTest extends AbstractTest {
         Assert.assertNotNull(generatedAccessToken);
         Assert.assertEquals(generatedAccessToken, endpointUser.getAccessToken());
     }
-
-//    @Test
-//    public void findEndpointConfigurationByHashTest() {
-//
-//    }
-//
-//    @Test
-//    public void removeEndpointConfigurationByHashTest() {
-//
-//    }
-//
-//    @Test
-//    public void findEndpointConfigurationByIdTest() {
-//
-//    }
-//
-//    @Test
-//    public void removeEndpointConfigurationByIdTest() {
-//
-//    }
-//
-//    @Test
-//    public void saveEndpointConfigurationTest() {
-//
-//    }
-//
-//    @Test
-//    public void findEndpointProfileByKeyHashTest() {
-//
-//    }
-//
-//    @Test
-//    public void findEndpointProfileByIdTest() {
-//
-//    }
-//
-//    @Test
-//    public void removeEndpointProfileByKeyHashTest() {
-//
-//    }
-//
-//    @Test
-//    public void removeEndpointProfileByIdTest() {
-//
-//    }
-//
-//    @Test
-//    public void saveEndpointProfileTest() {
-//
-//    }
 }

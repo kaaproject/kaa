@@ -72,6 +72,10 @@
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
     </bean>
 
+    <bean id="topicService" class="org.kaaproject.kaa.server.common.dao.service.TopicServiceImpl">
+        <property name="notificationDao" ref="notificationDao"/>
+    </bean>
+
     <alias name="endpointUserDao" alias="kaaEndpointUserVerifier" />
 
     <util:map id="verifierMap">

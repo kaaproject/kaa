@@ -32,7 +32,7 @@ public class SecureRoleMongoDao implements SecureRoleDao<SecureRole> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecureRoleMongoDao.class);
 
-    @Autowired
+    @Autowired(required=false)
     private MongoTemplate mongoTemplate;
 
     @Override

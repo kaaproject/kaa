@@ -21,6 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -32,11 +33,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/common-dao-test-context.xml")
+@ContextConfiguration(locations = "/mongo-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Ignore("This should be refactored to standalone module that does not depend on dao core")
 public class LogEventMongoDaoTest extends AbstractTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogEventMongoDaoTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LogEventMongoDaoTest.class);
 
     @BeforeClass
     public static void init() throws Exception {
@@ -51,7 +53,7 @@ public class LogEventMongoDaoTest extends AbstractTest {
 
     @Before
     public void beforeTest() throws IOException {
-        LOGGER.info("ConfigurationMongoDao init before tests.");
+        LOG.info("ConfigurationMongoDao init before tests.");
         MongoDataLoader.loadData();
     }
 

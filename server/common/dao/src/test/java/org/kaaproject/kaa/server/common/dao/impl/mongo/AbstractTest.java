@@ -23,9 +23,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemAlreadyExistsException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +37,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -47,7 +52,6 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -95,9 +99,7 @@ import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogEventDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
@@ -106,8 +108,6 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.model.mongo.MongoEndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.mongo.LogEvent;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
@@ -127,7 +127,7 @@ import com.mongodb.DB;
 
 public class AbstractTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
 
     protected static final Random random = new Random(0);
 
@@ -176,11 +176,7 @@ public class AbstractTest {
     @Autowired
     protected LogSchemaService logSchemaService;
     @Autowired
-    protected ApplicationDao<Application> applicationDao;
-    @Autowired
     protected ApplicationService applicationService;
-    @Autowired
-    protected TenantDao<Tenant> tenantDao;
     @Autowired
     protected TopicService topicService;
     @Autowired
@@ -189,10 +185,6 @@ public class AbstractTest {
     protected ConfigurationDao<Configuration> configurationDao;
     @Autowired
     protected ConfigurationSchemaDao<ConfigurationSchema> configurationSchemaDao;
-    @Autowired
-    protected EndpointConfigurationDao<MongoEndpointConfiguration> endpointConfigurationDao;
-    @Autowired
-    protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
     @Autowired
     protected EndpointGroupDao<EndpointGroup> endpointGroupDao;
     @Autowired
@@ -262,21 +254,21 @@ public class AbstractTest {
     }
 
     protected void clearDBData() {
-        LOGGER.info("Deleting data from MongoDB database");
+        LOG.info("Deleting data from MongoDB database");
         DB db = MongoDBTestRunner.getDB();
         if (db != null) {
             db.dropDatabase();
         }
         try {
             if (url.contains("h2")) {
-                LOGGER.info("Deleting data from H2 database");
+                LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
             } else if (url.contains("h2")) {
-                LOGGER.info("Deleting data from PostgreSQL database");
+                LOG.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
             }
         } catch (SQLException ex) {
-            LOGGER.error("Can't delete data from databases.", ex);
+            LOG.error("Can't delete data from databases.", ex);
         }
     }
 
@@ -312,11 +304,24 @@ public class AbstractTest {
 
     protected String readSchemaFileAsString(String filePath) throws IOException {
         try {
-            Path path = Paths.get(Thread.currentThread().getContextClassLoader().getResource(filePath).toURI());
-            byte[] bytes = Files.readAllBytes(path);
-            return new String(bytes);
+            URI uri = this.getClass().getClassLoader().getResource(filePath).toURI();
+            String[] array = uri.toString().split("!");
+            Path path;
+            if(array.length > 1){
+                LOG.info("Creating fs for {}", array[0]);
+                FileSystem fs; 
+                try{
+                    fs = FileSystems.newFileSystem(URI.create(array[0]), new HashMap<String, String>());
+                }catch(FileSystemAlreadyExistsException e){
+                    fs = FileSystems.getFileSystem(URI.create(array[0]));
+                }
+                path = fs.getPath(array[1]);
+            }else{
+                path = Paths.get(uri);
+            }
+            return new String(Files.readAllBytes(path));
         } catch (URISyntaxException e) {
-            LOGGER.error("Can't generate configs {}", e);
+            LOG.error("Can't generate configs {}", e);
         }
         return null;
     }
@@ -368,7 +373,7 @@ public class AbstractTest {
                 schemas.add(schemaDto);
             }
         } catch (Exception e) {
-            LOGGER.error("Can't generate configs {}", e);
+            LOG.error("Can't generate configs {}", e);
             Assert.fail("Can't generate configuration schemas." + e.getMessage());
         }
         return schemas;
@@ -408,7 +413,7 @@ public class AbstractTest {
                 ids.add(saved);
             }
         } catch (Exception e) {
-            LOGGER.error("Can't generate configs {}", e);
+            LOG.error("Can't generate configs {}", e);
             Assert.fail("Can't generate configurations. " + e.getMessage());
         }
         return ids;
@@ -433,7 +438,7 @@ public class AbstractTest {
                 schemas.add(schemaDto);
             }
         } catch (Exception e) {
-            LOGGER.error("Can't generate configs {}", e);
+            LOG.error("Can't generate configs {}", e);
             Assert.fail("Can't generate configurations.");
         }
         return schemas;
@@ -470,7 +475,7 @@ public class AbstractTest {
                 filters.add(saved);
             }
         } catch (Exception e) {
-            LOGGER.error("Can't generate configs {}", e);
+            LOG.error("Can't generate configs {}", e);
             Assert.fail("Can't generate configurations.");
         }
         return filters;
@@ -502,7 +507,7 @@ public class AbstractTest {
                 schemas.add(schemaDto);
             }
         } catch (Exception e) {
-            LOGGER.error("Can't generate log schemas {}", e);
+            LOG.error("Can't generate log schemas {}", e);
             Assert.fail("Can't generate log schemas.");
         }
         return schemas;
@@ -636,14 +641,6 @@ public class AbstractTest {
         return update.getPayload();
     }
 
-    protected EndpointProfileDto generateEndpointprofile(String appId, List<String> topicIds) {
-        EndpointProfileDto profileDto = new EndpointProfileDto();
-        profileDto.setApplicationId(appId);
-        profileDto.setSubscriptions(topicIds);
-        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        return endpointProfileDao.save(new MongoEndpointProfile(profileDto)).toDto();
-    }
-
     protected EndpointUserDto generateEndpointUser(String tenantId) {
         EndpointUserDto endpointUser = new EndpointUserDto();
         endpointUser.setExternalId(ENDPOINT_USER_EXTERNAL_ID);
@@ -661,7 +658,7 @@ public class AbstractTest {
             app = generateApplication();
             appId = app.getId();
         } else {
-            app = applicationDao.findById(appId).toDto();
+            app = applicationService.findAppById(appId);
         }
         if(isBlank(schemaId)){
             schema = generateLogSchema(appId, 1).get(0);
