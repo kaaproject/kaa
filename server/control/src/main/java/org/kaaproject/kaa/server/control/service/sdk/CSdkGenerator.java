@@ -347,7 +347,7 @@ public class CSdkGenerator extends SdkGenerator {
             tarEntry = new TarEntryData(entry, profileData.getBytes());
             tarEntries.add(tarEntry);
         } catch (Exception e) {
-            //TODO
+            LOG.error("Failed to generate C sdk profile sources", e);
         }
 
         return tarEntries;
@@ -362,11 +362,11 @@ public class CSdkGenerator extends SdkGenerator {
         VelocityContext logContext = new VelocityContext();
         logContext.put("logName", StyleUtils.toLowerUnderScore(logSchema.getName()));
 
-        StringWriter profileWriter = new StringWriter();
-        velocityEngine.getTemplate("sdk/c/kaa_logging.vm").merge(logContext, profileWriter);
+        StringWriter logWriter = new StringWriter();
+        velocityEngine.getTemplate("sdk/c/kaa_logging.vm").merge(logContext, logWriter);
 
-        entry.setSize(profileWriter.toString().length());
-        TarEntryData tarEntry = new TarEntryData(entry, profileWriter.toString().getBytes());
+        entry.setSize(logWriter.toString().length());
+        TarEntryData tarEntry = new TarEntryData(entry, logWriter.toString().getBytes());
         tarEntries.add(tarEntry);
 
         OutputStream hdrStream = new ByteArrayOutputStream();
@@ -377,20 +377,20 @@ public class CSdkGenerator extends SdkGenerator {
             compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", "logging"));
             compiler.generate();
 
-            String profileData = hdrStream.toString();
+            String logData = hdrStream.toString();
 
             entry = new TarArchiveEntry(KAA_GEN_SOURCE_DIR + KAA_LOG_SOURCE_NAME_PATTERN + C_HEADER_SUFFIX);
-            entry.setSize(profileData.length());
-            tarEntry = new TarEntryData(entry, profileData.getBytes());
+            entry.setSize(logData.length());
+            tarEntry = new TarEntryData(entry, logData.getBytes());
             tarEntries.add(tarEntry);
 
             entry = new TarArchiveEntry(KAA_GEN_SOURCE_DIR + KAA_LOG_SOURCE_NAME_PATTERN + C_SOURCE_SUFFIX);
-            profileData = srcStream.toString();
-            entry.setSize(profileData.length());
-            tarEntry = new TarEntryData(entry, profileData.getBytes());
+            logData = srcStream.toString();
+            entry.setSize(logData.length());
+            tarEntry = new TarEntryData(entry, logData.getBytes());
             tarEntries.add(tarEntry);
         } catch (Exception e) {
-            //TODO
+            LOG.error("Failed to generate C sdk log sources", e);
         }
 
         return tarEntries;
