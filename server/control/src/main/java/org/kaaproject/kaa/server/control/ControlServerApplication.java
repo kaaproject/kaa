@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.control;
 
+import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,7 @@ public class ControlServerApplication {
     private static final String DEFAULT_APPLICATION_CONTEXT_XML = "controlContext.xml";
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ControlServerApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ControlServerApplication.class);
 
     /**
      * The main method.
@@ -40,16 +40,18 @@ public class ControlServerApplication {
      */
     public static void main(String[] args) {
         LOG.info("Control Server Application starting...");
+        Environment.logState();
+
         String applicationContextXml = DEFAULT_APPLICATION_CONTEXT_XML;
         if (args.length > 0) {
             applicationContextXml = args[0];
         }
-        final ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
-                applicationContextXml);
-        final ControlService controlService = ctx.getBean("controlService",
-                ControlService.class);
+        final ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(applicationContextXml);
+        final ControlService controlService = ctx.getBean("controlService", ControlService.class);
+
         controlService.start();
         ctx.close();
+
         LOG.info("Control Server Application stopped.");
     }
 }

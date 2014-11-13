@@ -14,41 +14,11 @@
  * limitations under the License.
  */
 
-#include "kaa/Kaa.hpp"
+package org.kaaproject.kaa.server.common;
 
-namespace kaa {
+public final class Version {
 
-Botan::LibraryInitializer Kaa::botanInit_("thread_safe=true");
-KaaClient Kaa::client_;
-
-void Kaa::init(int options)
-{
-    client_.init(options);
-}
-
-void Kaa::start()
-{
-    client_.start();
-}
-
-void Kaa::stop()
-{
-    client_.stop();
-}
-
-IKaaClient& Kaa::getKaaClient()
-{
-    return client_;
-}
-
-void Kaa::pause()
-{
-    client_.pause();
-}
-
-void Kaa::resume()
-{
-    client_.resume();
-}
+    public static final String PROJECT_VERSION = "0.6.1-SNAPSHOT";
+    public static final String COMMIT_HASH = "2";
 
 }

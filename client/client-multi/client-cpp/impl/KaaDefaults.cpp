@@ -26,6 +26,10 @@
 
 namespace kaa {
 
+const char * const BUILD_VERSION = "0.6.1-SNAPSHOT";
+
+const char * const BUILD_COMMIT_HASH = "N/A";
+
 const char * const APPLICATION_TOKEN = "999739850901241";
 
 const std::uint32_t PROFILE_VERSION = 1;

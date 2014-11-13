@@ -103,6 +103,8 @@ public class KaaClientPropertiesState implements KaaClientState {
                 properties.getProperty(CLIENT_PUBLIC_KEY_FILE_LOCATION) :
                 CLIENT_PUBLIC_KEY_DEFAULT;
 
+        LOG.info("Version: '{}', commit hash: '{}'", properties.getBuildVersion(), properties.getCommitHash());
+
         state = new Properties();
         if (storage.exists(stateFileLocation)) {
             try {
