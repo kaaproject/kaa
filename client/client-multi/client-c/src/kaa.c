@@ -20,6 +20,7 @@
 #include "kaa_context.h"
 #include "kaa_external.h"
 #include "kaa_defaults.h"
+#include "kaa_log.h"
 #include <string.h>
 
 static kaa_context_t * kaa_context_;
@@ -60,6 +61,10 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
 
 kaa_error_t kaa_init()
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
+    KAA_LOG_INFO(KAA_ERR_NONE, "Version: %s, commit hash: %s", BUILD_VERSION, BUILD_COMMIT_HASH);
+
     kaa_error_t result = kaa_create_context(&kaa_context_);
 
     char *pub_key_buffer;
@@ -74,6 +79,7 @@ kaa_error_t kaa_init()
 
 kaa_error_t kaa_deinit()
 {
+    kaa_log_deinit();
     kaa_destroy_context(kaa_context_);
     return KAA_ERR_NONE;
 }
