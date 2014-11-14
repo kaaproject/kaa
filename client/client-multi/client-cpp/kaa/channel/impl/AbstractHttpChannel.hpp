@@ -24,7 +24,7 @@
 #if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || defined (KAA_DEFAULT_OPERATION_HTTP_CHANNEL)
 
 
-#include "kaa/channel/IDataChannel.hpp"
+#include "kaa/channel/ImpermanentDataChannel.hpp"
 #include "kaa/channel/server/AbstractServerInfo.hpp"
 #include "kaa/http/HttpClient.hpp"
 
@@ -45,7 +45,7 @@
 namespace kaa {
 
 template <ChannelType Type>
-class AbstractHttpChannel : public IDataChannel {
+class AbstractHttpChannel : public ImpermanentDataChannel {
 public:
     AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys);
     virtual ~AbstractHttpChannel() { }

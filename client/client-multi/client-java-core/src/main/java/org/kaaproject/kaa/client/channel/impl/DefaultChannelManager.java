@@ -26,6 +26,7 @@ import org.kaaproject.kaa.client.channel.AbstractServerInfo;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
 import org.kaaproject.kaa.client.channel.ServerInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
@@ -49,7 +50,9 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
     private final Map<ChannelType, ServerInfo> lastBSServers = new HashMap<>();
 
     private ConnectivityChecker connectivityChecker;
-    
+    private boolean isShutdown = false;
+    private boolean isPaused = false;
+
     public DefaultChannelManager(BootstrapManager manager, Map<ChannelType, List<ServerInfo>> bootststrapServers) {
         if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
             throw new ChannelRuntimeException("Failed to create channel manager");
@@ -58,29 +61,42 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
         this.bootststrapServers = bootststrapServers;
     }
 
+    private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
+        ChannelDirection direction = channel.getSupportedTransportTypes().get(type);
+        if (direction != null &&
+                (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
+            upChannels.put(type,  channel);
+            return true;
+        }
+        return false;
+    }
+
     private void useNewChannelForType(TransportType type) {
         for (KaaDataChannel channel : channels) {
-            ChannelDirection direction = channel.getSupportedTransportTypes().get(type);
-            if (direction != null &&
-                    (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
-                upChannels.put(type,  channel);
+            if (useChannelForType(channel, type)) {
                 return;
             }
         }
         upChannels.put(type, null);
     }
 
-    private void useNewChannel(KaaDataChannel channel) {
-        for (Map.Entry<TransportType, ChannelDirection> type : channel.getSupportedTransportTypes().entrySet()) {
-            if (type.getValue().equals(ChannelDirection.UP)
-                    || type.getValue().equals(ChannelDirection.BIDIRECTIONAL)) {
-                upChannels.put(type.getKey(), channel);
-            }
+    private void applyNewChannel(KaaDataChannel channel) {
+        for (TransportType type : channel.getSupportedTransportTypes().keySet()) {
+            useChannelForType(channel, type);
         }
     }
 
-    @Override
-    public synchronized void addChannel(KaaDataChannel channel) {
+    private void replaceAndRemoveChannel(KaaDataChannel channel) {
+        channels.remove(channel);
+        for (Map.Entry<TransportType, KaaDataChannel> entry : upChannels.entrySet()) {
+            if (entry.getValue() == channel) {
+                useNewChannelForType(entry.getKey());
+            }
+        }
+        channel.shutdown();
+    }
+
+    private void addChannelToList(KaaDataChannel channel) {
         if (!channels.contains(channel)) {
             channel.setConnectivityChecker(connectivityChecker);
             channels.add(channel);
@@ -100,16 +116,55 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
                     LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getType());
                 }
             }
-            useNewChannel(channel);
+        }
+    }
+
+    @Override
+    public synchronized void setChannel(TransportType transport,
+            KaaDataChannel channel) throws KaaInvalidChannelException {
+        if (isShutdown) {
+            LOG.warn("Can't set a channel. Channel manager is down");
+            return;
+        }
+        if (channel != null) {
+            if (!useChannelForType(channel, transport)) {
+                throw new KaaInvalidChannelException(
+                        "Unsupported transport type " + transport.toString()
+                                + " for channel \"" + channel.getId() + "\"");
+            }
+            if (isPaused) {
+                channel.pause();
+            }
+            addChannelToList(channel);
+        }
+    }
+
+    @Override
+    public synchronized void addChannel(KaaDataChannel channel) {
+        if (isShutdown) {
+            LOG.warn("Can't add a channel. Channel manager is down");
+            return;
+        }
+        if (channel != null) {
+            if (isPaused) {
+                channel.pause();
+            }
+            addChannelToList(channel);
+            applyNewChannel(channel);
         }
     }
 
     @Override
     public synchronized void removeChannel(KaaDataChannel channel) {
-        channels.remove(channel);
-        for (Map.Entry<TransportType, KaaDataChannel> entry : upChannels.entrySet()) {
-            if (entry.getValue() == channel) {
-                useNewChannelForType(entry.getKey());
+        replaceAndRemoveChannel(channel);
+    }
+
+    @Override
+    public synchronized void removeChannel(String id) {
+        for (KaaDataChannel channel : channels) {
+            if (channel.getId().equals(id)) {
+                replaceAndRemoveChannel(channel);
+                return;
             }
         }
     }
@@ -147,6 +202,10 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
 
     @Override
     public synchronized void onServerUpdated(ServerInfo newServer) {
+        if (isShutdown) {
+            LOG.warn("Can't process server update. Channel manager is down");
+            return;
+        }
         if (newServer.getServerType() == ServerType.OPERATIONS) {
             lastServers.put(newServer.getChannelType(), newServer);
         }
@@ -164,6 +223,10 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
 
     @Override
     public synchronized void onServerFailed(ServerInfo server) {
+        if (isShutdown) {
+            LOG.warn("Can't process server failure. Channel manager is down");
+            return;
+        }
         if (server.getServerType() == ServerType.BOOTSTRAP) {
             onServerUpdated(getNextBootstrapServer(server));
         } else {
@@ -207,9 +270,13 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
 
         return bsi;
     }
-    
+
     @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {
+        if (isShutdown) {
+            LOG.warn("Can't set connectivity checker. Channel manager is down");
+            return;
+        }
         connectivityChecker = checker;
         for (KaaDataChannel channel : channels) {
             channel.setConnectivityChecker(connectivityChecker);
@@ -221,4 +288,43 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
         //TODO Modify algorithm for more extended
         return (AbstractServerInfo)lastBSServers.values().iterator().next();
     }
+
+    @Override
+    public synchronized void shutdown() {
+        if (!isShutdown) {
+            isShutdown = true;
+            for (KaaDataChannel channel : channels) {
+                channel.shutdown();
+            }
+        }
+    }
+
+    @Override
+    public synchronized void pause() {
+        if (isShutdown) {
+            LOG.warn("Can't pause. Channel manager is down");
+            return;
+        }
+        if (!isPaused) {
+            isPaused = true;
+            for (KaaDataChannel channel : upChannels.values()) {
+                channel.pause();
+            }
+        }
+    }
+
+    @Override
+    public synchronized void resume() {
+        if (isShutdown) {
+            LOG.warn("Can't resume. Channel manager is down");
+            return;
+        }
+        if (isPaused) {
+            isPaused = false;
+            for (KaaDataChannel channel : upChannels.values()) {
+                channel.resume();
+            }
+        }
+    }
+
 }

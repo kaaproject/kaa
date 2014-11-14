@@ -48,6 +48,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>server-shared</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>endpoint-shared</artifactId>
         </dependency>
@@ -629,6 +633,18 @@
                     <artifactId>guava</artifactId>
                     <version>17.0</version>
              	</dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>oracle-nosql</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
+                    <artifactId>appender</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>oracle-nosql</classifier>
+                    <scope>runtime</scope>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>

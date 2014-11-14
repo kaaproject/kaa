@@ -36,10 +36,10 @@
 
     <context:annotation-config/>
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
-    <context:property-placeholder location="classpath:dao.properties"/>
+    <util:properties id="dao" location="classpath:dao.properties" />
 
     <import resource="classpath:common-dao-sql-context.xml" />
-    <import resource="classpath:common-dao-${nosql.db.provider.name}-context.xml" />
+    <import resource="classpath:common-dao-${nosql_db_provider_name}-context.xml" />
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 

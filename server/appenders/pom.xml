@@ -41,6 +41,12 @@
                 <module>cdap</module>
             </modules>
         </profile>
+        <profile>
+            <id>oracle-nosql</id>
+            <modules>
+                <module>oracle-nosql</module>
+            </modules>
+        </profile>
     </profiles>
 
 </project>

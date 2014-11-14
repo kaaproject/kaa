@@ -17,10 +17,10 @@
 package org.kaaproject.kaa.server.operations;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
+import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,8 @@ public class OperationsServerApplication {
      * @param args the arguments
      */
     public static void main(String[] args) {
-        LOG.info("Application starting.. " + Charset.defaultCharset().name());
+        LOG.info("Operations Server application starting...");
+        Environment.logState();
 
         String applicationContextXml = DEFAULT_APPLICATION_CONTEXT_XML;
         List<String> applicationPropertiesFiles = DEFAULT_APPLICATION_CONFIGURATION_FILES;
@@ -59,7 +60,7 @@ public class OperationsServerApplication {
         }
 
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{applicationContextXml}, false);
-        
+
         MutablePropertySources sources = ctx.getEnvironment().getPropertySources();
         for(String propertyFile : applicationPropertiesFiles){
             try {
@@ -76,6 +77,7 @@ public class OperationsServerApplication {
 
         operationsService.start();
         ctx.close();
+        
         LOG.info("Operations Server Application stopped.");
     }
 }

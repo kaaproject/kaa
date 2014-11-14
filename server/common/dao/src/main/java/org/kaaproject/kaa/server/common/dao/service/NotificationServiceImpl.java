@@ -69,7 +69,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
-    @Value("${dao.max.wait.time}")
+    @Value("#{dao[dao_max_wait_time]}")
     private int waitSeconds;
 
     @Autowired

@@ -30,6 +30,7 @@ import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
+import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 public class AbstractKaaClientTest extends AbstractKaaClient {
 
@@ -161,5 +162,14 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
         } catch (Exception e) {
             assertTrue("Exception was caught during testStart test: " + e.getMessage(), false);
         }
+    }
+
+    @Test
+    public void testDefaultChannels() throws Exception {
+        init();
+        assertEquals("default_operations_long_poll_channel", getDefaultChannel(ChannelType.HTTP_LP).getId());
+        assertEquals("default_operations_http_channel", getDefaultChannel(ChannelType.HTTP).getId());
+        assertEquals("default_bootstrap_channel", getDefaultChannel(ChannelType.BOOTSTRAP).getId());
+        assertEquals("default_operation_tcp_channel", getDefaultChannel(ChannelType.KAATCP).getId());
     }
 }

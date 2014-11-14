@@ -15,16 +15,16 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.6.1-SNAPSHOT</version>
-		<artifactId>server</artifactId>
-	</parent>
-	<groupId>org.kaaproject.kaa.server</groupId>
-	<artifactId>control</artifactId>
-	<packaging>jar</packaging>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.kaaproject.kaa</groupId>
+        <version>0.6.1-SNAPSHOT</version>
+        <artifactId>server</artifactId>
+    </parent>
+    <groupId>org.kaaproject.kaa.server</groupId>
+    <artifactId>control</artifactId>
+    <packaging>jar</packaging>
 
     <name>Kaa Control Server</name>
     <url>http://kaaproject.org</url>
@@ -40,6 +40,10 @@
         <sdk.path>${project.build.directory}/sdk</sdk.path>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>server-shared</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift</artifactId>

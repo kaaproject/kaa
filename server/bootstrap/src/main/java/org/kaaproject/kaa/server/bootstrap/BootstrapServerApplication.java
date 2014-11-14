@@ -16,32 +16,32 @@
 
 package org.kaaproject.kaa.server.bootstrap;
 
-import java.nio.charset.Charset;
-
 import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
+import org.kaaproject.kaa.server.common.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 /**
- * The Class BootstrapServerApplication.
- * Implements main() to start Bootstrap Service.
+ * The Class BootstrapServerApplication. Implements main() to start Bootstrap
+ * Service.
  */
 public class BootstrapServerApplication {
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapServerApplication.class);
 
     /**
      * The main method.
-     *
-     * @param args the arguments
+     * 
+     * @param args
+     *            the arguments
      */
     public static void main(String[] args) {
-        LOG.info("Bootstrap Server application starting... {}", Charset.defaultCharset().name());
+        LOG.info("Bootstrap Server application starting...");
+        Environment.logState();
 
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("bootstrapContext.xml");
-        final BootstrapInitializationService bootstrapInitializationService
-            = (BootstrapInitializationService) ctx.getBean("bootstrapInitializationService");
+        final BootstrapInitializationService bootstrapInitializationService = (BootstrapInitializationService) ctx
+                .getBean("bootstrapInitializationService");
 
         bootstrapInitializationService.start();
         ctx.close();

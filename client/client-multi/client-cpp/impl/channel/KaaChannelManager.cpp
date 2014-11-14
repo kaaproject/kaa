@@ -28,7 +28,7 @@
 namespace kaa {
 
 KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers)
-    : bootstrapManager_(manager)
+    : bootstrapManager_(manager), isShutdown_(false), isPaused_(false)
 {
     for (const auto& si : servers) {
         auto& list = bootstrapServers_[si->getChannelType()];
@@ -37,6 +37,10 @@ KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const Bootstrap
 }
 
 void KaaChannelManager::onServerFailed(IServerInfoPtr server) {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't update server. Channel manager is down");
+        return;
+    }
     if (!server) {
         KAA_LOG_WARN("Failed to process server failure: bad input data")
         throw KaaException("empty server pointer");
@@ -50,6 +54,10 @@ void KaaChannelManager::onServerFailed(IServerInfoPtr server) {
 }
 
 void KaaChannelManager::onServerUpdated(IServerInfoPtr server) {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't update server. Channel manager is down");
+        return;
+    }
     if (!server) {
         KAA_LOG_WARN("Failed to update server: bad input data")
         throw KaaException("empty server pointer");
@@ -69,13 +77,8 @@ void KaaChannelManager::onServerUpdated(IServerInfoPtr server) {
     }
 }
 
-void KaaChannelManager::addChannel(IDataChannelPtr channel)
+void KaaChannelManager::addChannelToList(IDataChannelPtr channel)
 {
-    if (!channel) {
-        KAA_LOG_WARN("Failed to add channel: bad input data")
-        throw KaaException("empty channel pointer");
-    }
-
     auto res = channels_.insert(channel);
 
     if (res.second) {
@@ -100,24 +103,77 @@ void KaaChannelManager::addChannel(IDataChannelPtr channel)
             KAA_LOG_WARN(boost::format("Failed to find server for channel \"%1%\" type %2%")
                         % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getChannelType()))
         }
-
-        useNewChannel(channel);
-    } else {
-        KAA_LOG_WARN("Failed to add channel: duplicate");
-        throw KaaException("duplicate data channel");
     }
+}
+
+void KaaChannelManager::setChannel(TransportType type, IDataChannelPtr channel)
+{
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't set channel. Channel manager is down");
+        return;
+    }
+    if (!channel) {
+        KAA_LOG_WARN("Failed to set channel: bad input data")
+        throw KaaException("empty channel pointer");
+    }
+    const auto &types = channel->getSupportedTransportTypes();
+    auto res = types.find(type);
+    if (res == types.end() || !useChannelForType(*res, channel)) {
+        KAA_LOG_WARN(boost::format("Can't apply Channel (id='%1%') for transport %2%")
+                        % channel->getId()
+                        % LoggingUtils::TransportTypeToString(type));
+        throw KaaException("invalid channel or transport type");
+    }
+    if (isPaused_) {
+        channel->pause();
+    }
+    addChannelToList(channel);
+}
+
+void KaaChannelManager::addChannel(IDataChannelPtr channel)
+{
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't set channel. Channel manager is down");
+        return;
+    }
+    if (!channel) {
+        KAA_LOG_WARN("Failed to add channel: bad input data")
+        throw KaaException("empty channel pointer");
+    }
+    if (isPaused_) {
+        channel->pause();
+    }
+    addChannelToList(channel);
+    useNewChannel(channel);
+}
+
+bool KaaChannelManager::useChannelForType(const std::pair<TransportType, ChannelDirection>& type, IDataChannelPtr channel)
+{
+    if (type.second == ChannelDirection::UP || type.second == ChannelDirection::BIDIRECTIONAL) {
+        KAA_LOG_INFO(boost::format("Channel (id='%1%') will be used for %2% transport type")
+                                                                % channel->getId() % LoggingUtils::TransportTypeToString(type.first));
+        mappedChannels_[type.first] = channel;
+        return true;
+    }
+    return false;
 }
 
 void KaaChannelManager::useNewChannel(IDataChannelPtr channel)
 {
     const auto& types = channel->getSupportedTransportTypes();
     for (const auto& type : types) {
-        if (type.second == ChannelDirection::UP || type.second == ChannelDirection::BIDIRECTIONAL) {
-            KAA_LOG_INFO(boost::format("New channel (id='%1%') will be used for %2% transport type")
-                                                                    % channel->getId() % LoggingUtils::TransportTypeToString(type.first));
-            mappedChannels_[type.first] = channel;
+        useChannelForType(type, channel);
+    }
+}
+
+void KaaChannelManager::replaceChannel(IDataChannelPtr channel)
+{
+    for (const auto& channelInfo : mappedChannels_) {
+        if (channelInfo.second == channel) {
+            useNewChannelForType(channelInfo.first);
         }
     }
+    channel->shutdown();
 }
 
 void KaaChannelManager::removeChannel(IDataChannelPtr channel)
@@ -127,11 +183,19 @@ void KaaChannelManager::removeChannel(IDataChannelPtr channel)
         throw KaaException("empty channel pointer");
     }
 
-    channels_.erase(channel);
+    if (channels_.erase(channel)) {
+        replaceChannel(channel);
+    }
+}
 
-    for (const auto& channelInfo : mappedChannels_) {
-        if (channelInfo.second == channel) {
-            useNewChannelForType(channelInfo.first);
+void KaaChannelManager::removeChannel(const std::string& id)
+{
+    for (auto it = channels_.begin(); it != channels_.end(); ++it) {
+        if ((*it)->getId() == id) {
+            IDataChannelPtr channel = *it;
+            channels_.erase(it);
+            replaceChannel(channel);
+            return;
         }
     }
 }
@@ -141,10 +205,7 @@ void KaaChannelManager::useNewChannelForType(TransportType type) {
         const auto& types = channel->getSupportedTransportTypes();
         auto it = types.find(type);
 
-        if (it != types.end() && (it->second == ChannelDirection::UP || it->second == ChannelDirection::BIDIRECTIONAL)) {
-            KAA_LOG_INFO(boost::format("New channel (id='%1%') will be used for %2% transport type")
-                                                                    % channel->getId() % LoggingUtils::TransportTypeToString(type));
-            mappedChannels_[type] = channel;
+        if (useChannelForType(*it, channel)) {
             return;
         }
     }
@@ -241,9 +302,56 @@ IServerInfoPtr KaaChannelManager::getNextBootstrapServer(IServerInfoPtr currentS
 }
 
 void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker) {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't set connectivity checker. Channel manager is down");
+        return;
+    }
     connectivityChecker_ = checker;
     for (auto& channel : channels_) {
         channel->setConnectivityChecker(connectivityChecker_);
+    }
+}
+
+void KaaChannelManager::doShutdown()
+{
+    if (!isShutdown_) {
+        isShutdown_ = true;
+        for (auto& channel : mappedChannels_) {
+            channel.second->shutdown();
+        }
+    }
+}
+
+void KaaChannelManager::shutdown()
+{
+    doShutdown();
+}
+
+void KaaChannelManager::pause()
+{
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't pause. Channel manager is down");
+        return;
+    }
+    if (!isPaused_) {
+        isPaused_ = true;
+        for (auto& channel : mappedChannels_) {
+            channel.second->pause();
+        }
+    }
+}
+
+void KaaChannelManager::resume()
+{
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't resume. Channel manager is down");
+        return;
+    }
+    if (isPaused_) {
+        isPaused_ = false;
+        for (auto& channel : mappedChannels_) {
+            channel.second->resume();
+        }
     }
 }
 

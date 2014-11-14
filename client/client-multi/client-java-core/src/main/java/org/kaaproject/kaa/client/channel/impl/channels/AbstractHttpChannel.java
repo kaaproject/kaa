@@ -137,7 +137,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             LOG.info("Can't set server. Channel {} is down", getId());
             return;
         }
-        if (executor == null) {
+        if (executor == null && !isPaused) {
             executor = createExecutor();
         }
         if (server != null) {
@@ -153,26 +153,46 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {}
 
+    @Override
     public void shutdown() {
-        isShutdown = true;
-        if (executor != null) {
-            executor.shutdownNow();
+        if (!isShutdown) {
+            isShutdown = true;
+            if (executor != null) {
+                executor.shutdownNow();
+            }
         }
     }
 
+    @Override
     public void pause() {
-        isPaused = true;
-        if (executor != null) {
-            executor.shutdownNow();
-            executor = null;
+        if (isShutdown) {
+            LOG.info("Can't pause channel. Channel [{}] is down", getId());
+            return;
+        }
+        if (!isPaused) {
+            isPaused = true;
+            if (executor != null) {
+                executor.shutdownNow();
+                executor = null;
+            }
         }
     }
 
+    @Override
     public void resume() {
-        isPaused = false;
-        if (lastConnectionFailed) {
-            lastConnectionFailed = false;
-            syncAll();
+        if (isShutdown) {
+            LOG.info("Can't resume channel. Channel [{}] is down", getId());
+            return;
+        }
+        if (isPaused) {
+            isPaused = false;
+            if (executor == null) {
+                executor = createExecutor();
+            }
+            if (lastConnectionFailed) {
+                lastConnectionFailed = false;
+                syncAll();
+            }
         }
     }
 

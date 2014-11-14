@@ -34,7 +34,7 @@
             http://www.springframework.org/schema/util
             http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <context:property-placeholder location="classpath:common-dao-mongodb.properties"/>
+    <util:properties id="mongo" location="classpath:common-dao-mongodb.properties"/>
 
     <!-- In order to implement support of custom NoSQL platform, one should declare following mandatory beans -->
 
@@ -47,22 +47,22 @@
 
     <!-- End of mandatory beans declaration -->
 
-    <mongo:mongo id="mongoClient" replica-set="${mongo.servers}" write-concern="${mongo.write.concern}">
+    <mongo:mongo id="mongoClient" replica-set="#{mongo[servers]}" write-concern="#{mongo[write_concern]}">
         <mongo:options
-                connections-per-host="${mongo.connections.per.host}"
+                connections-per-host="#{mongo[connections_per_host]}"
                 threads-allowed-to-block-for-connection-multiplier="5"
-                connect-timeout="${mongo.connection.timeout}"
-                max-wait-time="${mongo.max.wait.time}"
-                auto-connect-retry="${mongo.auto.connect.retry}"
-                socket-keep-alive="${mongo.socket.keepalive}"
-                socket-timeout="${mongo.socket.timeout}"
-                slave-ok="${mongo.slaveOk}"
+                connect-timeout="#{mongo[connection_timeout]}"
+                max-wait-time="#{mongo[max_wait_time]}"
+                auto-connect-retry="#{mongo[auto_connect_retry]}"
+                socket-keep-alive="#{mongo[socket_keepalive]}"
+                socket-timeout="#{mongo[socket_timeout]}"
+                slave-ok="#{mongo[slaveOk]}"
                 write-number="1"
                 write-timeout="0"
                 write-fsync="true"/>
     </mongo:mongo>
 
-    <mongo:db-factory dbname="${mongo.db.name}" mongo-ref="mongoClient"/>
+    <mongo:db-factory dbname="#{mongo[db_name]}" mongo-ref="mongoClient"/>
 
     <mongo:auditing />
 
