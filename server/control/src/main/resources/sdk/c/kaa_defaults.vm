@@ -24,6 +24,9 @@ extern "C" {
 \#define CLOSE_EXTERN
 # endif
 
+\#define BUILD_VERSION                   "${build_version}"
+\#define BUILD_COMMIT_HASH               "${build_commit_hash}"
+
 \#define APPLICATION_TOKEN               "${app_token}"
 
 \#define CONFIG_SCHEMA_VERSION           ${config_version}
