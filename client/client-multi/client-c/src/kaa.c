@@ -79,8 +79,9 @@ kaa_error_t kaa_init()
 
 kaa_error_t kaa_deinit()
 {
-    kaa_log_deinit();
     kaa_destroy_context(kaa_context_);
+
+    kaa_log_deinit();
     return KAA_ERR_NONE;
 }
 
