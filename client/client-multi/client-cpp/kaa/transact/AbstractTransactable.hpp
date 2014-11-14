@@ -32,11 +32,9 @@ public:
         KAA_MUTEX_LOCKING("transactionsGuard_")
         KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
         KAA_MUTEX_LOCKED("transactionsGuard_")
+
         transactions_.insert(std::make_pair(trxId, Container()));
 
-        KAA_MUTEX_UNLOCKING("transactionsGuard_")
-        KAA_UNLOCK(transactionsLock);
-        KAA_MUTEX_UNLOCKED("transactionsGuard_")
         return trxId;
     }
 
@@ -44,13 +42,11 @@ public:
         KAA_MUTEX_LOCKING("transactionsGuard_")
         KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
         KAA_MUTEX_LOCKED("transactionsGuard_")
+
         auto it = transactions_.find(trxId);
         if (it != transactions_.end()) {
             transactions_.erase(it);
         }
-        KAA_MUTEX_UNLOCKING("transactionsGuard_")
-        KAA_UNLOCK(transactionsLock);
-        KAA_MUTEX_UNLOCKED("transactionsGuard_")
     }
 
     Container & getContainerByTrxId(TransactionIdPtr trxId) {
@@ -61,15 +57,9 @@ public:
         auto it = transactions_.find(trxId);
 
         if (it != transactions_.end()) {
-            KAA_MUTEX_UNLOCKING("transactionsGuard_")
-            KAA_UNLOCK(transactionsLock);
-            KAA_MUTEX_UNLOCKED("transactionsGuard_")
             return it->second;
         } else {
             KAA_LOG_DEBUG(boost::format("Transaction with id %1% was not found. Creating new instance") % trxId->getId());
-            KAA_MUTEX_UNLOCKING("transactionsGuard_")
-            KAA_UNLOCK(transactionsLock);
-            KAA_MUTEX_UNLOCKED("transactionsGuard_")
             return transactions_[trxId];
         }
     }

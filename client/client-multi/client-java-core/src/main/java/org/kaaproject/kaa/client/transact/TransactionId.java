@@ -18,6 +18,10 @@ package org.kaaproject.kaa.client.transact;
 
 import java.util.UUID;
 
+/**
+ * Class representing unique transaction id for transactions initiated using
+ * {@link Transactable}.<br>
+ */
 public class TransactionId {
     private final String id;
 

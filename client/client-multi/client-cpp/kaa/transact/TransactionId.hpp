@@ -23,13 +23,40 @@
 
 namespace kaa {
 
+/**
+ * Class representing unique transaction id for transactions initiated using
+ * @link kaa::ITransactable @endlink.<br>
+ *
+ * @see kaa::ITransactable
+ * @see kaa::AbstractTransactable
+ * @see kaa::IEventManager
+ */
 class TransactionId {
 public:
+    /**
+     * Default constructor<br>
+     * <br>
+     * Generates random id object.
+     */
     TransactionId() : id_(UuidGenerator::generateUuid()) {}
+
+    /**
+     * Copy constructor<br>
+     * <br>
+     * Copies TransactionId object.
+     */
     TransactionId(const TransactionId & trxId) : id_(trxId.id_) {}
+
+    /**
+     * Constructs object from string value.
+     */
     TransactionId(const std::string & id) {
         this->id_ = id;
     }
+
+    /**
+     * Get string id representation.
+     */
     const std::string & getId() {
         return this->id_;
     }

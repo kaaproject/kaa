@@ -22,22 +22,22 @@ package org.kaaproject.kaa.client.transact;
 public interface Transactable {
 
 	/**
-	 * Creates new transaction entry.<br>
-	 * 
+	 * Create new transaction entry.<br>
+	 *
 	 * @return TransactionId Unique id of created transaction.
 	 */
     TransactionId beginTransaction();
 
     /**
      * Submit the transaction<br>
-     * 
+     *
      * @param trxId The unique identifier of the transaction which should be submitted.
      */
     void commit(TransactionId trxId);
 
     /**
-     * Reverts the transaction<br>
-     * 
+     * Revert the transaction<br>
+     *
      * @param trxId The unique identifier of the transaction which should be reverted.
      */
     void rollback(TransactionId trxId);
