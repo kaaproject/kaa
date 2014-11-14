@@ -38,100 +38,132 @@ public class MessageEncoderDecoderTest {
 
     PublicKey theifPublic;
     PrivateKey theifPrivate;
-    
+
     @Before
-    public void generateKeys() throws NoSuchAlgorithmException{
+    public void generateKeys() throws NoSuchAlgorithmException {
         KeyPairGenerator clientKeyGen = KeyPairGenerator.getInstance("RSA");
         clientKeyGen.initialize(2048);
         KeyPair kp = clientKeyGen.genKeyPair();
         clientPublic = kp.getPublic();
         clientPrivate = kp.getPrivate();
-        
+
         KeyPairGenerator serverKeyGen = KeyPairGenerator.getInstance("RSA");
         serverKeyGen.initialize(2048);
         kp = serverKeyGen.genKeyPair();
         serverPublic = kp.getPublic();
         serverPrivate = kp.getPrivate();
-        
+
         KeyPairGenerator otherKeyGen = KeyPairGenerator.getInstance("RSA");
         otherKeyGen.initialize(2048);
         kp = otherKeyGen.genKeyPair();
         theifPublic = kp.getPublic();
         theifPrivate = kp.getPrivate();
     }
-    
+
     @Test
-    public void basicTest() throws Exception{
+    public void basicTest() throws Exception {
         String message = "secret" + new Random().nextInt();
-        
-        MessageEncoderDecoder client =  new MessageEncoderDecoder(clientPrivate, clientPublic, serverPublic);
-        MessageEncoderDecoder server =  new MessageEncoderDecoder(serverPrivate, serverPublic, clientPublic);
-        MessageEncoderDecoder thief =  new MessageEncoderDecoder(theifPrivate, theifPublic, clientPublic);
-        
+
+        MessageEncoderDecoder client = new MessageEncoderDecoder(clientPrivate, clientPublic, serverPublic);
+        MessageEncoderDecoder server = new MessageEncoderDecoder(serverPrivate, serverPublic, clientPublic);
+        MessageEncoderDecoder thief = new MessageEncoderDecoder(theifPrivate, theifPublic, clientPublic);
+
         byte[] secretData = client.encodeData(message.getBytes());
         byte[] signature = client.sign(secretData);
         byte[] encodedSessionKey = client.getEncodedSessionKey();
-                
+
         Assert.assertTrue(server.verify(secretData, signature));
         String decodedSecret = new String(server.decodeData(secretData, encodedSessionKey));
-        
+
         Assert.assertEquals(message, decodedSecret);
-        
+
         byte[] theifData = thief.encodeData(message.getBytes());
         byte[] theifSignature = thief.sign(theifData);
         Assert.assertFalse(server.verify(theifData, theifSignature));
     }
-    
+
     @Test
-    public void basicUpdateTest() throws Exception{        
-        MessageEncoderDecoder client =  new MessageEncoderDecoder(clientPrivate, clientPublic, serverPublic);
+    public void basicSubsequentTest() throws Exception {
+        String message = "secret" + new Random().nextInt();
+        PrivateKey client2Private = theifPrivate;
+        PublicKey client2Public = theifPublic;
+
+        MessageEncoderDecoder client = new MessageEncoderDecoder(clientPrivate, clientPublic, serverPublic);
+        MessageEncoderDecoder client2 = new MessageEncoderDecoder(client2Private, client2Public, serverPublic);
+        MessageEncoderDecoder server = new MessageEncoderDecoder(serverPrivate, serverPublic);
+
+
+        byte[] secretData = client.encodeData(message.getBytes());
+        byte[] signature = client.sign(secretData);
+        byte[] encodedSessionKey = client.getEncodedSessionKey();
+
+        server.setRemotePublicKey(clientPublic);
+        Assert.assertTrue(server.verify(secretData, signature));
+        String decodedSecret = new String(server.decodeData(secretData, encodedSessionKey));
+
+        Assert.assertEquals(message, decodedSecret);
+
+        byte[] secretData2 = client2.encodeData(message.getBytes());
+        byte[] signature2 = client2.sign(secretData2);
+        byte[] encodedSessionKey2 = client2.getEncodedSessionKey();
+
+        server.setRemotePublicKey(client2Public);
+        Assert.assertTrue(server.verify(secretData2, signature2));
+        String decodedSecret2 = new String(server.decodeData(secretData2, encodedSessionKey2));
+
+        Assert.assertEquals(message, decodedSecret2);
+    }
+
+    @Test
+    public void basicUpdateTest() throws Exception {
+        MessageEncoderDecoder client = new MessageEncoderDecoder(clientPrivate, clientPublic, serverPublic);
 
         Assert.assertNotNull(client.getPublicKey());
         Assert.assertNotNull(client.getPrivateKey());
-        Assert.assertNotNull(client.getRemotePublicKey());        
-        
+        Assert.assertNotNull(client.getRemotePublicKey());
+
         byte[] remoteKey = client.getRemotePublicKey().getEncoded();
-        
+
         client.setRemotePublicKey(serverPublic);
-        
+
         Assert.assertTrue(Arrays.equals(remoteKey, client.getRemotePublicKey().getEncoded()));
-        
+
         client.setRemotePublicKey(serverPublic.getEncoded());
-        
+
         Assert.assertTrue(Arrays.equals(remoteKey, client.getRemotePublicKey().getEncoded()));
-        
+
         client.setRemotePublicKey(theifPublic.getEncoded());
-        
+
         Assert.assertFalse(Arrays.equals(remoteKey, client.getRemotePublicKey().getEncoded()));
-    }    
-    
+    }
+
     @Test
-    public void testExistingCipherAlgorithm(){
+    public void testExistingCipherAlgorithm() {
         Assert.assertNotNull(MessageEncoderDecoder.cipherForAlgorithm("RSA"));
     }
-    
+
     @Test
-    public void testNotExistingCipherAlgorithm(){
+    public void testNotExistingCipherAlgorithm() {
         Assert.assertNull(MessageEncoderDecoder.cipherForAlgorithm("42"));
     }
-    
+
     @Test
-    public void testExistingKeyGeneratorAlgorithm(){
+    public void testExistingKeyGeneratorAlgorithm() {
         Assert.assertNotNull(MessageEncoderDecoder.keyGeneratorForAlgorithm("AES", 128));
     }
-    
+
     @Test
-    public void testNotExistingKeyGeneratorAlgorithm(){
+    public void testNotExistingKeyGeneratorAlgorithm() {
         Assert.assertNull(MessageEncoderDecoder.keyGeneratorForAlgorithm("42", 128));
     }
-    
+
     @Test
-    public void testExistingSignatoreAlgorithm(){
+    public void testExistingSignatoreAlgorithm() {
         Assert.assertNotNull(MessageEncoderDecoder.signatureForAlgorithm("SHA1withRSA"));
     }
-    
+
     @Test
-    public void testNotExistingSignatoreAlgorithm(){
+    public void testNotExistingSignatoreAlgorithm() {
         Assert.assertNull(MessageEncoderDecoder.signatureForAlgorithm("42"));
-    }     
+    }
 }
