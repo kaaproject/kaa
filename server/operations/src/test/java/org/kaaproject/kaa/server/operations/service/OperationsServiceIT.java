@@ -88,6 +88,9 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -95,9 +98,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
-import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointProfile;
-import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointUser;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
@@ -179,7 +179,7 @@ public class OperationsServiceIT extends AbstractTest {
     protected EndpointService endpointService;
 
     @Autowired
-    protected EndpointUserDao<MongoEndpointUser> endpointUserDao;
+    protected EndpointUserDao<EndpointUser> endpointUserDao;
 
     @Autowired
     protected TenantDao<Tenant> customerDao;
@@ -194,10 +194,10 @@ public class OperationsServiceIT extends AbstractTest {
     protected ConfigurationDao<Configuration> configurationDao;
 
     @Autowired
-    protected EndpointConfigurationDao<MongoEndpointConfiguration> endpointConfigurationDao;
+    protected EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
 
     @Autowired
-    protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
+    protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
     @Autowired
     protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;

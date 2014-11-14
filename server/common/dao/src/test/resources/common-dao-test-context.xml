@@ -38,7 +38,6 @@
     <context:property-placeholder location="classpath:dao_test.properties" />
 
     <import resource="classpath:common-dao-sql-test-context.xml" />
-    <!--import resource="classpath:common-dao-nosql-test-context.xml" /-->
 
     <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
 

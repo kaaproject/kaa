@@ -63,6 +63,8 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -134,10 +136,10 @@ public class DeltaServiceIT {
     protected ConfigurationDao<Configuration> configurationDao;
 
     @Autowired
-    protected EndpointConfigurationDao<MongoEndpointConfiguration> endpointConfigurationDao;
+    protected EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
 
     @Autowired
-    protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
+    protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
     @Autowired
     protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
@@ -254,7 +256,7 @@ public class DeltaServiceIT {
         endpointConfiguration = new MongoEndpointConfiguration();
         endpointConfiguration.setConfiguration(confDto.getBody().getBytes(UTF_8));
         endpointConfiguration.setConfigurationHash(EndpointObjectHash.fromSHA1(confDto.getBody()).getData());
-        endpointConfiguration = endpointConfigurationDao.save(endpointConfiguration);
+        endpointConfiguration = (MongoEndpointConfiguration)endpointConfigurationDao.save(endpointConfiguration);
         assertNotNull(endpointConfiguration);
         assertNotNull(endpointConfiguration.getId());
 
@@ -271,7 +273,7 @@ public class DeltaServiceIT {
         endpointProfile.setProfileVersion(PROFILE_VERSION);
         endpointProfile.setCfGroupState(Collections.singletonList(egs));
         endpointProfile.setNfGroupState(Collections.singletonList(egs));
-        endpointProfile = endpointProfileDao.save(endpointProfile);
+        endpointProfile = (MongoEndpointProfile)endpointProfileDao.save(endpointProfile);
         assertNotNull(endpointProfile);
         assertNotNull(endpointProfile.getId());
     }

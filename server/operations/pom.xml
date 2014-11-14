@@ -56,6 +56,10 @@
             <artifactId>dao</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dto</artifactId>
         </dependency>
@@ -90,6 +94,12 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dao</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
