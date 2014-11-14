@@ -16,24 +16,31 @@
 
 package org.kaaproject.kaa.server.operations;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
 
 import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.io.support.ResourcePropertySource;
 
 /**
  * Main class that is used to launch Operations Server.
  */
 public class OperationsServerApplication {
-    
+
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
             .getLogger(OperationsServerApplication.class);
-    
+
     private static final String DEFAULT_APPLICATION_CONTEXT_XML = "operationsContext.xml";
 
+    private static final List<String> DEFAULT_APPLICATION_CONFIGURATION_FILES = Arrays.asList("operations-server.properties", "dao.properties");
+    
     /**
      * The main method. Used to launch Operations Server.
      *
@@ -43,10 +50,27 @@ public class OperationsServerApplication {
         LOG.info("Application starting.. " + Charset.defaultCharset().name());
 
         String applicationContextXml = DEFAULT_APPLICATION_CONTEXT_XML;
-        if (args.length>0) {
+        List<String> applicationPropertiesFiles = DEFAULT_APPLICATION_CONFIGURATION_FILES;
+        if (args.length > 0) {
             applicationContextXml = args[0];
+            if(args.length > 1){
+                applicationPropertiesFiles = Arrays.asList(Arrays.copyOfRange(args, 1, args.length));
+            }
         }
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(applicationContextXml);
+
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{applicationContextXml}, false);
+        
+        MutablePropertySources sources = ctx.getEnvironment().getPropertySources();
+        for(String propertyFile : applicationPropertiesFiles){
+            try {
+                sources.addLast(new ResourcePropertySource(propertyFile, OperationsServerApplication.class.getClassLoader()));
+            } catch (IOException e) {
+                LOG.error("Can't load properties file {} from classpath", propertyFile);
+                return;
+            }
+        }
+        ctx.refresh();
+        
         final OperationsBootstrapService operationsService = (OperationsBootstrapService) ctx
                 .getBean("operationsBootstrapService");
 

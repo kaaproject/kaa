@@ -39,7 +39,7 @@
     <context:property-placeholder location="classpath:dao.properties"/>
 
     <import resource="classpath:common-dao-sql-context.xml" />
-    <import resource="classpath:common-dao-nosql-context.xml" />
+    <import resource="classpath:common-dao-${nosql.db.provider.name}-context.xml" />
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
