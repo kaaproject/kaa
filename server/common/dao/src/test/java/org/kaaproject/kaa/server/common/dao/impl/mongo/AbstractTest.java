@@ -33,6 +33,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -257,7 +258,11 @@ public class AbstractTest {
             db.dropDatabase();
         }
         try {
-            if (dataSource.getConnection().getMetaData().getURL().contains("h2")) {
+        	String url;
+        	try(Connection connection = dataSource.getConnection()){
+        		url = connection.getMetaData().getURL();
+        	}
+            if (url.contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
             } else {
