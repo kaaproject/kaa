@@ -162,9 +162,6 @@ public class AbstractTest {
     protected List<String> applicationEventFamilyMaps = new ArrayList<String>();
     protected List<String> endUsers = new ArrayList<String>();
 
-    @Value("${jdbc.url}")
-    private String url;
-
     @Autowired
     private DataSource dataSource;
     @Autowired
@@ -260,10 +257,10 @@ public class AbstractTest {
             db.dropDatabase();
         }
         try {
-            if (url.contains("h2")) {
+            if (dataSource.getConnection().getMetaData().getURL().contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
-            } else if (url.contains("h2")) {
+            } else {
                 LOG.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
             }

@@ -16,68 +16,45 @@
 
 package org.kaaproject.kaa.server.operations;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import org.kaaproject.kaa.server.common.Environment;
+import org.kaaproject.kaa.server.common.AbstractServerApplication;
 import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.io.support.ResourcePropertySource;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Main class that is used to launch Operations Server.
  */
-public class OperationsServerApplication {
+public class OperationsServerApplication extends AbstractServerApplication {
 
-    /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(OperationsServerApplication.class);
+    private static final String[] DEFAULT_APPLICATION_CONTEXT_XML = new String[] { "operationsContext.xml" };
 
-    private static final String DEFAULT_APPLICATION_CONTEXT_XML = "operationsContext.xml";
+    private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] {
+            "operations-server.properties", "dao.properties" };
 
-    private static final List<String> DEFAULT_APPLICATION_CONFIGURATION_FILES = Arrays.asList("operations-server.properties", "dao.properties");
-    
     /**
      * The main method. Used to launch Operations Server.
-     *
-     * @param args the arguments
+     * 
+     * @param args
+     *            the arguments
      */
     public static void main(String[] args) {
-        LOG.info("Operations Server application starting...");
-        Environment.logState();
+        OperationsServerApplication app = new OperationsServerApplication(DEFAULT_APPLICATION_CONTEXT_XML,
+                DEFAULT_APPLICATION_CONFIGURATION_FILES);
+        app.startAndWait(args);
+    }
 
-        String applicationContextXml = DEFAULT_APPLICATION_CONTEXT_XML;
-        List<String> applicationPropertiesFiles = DEFAULT_APPLICATION_CONFIGURATION_FILES;
-        if (args.length > 0) {
-            applicationContextXml = args[0];
-            if(args.length > 1){
-                applicationPropertiesFiles = Arrays.asList(Arrays.copyOfRange(args, 1, args.length));
-            }
-        }
+    public OperationsServerApplication(String[] defaultContextFiles, String[] defaultConfigurationFiles) {
+        super(defaultContextFiles, defaultConfigurationFiles);
+    }
 
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{applicationContextXml}, false);
+    @Override
+    protected String getName() {
+        return "Operations Server";
+    }
 
-        MutablePropertySources sources = ctx.getEnvironment().getPropertySources();
-        for(String propertyFile : applicationPropertiesFiles){
-            try {
-                sources.addLast(new ResourcePropertySource(propertyFile, OperationsServerApplication.class.getClassLoader()));
-            } catch (IOException e) {
-                LOG.error("Can't load properties file {} from classpath", propertyFile);
-                return;
-            }
-        }
-        ctx.refresh();
-        
+    @Override
+    protected void init(ApplicationContext ctx) {
         final OperationsBootstrapService operationsService = (OperationsBootstrapService) ctx
                 .getBean("operationsBootstrapService");
-
         operationsService.start();
-        ctx.close();
-        
-        LOG.info("Operations Server Application stopped.");
     }
 }

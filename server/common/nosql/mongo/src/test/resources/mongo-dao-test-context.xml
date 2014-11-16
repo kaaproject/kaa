@@ -35,7 +35,8 @@
 
     <context:annotation-config/>
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
-    <context:property-placeholder location="classpath:mongo_test.properties" />
+    <util:properties id="dao" location="classpath:mongo_test.properties"/>
+    <util:properties id="mongo" location="classpath:mongo_test.properties"/>
 
     <import resource="classpath:mongo-dao-sql-test-context.xml" />
     <import resource="classpath:mongo-dao-nosql-test-context.xml" />

@@ -45,22 +45,22 @@
     
     <!-- End of mandatory beans declaration -->
 
-    <mongo:mongo id="mongoClient" replica-set="${servers}" write-concern="${write.concern}">
+    <mongo:mongo id="mongoClient" replica-set="#{mongo[servers]}" write-concern="#{mongo[write_concern]}">
         <mongo:options
-                connections-per-host="${connections.per.host}"
+                connections-per-host="#{mongo[connections_per_host]}"
                 threads-allowed-to-block-for-connection-multiplier="5"
-                connect-timeout="${connection.timeout}"
-                max-wait-time="${max.wait.time}"
-                auto-connect-retry="${auto.connect.retry}"
-                socket-keep-alive="${socket.keepalive}"
-                socket-timeout="${socket.timeout}"
-                slave-ok="${slaveOk}"
+                connect-timeout="#{mongo[connection_timeout]}"
+                max-wait-time="#{mongo[max_wait_time]}"
+                auto-connect-retry="#{mongo[auto_connect_retry]}"
+                socket-keep-alive="#{mongo[socket_keepalive]}"
+                socket-timeout="#{mongo[socket_timeout]}"
+                slave-ok="#{mongo[slaveOk]}"
                 write-number="1"
                 write-timeout="0"
                 write-fsync="true"/>
     </mongo:mongo>
 
-    <mongo:db-factory dbname="${db.name}" mongo-ref="mongoClient"/>
+    <mongo:db-factory dbname="#{mongo[db_name]}" mongo-ref="mongoClient"/>
 
     <mongo:auditing />
 

@@ -199,9 +199,6 @@ public abstract class AbstractTestControlServer {
 
     private final Random random = new Random();
 
-    @Value("${jdbc.url}")
-    private String url;
-
     @Autowired
     private DataSource dataSource;
 
@@ -259,10 +256,10 @@ public abstract class AbstractTestControlServer {
             db.dropDatabase();
         }
         try {
-            if (url.contains("h2")) {
+            if (dataSource.getConnection().getMetaData().getURL().contains("h2")) {
                 logger.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
-            } else if (url.contains("h2")) {
+            } else {
                 logger.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
             }
