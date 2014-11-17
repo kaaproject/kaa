@@ -33,7 +33,6 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.IOUtils;
-import org.kaa.config.Profile;
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
@@ -67,10 +66,9 @@ import org.kaaproject.kaa.examples.robotrun.visualization.EmulatorSetupDialog.Em
 import org.kaaproject.kaa.examples.robotrun.visualization.LabyrinthDialog.LabyrinthDialogListener;
 import org.kaaproject.kaa.examples.robotrun.visualization.emulator.EmulatorManager;
 import org.kaaproject.kaa.examples.robotrun.visualization.emulator.EmulatorManager.EmulatorManagerCallback;
+import org.kaaproject.kaa.schema.base.Profile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import config.system.ProfileProperty;
 
 public class Context implements ConfigurationReceiver, EventListener, EmulatorManagerCallback {
     
@@ -341,9 +339,7 @@ public class Context implements ConfigurationReceiver, EventListener, EmulatorMa
 
         @Override
         public Profile getProfile() {
-            List<ProfileProperty> props = new ArrayList<>();
-            props.add(new ProfileProperty("propName", "propValue"));
-            return new Profile(props);
+            return new Profile();
         }
         
     }
