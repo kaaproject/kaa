@@ -91,6 +91,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
@@ -672,58 +678,14 @@
                                         <source>
                                             <location>../common/dao/src/main/resources/common-dao-context.xml</location>
                                         </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
-                                            <location>target/conf</location>
-                                        </source>
                                         <source>
                                             <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
-                                            <location>target/conf</location>
                                         </source>
                                         <source>
                                             <location>../common/dao/src/main/resources/dao.properties</location>
                                         </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
-                                            <location>target/conf</location>
-                                        </source>
                                         <source>
                                             <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
-                                            <location>target/conf</location>
                                         </source>
                                         <source>
                                             <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</location>

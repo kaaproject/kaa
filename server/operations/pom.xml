@@ -606,21 +606,7 @@
                                     <groupname>kaa</groupname>
                                     <sources>
                                         <source>
-                                            <location>target/conf</location>
-                                        </source>
-                                        <source>
                                             <location>../common/dao/src/main/resources/common-dao-context.xml</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
-                                            <location>target/conf</location>
                                         </source>
                                         <source>
                                             <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
@@ -637,32 +623,16 @@
                                             <location>src/main/resources</location>
                                         </source>
                                         <source>
-                                            <location>../common/dao/src/main/resources/dao.properties</location>
+                                            <location>../common/dao/src/main/resources/common-dao-context.xml</location>
                                         </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
                                         <source>
-                                            <location>target/conf</location>
+                                            <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/dao/src/main/resources/dao.properties</location>
                                         </source>
                                         <source>
                                             <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
-                                            <location>target/conf</location>
                                         </source>
                                         <source>
                                             <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</location>
