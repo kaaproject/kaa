@@ -123,19 +123,18 @@ void kaa_log_write(const char* filename, int lineno, kaa_log_level_t level
     }
 
     if (consumed_len > 0) {
+        if (consumed_len > KAA_MAX_LOG_MESSAGE_LENGTH) {
+            consumed_len = KAA_MAX_LOG_MESSAGE_LENGTH;
+        }
+
+        log_buffer[consumed_len++] = '\n';
         write_log(log_buffer, consumed_len);
     }
 }
 
 static void write_log(char* log, size_t len)
 {
-    if (log) {
-        if (len > KAA_MAX_LOG_MESSAGE_LENGTH) {
-            len = KAA_MAX_LOG_MESSAGE_LENGTH;
-        }
-
-        log[len++] = '\n';
-
+    if (log && len > 0) {
         FILE* sink = stdout;
         if (user_sink) {
             sink = user_sink;
