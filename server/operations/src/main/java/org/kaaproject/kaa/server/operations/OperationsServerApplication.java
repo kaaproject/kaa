@@ -25,7 +25,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class OperationsServerApplication extends AbstractServerApplication {
 
-    private static final String[] DEFAULT_APPLICATION_CONTEXT_XML = new String[] { "operationsContext.xml" };
+    private static final String[] DEFAULT_APPLICATION_CONTEXT_XMLS = new String[] { "operationsContext.xml" };
 
     private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] {
             "operations-server.properties", "dao.properties" };
@@ -37,7 +37,7 @@ public class OperationsServerApplication extends AbstractServerApplication {
      *            the arguments
      */
     public static void main(String[] args) {
-        OperationsServerApplication app = new OperationsServerApplication(DEFAULT_APPLICATION_CONTEXT_XML,
+        OperationsServerApplication app = new OperationsServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS,
                 DEFAULT_APPLICATION_CONFIGURATION_FILES);
         app.startAndWait(args);
     }

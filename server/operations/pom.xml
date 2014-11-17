@@ -447,7 +447,43 @@
                                     </mapper>
                                 </data>
                                 <data>
+                                    <src>../common/dao/src/main/resources/common-dao-context.xml</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../common/dao/src/main/resources/common-dao-sql-context.xml</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
                                     <src>../common/dao/src/main/resources/dao.properties</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -570,10 +606,66 @@
                                     <groupname>kaa</groupname>
                                     <sources>
                                         <source>
+                                            <location>target/conf</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/dao/src/main/resources/common-dao-context.xml</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/lib/${script.server.name}/conf</directory>
+                                    <filemode>755</filemode>
+                                    <username>kaa</username>
+                                    <groupname>kaa</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>target/conf</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/lib/${script.server.name}/conf</directory>
+                                    <filemode>755</filemode>
+                                    <username>kaa</username>
+                                    <groupname>kaa</groupname>
+                                    <sources>
+                                        <source>
                                             <location>src/main/resources</location>
                                         </source>
                                         <source>
                                             <location>../common/dao/src/main/resources/dao.properties</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/lib/${script.server.name}/conf</directory>
+                                    <filemode>755</filemode>
+                                    <username>kaa</username>
+                                    <groupname>kaa</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>target/conf</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/lib/${script.server.name}/conf</directory>
+                                    <filemode>755</filemode>
+                                    <username>kaa</username>
+                                    <groupname>kaa</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>target/conf</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</location>
                                         </source>
                                     </sources>
                                 </mapping>
