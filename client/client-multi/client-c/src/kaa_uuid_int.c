@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define KAA_UUID_FORMAT     "%u"
+
 void kaa_uuid_fill(kaa_uuid_t *dst, KAA_UUID_VALUE_T src)
 {
     *dst = src;
@@ -32,15 +34,14 @@ void kaa_uuid_copy(kaa_uuid_t *dst, kaa_uuid_t *src)
 void kaa_uuid_to_string(char **dst, kaa_uuid_t *uuid)
 {
     char buf[16];
-    sprintf(buf, "%i", *uuid);
-    size_t len = strlen(buf);
+    size_t len = sprintf(buf, KAA_UUID_FORMAT, *uuid);
     *dst = KAA_CALLOC(len + 1, sizeof(char));
     strcpy(*dst, buf);
 }
 
 void kaa_uuid_from_string(const char *src, kaa_uuid_t *uuid)
 {
-    sscanf(src, "%i", uuid);
+    sscanf(src, KAA_UUID_FORMAT, uuid);
 }
 
 int kaa_uuid_compare(kaa_uuid_t *uuid1, kaa_uuid_t *uuid2)

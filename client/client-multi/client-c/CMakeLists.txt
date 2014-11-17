@@ -59,8 +59,6 @@ set (KAA_SOURCE_FILES
                        src/kaa_uuid_int.c
                        src/kaa_common.c
                        src/gen/kaa_endpoint_gen.c
-                       src/gen/kaa_profile_gen.c
-                       src/gen/kaa_logging_gen.c
                        src/kaa_logging.c
                        src/log/kaa_memory_log_storage.c
 )
@@ -101,6 +99,7 @@ add_executable  (test_bootstrap
 target_link_libraries(test_bootstrap kaac crypto)
 
 add_executable  (test_profile
+                    src/gen/kaa_profile_gen.c
                     test/test_kaa_profile.c
                     test/kaa_test_external.c
                 )
@@ -113,6 +112,7 @@ add_executable  (test_common
 target_link_libraries(test_common kaac crypto)
 
 add_executable  (test_log
+                    src/gen/kaa_logging_gen.c
                     test/test_kaa_log.c
                     test/kaa_test_external.c
                 )
