@@ -207,6 +207,7 @@ public class MessageEncoderDecoder {
      *             the general security exception
      */
     public byte[] decodeData(byte[] message, byte[] encodedKey) throws GeneralSecurityException {
+        sessionCipherPair = null;
         decodeSessionKey(encodedKey);
         return decodeData(message);
     }
