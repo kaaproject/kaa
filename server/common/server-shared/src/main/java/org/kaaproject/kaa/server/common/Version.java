@@ -19,6 +19,6 @@ package org.kaaproject.kaa.server.common;
 public final class Version {
 
     public static final String PROJECT_VERSION = "0.6.1-SNAPSHOT";
-    public static final String COMMIT_HASH = "2";
+    public static final String COMMIT_HASH = "N/A";
 
 }

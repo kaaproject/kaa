@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -256,7 +257,11 @@ public abstract class AbstractTestControlServer {
             db.dropDatabase();
         }
         try {
-            if (dataSource.getConnection().getMetaData().getURL().contains("h2")) {
+        	String url;
+        	try(Connection connection = dataSource.getConnection()){
+        		url = connection.getMetaData().getURL();
+        	}        	
+            if (url.contains("h2")) {
                 logger.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
             } else {
