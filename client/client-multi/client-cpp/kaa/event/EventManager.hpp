@@ -34,14 +34,14 @@
 #include "kaa/event/EventTransport.hpp"
 #include "kaa/event/IEventDataProcessor.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
+#include "kaa/transact/AbstractTransactable.hpp"
 
 namespace kaa {
-
-class IUpdateManager;
 
 class EventManager : public IEventManager
                    , public IEventListenersResolver
                    , public IEventDataProcessor
+                   , public AbstractTransactable<std::list<Event> >
 {
 public:
     EventManager(IKaaClientStateStoragePtr status)
@@ -80,7 +80,15 @@ public:
         }
     }
 
+    virtual TransactionIdPtr beginTransaction() {
+        return AbstractTransactable::beginTransaction();
+    }
+
     virtual void commit(TransactionIdPtr trxId);
+
+    virtual void rollback(TransactionIdPtr trxId) {
+        AbstractTransactable::rollback(trxId);
+    }
 private:
     struct EventListenersInfo {
         std::list<std::string> eventFQNs_;

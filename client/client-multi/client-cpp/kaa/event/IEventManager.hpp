@@ -25,7 +25,7 @@
 #include <vector>
 #include <cstdint>
 #include "kaa/gen/EndpointGen.hpp"
-#include "kaa/transact/AbstractTransactable.hpp"
+#include "kaa/transact/TransactionId.hpp"
 
 namespace kaa {
 
@@ -34,7 +34,7 @@ class IEventFamily;
 /**
  * Interface for event management.
  */
-class IEventManager : public AbstractTransactable<std::list<Event> > {
+class IEventManager {
 public:
     /**
      * Add event family object which can handle specified event.

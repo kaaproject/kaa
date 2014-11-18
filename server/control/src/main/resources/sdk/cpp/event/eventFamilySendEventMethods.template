@@ -9,7 +9,7 @@
         converter.toByteArray(event, stream);
         const auto& encodedData = stream.str();
         std::vector<std::uint8_t> buffer(encodedData.begin(), encodedData.end());
-        static const TransactionIdPtr empty;
+        static const TransactionIdPtr empty(nullptr);
         eventManager_.produceEvent("${event_class_fqn}", buffer, target, empty);
     }
 
