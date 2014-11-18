@@ -21,13 +21,9 @@ import java.util.List;
 
 import org.apache.avro.generic.GenericContainer;
 import org.bson.types.ObjectId;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
@@ -47,42 +43,15 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/common-dao-test-context.xml")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class ConfigurationServiceImplTest extends AbstractTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationServiceImplTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationServiceImplTest.class);
 
     private static final String INCORRECT_SQL_ID = "incorrect id";
-
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
-
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
-
-    @Before
-    public void beforeTest() throws IOException {
-        MongoDataLoader.loadData();
-    }
-
-    @After
-    public void afterTest() {
-        clearDBData();
-    }
 
     @Test(expected = IncorrectParameterException.class)
     public void saveConfigurationWithIncorrectIdTestFail() throws SchemaCreationException {
@@ -255,8 +224,8 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         String config = readSchemaFileAsString("dao/schema/testOverrideData.json");
         GenericAvroConverter<GenericContainer> converter = new GenericAvroConverter<GenericContainer>(schema);
         GenericContainer container = converter.decodeJson(config);
-        LOGGER.debug("JSON {}", container);
-        LOGGER.debug("Converted JSON {} ", new String(converter.encodeToJsonBytes(container)));
+        LOG.debug("JSON {}", container);
+        LOG.debug("Converted JSON {} ", new String(converter.encodeToJsonBytes(container)));
         Assert.assertEquals(converter.endcodeToJson(container), new String(converter.encodeToJsonBytes(container)));
     }
 
@@ -268,9 +237,9 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         KaaSchema protocolSchema = generator.getProtocolSchema();
         KaaSchema baseSchema = generator.getBaseSchema();
         KaaSchema overrideSchema = generator.getOverrideSchema();
-        LOGGER.debug("Created Override schema JSON {} ", overrideSchema.getRawSchema());
-        LOGGER.debug("Created Base schema JSON {} ", baseSchema.getRawSchema());
-        LOGGER.debug("Created Protocol schema JSON {} ", protocolSchema.getRawSchema());
+        LOG.debug("Created Override schema JSON {} ", overrideSchema.getRawSchema());
+        LOG.debug("Created Base schema JSON {} ", baseSchema.getRawSchema());
+        LOG.debug("Created Protocol schema JSON {} ", protocolSchema.getRawSchema());
     }
 
     @Test

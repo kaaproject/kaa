@@ -24,9 +24,6 @@
     <bean id="akkaService" class="org.kaaproject.kaa.server.operations.service.event.ESTestAkkaService" />
     <bean id="applicationService" class="org.kaaproject.kaa.server.operations.service.event.ESTestApplicationService" />
     <bean id="operationsService" class="org.kaaproject.kaa.server.operations.service.event.ESTestOperationsService" />
-    <!-- bean id="metricsService" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultMerticsService" init-method="startReport" destroy-method="stopReport">
-        <property name="enabled" value="#{properties[metrics_enabled]}"/>
-    </bean-->
 
     <bean id="operationsServerConfig" class="org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig">
         <property name="thriftHost" value="#{properties[thrift_host]}" />

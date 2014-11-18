@@ -14,11 +14,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:security="http://www.springframework.org/schema/security"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:task="http://www.springframework.org/schema/task" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
@@ -28,17 +30,14 @@
             http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
-	<context:component-scan base-package="org.kaaproject.kaa.server.operations.service.config" />
-	<util:properties id="properties" location="classpath:/config-server-test.properties" />
+    <context:component-scan
+        base-package="org.kaaproject.kaa.server.operations.service.config" />
+    <util:properties id="properties"
+        location="classpath:/config-server-test.properties" />
 	
     <bean id="operationsBootstrapService" class="org.kaaproject.kaa.server.operations.service.event.ESTestOperationsBootstrapService" />
     <bean id="akkaService" class="org.kaaproject.kaa.server.operations.service.event.ESTestAkkaService" />
     <bean id="operationsService" class="org.kaaproject.kaa.server.operations.service.event.ESTestOperationsService" />
-    <!--bean id="sysMonInfo" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultSystemMonitoringInfo" />
-    <bean id="metricsService" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultMerticsService" init-method="startReport" destroy-method="stopReport">
-        <property name="enabled" value="#{properties[metrics_enabled]}"/>
-        <property name="monitor" ref="metricsService" />
-    </bean-->
 
     <!-- Configuration from properties file -->
 

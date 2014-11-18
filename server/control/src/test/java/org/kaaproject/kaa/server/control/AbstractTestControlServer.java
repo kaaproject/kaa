@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +96,6 @@ import org.kaaproject.kaa.server.control.service.ControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -199,9 +199,6 @@ public abstract class AbstractTestControlServer {
 
     private final Random random = new Random();
 
-    @Value("${jdbc.url}")
-    private String url;
-
     @Autowired
     private DataSource dataSource;
 
@@ -259,10 +256,14 @@ public abstract class AbstractTestControlServer {
             db.dropDatabase();
         }
         try {
+            String url;
+            try (Connection connection = dataSource.getConnection()) {
+                url = connection.getMetaData().getURL();
+            }
             if (url.contains("h2")) {
                 logger.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
-            } else if (url.contains("h2")) {
+            } else {
                 logger.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
             }

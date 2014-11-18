@@ -43,7 +43,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     private static final Logger LOG = LoggerFactory.getLogger(HistoryServiceImpl.class);
 
-    @Value("${dao.max.wait.time}")
+    @Value("#{dao[dao_max_wait_time]}")
     private int waitSeconds;
 
     @Autowired
