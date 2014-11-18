@@ -198,6 +198,10 @@ void kaa_destroy_event_manager(kaa_event_manager_t *event_manager)
 
 void kaa_add_event(void *ctx, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size)
 {
+    if (ctx == NULL || fqn == NULL || fqn_length == 0) {
+        return;
+    }
+
     event_t *event = create_event(++event_sequence_number, fqn, fqn_length, event_data, event_data_size, target, target_size);
 
     kaa_context_t * context = (kaa_context_t*)ctx;
@@ -395,12 +399,11 @@ void kaa_event_remove_transaction(void *ctx, kaa_trx_id trx_id)
             kaa_list_remove_at(&event_manager->transactions, it, &destroy_transaction);
         }
     }
-
 }
 
 void kaa_add_event_to_transaction(void *ctx, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size)
 {
-    if (ctx == NULL) {
+    if (ctx == NULL || fqn == NULL || fqn_length == 0) {
         return;
     }
 
