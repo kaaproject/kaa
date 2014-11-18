@@ -96,7 +96,6 @@ import org.kaaproject.kaa.server.control.service.ControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -257,10 +256,10 @@ public abstract class AbstractTestControlServer {
             db.dropDatabase();
         }
         try {
-        	String url;
-        	try(Connection connection = dataSource.getConnection()){
-        		url = connection.getMetaData().getURL();
-        	}        	
+            String url;
+            try (Connection connection = dataSource.getConnection()) {
+                url = connection.getMetaData().getURL();
+            }
             if (url.contains("h2")) {
                 logger.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);

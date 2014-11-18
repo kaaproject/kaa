@@ -258,10 +258,10 @@ public class AbstractTest {
             db.dropDatabase();
         }
         try {
-        	String url;
-        	try(Connection connection = dataSource.getConnection()){
-        		url = connection.getMetaData().getURL();
-        	}
+            String url;
+            try (Connection connection = dataSource.getConnection()) {
+                url = connection.getMetaData().getURL();
+            }
             if (url.contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
