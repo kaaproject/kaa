@@ -142,7 +142,7 @@ typedef struct event_transaction_t_ {
 
 static event_transaction_t * create_transaction(kaa_trx_id id)
 {
-    event_transaction_t * trx = KAA_CALLOC(1, sizeof(event_transaction_t));
+    event_transaction_t * trx = KAA_MALLOC(event_transaction_t);
     trx->id = id;
     trx->events = NULL;
     return trx;
@@ -400,6 +400,10 @@ void kaa_event_remove_transaction(void *ctx, kaa_trx_id trx_id)
 
 void kaa_add_event_to_transaction(void *ctx, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size)
 {
+    if (ctx == NULL) {
+        return;
+    }
+
     kaa_context_t * context = (kaa_context_t *)ctx;
     kaa_event_manager_t * event_manager = context->event_manager;
     if (event_manager->transactions != NULL) {

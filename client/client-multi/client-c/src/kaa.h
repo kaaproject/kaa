@@ -124,27 +124,27 @@ void kaa_send_event(const char * fqn, size_t fqn_length, const char *event_data,
 void kaa_event_add_to_transaction(kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size);
 
 /**
- * Start new events block<br>
+ * Starts a new events block<br>
  * <br>
- * Returns new id which must be used to add an event to a block.
+ * Returns a new id which must be used to add an event to a block.
  * \return new events block id.
  */
-kaa_trx_id kaa_start_events_block();
+kaa_trx_id kaa_start_event_block();
 
 /**
- * Send all events from events block at once.<br>
+ * Send all the events from events block at once.<br>
  * <br>
- * Event block will be identified by given trx_id.
- * \param trx_id    ID of events block to be sent.
+ * The event block is identified by the given trx_id.
+ * \param trx_id    The ID of events block to be sent.
  */
 void kaa_send_events_block(kaa_trx_id trx_id);
 
 /**
- * Remove block of events without sending them.<br>
+ * Removes the event block without sending events.<br>
  * <br>
- * \param trx_id    ID of events block to be removed.
+ * \param trx_id    The ID of events block to be removed.
  */
-void kaa_remove_events_block(kaa_trx_id trx_id);
+void kaa_remove_event_block(kaa_trx_id trx_id);
 
 /**
  * Register listener to an event.<br>
