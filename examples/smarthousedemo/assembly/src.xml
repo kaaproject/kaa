@@ -32,37 +32,6 @@
             <directory>${project.basedir}/source</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>smarthouse_demo/SmartHouseDemo</outputDirectory>
-        </fileSet>  
-        <!--fileSet>
-            <directory>${project.basedir}/../robot</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>robotrun_demo/RobotRun</outputDirectory>
-            
-        </fileSet>  
-        <fileSet>
-            <directory>${project.basedir}/../appcompat-v7/src</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>robotrun_demo/appcompat-v7/src</outputDirectory>
         </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../appcompat-v7/res</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>robotrun_demo/appcompat-v7/res</outputDirectory>
-        </fileSet>  
-        <fileSet>
-            <directory>${project.basedir}/../appcompat-v7/libs</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>robotrun_demo/appcompat-v7/libs</outputDirectory>
-        </fileSet>          
-        <fileSet>
-            <directory>${project.basedir}/../appcompat-v7</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>robotrun_demo/appcompat-v7</outputDirectory>
-            <includes>
-                 <include>AndroidManifest.xml</include>
-                 <include>build.xml</include>
-                 <include>project.properties</include>
-            </includes>            
-        </fileSet-->                              
     </fileSets>
 </assembly>

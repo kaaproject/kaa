@@ -145,8 +145,8 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-resources/demo/robotrun</outputDirectory>
-                            <includeArtifactIds>robotrun-shared</includeArtifactIds>
                             <includeGroupIds>org.kaaproject.kaa.examples.robotrun</includeGroupIds>
+                            <includeArtifactIds>robotrun-shared</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
@@ -158,9 +158,9 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>smarthousedemo</includeArtifactIds>
                             <includeClassifiers>smarthouse-android-resources</includeClassifiers>
-                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
