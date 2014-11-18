@@ -65,6 +65,8 @@ public interface KaaClientState {
     String getEndpointAccessToken();
 
     int getAndIncrementEventSeqNum();
+    int getEventSeqNum();
+    void setEventSeqNum(int newSeqNum);
 
     boolean isAttachedToUser();
     void setAttachedToUser(boolean isAttached);
