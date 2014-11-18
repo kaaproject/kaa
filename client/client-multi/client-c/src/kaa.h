@@ -110,7 +110,7 @@ void kaa_attach_to_user(const char *user_external_id, const char * user_access_t
  */
 
 /**
- * Send raw event<br>
+ * Sends raw event<br>
  * <br>
  * It is not recommended to use this function directly. Instead you should use
  * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
@@ -121,28 +121,34 @@ void kaa_send_event(const char * fqn, size_t fqn_length, const char *event_data,
 #endif
 #define kaa_broadcast_event(fqn, fqn_length, event_data, event_data_size) kaa_send_event(fqn, fqn_length, event_data,event_data_size, NULL, 0)
 
+/**
+ * Adds a raw event to the transaction<br>
+ * <br>
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (kaa_add_*_event_to_transaction(...))
+ */
 void kaa_event_add_to_transaction(kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size);
 
 /**
- * Starts a new events block<br>
+ * Start a new event block<br>
  * <br>
- * Returns a new id which must be used to add an event to a block.
+ * Returns a new id which must be used to add an event to the block.
  * \return new events block id.
  */
 kaa_trx_id kaa_start_event_block();
 
 /**
- * Send all the events from events block at once.<br>
+ * Send all the events from the event block at once.<br>
  * <br>
  * The event block is identified by the given trx_id.
- * \param trx_id    The ID of events block to be sent.
+ * \param trx_id    The ID of the event block to be sent.
  */
 void kaa_send_events_block(kaa_trx_id trx_id);
 
 /**
  * Removes the event block without sending events.<br>
  * <br>
- * \param trx_id    The ID of events block to be removed.
+ * \param trx_id    The ID of the event block to be removed.
  */
 void kaa_remove_event_block(kaa_trx_id trx_id);
 
