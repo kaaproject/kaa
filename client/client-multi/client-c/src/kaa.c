@@ -202,15 +202,20 @@ void kaa_response_received(const char *buffer, size_t buffer_size)
                     : 0;
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     kaa_list_t * received_events = NULL;
+    kaa_event_sequence_number_response_t * event_sn_response = NULL;
     if (response->event_sync_response != NULL) {
         if (response->event_sync_response->type == KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_EVENT_SYNC_RESPONSE_BRANCH) {
             kaa_event_sync_response_t * ev_response = response->event_sync_response->data;
-            if (ev_response != NULL && ev_response->events != NULL && ev_response->events->type == KAA_ARRAY_EVENT_ARRAY_NULL_UNION_ARRAY_BRANCH) {
+            if (ev_response != NULL && ev_response->events != NULL && ev_response->events->type == KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH) {
                 received_events = (kaa_list_t *)ev_response->events->data;
+            }
+            if (ev_response->event_sequence_number_response != NULL
+            		&& ev_response->event_sequence_number_response->type == KAA_RECORD_EVENT_SEQUENCE_NUMBER_RESPONSE_NULL_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_BRANCH) {
+            	event_sn_response = ev_response->event_sequence_number_response;
             }
         }
     }
-    kaa_event_handle_sync(kaa_context_, responseId, received_events);
+    kaa_event_handle_sync(kaa_context_, responseId, event_sn_response, received_events);
 #endif
     if (response->user_sync_response != NULL) {
         if (response->user_sync_response->type == KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_USER_SYNC_RESPONSE_BRANCH) {
