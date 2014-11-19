@@ -65,7 +65,7 @@ void test_kaa_event_compile_request()
     sync_request2->destruct(sync_request2);
     KAA_FREE(sync_request2);
 
-    kaa_event_handle_sync(context, 100502, NULL);
+    kaa_event_handle_sync(context, 100502, NULL, NULL);
 
     kaa_event_sync_request_t* sync_request3 = kaa_event_compile_request(context, 100503);
     ASSERT_NOT_NULL(sync_request3);
@@ -92,7 +92,7 @@ static void kaa_destroy_event(void* data)
 {
     kaa_event_t* record = (kaa_event_t*)data;
 
-    KAA_FREE(record->event_classfqn);
+    KAA_FREE(record->event_class_fqn);
     kaa_destroy_bytes(record->event_data);
     KAA_FREE(record->event_data);
     record->source->destruct(record->source);
@@ -113,15 +113,15 @@ void test_kaa_add_on_event_callback()
     ASSERT_EQUAL(specific_events_counter, 0);
 
     kaa_event_t * event1 = kaa_create_event();
-    event1->event_classfqn = KAA_CALLOC(4, sizeof(char));
+    event1->event_class_fqn = KAA_CALLOC(4, sizeof(char));
     event1->event_data = KAA_CALLOC(1, sizeof(kaa_bytes_t));
     event1->event_data->buffer = NULL;
     event1->event_data->size = 0;
     event1->source = kaa_create_string_null_union_null_branch();
     event1->target = kaa_create_string_null_union_null_branch();
-    memcpy(event1->event_classfqn, "fqn", 3);
+    memcpy(event1->event_class_fqn, "fqn", 3);
     kaa_list_t * list1 = kaa_list_create(event1);
-    kaa_event_handle_sync(context, 1, list1);
+    kaa_event_handle_sync(context, 1, NULL, list1);
 
     kaa_list_destroy(list1, &kaa_destroy_event);
     list1 = NULL;
@@ -130,15 +130,15 @@ void test_kaa_add_on_event_callback()
     ASSERT_EQUAL(specific_events_counter, 1);
 
     kaa_event_t * event2 = kaa_create_event();
-    event2->event_classfqn = KAA_CALLOC(5, sizeof(char));
+    event2->event_class_fqn = KAA_CALLOC(5, sizeof(char));
     event2->event_data = KAA_CALLOC(1, sizeof(kaa_bytes_t));
     event2->event_data->buffer = NULL;
     event2->event_data->size = 0;
     event2->source = kaa_create_string_null_union_null_branch();
     event2->target = kaa_create_string_null_union_null_branch();
-    memcpy(event2->event_classfqn, "fqn2", 4);
+    memcpy(event2->event_class_fqn, "fqn2", 4);
     kaa_list_t * list2 = kaa_list_create(event2);
-    kaa_event_handle_sync(context, 2, list2);
+    kaa_event_handle_sync(context, 2, NULL, list2);
 
     ASSERT_EQUAL(global_events_counter, 1);
     ASSERT_EQUAL(specific_events_counter, 1);
