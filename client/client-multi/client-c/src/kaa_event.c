@@ -197,7 +197,7 @@ kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId)
     kaa_event_manager_t * event_manager = context->event_manager;
 
     kaa_event_sync_request_t* request = kaa_create_event_sync_request();
-    request->event_listeners_requests = kaa_create_array_event_listeners_request_array_null_union_null_branch();
+    request->event_listeners_requests = kaa_create_array_event_listeners_request_null_union_null_branch();
 
     if (event_manager->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED) {
         request->event_sequence_number_request = kaa_create_record_event_sequence_number_request_null_union_event_sequence_number_request_branch();
