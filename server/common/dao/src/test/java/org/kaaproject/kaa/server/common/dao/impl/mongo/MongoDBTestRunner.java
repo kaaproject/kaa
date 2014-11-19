@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class MongoDBTestRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(MongoDBTestRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDBTestRunner.class);
 
     private static final String MONGO_HOST = "localhost";
     private static final int DEFAULT_PORT = 27717;
@@ -47,7 +47,7 @@ public abstract class MongoDBTestRunner {
     }
 
     public static void setUp(int port) throws Exception {
-        logger.info("Embedded MongoDB server started on " + port + " port and " + MONGO_HOST + " host.");
+        LOG.info("Embedded MongoDB server started on " + port + " port and " + MONGO_HOST + " host.");
         MongodStarter runtime = MongodStarter.getDefaultInstance();
         mongoDBExec = runtime.prepare(createMongodConfig(port));
         mongod = mongoDBExec.start();

@@ -32,7 +32,7 @@ import com.mongodb.util.JSON;
 
 public class MongoDataLoader {
 
-    private static final Logger logger = LoggerFactory.getLogger(MongoDataLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDataLoader.class);
 
     public static final String DATA_FILE = "mongo.data";
     public static final String COLLECTION_NAME_LINE = "#";
@@ -54,7 +54,7 @@ public class MongoDataLoader {
             }
         }
         input.close();
-        logger.info("Load data finished.");
+        LOG.info("Load data finished.");
     }
 
     private static void setCollectionFromName(String line) {
@@ -62,7 +62,7 @@ public class MongoDataLoader {
         if (idx != -1) {
             String collectionName = line.substring(++idx, line.length()).trim();
             if (StringUtils.isNotEmpty(collectionName)) {
-                logger.info("Loading data into " + collectionName + " collection");
+                LOG.info("Loading data into " + collectionName + " collection");
                 currentCollection = MongoDBTestRunner.getDB().getCollectionFromString(collectionName);
             } else {
                 new RuntimeException("Incorrect collection name:" + collectionName

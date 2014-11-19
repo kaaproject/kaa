@@ -15,17 +15,15 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.mongo;
 
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.dao.impl.SecureUserDao;
 import org.kaaproject.kaa.server.common.dao.model.mongo.SecureUser;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -35,8 +33,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
 public class SecureUserMongoDaoTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SecureUserMongoDaoTest.class);
 
     SecureUserDao<SecureUser> secureUserMongoDao;
     MongoTemplate mongoTemplate;

@@ -32,7 +32,7 @@ public class LogEventMongoDao implements LogEventDao<LogEvent> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogEventMongoDao.class);
 
-    @Autowired
+    @Autowired(required=false)
     protected MongoTemplate mongoTemplate;
 
     protected Class<LogEvent> getDocumentClass() {

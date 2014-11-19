@@ -16,9 +16,25 @@
 
 package org.kaaproject.kaa.server.common;
 
+/*
+ * This code is automatically generated. In order to change content of this class edit Version.template file 
+ */
+
+/**
+ * The Class Version provides access to useful project version information.
+ * This information is populated during pre-compilation phase.
+ */
 public final class Version {
 
+    /** The Constant PROJECT_VERSION. */
     public static final String PROJECT_VERSION = "0.6.1-SNAPSHOT";
-    public static final String COMMIT_HASH = "";
 
+    /** The Constant COMMIT_HASH. */
+    public static final String COMMIT_HASH = "N/A";
+
+    /**
+     * Instantiates a new version.
+     */
+    private Version(){
+    }
 }
