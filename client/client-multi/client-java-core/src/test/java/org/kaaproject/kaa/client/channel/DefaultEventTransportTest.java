@@ -143,7 +143,7 @@ public class DefaultEventTransportTest {
 
         EventSyncRequest eventRequest2 = transport.createEventRequest(requestId++);
 
-        Assert.assertTrue(eventRequest2.getEventSequenceNumberRequest() == null);
+        Assert.assertTrue(eventRequest2.getEventSequenceNumberRequest() != null);
         Assert.assertTrue(eventRequest2.getEvents() == null);
     }
 
