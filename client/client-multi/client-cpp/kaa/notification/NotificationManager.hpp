@@ -84,7 +84,7 @@ private:
 
     void notifyTopicUpdateSubscribers(const Topics& topics);
     void notifyMandatoryNotificationSubscribers(const Notification& notification);
-    bool notifyVoluntaryNotificationSubscribers(const Notification& notification);
+    bool notifyOptionalNotificationSubscribers(const Notification& notification);
 
 private:
     std::shared_ptr<NotificationTransport>                           transport_;
@@ -93,7 +93,7 @@ private:
     std::unordered_map<std::string/*Topic ID*/, Topic>               topics_;
 
     KAA_MUTEX_DECLARE(topicsGuard_);
-    KAA_MUTEX_DECLARE(voluntaryListenersGuard_);
+    KAA_MUTEX_DECLARE(optionalListenersGuard_);
 
     typedef KaaObservable<
             void(const std::string& topicId,
@@ -104,7 +104,7 @@ private:
 
     KaaObservable<void (const Topics& list), INotificationTopicListListenerPtr> topicListeners_;
     NotificationObservable                                                     mandatoryListeners_;
-    std::unordered_map<std::string/*Topic ID*/, NotificationObservablePtr>     voluntaryListeners_;
+    std::unordered_map<std::string/*Topic ID*/, NotificationObservablePtr>     optionalListeners_;
 
     SubscriptionCommands                                             subscriptions_;
     KAA_MUTEX_DECLARE(subscriptionsGuard_);

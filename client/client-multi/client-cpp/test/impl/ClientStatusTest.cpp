@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     ts2.topicId = "topic2";
     ts2.sequenceNumber = 200;
     ts2.topicName = "topicName2";
-    ts2.subscriptionType = SubscriptionType::VOLUNTARY;
+    ts2.subscriptionType = SubscriptionType::OPTIONAL;
 
     ts.insert(std::make_pair(ts1.topicId, ts1));
     ts.insert(std::make_pair(ts2.topicId, ts2));

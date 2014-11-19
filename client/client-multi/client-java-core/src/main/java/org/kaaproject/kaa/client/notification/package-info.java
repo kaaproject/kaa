@@ -21,10 +21,10 @@
  *  Kaa cluster to endpoints (EP). It is based on auto-generated classes
  *  according to the topic's notification schema used during SDK generation.</p>
  *
- *  <p>Notification topics can be mandatory or voluntary. Mandatory topic
- *  notifications are delivered in an enforced manner. Voluntary topics require
+ *  <p>Notification topics can be mandatory or optional. Mandatory topic
+ *  notifications are delivered in an enforced manner. Optional topics require
  *  subscription. It is the responsibility of the client code to register
- *  the topic update listener and subscribe to voluntary topics.</p>
+ *  the topic update listener and subscribe to optional topics.</p>
  *
  *  <h3>Topics - usage examples</h3>
  *
@@ -70,7 +70,7 @@
  *
  *  <h3>Notifications - usage examples</h3>
  *
- *  <p>In order to receive notifications, both mandatory or voluntary, there
+ *  <p>In order to receive notifications, both mandatory or optional, there
  *  should be add an appropriate listener. The listener may be one for all topics.
  *  Also there is possibility to add listener for specific topic notifications.</p>
  *
@@ -92,12 +92,12 @@
  *  </pre>
  *
  *  <p>As mentioned earlier, there is two kind of topics - mandatory and
- *  voluntary. Further it will be discussed dealing with both of them.</p>
+ *  optional. Further it will be discussed dealing with both of them.</p>
  *
  *  <h5>Notification listener(s) for all topics</h5>
  *
  *  <p>Below is an example of receiving notifications relating to all topics
- *  irrespective whether it is mandatory or voluntary:</p>
+ *  irrespective whether it is mandatory or optional:</p>
  *
  *  <pre>
  *  {@code
@@ -147,27 +147,27 @@
  *  }
  *  </pre>
  *
- *  <h5>Voluntary topic (un)subscription</h5>
+ *  <h5>Optional topic (un)subscription</h5>
  *
- *  <p>To receive notifications relating to some voluntary topic, firstly you
+ *  <p>To receive notifications relating to some optional topic, firstly you
  *  should to subscribe to this topic:</p>
  *  <pre>
  *  {@code
  *  BasicNotificationListener listener = new BasicNotificationListener();
- *  notificationManager.addNotificationListener("voluntary_topic_id", listener);
- *  notificationManager.subscribeToTopic("voluntary_topic_id", true);
+ *  notificationManager.addNotificationListener("optional_topic_id", listener);
+ *  notificationManager.subscribeToTopic("optional_topic_id", true);
  *  }
  *  </pre>
  *
- *  <p>To unsubscribe from some voluntary topic, do following:</p>
+ *  <p>To unsubscribe from some optional topic, do following:</p>
  *  <pre>
  *  {@code
  *  // All added listeners will be removed automatically
- *  notificationManager.unsubscribeFromTopic("voluntary_topic_id", true);
+ *  notificationManager.unsubscribeFromTopic("optional_topic_id", true);
  *  }
  *  </pre>
  *
- *  <p>There is a similar stuff to deal with a group of voluntary topics -
+ *  <p>There is a similar stuff to deal with a group of optional topics -
  *  {@link org.kaaproject.kaa.client.notification.NotificationManager#subscribeToTopics(java.util.List, boolean)} and
  *  {@link org.kaaproject.kaa.client.notification.NotificationManager#unsubscribeFromTopics(java.util.List, boolean)}.</p>
  *
@@ -180,10 +180,10 @@
  *  {@code
  *  // Make subscription changes
  *  notificationManager.subscribeToTopics(Arrays.asList(
- *          "voluntary_topic1", "voluntary_topic2", "voluntary_topic3"), false);
- *  notificationManager.unsubscribeFromTopic("voluntary_topic4", false);
+ *          "optional_topic1", "optional_topic2", "optional_topic3"), false);
+ *  notificationManager.unsubscribeFromTopic("optional_topic4", false);
  *
- *  // Add listeners for voluntary topics (optional)
+ *  // Add listeners for optional topics here
  *
  *  // Commit changes
  *  notificationManager.sync();

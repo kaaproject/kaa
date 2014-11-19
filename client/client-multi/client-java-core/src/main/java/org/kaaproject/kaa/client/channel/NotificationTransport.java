@@ -72,7 +72,7 @@ public interface NotificationTransport extends KaaTransport {
      * <p>Notify about new subscription info.</p>
      *
      * <p>Will be called when one either subscribes or unsubscribes
-     * on\from some voluntary topic(s).</p>
+     * on\from some optional topic(s).</p>
      *
      * @param commands Info about subscription actions (subscribe/unsubscribe).
      */

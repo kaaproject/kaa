@@ -293,8 +293,8 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY));
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id2", "topic_name1", SubscriptionType.OPTIONAL));
 
         notificationManager.topicsListUpdated(topicsUpdate);
         notificationManager.subscribeToTopic("unknown_id", true);
@@ -308,8 +308,8 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY));
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id2", "topic_name1", SubscriptionType.OPTIONAL));
 
         notificationManager.topicsListUpdated(topicsUpdate);
         notificationManager.subscribeToTopics(Arrays.asList("id1", "id2", "unknown_id"), true);
@@ -323,8 +323,8 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY));
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id2", "topic_name1", SubscriptionType.OPTIONAL));
 
         notificationManager.topicsListUpdated(topicsUpdate);
         notificationManager.unsubscribeFromTopic("unknown_id", true);
@@ -338,8 +338,8 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY));
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id2", "topic_name1", SubscriptionType.OPTIONAL));
 
         notificationManager.topicsListUpdated(topicsUpdate);
         notificationManager.unsubscribeFromTopics(Arrays.asList("id1", "id2", "unknown_id"), true);
@@ -353,7 +353,7 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
               , new Topic("id2", "topic_name1", SubscriptionType.MANDATORY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
@@ -368,7 +368,7 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
               , new Topic("id2", "topic_name1", SubscriptionType.MANDATORY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
@@ -383,7 +383,7 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
               , new Topic("id2", "topic_name1", SubscriptionType.MANDATORY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
@@ -398,7 +398,7 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
               , new Topic("id2", "topic_name1", SubscriptionType.MANDATORY));
 
         notificationManager.topicsListUpdated(topicsUpdate);
@@ -413,9 +413,9 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id3", "topic_name1", SubscriptionType.VOLUNTARY));
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id2", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id3", "topic_name1", SubscriptionType.OPTIONAL));
 
         notificationManager.topicsListUpdated(topicsUpdate);
         notificationManager.subscribeToTopic("id1", true);
@@ -444,9 +444,9 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id3", "topic_name1", SubscriptionType.VOLUNTARY));
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id2", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id3", "topic_name1", SubscriptionType.OPTIONAL));
 
         notificationManager.topicsListUpdated(topicsUpdate);
 
@@ -466,9 +466,9 @@ public class DefaultNotificationManagerTest {
         DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, transport);
 
         List<Topic> topicsUpdate = Arrays.asList(
-                new Topic("id1", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id2", "topic_name1", SubscriptionType.VOLUNTARY)
-              , new Topic("id3", "topic_name1", SubscriptionType.VOLUNTARY));
+                new Topic("id1", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id2", "topic_name1", SubscriptionType.OPTIONAL)
+              , new Topic("id3", "topic_name1", SubscriptionType.OPTIONAL));
 
         notificationManager.topicsListUpdated(topicsUpdate);
 

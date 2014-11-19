@@ -206,7 +206,7 @@ public class TestOperationsService implements OperationsService {
             if (rnd.nextBoolean()) {
                 topic.setSubscriptionType(SubscriptionType.MANDATORY);
             } else {
-                topic.setSubscriptionType(SubscriptionType.VOLUNTARY);
+                topic.setSubscriptionType(SubscriptionType.OPTIONAL);
             }
             topics.add(topic);
         }

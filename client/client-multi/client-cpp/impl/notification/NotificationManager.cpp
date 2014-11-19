@@ -58,12 +58,12 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
     }
 
     {
-        KAA_MUTEX_LOCKING("voluntaryListenersGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(voluntaryListenersLock, voluntaryListenersGuard_);
-        KAA_MUTEX_LOCKED("voluntaryListenersGuard_");
+        KAA_MUTEX_LOCKING("optionalListenersGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
+        KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
         for (const auto& pair : topics_) {
-            voluntaryListeners_.erase(pair.second.id);
+            optionalListeners_.erase(pair.second.id);
         }
     }
 
@@ -81,7 +81,7 @@ void NotificationManager::notificationReceived(const Notifications& notification
         try {
             findTopic(notification.topicId);
 
-            if (!notifyVoluntaryNotificationSubscribers(notification)) {
+            if (!notifyOptionalNotificationSubscribers(notification)) {
                 notifyMandatoryNotificationSubscribers(notification);
             }
         } catch (const UnavailableTopicException& e) {
@@ -147,13 +147,13 @@ void NotificationManager::addNotificationListener(const std::string& topidId, IN
         throw KaaException("Bad notification listener");
     }
 
-    if (findTopic(topidId).subscriptionType != VOLUNTARY) {
-        KAA_LOG_WARN("Failed to add notification listener: topic isn't voluntary");
-        throw UnavailableTopicException(boost::format("Topic '%s' isn't voluntary"));
+    if (findTopic(topidId).subscriptionType != OPTIONAL) {
+        KAA_LOG_WARN("Failed to add notification listener: topic isn't optional");
+        throw UnavailableTopicException(boost::format("Topic '%s' isn't optional"));
     }
 
-    auto it = voluntaryListeners_.find(topidId);
-    if (it != voluntaryListeners_.end()) {
+    auto it = optionalListeners_.find(topidId);
+    if (it != optionalListeners_.end()) {
         it->second->addCallback(listener,
                 std::bind(&INotificationListener::onNotificationRaw, listener,
                         std::placeholders::_1, std::placeholders::_2));
@@ -162,7 +162,7 @@ void NotificationManager::addNotificationListener(const std::string& topidId, IN
         listeners->addCallback(listener,
                 std::bind(&INotificationListener::onNotificationRaw, listener,
                         std::placeholders::_1, std::placeholders::_2));
-        voluntaryListeners_.insert(std::make_pair(topidId, listeners));
+        optionalListeners_.insert(std::make_pair(topidId, listeners));
     }
 }
 
@@ -183,26 +183,26 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
         throw KaaException("Bad notification listener");
     }
 
-    if (findTopic(topidId).subscriptionType != VOLUNTARY) {
-        KAA_LOG_WARN("Failed to remove notification listener: topic isn't voluntary");
-        throw UnavailableTopicException(boost::format("Topic '%s' isn't voluntary"));
+    if (findTopic(topidId).subscriptionType != OPTIONAL) {
+        KAA_LOG_WARN("Failed to remove notification listener: topic isn't optional");
+        throw UnavailableTopicException(boost::format("Topic '%s' isn't optional"));
     }
 
-    KAA_MUTEX_LOCKING("voluntaryListenersGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(notificationListenersLock, voluntaryListenersGuard_);
-    KAA_MUTEX_LOCKED("voluntaryListenersGuard_");
+    KAA_MUTEX_LOCKING("optionalListenersGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(notificationListenersLock, optionalListenersGuard_);
+    KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
-    auto it = voluntaryListeners_.find(topidId);
-    if (it != voluntaryListeners_.end()) {
+    auto it = optionalListeners_.find(topidId);
+    if (it != optionalListeners_.end()) {
         it->second->removeCallback(listener);
     }
 }
 
 void NotificationManager::subscribeToTopic(const std::string& id, bool forceSync)
 {
-    if (findTopic(id).subscriptionType != VOLUNTARY) {
-        KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%s' isn't voluntary") % id);
-        throw UnavailableTopicException(boost::format("Topic '%s' isn't voluntary"));
+    if (findTopic(id).subscriptionType != OPTIONAL) {
+        KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%s' isn't optional") % id);
+        throw UnavailableTopicException(boost::format("Topic '%s' isn't optional"));
     }
 
     updateSubscriptionInfo(id, SubscriptionCommandType::ADD);
@@ -217,9 +217,9 @@ void NotificationManager::subscribeToTopics(const std::list<std::string>& idList
     SubscriptionCommands subscriptions;
 
     for (const auto& id : idList) {
-        if (findTopic(id).subscriptionType != VOLUNTARY) {
-            KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%s' isn't voluntary") % id);
-            throw UnavailableTopicException(boost::format("Topic '%s' isn't voluntary"));
+        if (findTopic(id).subscriptionType != OPTIONAL) {
+            KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%s' isn't optional") % id);
+            throw UnavailableTopicException(boost::format("Topic '%s' isn't optional"));
         }
 
         SubscriptionCommand cmd;
@@ -236,9 +236,9 @@ void NotificationManager::subscribeToTopics(const std::list<std::string>& idList
 
 void NotificationManager::unsubscribeFromTopic(const std::string& id, bool forceSync)
 {
-    if (findTopic(id).subscriptionType != VOLUNTARY) {
-        KAA_LOG_WARN(boost::format("Failed to unsubscribe: topic '%s' isn't voluntary") % id);
-        throw UnavailableTopicException(boost::format("Topic '%s' isn't voluntary"));
+    if (findTopic(id).subscriptionType != OPTIONAL) {
+        KAA_LOG_WARN(boost::format("Failed to unsubscribe: topic '%s' isn't optional") % id);
+        throw UnavailableTopicException(boost::format("Topic '%s' isn't optional"));
     }
 
     updateSubscriptionInfo(id, SubscriptionCommandType::REMOVE);
@@ -253,9 +253,9 @@ void NotificationManager::unsubscribeFromTopics(const std::list<std::string>& id
     SubscriptionCommands subscriptions;
 
     for (const auto& id : idList) {
-        if (findTopic(id).subscriptionType != VOLUNTARY) {
-            KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%s' isn't voluntary") % id);
-            throw UnavailableTopicException(boost::format("Topic '%s' isn't voluntary"));
+        if (findTopic(id).subscriptionType != OPTIONAL) {
+            KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%s' isn't optional") % id);
+            throw UnavailableTopicException(boost::format("Topic '%s' isn't optional"));
         }
 
         SubscriptionCommand cmd;
@@ -278,7 +278,7 @@ void NotificationManager::sync()
     KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     if (!subscriptions_.empty()) {
-        KAA_LOG_INFO("Sending info about new voluntary topic subscription...");
+        KAA_LOG_INFO("Sending info about new optional topic subscription...");
         transport_->onSubscriptionChanged(subscriptions_);
         subscriptions_.clear();
         transport_->sync();
@@ -330,15 +330,15 @@ void NotificationManager::notifyMandatoryNotificationSubscribers(const Notificat
     mandatoryListeners_(notification.topicId, notification.body);
 }
 
-bool NotificationManager::notifyVoluntaryNotificationSubscribers(const Notification& notification)
+bool NotificationManager::notifyOptionalNotificationSubscribers(const Notification& notification)
 {
     bool notified = false;
-    KAA_MUTEX_LOCKING("voluntaryListenersGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(voluntaryListenersLock, voluntaryListenersGuard_);
-    KAA_MUTEX_LOCKED("voluntaryListenersGuard_");
+    KAA_MUTEX_LOCKING("optionalListenersGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
+    KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
-    auto it = voluntaryListeners_.find(notification.topicId);
-    if (it != voluntaryListeners_.end()) {
+    auto it = optionalListeners_.find(notification.topicId);
+    if (it != optionalListeners_.end()) {
         notified = true;
         (*it->second)(notification.topicId, notification.body);
     }

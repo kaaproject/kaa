@@ -64,9 +64,9 @@ public:
     virtual void onNotificationResponse(const NotificationSyncResponse& response) = 0;
 
     /**
-     * Updates the subscription state of voluntary topic
+     * Updates the subscription state of optional topic
      *
-     * @param commands the info about voluntary topic subscription.
+     * @param commands the info about optional topic subscription.
      * @see SubscriptionCommand
      * @see SubscriptionCommands
      */

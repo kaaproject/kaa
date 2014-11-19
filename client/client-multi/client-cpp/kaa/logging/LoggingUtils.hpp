@@ -495,7 +495,7 @@ public:
 
         switch (type) {
             case MANDATORY: description = "MANDATORY"; break;
-            case VOLUNTARY: description = "VOLUNTARY"; break;
+            case OPTIONAL: description = "OPTIONAL"; break;
             default: description = "UNKNOWN"; break;
         }
 
