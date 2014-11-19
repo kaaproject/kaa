@@ -211,7 +211,7 @@ void kaa_response_received(const char *buffer, size_t buffer_size)
             }
             if (ev_response->event_sequence_number_response != NULL
             		&& ev_response->event_sequence_number_response->type == KAA_RECORD_EVENT_SEQUENCE_NUMBER_RESPONSE_NULL_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_BRANCH) {
-            	event_sn_response = ev_response->event_sequence_number_response;
+            	event_sn_response = (kaa_event_sequence_number_response_t *) ev_response->event_sequence_number_response->data;
             }
         }
     }

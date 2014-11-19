@@ -43,7 +43,7 @@ static kaa_endpoint_version_info_t * create_versions_info() {
     vi->user_nf_version = USER_NF_SCHEMA_VERSION;
     if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
         vi->event_family_versions =
-                kaa_create_array_event_class_family_version_info_array_null_union_array_branch();
+                kaa_create_array_event_class_family_version_info_null_union_array_branch();
         vi->event_family_versions->data = NULL;
         size_t i = 0;
         for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
@@ -61,7 +61,7 @@ static kaa_endpoint_version_info_t * create_versions_info() {
         }
     } else {
         vi->event_family_versions =
-                kaa_create_array_event_class_family_version_info_array_null_union_null_branch();
+                kaa_create_array_event_class_family_version_info_null_union_null_branch();
     }
     return vi;
 }
