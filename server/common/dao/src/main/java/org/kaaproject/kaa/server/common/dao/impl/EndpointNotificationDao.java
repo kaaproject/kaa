@@ -18,12 +18,17 @@ package org.kaaproject.kaa.server.common.dao.impl;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+
 /**
  * The Interface EndpointNotificationDao.
  *
  * @param <T> the generic type
  */
-public interface EndpointNotificationDao<T> extends Dao<T> {
+public interface EndpointNotificationDao<T extends EndpointNotification> extends Dao<T> {
+
+    T save(EndpointNotificationDto dto);
 
     /**
      * Find notifications by key hash.

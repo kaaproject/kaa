@@ -17,55 +17,27 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
-import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/common-dao-test-context.xml")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class LogSchemaServiceImplTest extends AbstractTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogSchemaServiceImplTest.class);
     
     private static final String CUSTOMER_ID = "customer id";
     private static final String APPLICATION_NAME = "application name";
     
     private ApplicationDto applicationDto;
     private TenantDto customer;
-
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
-
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
 
     @Before
     public void beforeTest() throws IOException {

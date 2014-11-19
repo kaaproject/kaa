@@ -358,15 +358,6 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/dao.properties</src>
-                                    <type>file</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <filemode>755</filemode>
-                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
                                     <src>${project.basedir}/tmp_sh/bin</src>
                                     <type>directory</type>
                                     <mapper>

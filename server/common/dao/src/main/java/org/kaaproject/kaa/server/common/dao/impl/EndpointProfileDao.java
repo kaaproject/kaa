@@ -18,12 +18,17 @@ package org.kaaproject.kaa.server.common.dao.impl;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+
 /**
  * The interface Endpoint profile dao.
  *
  * @param <T> the type parameter
  */
-public interface EndpointProfileDao<T> extends Dao<T> {
+public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T> {
+
+    T save(EndpointProfileDto dto);
 
     /**
      * Find endpoint profile by key hash.

@@ -22,11 +22,9 @@ import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -38,26 +36,10 @@ import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/common-dao-test-context.xml")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class ProfileServiceImplTest extends AbstractTest {
-
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
-
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
 
     @After
     public void afterTest() {

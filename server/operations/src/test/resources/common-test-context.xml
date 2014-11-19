@@ -32,7 +32,7 @@
 
     <context:component-scan base-package="org.kaaproject.kaa.server.operations" />
 
-    <import resource="classpath:common-dao-test-context.xml" />
+    <import resource="classpath:mongo-dao-test-context.xml" />
 
 	<util:properties id="properties" location="classpath:/operations-server-test.properties" />
 	<bean id="operationsBootstrapService" class="org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService" />

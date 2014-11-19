@@ -22,17 +22,31 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The Class Environment provides ability to log environment state.
+ */
 public class Environment {
 
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(Environment.class);
 
-    private static final List<String> systemProperties = Arrays.asList("java.version", "java.vendor", "java.home",
+    /** The Constant SYSTEM_PROPERTIES. */
+    private static final List<String> SYSTEM_PROPERTIES = Arrays.asList("java.version", "java.vendor", "java.home",
             "java.class.path", "java.library.path", "java.io.tmpdir", "java.compiler", "os.name", "os.arch", "os.version",
             "user.name", "user.home", "user.dir");
 
+    /**
+     * Instantiates a new environment.
+     */
+    private Environment(){
+    }
+
+    /**
+     * Logs environment state using {@link Logger}
+     */
     public static void logState(){
         LOG.info("Kaa version: {}, commit: {}", Version.PROJECT_VERSION, Version.COMMIT_HASH);
-        for(String property : systemProperties){
+        for(String property : SYSTEM_PROPERTIES){
             LOG.info("{} : {}", property, System.getProperty(property, "N/A"));
         }
     };
