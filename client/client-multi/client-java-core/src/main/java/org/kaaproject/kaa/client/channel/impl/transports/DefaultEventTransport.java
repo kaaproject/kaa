@@ -45,14 +45,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
     private EventManager manager;
     private final EventComparator eventComparator = new EventComparator();
 
-    private enum SequenceNumberSyncStatus {
-        UNSYNCHRONIZED,
-        IN_PROGRESS,
-        SYNCHRONIZED
-    }
-
-    private SequenceNumberSyncStatus sequenceNumberSyncStatus =
-                                SequenceNumberSyncStatus.UNSYNCHRONIZED;
+    private boolean isEventSNSynchronized = false;
     private int startEventSN;
 
     public DefaultEventTransport(KaaClientState state) {
@@ -67,7 +60,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
 
             manager.fillEventListenersSyncRequest(request);
 
-            if (sequenceNumberSyncStatus == SequenceNumberSyncStatus.SYNCHRONIZED) {
+            if (isEventSNSynchronized) {
                 List<Event> events = new LinkedList<Event>();
 
                 if (!sentEvents.isEmpty()) {
@@ -104,8 +97,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
                 }
 
                 request.setEventSequenceNumberRequest(null);
-            } else if (sequenceNumberSyncStatus == SequenceNumberSyncStatus.UNSYNCHRONIZED) {
-                sequenceNumberSyncStatus = SequenceNumberSyncStatus.IN_PROGRESS;
+            } else {
                 request.setEventSequenceNumberRequest(new EventSequenceNumberRequest());
                 LOG.trace("Sending event sequence number request: "
                                     + "restored_sn = {}", startEventSN);
@@ -119,8 +111,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
     @Override
     public void onEventResponse(EventSyncResponse response) {
         if (manager != null) {
-            if (sequenceNumberSyncStatus == SequenceNumberSyncStatus.IN_PROGRESS &&
-                    response.getEventSequenceNumberResponse() != null)
+            if (!isEventSNSynchronized && response.getEventSequenceNumberResponse() != null)
             {
                 int lastSN = response.getEventSequenceNumberResponse().getSeqNum();
                 int expectedSN = (lastSN > 0 ? lastSN + 1 : lastSN);
@@ -133,7 +124,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
                     LOG.info("Event sequence number is up to date: {}", startEventSN);
                 }
 
-                sequenceNumberSyncStatus = SequenceNumberSyncStatus.SYNCHRONIZED;
+                isEventSNSynchronized = true;
             }
 
             if (response.getEvents() != null && !response.getEvents().isEmpty()) {
