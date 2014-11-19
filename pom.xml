@@ -445,6 +445,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/appcompat-v7/**</exclude>
                         <exclude>**/support-v4/**</exclude>
                         <exclude>**/bin/**</exclude>
+                        <exclude>**/thirdparty/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
