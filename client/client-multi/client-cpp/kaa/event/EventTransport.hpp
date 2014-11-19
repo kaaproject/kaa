@@ -17,34 +17,38 @@
 #ifndef EVENTTRANSPORT_HPP_
 #define EVENTTRANSPORT_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #ifdef KAA_USE_EVENTS
 
+#include "kaa/KaaDefaults.hpp"
+#include "kaa/KaaThread.hpp"
+#include "kaa/gen/EndpointGen.hpp"
 #include "kaa/channel/transport/IEventTransport.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
-#include "kaa/channel/IKaaChannelManager.hpp"
-#include "kaa/gen/EndpointGen.hpp"
-#include "kaa/KaaThread.hpp"
 
 namespace kaa {
 
-class EventManager;
+class IEventDataProcessor;
+class IKaaChannelManager;
 
 class EventTransport : public AbstractKaaTransport<TransportType::EVENT>, public IEventTransport {
 public:
-    EventTransport(EventManager& eventManager, IKaaChannelManager& channelManager);
+    EventTransport(IEventDataProcessor& eventManager, IKaaChannelManager& channelManager, IKaaClientStateStoragePtr state);
 
-    std::shared_ptr<EventSyncRequest>    createEventRequest(std::int32_t requestId);
-    void                onEventResponse(const EventSyncResponse& response);
-    void                onSyncResponseId(std::int32_t requestId);
+    std::shared_ptr<EventSyncRequest> createEventRequest(std::int32_t requestId);
+
+    void onEventResponse(const EventSyncResponse& response);
+    void onSyncResponseId(std::int32_t requestId);
 
     void sync();
+
 private:
     KAA_MUTEX_DECLARE(eventsGuard_);
 
-    EventManager & eventManager_;
+    IEventDataProcessor& eventDataProcessor_;
     std::map<std::uint32_t, std::list<Event> >    events_;
+
+    std::int32_t startEventSN_;
+    bool isEventSNSynchronized_;;
 };
 
 }  // namespace kaa

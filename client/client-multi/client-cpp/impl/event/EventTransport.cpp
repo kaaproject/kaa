@@ -18,24 +18,28 @@
 
 #ifdef KAA_USE_EVENTS
 
-#include "kaa/event/EventManager.hpp"
+#include "kaa/event/IEventDataProcessor.hpp"
 #include "kaa/logging/Log.hpp"
 
 #include <algorithm>
 
 namespace kaa {
 
-EventTransport::EventTransport(EventManager& eventManager, IKaaChannelManager& channelManager)
-    : AbstractKaaTransport(channelManager)
-    , eventManager_(eventManager)
+EventTransport::EventTransport(IEventDataProcessor& processor
+        , IKaaChannelManager& channelManager, IKaaClientStateStoragePtr state)
+    : AbstractKaaTransport(channelManager), eventDataProcessor_(processor)
+    , startEventSN_(0), isEventSNSynchronized_(false)
 {
-
+    clientStatus_ = state;
+    if (clientStatus_) {
+        startEventSN_ = clientStatus_->getEventSequenceNumber();
+    }
 }
 
 std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_t requestId)
 {
-    std::map<std::string, std::list<std::string> > resolveRequests = eventManager_.getPendingListenerRequests();
-    std::list<Event> pendingEvents = eventManager_.getPendingEvents();
+    std::map<std::string, std::list<std::string> > resolveRequests = eventDataProcessor_.getPendingListenerRequests();
+    std::list<Event> pendingEvents(eventDataProcessor_.getPendingEvents());
     std::shared_ptr<EventSyncRequest> request(new EventSyncRequest);
 
     if (resolveRequests.empty()) {
@@ -51,22 +55,48 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
         request->eventListenersRequests.set_array(requests);
     }
 
-    KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
-    for (auto it = events_.begin(); it != events_.end(); ++it) {
-        pendingEvents.insert(pendingEvents.end(), it->second.begin(), it->second.end());
-    }
-    events_.clear();
-
-    if (pendingEvents.empty()) {
-        request->events.set_null();
-    } else {
-        std::vector<Event> eventsCopy;
-        for (const Event& e : pendingEvents) {
-            eventsCopy.push_back(e);
+    if (isEventSNSynchronized_) {
+        KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
+        for (auto it = events_.begin(); it != events_.end(); ++it) {
+            pendingEvents.insert(pendingEvents.end(), it->second.begin(), it->second.end());
         }
-        std::sort(eventsCopy.begin(), eventsCopy.end(), [&](const Event& l, const Event& r) -> bool { return l.seqNum < r.seqNum; });
-        request->events.set_array(eventsCopy);
-        events_.insert(std::make_pair(requestId, pendingEvents));
+        events_.clear();
+
+        if (pendingEvents.empty()) {
+            request->events.set_null();
+        } else {
+            std::vector<Event> eventsCopy;
+            for (const Event& e : pendingEvents) {
+                eventsCopy.push_back(e);
+            }
+            std::sort(eventsCopy.begin(), eventsCopy.end(),
+                    [&](const Event& l, const Event& r) -> bool { return l.seqNum < r.seqNum; });
+
+            if (eventsCopy.begin()->seqNum != startEventSN_) {
+                if (clientStatus_) {
+                    clientStatus_->setEventSequenceNumber(startEventSN_ + eventsCopy.size());
+                }
+
+                KAA_LOG_INFO(boost::format("Put in order event sequence numbers "
+                        "(expected: %li, actual: %li)") % startEventSN_ % eventsCopy.begin()->seqNum);
+
+                for (auto& e : eventsCopy) {
+                    e.seqNum = startEventSN_++;
+                }
+            } else {
+                startEventSN_ += eventsCopy.size();
+            }
+
+            request->events.set_array(eventsCopy);
+            events_.insert(std::make_pair(requestId, pendingEvents));
+        }
+
+        request->eventSequenceNumberRequest.set_null();
+    } else {
+        request->events.set_null();
+        request->eventSequenceNumberRequest.set_EventSequenceNumberRequest(EventSequenceNumberRequest());
+        KAA_LOG_TRACE(boost::format("Sending event sequence number request: "
+                                        "restored_sn = %li") % startEventSN_);
     }
 
     return request;
@@ -74,12 +104,31 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
 
 void EventTransport::onEventResponse(const EventSyncResponse& response)
 {
+    if (!isEventSNSynchronized_ && !response.eventSequenceNumberResponse.is_null()) {
+        std::int32_t lastEventSN = response.eventSequenceNumberResponse
+                                    .get_EventSequenceNumberResponse().seqNum;
+        std::int32_t expectedEventSN = (lastEventSN > 0 ? lastEventSN + 1 : lastEventSN);
+
+        if (startEventSN_ != expectedEventSN) {
+            startEventSN_ = expectedEventSN;
+            if (clientStatus_) {
+                clientStatus_->setEventSequenceNumber(startEventSN_);
+            }
+
+            KAA_LOG_INFO(boost::format("Event sequence number is unsynchronized. Set to %li") % startEventSN_);
+        } else {
+            KAA_LOG_INFO(boost::format("Event sequence number is up to date: %li") % startEventSN_);
+        }
+
+        isEventSNSynchronized_ = true;
+    }
+
     if (!response.events.is_null()) {
-        eventManager_.onEventsReceived(response.events);
+        eventDataProcessor_.onEventsReceived(response.events);
     }
 
     if (!response.eventListenersResponses.is_null()) {
-        eventManager_.onEventListenersReceived(response.eventListenersResponses);
+        eventDataProcessor_.onEventListenersReceived(response.eventListenersResponses);
     }
 }
 

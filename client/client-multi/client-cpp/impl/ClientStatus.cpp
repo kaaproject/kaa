@@ -62,7 +62,7 @@ static bimap create_bimap()
 }
 
 const bimap                 ClientStatus::parameterToToken_ = create_bimap();
-const SequenceNumber        ClientStatus::appSeqNumberDefault_ = {0, 0, 1};
+const SequenceNumber        ClientStatus::appSeqNumberDefault_ = {0, 0, 0};
 const bool                  ClientStatus::isRegisteredDefault_ = false;
 const SharedDataBuffer      ClientStatus::endpointHashDefault_;
 const DetailedTopicStates   ClientStatus::topicStatesDefault_;

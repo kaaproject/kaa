@@ -18,6 +18,7 @@
 
 #ifdef KAA_USE_EVENTS
 
+#include <utility>
 #include <algorithm>
 
 #include "kaa/common/UuidGenerator.hpp"
@@ -57,7 +58,7 @@ void EventManager::produceEvent(const std::string& fqn
 
     KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceGuard_);
     event.seqNum = eventSequenceNumber_++;
-    status_->setEventSequenceNumber(event.seqNum);
+    status_->setEventSequenceNumber(eventSequenceNumber_);
 
     KAA_UNLOCK(lock);
 
@@ -85,10 +86,7 @@ void EventManager::produceEvent(const std::string& fqn
 std::list<Event> EventManager::getPendingEvents()
 {
     KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceGuard_);
-    std::list<Event> copy;
-    copy.assign(pendingEvents_.begin(), pendingEvents_.end());
-    pendingEvents_.clear();
-    return copy;
+    return std::list<Event>(std::move(pendingEvents_));
 }
 
 void EventManager::onEventFromServer(const std::string& eventClassFQN
