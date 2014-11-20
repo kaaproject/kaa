@@ -30,7 +30,11 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif ()
 
 if (KAA_WITHOUT_EVENTS)
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
+endif()
+
+if (KAA_WITHOUT_LOGGING)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
 endif()
 
 find_package (OpenSSL REQUIRED)
@@ -53,10 +57,14 @@ set (KAA_SOURCE_FILES
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
                        src/kaa_mem.c
+                       src/kaa_uuid_int.c
                        src/kaa_common.c
                        src/gen/kaa_endpoint_gen.c
-                       src/gen/kaa_profile_gen.c
+                       src/kaa_logging.c
+                       src/log/kaa_memory_log_storage.c
 )
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
 
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
 
@@ -67,7 +75,7 @@ target_link_libraries(kaac ssl crypto)
 add_library (kaac_s STATIC ./src $<TARGET_OBJECTS:kaac_o>)
 
 if (KAA_UNITTESTS_COMPILE)
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TRACE_MEMORY_ALLOCATIONS")
+
 add_executable  (test_context
                     test/test_kaa_context.c
                     test/kaa_test_external.c
@@ -92,6 +100,7 @@ add_executable  (test_bootstrap
 target_link_libraries(test_bootstrap kaac crypto)
 
 add_executable  (test_profile
+                    src/gen/kaa_profile_gen.c
                     test/test_kaa_profile.c
                     test/kaa_test_external.c
                 )
@@ -102,6 +111,13 @@ add_executable  (test_common
                     test/kaa_test_external.c
                 )
 target_link_libraries(test_common kaac crypto)
+
+add_executable  (test_log
+                    src/gen/kaa_logging_gen.c
+                    test/test_kaa_log.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_log kaac crypto)
 
 endif ()
 

@@ -113,5 +113,7 @@ kaa_list_t * kaa_list_find_next(kaa_list_t * from, match_predicate pred);
  */
 kaa_list_t * kaa_list_find_last_occurance(kaa_list_t * from, match_predicate pred);
 
+kaa_list_t * kaa_list_split_after(kaa_list_t * head, kaa_list_t * after, kaa_list_t **tail);
+
 CLOSE_EXTERN
 #endif /* KAA_LIST_H_ */
