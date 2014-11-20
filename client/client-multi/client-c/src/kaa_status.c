@@ -24,13 +24,14 @@ struct kaa_status_t {
 
     KAA_BOOL        is_registered;
     KAA_BOOL        is_attached;
-    KAA_INT32T      event_seq_n;
+    uint32_t        event_seq_n;
+    uint32_t        log_bucket_id;
     kaa_digest      endpoint_public_key_hash;
     kaa_digest      profile_hash;
 
     char *          endpoint_access_token;
 };
-#define KAA_STATUS_STATIC_SIZE      (sizeof(KAA_BOOL) + sizeof(KAA_BOOL) + sizeof(KAA_INT32T) + SHA_1_DIGEST_LENGTH*sizeof(char) + SHA_1_DIGEST_LENGTH*sizeof(char))
+#define KAA_STATUS_STATIC_SIZE      (sizeof(KAA_BOOL) + sizeof(KAA_BOOL) + sizeof(uint32_t) + sizeof(uint32_t) + SHA_1_DIGEST_LENGTH*sizeof(char) + SHA_1_DIGEST_LENGTH*sizeof(char))
 
 #define READ_BUFFER(FROM, TO, SIZE) \
         memcpy(TO, FROM, SIZE); \
@@ -63,6 +64,7 @@ kaa_error_t kaa_create_status(kaa_status_t ** kaa_status_p)
         READ_BUFFER(read_buf, &kaa_status->is_registered, sizeof(kaa_status->is_registered))
         READ_BUFFER(read_buf, &kaa_status->is_attached, sizeof(kaa_status->is_attached))
         READ_BUFFER(read_buf, &kaa_status->event_seq_n, sizeof(kaa_status->event_seq_n))
+        READ_BUFFER(read_buf, &kaa_status->log_bucket_id, sizeof(kaa_status->log_bucket_id))
         READ_BUFFER(read_buf, kaa_status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH)
         READ_BUFFER(read_buf, kaa_status->profile_hash, SHA_1_DIGEST_LENGTH)
 
@@ -185,7 +187,7 @@ kaa_error_t kaa_status_set_profile_hash(kaa_status_t *status, const kaa_digest h
     return KAA_ERR_NONE;
 }
 
-KAA_INT32T  kaa_status_get_event_sequence_number(kaa_status_t* status)
+uint32_t  kaa_status_get_event_sequence_number(kaa_status_t* status)
 {
     if (status != NULL) {
         return status->event_seq_n;
@@ -193,7 +195,7 @@ KAA_INT32T  kaa_status_get_event_sequence_number(kaa_status_t* status)
     return 0;
 }
 
-kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t* status, KAA_INT32T seq_n)
+kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t* status, uint32_t seq_n)
 {
     if (status == NULL || seq_n < status->event_seq_n) {
         return KAA_ERR_BADPARAM;
@@ -202,6 +204,25 @@ kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t* status, KAA_INT32
     status->event_seq_n = seq_n;
     return KAA_ERR_NONE;
 }
+
+uint32_t    kaa_status_get_log_bucket_id(kaa_status_t* status)
+{
+    if (status != NULL) {
+        return status->log_bucket_id;
+    }
+    return 0;
+}
+
+kaa_error_t kaa_status_set_log_bucket_id(kaa_status_t* status, uint32_t id)
+{
+    if (status == NULL || id < status->log_bucket_id) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    status->log_bucket_id = id;
+    return KAA_ERR_NONE;
+}
+
 
 kaa_error_t kaa_status_save(kaa_status_t *status)
 {
@@ -216,6 +237,7 @@ kaa_error_t kaa_status_save(kaa_status_t *status)
     WRITE_BUFFER(&status->is_registered, buffer, sizeof(status->is_registered));
     WRITE_BUFFER(&status->is_attached, buffer, sizeof(status->is_attached));
     WRITE_BUFFER(&status->event_seq_n, buffer, sizeof(status->event_seq_n));
+    WRITE_BUFFER(&status->log_bucket_id, buffer, sizeof(status->log_bucket_id));
     WRITE_BUFFER(status->endpoint_public_key_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(status->profile_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(&endpoint_access_token_length, buffer, sizeof(endpoint_access_token_length));

@@ -34,7 +34,9 @@ kaa_error_t kaa_create_context(kaa_context_t ** context_p)
 #endif
     error_c |= kaa_create_bootstrap_manager(&(context->bootstrap_manager));
     error_c |= kaa_channel_manager_create(&(context->channel_manager));
-
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    error_c |= kaa_create_log_collector(&(context->log_collector));
+#endif
     if (error_c) {
         return KAA_ERR_NOMEM;
     }
@@ -53,7 +55,9 @@ kaa_error_t kaa_destroy_context(kaa_context_t * context)
     kaa_destroy_bootstrap_manager(context->bootstrap_manager);
     kaa_channel_manager_destroy(context);
     kaa_destroy_status(context->status);
-
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    kaa_destroy_log_collector(context->log_collector);
+#endif
     KAA_FREE(context);
     return KAA_ERR_NONE;
 }

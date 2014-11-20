@@ -205,6 +205,18 @@ size_t kaa_compile_request(kaa_sync_request_t **request_p, size_t service_count,
                     }
                     break;
                 }
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+                case KAA_SERVICE_LOGGING: {
+                    kaa_log_sync_request_t *log_request = kaa_logging_compile_request(kaa_context_);
+                    if (log_request) {
+                        request->log_sync_request->destruct(request->log_sync_request);
+                        KAA_FREE(request->log_sync_request);
+                        request->log_sync_request = kaa_create_record_log_sync_request_null_union_log_sync_request_branch();
+                        request->log_sync_request->data = log_request;
+                    }
+                    break;
+                }
+#endif
                 default:
                     break;
             }
@@ -275,6 +287,13 @@ void kaa_response_received(const char *buffer, size_t buffer_size)
         kaa_profile_handle_sync(kaa_context_, (kaa_profile_sync_response_t *)response->profile_sync_response->data);
     }
 
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    if (response->log_sync_response != NULL
+            && response->log_sync_response->type == KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_LOG_SYNC_REQUEST_BRANCH) {
+        kaa_logging_handle_sync(kaa_context_, (kaa_log_sync_response_t *)response->log_sync_response->data);
+    }
+#endif
+
     kaa_status_save(kaa_context_->status);
     response->destruct(response);
     KAA_FREE(response);
@@ -285,3 +304,22 @@ void kaa_set_profile(kaa_profile_t *profile_body)
     kaa_profile_update_profile(kaa_context_, profile_body);
 }
 
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+
+void kaa_init_log_storage(
+                    kaa_log_storage_t * storage
+                  , kaa_storage_status_t * status
+                  , kaa_log_upload_properties_t *properties
+                  , log_upload_decision_fn need_upl
+                  )
+{
+    kaa_init_log_collector(kaa_context_->log_collector, storage, properties, status, need_upl);
+}
+
+void kaa_add_log(kaa_user_log_record_t *entry)
+{
+    kaa_add_log_record(kaa_context_, entry);
+}
+
+#endif

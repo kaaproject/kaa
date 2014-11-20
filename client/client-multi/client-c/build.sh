@@ -28,13 +28,20 @@ then
     help
 fi
 
-mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=1 ..; cd ..
+function prepare_plain_build {
+    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=0 ..; cd ..
+}
+
+function prepare_test_build {
+    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=1 ..; cd ..
+}
 
 for cmd in $@
 do
 
 case "$cmd" in
     build)
+    prepare_plain_build
     cd build && make && cd ..
     ;;
 
@@ -43,12 +50,15 @@ case "$cmd" in
     ;;
 
     test)
+    prepare_test_build
     cd build && make
     FAILUTE_COUNTER=0
     FAILED_TESTS=""
     for test in test_*
     do
+        echo -e "Starting test $test"
         ./$test
+        echo -e "Test $test finished"
         if [ "$?" -ne "0" ]
         then
             FAILUTE_COUNTER=$((FAILUTE_COUNTER + 1))

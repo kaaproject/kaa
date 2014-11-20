@@ -28,8 +28,9 @@ extern "C" {
 #include "kaa_external.h"
 #include "kaa_error.h"
 #include "kaa_profile.h"
-#include "gen/kaa_endpoint_gen.h"
+#include "kaa_logging.h"
 
+#include "gen/kaa_endpoint_gen.h"
 #include <stddef.h>
 
 /**
@@ -220,6 +221,45 @@ void    kaa_serialize_request(kaa_sync_request_t *request, char *buffer, size_t 
  * Process data received from Operations server.
  */
 void    kaa_response_received(const char *buffer, size_t buffer_size);
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+
+/**
+ * Log management
+ */
+
+/**
+ * Provide log storage to Kaa.<br>
+ * <br>
+ *
+ * \param i_storage     Structure containing pointers to functions which are used
+ * to manage log storage.
+ * \param i_status      Structure containing pointers to functions describing
+ * state of the storage (occupied size, records count etc.)
+ * \param upload_properties     Properties which are used to control log storage
+ * size and log upload neediness.
+ * \param is_upload_needed  Pointer to function which will be used to decide
+ * which operation (NO_OPERATION, UPLOAD or CLEANUP) should be performed on log storage.
+ */
+void   kaa_init_log_storage(
+                    kaa_log_storage_t * i_storage
+                  , kaa_storage_status_t * i_status
+                  , kaa_log_upload_properties_t * upload_properties
+                  , log_upload_decision_fn is_upload_needed
+                  );
+
+/**
+ * Add log record to log storage.<br>
+ * <br>
+ * Use this to add the log entry to the predefined log storage.<br>
+ * Log record will be serialized and pushed to a log storage interface via
+ * <pre>
+ * void            (* add_log_record)  (kaa_log_entry_t * record);
+ * </pre>
+ * See also \see kaa_log_storage_t
+ */
+void    kaa_add_log(kaa_user_log_record_t *entry);
+#endif
 
 CLOSE_EXTERN
 #endif /* KAA_H_ */
