@@ -45,6 +45,7 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src
 set (KAA_SOURCE_FILES
                        src/avro_src/io.c
                        src/avro_src/encoding_binary.c
+                       src/kaa_log.c
                        src/kaa.c
                        src/kaa_context.c
                        src/kaa_profile.c

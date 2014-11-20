@@ -1,0 +1,118 @@
+<!--
+  Copyright 2014 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Theme.AppCompat.AppBaseTheme" parent="Theme.AppCompat.Light">
+ 
+    </style>
+
+    <style name="DeviceBaseTheme" parent="Theme.AppCompat">
+ 
+    </style>
+    
+    <!-- Application theme. -->
+    <style name="Theme.AppCompat.AppTheme" parent="Theme.AppCompat.AppBaseTheme">
+        <item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>
+        <item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
+    </style>
+    
+    <style name="DeviceTheme" parent="DeviceBaseTheme">
+        <item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
+    </style>
+    
+    <style name="FullScreenAppTheme" parent="Theme.AppCompat.AppTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="FullScreenDeviceTheme" parent="DeviceTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    
+    <style name="CustomTabPageIndicator" parent="Widget.TabPageIndicator">
+             <item name="android:divider">@drawable/custom_tab_indicator_divider</item>
+             <item name="android:showDividers">middle</item>
+             <item name="android:gravity">center</item>
+             <!-- item name="android:padding">0dp</item-->
+             <!-- item name="android:drawablePadding">0dp</item -->
+<!--         <item name="android:textAppearance">@style/CustomTabPageIndicator.Text</item> -->
+<!--         <item name="android:textColor">#FF555555</item> -->
+<!--         <item name="android:textSize">16sp</item> -->
+<!--         <item name="android:paddingLeft">8dp</item> -->
+<!--         <item name="android:paddingRight">8dp</item> -->
+<!--         <item name="android:fadingEdge">horizontal</item> -->
+<!--         <item name="android:fadingEdgeLength">8dp</item> -->
+<!--         <item name="android:drawablePadding">5dp</item> -->
+    </style>
+
+    <style name="CustomTabPageIndicator.Text" parent="android:TextAppearance.Medium">
+        <item name="android:typeface">sans</item>
+    </style>
+    
+    <style name="TextAppearance.Menu" parent="@android:style/TextAppearance">
+		<item name="android:textColor">#FF555555</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    
+    <style name="TextAppearance.Menu.Selected" parent="TextAppearance.Menu">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="big_button_text" >
+	    <item name="android:layout_width" >fill_parent</item>
+	    <item name="android:layout_height" >wrap_content</item>
+	    <item name="android:textColor" >#ffffff</item>
+	    <item name="android:gravity" >center</item>
+	    <item name="android:layout_margin" >3dp</item>
+	    <item name="android:textSize" >30sp</item>
+	    <item name="android:textStyle" >bold</item>
+	    <item name="android:shadowColor" >#000000</item>
+	    <item name="android:shadowDx" >1</item>
+	    <item name="android:shadowDy" >1</item>
+	    <item name="android:shadowRadius" >2</item>
+    </style>
+    
+    <style name="Widget.Holo" parent="Widget">
+    </style>
+    
+    <style name="Widget.Holo.SeekBar">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_dark</item>
+        <item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_dark</item>
+        <item name="android:minHeight">13dip</item>
+        <item name="android:maxHeight">13dip</item>
+        <item name="android:thumb">@drawable/scrubber_control_selector_holo</item>
+        <item name="android:thumbOffset">16dip</item>
+        <item name="android:focusable">true</item>
+        <item name="android:paddingLeft">16dip</item>
+        <item name="android:paddingRight">16dip</item>
+    </style>
+    
+    <style name="Widget.Holo.Light.SeekBar" parent="Widget.Holo.SeekBar">
+        <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>        
+    </style>
+
+    <style name="medium_text" >
+        <item name="android:gravity" >center</item>
+        <item name="android:textSize" >20sp</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+    
+</resources>

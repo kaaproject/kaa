@@ -17,8 +17,8 @@
 #include "kaa/KaaDefaults.hpp"
 
 #include <algorithm>
-
 #include <cstdint>
+#include <sstream>
 
 #include "kaa/channel/server/HttpServerInfo.hpp"
 #include "kaa/channel/server/HttpLPServerInfo.hpp"
@@ -97,6 +97,62 @@ const std::string& getDefaultConfigSchema() {
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() {
     static const EventClassFamilyVersionInfos versions = %{event.family_version};/* = {{"familyName1",1}, {"familyName2",3}};*/
     return versions;
+}
+
+SharedDataBuffer getPropertiesHash() {
+    std::ostringstream ss;
+
+    ss << APPLICATION_TOKEN;
+    ss << PROFILE_VERSION;
+    ss << CONFIG_VERSION;
+    ss << SYSTEM_NF_VERSION;
+    ss << USER_NF_VERSION;
+    ss << LOG_SCHEMA_VERSION;
+    ss << POLLING_PERIOD_SECONDS;
+    ss << CLIENT_PUB_KEY_LOCATION;
+    ss << CLIENT_PRIV_KEY_LOCATION;
+    ss << CLIENT_STATUS_FILE_LOCATION;
+
+    for (auto server : getServerInfoList()) {
+        switch (server->getChannelType()) {
+        case ChannelType::HTTP:
+        {
+            HttpServerInfo* s = dynamic_cast<HttpServerInfo*>(server.get());
+            ss << s->getHost(); ss << s->getPort();
+            ss.write(reinterpret_cast<const char*>(
+                    s->getPublicKey().begin()), s->getPublicKey().size());
+            break;
+        }
+        case ChannelType::HTTP_LP:
+        {
+            HttpLPServerInfo* s = dynamic_cast<HttpLPServerInfo*>(server.get());
+            ss << s->getHost(); ss << s->getPort();
+            ss.write(reinterpret_cast<const char*>(
+                    s->getPublicKey().begin()), s->getPublicKey().size());
+            break;
+        }
+        case ChannelType::KAATCP:
+        {
+            KaaTcpServerInfo* s = dynamic_cast<KaaTcpServerInfo*>(server.get());
+            ss << s->getHost(); ss << s->getPort();
+            ss.write(reinterpret_cast<const char*>(
+                    s->getPublicKey().begin()), s->getPublicKey().size());
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    ss.write(reinterpret_cast<const char*>(
+            getDefaultConfigData().begin()), getDefaultConfigData().size());
+    ss << getDefaultConfigSchema();
+
+    for (const auto& eventFamily : getEventClassFamilyVersionInfo()) {
+        ss << eventFamily.first << eventFamily.second;
+    }
+
+    return EndpointObjectHash(ss.str()).getHash();
 }
 
 }

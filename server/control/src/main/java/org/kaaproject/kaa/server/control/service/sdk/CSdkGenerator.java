@@ -42,6 +42,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.kaaproject.kaa.avro.avrogenc.Compiler;
 import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
+import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
@@ -268,6 +269,8 @@ public class CSdkGenerator extends SdkGenerator {
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
 
+        context.put("build_version", Version.PROJECT_VERSION);
+        context.put("build_commit_hash", Version.COMMIT_HASH);
         context.put("app_token", appToken);
         context.put("config_version", configurationSchemaVersion);
         context.put("profile_version", profileSchemaVersion);

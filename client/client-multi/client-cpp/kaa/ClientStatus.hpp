@@ -82,6 +82,9 @@ public:
     void save();
 
 private:
+    void checkSDKPropertiesForUpdates();
+
+private:
     std::string filename_;
     std::map<ClientParameterT, std::shared_ptr<IPersistentParameter> > parameters_;
 

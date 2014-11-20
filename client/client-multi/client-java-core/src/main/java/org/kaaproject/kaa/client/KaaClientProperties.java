@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client;
 
 import java.io.IOException;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -40,19 +41,18 @@ import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service class to store base endpoint configuration
  */
 public class KaaClientProperties extends Properties {
+    private static final Logger LOG = LoggerFactory.getLogger(KaaClientProperties.class);
 
     private static final String DEFAULT_CLIENT_PROPERTIES = "client.properties";
-
     public static final String KAA_CLIENT_PROPERTIES_FILE = "kaaClientPropertiesFile";
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 8793954229852581418L;
 
     public static final String BUILD_VERSION = "build.version";
@@ -70,6 +70,9 @@ public class KaaClientProperties extends Properties {
     public static final String CONFIG_SCHEMA_DEFAULT = "config.schema.default";
     public static final String EVENT_CLASS_FAMILY_VERSION = "event_cf_version";
     public static final String LOG_SCHEMA_VERSION = "logs_version";
+
+    private static final String PROPERTIES_HASH_ALGORITHM = "SHA";
+    private byte[] propertiesHash;
 
     public KaaClientProperties(Properties properties) {
         super(properties);
@@ -91,6 +94,41 @@ public class KaaClientProperties extends Properties {
         properties
                 .load(classLoader.getResourceAsStream(propertiesLocation));
         return properties;
+    }
+
+    public byte[] getPropertiesHash() {
+        if (propertiesHash == null) {
+            try {
+                MessageDigest digest = MessageDigest.getInstance(PROPERTIES_HASH_ALGORITHM);
+
+                updateDigest(digest, TRANSPORT_POLL_DELAY);
+                updateDigest(digest, TRANSPORT_POLL_PERIOD);
+                updateDigest(digest, TRANSPORT_POLL_UNIT);
+                updateDigest(digest, BOOTSTRAP_SERVERS);
+                updateDigest(digest, CONFIG_VERSION);
+                updateDigest(digest, PROFILE_VERSION);
+                updateDigest(digest, SYSTEM_NT_VERSION);
+                updateDigest(digest, USER_NT_VERSION);
+                updateDigest(digest, APPLICATION_TOKEN);
+                updateDigest(digest, CONFIG_DATA_DEFAULT);
+                updateDigest(digest, CONFIG_SCHEMA_DEFAULT);
+                updateDigest(digest, EVENT_CLASS_FAMILY_VERSION);
+                updateDigest(digest, LOG_SCHEMA_VERSION);
+
+                propertiesHash = digest.digest();
+            } catch (NoSuchAlgorithmException e) {
+                LOG.warn("Failed to calculate hash for SDK properties: {}", e);
+            }
+        }
+
+        return propertiesHash;
+    }
+
+    private void updateDigest(MessageDigest digest, String propertyName) {
+        String value = getProperty(propertyName);
+        if (value != null) {
+            digest.update(value.getBytes());
+        }
     }
 
     public String getBuildVersion() {

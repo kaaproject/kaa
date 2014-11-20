@@ -16,21 +16,19 @@
 
 package org.kaaproject.kaa.server.control;
 
-import org.kaaproject.kaa.server.common.Environment;
+import org.kaaproject.kaa.server.common.AbstractServerApplication;
 import org.kaaproject.kaa.server.control.service.ControlService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 /**
  * The Class ControlServerApplication.
  */
-public class ControlServerApplication {
+public class ControlServerApplication extends AbstractServerApplication {
 
-    private static final String DEFAULT_APPLICATION_CONTEXT_XML = "controlContext.xml";
+    private static final String[] DEFAULT_APPLICATION_CONTEXT_XMLS = new String[] { "controlContext.xml" };
 
-    /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(ControlServerApplication.class);
+    private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] {
+            "control-server.properties", "dao.properties" };
 
     /**
      * The main method.
@@ -39,19 +37,22 @@ public class ControlServerApplication {
      *            the arguments
      */
     public static void main(String[] args) {
-        LOG.info("Control Server Application starting...");
-        Environment.logState();
+        ControlServerApplication app = new ControlServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS, DEFAULT_APPLICATION_CONFIGURATION_FILES);
+        app.startAndWait(args);
+    }
 
-        String applicationContextXml = DEFAULT_APPLICATION_CONTEXT_XML;
-        if (args.length > 0) {
-            applicationContextXml = args[0];
-        }
-        final ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(applicationContextXml);
-        final ControlService controlService = ctx.getBean("controlService", ControlService.class);
+    public ControlServerApplication(String[] defaultContextFiles, String[] defaultConfigurationFiles) {
+        super(defaultContextFiles, defaultConfigurationFiles);
+    }
 
+    @Override
+    protected String getName() {
+        return "Control Server";
+    }
+
+    @Override
+    protected void init(ApplicationContext context) {
+        final ControlService controlService = context.getBean("controlService", ControlService.class);
         controlService.start();
-        ctx.close();
-
-        LOG.info("Control Server Application stopped.");
     }
 }

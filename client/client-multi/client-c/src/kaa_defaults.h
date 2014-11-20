@@ -24,6 +24,9 @@ extern "C" {
 #define CLOSE_EXTERN
 # endif
 
+#define BUILD_VERSION                   "0.6.1-SNAPSHOT"
+#define BUILD_COMMIT_HASH               "N/A"
+
 #define APPLICATION_TOKEN               "token"
 
 #define CONFIG_SCHEMA_VERSION           6
