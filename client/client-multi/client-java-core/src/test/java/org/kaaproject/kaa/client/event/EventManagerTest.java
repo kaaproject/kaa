@@ -39,6 +39,7 @@ import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.persistance.KaaClientPropertiesStateTest;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
+import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
@@ -114,6 +115,40 @@ public class EventManagerTest {
         Mockito.verify(transport, times(1)).sync();
 
         assertTrue(eventManager.releaseDataChannel());
+    }
+
+    @Test
+    public void testTransaction() throws IOException {
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+
+        EventTransport transport = Mockito.mock(EventTransport.class);
+        EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
+
+        EventManager eventManager = new DefaultEventManager(state, transport);
+        eventManager.registerEventFamily(eventFamily);
+
+        TransactionId trxId = eventManager.beginTransaction();
+        assertNotNull("Null transaction id", trxId);
+        try {
+            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
+            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
+        } catch (IOException e) {
+            assertTrue("Unexpected exception", false);
+        }
+        Mockito.verify(transport, times(0)).sync();
+
+        eventManager.rollback(trxId);
+        Mockito.verify(transport, times(0)).sync();
+        trxId = eventManager.beginTransaction();
+        try {
+            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
+        } catch (IOException e) {
+            assertTrue("Unexpected exception", false);
+        }
+        Mockito.verify(transport, times(0)).sync();
+
+        eventManager.commit(trxId);
+        Mockito.verify(transport, times(1)).sync();
     }
 
     @Test

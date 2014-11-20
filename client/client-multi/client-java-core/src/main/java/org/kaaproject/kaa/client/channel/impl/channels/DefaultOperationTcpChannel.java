@@ -103,7 +103,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private final int RECONNECT_TIMEOUT = 5; // in sec
     private ConnectivityChecker connectivityChecker;
 
-
     private final List<TransportType> ackTypes = new ArrayList<TransportType>();
 
     private final Runnable openConnectionTask = new Runnable() {

@@ -18,7 +18,7 @@ package org.kaaproject.kaa.client.event;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import org.kaaproject.kaa.client.transact.TransactionId;
 
 /**
  * Factory for accessing supported event families.
@@ -35,5 +35,15 @@ public class EventFamilyFactory {
         this.eventManager = eventManager;
     }
 
+    public TransactionId startEventsBlock() {
+        return eventManager.beginTransaction();
+    }
 
+    public void submitEventsBlock(TransactionId trxId) {
+        eventManager.commit(trxId);
+    }
+
+    public void removeEventsBlock(TransactionId trxId) {
+        eventManager.rollback(trxId);
+    }
 }

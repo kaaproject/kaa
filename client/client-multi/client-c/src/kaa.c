@@ -116,6 +116,37 @@ void kaa_send_event(const char * fqn, size_t fqn_length, const char *event_data,
     }
 }
 
+kaa_trx_id kaa_start_event_block()
+{
+    return kaa_event_create_transaction(kaa_context_);
+}
+
+void kaa_event_add_to_transaction(kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size)
+{
+    if (kaa_is_endpoint_attached_to_user(kaa_context_->status)) {
+        kaa_add_event_to_transaction(
+                  kaa_context_
+                , trx_id
+                , fqn
+                , fqn_length
+                , event_data
+                , event_data_size
+                , event_target
+                , event_target_size
+        );
+    }
+}
+
+void kaa_send_events_block(kaa_trx_id trx_id)
+{
+    kaa_event_finish_transaction(kaa_context_, trx_id);
+}
+
+void kaa_remove_event_block(kaa_trx_id trx_id)
+{
+    kaa_event_remove_transaction(kaa_context_, trx_id);
+}
+
 void kaa_register_event_listener(const char *fqn, size_t fqn_length, event_callback_t listener)
 {
     kaa_add_on_event_callback(

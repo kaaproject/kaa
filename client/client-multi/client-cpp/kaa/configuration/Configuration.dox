@@ -72,7 +72,7 @@
         // Variant 1: Check correctness of action to avoid exceptions:
         // check if record contains field "foo"
         if (configuration.hasField(fieldName)) {
-            boost::shared_ptr<ICommonValue> fooField = configuration.getField(fieldName);
+            std::shared_ptr<ICommonValue> fooField = configuration.getField(fieldName);
             // Assuming that field "foo" is a boolean
             if (CommonValueTools::isBoolean(fooField)) {
                 bool fooValue = boost::any_cast<bool>(fooField->getValue());
@@ -104,7 +104,7 @@
         // check if record contains field "foo"
         if (configuration.hasField(fieldName)) {
             // if field "foo" is present in record get its value
-            boost::shared_ptr<ICommonValue> fooField = configuration.getField(fieldName);
+            std::shared_ptr<ICommonValue> fooField = configuration.getField(fieldName);
             // Assuming that field "foo" is a record extract CommonRecord from ICommonValue
             if (CommonValueTools::isRecord(fooField)) {
                 const ICommonRecord & fooRecord = CommonValueTools::getRecord(fooField);
@@ -135,7 +135,7 @@
         // Variant 1: Check correctness of action to avoid exceptions:
         // check if record contains field "fooArray"
         if (configuration.hasField(fieldName)) {
-            boost::shared_ptr<ICommonValue> fooField = configuration.getField(fieldName);
+            std::shared_ptr<ICommonValue> fooField = configuration.getField(fieldName);
             if (CommonValueTools::isArray(fooField)) {
                 auto fooArray = CommonValueTools::getArray(fooField);
             }
@@ -155,7 +155,6 @@
     
     @code
         #include <vector>
-        #include <boost/cstdint.hpp>
         #include <kaa/Kaa.hpp>
         #include <kaa/configuration/storage/IConfigurationStorage.hpp>
         
@@ -183,7 +182,6 @@
     
     @code
         #include <vector>
-        #include <boost/cstdint.hpp>
         #include <kaa/Kaa.hpp>
         #include <kaa/schema/storage/ISchemaStorage.hpp>
         

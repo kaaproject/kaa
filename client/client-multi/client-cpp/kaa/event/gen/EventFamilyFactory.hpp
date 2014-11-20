@@ -23,14 +23,16 @@
 
 #include <memory>
 #include "kaa/event/IEventManager.hpp"
+#include "kaa/transact/ITransactable.hpp"
+
 #include "kaa/event/gen/BasicEventFamily.hpp"
 
 namespace kaa {
 
 class EventFamilyFactory {
 public:
-    EventFamilyFactory(IEventManager& manager)
-        : eventManager_(manager) {}
+    EventFamilyFactory(IEventManager& manager, ITransactable &transactionManager)
+        : eventManager_(manager), transactionManager_(transactionManager) {}
 
     BasicEventFamily& getBasicEventFamily()
     {
@@ -42,8 +44,21 @@ public:
         return *concreteEventFamily_;
     }
 
+    TransactionIdPtr startEventsBlock() {
+        return transactionManager_.beginTransaction();
+    }
+
+    void submitEventsBlock(TransactionIdPtr trxId) {
+        transactionManager_.commit(trxId);
+    }
+
+    void removeEventsBlock(TransactionIdPtr trxId) {
+        transactionManager_.rollback(trxId);
+    }
+
 private:
     IEventManager& eventManager_;
+    ITransactable& transactionManager_;
     std::set<std::string> efcNames_;
     std::map<std::string, std::shared_ptr<IEventFamily> > eventFamilies_;
     std::map<std::string, FQNList > supportedFQNLists_;
