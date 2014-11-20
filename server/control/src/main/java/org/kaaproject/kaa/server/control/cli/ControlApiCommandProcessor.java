@@ -2099,7 +2099,7 @@ public class ControlApiCommandProcessor {
         opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
         opt.setRequired(!edit);
         command.addOption(opt);
-        opt = new Option("t", "type", true, "Topic type option. Values: MANDATORY, VOLUNTARY");
+        opt = new Option("t", "type", true, "Topic type option. Values: MANDATORY, OPTIONAL");
         opt.setRequired(!edit);
         command.addOption(opt);
         return command;

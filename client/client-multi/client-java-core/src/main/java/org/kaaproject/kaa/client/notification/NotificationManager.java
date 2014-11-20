@@ -25,7 +25,7 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
  * <p>Interface for the notification delivery system.</p>
  *
  * <p>Responsible for processing received topic/notification updates,
- * subscribing for voluntary topic updates and unsubscribing from them.</p>
+ * subscribing for optional topic updates and unsubscribing from them.</p>
  *
  * @author Yaroslav Zeygerman
  * @author Denis Kimcherenko
@@ -87,7 +87,7 @@ public interface NotificationManager {
     /**
      * <p>Update (subscribe/unsubscribe) info about topic's subscriptions.</p>
      *
-     * <p>Basic usage is to subscribe for voluntary topic updates and unsubscribe
+     * <p>Basic usage is to subscribe for optional topic updates and unsubscribe
      * from them. More than one listener may be used for the same topic.</p>
      *
      * <p>Also it may be used to add/remove specific listener(s) for some
@@ -106,7 +106,7 @@ public interface NotificationManager {
      * }
      *
      * // Assume, there are one mandatory topic with id "mand_id" and
-     * // one voluntary with id "vol_id".
+     * // one optional with id "vol_id".
      * Map<String, List<NotificationListenerInfo>> subscriptions = new HashMap<>();
      *
      * // Add specific listener for "mand_id" topic
@@ -114,10 +114,10 @@ public interface NotificationManager {
      * subscriptions.put("mand_id", Arrays.asList(
      *      new NotificationListenerInfo(mandatoryListener, NotificationListenerInfo.Action.ADD)));
      *
-     * // Subscribe for voluntary topic updates
-     * UserNotificationListener voluntaryListener = new UserNotificationListener();
+     * // Subscribe for optional topic updates
+     * UserNotificationListener optionalListener = new UserNotificationListener();
      * subscriptions.put("vol_id", Arrays.asList(
-     *      new NotificationListenerInfo(voluntaryListener, NotificationListenerInfo.Action.ADD)));
+     *      new NotificationListenerInfo(optionalListener, NotificationListenerInfo.Action.ADD)));
      *
      * kaaClient.getNotificationManager().updateTopicSubscriptions(subscriptions);
      * }
@@ -147,7 +147,7 @@ public interface NotificationManager {
 
     /**
      * <p>Add listener to receive all notifications (both for mandatory and
-     * voluntary topics).</p>
+     * optional topics).</p>
      *
      * @param listener Listener to receive notifications
      *
@@ -158,10 +158,10 @@ public interface NotificationManager {
     /**
      * <p>Add listener to receive notifications relating to the specified topic.</p>
      *
-     * <p>Listener(s) for voluntary topics may be added/removed irrespective to
+     * <p>Listener(s) for optional topics may be added/removed irrespective to
      * whether subscription was already or not.</p>
      *
-     * @param topicId  Id of topic (both mandatory and voluntary).
+     * @param topicId  Id of topic (both mandatory and optional).
      * @param listener Listener to receive notifications.
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided.
@@ -173,7 +173,7 @@ public interface NotificationManager {
 
     /**
      * <p>Remove listener receiving all notifications (both for mandatory and
-     * voluntary topics).</p>
+     * optional topics).</p>
      *
      * @param listener Listener to receive notifications
      *
@@ -184,10 +184,10 @@ public interface NotificationManager {
    /**
     * <p>Remove listener receiving notifications for the specified topic.</p>
     *
-    * <p>Listener(s) for voluntary topics may be added/removed irrespective to
+    * <p>Listener(s) for optional topics may be added/removed irrespective to
     * whether subscription was already or not.</p>
     *
-    * @param topicId Id of topic (both mandatory and voluntary).
+    * @param topicId Id of topic (both mandatory and optional).
     * @param listener Listener to receive notifications.
     *
     * @throws UnavailableTopicException Throw if unknown topic id is provided.
@@ -198,14 +198,14 @@ public interface NotificationManager {
                                            throws UnavailableTopicException;
 
     /**
-     * <p>Subscribe to notifications relating to the specified voluntary topic.</p>
+     * <p>Subscribe to notifications relating to the specified optional topic.</p>
      *
-     * @param topicId Id of a voluntary topic.
+     * @param topicId Id of a optional topic.
      * @param forceSync Define whether current subscription update should be
      * accepted immediately (see {@link #sync()}).
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't voluntary.
+     * topic isn't optional.
      *
      * @see #sync()
      */
@@ -214,14 +214,14 @@ public interface NotificationManager {
 
     /**
      * <p>Subscribe to notifications relating to the specified list of
-     * voluntary topics.</p>
+     * optional topics.</p>
      *
-     * @param topicIds List of voluntary topic id.
+     * @param topicIds List of optional topic id.
      * @param forceSync Define whether current subscription update should be
      * accepted immediately (see {@link #sync()}).
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't voluntary.
+     * topic isn't optional.
      *
      * @see #sync()
      */
@@ -229,16 +229,16 @@ public interface NotificationManager {
                                             throws UnavailableTopicException;
 
     /**
-     * <p>Unsubscribe from notifications relating to the specified voluntary topic.</p>
+     * <p>Unsubscribe from notifications relating to the specified optional topic.</p>
      *
      * <p>All previously added listeners will be removed automatically.</p>
      *
-     * @param topicId Id of a voluntary topic.
+     * @param topicId Id of a optional topic.
      * @param forceSync Define whether current subscription update should be
      * accepted immediately (see {@link #sync()}).
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't voluntary.
+     * topic isn't optional.
      *
      * @see #sync()
      */
@@ -247,16 +247,16 @@ public interface NotificationManager {
 
     /**
      * <p>Unsubscribe from notifications relating to the specified list of
-     * voluntary topics.</p>
+     * optional topics.</p>
      *
      * <p>All previously added listeners will be removed automatically.</p>
      *
-     * @param topicIds List of voluntary topic id.
+     * @param topicIds List of optional topic id.
      * @param forceSync Define whether current subscription update should be
      * accepted immediately (see {@link #sync()}).
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't voluntary.
+     * topic isn't optional.
      *
      * @see #sync()
      */
@@ -264,7 +264,7 @@ public interface NotificationManager {
                                             throws UnavailableTopicException;
 
     /**
-     * <p>Accept voluntary subscription changes.</p>
+     * <p>Accept optional subscription changes.</p>
      *
      * <p>Should be used after all {@link #subscribeToTopic(String, boolean)},
      * {@link #subscribeToTopics(List, boolean)}, {@link #unsubscribeFromTopic(String, boolean)},
@@ -272,17 +272,17 @@ public interface NotificationManager {
      * {@code forceSync} set to {@code false}.</p>
      *
      * <p>Use it as a convenient way to make different consequent changes in
-     * the voluntary subscription:</p>
+     * the optional subscription:</p>
      * <pre>
      * {@code
      *  NotificationManager notificationManager = kaaClient.getNotificationManager();
      *
      *  // Make subscription changes
      *  notificationManager.subscribeOnTopics(Arrays.asList(
-     *          "voluntary_topic1", "voluntary_topic2", "voluntary_topic3"), false);
-     *  notificationManager.unsubscribeFromTopic("voluntary_topic4", false);
+     *          "optional_topic1", "optional_topic2", "optional_topic3"), false);
+     *  notificationManager.unsubscribeFromTopic("optional_topic4", false);
      *
-     *  // Add listeners for voluntary topics (optional)
+     *  // Add listeners for optional topics here
      *
      *  // Commit changes
      *  notificationManager.sync();

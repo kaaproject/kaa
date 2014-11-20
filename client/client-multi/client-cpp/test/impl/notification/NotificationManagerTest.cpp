@@ -66,13 +66,13 @@ public:
 
     virtual void onNotification(const std::string& id, const BasicUserNotification& notification)
     {
-        BOOST_CHECK_MESSAGE(topicId_ == id, "Voluntary: received notification for a foreign topic");
+        BOOST_CHECK_MESSAGE(topicId_ == id, "Optional: received notification for a foreign topic");
 
         BOOST_CHECK_MESSAGE(notification.notificationBody == "user"
-                , "Voluntary: unexpected notification body. Expected 'system'!!! ");
+                , "Optional: unexpected notification body. Expected 'system'!!! ");
 
         BOOST_CHECK_MESSAGE(notification.userNotificationParam == 3
-                , "Voluntary: unexpected notification param value. Expected 3!!! ");
+                , "Optional: unexpected notification param value. Expected 3!!! ");
     }
 
 private:
@@ -90,26 +90,26 @@ public:
 
         BOOST_CHECK_MESSAGE(newList.front().subscriptionType == SubscriptionType::MANDATORY
                 , "Expected MANDATORY topic!!!");
-        BOOST_CHECK_MESSAGE(newList.back().subscriptionType == SubscriptionType::VOLUNTARY
-                , "Expected VOLUNTARY topic!!!");
+        BOOST_CHECK_MESSAGE(newList.back().subscriptionType == SubscriptionType::OPTIONAL
+                , "Expected OPTIONAL topic!!!");
 
         topics_ = newList;
-        voluntaryListener_.reset(new UserNotificationListener(newList.back().id));
+        optionalListener_.reset(new UserNotificationListener(newList.back().id));
 
-        notificationManager_.addNotificationListener(newList.back().id, voluntaryListener_);
+        notificationManager_.addNotificationListener(newList.back().id, optionalListener_);
         notificationManager_.subscribeToTopic(newList.back().id, false);
     }
 
     ~TopicListener() {
-        if (voluntaryListener_) {
-            notificationManager_.removeNotificationListener(topics_.back().id, voluntaryListener_);
+        if (optionalListener_) {
+            notificationManager_.removeNotificationListener(topics_.back().id, optionalListener_);
             notificationManager_.unsubscribeFromTopic(topics_.back().id, false);
         }
     }
 
 private:
     Topics topics_;
-    std::shared_ptr<UserNotificationListener> voluntaryListener_;
+    std::shared_ptr<UserNotificationListener> optionalListener_;
     INotificationManager& notificationManager_;
 };
 
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(BadSubscriber)
     BOOST_CHECK_THROW(notificationManager.removeNotificationListener("unknownId", mandatoryListener), UnavailableTopicException);
 }
 
-BOOST_AUTO_TEST_CASE(VoluntarySubscription)
+BOOST_AUTO_TEST_CASE(OptionalSubscription)
 {
     IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
     MockChannelManager channelManager;
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(VoluntarySubscription)
 
     Topic topic2;
     topic2.id = topicId2;
-    topic2.subscriptionType = VOLUNTARY;
+    topic2.subscriptionType = OPTIONAL;
 
     std::vector<Topic> topics = {topic1, topic2};
     NotificationSyncResponse response;
@@ -173,11 +173,11 @@ BOOST_AUTO_TEST_CASE(NotificationReceiving)
     manadatoryTopic.id = "aa11";
     manadatoryTopic.subscriptionType = SubscriptionType::MANDATORY;
 
-    Topic voluntaryTopic;
-    voluntaryTopic.id = "bb22";
-    voluntaryTopic.subscriptionType = SubscriptionType::VOLUNTARY;
+    Topic optionalTopic;
+    optionalTopic.id = "bb22";
+    optionalTopic.subscriptionType = SubscriptionType::OPTIONAL;
 
-    Topics topics{manadatoryTopic, voluntaryTopic};
+    Topics topics{manadatoryTopic, optionalTopic};
 
     SharedDataBuffer encodedData;
     AvroByteArrayConverter<BasicSystemNotification> systemNotificationContainer;
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(NotificationReceiving)
 
     Notification personalNotification1;
     personalNotification1.uid.set_null();
-    personalNotification1.topicId = voluntaryTopic.id;
+    personalNotification1.topicId = optionalTopic.id;
     personalNotification1.type = NotificationType::CUSTOM;
     personalNotification1.body = std::vector<uint8_t>(encodedData.first.get()
             , encodedData.first.get() + encodedData.second);
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(TopicsPersistence)
 
     Topic topic2;
     topic2.id = topicId2;
-    topic2.subscriptionType = VOLUNTARY;
+    topic2.subscriptionType = OPTIONAL;
 
     std::vector<Topic> topics = {topic1, topic2};
     NotificationSyncResponse response;

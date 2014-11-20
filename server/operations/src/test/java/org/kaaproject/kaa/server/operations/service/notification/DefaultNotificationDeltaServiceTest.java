@@ -172,7 +172,7 @@ public class DefaultNotificationDeltaServiceTest {
         TopicDto t3 = new TopicDto();
         t3.setId(T3);
         t3.setName(T3);
-        t3.setType(TopicTypeDto.VOLUNTARY);
+        t3.setType(TopicTypeDto.OPTIONAL);
         TopicDto t5 = new TopicDto();
         t5.setId(T5);
         t5.setName(T5);

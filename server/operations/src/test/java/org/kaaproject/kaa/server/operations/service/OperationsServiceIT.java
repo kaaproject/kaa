@@ -153,7 +153,7 @@ public class OperationsServiceIT extends AbstractTest {
     private ProfileSchema profileSchema;
     private ProfileFilterDto profileFilter;
     private TopicDto mandatoryTopicDto;
-    private TopicDto voluntaryTopicDto;
+    private TopicDto optionalTopicDto;
 
     private final GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
 
@@ -302,17 +302,17 @@ public class OperationsServiceIT extends AbstractTest {
         mandatoryTopicDto.setType(TopicTypeDto.MANDATORY);
         mandatoryTopicDto = topicService.saveTopic(mandatoryTopicDto);
 
-        voluntaryTopicDto = new TopicDto();
-        voluntaryTopicDto.setApplicationId(applicationDto.getId());
-        voluntaryTopicDto.setName("Voluntary");
-        voluntaryTopicDto.setType(TopicTypeDto.VOLUNTARY);
-        voluntaryTopicDto = topicService.saveTopic(voluntaryTopicDto);
+        optionalTopicDto = new TopicDto();
+        optionalTopicDto.setApplicationId(applicationDto.getId());
+        optionalTopicDto.setName("Optional");
+        optionalTopicDto.setType(TopicTypeDto.OPTIONAL);
+        optionalTopicDto = topicService.saveTopic(optionalTopicDto);
 
 
         List<EndpointGroupDto> groups =  endpointService.findEndpointGroupsByAppId(applicationDto.getId());
         for(EndpointGroupDto group : groups){
             endpointService.addTopicToEndpointGroup(group.getId(), mandatoryTopicDto.getId());
-            endpointService.addTopicToEndpointGroup(group.getId(), voluntaryTopicDto.getId());
+            endpointService.addTopicToEndpointGroup(group.getId(), optionalTopicDto.getId());
         }
 
         NotificationSchemaDto userSchemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(applicationDto.getId(), NotificationTypeDto.USER, 1);
@@ -325,10 +325,10 @@ public class OperationsServiceIT extends AbstractTest {
         notificationService.saveNotification(mNotificationDto);
 
         NotificationDto vNotificationDto = new NotificationDto();
-        vNotificationDto.setTopicId(voluntaryTopicDto.getId());
+        vNotificationDto.setTopicId(optionalTopicDto.getId());
         vNotificationDto.setSchemaId(userSchemaDto.getId());
         vNotificationDto.setType(NotificationTypeDto.USER);
-        vNotificationDto.setBody("{\"message\": \"voluntary\"}".getBytes(Charset.forName("UTF-8")));
+        vNotificationDto.setBody("{\"message\": \"optional\"}".getBytes(Charset.forName("UTF-8")));
         notificationService.saveNotification(vNotificationDto);
 
     }
@@ -526,7 +526,7 @@ public class OperationsServiceIT extends AbstractTest {
     }
 
     @Test
-    public void basicVoluntaryNotificationsTest() throws GetDeltaException, IOException {
+    public void basicOptionalNotificationsTest() throws GetDeltaException, IOException {
         basicRegistrationTest();
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
@@ -540,7 +540,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         NotificationSyncRequest nfSyncRequest = new NotificationSyncRequest();
         nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
-        SubscriptionCommand command = new SubscriptionCommand(voluntaryTopicDto.getId(), SubscriptionCommandType.ADD);
+        SubscriptionCommand command = new SubscriptionCommand(optionalTopicDto.getId(), SubscriptionCommandType.ADD);
         nfSyncRequest.setSubscriptionCommands(Collections.singletonList(command));
         request.setNotificationSyncRequest(nfSyncRequest);
 
@@ -551,7 +551,7 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSyncResponse().getResponseStatus());
         Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSyncResponse().getAppStateSeqNumber());
         Assert.assertNotNull(response.getNotificationSyncResponse().getNotifications());
-        //Mandatory + Voluntary notification
+        //Mandatory + Optional notification
         Assert.assertEquals(2, response.getNotificationSyncResponse().getNotifications().size());
     }
 

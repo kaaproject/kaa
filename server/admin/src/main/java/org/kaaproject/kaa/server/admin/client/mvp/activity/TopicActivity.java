@@ -86,7 +86,7 @@ public class TopicActivity
     @Override
     protected void onSave() {
         entity.setName(detailsView.getName().getValue());
-        entity.setType(detailsView.getMandatory().getValue() ? TopicTypeDto.MANDATORY : TopicTypeDto.VOLUNTARY);
+        entity.setType(detailsView.getMandatory().getValue() ? TopicTypeDto.MANDATORY : TopicTypeDto.OPTIONAL);
         entity.setDescription(detailsView.getDescription().getValue());
     }
 

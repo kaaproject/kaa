@@ -33,7 +33,7 @@ namespace kaa {
  * <p>Interface for the notification delivery system.</p>
  *
  * <p>Responsible for processing received topic/notification updates,
- * subscription to voluntary topic updates and unsubscription from them.</p>
+ * subscription to optional topic updates and unsubscription from them.</p>
  *
  * @author Denis Kimcherenko
  *
@@ -72,7 +72,7 @@ public:
 
     /**
      * <p>Add listener to receive all notifications (both for mandatory and
-     * voluntary topics).</p>
+     * optional topics).</p>
      *
      * @param listener The listener to receive notifications.
      *
@@ -83,10 +83,10 @@ public:
     /**
      * <p>Add listener to receive notifications relating to the specified topic.</p>
      *
-     * <p>Listener(s) for voluntary topics may be added/removed irrespective to
+     * <p>Listener(s) for optional topics may be added/removed irrespective to
      * whether subscription was already or not.</p>
      *
-     * @param topicId  Id of topic (either mandatory or voluntary).
+     * @param topicId  Id of topic (either mandatory or optional).
      * @param listener The listener to receive notifications.
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided.
@@ -97,7 +97,7 @@ public:
 
     /**
      * <p>Remove listener receiving all notifications (both for mandatory and
-     * voluntary topics).</p>
+     * optional topics).</p>
      *
      * @param listener Listener to receive notifications
      *
@@ -108,10 +108,10 @@ public:
     /**
      * <p>Remove listener receiving notifications for the specified topic.</p>
      *
-     * <p>Listener(s) for voluntary topics may be added/removed irrespective to
+     * <p>Listener(s) for optional topics may be added/removed irrespective to
      * whether subscription was already or not.</p>
      *
-     * @param topicId Id of topic (either mandatory or voluntary).
+     * @param topicId Id of topic (either mandatory or optional).
      * @param listener Listener to receive notifications.
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided.
@@ -121,14 +121,14 @@ public:
     virtual void removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener) = 0;
 
     /**
-     * <p>Subscribe to notifications relating to the specified voluntary topic.</p>
+     * <p>Subscribe to notifications relating to the specified optional topic.</p>
      *
-     * @param topicId Id of a voluntary topic.
+     * @param topicId Id of a optional topic.
      * @param forceSync Define whether current subscription update should be
      * accepted immediately (see @link sync() @endlink).
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't voluntary.
+     * topic isn't optional.
      *
      * @see sync()
      */
@@ -136,30 +136,30 @@ public:
 
     /**
      * <p>Subscribe to notifications relating to the specified list of
-     * voluntary topics.</p>
+     * optional topics.</p>
      *
-     * @param topicIds List of voluntary topic id.
+     * @param topicIds List of optional topic id.
      * @param forceSync Define whether current subscription update should be
      * accepted immediately (see @link sync() @endlink).
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't voluntary.
+     * topic isn't optional.
      *
      * @see sync()
      */
     virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync) = 0;
 
     /**
-     * <p>Unsubscribe from notifications relating to the specified voluntary topic.</p>
+     * <p>Unsubscribe from notifications relating to the specified optional topic.</p>
      *
      * <p>All previously added listeners will be removed automatically.</p>
      *
-     * @param topicId Id of a voluntary topic.
+     * @param topicId Id of a optional topic.
      * @param forceSync Define whether current subscription update should be
      * accepted immediately (see @link sync() @endlink).
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't voluntary.
+     * topic isn't optional.
      *
      * @see sync()
      */
@@ -167,23 +167,23 @@ public:
 
     /**
      * <p>Unsubscribe from notifications relating to the specified list of
-     * voluntary topics.</p>
+     * optional topics.</p>
      *
      * <p>All previously added listeners will be removed automatically.</p>
      *
-     * @param topicIds List of voluntary topic id.
+     * @param topicIds List of optional topic id.
      * @param forceSync Define whether current subscription update should be
      * accepted immediately (see {@link sync() @endlink).
      *
      * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't voluntary.
+     * topic isn't optional.
      *
      * @see sync()
      */
     virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync) = 0;
 
     /**
-     * <p>Accept voluntary subscription changes.</p>
+     * <p>Accept optional subscription changes.</p>
      *
      * <p>Should be used after all @link subscribeToTopic() @endlink,
      * @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink,
@@ -191,16 +191,16 @@ public:
      * <i>forceSync</i> set to <i>false</i>.</p>
      *
      * <p>Use it as a convenient way to make different consequent changes in
-     * the voluntary subscription:</p>
+     * the optional subscription:</p>
      * @code
      *  NotificationManager notificationManager = kaaClient.getNotificationManager();
      *
      *  // Make subscription changes
      *  notificationManager.subscribeToTopics(Arrays.asList(
-     *          "voluntary_topic1", "voluntary_topic2", "voluntary_topic3"), false);
-     *  notificationManager.unsubscribeFromTopic("voluntary_topic4", false);
+     *          "optional_topic1", "optional_topic2", "optional_topic3"), false);
+     *  notificationManager.unsubscribeFromTopic("optional_topic4", false);
      *
-     *  // Add listeners for voluntary topics (optional)
+     *  // Add listeners for optional topics (optional)
      *
      *  // Commit changes
      *  notificationManager.sync();
