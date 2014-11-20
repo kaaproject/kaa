@@ -15,7 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import javax.persistence.Column;
 
 public final class ModelConstants {
 

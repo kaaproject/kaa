@@ -445,6 +445,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/appcompat-v7/**</exclude>
                         <exclude>**/support-v4/**</exclude>
                         <exclude>**/bin/**</exclude>
+                        <exclude>**/thirdparty/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -476,6 +477,11 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                <artifactId>mongo</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -531,6 +537,13 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>dao</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                <artifactId>mongo</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>

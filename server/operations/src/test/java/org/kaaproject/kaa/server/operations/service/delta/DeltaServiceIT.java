@@ -63,9 +63,8 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointGroupState;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -73,6 +72,9 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
+import org.kaaproject.kaa.server.common.dao.mongo.model.EndpointGroupState;
+import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointProfile;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
 import org.kaaproject.kaa.server.operations.service.OperationsServiceIT;
@@ -164,8 +166,8 @@ public class DeltaServiceIT {
     private Application application;
     private ProfileSchema profileSchema;
     private ProfileFilterDto profileFilter;
-    private EndpointProfile endpointProfile;
-    private EndpointConfiguration endpointConfiguration;
+    private MongoEndpointProfile endpointProfile;
+    private MongoEndpointConfiguration endpointConfiguration;
     private byte[] endpointConfigurationBytes;
     private ConfigurationSchema confSchema;
 
@@ -251,10 +253,10 @@ public class DeltaServiceIT {
         ConfigurationDto confDto = configurationService.findConfigurationByEndpointGroupIdAndVersion(egAllId, CONF_SCHEMA_VERSION);
         cfAllId = confDto.getId();
 
-        endpointConfiguration = new EndpointConfiguration();
+        endpointConfiguration = new MongoEndpointConfiguration();
         endpointConfiguration.setConfiguration(confDto.getBody().getBytes(UTF_8));
         endpointConfiguration.setConfigurationHash(EndpointObjectHash.fromSHA1(confDto.getBody()).getData());
-        endpointConfiguration = endpointConfigurationDao.save(endpointConfiguration);
+        endpointConfiguration = (MongoEndpointConfiguration)endpointConfigurationDao.save(endpointConfiguration);
         assertNotNull(endpointConfiguration);
         assertNotNull(endpointConfiguration.getId());
 
@@ -263,7 +265,7 @@ public class DeltaServiceIT {
         egs.setEndpointGroupId(egAllId);
         egs.setProfileFilterId(pfAllId);
 
-        endpointProfile = new EndpointProfile();
+        endpointProfile = new MongoEndpointProfile();
         endpointProfile.setProfile((DBObject) JSON.parse(PROFILE_JSON));
         endpointProfile.setProfileHash(EndpointObjectHash.fromSHA1(PROFILE_BYTES).getData());
         endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());
@@ -271,7 +273,7 @@ public class DeltaServiceIT {
         endpointProfile.setProfileVersion(PROFILE_VERSION);
         endpointProfile.setCfGroupState(Collections.singletonList(egs));
         endpointProfile.setNfGroupState(Collections.singletonList(egs));
-        endpointProfile = endpointProfileDao.save(endpointProfile);
+        endpointProfile = (MongoEndpointProfile)endpointProfileDao.save(endpointProfile);
         assertNotNull(endpointProfile);
         assertNotNull(endpointProfile.getId());
     }

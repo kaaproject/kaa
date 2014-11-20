@@ -19,7 +19,6 @@ package org.kaaproject.kaa.examples.robotrun.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaa.config.Profile;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.profile.AbstractProfileContainer;
 import org.kaaproject.kaa.examples.robotrun.controller.Controller.ControllerCallback;
@@ -36,10 +35,9 @@ import org.kaaproject.kaa.examples.robotrun.gen.event.EntityType;
 import org.kaaproject.kaa.examples.robotrun.labyrinth.Cell;
 import org.kaaproject.kaa.examples.robotrun.labyrinth.Direction;
 import org.kaaproject.kaa.examples.robotrun.labyrinth.Labyrinth;
+import org.kaaproject.kaa.schema.base.Profile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import config.system.ProfileProperty;
 
 public abstract class Launcher implements StateCallback, ControllerCallback, ErrorCallback {
 
@@ -177,9 +175,7 @@ public abstract class Launcher implements StateCallback, ControllerCallback, Err
 
         @Override
         public Profile getProfile() {
-            List<ProfileProperty> props = new ArrayList<>();
-            props.add(new ProfileProperty("propName", "propValue"));
-            return new Profile(props);
+            return new Profile();
         }
 
     }

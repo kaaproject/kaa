@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2014 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+    
+     <declare-styleable name="Thermostat">
+        <attr name="thumb" format="reference" />
+        <attr name="thumbOffset" format="dimension" />
+        <attr name="max" format="integer" />
+        <attr name="progressWidth" format="dimension" />
+        <attr name="arcWidth" format="dimension" />
+        <attr name="progress" format="integer" />
+        <attr name="rotation" format="integer" />
+        <attr name="startAngle" format="integer" />
+        <attr name="sweepAngle" format="integer" />
+        <attr name="roundEdges" format="boolean" />
+        <attr name="touchInside" format="boolean" />
+        <attr name="clockwise" format="boolean" />
+        <attr name="enableBlur" format="boolean" />
+        <attr name="tempMin" format="integer" />
+        <attr name="tempMax" format="integer" />
+        <attr name="coolingText" format="string" />
+        <attr name="heatingText" format="string" />
+        <attr name="arcColorCold" format="color" />
+        <attr name="progressColorCold" format="color" />
+        <attr name="backgroundColorCold" format="color" />
+        <attr name="arcColor" format="color" />
+        <attr name="progressColor" format="color" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="arcColorHeat" format="color" />
+        <attr name="progressColorHeat" format="color" />
+        <attr name="backgroundColorHeat" format="color" />
+        <attr name="thumbsColor" format="color" />
+        <attr name="thumbsGlowColor" format="color" />
+        <attr name="controlsColor" format="color" />
+    </declare-styleable>
+    
+    <declare-styleable name="ThermostatTheme">
+        <attr name="thermostatStyle" format="reference"></attr>        
+    </declare-styleable>
+    
+    <declare-styleable name="TextViewPlus">
+        <attr name="customFont" format="string"/>
+    </declare-styleable>    
+    
+</resources>

@@ -22,8 +22,8 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
@@ -53,11 +53,11 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
-import org.kaaproject.kaa.server.common.dao.model.mongo.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,15 +78,13 @@ public class EndpointServiceImpl implements EndpointService {
     @Autowired
     private ProfileFilterDao<ProfileFilter> profileFilterDao;
     @Autowired
-    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
-    @Autowired
-    private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
-    @Autowired
-    private EndpointUserDao<EndpointUser> endpointUserDao;
-    @Autowired
     private HistoryService historyService;
     @Autowired
     private EndpointUserVerifierResolver endpointUserVerifierResolver;
+    
+    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
+    private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
+    private EndpointUserDao<EndpointUser> endpointUserDao;
 
     @Override
     @Transactional
@@ -219,7 +217,7 @@ public class EndpointServiceImpl implements EndpointService {
     public EndpointConfigurationDto saveEndpointConfiguration(EndpointConfigurationDto endpointConfigurationDto) {
         validateObject(endpointConfigurationDto, "Can't save endpoint configuration object. Incorrect endpoint configuration object."
                 + endpointConfigurationDto);
-        return getDto(endpointConfigurationDao.save(new EndpointConfiguration(endpointConfigurationDto)));
+        return getDto(endpointConfigurationDao.save(endpointConfigurationDto));
     }
 
     @Override
@@ -252,13 +250,13 @@ public class EndpointServiceImpl implements EndpointService {
         if (isBlank(endpointProfileDto.getId())) {
             if (endpointProfileDao.getCountByKeyHash(keyHash) == 0) {
                 LOG.debug("Register new endpoint profile.");
-                dto = getDto(endpointProfileDao.save(new EndpointProfile(endpointProfileDto)));
+                dto = getDto(endpointProfileDao.save(endpointProfileDto));
             } else {
                 EndpointProfile storedProfile = endpointProfileDao.findByKeyHash(keyHash);
                 if(Arrays.equals(storedProfile.getEndpointKey(), endpointProfileDto.getEndpointKey())){
                     LOG.debug("Got register profile for already existing profile {}. Will overwrite existing profile!", keyHash);
                     endpointProfileDto.setId(storedProfile.getId());
-                    dto = getDto(endpointProfileDao.save(new EndpointProfile(endpointProfileDto)));
+                    dto = getDto(endpointProfileDao.save(endpointProfileDto));
                 }else{
                     LOG.warn("Endpoint profile with key hash {} already exists.", keyHash);
                     throw new DatabaseProcessingException("Can't save endpoint profile with existing key hash.");
@@ -266,7 +264,7 @@ public class EndpointServiceImpl implements EndpointService {
             }
         } else {
             LOG.debug("Update endpoint profile with id [{}]", endpointProfileDto.getId());
-            dto = getDto(endpointProfileDao.save(new EndpointProfile(endpointProfileDto)));
+            dto = getDto(endpointProfileDao.save(endpointProfileDto));
         }
         return dto;
     }
@@ -297,7 +295,7 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUserDto.setExternalId(userExternalId);
             endpointUserDto.setUsername(userExternalId);
             endpointUserDto.setAccessToken(userAccessToken);
-            endpointUser = endpointUserDao.save(new EndpointUser(endpointUserDto));
+            endpointUser = endpointUserDao.save(endpointUserDto);
         }
 
         List<String> endpointIds = endpointUser.getEndpointIds();
@@ -382,7 +380,7 @@ public class EndpointServiceImpl implements EndpointService {
         if (isValidObject(endpointUserDto)) {
             EndpointUser user = endpointUserDao.findByExternalIdAndTenantId(endpointUserDto.getExternalId(), endpointUserDto.getTenantId());
             if (user == null || user.getId().equals(endpointUserDto.getId())) {
-                endpointUser = getDto(endpointUserDao.save(new EndpointUser(endpointUserDto)));
+                endpointUser = getDto(endpointUserDao.save(endpointUserDto));
             } else {
                 throw new IncorrectParameterException("Can't save endpoint user with same external id");
             }
@@ -443,5 +441,17 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     public List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId) {
         return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUserId));
+    }
+
+    public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
+        this.endpointProfileDao = endpointProfileDao;
+    }
+
+    public void setEndpointConfigurationDao(EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao) {
+        this.endpointConfigurationDao = endpointConfigurationDao;
+    }
+
+    public void setEndpointUserDao(EndpointUserDao<EndpointUser> endpointUserDao) {
+        this.endpointUserDao = endpointUserDao;
     }
 }
