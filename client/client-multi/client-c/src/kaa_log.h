@@ -41,17 +41,17 @@ typedef enum kaa_log_level_t {
     /**
      * Used to switch off logging.
      */
-    KAA_LOG_NONE,
+    KAA_LOG_NONE    = 0,
 
     /**
      * Used to configure the log level.
      */
-    KAA_LOG_FATAL,
-    KAA_LOG_ERROR,
-    KAA_LOG_WARN,
-    KAA_LOG_INFO,
-    KAA_LOG_DEBUG,
-    KAA_LOG_TRACE,
+    KAA_LOG_FATAL   = 1,
+    KAA_LOG_ERROR   = 2,
+    KAA_LOG_WARN    = 3,
+    KAA_LOG_INFO    = 4,
+    KAA_LOG_DEBUG   = 5,
+    KAA_LOG_TRACE   = 6,
 
     /**
      * <p>Used for the service purpose.</p>

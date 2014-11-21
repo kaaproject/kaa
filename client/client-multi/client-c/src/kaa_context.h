@@ -50,13 +50,14 @@ typedef struct kaa_context_t {
 kaa_error_t kaa_create_context(kaa_context_t ** context);
 kaa_error_t kaa_destroy_context(kaa_context_t * context);
 
-// Kaa channel manager API
-kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **);
-void kaa_channel_manager_destroy(kaa_context_t *context);
-void kaa_channel_manager_set_sync_handler(kaa_context_t *context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[]);
-void kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa_sync_all_t handler);
-kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_context_t *context, kaa_service_t service);
-kaa_sync_all_t kaa_channel_manager_get_sync_all_handler(kaa_context_t *context);
+/** Channel manager API */
+kaa_error_t     kaa_channel_manager_create(kaa_channel_manager_t **);
+void            kaa_channel_manager_destroy(kaa_context_t *context);
+
+kaa_error_t     kaa_channel_manager_set_sync_handler(kaa_context_t *context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[]);
+kaa_error_t     kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa_sync_all_t handler);
+kaa_sync_t      kaa_channel_manager_get_sync_handler(kaa_context_t *context, kaa_service_t service);
+kaa_sync_all_t  kaa_channel_manager_get_sync_all_handler(kaa_context_t *context);
 
 CLOSE_EXTERN
 #endif /* KAA_CONTEXT_H_ */

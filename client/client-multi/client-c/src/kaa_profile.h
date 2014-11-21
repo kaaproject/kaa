@@ -24,6 +24,7 @@ extern "C" {
 #define CLOSE_EXTERN
 #endif
 
+#include <stdbool.h>
 #include "kaa_error.h"
 #include "gen/kaa_profile_gen.h"
 #include "gen/kaa_endpoint_gen.h"
@@ -35,7 +36,7 @@ kaa_error_t                     kaa_create_profile_manager(kaa_profile_manager_t
 void                            kaa_destroy_profile_manager(kaa_profile_manager_t *);
 
 kaa_error_t                     kaa_profile_update_profile(void *, kaa_profile_t *);
-int                             kaa_profile_need_profile_resync(void *);
+bool                            kaa_profile_need_profile_resync(void *);
 kaa_profile_sync_request_t *    kaa_profile_compile_request(void *);
 void                            kaa_profile_handle_sync(void *, kaa_profile_sync_response_t *);
 CLOSE_EXTERN

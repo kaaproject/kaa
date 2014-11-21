@@ -26,6 +26,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "kaa_error.h"
 
@@ -34,14 +35,18 @@ typedef enum kaa_server_response_result_t {
     KAA_FAILURE
 } kaa_server_response_result_t;
 
-#define KAA_NON_VOID(p, E) \
+#define KAA_NOT_VOID(p, E) \
     if ((void *)0 == p) { return E; }
 
-#define KAA_BOOL                int8_t
-#define KAA_INT32T              int32_t
-#define KAA_INT64T              int64_t
+#define KAA_CHECK_RET_ERR_CODE(Exp) \
+    do { \
+        kaa_error_t e = Exp; \
+        if (e != KAA_ERR_NONE) { \
+            return e; \
+        } \
+    } while (0);\
 
-typedef void (* user_response_handler_t)(KAA_BOOL is_attached);
+typedef void (* user_response_handler_t)(bool is_attached);
 typedef void (* event_callback_t)(const char * event_fqn, const char * event_data, size_t event_data_size);
 
 typedef enum {

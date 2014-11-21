@@ -29,5 +29,7 @@ extern "C" {
 
 typedef struct kaa_channel_manager_t kaa_channel_manager_t;
 
+
+
 CLOSE_EXTERN
 #endif /* KAA_CHANNEL_MANAGER_H_ */

@@ -25,6 +25,7 @@ extern "C" {
 #endif
 
 #include "kaa_common.h"
+#include <stdbool.h>
 
 typedef struct kaa_list_t kaa_list_t;
 
@@ -53,7 +54,7 @@ size_t kaa_list_get_size(kaa_list_t * position);
 /**
  * Checks if there is an element after current position.
  */
-KAA_BOOL kaa_list_has_next(kaa_list_t * position);
+bool kaa_list_has_next(kaa_list_t * position);
 
 /**
  * Returns next element.
@@ -100,7 +101,7 @@ kaa_list_t * kaa_list_insert_after(kaa_list_t * position, void * data);
 /**
  * Return 0 if data doesn't match search criteria
  */
-typedef int (* match_predicate)(void *data);
+typedef bool (* match_predicate)(void *data);
 /**
  * Returns first element in list from given position where ((*pred)(data) != 0).
  * If nothing matched given criteria or list is empty NULL is returned.
