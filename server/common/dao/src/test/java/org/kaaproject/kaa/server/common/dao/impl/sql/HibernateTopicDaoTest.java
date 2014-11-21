@@ -53,9 +53,9 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testFindTopicsByAppIdAndType() {
-        Topic topic = generateTopic(null, TopicTypeDto.VOLUNTARY);
+        Topic topic = generateTopic(null, TopicTypeDto.OPTIONAL);
         Application app = topic.getApplication();
-        List<Topic> found = topicDao.findTopicsByAppIdAndType(app.getId().toString(), TopicTypeDto.VOLUNTARY);
+        List<Topic> found = topicDao.findTopicsByAppIdAndType(app.getId().toString(), TopicTypeDto.OPTIONAL);
         Assert.assertEquals(1, found.size());
         Assert.assertEquals(topic, found.get(0));
     }

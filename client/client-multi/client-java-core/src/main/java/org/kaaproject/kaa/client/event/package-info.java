@@ -59,7 +59,45 @@
  *      classFamily.sendEvent(new TestEvent(), target);
  *  }
  *  </pre>
+ *  
+ *  <h4>Sending bulk of events</h4>
+ *  Event blocks in sdk are identified by TransactionId key.<br>
+ *
+ *  Create new empty events block:
+ *  <pre>
+ *  {@code
+ *       TransactionId blockId = Kaa.getClient().getEventFamilyFactory().startEventsBlock();
+ *  }
+ *  </pre>
+ *
+ *   Events block can contain events from different event class families.<br>
+ *   Add events to a block:
+ *  <pre>
+ *  {@code
+ *       TestEvent event1 = new TestEvent();
+ *       TestEvent event2 = new TestEvent();
+ *       // Sending event1 to a concrete target and broadcasting event2 to all endpoints.
+ *       String target = "lZjEzq4E/D5aWjXYuG1N2sKYt/U="; // Target's public key hash.
+ *       classFamily.addEventToBlock(blockId, event1, target);
+ *       classFamily.addEventToBlock(blockId, event2);
+ *  }
+ *  </pre>
+ *   
+ *  If events block is completed use next call to send events:
+ *  <pre>
+ *  {@code
+ *       Kaa.getClient().getEventFamilyFactory().submitEventsBlock(blockId);
+ *  }
+ *  </pre>
+ *
+ *  In order to remove events block (events will not be sent) use:
+ *  <pre>
+ *  {@code
+ *       Kaa.getClient().getEventFamilyFactory().removeEventsBlock(blockId);
+ *  }
+ *  </pre>
  *  </p>
+ *  
  *  <p>
  *  <h3>Receiving an event</h3>
  *  <h4>Register event listener</h4>

@@ -34,12 +34,14 @@
 #include "kaa/event/EventTransport.hpp"
 #include "kaa/event/IEventDataProcessor.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
+#include "kaa/transact/AbstractTransactable.hpp"
 
 namespace kaa {
 
 class EventManager : public IEventManager
                    , public IEventListenersResolver
                    , public IEventDataProcessor
+                   , public AbstractTransactable<std::list<Event> >
 {
 public:
     EventManager(IKaaClientStateStoragePtr status)
@@ -53,7 +55,8 @@ public:
 
     virtual void produceEvent(const std::string& fqn
                             , const std::vector<std::uint8_t>& data
-                            , const std::string& target);
+                            , const std::string& target
+                            , TransactionIdPtr trxId);
 
     virtual void onEventsReceived(const EventSyncResponse::events_t& events);
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners);
@@ -75,6 +78,16 @@ public:
         if (eventTransport_ != nullptr && (!pendingEvents_.empty() || !eventListenersRequests_.empty())) {
             eventTransport_->sync();
         }
+    }
+
+    virtual TransactionIdPtr beginTransaction() {
+        return AbstractTransactable::beginTransaction();
+    }
+
+    virtual void commit(TransactionIdPtr trxId);
+
+    virtual void rollback(TransactionIdPtr trxId) {
+        AbstractTransactable::rollback(trxId);
     }
 private:
     struct EventListenersInfo {

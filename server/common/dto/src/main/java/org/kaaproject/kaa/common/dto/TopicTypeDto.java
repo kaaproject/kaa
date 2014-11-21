@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.common.dto;
 
 public enum TopicTypeDto {
-    MANDATORY, VOLUNTARY
+    MANDATORY, OPTIONAL
 }

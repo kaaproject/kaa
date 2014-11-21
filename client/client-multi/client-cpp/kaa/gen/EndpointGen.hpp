@@ -95,7 +95,7 @@ enum NotificationType {
 
 enum SubscriptionType {
     MANDATORY,
-    VOLUNTARY,
+    OPTIONAL,
 };
 
 enum SubscriptionCommandType {
@@ -2970,7 +2970,7 @@ template<> struct codec_traits<kaa::NotificationType> {
 
 template<> struct codec_traits<kaa::SubscriptionType> {
     static void encode(Encoder& e, kaa::SubscriptionType v) {
-		if (v < kaa::MANDATORY || v > kaa::VOLUNTARY)
+		if (v < kaa::MANDATORY || v > kaa::OPTIONAL)
 		{
 			std::ostringstream error;
 			error << "enum value " << v << " is out of bound for kaa::SubscriptionType and cannot be encoded";
@@ -2980,7 +2980,7 @@ template<> struct codec_traits<kaa::SubscriptionType> {
     }
     static void decode(Decoder& d, kaa::SubscriptionType& v) {
 		size_t index = d.decodeEnum();
-		if (index < kaa::MANDATORY || index > kaa::VOLUNTARY)
+		if (index < kaa::MANDATORY || index > kaa::OPTIONAL)
 		{
 			std::ostringstream error;
 			error << "enum value " << index << " is out of bound for kaa::SubscriptionType and cannot be decoded";

@@ -49,7 +49,7 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "enum",
  "name": "SubscriptionType",
- "symbols" : ["MANDATORY", "VOLUNTARY"]
+ "symbols" : ["MANDATORY", "OPTIONAL"]
 },
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
@@ -220,7 +220,7 @@
  "name": "Topic",
  "direction": "in",
   "fields": [
-  	 {"name": "id", "type": "string"},
+     {"name": "id", "type": "string"},
      {"name": "name", "type": "string"},
      {"name": "subscriptionType", "type": "org.kaaproject.kaa.common.endpoint.gen.SubscriptionType"}
  ]
@@ -415,12 +415,21 @@
      {"name": "requestId", "type": ["int", "null"]},
      {"name": "status", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
      {"name": "profileSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse", "null"]},
- 	 {"name": "configurationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse", "null"]},
- 	 {"name": "notificationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse", "null"]},
- 	 {"name": "userSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse", "null"]},
- 	 {"name": "eventSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse", "null"]},
+     {"name": "configurationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse", "null"]},
+     {"name": "notificationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse", "null"]},
+     {"name": "userSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse", "null"]},
+     {"name": "eventSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse", "null"]},
      {"name": "redirectSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse", "null"]},
      {"name": "logSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse", "null"]}
+ ]
+},
+{
+ "type": "record",
+ "name": "TopicSubscriptionInfo",
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "fields": [
+     {"name": "topicInfo", "type":"org.kaaproject.kaa.common.endpoint.gen.Topic"},
+     {"name": "seqNumber", "type": "int"}
  ]
 }
 ]

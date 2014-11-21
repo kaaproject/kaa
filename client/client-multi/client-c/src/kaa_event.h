@@ -37,6 +37,11 @@ void kaa_destroy_event_manager(kaa_event_manager_t *);
 kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId);
 void kaa_event_handle_sync(void *ctx, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
 
+kaa_trx_id kaa_event_create_transaction(void *context);
+void kaa_event_finish_transaction(void *context, kaa_trx_id trx_id);
+void kaa_event_remove_transaction(void *context, kaa_trx_id trx_id);
+void kaa_add_event_to_transaction(void *context, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
+
 void kaa_add_event(void *context, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
 void kaa_add_on_event_callback(kaa_event_manager_t *event_manager, const char *fqn, size_t fqn_length, event_callback_t callback);
 

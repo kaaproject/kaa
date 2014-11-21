@@ -28,6 +28,9 @@
 		<fileSet>
 			<directory>${project.basedir}/kaa</directory>
 			<outputDirectory>kaa</outputDirectory>
+			<excludes>
+			    <exclude>event/gen/BasicEventFamily.hpp</exclude>
+			</excludes>
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/Modules</directory>

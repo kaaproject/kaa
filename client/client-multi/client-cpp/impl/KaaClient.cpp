@@ -74,7 +74,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 #ifdef KAA_USE_EVENTS
     registrationManager_.reset(new EndpointRegistrationManager(status_));
     eventManager_.reset(new EventManager(status_));
-    eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_));
+    eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_, *eventManager_));
 #endif
 
 #ifdef KAA_USE_NOTIFICATIONS

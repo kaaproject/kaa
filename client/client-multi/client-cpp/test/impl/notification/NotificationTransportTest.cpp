@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 
     Topic topic1;
     topic1.id = topicId1;
-    topic1.subscriptionType = VOLUNTARY;
+    topic1.subscriptionType = OPTIONAL;
 
     Topic topic2;
     topic2.id = topicId2;
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 
     Topic topic4;
     topic4.id = topicId4;
-    topic4.subscriptionType = VOLUNTARY;
+    topic4.subscriptionType = OPTIONAL;
 
     std::vector<Topic> topics = {topic1, topic2, topic3, topic4};
 

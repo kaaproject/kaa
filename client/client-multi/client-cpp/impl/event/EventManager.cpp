@@ -44,7 +44,8 @@ void EventManager::registerEventFamily(IEventFamily* eventFamily)
 
 void EventManager::produceEvent(const std::string& fqn
                               , const std::vector<std::uint8_t>& data
-                              , const std::string& target)
+                              , const std::string& target
+                              , TransactionIdPtr trxId)
 {
     if (fqn.empty() || data.empty()) {
         KAA_LOG_WARN("Failed to process outgoing event: bad input data");
@@ -55,13 +56,6 @@ void EventManager::produceEvent(const std::string& fqn
                     % fqn % (target.empty() ? "broadcast" : target) % data.size());
 
     Event event;
-
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceGuard_);
-    event.seqNum = eventSequenceNumber_++;
-    status_->setEventSequenceNumber(eventSequenceNumber_);
-
-    KAA_UNLOCK(lock);
-
     event.eventClassFQN = fqn;
     event.eventData.assign(data.begin(), data.end());
 
@@ -70,6 +64,17 @@ void EventManager::produceEvent(const std::string& fqn
     } else {
         event.target.set_string(target);
     }
+
+    if (trxId.get() != nullptr) {
+        getContainerByTrxId(trxId).push_back(event);
+        return;
+    }
+
+    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceGuard_);
+    event.seqNum = eventSequenceNumber_++;
+    status_->setEventSequenceNumber(eventSequenceNumber_);
+
+    KAA_UNLOCK(lock);
 
     KAA_LOG_TRACE(boost::format("New event %1% is produced for %2%") % fqn % target);
     {
@@ -184,6 +189,25 @@ std::string EventManager::findEventListeners(const std::list<std::string>& event
     }
 
     return requestId;
+}
+
+void EventManager::commit(TransactionIdPtr trxId)
+{
+    auto it = transactions_.find(trxId);
+    if (it != transactions_.end()) {
+        KAA_LOCK(pendingEventsGuard_);
+        std::list<Event> & events = it->second;
+        for (Event &e : events) {
+            e.seqNum = eventSequenceNumber_++;
+            pendingEvents_.push_back(e);
+            status_->setEventSequenceNumber(e.seqNum);
+        }
+        transactions_.erase(it);
+        KAA_UNLOCK(pendingEventsGuard_);
+        if (eventTransport_ != nullptr) {
+            eventTransport_->sync();
+        }
+    }
 }
 
 } /* namespace kaa */

@@ -30,6 +30,7 @@ extern "C" {
 #include "kaa_profile.h"
 #include "kaa_bootstrap.h"
 #include "kaa_status.h"
+#include "kaa_logging.h"
 #include "kaa_channel_manager.h"
 
 typedef struct kaa_context_t {
@@ -41,6 +42,9 @@ typedef struct kaa_context_t {
     kaa_bootstrap_manager_t *   bootstrap_manager;
     kaa_status_t            *   status;
     kaa_channel_manager_t   *   channel_manager;
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    kaa_log_collector_t     *   log_collector;
+#endif
 } kaa_context_t;
 
 kaa_error_t kaa_create_context(kaa_context_t ** context);

@@ -276,7 +276,7 @@ void ClientParameter<DetailedTopicStates>::read(const std::string &strValue)
             DetailedTopicState ts;
             ts.topicId = convertFromByteArrayString(topicId);
             ts.topicName = convertFromByteArrayString(topicName);
-            ts.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY : SubscriptionType::VOLUNTARY);
+            ts.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY : SubscriptionType::OPTIONAL);
             ts.sequenceNumber = topicSN;
 
             value_.insert(std::make_pair(ts.topicId, ts));
