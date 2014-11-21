@@ -19,12 +19,17 @@
 #include "kaa_status.h"
 #include "kaa_test.h"
 #include "kaa_mem.h"
+#include "kaa_log.h"
+
 
 #include "kaa_context.h"
 #include "kaa_profile.h"
 #include "gen/kaa_profile_gen.h"
 
-void test_profile_update() {
+void test_profile_update()
+{
+    KAA_TRACE_IN;
+
     kaa_context_t * context = NULL;
     kaa_error_t err_code = kaa_create_context(&context);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
@@ -52,6 +57,8 @@ void test_profile_update() {
 
 int main(int argc, char **argv)
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
     test_profile_update();
 
     return 0;

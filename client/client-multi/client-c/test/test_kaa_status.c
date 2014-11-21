@@ -17,6 +17,8 @@
 #include "kaa_status.h"
 #include "kaa_test.h"
 #include "kaa_mem.h"
+#include "kaa_log.h"
+
 
 #include <string.h>
 #include <stdio.h>
@@ -79,6 +81,8 @@ void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size)
 
 void test_create_status()
 {
+    KAA_TRACE_IN;
+
     kaa_status_t *status;
     kaa_error_t err_code = kaa_create_status(&status);
 
@@ -90,6 +94,8 @@ void test_create_status()
 
 void test_status_persistense()
 {
+    KAA_TRACE_IN;
+
     kaa_status_t *status;
     kaa_error_t err_code = kaa_create_status(&status);
 
@@ -156,6 +162,8 @@ void test_status_persistense()
 
 int main(int argc, char **argv)
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
     remove(KAA_STATUS_STORAGE);
     test_create_status();
     test_status_persistense();
