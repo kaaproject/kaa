@@ -15,14 +15,19 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl;
 
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
+
 
 /**
  * The Interface EndpointUserDao.
  *
  * @param <T> the generic type
  */
-public interface EndpointUserDao<T> extends Dao<T> {
+public interface EndpointUserDao<T extends EndpointUser> extends Dao<T> {
 
+    T save(EndpointUserDto dto);
+    
     /**
      * Find user by external id and tenant id.
      *

@@ -20,6 +20,7 @@
 #include "kaa_context.h"
 #include "kaa_external.h"
 #include "kaa_defaults.h"
+#include "kaa_log.h"
 #include <string.h>
 
 static kaa_context_t * kaa_context_;
@@ -60,6 +61,10 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
 
 kaa_error_t kaa_init()
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
+    KAA_LOG_INFO(KAA_ERR_NONE, "Version: %s, commit hash: %s", BUILD_VERSION, BUILD_COMMIT_HASH);
+
     kaa_error_t result = kaa_create_context(&kaa_context_);
 
     char *pub_key_buffer;
@@ -75,6 +80,8 @@ kaa_error_t kaa_init()
 kaa_error_t kaa_deinit()
 {
     kaa_destroy_context(kaa_context_);
+
+    kaa_log_deinit();
     return KAA_ERR_NONE;
 }
 
@@ -107,6 +114,37 @@ void kaa_send_event(const char * fqn, size_t fqn_length, const char *event_data,
                 , event_target_size
         );
     }
+}
+
+kaa_trx_id kaa_start_event_block()
+{
+    return kaa_event_create_transaction(kaa_context_);
+}
+
+void kaa_event_add_to_transaction(kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size)
+{
+    if (kaa_is_endpoint_attached_to_user(kaa_context_->status)) {
+        kaa_add_event_to_transaction(
+                  kaa_context_
+                , trx_id
+                , fqn
+                , fqn_length
+                , event_data
+                , event_data_size
+                , event_target
+                , event_target_size
+        );
+    }
+}
+
+void kaa_send_events_block(kaa_trx_id trx_id)
+{
+    kaa_event_finish_transaction(kaa_context_, trx_id);
+}
+
+void kaa_remove_event_block(kaa_trx_id trx_id)
+{
+    kaa_event_remove_transaction(kaa_context_, trx_id);
 }
 
 void kaa_register_event_listener(const char *fqn, size_t fqn_length, event_callback_t listener)
@@ -167,6 +205,18 @@ size_t kaa_compile_request(kaa_sync_request_t **request_p, size_t service_count,
                     }
                     break;
                 }
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+                case KAA_SERVICE_LOGGING: {
+                    kaa_log_sync_request_t *log_request = kaa_logging_compile_request(kaa_context_);
+                    if (log_request) {
+                        request->log_sync_request->destruct(request->log_sync_request);
+                        KAA_FREE(request->log_sync_request);
+                        request->log_sync_request = kaa_create_record_log_sync_request_null_union_log_sync_request_branch();
+                        request->log_sync_request->data = log_request;
+                    }
+                    break;
+                }
+#endif
                 default:
                     break;
             }
@@ -237,6 +287,13 @@ void kaa_response_received(const char *buffer, size_t buffer_size)
         kaa_profile_handle_sync(kaa_context_, (kaa_profile_sync_response_t *)response->profile_sync_response->data);
     }
 
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    if (response->log_sync_response != NULL
+            && response->log_sync_response->type == KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_LOG_SYNC_REQUEST_BRANCH) {
+        kaa_logging_handle_sync(kaa_context_, (kaa_log_sync_response_t *)response->log_sync_response->data);
+    }
+#endif
+
     kaa_status_save(kaa_context_->status);
     response->destruct(response);
     KAA_FREE(response);
@@ -247,3 +304,22 @@ void kaa_set_profile(kaa_profile_t *profile_body)
     kaa_profile_update_profile(kaa_context_, profile_body);
 }
 
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+
+void kaa_init_log_storage(
+                    kaa_log_storage_t * storage
+                  , kaa_storage_status_t * status
+                  , kaa_log_upload_properties_t *properties
+                  , log_upload_decision_fn need_upl
+                  )
+{
+    kaa_init_log_collector(kaa_context_->log_collector, storage, properties, status, need_upl);
+}
+
+void kaa_add_log(kaa_user_log_record_t *entry)
+{
+    kaa_add_log_record(kaa_context_, entry);
+}
+
+#endif

@@ -19,6 +19,8 @@ package org.kaaproject.kaa.client.event;
 import java.io.IOException;
 import java.util.List;
 
+import org.kaaproject.kaa.client.transact.Transactable;
+import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
@@ -29,7 +31,7 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
  * @author Taras Lemkin
  *
  */
-public interface EventManager extends EventListenersResolver {
+public interface EventManager extends EventListenersResolver, Transactable {
 
     /**
      * Add event family object which can handle specified event.
@@ -47,6 +49,16 @@ public interface EventManager extends EventListenersResolver {
      * @param target    Event target, null for event broadcasting.
      */
     void produceEvent(String eventFqn, byte[] data, String target) throws IOException;
+
+    /**
+     * Creates an Event and passes it to OPS
+     *
+     * @param eventFqn  Fully qualified name of the Event
+     * @param data      Event data
+     * @param target    Event target, null for event broadcasting.
+     * @param trxId     Transaction Id of event
+     */
+    void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId) throws IOException;
 
     /**
      * Retrieves an event.

@@ -97,10 +97,22 @@ import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 public interface KaaChannelManager {
 
     /**
+     * Updates the manager by setting the channel to the specified {@link TransportType}.
+     *
+     * @param transport
+     *            the type of the transport which is going to receive updates using the specified channel.
+     * @param channel
+     *            the channel to be added.
+     * @see KaaDataChannel
+     *
+     */
+    void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException;
+
+    /**
      * Updates the manager by adding the channel.
      *
      * @param channel
-     *            channel to be added.
+     *            the channel to be added.
      * @see KaaDataChannel
      *
      */
@@ -109,11 +121,20 @@ public interface KaaChannelManager {
     /**
      * Updates the manager by removing the channel from the manager.
      *
-     * @param channel channel to be removed.
+     * @param channel the channel to be removed.
      * @see KaaDataChannel
      *
      */
     void removeChannel(KaaDataChannel channel);
+
+    /**
+     * Updates the manager by removing the channel from the manager.
+     *
+     * @param id the channel's id.
+     * @see KaaDataChannel
+     *
+     */
+    void removeChannel(String id);
 
     /**
      * Retrieves the list of current channels.
@@ -125,10 +146,10 @@ public interface KaaChannelManager {
     List<KaaDataChannel> getChannels();
 
     /**
-     * Retrieves the list of channels by the specific type (HTTP, HTTP_LP etc.).
+     * Retrieves a list of channels by the specific type (HTTP, HTTP_LP etc.).
      *
      * @param type type of the channel.
-     * @return the channels' list.
+     * @return a list of channels.
      *
      * @see ChannelType
      * @see KaaDataChannel
@@ -137,10 +158,10 @@ public interface KaaChannelManager {
     List<KaaDataChannel> getChannelsByType(ChannelType type);
 
     /**
-     * Retrieves the list of channels by the specific transport type.
+     * Retrieves a list of channels by the specific transport type.
      *
      * @param type the transport's type.
-     * @return the channels' list.
+     * @return a list of channels.
      *
      * @see TransportType
      * @see KaaDataChannel
@@ -190,4 +211,22 @@ public interface KaaChannelManager {
      *
      */
     void setConnectivityChecker(ConnectivityChecker checker);
+
+    /**
+     * Shuts down the manager and all registered channels. The instance can no longer be used.
+     *
+     */
+    void shutdown();
+
+    /**
+     * Pauses all active channels.
+     *
+     */
+    void pause();
+
+    /**
+     * Restores channels' activity.
+     *
+     */
+    void resume();
 }

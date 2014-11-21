@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
@@ -96,7 +97,7 @@ public class KaaClientPropertiesStateTest {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), getProperties());
 
         Topic topic1 = Topic.newBuilder().setId("1234").setName("testName")
-                .setSubscriptionType(SubscriptionType.VOLUNTARY).build();
+                .setSubscriptionType(SubscriptionType.OPTIONAL).build();
 
         Topic topic2 = Topic.newBuilder().setId("4321").setName("testName")
                 .setSubscriptionType(SubscriptionType.MANDATORY).build();
@@ -128,5 +129,25 @@ public class KaaClientPropertiesStateTest {
         expected.remove(topic1.getId());
 
         assertEquals(expected, state.getNfSubscriptions());
+    }
+
+    @Test
+    public void testSDKPropertiesUpdate() throws IOException {
+        KaaClientProperties props = getProperties();
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), props);
+
+        Assert.assertFalse(state.isRegistered());
+
+        state.setRegistered(true);
+        state.persist();
+
+        Assert.assertTrue(state.isRegistered());
+
+        KaaClientProperties newProps = getProperties();
+        newProps.setProperty(KaaClientProperties.LOG_SCHEMA_VERSION, Integer.toString(100500));
+
+        KaaClientState newState = new KaaClientPropertiesState(new FilePersistentStorage(), newProps);
+
+        Assert.assertFalse(newState.isRegistered());
     }
 }

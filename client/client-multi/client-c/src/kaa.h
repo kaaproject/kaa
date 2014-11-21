@@ -28,8 +28,9 @@ extern "C" {
 #include "kaa_external.h"
 #include "kaa_error.h"
 #include "kaa_profile.h"
-#include "gen/kaa_endpoint_gen.h"
+#include "kaa_logging.h"
 
+#include "gen/kaa_endpoint_gen.h"
 #include <stddef.h>
 
 /**
@@ -110,7 +111,7 @@ void kaa_attach_to_user(const char *user_external_id, const char * user_access_t
  */
 
 /**
- * Send raw event<br>
+ * Sends raw event<br>
  * <br>
  * It is not recommended to use this function directly. Instead you should use
  * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
@@ -120,6 +121,37 @@ void kaa_send_event(const char * fqn, size_t fqn_length, const char *event_data,
 #undef kaa_broadcast_event
 #endif
 #define kaa_broadcast_event(fqn, fqn_length, event_data, event_data_size) kaa_send_event(fqn, fqn_length, event_data,event_data_size, NULL, 0)
+
+/**
+ * Adds a raw event to the transaction<br>
+ * <br>
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (kaa_add_*_event_to_block(...))
+ */
+void kaa_event_add_to_transaction(kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size);
+
+/**
+ * Start a new event block<br>
+ * <br>
+ * Returns a new id which must be used to add an event to the block.
+ * \return new events block id.
+ */
+kaa_trx_id kaa_start_event_block();
+
+/**
+ * Send all the events from the event block at once.<br>
+ * <br>
+ * The event block is identified by the given trx_id.
+ * \param trx_id    The ID of the event block to be sent.
+ */
+void kaa_send_event_block(kaa_trx_id trx_id);
+
+/**
+ * Removes the event block without sending events.<br>
+ * <br>
+ * \param trx_id    The ID of the event block to be removed.
+ */
+void kaa_remove_event_block(kaa_trx_id trx_id);
 
 /**
  * Register listener to an event.<br>
@@ -189,6 +221,45 @@ void    kaa_serialize_request(kaa_sync_request_t *request, char *buffer, size_t 
  * Process data received from Operations server.
  */
 void    kaa_response_received(const char *buffer, size_t buffer_size);
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+
+/**
+ * Log management
+ */
+
+/**
+ * Provide log storage to Kaa.<br>
+ * <br>
+ *
+ * \param i_storage     Structure containing pointers to functions which are used
+ * to manage log storage.
+ * \param i_status      Structure containing pointers to functions describing
+ * state of the storage (occupied size, records count etc.)
+ * \param upload_properties     Properties which are used to control log storage
+ * size and log upload neediness.
+ * \param is_upload_needed  Pointer to function which will be used to decide
+ * which operation (NO_OPERATION, UPLOAD or CLEANUP) should be performed on log storage.
+ */
+void   kaa_init_log_storage(
+                    kaa_log_storage_t * i_storage
+                  , kaa_storage_status_t * i_status
+                  , kaa_log_upload_properties_t * upload_properties
+                  , log_upload_decision_fn is_upload_needed
+                  );
+
+/**
+ * Add log record to log storage.<br>
+ * <br>
+ * Use this to add the log entry to the predefined log storage.<br>
+ * Log record will be serialized and pushed to a log storage interface via
+ * <pre>
+ * void            (* add_log_record)  (kaa_log_entry_t * record);
+ * </pre>
+ * See also \see kaa_log_storage_t
+ */
+void    kaa_add_log(kaa_user_log_record_t *entry);
+#endif
 
 CLOSE_EXTERN
 #endif /* KAA_H_ */

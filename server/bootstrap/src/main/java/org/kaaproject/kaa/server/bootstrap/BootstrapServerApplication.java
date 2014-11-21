@@ -16,36 +16,45 @@
 
 package org.kaaproject.kaa.server.bootstrap;
 
-import java.nio.charset.Charset;
-
 import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
+import org.kaaproject.kaa.server.common.AbstractServerApplication;
+import org.springframework.context.ApplicationContext;
 
 /**
- * The Class BootstrapServerApplication.
- * Implements main() to start Bootstrap Service.
+ * The Class BootstrapServerApplication. Implements main() to start Bootstrap
+ * Service.
  */
-public class BootstrapServerApplication {
-    private static final Logger LOG = LoggerFactory.getLogger(BootstrapServerApplication.class);
+public class BootstrapServerApplication extends AbstractServerApplication {
+
+    private static final String[] DEFAULT_APPLICATION_CONTEXT_XMLS = new String[] { "bootstrapContext.xml" };
+
+    private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] { "bootstrap-server.properties" };
 
     /**
      * The main method.
-     *
-     * @param args the arguments
+     * 
+     * @param args
+     *            the arguments
      */
     public static void main(String[] args) {
-        LOG.info("Bootstrap Server application starting... {}", Charset.defaultCharset().name());
+        BootstrapServerApplication app = new BootstrapServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS,
+                DEFAULT_APPLICATION_CONFIGURATION_FILES);
+        app.startAndWait(args);
+    }
 
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("bootstrapContext.xml");
-        final BootstrapInitializationService bootstrapInitializationService
-            = (BootstrapInitializationService) ctx.getBean("bootstrapInitializationService");
+    public BootstrapServerApplication(String[] defaultContextFiles, String[] defaultConfigurationFiles) {
+        super(defaultContextFiles, defaultConfigurationFiles);
+    }
 
+    @Override
+    protected String getName() {
+        return "Bootstrap Server";
+    }
+
+    @Override
+    protected void init(ApplicationContext context) {
+        final BootstrapInitializationService bootstrapInitializationService = (BootstrapInitializationService) context
+                .getBean("bootstrapInitializationService");
         bootstrapInitializationService.start();
-        ctx.close();
-
-        LOG.info("Bootstrap Server application stopped");
     }
 }

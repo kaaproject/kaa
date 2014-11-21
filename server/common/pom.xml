@@ -41,11 +41,13 @@
         <module>thrift-cli-server</module>
         <module>thrift-cli-client</module>
         <module>dao</module>
+		<module>nosql</module>
         <module>dto</module>
         <module>utils</module>
         <module>netty-server</module>
         <module>log-shared</module>
         <module>admin-rest-client</module>
+        <module>server-shared</module>
     </modules>
 
     <dependencyManagement>

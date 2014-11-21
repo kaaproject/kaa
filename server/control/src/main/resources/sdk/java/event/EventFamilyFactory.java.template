@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.client.event;
 
+import org.kaaproject.kaa.client.transact.TransactionId;
+
 ${event_family_factory_imports}
 
 public class EventFamilyFactory {
@@ -25,6 +27,18 @@ public class EventFamilyFactory {
     public EventFamilyFactory(EventManager eventManager) {
         super();
         this.eventManager = eventManager;
+    }
+    
+    public TransactionId startEventsBlock() {
+        return eventManager.beginTransaction();
+    }
+
+    public void submitEventsBlock(TransactionId trxId) {
+        eventManager.commit(trxId);
+    }
+
+    public void removeEventsBlock(TransactionId trxId) {
+        eventManager.rollback(trxId);
     }
 
     ${event_family_factory_methods}

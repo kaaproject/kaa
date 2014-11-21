@@ -42,19 +42,20 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>server-shared</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>endpoint-shared</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>zk</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>netty-server</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -350,15 +351,6 @@
                                 <data>
                                     <src>${project.basedir}/src/main/resources</src>
                                     <type>directory</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <filemode>755</filemode>
-                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>../common/dao/src/main/resources/dao.properties</src>
-                                    <type>file</type>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>

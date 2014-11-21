@@ -47,8 +47,11 @@ kaa_error_t kaa_status_set_endpoint_public_key_hash(kaa_status_t *, const kaa_di
 kaa_digest* kaa_status_get_profile_hash(kaa_status_t *);
 kaa_error_t kaa_status_set_profile_hash(kaa_status_t *, const kaa_digest);
 
-KAA_INT32T  kaa_status_get_event_sequence_number(kaa_status_t*);
-kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t*, KAA_INT32T);
+uint32_t    kaa_status_get_event_sequence_number(kaa_status_t*);
+kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t*, uint32_t);
+
+uint32_t    kaa_status_get_log_bucket_id(kaa_status_t*);
+kaa_error_t kaa_status_set_log_bucket_id(kaa_status_t*, uint32_t);
 
 kaa_error_t kaa_status_save(kaa_status_t *);
 

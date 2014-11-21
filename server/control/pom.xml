@@ -15,16 +15,16 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.6.1-SNAPSHOT</version>
-		<artifactId>server</artifactId>
-	</parent>
-	<groupId>org.kaaproject.kaa.server</groupId>
-	<artifactId>control</artifactId>
-	<packaging>jar</packaging>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.kaaproject.kaa</groupId>
+        <version>0.6.1-SNAPSHOT</version>
+        <artifactId>server</artifactId>
+    </parent>
+    <groupId>org.kaaproject.kaa.server</groupId>
+    <artifactId>control</artifactId>
+    <packaging>jar</packaging>
 
     <name>Kaa Control Server</name>
     <url>http://kaaproject.org</url>
@@ -42,6 +42,10 @@
     <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>server-shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift</artifactId>
         </dependency>
         <dependency>
@@ -55,6 +59,10 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -79,6 +87,12 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dao</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -509,7 +523,43 @@
                                     </mapper>
                                 </data>
                                 <data>
+                                    <src>../common/dao/src/main/resources/common-dao-context.xml</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../common/dao/src/main/resources/common-dao-sql-context.xml</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
                                     <src>../common/dao/src/main/resources/dao.properties</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -626,7 +676,19 @@
                                             <location>target/conf</location>
                                         </source>
                                         <source>
+                                            <location>../common/dao/src/main/resources/common-dao-context.xml</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
+                                        </source>
+                                        <source>
                                             <location>../common/dao/src/main/resources/dao.properties</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</location>
                                         </source>
                                     </sources>
                                 </mapping>

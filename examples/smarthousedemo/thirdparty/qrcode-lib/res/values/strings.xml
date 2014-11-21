@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="app_name">Qrcode Library</string>
+
+    <string name="msg_default_format">Format</string>
+    <string name="msg_default_type">Type</string>
+    <string name="msg_default_time">Time</string>
+    <string name="msg_default_meta">Metadata</string>
+    <string name="msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
+    <string name="msg_encode_contents_failed">Could not encode a barcode from the data provided.</string>
+    
+    <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
+    <string name="button_ok">OK</string>
+    
+</resources>

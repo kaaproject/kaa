@@ -25,6 +25,7 @@
 #include <vector>
 #include <cstdint>
 #include "kaa/gen/EndpointGen.hpp"
+#include "kaa/transact/TransactionId.hpp"
 
 namespace kaa {
 
@@ -52,7 +53,8 @@ public:
      */
     virtual void produceEvent(const std::string& fqn
                             , const std::vector<std::uint8_t>& data
-                            , const std::string& target) = 0;
+                            , const std::string& target
+                            , TransactionIdPtr trxId) = 0;
 
     virtual ~IEventManager() {}
 };

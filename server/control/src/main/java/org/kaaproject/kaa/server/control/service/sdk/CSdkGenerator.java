@@ -42,6 +42,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.kaaproject.kaa.avro.avrogenc.Compiler;
 import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
+import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
@@ -76,12 +77,12 @@ public class CSdkGenerator extends SdkGenerator {
     private static final String C_SOURCE_SUFFIX = ".c";
 
     /** The Constant KAA_DEFAULTS_CPP. */
-    private static final String KAA_DEFAULTS_HPP = "src/kaa_defaults.h";
+    private static final String KAA_DEFAULTS_HDR = "src/kaa_defaults.h";
 
     /** The Constant CMakeLists.txt. */
-    private static final String KAA_CMAKELISTS_TXT = "CMakeLists.txt";
+    private static final String KAA_CMAKEGEN = "listfiles/CMakeGen.cmake";
 
-    private static final String KAA_CMAKELISTS_TEMPLATE = "sdk/c/CMakeLists.vm";
+    private static final String KAA_CMAKELISTS_TEMPLATE = "sdk/c/CMakeGen.vm";
 
     /** The Constant PROFILE_SCHEMA_AVRO_SRC. */
     private static final String PROFILE_HDR = "src/kaa_profile.h";
@@ -89,6 +90,11 @@ public class CSdkGenerator extends SdkGenerator {
     private static final String KAA_GEN_SOURCE_DIR = "src/gen/";
 
     private static final String KAA_PROFILE_SOURCE_NAME_PATTERN = "kaa_profile_gen";
+
+    /** The Constant LOG_SCHEMA_AVRO_SRC. */
+    private static final String LOG_HDR = "src/kaa_logging.h";
+
+    private static final String KAA_LOG_SOURCE_NAME_PATTERN = "kaa_logging_gen";
 
     private static final String NAME_PREFIX_TEMPLATE = "kaa_{name}";
 
@@ -143,6 +149,10 @@ public class CSdkGenerator extends SdkGenerator {
         List<TarEntryData> cSources = new ArrayList<>();
         cSources.addAll(generateProfileSources(profileSchemaBody));
 
+        if (logSchemaBody != null) {
+            cSources.addAll(generateLogSources(logSchemaBody));
+        }
+
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
             cSources.addAll(CEventSourcesGenerator.generateEventSources(eventFamilies));
         }
@@ -154,9 +164,9 @@ public class CSdkGenerator extends SdkGenerator {
         ArchiveEntry e = null;
         while ((e = templateArchive.getNextEntry()) != null) {
             if (!e.isDirectory()) {
-                if (e.getName().equals(KAA_DEFAULTS_HPP)) {
+                if (e.getName().equals(KAA_DEFAULTS_HDR)) {
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(
-                            KAA_DEFAULTS_HPP);
+                            KAA_DEFAULTS_HDR);
                     byte[] kaaDefaultsData = generateKaaDefaults(
                             bootstrapNodes, appToken,
                             configurationSchemaVersion, profileSchemaVersion,
@@ -167,14 +177,14 @@ public class CSdkGenerator extends SdkGenerator {
                     kaaDefaultsEntry.setSize(kaaDefaultsData.length);
                     sdkFile.putArchiveEntry(kaaDefaultsEntry);
                     sdkFile.write(kaaDefaultsData);
-                } else if (e.getName().equals(KAA_CMAKELISTS_TXT)) {
+                } else if (e.getName().equals(KAA_CMAKEGEN)) {
                     TarArchiveEntry kaaCMakeEntry = new TarArchiveEntry(
-                            KAA_CMAKELISTS_TXT);
+                            KAA_CMAKEGEN);
 
                     List<String> sourceNames = new LinkedList<>();
                     for (TarEntryData sourceEntry : cSources) {
                         String fileName = sourceEntry.getEntry().getName();
-                        if (fileName.endsWith(C_SOURCE_SUFFIX)) {
+                        if (fileName.endsWith(C_SOURCE_SUFFIX) && !sourceNames.contains(fileName)) {
                             sourceNames.add(fileName);
                         }
                     }
@@ -259,6 +269,8 @@ public class CSdkGenerator extends SdkGenerator {
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
 
+        context.put("build_version", Version.PROJECT_VERSION);
+        context.put("build_commit_hash", Version.COMMIT_HASH);
         context.put("app_token", appToken);
         context.put("config_version", configurationSchemaVersion);
         context.put("profile_version", profileSchemaVersion);
@@ -338,7 +350,50 @@ public class CSdkGenerator extends SdkGenerator {
             tarEntry = new TarEntryData(entry, profileData.getBytes());
             tarEntries.add(tarEntry);
         } catch (Exception e) {
-            //TODO
+            LOG.error("Failed to generate C sdk profile sources", e);
+        }
+
+        return tarEntries;
+    }
+
+    private List<TarEntryData> generateLogSources(String logSchemaBody) {
+        List<TarEntryData> tarEntries = new LinkedList<>();
+
+        TarArchiveEntry entry = new TarArchiveEntry(LOG_HDR);
+        Schema logSchema = new Schema.Parser().parse(logSchemaBody);
+
+        VelocityContext logContext = new VelocityContext();
+        logContext.put("logName", StyleUtils.toLowerUnderScore(logSchema.getName()));
+
+        StringWriter logWriter = new StringWriter();
+        velocityEngine.getTemplate("sdk/c/kaa_logging.vm").merge(logContext, logWriter);
+
+        entry.setSize(logWriter.toString().length());
+        TarEntryData tarEntry = new TarEntryData(entry, logWriter.toString().getBytes());
+        tarEntries.add(tarEntry);
+
+        OutputStream hdrStream = new ByteArrayOutputStream();
+        OutputStream srcStream = new ByteArrayOutputStream();
+
+        try {
+            Compiler compiler = new Compiler(logSchema, KAA_LOG_SOURCE_NAME_PATTERN, hdrStream, srcStream);
+            compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", "logging"));
+            compiler.generate();
+
+            String logData = hdrStream.toString();
+
+            entry = new TarArchiveEntry(KAA_GEN_SOURCE_DIR + KAA_LOG_SOURCE_NAME_PATTERN + C_HEADER_SUFFIX);
+            entry.setSize(logData.length());
+            tarEntry = new TarEntryData(entry, logData.getBytes());
+            tarEntries.add(tarEntry);
+
+            entry = new TarArchiveEntry(KAA_GEN_SOURCE_DIR + KAA_LOG_SOURCE_NAME_PATTERN + C_SOURCE_SUFFIX);
+            logData = srcStream.toString();
+            entry.setSize(logData.length());
+            tarEntry = new TarEntryData(entry, logData.getBytes());
+            tarEntries.add(tarEntry);
+        } catch (Exception e) {
+            LOG.error("Failed to generate C sdk log sources", e);
         }
 
         return tarEntries;

@@ -21,39 +21,21 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/common-dao-test-context.xml")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class TopicServiceImplTest extends AbstractTest {
 
     @Autowired
     private DataSource dataSource;
-
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
-
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
 
     @After
     public void afterTest() {
@@ -77,8 +59,8 @@ public class TopicServiceImplTest extends AbstractTest {
 
     @Test
     public void findTopicsByAppIdAndTypeTest() {
-        TopicDto topic = generateTopic(null, TopicTypeDto.VOLUNTARY);
-        List<TopicDto> found = topicService.findTopicsByAppIdAndType(topic.getApplicationId(), TopicTypeDto.VOLUNTARY);
+        TopicDto topic = generateTopic(null, TopicTypeDto.OPTIONAL);
+        List<TopicDto> found = topicService.findTopicsByAppIdAndType(topic.getApplicationId(), TopicTypeDto.OPTIONAL);
         Assert.assertEquals(1, found.size());
         Assert.assertEquals(topic, found.get(0));
     }

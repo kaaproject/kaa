@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2014 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/musiccenterContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/soundsystem_background"
+    tools:context="org.kaaproject.kaa.demo.smarthousedemo.device.SoundSystemFragment" >
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="40dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:layout_alignParentTop="true">
+	        <TextView
+	            android:id="@+id/songAuthor"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:textSize="24sp"
+	            android:shadowDx="0"
+	            android:shadowDy="0"
+	            android:shadowRadius="8"
+	            android:shadowColor="@android:color/white"
+	            android:textColor="@android:color/white"
+	            android:ellipsize="end"
+	            android:singleLine="true"/>
+	        <TextView
+	            android:id="@+id/songName"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:textSize="26sp"
+	            android:shadowDx="0"
+	            android:shadowDy="0"
+	            android:shadowRadius="8"
+	            android:shadowColor="@android:color/white"
+	            android:textColor="@android:color/white"
+	            android:paddingTop="5dp"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+	        <TextView
+	            android:id="@+id/songAlbum"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:textSize="28sp"
+	            android:shadowDx="0"
+	            android:shadowDy="0"
+	            android:shadowRadius="8"
+	            android:shadowColor="@android:color/white"
+	            android:textColor="@android:color/white"
+	            android:paddingTop="5dp"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+	        <RelativeLayout 
+	             android:layout_width="match_parent"
+	             android:layout_height="wrap_content"
+	             android:paddingTop="5dp">
+	            <TextView
+                    android:id="@+id/songProgressElapsed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:paddingRight="10dp"/>
+		         <org.kaaproject.kaa.demo.smarthousedemo.widget.HoloSeekBar
+		            android:id="@+id/songProgress"
+		            style="@style/Widget.Holo.SeekBar"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_toRightOf="@id/songProgressElapsed"
+		            android:layout_toLeftOf="@+id/songProgressLeft"/>
+                <TextView
+                    android:id="@id/songProgressLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:paddingLeft="10dp"/>		         	            
+            </RelativeLayout>
+        </LinearLayout>     
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignParentBottom="true">
+
+               <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="#FF000000"
+               />	           
+               <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="#30FFFFFF"
+               />
+	           <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal">
+	                <Button
+	                    android:id="@+id/previousSongAction"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_gravity="center_vertical"
+	                    android:layout_marginRight="60dp"
+	                    android:background="@drawable/music_previous"
+	                    android:minHeight="0dp"
+	                    android:minWidth="0dp" />
+                    <Button
+                        android:id="@+id/currentSongAction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/music_play"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp" />
+                    <Button
+                        android:id="@+id/nextSongAction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="60dp"
+                        android:background="@drawable/music_next"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp" />
+	           </LinearLayout>
+        </LinearLayout>
+</RelativeLayout>

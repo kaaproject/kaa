@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,20 +23,15 @@ import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
-import org.kaaproject.kaa.server.common.dao.impl.SecureRoleDao;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.SecureRoleMongoDao;
 import org.kaaproject.kaa.server.common.dao.model.mongo.SecureRole;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -50,9 +40,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Ignore("This should be refactored to standalone module that does not depend on dao core")
 public class LogEventMongoDBServiceImplTest extends AbstractTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogEventMongoDBServiceImplTest.class);
 
     private static final String TEST_USER = "test user";
     private static final String TEST_PASSWORD = "test password";

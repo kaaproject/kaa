@@ -410,8 +410,8 @@ public class DefaultOperationsService implements OperationsService {
                 case MANDATORY:
                     topic.setSubscriptionType(SubscriptionType.MANDATORY);
                     break;
-                case VOLUNTARY:
-                    topic.setSubscriptionType(SubscriptionType.VOLUNTARY);
+                case OPTIONAL:
+                    topic.setSubscriptionType(SubscriptionType.OPTIONAL);
                     break;
                 default:
                     break;

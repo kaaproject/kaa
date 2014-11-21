@@ -54,6 +54,10 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(IServerInfoPtr server);
 
+    virtual void shutdown();
+    virtual void pause();
+    virtual void resume();
+
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
 
     virtual ServerType getServerType() const {
@@ -91,6 +95,8 @@ private:
 
     void createThreads();
 
+    void doShutdown();
+
 private:
     static const std::string CHANNEL_ID;
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
@@ -111,6 +117,8 @@ private:
     bool isConnected_;
     bool isFirstResponseReceived_;
     bool isPendingSyncRequest_;
+    bool isShutdown_;
+    bool isPaused_;
 
     IKaaDataMultiplexer *multiplexer_;
     IKaaDataDemultiplexer *demultiplexer_;

@@ -106,7 +106,7 @@ public class OperationsServiceTest {
 
         userTopic = new TopicDto();
         userTopic.setId(USER_TOPIC_ID);
-        userTopic.setType(TopicTypeDto.VOLUNTARY);
+        userTopic.setType(TopicTypeDto.OPTIONAL);
         userTopic.setName(USER_TOPIC_NAME);
     }
 

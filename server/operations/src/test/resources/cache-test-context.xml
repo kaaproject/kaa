@@ -32,7 +32,7 @@
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
             http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-    <import resource="classpath:common-dao-test-context.xml" />
+    <import resource="classpath:mongo-dao-test-context.xml" />
 
     <cache:annotation-driven/>
 

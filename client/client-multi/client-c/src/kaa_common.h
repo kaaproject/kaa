@@ -49,6 +49,7 @@ typedef enum {
     KAA_SERVICE_PROFILE = 1,
     KAA_SERVICE_USER = 2,
     KAA_SERVICE_EVENT = 3,
+    KAA_SERVICE_LOGGING = 4,
 } kaa_service_t;
 
 typedef void (*kaa_sync_t)(size_t service_count, const kaa_service_t services[]);
@@ -75,6 +76,8 @@ typedef enum kaa_channel_type_t {
  * elements in kaa_channel_type_t enumeration
  */
 #define KAA_CHANNEL_TYPE_COUNT   3
+
+typedef size_t kaa_trx_id;
 
 CLOSE_EXTERN
 #endif /* KAA_COMMON_H_ */

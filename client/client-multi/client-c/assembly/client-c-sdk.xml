@@ -26,6 +26,10 @@
             <outputDirectory>test</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/listfiles</directory>
+            <outputDirectory>listfiles</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}/src</directory>
             <outputDirectory>src</outputDirectory>
         </fileSet>

@@ -46,7 +46,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     private Map<String, Topic> topics = new HashMap<String, Topic>();
 
     private final Set<NotificationListener> mandatoryListeners = new HashSet<NotificationListener>();
-    private final Map<String, List<NotificationListener>> voluntaryListeners = new HashMap<String, List<NotificationListener>>();
+    private final Map<String, List<NotificationListener>> optionalListeners = new HashMap<String, List<NotificationListener>>();
     private final Set<NotificationTopicListListener> topicsListeners = new HashSet<NotificationTopicListListener>();
 
     private final List<SubscriptionCommand> subscriptionInfo = new LinkedList<SubscriptionCommand>();
@@ -109,18 +109,18 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         for (Map.Entry<String, List<NotificationListenerInfo>> cursor : subscribers.entrySet()) {
             Topic listenerTopic = findTopicById(cursor.getKey());
 
-            synchronized (voluntaryListeners) {
-                List<NotificationListener> listeners = voluntaryListeners.get(cursor.getKey());
+            synchronized (optionalListeners) {
+                List<NotificationListener> listeners = optionalListeners.get(cursor.getKey());
 
                 if (cursor.getValue() != null) {
                     for (NotificationListenerInfo subscriberInfo : cursor.getValue()) {
                         if (subscriberInfo.getAction() == NotificationListenerInfo.Action.ADD) {
                             if (listeners == null) {
                                 listeners = new LinkedList<NotificationListener>();
-                                voluntaryListeners.put(listenerTopic.getId(), listeners);
+                                optionalListeners.put(listenerTopic.getId(), listeners);
                             }
 
-                            if (listeners.isEmpty() && listenerTopic.getSubscriptionType() == SubscriptionType.VOLUNTARY) {
+                            if (listeners.isEmpty() && listenerTopic.getSubscriptionType() == SubscriptionType.OPTIONAL) {
                                 subscriptionUpdate.add(new SubscriptionCommand(
                                         listenerTopic.getId(), SubscriptionCommandType.ADD));
                             }
@@ -131,7 +131,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                         } else if (listeners != null) {
                             listeners.remove(subscriberInfo.getListener());
 
-                            if (listeners.isEmpty() && listenerTopic.getSubscriptionType() == SubscriptionType.VOLUNTARY) {
+                            if (listeners.isEmpty() && listenerTopic.getSubscriptionType() == SubscriptionType.OPTIONAL) {
                                 subscriptionUpdate.add(new SubscriptionCommand(
                                         listenerTopic.getId(), SubscriptionCommandType.REMOVE));
                             }
@@ -204,10 +204,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             throws UnavailableTopicException
     {
         Topic topic = findTopicById(topicId);
-        if (topic.getSubscriptionType() != SubscriptionType.VOLUNTARY) {
-            LOG.warn("Failed to subscribe: topic '{}' isn't voluntary", topicId);
+        if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
+            LOG.warn("Failed to subscribe: topic '{}' isn't optional", topicId);
             throw new UnavailableTopicException(
-                    String.format("Topic '%s' isn't voluntary", topicId));
+                    String.format("Topic '%s' isn't optional", topicId));
         }
 
         updateSubscriptionInfo(topicId, SubscriptionCommandType.ADD);
@@ -225,10 +225,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
         for (String id : topicIds) {
             Topic topic = findTopicById(id);
-            if (topic.getSubscriptionType() != SubscriptionType.VOLUNTARY) {
-                LOG.warn("Failed to subscribe: topic '{}' isn't voluntary", id);
+            if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
+                LOG.warn("Failed to subscribe: topic '{}' isn't optional", id);
                 throw new UnavailableTopicException(
-                        String.format("Topic '%s' isn't voluntary", id));
+                        String.format("Topic '%s' isn't optional", id));
             }
 
             subscriptionUpdate.add(new SubscriptionCommand(
@@ -247,10 +247,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             throws UnavailableTopicException
     {
         Topic topic = findTopicById(topicId);
-        if (topic.getSubscriptionType() != SubscriptionType.VOLUNTARY) {
-            LOG.warn("Failed to unsubscribe: topic '{}' isn't voluntary", topicId);
+        if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
+            LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", topicId);
             throw new UnavailableTopicException(
-                    String.format("Topic '%s' isn't voluntary", topicId));
+                    String.format("Topic '%s' isn't optional", topicId));
         }
 
         topicsListeners.remove(topicId);
@@ -267,10 +267,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
         for (String id : topicIds) {
             Topic topic = findTopicById(id);
-            if (topic.getSubscriptionType() != SubscriptionType.VOLUNTARY) {
-                LOG.warn("Failed to unsubscribe: topic '{}' isn't voluntary", id);
+            if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
+                LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", id);
                 throw new UnavailableTopicException(
-                        String.format("Topic '%s' isn't voluntary", id));
+                        String.format("Topic '%s' isn't optional", id));
             }
 
             topicsListeners.remove(id);
@@ -296,12 +296,12 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
         findTopicById(topicId);
 
-        synchronized (voluntaryListeners) {
-            List<NotificationListener> listeners = voluntaryListeners.get(topicId);
+        synchronized (optionalListeners) {
+            List<NotificationListener> listeners = optionalListeners.get(topicId);
 
             if (listeners == null) {
                 listeners = new LinkedList<>();
-                voluntaryListeners.put(topicId, listeners);
+                optionalListeners.put(topicId, listeners);
             }
 
             listeners.add(listener);
@@ -319,8 +319,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
         findTopicById(topicId);
 
-        synchronized (voluntaryListeners) {
-            List<NotificationListener> listeners = voluntaryListeners.get(topicId);
+        synchronized (optionalListeners) {
+            List<NotificationListener> listeners = optionalListeners.get(topicId);
 
             if (listeners != null) {
                 listeners.remove(listener);
@@ -344,9 +344,9 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                     state.addTopic(topic);
                 }
             }
-            synchronized (voluntaryListeners) {
+            synchronized (optionalListeners) {
                 for (Topic topic : topics.values()) {
-                    voluntaryListeners.remove(topic.getId());
+                    optionalListeners.remove(topic.getId());
                     state.removeTopic(topic.getId());
                 }
             }
@@ -367,8 +367,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                 Topic topic = findTopicById(notification.getTopicId());
                 boolean hasOwner = false;
 
-                synchronized (voluntaryListeners) {
-                    List<NotificationListener> listeners = voluntaryListeners.get(topic.getId());
+                synchronized (optionalListeners) {
+                    List<NotificationListener> listeners = optionalListeners.get(topic.getId());
                     if (listeners != null && !listeners.isEmpty()) {
                         hasOwner = true;
                         for (NotificationListener listener : listeners) {

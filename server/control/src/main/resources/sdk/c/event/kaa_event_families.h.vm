@@ -36,4 +36,9 @@ void set_${prefix}_${e_name}_listener(on_${prefix}_${e_name});
 void kaa_send_${prefix}_${e_name}(${prefix}_${e_name}_t *, const char *, size_t);
 #end
 
+#foreach ($event in $outgoingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+void kaa_add_${prefix}_${e_name}_event_to_block(${prefix}_${e_name}_t *event, const char *target, size_t target_len, kaa_trx_id trx_id);
+#end
+
 # endif // KAA_${EVENT_FAMILY_NAME}_H

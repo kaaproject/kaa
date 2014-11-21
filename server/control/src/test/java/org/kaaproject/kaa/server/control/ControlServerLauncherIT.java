@@ -91,14 +91,14 @@ public class ControlServerLauncherIT {
                 @Override
                 public void run() {
                     logger.info("Starting Control Server ...");
-                    new ControlServerApplication().main(new String[]{"common-test-context.xml"});
+                    new ControlServerApplication(new String[]{}, new String[]{}).main(new String[]{"common-test-context.xml"});
                     logger.info("Control Server Stopped");
                 }
             });
             
             controlServerLauncherThread.start();
             
-            Thread.sleep(5000);
+            Thread.sleep(15000);
 
             transport = new TSocket(HOST, PORT);
             TProtocol protocol = new TBinaryProtocol(transport);

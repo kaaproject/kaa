@@ -32,7 +32,7 @@ public class SecureUserMongoDao implements SecureUserDao<SecureUser> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecureUserMongoDao.class);
 
-    @Autowired
+    @Autowired(required=false)
     private MongoTemplate mongoTemplate;
 
     @Override

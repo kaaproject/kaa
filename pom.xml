@@ -102,6 +102,9 @@ Copyright 2014 CyberVision, Inc.
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <properties>
+                <build.commit>N/A</build.commit>
+            </properties>
         </profile>
         <profile>
             <id>examples</id>
@@ -124,37 +127,40 @@ Copyright 2014 CyberVision, Inc.
                 <module>it</module>
                 <module>sandbox</module>
             </modules>
+            <properties>
+                <build.commit>${GIT_COMMIT}</build.commit>
+            </properties>
             <build>
                 <plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.7.2.201409121644</version>
-						<executions>
-							<execution>
-								<id>pre-test</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-								<configuration>
-									<propertyName>jacoco.agent.ut.argLine</propertyName>
-									<destFile>${sonar.jacoco.reportPath}</destFile>
-									<append>true</append>
-								</configuration>
-							</execution>
-							<execution>
-								<id>pre-integration</id>
-								<goals>
-									<goal>prepare-agent-integration</goal>
-								</goals>
-								<configuration>
-									<propertyName>jacoco.agent.it.argLine</propertyName>
-									<destFile>${sonar.jacoco.itReportPath}</destFile>
-									<append>true</append>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.7.2.201409121644</version>
+                        <executions>
+                            <execution>
+                                <id>pre-test</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <configuration>
+                                    <propertyName>jacoco.agent.ut.argLine</propertyName>
+                                    <destFile>${sonar.jacoco.reportPath}</destFile>
+                                    <append>true</append>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>pre-integration</id>
+                                <goals>
+                                    <goal>prepare-agent-integration</goal>
+                                </goals>
+                                <configuration>
+                                    <propertyName>jacoco.agent.it.argLine</propertyName>
+                                    <destFile>${sonar.jacoco.itReportPath}</destFile>
+                                    <append>true</append>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>2.17</version>
@@ -211,28 +217,28 @@ Copyright 2014 CyberVision, Inc.
                             </execution>
                         </executions>
                     </plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-						    <argLine>${jacoco.agent.ut.argLine}</argLine>
-							<properties>
-								<property>
-									<name>listener</name>
-									<value>org.sonar.java.jacoco.JUnitListener</value>
-								</property>
-							</properties>
-						</configuration>
-					</plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>${jacoco.agent.ut.argLine}</argLine>
+                            <properties>
+                                <property>
+                                    <name>listener</name>
+                                    <value>org.sonar.java.jacoco.JUnitListener</value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
             <dependencies>
-				<dependency>
-					<groupId>org.codehaus.sonar-plugins.java</groupId>
-					<artifactId>sonar-jacoco-listeners</artifactId>
-					<version>2.5</version>
-					<scope>test</scope>
-				</dependency>                
+                <dependency>
+                    <groupId>org.codehaus.sonar-plugins.java</groupId>
+                    <artifactId>sonar-jacoco-listeners</artifactId>
+                    <version>2.5</version>
+                    <scope>test</scope>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -439,6 +445,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/appcompat-v7/**</exclude>
                         <exclude>**/support-v4/**</exclude>
                         <exclude>**/bin/**</exclude>
+                        <exclude>**/thirdparty/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -447,6 +454,11 @@ Copyright 2014 CyberVision, Inc.
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>server-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>thrift</artifactId>
@@ -465,6 +477,11 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                <artifactId>mongo</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -520,6 +537,13 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>dao</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                <artifactId>mongo</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>

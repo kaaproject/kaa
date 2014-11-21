@@ -33,7 +33,8 @@ enum class ClientParameterT {
     ATTACHED_ENDPOINTS,
     EP_ACCESS_TOKEN,
     EP_ATTACH_STATUS,
-    EP_KEY_HASH
+    EP_KEY_HASH,
+    PROPERTIES_HASH
 };
 
 class IPersistentParameter {
@@ -56,6 +57,7 @@ static bimap create_bimap()
     bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ACCESS_TOKEN,    "access_token"));
     bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ATTACH_STATUS,   "ep_attach_status"));
     bi.left.insert(bimap::left_value_type(ClientParameterT::EP_KEY_HASH,        "ep_key_hash"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::PROPERTIES_HASH,    "properties_hash"));
     return bi;
 }
 
@@ -274,7 +276,7 @@ void ClientParameter<DetailedTopicStates>::read(const std::string &strValue)
             DetailedTopicState ts;
             ts.topicId = convertFromByteArrayString(topicId);
             ts.topicName = convertFromByteArrayString(topicName);
-            ts.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY : SubscriptionType::VOLUNTARY);
+            ts.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY : SubscriptionType::OPTIONAL);
             ts.sequenceNumber = topicSN;
 
             value_.insert(std::make_pair(ts.topicId, ts));
@@ -374,7 +376,37 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename)
         parameters_.insert(std::make_pair(ClientParameterT::EP_KEY_HASH, endpointKeyHash));
     }
 
+    auto propertieshash = parameterToToken_.left.find(ClientParameterT::PROPERTIES_HASH);
+    if (propertieshash != parameterToToken_.left.end()) {
+        std::shared_ptr<IPersistentParameter> propertiesHash(new ClientParameter<SharedDataBuffer>(
+                propertieshash->second, endpointHashDefault_/*It's OK*/));
+        parameters_.insert(std::make_pair(ClientParameterT::PROPERTIES_HASH, propertiesHash));
+    }
+
     this->read();
+
+    checkSDKPropertiesForUpdates();
+}
+
+void ClientStatus::checkSDKPropertiesForUpdates() {
+    SharedDataBuffer truePropertiesHash = getPropertiesHash();
+    SharedDataBuffer storedPropertiesHash;
+
+    auto parameter_it = parameters_.find(ClientParameterT::PROPERTIES_HASH);
+    if (parameter_it != parameters_.end()) {
+        storedPropertiesHash = boost::any_cast<SharedDataBuffer>(parameter_it->second->getValue());
+    }
+
+    if (!EndpointObjectHash::isEqual(truePropertiesHash, storedPropertiesHash)) {
+        setRegistered(false);
+        auto it = parameters_.find(ClientParameterT::PROPERTIES_HASH);
+        if (it != parameters_.end()) {
+            it->second->setValue(truePropertiesHash);
+        }
+        KAA_LOG_INFO("SDK properties were updated");
+    } else {
+        KAA_LOG_INFO("SDK properties are up to date");
+    }
 }
 
 SequenceNumber ClientStatus::getAppSeqNumber() const
