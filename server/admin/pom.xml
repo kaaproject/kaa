@@ -259,7 +259,28 @@
             <version>1.0</version>
             <scope>provided</scope>
         </dependency>       
-		</dependencies>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+            <classifier>file</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+            <classifier>mongo</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+            <classifier>flume</classifier>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
     <dependencyManagement>
         <dependencies>
         </dependencies>

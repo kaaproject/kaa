@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
@@ -36,13 +35,20 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AppenderInfoListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FlumeBalancingTypeListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.form.RecordFieldWidget;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.form.RecordField;
+import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -51,7 +57,9 @@ import com.watopi.chosen.client.event.ChosenChangeEvent;
 import com.watopi.chosen.client.event.ChosenChangeEvent.ChosenChangeHandler;
 import com.watopi.chosen.client.gwt.ChosenListBox;
 
-public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppenderView, ValueChangeHandler<LogAppenderInfoDto>, ChosenChangeHandler {
+public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppenderView,                                                                        
+                                                                        ValueChangeHandler<RecordField>, 
+                                                                        ChosenChangeHandler {
 
     private static final int FULL_TABLE_SIZE = 9;
     private static final int DEFAULT_PRIORITIZED_TABLE_ROW_COUNT = 2;
@@ -79,8 +87,8 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     private Label publicKeyLabel;
     private SizedTextBox sshKey;
 
-    private Label configurationLabel;
-    private SizedTextArea configuration;
+    private RecordFieldWidget configuration;
+    private HandlerRegistration confiurationHandlerRegistration;
     
     private static final String FULL_WIDTH = "100%";
 
@@ -153,7 +161,12 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         appenderInfo = new AppenderInfoListBox();
         appenderInfo.setValue(new LogAppenderInfoDto(LogAppenderTypeDto.FILE), true);
         appenderInfo.setEnabled(create);
-        appenderInfo.addValueChangeHandler(this);
+        appenderInfo.addValueChangeHandler(new ValueChangeHandler<LogAppenderInfoDto>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<LogAppenderInfoDto> event) {
+                updateAppender(event.getValue());
+            }
+        });
 
         detailsTable.setWidget(7, 0, typeLabel);
         detailsTable.setWidget(7, 1, appenderInfo);
@@ -226,7 +239,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     @Override
     protected boolean validate() {
         boolean result = isNotBlank(name.getValue());
-        if (hostTable != null && appenderInfo != null && LogAppenderTypeDto.FLUME.equals(appenderInfo.getValue())) {
+        if (hostTable != null && appenderInfo != null && LogAppenderTypeDto.FLUME.equals(appenderInfo.getValue().getType())) {
             for (int i = 1; i < hostTable.getRowCount(); i++) {
                 result &= isNotBlank(((SizedTextBox) hostTable.getWidget(i, 0)).getValue())
                         && isNotBlank(((SizedTextBox) hostTable.getWidget(i, 1)).getValue());
@@ -235,8 +248,11 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
                 }
             }
         }
-        if (sshKey != null && appenderInfo != null && LogAppenderTypeDto.FILE.equals(appenderInfo.getValue())) {
+        if (sshKey != null && appenderInfo != null && LogAppenderTypeDto.FILE.equals(appenderInfo.getValue().getType())) {
             result &= isNotBlank(sshKey.getValue());
+        }
+        if (LogAppenderTypeDto.CUSTOM.equals(appenderInfo.getValue().getType())) {
+            result &= configuration.validate();
         }
         return result;
     }
@@ -311,9 +327,8 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         }
     }
 
-    @Override
-    public void onValueChange(ValueChangeEvent<LogAppenderInfoDto> event) {
-        switch (event.getValue().getType()) {
+    public void updateAppender(LogAppenderInfoDto value) {
+        switch (value.getType()) {
             case FILE:
                 hideFlumeCongurationFields();
                 hideCustomConfigurationFields();
@@ -336,7 +351,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
                 hideFlumeCongurationFields();
                 hideFileCongurationFields();
                 showCustomConfigurationFields();
-                configuration.setValue(event.getValue().getDefaultConfig());
+                configuration.setValue(value.getConfigForm());
                 fireChanged();
                 break;
         }
@@ -384,39 +399,35 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     
     @Override
     public void showCustomConfigurationFields() {
-        configurationLabel = new Label(Utils.constants.configuration());
-        configurationLabel.addStyleName(REQUIRED);
-        configuration = new SizedTextArea(524288);
-        configuration.setWidth(FULL_WIDTH);
-        configuration.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 300);
-        configuration.addInputHandler(this);
-        detailsTable.setWidget(8, 0, configurationLabel);
-        detailsTable.setWidget(8, 1, configuration);
+        configuration = new RecordFieldWidget();
+        confiurationHandlerRegistration = configuration.addValueChangeHandler(this);
+        getFooter().add(configuration);
     }
 
     @Override
-    public String getConfiguration() {
-        String configurationString = "";
+    public RecordField getConfiguration() {
         if(configuration != null) {
-            configurationString = configuration.getValue();
+            return configuration.getValue();
         }
-        return configurationString;
+        else {
+            return null;
+        }
     }
 
     @Override
-    public void setConfiguration(String configurationString) {
+    public void setConfiguration(RecordField configurationData) {
         if(configuration != null) {
-            configuration.setValue(configurationString);
+            configuration.setValue(configurationData);
         }
     }
 
     @Override
     public void hideCustomConfigurationFields() {
-        if (configurationLabel != null) {
-            detailsTable.remove(configurationLabel);
-        }
         if (configuration != null) {
-            detailsTable.remove(configuration);
+            getFooter().remove(configuration);
+        }
+        if (confiurationHandlerRegistration != null) {
+            confiurationHandlerRegistration.removeHandler();
         }
     }
 
@@ -559,6 +570,11 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
 
     @Override
     public void onChange(ChosenChangeEvent event) {
+        fireChanged();
+    }
+
+    @Override
+    public void onValueChange(ValueChangeEvent<RecordField> event) {
         fireChanged();
     }
 

@@ -40,9 +40,36 @@
             <artifactId>log-shared</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+            <classifier>oracle-nosql</classifier>
+        </dependency>
+        <dependency>
         	<groupId>com.oracle.kv</groupId>
         	<artifactId>oracle-nosql-client</artifactId>
         	<version>3.0.14</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.kv</groupId>
+            <artifactId>kvstore</artifactId>
+            <version>3.1.7</version>
+            <scope>test</scope>
+        </dependency>        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -55,6 +82,16 @@
                     <classifier>oracle-nosql</classifier>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Djava.security.manager -Djava.security.policy=${basedir}/src/test/resources/security.policy</argLine>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExcludes>com.oracle.kv:oracle-nosql-client</classpathDependencyExcludes>
+                    </classpathDependencyExcludes>
+                </configuration>
+            </plugin>        
         </plugins>
     </build>
 </project>

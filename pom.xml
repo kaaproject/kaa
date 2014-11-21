@@ -39,7 +39,7 @@ Copyright 2014 CyberVision, Inc.
         <hibernate.version>4.3.5.Final</hibernate.version>
         <pgsql.driver.ver>9.3-1101-jdbc41</pgsql.driver.ver>
         <h2.driver.ver>1.4.179</h2.driver.ver>
-        <gwt.version>2.6.0</gwt.version>
+        <gwt.version>2.6.1</gwt.version>
         <aspectj.version>1.7.4</aspectj.version>
         <twitter.common.thrift.version>0.0.64</twitter.common.thrift.version>
 
@@ -833,6 +833,10 @@ Copyright 2014 CyberVision, Inc.
         <repository>
             <id>central</id>
             <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>repository.kaaproject</id>
+            <url>http://repository.kaaproject.org/repository/internal/</url>
         </repository>
     </repositories>
 </project>

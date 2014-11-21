@@ -1,0 +1,95 @@
+#!/bin/bash
+#
+# Copyright 2014 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+args_size=$#
+
+user_name=$1
+
+group_name=$2
+
+path=$3
+
+public_key=$4
+
+function create_user()
+{
+    if [ $(id -u) -eq 0 ]; then
+        if [ $args_size -eq 4 ]; then
+            egrep "^$user_name" /etc/passwd >/dev/null
+            if [ $? -eq 0 ]; then
+                echo "$user_name already exists!"
+                if [ ! -d "/home/$user_name" ]; then
+                    sudo mkdir /home/$user_name
+                    [ $? -eq 0 ] && echo "User home has been created!" || echo "Failed to create user home!"
+                else
+                    echo "User home already exists!"
+                fi
+            else
+                sudo useradd -m $user_name
+                [ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
+            fi
+
+            egrep "^$group_name" /etc/group >/dev/null
+            if [ $? -eq 0 ]; then
+                echo "$group_name already exists!"
+            else
+                sudo addgroup $group_name
+                [ $? -eq 0 ] && echo "Group has been added to system!" || echo "Failed to add a group!"
+
+                sudo usermod -a -G $group_name kaa
+                [ $? -eq 0 ] && echo "kaa has been added to group!" || echo "Failed to add kaa to group!"
+
+                sudo usermod -a -G $group_name $user_name
+                [ $? -eq 0 ] && echo "$user_name has been added to group!" || echo "Failed to add $user_name to group!"
+            fi
+
+            sudo chown kaa:$group_name $path
+            [ $? -eq 0 ] && echo "Owner and group has been added to $path!" || echo "Failed to add owner and group to $path!"
+
+            sudo chmod 750 $path
+            [ $? -eq 0 ] && echo "Permissions has been set to $path!" || echo "Failed to set permissions to $path!"
+
+            if [ ! -d "/home/$user_name/.ssh" ]; then
+                sudo mkdir /home/$user_name/.ssh
+                sudo chown $user_name:$user_name /home/$user_name/.ssh
+                sudo chmod 700 /home/$user_name/.ssh
+                [ $? -eq 0 ] && echo "Ssh directory has been created!" || echo "Failed to create ssh directory!"
+            else
+                echo "Ssh directory already exists!"
+            fi
+
+            if [ ! -f "/home/$user_name/.ssh/authorized_keys" ]; then
+                sudo touch /home/$user_name/.ssh/authorized_keys
+                sudo chown $user_name:$user_name /home/$user_name/.ssh/authorized_keys
+                sudo chmod 700 /home/$user_name/.ssh/authorized_keys
+                [ $? -eq 0 ] && echo "Key file has been created!" || echo "Failed to create key file!"
+            fi
+
+            sudo cat "$public_key" | sudo tee /home/$user_name/.ssh/authorized_keys > /dev/null
+            [ $? -eq 0 ] && echo "Public key has been added to key file!" || echo "Failed to add public key to key file!"
+        else
+            echo "Expected 4 arguments but was $args_size"
+            exit 2
+        fi
+    else
+        echo "You need root privileges to run this script"
+        exit 1
+    fi
+}
+
+
+create_user
+

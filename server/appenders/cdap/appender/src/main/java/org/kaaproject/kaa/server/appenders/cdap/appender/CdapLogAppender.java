@@ -22,47 +22,31 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
+import org.kaaproject.kaa.server.appenders.cdap.config.CdapConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.CustomLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-
 import co.cask.cdap.client.StreamClient;
 import co.cask.cdap.client.StreamWriter;
 import co.cask.cdap.client.rest.RestStreamClient;
 import co.cask.cdap.security.authentication.client.AuthenticationClient;
+import co.cask.cdap.security.authentication.client.basic.BasicAuthenticationClient;
 
-public class CdapLogAppender extends CustomLogAppender {
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
+public class CdapLogAppender extends CustomLogAppender<CdapConfig> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CdapLogAppender.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    /**
-     * Configuration properties constants
-     */
-    private static final String STREAM = "stream";
-    private static final String HOST = "host";
-    private static final String PORT = "port";
-    private static final String SSL = "ssl";
-    private static final String VERIFY_SSL_CERT = "verify_ssl_cert";
-    private static final String VERSION = "version";
-    private static final String AUTH_CLIENT = "auth_client";
-    private static final String CALLBACK_THREAD_POOL_SIZE = "callback_thread_pool_size";
-    private static final String WRITER_POOL_SIZE = "writer_pool_size";
-
-    /**
-     * Default values
-     */
-    private static final String DEFAULT_HOST = "localhost";
-    private static final String DEFAULT_PORT = "10000";
-    private static final String DEFAULT_SSL = "false";
-    private static final String DEFAULT_CALLBACK_THREAD_POOL_SIZE = "2";
+    private static final int DEFAULT_CALLBACK_THREAD_POOL_SIZE = 2;
 
     /**
      * Max values for security purposes
@@ -77,7 +61,7 @@ public class CdapLogAppender extends CustomLogAppender {
     private Executor callbackExecutor;
 
     public CdapLogAppender() {
-        super();
+        super(CdapConfig.class);
     }
 
     @Override
@@ -103,15 +87,20 @@ public class CdapLogAppender extends CustomLogAppender {
     }
 
     @Override
-    protected void initFromProperties(Properties properties) {
+    protected void initFromConfiguration(LogAppenderDto appender, CdapConfig configuration) {
         try {
-            streamClient = initStreamClient(properties);
-            callbackExecutor = Executors.newFixedThreadPool(getPropertyValue(properties, CALLBACK_THREAD_POOL_SIZE,
-                    DEFAULT_CALLBACK_THREAD_POOL_SIZE, MAX_CALLBACK_THREAD_POOL_SIZE));
-            if (properties.containsKey(STREAM)) {
-                streamWriter = streamClient.createWriter(properties.getProperty(STREAM));
+            streamClient = initStreamClient(configuration);
+            Integer callbackPoolSize = configuration.getCallbackThreadPoolSize();
+            if (callbackPoolSize == null) {
+                callbackPoolSize = DEFAULT_CALLBACK_THREAD_POOL_SIZE;
+            }
+            callbackPoolSize = Math.min(callbackPoolSize, MAX_CALLBACK_THREAD_POOL_SIZE);
+            callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
+            
+            if (configuration.getStream() != null) {
+                streamWriter = streamClient.createWriter(configuration.getStream());
             } else {
-                throw new IllegalArgumentException(STREAM + " property is not set!");
+                throw new IllegalArgumentException("Stream parameter is not set!");
             }
         } catch (Exception e) {
             LOG.error("Failed to init stream client: ", e);
@@ -129,37 +118,37 @@ public class CdapLogAppender extends CustomLogAppender {
         LOG.debug("Stopped Cdap log appender.");
     }
 
-    private static int getPropertyValue(Properties properties, String propertyName, int maxValue) {
-        return Math.min(Integer.parseInt(properties.getProperty(propertyName)), maxValue);
-    }
-
-    private static int getPropertyValue(Properties properties, String propertyName, String defaultValue, int maxValue) {
-        return Math.min(Integer.parseInt(properties.getProperty(propertyName, defaultValue)), maxValue);
-    }
-
-    private StreamClient initStreamClient(Properties properties) throws Exception {
-        String host = properties.getProperty(HOST, DEFAULT_HOST);
-        int port = Integer.valueOf(properties.getProperty(PORT, DEFAULT_PORT));
-        boolean ssl = Boolean.parseBoolean(properties.getProperty(SSL, DEFAULT_SSL));
+    private StreamClient initStreamClient(CdapConfig configuration) throws Exception {
+        String host = configuration.getHost();
+        int port = configuration.getPort();
+        boolean ssl = configuration.getSsl() != null ? configuration.getSsl().booleanValue() : false;
         RestStreamClient.Builder builder = RestStreamClient.builder(host, port);
-
-        if (properties.containsKey(SSL)) {
-            builder.ssl(ssl);
+        builder.ssl(ssl);
+        if (configuration.getWriterPoolSize() != null) {
+            int writerPoolSize = Math.min(MAX_WRITER_POOL_SIZE, configuration.getWriterPoolSize().intValue());
+            builder.writerPoolSize(writerPoolSize);
         }
-        if (properties.containsKey(WRITER_POOL_SIZE)) {
-            builder.writerPoolSize(getPropertyValue(properties, WRITER_POOL_SIZE, MAX_WRITER_POOL_SIZE));
+        if (configuration.getVersion() != null) {
+            builder.version(configuration.getVersion());
         }
-        if (properties.containsKey(VERSION)) {
-            builder.version(properties.getProperty(VERSION));
+        if (configuration.getVerifySslCert() != null) {
+            builder.verifySSLCert(configuration.getVerifySslCert().booleanValue());
         }
-        if (properties.containsKey(VERIFY_SSL_CERT)) {
-            builder.verifySSLCert(Boolean.parseBoolean(properties.getProperty(VERIFY_SSL_CERT)));
-        }
-        if (properties.containsKey(AUTH_CLIENT)) {
-            AuthenticationClient authClient = (AuthenticationClient) Class.forName(properties.getProperty(AUTH_CLIENT))
+        if (configuration.getAuthClient() != null) {
+            AuthenticationClient authClient = (AuthenticationClient) Class.forName(configuration.getAuthClient())
                     .getConstructor().newInstance();
             authClient.setConnectionInfo(host, port, ssl);
             if (authClient.isAuthEnabled()) {
+                Properties properties = new Properties();
+                if (configuration.getUsername() != null) {
+                    properties.put("security.auth.client.username", configuration.getUsername());
+                }
+                if (configuration.getPassword() != null) {
+                    properties.put("security.auth.client.password", configuration.getPassword());
+                }
+                if (configuration.getVerifySslCert() != null) {
+                    properties.put(BasicAuthenticationClient.VERIFY_SSL_CERT_PROP_NAME, configuration.getVerifySslCert());
+                }
                 authClient.configure(properties);
             }
             builder.authClient(authClient);

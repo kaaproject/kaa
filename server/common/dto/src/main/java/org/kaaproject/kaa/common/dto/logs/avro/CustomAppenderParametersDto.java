@@ -8,15 +8,15 @@ public class CustomAppenderParametersDto implements Parameters, Serializable {
 
     private String name;
     private String appenderClassName;   
-    private String configuration;
+    private byte[] rawConfiguration;
     
     public CustomAppenderParametersDto() {        
     }
     
-    public CustomAppenderParametersDto(String name, String appenderClassName,  String configuration) {
+    public CustomAppenderParametersDto(String name, String appenderClassName, byte[] rawConfiguration) {
         this.name = name;
         this.appenderClassName = appenderClassName;
-        this.configuration = configuration;
+        this.rawConfiguration = rawConfiguration;
     }
     
     public String getName() {
@@ -35,12 +35,12 @@ public class CustomAppenderParametersDto implements Parameters, Serializable {
         this.appenderClassName = appenderClassName;
     }
 
-    public String getConfiguration() {
-        return configuration;
+    public byte[] getRawConfiguration() {
+        return rawConfiguration;
     }
 
-    public void setConfiguration(String configuration) {
-        this.configuration = configuration;
+    public void setRawConfiguration(byte[] rawConfiguration) {
+        this.rawConfiguration = rawConfiguration;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class CustomAppenderParametersDto implements Parameters, Serializable {
                 + ((appenderClassName == null) ? 0 : appenderClassName
                         .hashCode());
         result = prime * result
-                + ((configuration == null) ? 0 : configuration.hashCode());
+                + ((rawConfiguration == null) ? 0 : rawConfiguration.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
@@ -76,11 +76,11 @@ public class CustomAppenderParametersDto implements Parameters, Serializable {
         } else if (!appenderClassName.equals(other.appenderClassName)) {
             return false;
         }
-        if (configuration == null) {
-            if (other.configuration != null) {
+        if (rawConfiguration == null) {
+            if (other.rawConfiguration != null) {
                 return false;
             }
-        } else if (!configuration.equals(other.configuration)) {
+        } else if (!rawConfiguration.equals(other.rawConfiguration)) {
             return false;
         }
         if (name == null) {
@@ -97,7 +97,7 @@ public class CustomAppenderParametersDto implements Parameters, Serializable {
     public String toString() {
         return "CustomAppenderParametersDto [name=" + name
                 + ", appenderClassName=" + appenderClassName
-                + ", configuration=" + configuration + "]";
+                + ", rawConfiguration=" + rawConfiguration + "]";
     }
 
 }

@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.common.dao.model.sql.avro;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,7 +83,7 @@ public class DaoAvroUtil {
                     CustomAppenderParametersDto customDto = new CustomAppenderParametersDto();
                     customDto.setName(customParameters.getName());
                     customDto.setAppenderClassName(customParameters.getAppenderClassName());
-                    customDto.setConfiguration(customParameters.getConfiguration());
+                    customDto.setRawConfiguration(customParameters.getRawConfiguration().array());
                     dto.setParameters(customDto);
                 }
             }
@@ -119,7 +120,7 @@ public class DaoAvroUtil {
                 avroParameters.setAppenderParameters(new FileAppenderParameters(fileDto.getLogDirectoryPath(), fileDto.getUsername(), fileDto.getSshKey()));
             } else if (params instanceof CustomAppenderParametersDto) {
                 CustomAppenderParametersDto customDto = (CustomAppenderParametersDto) params;
-                avroParameters.setAppenderParameters(new CustomAppenderParameters(customDto.getName(), customDto.getAppenderClassName(), customDto.getConfiguration()));
+                avroParameters.setAppenderParameters(new CustomAppenderParameters(customDto.getName(), customDto.getAppenderClassName(), ByteBuffer.wrap(customDto.getRawConfiguration())));
             }
             AvroByteArrayConverter<LogAppenderParameters> converter = new AvroByteArrayConverter<LogAppenderParameters>(LogAppenderParameters.class);
             try {

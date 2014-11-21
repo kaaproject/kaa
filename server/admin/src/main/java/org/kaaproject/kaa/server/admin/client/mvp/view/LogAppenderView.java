@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FlumeBalancingTypeListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AppenderInfoListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
+import org.kaaproject.kaa.server.admin.shared.form.RecordField;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -68,9 +69,9 @@ public interface LogAppenderView extends BaseDetailsView {
     
     void showCustomConfigurationFields();
     
-    String getConfiguration();
+    RecordField getConfiguration();
     
-    void setConfiguration(String configuration);
+    void setConfiguration(RecordField configuration);
     
     void hideCustomConfigurationFields();
 }

@@ -26,13 +26,17 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.iharder.Base64;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
+import org.apache.avro.generic.GenericRecord;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -62,9 +66,9 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
@@ -72,7 +76,11 @@ import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
+import org.kaaproject.kaa.server.admin.services.util.FormAvroConverter;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.form.RecordField;
+import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
+import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
@@ -116,9 +124,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     private List<LogAppenderInfoDto> appenders = new ArrayList<>();
+    private Map<String, Schema> appenderConfigSchemas = new HashMap<>();
     
-    private List<AppenderConfig> appenderConfigs = new ArrayList<>();
-
     @Override
     public void afterPropertiesSet() throws Exception {
         for (LogAppenderTypeDto type : LogAppenderTypeDto.values()) {
@@ -133,9 +140,10 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         for (BeanDefinition bean : beans) {
             Class<?> clazz = Class.forName(bean.getBeanClassName());
             AppenderConfig appenderConfig = (AppenderConfig)clazz.newInstance();
-            appenderConfigs.add(appenderConfig);
+            appenderConfigSchemas.put(appenderConfig.getLogAppenderClass(), appenderConfig.getConfigSchema());
+            RecordField appenderConfigForm = FormAvroConverter.createRecordFieldFromSchema(appenderConfig.getConfigSchema());
             LogAppenderInfoDto appender = new LogAppenderInfoDto(LogAppenderTypeDto.CUSTOM,
-                    appenderConfig.getName(), appenderConfig.getDefaultConfig(), appenderConfig.getLogAppenderClass());
+                    appenderConfig.getName(), appenderConfigForm, appenderConfig.getLogAppenderClass());
             appenders.add(appender);
         }
     }
@@ -1086,7 +1094,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-
+    
     @Override
     public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -1099,7 +1107,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-
+    
     @Override
     public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -1114,6 +1122,46 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 checkApplicationId(storedlLogAppender.getApplicationId());
             }
             return toDto(clientProvider.getClient().editLogAppender(toDataStruct(appender)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public LogAppenderFormWrapper getLogAppenderForm(String appenderId) throws KaaAdminServiceException {
+        LogAppenderDto logAppender =  getLogAppender(appenderId);
+        try {
+            LogAppenderFormWrapper wrapper = new LogAppenderFormWrapper(logAppender);
+            if (logAppender.getType()==LogAppenderTypeDto.CUSTOM) {
+                CustomAppenderParametersDto custom = (CustomAppenderParametersDto) logAppender.getProperties().getParameters();
+                Schema schema = appenderConfigSchemas.get(custom.getAppenderClassName());
+                GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+                GenericRecord record = converter.decodeBinary(custom.getRawConfiguration());
+                RecordField formData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
+                wrapper.setConfiguration(formData);
+            }
+            return wrapper;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException {
+        LogAppenderDto logAppender = wrapper.getLogAppender();
+        try {
+            if (logAppender.getType()==LogAppenderTypeDto.CUSTOM) {
+                CustomAppenderParametersDto custom = (CustomAppenderParametersDto) logAppender.getProperties().getParameters();
+                Schema schema = appenderConfigSchemas.get(custom.getAppenderClassName());
+                GenericRecord record = FormAvroConverter.createGenericRecordFormRecordField(wrapper.getConfiguration(), schema);
+                GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+                byte[] rawConfiguration = converter.encode(record);
+                custom.setRawConfiguration(rawConfiguration);
+            }
+            
+            LogAppenderDto saved = editLogAppender(logAppender);
+            LogAppenderFormWrapper savedWrapper = new LogAppenderFormWrapper(saved);
+            return savedWrapper;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

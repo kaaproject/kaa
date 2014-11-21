@@ -16,42 +16,39 @@
 package org.kaaproject.kaa.server.common.log.shared.appender;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Properties;
 
+import org.apache.avro.specific.SpecificRecordBase;
+import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class CustomLogAppender extends AbstractLogAppender {
+public abstract class CustomLogAppender<T extends SpecificRecordBase> extends AbstractLogAppender {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomLogAppender.class);
+    
+    private Class<T> configurationClass;
+    
+    public CustomLogAppender(Class<T> configurationClass) {
+        this.configurationClass = configurationClass;
+    }
     
     @Override
     public void initLogAppender(LogAppenderDto appender) {
         CustomAppenderParametersDto customParameters = 
                 (CustomAppenderParametersDto)appender.getProperties().getParameters();
         
-        String configurationString = customParameters.getConfiguration();
-        Properties properties = new Properties();
+        byte[] rawConfiguration = customParameters.getRawConfiguration();
         try {
-            properties.load(new StringReader(configurationString));
-            if (LOG.isDebugEnabled()) {
-                StringWriter writer = new StringWriter();
-                PrintWriter printWriter = new PrintWriter(writer, true);
-                properties.list(printWriter);
-                LOG.debug("Initializing appender [{}] with the following configuration:", getName());
-                LOG.debug(writer.toString());
-            }
-            initFromProperties(properties);
+            AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(configurationClass);
+            T configuration = converter.fromByteArray(rawConfiguration);
+            initFromConfiguration(appender, configuration);
         } catch (IOException e) {
             LOG.error("Unable to parse configuration for appender '" + getName() + "'", e);
         }
     }
     
-    protected abstract void initFromProperties(Properties properties);
+    protected abstract void initFromConfiguration(LogAppenderDto appender, T configuration);
     
 }

@@ -196,6 +196,27 @@
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
+            <artifactId>appender</artifactId>
+            <version>${project.version}</version>
+            <classifier>file</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
+            <artifactId>appender</artifactId>
+            <version>${project.version}</version>
+            <classifier>mongo</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
+            <artifactId>appender</artifactId>
+            <version>${project.version}</version>
+            <classifier>flume</classifier>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -50,6 +50,9 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DecoderFactory;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.server.appenders.oraclenosql.config.KvStoreNode;
+import org.kaaproject.kaa.server.appenders.oraclenosql.config.OracleNoSqlConfig;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.log.shared.appender.CustomLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -58,22 +61,9 @@ import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OracleNoSqlLogAppender extends CustomLogAppender {
+public class OracleNoSqlLogAppender extends CustomLogAppender<OracleNoSqlConfig> {
 
     private static final Logger LOG = LoggerFactory.getLogger(OracleNoSqlLogAppender.class);
-
-    /**
-     * Configuration properties constants
-     */
-    private static final String STORE_NAME = "storeName";
-    private static final String HELPER_HOST_PORT = "helperHostPort";
-
-    /**
-     * Default values
-     */
-    private static final String DEFAULT_STORE_NAME = "kvstore";
-    private static final String DEFAULT_HELPER_HOST_PORT = "localhost:5000";
-    private static final String HELPER_HOST_PORT_SEPARATOR = ",";
 
     private boolean closed = false;
 
@@ -85,7 +75,7 @@ public class OracleNoSqlLogAppender extends CustomLogAppender {
     private DatumReader<GenericRecord> datumReader;
 
     public OracleNoSqlLogAppender() {
-        super();
+        super(OracleNoSqlConfig.class);
     }
 
     @Override
@@ -108,9 +98,9 @@ public class OracleNoSqlLogAppender extends CustomLogAppender {
     }
     
     @Override
-    protected void initFromProperties(Properties properties) {
+    protected void initFromConfiguration(LogAppenderDto appender, OracleNoSqlConfig configuration) {
         try {
-            kvStore = initKvStore(properties);
+            kvStore = initKvStore(configuration);
         } catch (Exception e) {
             LOG.error("Failed to init kvStore: ", e);
         }
@@ -226,15 +216,55 @@ public class OracleNoSqlLogAppender extends CustomLogAppender {
         LOG.debug("Stopped Oracle NoSQL log appender.");
     }
 
-    private KVStore initKvStore(Properties properties) throws Exception {
-        String storeName = properties.getProperty(STORE_NAME, DEFAULT_STORE_NAME);
-        String helperHostPort = properties.getProperty(HELPER_HOST_PORT, DEFAULT_HELPER_HOST_PORT);
-        String[] helperHostPorts = helperHostPort.split(HELPER_HOST_PORT_SEPARATOR);
+    private KVStore initKvStore(OracleNoSqlConfig configuration) throws Exception {
+        List<KvStoreNode> kvStoreNodes = configuration.getKvStoreNodes();
+        String[] helperHostPorts = new String[kvStoreNodes.size()];
+        for (int i=0;i<kvStoreNodes.size();i++) {
+            KvStoreNode node = kvStoreNodes.get(i);
+            helperHostPorts[i] = node.getHost() + ":" + node.getPort();
+        }
+
+        KVStoreConfig config = new KVStoreConfig(configuration.getStoreName(), helperHostPorts);
         
-        KVStoreConfig config = new KVStoreConfig(storeName, helperHostPorts);
-        config.setSecurityProperties(properties);
-        
-        username = properties.getProperty(KVSecurityConstants.AUTH_USERNAME_PROPERTY, "");
+        Properties securityProperties = new Properties();
+        if (configuration.getUsername() != null) {
+            username = configuration.getUsername();
+            securityProperties.put(KVSecurityConstants.AUTH_USERNAME_PROPERTY, configuration.getUsername());
+        }
+        else {
+            username = "";
+        }
+        if (configuration.getWalletDir() != null) {
+            securityProperties.put(KVSecurityConstants.AUTH_WALLET_PROPERTY, configuration.getWalletDir());
+        }
+        if (configuration.getPwdFile() != null) {
+            securityProperties.put(KVSecurityConstants.AUTH_PWDFILE_PROPERTY, configuration.getPwdFile());
+        }
+        if (configuration.getSecurityFile() != null) {
+            securityProperties.put(KVSecurityConstants.SECURITY_FILE_PROPERTY, configuration.getSecurityFile());
+        }
+        if (configuration.getTransport() != null) {
+            securityProperties.put(KVSecurityConstants.TRANSPORT_PROPERTY, configuration.getTransport());
+        }
+        if (configuration.getSsl() != null) {
+            securityProperties.put(KVSecurityConstants.SSL_TRANSPORT_NAME, configuration.getSsl());
+        }
+        if (configuration.getSslCipherSuites() != null) {
+            securityProperties.put(KVSecurityConstants.SSL_CIPHER_SUITES_PROPERTY, configuration.getSslCipherSuites());
+        }
+        if (configuration.getSslProtocols() != null) {
+            securityProperties.put(KVSecurityConstants.SSL_PROTOCOLS_PROPERTY, configuration.getSslProtocols());
+        }
+        if (configuration.getSslHostnameVerifier() != null) {
+            securityProperties.put(KVSecurityConstants.SSL_HOSTNAME_VERIFIER_PROPERTY, configuration.getSslHostnameVerifier());
+        }
+        if (configuration.getSslTrustStore() != null) {
+            securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY, configuration.getSslTrustStore());
+        }
+        if (configuration.getSslTrustStoreType() != null) {
+            securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_TYPE_PROPERTY, configuration.getSslTrustStoreType());
+        }
+        config.setSecurityProperties(securityProperties);
         
         KVStore kvStore = KVStoreFactory.getStore(config);
         

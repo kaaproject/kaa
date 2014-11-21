@@ -113,9 +113,9 @@
                             ]
                         },
                         {
-                            "name":"configuration",
+                            "name":"rawConfiguration",
                             "type":[
-                                    "string", 
+                                    "bytes", 
                                     "null"
                             ]
                         }

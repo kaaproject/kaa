@@ -43,9 +43,10 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
+import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
+import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -883,22 +884,22 @@ public class DataSource {
         });
     }
 
-    public void getLogAppender(String appenderId,
-            final AsyncCallback<LogAppenderDto> callback) {
-        rpcService.getLogAppender(appenderId,
-                new DataCallback<LogAppenderDto>(callback) {
+    public void getLogAppenderForm(String appenderId,
+            final AsyncCallback<LogAppenderFormWrapper> callback) {
+        rpcService.getLogAppenderForm(appenderId,
+                new DataCallback<LogAppenderFormWrapper>(callback) {
             @Override
-            protected void onResult(LogAppenderDto result) {
+            protected void onResult(LogAppenderFormWrapper result) {
             }
         });
     }
 
-    public void editLogAppender(LogAppenderDto dto,
-            final AsyncCallback<LogAppenderDto> callback) {
-        rpcService.editLogAppender(dto,
-                new DataCallback<LogAppenderDto>(callback) {
+    public void editLogAppenderForm(LogAppenderFormWrapper dto,
+            final AsyncCallback<LogAppenderFormWrapper> callback) {
+        rpcService.editLogAppenderForm(dto,
+                new DataCallback<LogAppenderFormWrapper>(callback) {
             @Override
-            protected void onResult(LogAppenderDto result) {
+            protected void onResult(LogAppenderFormWrapper result) {
             }
         });
     }

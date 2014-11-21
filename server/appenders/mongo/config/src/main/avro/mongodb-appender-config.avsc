@@ -1,0 +1,32 @@
+{
+    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config",
+    "type": "record",
+    "name": "MongoDbConfig",
+    "fields": 
+    [
+           {
+            "name": "mongoServers", 
+            "displayName": "MongoDB nodes",
+            "minRowCount": 1,
+            "type": {
+                "type": "array",
+                "items": {
+                    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config",
+                    "type": "record",
+                    "name": "MongoDbServer",
+                    "fields": [
+                        {"name": "host", "displayName": "Host", "weight": 0.75, "default": "localhost", "type": "string"},
+                        {"name": "port", "displayName": "Port", "weight": 0.25, "default": 27017, "type": "int"}
+                    ]
+                }
+            }
+        },
+        {"name": "dbName", "displayName": "MongoDB database name", "type": "string"},
+        {"name": "connectionsPerHost", "displayName": "Max connections per host", "default": 30, "optional": true, "type": ["int", "null"]},
+        {"name": "maxWaitTime", "displayName": "Max wait time (ms)", "default": 120000, "optional": true, "type": ["int", "null"]},
+        {"name": "connectionTimeout", "displayName": "Connection timeout (ms)", "default": 5000, "optional": true, "type": ["int", "null"]},
+        {"name": "socketTimeout", "displayName": "Socket timeout (ms)", "default": 0, "optional": true, "type": ["int", "null"]},
+        {"name": "socketKeepalive", "displayName": "Turn on socket keepalive", "default": false, "optional": true, "type": ["boolean", "null"]},
+        {"name": "autoConnectRetry", "displayName": "Automatic reconnect on errors", "default": true, "optional": true, "type": ["boolean", "null"]}
+    ]
+}

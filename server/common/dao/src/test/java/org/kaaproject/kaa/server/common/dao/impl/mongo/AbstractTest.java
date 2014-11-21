@@ -694,7 +694,7 @@ public class AbstractTest {
                 parameters.setParameters(new MongoAppenderParametersDto("testCollections"));
                 break;
             case CUSTOM:
-                parameters.setParameters(new CustomAppenderParametersDto("CustomAppender", "org.kaaproject.TestAppender", "config"));
+                parameters.setParameters(new CustomAppenderParametersDto("CustomAppender", "org.kaaproject.TestAppender", new byte[]{1,2,3}));
                 break;
         }
         logAppender.setProperties(parameters);

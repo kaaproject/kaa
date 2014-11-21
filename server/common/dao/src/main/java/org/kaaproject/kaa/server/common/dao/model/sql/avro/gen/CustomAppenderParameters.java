@@ -7,11 +7,11 @@ package org.kaaproject.kaa.server.common.dao.model.sql.avro.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class CustomAppenderParameters extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CustomAppenderParameters\",\"namespace\":\"org.kaaproject.kaa.server.common.dao.model.sql.avro.gen\",\"fields\":[{\"name\":\"name\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"appenderClassName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"configuration\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CustomAppenderParameters\",\"namespace\":\"org.kaaproject.kaa.server.common.dao.model.sql.avro.gen\",\"fields\":[{\"name\":\"name\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"appenderClassName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"rawConfiguration\",\"type\":[\"bytes\",\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String name;
    private java.lang.String appenderClassName;
-   private java.lang.String configuration;
+   private java.nio.ByteBuffer rawConfiguration;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -23,10 +23,10 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
   /**
    * All-args constructor.
    */
-  public CustomAppenderParameters(java.lang.String name, java.lang.String appenderClassName, java.lang.String configuration) {
+  public CustomAppenderParameters(java.lang.String name, java.lang.String appenderClassName, java.nio.ByteBuffer rawConfiguration) {
     this.name = name;
     this.appenderClassName = appenderClassName;
-    this.configuration = configuration;
+    this.rawConfiguration = rawConfiguration;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -35,7 +35,7 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
     switch (field$) {
     case 0: return name;
     case 1: return appenderClassName;
-    case 2: return configuration;
+    case 2: return rawConfiguration;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -45,7 +45,7 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
     switch (field$) {
     case 0: name = (java.lang.String)value$; break;
     case 1: appenderClassName = (java.lang.String)value$; break;
-    case 2: configuration = (java.lang.String)value$; break;
+    case 2: rawConfiguration = (java.nio.ByteBuffer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -81,18 +81,18 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
   }
 
   /**
-   * Gets the value of the 'configuration' field.
+   * Gets the value of the 'rawConfiguration' field.
    */
-  public java.lang.String getConfiguration() {
-    return configuration;
+  public java.nio.ByteBuffer getRawConfiguration() {
+    return rawConfiguration;
   }
 
   /**
-   * Sets the value of the 'configuration' field.
+   * Sets the value of the 'rawConfiguration' field.
    * @param value the value to set.
    */
-  public void setConfiguration(java.lang.String value) {
-    this.configuration = value;
+  public void setRawConfiguration(java.nio.ByteBuffer value) {
+    this.rawConfiguration = value;
   }
 
   /** Creates a new CustomAppenderParameters RecordBuilder */
@@ -118,7 +118,7 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
 
     private java.lang.String name;
     private java.lang.String appenderClassName;
-    private java.lang.String configuration;
+    private java.nio.ByteBuffer rawConfiguration;
 
     /** Creates a new Builder */
     private Builder() {
@@ -136,8 +136,8 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
         this.appenderClassName = data().deepCopy(fields()[1].schema(), other.appenderClassName);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.configuration)) {
-        this.configuration = data().deepCopy(fields()[2].schema(), other.configuration);
+      if (isValidValue(fields()[2], other.rawConfiguration)) {
+        this.rawConfiguration = data().deepCopy(fields()[2].schema(), other.rawConfiguration);
         fieldSetFlags()[2] = true;
       }
     }
@@ -153,8 +153,8 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
         this.appenderClassName = data().deepCopy(fields()[1].schema(), other.appenderClassName);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.configuration)) {
-        this.configuration = data().deepCopy(fields()[2].schema(), other.configuration);
+      if (isValidValue(fields()[2], other.rawConfiguration)) {
+        this.rawConfiguration = data().deepCopy(fields()[2].schema(), other.rawConfiguration);
         fieldSetFlags()[2] = true;
       }
     }
@@ -209,27 +209,27 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
       return this;
     }
 
-    /** Gets the value of the 'configuration' field */
-    public java.lang.String getConfiguration() {
-      return configuration;
+    /** Gets the value of the 'rawConfiguration' field */
+    public java.nio.ByteBuffer getRawConfiguration() {
+      return rawConfiguration;
     }
     
-    /** Sets the value of the 'configuration' field */
-    public org.kaaproject.kaa.server.common.dao.model.sql.avro.gen.CustomAppenderParameters.Builder setConfiguration(java.lang.String value) {
+    /** Sets the value of the 'rawConfiguration' field */
+    public org.kaaproject.kaa.server.common.dao.model.sql.avro.gen.CustomAppenderParameters.Builder setRawConfiguration(java.nio.ByteBuffer value) {
       validate(fields()[2], value);
-      this.configuration = value;
+      this.rawConfiguration = value;
       fieldSetFlags()[2] = true;
       return this; 
     }
     
-    /** Checks whether the 'configuration' field has been set */
-    public boolean hasConfiguration() {
+    /** Checks whether the 'rawConfiguration' field has been set */
+    public boolean hasRawConfiguration() {
       return fieldSetFlags()[2];
     }
     
-    /** Clears the value of the 'configuration' field */
-    public org.kaaproject.kaa.server.common.dao.model.sql.avro.gen.CustomAppenderParameters.Builder clearConfiguration() {
-      configuration = null;
+    /** Clears the value of the 'rawConfiguration' field */
+    public org.kaaproject.kaa.server.common.dao.model.sql.avro.gen.CustomAppenderParameters.Builder clearRawConfiguration() {
+      rawConfiguration = null;
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -240,7 +240,7 @@ public class CustomAppenderParameters extends org.apache.avro.specific.SpecificR
         CustomAppenderParameters record = new CustomAppenderParameters();
         record.name = fieldSetFlags()[0] ? this.name : (java.lang.String) defaultValue(fields()[0]);
         record.appenderClassName = fieldSetFlags()[1] ? this.appenderClassName : (java.lang.String) defaultValue(fields()[1]);
-        record.configuration = fieldSetFlags()[2] ? this.configuration : (java.lang.String) defaultValue(fields()[2]);
+        record.rawConfiguration = fieldSetFlags()[2] ? this.rawConfiguration : (java.nio.ByteBuffer) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

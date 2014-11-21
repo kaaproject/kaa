@@ -15,12 +15,14 @@
  */
 package org.kaaproject.kaa.server.common.log.shared.config;
 
+import org.apache.avro.Schema;
+
 public interface AppenderConfig {
 
     String getName();
     
     String getLogAppenderClass();
     
-    String getDefaultConfig();
+    Schema getConfigSchema();
     
 }
