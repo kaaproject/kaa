@@ -84,10 +84,14 @@ kaa_error_t kaa_init()
         kaa_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size);
 
         kaa_digest d;
-        kaa_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, d);
-        kaa_status_set_endpoint_public_key_hash(kaa_context_->status, d);
-
-        kaa_initialized = true;
+        result = kaa_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, d);
+        if (result == KAA_ERR_NONE) {
+            kaa_status_set_endpoint_public_key_hash(kaa_context_->status, d);
+            kaa_initialized = true;
+        } else {
+            kaa_destroy_context(kaa_context_);
+            kaa_context_ = NULL;
+        }
     }
     return result;
 }
