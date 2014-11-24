@@ -159,7 +159,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
 
     private void checkIfArray(Map<String, Object> fieldType, List<Object> union) {
         if (fieldType.get(TYPE_FIELD).equals(ARRAY_FIELD_VALUE) && strategy.isArrayEditable()) {
-            union.add(getResetType());
+            union.add(0, getResetType());
         }
     }
 
