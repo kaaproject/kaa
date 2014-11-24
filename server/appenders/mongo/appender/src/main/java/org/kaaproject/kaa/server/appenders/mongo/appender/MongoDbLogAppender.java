@@ -1,17 +1,33 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
-import org.kaaproject.kaa.server.appenders.mongo.config.MongoDbConfig;
-import org.kaaproject.kaa.server.common.log.shared.appender.CustomLogAppender;
+import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
+import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MongoDbLogAppender extends CustomLogAppender<MongoDbConfig> {
+public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
     
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbLogAppender.class);
 

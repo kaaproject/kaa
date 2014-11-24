@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.appenders.flume.appender.client;
 
 import org.junit.After;
 import org.junit.Before;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeConfig;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 
 public abstract class FlumeClientManagerTest<T> {
 

@@ -86,12 +86,21 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Djava.security.manager -Djava.security.policy=${basedir}/src/test/resources/security.policy</argLine>
+                    <argLine>${jacoco.agent.ut.argLine} -Djava.security.manager -Djava.security.policy=${basedir}/src/test/resources/security.policy</argLine>
                     <classpathDependencyExcludes>
                         <classpathDependencyExcludes>com.oracle.kv:oracle-nosql-client</classpathDependencyExcludes>
                     </classpathDependencyExcludes>
                 </configuration>
             </plugin>        
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>src/test/resources/security.policy</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

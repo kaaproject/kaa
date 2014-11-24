@@ -1,5 +1,5 @@
 {
-    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config",
+    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config.gen",
     "type": "record",
     "name": "MongoDbConfig",
     "fields": 
@@ -11,7 +11,7 @@
             "type": {
                 "type": "array",
                 "items": {
-                    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config",
+                    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config.gen",
                     "type": "record",
                     "name": "MongoDbServer",
                     "fields": [

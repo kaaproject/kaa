@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.specific.SpecificRecordBase;
+import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
@@ -34,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Class LogAppender.
  */
-public abstract class AbstractLogAppender implements LogAppender {
+public abstract class AbstractLogAppender<T extends SpecificRecordBase> implements LogAppender {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLogAppender.class);
@@ -56,6 +58,12 @@ public abstract class AbstractLogAppender implements LogAppender {
 
     /** The converters. */
     Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
+    
+    private final Class<T> configurationClass;
+    
+    public AbstractLogAppender(Class<T> configurationClass) {
+        this.configurationClass = configurationClass;
+    }
 
     /**
      * Log in <code>LogAppender</code> specific way.
@@ -70,7 +78,19 @@ public abstract class AbstractLogAppender implements LogAppender {
      *
      * @param appender the appender
      */
-    public abstract void initLogAppender(LogAppenderDto appender);
+    
+    protected abstract void initFromConfiguration(LogAppenderDto appender, T configuration);
+
+    public void initLogAppender(LogAppenderDto appender) {
+        byte[] rawConfiguration = appender.getRawConfiguration();
+        try {
+            AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(configurationClass);
+            T configuration = converter.fromByteArray(rawConfiguration);
+            initFromConfiguration(appender, configuration);
+        } catch (IOException e) {
+            LOG.error("Unable to parse configuration for appender '" + getName() + "'", e);
+        }
+    }
 
     @Override
     public void setName(String name) {

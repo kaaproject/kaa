@@ -16,26 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
-import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
-import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
-import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
@@ -43,7 +31,7 @@ import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.ValueListBox;
 
 public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderFormWrapper, LogAppenderView, LogAppenderPlace> {
 
@@ -103,7 +91,7 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
 
                 @Override
                 public void onSuccess(List<SchemaDto> result) {
-                    SchemaListBox versions = detailsView.getSchemaVersions();
+                    ValueListBox<SchemaDto> versions = detailsView.getSchemaVersions();
                     versions.setValue(Utils.getMaxSchemaVersions(result));
                     versions.setAcceptableValues(result);
                 }
@@ -117,33 +105,10 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
             detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
             detailsView.getSchemaVersions().setValue(entity.getSchema());
             detailsView.setMetadataListBox(entity.getHeaderStructure());
-
-            LogAppenderTypeDto type = entity.getType();
-            switch (type) {
-                case FILE:
-                    FileAppenderParametersDto file = (FileAppenderParametersDto) entity.getProperties().getParameters();
-                    detailsView.setPublicKey(file.getSshKey());
-                    detailsView.getAppenderInfo().setValue(new LogAppenderInfoDto(type));
-                    break;
-                case MONGO:
-                    detailsView.hideFileCongurationFields();
-                    detailsView.getAppenderInfo().setValue(new LogAppenderInfoDto(type));
-                    break;
-                case FLUME:
-                    FlumeAppenderParametersDto flume = (FlumeAppenderParametersDto) entity.getProperties().getParameters();
-                    detailsView.showFlumeCongurationFields(flume);
-                    detailsView.getAppenderInfo().setValue(new LogAppenderInfoDto(type));
-                    break;
-                case CUSTOM:
-                    CustomAppenderParametersDto custom = (CustomAppenderParametersDto) entity.getProperties().getParameters();
-                    detailsView.hideFileCongurationFields();
-                    detailsView.showCustomConfigurationFields();
-                    detailsView.setConfiguration(entity.getConfiguration());
-                    LogAppenderInfoDto appenderInfo = 
-                            new LogAppenderInfoDto(type, custom.getName(), entity.getConfiguration(), custom.getAppenderClassName());
-                    detailsView.getAppenderInfo().setValue(appenderInfo);
-                    break;
-            }
+            detailsView.getConfiguration().setValue(entity.getConfiguration());
+            LogAppenderInfoDto appenderInfo = 
+                    new LogAppenderInfoDto(entity.getTypeName(), entity.getConfiguration(), entity.getAppenderClassName());
+            detailsView.getAppenderInfo().setValue(appenderInfo);
         }
     }
 
@@ -152,51 +117,12 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
         entity.setName(detailsView.getName().getValue());
         entity.setSchema(detailsView.getSchemaVersions().getValue());
         entity.setStatus(LogAppenderStatusDto.REGISTERED);
-
         entity.setDescription(detailsView.getDescription().getValue());
         entity.setHeaderStructure(detailsView.getHeader());
-
         LogAppenderInfoDto appenderInfo = detailsView.getAppenderInfo().getValue();
-        entity.setType(appenderInfo.getType());
-        LogAppenderParametersDto parameters = new LogAppenderParametersDto();
-        switch (appenderInfo.getType()) {
-            case FILE:
-                FileAppenderParametersDto fileDto = new FileAppenderParametersDto();
-                fileDto.setSshKey(detailsView.getPublicKey());
-                parameters.setParameters(fileDto);
-                break;
-            case MONGO:
-                break;
-            case FLUME:
-                FlumeAppenderParametersDto flume = new FlumeAppenderParametersDto();
-                FlumeBalancingTypeDto type = detailsView.getFlumeBalancingType().getValue();
-                flume.setBalancingType(type);
-                FlexTable table = detailsView.getHostTable();
-                List<HostInfoDto> hosts = new ArrayList<>();
-                for (int i = 1; i < table.getRowCount(); i++) {
-                    String host = ((SizedTextBox) table.getWidget(i, 0)).getValue();
-                    String port = ((SizedTextBox) table.getWidget(i, 1)).getValue();
-                    if (FlumeBalancingTypeDto.PRIORITIZED.equals(type)) {
-                        String priority = ((SizedTextBox) table.getWidget(i, 2)).getValue();
-                        if (isNotBlank(host) && isNotBlank(port) && isNotBlank(priority)) {
-                            hosts.add(new HostInfoDto(host, Integer.valueOf(port), Integer.valueOf(priority)));
-                        }
-                    } else if (isNotBlank(host) && isNotBlank(port)) {
-                        hosts.add(new HostInfoDto(host, Integer.valueOf(port), 0));
-                    }
-                }
-                flume.setHosts(hosts);
-                parameters.setParameters(flume);
-                break;
-            case CUSTOM:
-                CustomAppenderParametersDto customParameters = new CustomAppenderParametersDto();
-                customParameters.setName(appenderInfo.getName());
-                customParameters.setAppenderClassName(appenderInfo.getAppenderClassName());
-                entity.setConfiguration(detailsView.getConfiguration());
-                parameters.setParameters(customParameters);
-                break;
-        }
-        entity.setProperties(parameters);
+        entity.setTypeName(appenderInfo.getName());
+        entity.setAppenderClassName(appenderInfo.getAppenderClassName());
+        entity.setConfiguration(detailsView.getConfiguration().getValue());
     }
 
     @Override

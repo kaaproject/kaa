@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.appenders.oraclenosql.appender;
 
 import java.io.File;
@@ -35,10 +51,8 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
-import org.kaaproject.kaa.server.appenders.oraclenosql.config.KvStoreNode;
-import org.kaaproject.kaa.server.appenders.oraclenosql.config.OracleNoSqlConfig;
+import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.KvStoreNode;
+import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
@@ -140,9 +154,6 @@ public class OracleNoSqlLogAppenderTest {
         appenderDto.setTenantId(TENANT_ID);
         appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
 
-        LogAppenderParametersDto parameters = new LogAppenderParametersDto();
-        CustomAppenderParametersDto customParameters = new CustomAppenderParametersDto();
-        
         List<KvStoreNode> nodes = Arrays.asList(new KvStoreNode(STORE_HOST, STORE_PORT));
         OracleNoSqlConfig oracleConfig = new OracleNoSqlConfig();
         oracleConfig.setKvStoreNodes(nodes);
@@ -151,10 +162,7 @@ public class OracleNoSqlLogAppenderTest {
         AvroByteArrayConverter<OracleNoSqlConfig> converter = new AvroByteArrayConverter<>(OracleNoSqlConfig.class);
         byte[] rawConfiguration = converter.toByteArray(oracleConfig);
         
-        customParameters.setRawConfiguration(rawConfiguration);
-        parameters.setParameters(customParameters);
-        
-        appenderDto.setProperties(parameters);        
+        appenderDto.setRawConfiguration(rawConfiguration);
         
         logAppender.setApplicationToken(appenderDto.getApplicationToken());
         logAppender.init(appenderDto);

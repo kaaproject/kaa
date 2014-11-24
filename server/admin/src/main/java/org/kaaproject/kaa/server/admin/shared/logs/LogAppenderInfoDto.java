@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.admin.shared.logs;
 
 import java.io.Serializable;
 
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
-import org.kaaproject.kaa.server.admin.shared.form.RecordField;
+import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
 public class LogAppenderInfoDto implements Serializable {
 
     private static final long serialVersionUID = 5417936799807172505L;
     
-    private LogAppenderTypeDto type;
     private String name;
     private RecordField configForm;
     private String appenderClassName;
@@ -32,28 +31,13 @@ public class LogAppenderInfoDto implements Serializable {
     public LogAppenderInfoDto() {
         super();
     }
-    
-    public LogAppenderInfoDto(LogAppenderTypeDto type) {
-        super();
-        this.type = type;
-        this.name = type.getLabel();
-    }
 
-    public LogAppenderInfoDto(LogAppenderTypeDto type, String name,
+    public LogAppenderInfoDto(String name,
             RecordField configForm, String appenderClassName) {
         super();
-        this.type = type;
         this.name = name;
         this.configForm = configForm;
         this.appenderClassName = appenderClassName;
-    }
-
-    public LogAppenderTypeDto getType() {
-        return type;
-    }
-
-    public void setType(LogAppenderTypeDto type) {
-        this.type = type;
     }
 
     public String getName() {
@@ -84,7 +68,6 @@ public class LogAppenderInfoDto implements Serializable {
                 * result
                 + ((appenderClassName == null) ? 0 : appenderClassName
                         .hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 
@@ -107,17 +90,13 @@ public class LogAppenderInfoDto implements Serializable {
         } else if (!appenderClassName.equals(other.appenderClassName)) {
             return false;
         }
-        if (type != other.type) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "LogAppenderInfoDto [type=" + type + ", name=" + name
-                + ", configForm=" + configForm + ", appenderClassName="
-                + appenderClassName + "]";
+        return "LogAppenderInfoDto [name=" + name + ", configForm="
+                + configForm + ", appenderClassName=" + appenderClassName + "]";
     }
 
 }

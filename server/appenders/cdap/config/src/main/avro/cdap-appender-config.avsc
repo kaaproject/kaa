@@ -1,5 +1,5 @@
 {
-    "namespace": "org.kaaproject.kaa.server.appenders.cdap.config",
+    "namespace": "org.kaaproject.kaa.server.appenders.cdap.config.gen",
     "type": "record",
     "name": "CdapConfig",
     "fields": [

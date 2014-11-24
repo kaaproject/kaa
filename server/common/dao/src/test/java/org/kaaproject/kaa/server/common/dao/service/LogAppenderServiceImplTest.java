@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 
@@ -47,7 +46,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void findRegisteredLogAppendersByAppIdTest() {
-        LogAppenderDto appender = generateLogAppender(application.getId(), null, LogAppenderTypeDto.FLUME, null);
+        LogAppenderDto appender = generateLogAppender(application.getId(), null, null);
         List<LogAppenderDto> appenders = logAppendersService.findRegisteredLogAppendersByAppId(application.getId());
         Assert.assertNotNull(appenders);
         Assert.assertEquals(1, appenders.size());
@@ -56,9 +55,9 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void findAllAppendersByAppIdTest() {
-        LogAppenderDto unreg = generateLogAppender(application.getId(), null, null, LogAppenderStatusDto.UNREGISTERED);
+        LogAppenderDto unreg = generateLogAppender(application.getId(), null, LogAppenderStatusDto.UNREGISTERED);
         Assert.assertNotNull(unreg);
-        LogAppenderDto reg = generateLogAppender(application.getId(), null, null, LogAppenderStatusDto.REGISTERED);
+        LogAppenderDto reg = generateLogAppender(application.getId(), null, LogAppenderStatusDto.REGISTERED);
         Assert.assertNotNull(reg);
         List<LogAppenderDto> appenders = logAppendersService.findAllAppendersByAppId(application.getId());
         Assert.assertNotNull(appenders);
@@ -71,7 +70,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void registerLogAppenderByAppIdAndAppenderIdTest() {
-        LogAppenderDto appender = generateLogAppender(application.getId(), null, null, LogAppenderStatusDto.UNREGISTERED);
+        LogAppenderDto appender = generateLogAppender(application.getId(), null, LogAppenderStatusDto.UNREGISTERED);
         LogAppenderDto registered = logAppendersService.registerLogAppenderById(appender.getId());
         Assert.assertNotNull(registered);
         Assert.assertNotEquals(appender, registered);
@@ -80,7 +79,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void unregisterLogAppenderByAppenderIdTest() {
-        LogAppenderDto appender = generateLogAppender(application.getId(), null, null, null);
+        LogAppenderDto appender = generateLogAppender(application.getId(), null, null);
         LogAppenderDto unreg = logAppendersService.unregisterLogAppenderById(appender.getId());
         Assert.assertNotNull(unreg);
         Assert.assertNotEquals(appender, unreg);
@@ -89,7 +88,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void findLogAppenderByIdTest() {
-        LogAppenderDto appender = generateLogAppender(application.getId(), null, LogAppenderTypeDto.FLUME, null);
+        LogAppenderDto appender = generateLogAppender(application.getId(), null, null);
         LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
         Assert.assertNotNull(found);
         Assert.assertEquals(appender, found);
@@ -98,7 +97,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void removeLogAppenderByIdTest() {
-        LogAppenderDto appender = generateLogAppender(application.getId(), null, LogAppenderTypeDto.FLUME, null);
+        LogAppenderDto appender = generateLogAppender(application.getId(), null, null);
         LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
         Assert.assertNotNull(found);
         Assert.assertEquals(appender, found);

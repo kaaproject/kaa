@@ -170,28 +170,6 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
-           <plugin>
-              <groupId>org.apache.avro</groupId>
-              <artifactId>avro-maven-plugin</artifactId>
-              <version>${avro.version}</version>
-              <executions>
-                <execution>
-                  <phase>generate-sources</phase>
-                  <goals>
-                    <goal>schema</goal>
-                  </goals>
-                  <configuration>
-                    <stringType>String</stringType>
-                    <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
-                    <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
-                    <fieldVisibility>PRIVATE</fieldVisibility>
-                    <includes>
-                      <include>*.avsc</include>
-                    </includes>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -220,23 +198,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
-            <plugin>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <configuration>
-                  <descriptors>
-                      <descriptor>src/main/assembly/avro.xml</descriptor>
-                  </descriptors>
-              </configuration>
-              <executions>
-                  <execution>
-                      <id>make-assembly</id>
-                      <phase>package</phase>
-                      <goals>
-                          <goal>single</goal>
-                      </goals>
-                  </execution>
-              </executions>
-          </plugin>
         </plugins>
     </build>
 

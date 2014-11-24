@@ -51,17 +51,17 @@ import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DecoderFactory;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.server.appenders.oraclenosql.config.KvStoreNode;
-import org.kaaproject.kaa.server.appenders.oraclenosql.config.OracleNoSqlConfig;
+import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.KvStoreNode;
+import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
-import org.kaaproject.kaa.server.common.log.shared.appender.CustomLogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OracleNoSqlLogAppender extends CustomLogAppender<OracleNoSqlConfig> {
+public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfig> {
 
     private static final Logger LOG = LoggerFactory.getLogger(OracleNoSqlLogAppender.class);
 
@@ -211,8 +211,13 @@ public class OracleNoSqlLogAppender extends CustomLogAppender<OracleNoSqlConfig>
 
     @Override
     public void close() {
-        closed = true;
-        kvStore.close();
+        if (!closed) {
+            closed = true;
+            if (kvStore != null) {
+                kvStore.close();
+                kvStore = null;
+            }
+        }
         LOG.debug("Stopped Oracle NoSQL log appender.");
     }
 

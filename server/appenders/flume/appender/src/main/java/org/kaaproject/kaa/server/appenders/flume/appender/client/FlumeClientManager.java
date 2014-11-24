@@ -19,9 +19,9 @@ package org.kaaproject.kaa.server.appenders.flume.appender.client;
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.apache.flume.api.RpcClient;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeConfig;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeNodes;
-import org.kaaproject.kaa.server.appenders.flume.config.PrioritizedFlumeNodes;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

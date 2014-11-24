@@ -20,9 +20,11 @@ import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
@@ -105,7 +107,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
     protected void initDetailsTable() {
         
         Label authorLabel = new Label(Utils.constants.author());
-        createdUsername = new SizedTextBox(-1, false);
+        createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");
         detailsTable.setWidget(0, 0, authorLabel);
         detailsTable.setWidget(0, 1, createdUsername);
@@ -114,7 +116,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         createdUsername.setVisible(!create);
 
         Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
-        createdDateTime = new SizedTextBox(-1, false);
+        createdDateTime = new KaaAdminSizedTextBox(-1, false);
         createdDateTime.setWidth("100%");
         detailsTable.setWidget(1, 0, dateTimeCreatedLabel);
         detailsTable.setWidget(1, 1, createdDateTime);
@@ -124,7 +126,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         
         Label nameLabel = new Label(Utils.constants.name());
         nameLabel.addStyleName("required");
-        name = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         name.setWidth("100%");
         detailsTable.setWidget(2, 0, nameLabel);
         detailsTable.setWidget(2, 1, name);
@@ -135,14 +137,14 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         if (create) {  
             namespaceLabel.addStyleName("required");
             classNameLabel.addStyleName("required");
-            namespace = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+            namespace = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
             namespace.addInputHandler(this);
-            className = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+            className = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
             className.addInputHandler(this);
         }
         else {
-            namespace = new SizedTextBox(-1, false);
-            className = new SizedTextBox(-1, false);
+            namespace = new KaaAdminSizedTextBox(-1, false);
+            className = new KaaAdminSizedTextBox(-1, false);
         }
         namespace.setWidth("100%");
         className.setWidth("100%");
@@ -153,7 +155,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         detailsTable.setWidget(4, 0, classNameLabel);
         detailsTable.setWidget(4, 1, className);
 
-        description = new SizedTextArea(1024);
+        description = new KaaAdminSizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());

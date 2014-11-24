@@ -52,5 +52,21 @@
             </modules>
         </profile>
     </profiles>
-
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>${rat.version}</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/gen/*.java</exclude>
+                            <exclude>**/*.avsc</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

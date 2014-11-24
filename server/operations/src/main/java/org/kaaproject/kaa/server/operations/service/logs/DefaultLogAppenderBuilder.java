@@ -16,11 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.logs;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
-import org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogAppender;
-import org.kaaproject.kaa.server.operations.service.logs.flume.FlumeLogAppender;
-import org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,40 +38,22 @@ public class DefaultLogAppenderBuilder implements LogAppenderBuilder {
     public LogAppender getAppender(LogAppenderDto appenderConfig) {
         LogAppender logAppender = null;
         if (appenderConfig != null) {
-            switch (appenderConfig.getType()) {
-                case FILE:
-                    logAppender = applicationContext.getBean(FileSystemLogAppender.class);
-                    break;
-                case FLUME:
-                    logAppender = applicationContext.getBean(FlumeLogAppender.class);
-                    break;
-                case MONGO:
-                    logAppender = applicationContext.getBean(MongoDBLogAppender.class);
-                    break;
-                case CUSTOM:
-                    CustomAppenderParametersDto customParameters = 
-                        (CustomAppenderParametersDto)appenderConfig.getProperties().getParameters();
-                    try {
-                        @SuppressWarnings("unchecked")
-                        Class<LogAppender> appenderClass = (Class<LogAppender>) Class.forName(customParameters.getAppenderClassName());
-                        logAppender = appenderClass.newInstance();
-                    } catch (ClassNotFoundException e) {
-                        LOG.error("Unable to find custom appender class " + customParameters.getAppenderClassName(), e);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        LOG.error("Unable to instantiate custom appender from class " + customParameters.getAppenderClassName(), e);
-                    } 
-                    break;
-                default:
-                    LOG.debug("Incorrect type of log appender [{}].", appenderConfig.getType());
-                    break;
-            }
-            if (logAppender != null) {
-                LOG.debug("Init log appender [{}] with appender configuration {[]}.", logAppender, appenderConfig);
-                logAppender.setName(appenderConfig.getName());
-                logAppender.setAppenderId(appenderConfig.getId());
-                logAppender.setApplicationToken(appenderConfig.getApplicationToken());
-                logAppender.init(appenderConfig);
-            }
+            try {
+                @SuppressWarnings("unchecked")
+                Class<LogAppender> appenderClass = (Class<LogAppender>) Class.forName(appenderConfig.getAppenderClassName());
+                logAppender = appenderClass.newInstance();
+            } catch (ClassNotFoundException e) {
+                LOG.error("Unable to find custom appender class " + appenderConfig.getAppenderClassName(), e);
+            } catch (InstantiationException | IllegalAccessException e) {
+                LOG.error("Unable to instantiate custom appender from class " + appenderConfig.getAppenderClassName(), e);
+            } 
+        }
+        if (logAppender != null) {
+            LOG.debug("Init log appender [{}] with appender configuration {[]}.", logAppender, appenderConfig);
+            logAppender.setName(appenderConfig.getName());
+            logAppender.setAppenderId(appenderConfig.getId());
+            logAppender.setApplicationToken(appenderConfig.getApplicationToken());
+            logAppender.init(appenderConfig);
         }
         return logAppender;
     }

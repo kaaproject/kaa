@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.appenders.cdap.config;
 
 import org.apache.avro.Schema;
+import org.kaaproject.kaa.server.appenders.cdap.config.gen.CdapConfig;
 import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
 import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
 

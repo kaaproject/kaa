@@ -240,7 +240,7 @@ public final class ModelConstants {
      * Log schema constants.
      */
     public static final String LOG_SCHEMA_TABLE_NAME = "log_schema";
-
+    
     /**
      * Log appender constants.
      */
@@ -249,8 +249,9 @@ public final class ModelConstants {
     public static final String LOG_APPENDER_APPLICATION_ID = "application_id";
     public static final String LOG_APPENDER_LOG_SCHEMA_ID = "log_schema_id";
     public static final String LOG_APPENDER_STATUS = "status";
-    public static final String LOG_APPENDER_TYPE = "type";
-    public static final String LOG_APPENDER_PROPERTIES = "properties";
+    public static final String LOG_APPENDER_TYPE_NAME = "type_name";
+    public static final String LOG_APPENDER_APPENDER_CLASS_NAME = "appender_class_name";
+    public static final String LOG_APPENDER_RAW_CONFIGURATION = "raw_configuration";
     public static final String LOG_APPENDER_DESCRIPTION = DESCRIPTION;
     public static final String LOG_APPENDER_CREATED_USERNAME = CREATED_USERNAME;
     public static final String LOG_APPENDER_CREATED_TIME = CREATED_TIME;

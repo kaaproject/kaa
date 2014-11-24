@@ -1,0 +1,24 @@
+{
+    "namespace": "org.kaaproject.kaa.server.common.avro.ui.test",
+    "type": "record",
+    "name": "TestArray",
+    "fields": 
+    [
+        {
+            "name": "testArrayElements", 
+            "displayName": "Test Array Elements",
+            "minRowCount": 1,
+            "type": {
+                "type": "array",
+                "items": {
+                    "namespace": "org.kaaproject.kaa.server.common.avro.ui.test",
+                    "type": "record",
+                    "name": "TestArrayRecord",
+                    "fields": [
+		        {"name": "test", "displayName": "Test field", "maxLength": 1000, "default": "", "type": "string"}
+                    ]
+                }
+            }
+        }
+    ]
+}

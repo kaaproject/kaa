@@ -24,8 +24,8 @@ import org.apache.flume.event.EventBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kaaproject.kaa.server.appenders.flume.config.PrioritizedFlumeNode;
-import org.kaaproject.kaa.server.appenders.flume.config.PrioritizedFlumeNodes;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes;
 
 public class PriorityFlumeClientManagerTest extends FlumeClientManagerTest<PrioritizedFlumeNodes> {
 

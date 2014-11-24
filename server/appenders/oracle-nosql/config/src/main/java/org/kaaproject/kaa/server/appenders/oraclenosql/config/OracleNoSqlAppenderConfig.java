@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.appenders.oraclenosql.config;
 
 import org.apache.avro.Schema;
+import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig;
 import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
 import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
 

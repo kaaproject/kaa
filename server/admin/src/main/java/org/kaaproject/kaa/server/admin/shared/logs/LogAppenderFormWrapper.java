@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.admin.shared.logs;
 
 import java.io.Serializable;
@@ -7,10 +23,8 @@ import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
-import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
-import org.kaaproject.kaa.server.admin.shared.form.RecordField;
+import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
 public class LogAppenderFormWrapper implements HasId, Serializable {
 
@@ -122,22 +136,6 @@ public class LogAppenderFormWrapper implements HasId, Serializable {
         logAppender.setStatus(status);
     }
 
-    public LogAppenderTypeDto getType() {
-        return logAppender.getType();
-    }
-
-    public void setType(LogAppenderTypeDto type) {
-        logAppender.setType(type);
-    }
-
-    public LogAppenderParametersDto getProperties() {
-        return logAppender.getProperties();
-    }
-
-    public void setProperties(LogAppenderParametersDto properties) {
-        logAppender.setProperties(properties);
-    }
-
     public List<LogHeaderStructureDto> getHeaderStructure() {
         return logAppender.getHeaderStructure();
     }
@@ -148,6 +146,30 @@ public class LogAppenderFormWrapper implements HasId, Serializable {
 
     public String getSchemaVersion() {
         return logAppender.getSchemaVersion();
+    }
+
+    public String getTypeName() {
+        return logAppender.getTypeName();
+    }
+
+    public void setTypeName(String typeName) {
+        logAppender.setTypeName(typeName);
+    }
+
+    public String getAppenderClassName() {
+        return logAppender.getAppenderClassName();
+    }
+
+    public void setAppenderClassName(String appenderClassName) {
+        logAppender.setAppenderClassName(appenderClassName);
+    }
+
+    public byte[] getRawConfiguration() {
+        return logAppender.getRawConfiguration();
+    }
+
+    public void setRawConfiguration(byte[] rawConfiguration) {
+        logAppender.setRawConfiguration(rawConfiguration);
     }
 
     @Override

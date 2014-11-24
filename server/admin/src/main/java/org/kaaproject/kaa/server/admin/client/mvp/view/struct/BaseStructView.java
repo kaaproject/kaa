@@ -16,19 +16,21 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import static org.kaaproject.kaa.server.admin.client.util.Utils.millisecondsToDateTimeString;
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.server.admin.client.mvp.event.input.InputEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.input.InputEventHandler;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -67,7 +69,6 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     private Button deactivateButton;
 
     private boolean active;
-    private boolean schemaSelected = false;
 
     private Label bodyLabel;
 
@@ -88,49 +89,49 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         userTable.getColumnFormatter().setWidth(1, "200px");
 
         dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
-        createdDateTime = new SizedTextBox(-1, false, false);
+        createdDateTime = new KaaAdminSizedTextBox(-1, false, false);
         createdDateTime.setWidth("100%");
         dateTable.setWidget(0, 0, dateTimeCreatedLabel);
         dateTable.setWidget(0, 1, createdDateTime);
 
         dateTimeModifiedLabel = new Label(Utils.constants.dateTimeModified());
-        modifiedDateTime = new SizedTextBox(-1, false, false);
+        modifiedDateTime = new KaaAdminSizedTextBox(-1, false, false);
         modifiedDateTime.setWidth("100%");
         dateTable.setWidget(1, 0, dateTimeModifiedLabel);
         dateTable.setWidget(1, 1, modifiedDateTime);
 
         dateTimeActivatedLabel = new Label(Utils.constants.dateTimeActivated());
-        activatedDateTime = new SizedTextBox(-1, false, false);
+        activatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
         activatedDateTime.setWidth("100%");
         dateTable.setWidget(2, 0, dateTimeActivatedLabel);
         dateTable.setWidget(2, 1, activatedDateTime);
 
         dateTimeDeactivatedLabel = new Label(Utils.constants.dateTimeDectivated());
-        deactivatedDateTime = new SizedTextBox(-1, false, false);
+        deactivatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
         deactivatedDateTime.setWidth("100%");
         dateTable.setWidget(3, 0, dateTimeDeactivatedLabel);
         dateTable.setWidget(3, 1, deactivatedDateTime);
 
         authorLabel = new Label(Utils.constants.author());
-        createdUsername = new SizedTextBox(-1, false, false);
+        createdUsername = new KaaAdminSizedTextBox(-1, false, false);
         createdUsername.setWidth("100%");
         userTable.setWidget(0, 0, authorLabel);
         userTable.setWidget(0, 1, createdUsername);
 
         modifiedByLabel = new Label(Utils.constants.lastModifiedBy());
-        modifiedUsername = new SizedTextBox(-1, false, false);
+        modifiedUsername = new KaaAdminSizedTextBox(-1, false, false);
         modifiedUsername.setWidth("100%");
         userTable.setWidget(1, 0, modifiedByLabel);
         userTable.setWidget(1, 1, modifiedUsername);
 
         activatedByLabel = new Label(Utils.constants.activatedBy());
-        activatedUsername = new SizedTextBox(-1, false, false);
+        activatedUsername = new KaaAdminSizedTextBox(-1, false, false);
         activatedUsername.setWidth("100%");
         userTable.setWidget(2, 0, activatedByLabel);
         userTable.setWidget(2, 1, activatedUsername);
 
         deactivatedByLabel = new Label(Utils.constants.deactivatedBy());
-        deactivatedUsername = new SizedTextBox(-1, false, false);
+        deactivatedUsername = new KaaAdminSizedTextBox(-1, false, false);
         deactivatedUsername.setWidth("100%");
         userTable.setWidget(3, 0, deactivatedByLabel);
         userTable.setWidget(3, 1, deactivatedUsername);
@@ -146,7 +147,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         detailsTable.getColumnFormatter().setWidth(1, "300px");
 
 
-        description = new SizedTextArea(1024);
+        description = new KaaAdminSizedTextArea(1024);
         description.setWidth("500px");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
@@ -157,7 +158,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
         bodyLabel = new Label(Utils.constants.body());
         detailsTable.setWidget(1, 0, bodyLabel);
-        body = new SizedTextArea(524288);
+        body = new KaaAdminSizedTextArea(524288);
         body.setWidth("500px");
         body.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 200);
         detailsTable.setWidget(1, 1, body);
@@ -236,7 +237,6 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
     public void setData(T struct) {
         this.active = struct.getStatus() != UpdateStatus.INACTIVE;
-        this.schemaSelected = !isEmpty(struct.getSchemaId());
         if (!isEmpty(struct.getCreatedUsername())) {
             dateTimeCreatedLabel.setVisible(true);
             createdDateTime.setVisible(true);
@@ -294,7 +294,6 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     }
 
     public void setSchemaSelected(boolean selected) {
-        this.schemaSelected = selected;
         fireChanged();
     }
 

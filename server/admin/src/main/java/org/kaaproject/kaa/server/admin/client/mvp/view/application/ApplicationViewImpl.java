@@ -19,8 +19,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.application;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
@@ -56,7 +57,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
 
     @Override
     protected void initDetailsTable() {
-        applicationName = new SizedTextBox(DEFAULT_TEXTBOX_SIZE, editable);
+        applicationName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE, editable);
         applicationName.setWidth("100%");
         Label titleLabel = new Label(Utils.constants.title());
         if (editable) {
@@ -76,7 +77,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
 //        detailsTable.setWidget(1, 1, applicationKey);
 
         if (!create) {
-            applicationToken = new SizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
+            applicationToken = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
             applicationToken.setWidth("100%");
             applicationToken.setEnabled(false);
 

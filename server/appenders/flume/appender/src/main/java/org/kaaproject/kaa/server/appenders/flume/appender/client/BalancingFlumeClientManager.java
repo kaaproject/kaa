@@ -23,8 +23,8 @@ import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.apache.flume.api.RpcClient;
 import org.apache.flume.api.RpcClientFactory;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeNode;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeNodes;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

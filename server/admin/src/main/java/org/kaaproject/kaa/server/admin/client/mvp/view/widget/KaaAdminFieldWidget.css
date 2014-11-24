@@ -1,0 +1,11 @@
+.requiredField:after {
+    content: " *";
+    font-size: 16px;
+    color: #CC0000;
+    font-weight: bold;
+}
+
+.buttonsPanel {
+    padding-left: 20px;
+    border-spacing: 15px;
+}

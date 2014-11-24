@@ -29,8 +29,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,22 +57,12 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
-import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
-import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.MongoAppenderParametersDto;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
@@ -83,7 +71,6 @@ import org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ControlApiCommandProcessor.<br>
  * Used to process Control API commands from API console.
@@ -116,9 +103,6 @@ public class ControlApiCommandProcessor {
     private static final String LOG_SCHEMA = " Log Schema";
     private static final String LOG_SCHEMA_ID = "logSchemaId";
     private static final String LOG_SCHEMA_ID_OPTION = "Log Schema Id option";
-    private static final String LOG_APPENDER = " Log Appender";
-    private static final String LOG_APPENDER_ID = "logAppenderId";
-    private static final String LOG_APPENDER_ID_OPTION = "Log Appender Id option";
     private static final String ENDPOINT_GROUP = " Endpoint Group";
     private static final String ENDPOINT_GROUP_ID = "endpointGroupId";
     private static final String ENDPOINT_GROUP_ID_OPTION = "Endpoint Group Id option";
@@ -293,8 +277,6 @@ public class ControlApiCommandProcessor {
 
         addCommand(listLogSchemasCommand());
         addCommand(listLogAppendersCommand());
-        addCommand(createLogAppenderCommand(false));
-        addCommand(createLogAppenderCommand(true));
 
         for (EntityType type : EntityType.values()) {
             addCommand(showCommand(type));
@@ -1147,213 +1129,6 @@ public class ControlApiCommandProcessor {
         } catch (TException e) {
             handleException(UNABLE_TO + (edit ? UPDATE : CREATE)
                     + LOG_SCHEMA, e, errorWriter);
-        }
-    }
-
-    /**
-     * Creates the API command to work with log schema entities.
-     *
-     * @param edit
-     *            edit else create log schema
-     * @return the control api command
-     */
-    private ControlApiCommand createLogAppenderCommand(final boolean edit) {
-        ControlApiCommand command = new ControlApiCommand(
-                edit ? "editLogAppender" : "createLogAppender",
-                (edit ? "edit" : CREATE) + LOG_APPENDER) {
-            @Override
-            public void runCommand(CommandLine line,
-                    ControlThriftService.Iface client, PrintWriter writer,
-                    PrintWriter errorWriter) {
-                createLogAppender(line, client, writer, errorWriter, edit);
-            }
-        };
-        if (edit) {
-            Option opt = new Option("i", LOG_APPENDER_ID, true,
-                    LOG_APPENDER_ID_OPTION);
-            opt.setRequired(true);
-            command.addOption(opt);
-        } else {
-            Option opt = new Option("o", OUTPUT, true,
-                    OUTPUT_FILE_TO_STORE_OBJECT_ID);
-            opt.setRequired(false);
-            command.addOption(opt);
-        }
-
-        Option opt = new Option("a", APPLICATION_ID, true, APPLICATION_ID_OPTION);
-        opt.setRequired(!edit);
-        command.addOption(opt);
-
-        opt = new Option("s", "schemaId", true, "Log Schema id");
-        opt.setRequired(!edit);
-        command.addOption(opt);
-
-        opt = new Option("n", "name", true, "Log appender name");
-        opt.setRequired(!edit);
-        command.addOption(opt);
-
-        opt = new Option("t", "type", true, "Log appender type. Existing types: MONGO, FILE, FLUME");
-        opt.setRequired(!edit);
-        command.addOption(opt);
-
-        opt = new Option("hs", "hosts", true, "Use only with FLUME type. Flume agent hosts. Host format: 'priority:hostname:port,priority2:hostname2:port2'");
-        opt.setRequired(false);
-        command.addOption(opt);
-
-        return command;
-    }
-
-    /**
-     * Creates or edits the log appender.
-     *
-     * @param line
-     *            the command line
-     * @param client
-     *            the control thrift client
-     * @param writer
-     *            the writer to output command results
-     * @param errorWriter
-     *            the error writer to output command errors
-     * @param edit
-     *            edit else create log appender
-     */
-    private void createLogAppender(CommandLine line, ControlThriftService.Iface client, PrintWriter writer, PrintWriter errorWriter, boolean edit) {
-
-        try {
-            LogAppenderDto logAppender = null;
-            if (edit) {
-                String logAppenderId = line.getOptionValue("i");
-                logAppender = toDto(client.getLogSchema(logAppenderId));
-                if (logAppender == null) {
-                    writer.println("Log Appender with id " + logAppenderId + NOT_FOUND);
-                    return;
-                }
-            } else {
-                logAppender = new LogAppenderDto();
-            }
-
-            if (line.hasOption("a")) {
-                String appId = line.getOptionValue("a");
-                ApplicationDto app = toDto(client.getApplication(appId));
-                if (app != null) {
-                    logAppender.setApplicationId(appId);
-                    logAppender.setApplicationToken(app.getApplicationToken());
-                    logAppender.setTenantId(app.getTenantId());
-                } else {
-                    writer.println("Application with id " + appId + NOT_FOUND);
-                    return;
-                }
-            }
-
-            if (line.hasOption("s")) {
-                String schemaId = line.getOptionValue("s");
-                if(StringUtils.isNotBlank(schemaId)) {
-                    SchemaDto schema = new SchemaDto();
-                    schema.setId(schemaId);
-                    logAppender.setSchema(schema);
-                } else {
-                    writer.println("Incorrect schema id " + schemaId);
-                    return;
-                }
-            }
-
-            if (line.hasOption("n")) {
-                String name = line.getOptionValue("n");
-                if (StringUtils.isNotBlank(name)) {
-                    logAppender.setName(name);
-                } else {
-                    writer.println("Empty name of log appender" + name);
-                    return;
-                }
-            }
-
-            if (line.hasOption("t")) {
-                String type = line.getOptionValue("t");
-                if (StringUtils.isNotBlank(type)) {
-                    for (LogAppenderTypeDto current : LogAppenderTypeDto.values()) {
-                        if (current.name().equalsIgnoreCase(type)) {
-                            logAppender.setType(current);
-                            logAppender.setProperties(new LogAppenderParametersDto());
-                        }
-                    }
-                    if (logAppender.getType() == null) {
-                        writer.println("Incorrect appender type " + type);
-                        return;
-                    }
-                }
-            }
-
-            if (line.hasOption("hs")) {
-                if (logAppender.getType() == LogAppenderTypeDto.FLUME) {
-                    String hosts = line.getOptionValue("hs");
-                    List<HostInfoDto> list = getHostInfo(hosts.trim());
-                    if (!list.isEmpty()) {
-                        FlumeAppenderParametersDto parameters = new FlumeAppenderParametersDto(list);
-                        parameters.setBalancingType(FlumeBalancingTypeDto.PRIORITIZED);
-                        logAppender.setProperties(new LogAppenderParametersDto(parameters));
-                    } else {
-                        writer.println("Incorrect hosts format.");
-                        return;
-                    }
-                } else {
-                    writer.println("Please, use parameter -hs only with FLUME type.");
-                    return;
-                }
-            }
-            if(logAppender.getType() == LogAppenderTypeDto.FLUME && logAppender.getProperties() == null) {
-                writer.println("With FLUME type parameter -hs is required.");
-                return;
-            }
-
-            logAppender.setStatus(LogAppenderStatusDto.REGISTERED);
-
-            LogAppenderDto savedLogAppender = toDto(client.editLogAppender(toDataStruct(logAppender)));
-
-            if (edit) {
-                writer.println("Log Appender updated.");
-            } else {
-                writer.println("Created new Log Appender with id: " + savedLogAppender.getId());
-                if (line.hasOption("o")) {
-                    String outFileName = line.getOptionValue("o");
-                    storeInfo(outFileName, savedLogAppender.getId(), errorWriter);
-                }
-            }
-        } catch (TException e) {
-            handleException(UNABLE_TO + (edit ? UPDATE : CREATE) + LOG_APPENDER, e, errorWriter);
-        }
-    }
-
-    private List<HostInfoDto> getHostInfo(String hosts) {
-        List<HostInfoDto> hostList = Collections.emptyList();
-        if (StringUtils.isNotBlank(hosts)) {
-            if (hosts.indexOf(",") == -1) {
-                HostInfoDto host = parseHost(hosts);
-                if (host != null) {
-                    hostList = new ArrayList<>();
-                    hostList.add(host);
-                }
-            } else {
-                String[] hostArray = hosts.split(",");
-                hostList = new ArrayList<>();
-                for (String host : hostArray) {
-                    HostInfoDto hostInfo = parseHost(host.trim());
-                    if (hostInfo != null) {
-                        hostList.add(hostInfo);
-                    } else {
-                        return Collections.emptyList();
-                    }
-                }
-            }
-        }
-        return hostList;
-    }
-
-    private HostInfoDto parseHost(String host) {
-        if(host.indexOf(":") != -1) {
-            String[] params = host.split(":");
-            return new HostInfoDto(params[1], Integer.valueOf(params[2].trim()), Integer.valueOf(params[0].trim()));
-        } else {
-            return null;
         }
     }
 

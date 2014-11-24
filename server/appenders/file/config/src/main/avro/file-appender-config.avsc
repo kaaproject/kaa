@@ -1,5 +1,5 @@
 {
-    "namespace": "org.kaaproject.kaa.server.appenders.file.config",
+    "namespace": "org.kaaproject.kaa.server.appenders.file.config.gen",
     "type": "record",
     "name": "FileConfig",
     "fields": [

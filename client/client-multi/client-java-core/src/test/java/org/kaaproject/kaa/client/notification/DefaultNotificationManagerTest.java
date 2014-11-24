@@ -91,7 +91,8 @@ public class DefaultNotificationManagerTest {
 
         Assert.assertTrue(newNotificationManager.getTopics().size() == topics.size());
 
-        new File(props.getProperty("state.file_location")).delete();
+        boolean deleted = new File(props.getProperty("state.file_location")).delete();
+        Assert.assertTrue(deleted);
     }
 
     @Test

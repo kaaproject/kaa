@@ -38,10 +38,8 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
-import org.kaaproject.kaa.server.appenders.mongo.config.MongoDbConfig;
-import org.kaaproject.kaa.server.appenders.mongo.config.MongoDbServer;
+import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
+import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -105,9 +103,6 @@ public class MongoDBLogAppenderTest {
         appenderDto.setTenantId(TENANT_ID);
         appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
 
-        LogAppenderParametersDto parameters = new LogAppenderParametersDto();
-        CustomAppenderParametersDto customParameters = new CustomAppenderParametersDto();
-        
         String dbName = MongoDBTestRunner.getDB().getName();
         List<ServerAddress> serverAddresses = MongoDBTestRunner.getDB().getMongo().getServerAddressList();
         List<MongoDbServer> servers = new ArrayList<>();
@@ -122,10 +117,7 @@ public class MongoDBLogAppenderTest {
         AvroByteArrayConverter<MongoDbConfig> converter = new AvroByteArrayConverter<>(MongoDbConfig.class);
         byte[] rawConfiguration = converter.toByteArray(mongoDbConfig);
         
-        customParameters.setRawConfiguration(rawConfiguration);
-        parameters.setParameters(customParameters);
-        
-        appenderDto.setProperties(parameters);        
+        appenderDto.setRawConfiguration(rawConfiguration);
         
         logAppender.init(appenderDto);
     }

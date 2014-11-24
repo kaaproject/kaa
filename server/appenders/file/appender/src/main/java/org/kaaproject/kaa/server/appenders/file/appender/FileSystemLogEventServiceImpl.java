@@ -23,7 +23,7 @@ import java.io.PrintWriter;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.taskdefs.Execute;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.server.appenders.file.config.FileConfig;
+import org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

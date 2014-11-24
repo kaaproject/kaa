@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.base;
 
-import org.kaaproject.kaa.server.admin.client.mvp.event.input.InputEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.input.InputEventHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseDetailsView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel.Type;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;

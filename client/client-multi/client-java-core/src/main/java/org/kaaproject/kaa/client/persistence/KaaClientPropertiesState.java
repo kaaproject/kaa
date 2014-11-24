@@ -108,7 +108,9 @@ public class KaaClientPropertiesState implements KaaClientState {
         state = new Properties();
         if (storage.exists(stateFileLocation)) {
             try {
-                state.load(storage.openForRead(stateFileLocation));
+                InputStream stream = storage.openForRead(stateFileLocation);
+                state.load(stream);
+                stream.close();
 
                 if (isSDKPropertiesUpdated(properties, state)) {
                     LOG.info("SDK properties were updated");
@@ -230,6 +232,7 @@ public class KaaClientPropertiesState implements KaaClientState {
             try {
                 InputStream input = storage.openForRead(clientPrivateKeyFileLocation);
                 privateKey = KeyUtil.getPrivate(input);
+                input.close();
             } catch (Exception e) {
                 LOG.error("Error loading Client Private Key", e);
                 throw new RuntimeException(e); //NOSONAR
@@ -259,6 +262,7 @@ public class KaaClientPropertiesState implements KaaClientState {
             try {
                 InputStream input = storage.openForRead(clientPublicKeyFileLocation);
                 publicKey = KeyUtil.getPublic(input);
+                input.close();
             } catch (Exception e) {
                 LOG.error("Error loading Client Public Key", e);
                 throw new RuntimeException(e); //NOSONAR

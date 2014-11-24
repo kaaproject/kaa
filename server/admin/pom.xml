@@ -196,6 +196,16 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <artifactId>gwt-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <artifactId>converter</artifactId>
+            <version>${project.version}</version>
+        </dependency>           
+        <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>

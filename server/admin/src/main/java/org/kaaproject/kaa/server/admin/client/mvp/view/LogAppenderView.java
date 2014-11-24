@@ -18,60 +18,36 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FlumeBalancingTypeListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AppenderInfoListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
-import org.kaaproject.kaa.server.admin.shared.form.RecordField;
+import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
+import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface LogAppenderView extends BaseDetailsView {
 
-    SchemaListBox getSchemaVersions();
+    ValueListBox<SchemaDto> getSchemaVersions();
 
-    SizedTextBox getName();
+    HasValue<String> getName();
 
-    CheckBox getStatus();
+    HasValue<Boolean> getStatus();
 
-    AppenderInfoListBox getAppenderInfo();
+    ValueListBox<LogAppenderInfoDto> getAppenderInfo();
 
-    SizedTextArea getDescription();
+    HasValue<String> getDescription();
 
-    SizedTextBox getCreatedDateTime();
+    HasValue<String> getCreatedDateTime();
 
     Button getActivate();
 
-    SizedTextBox getCreatedUsername();
-
-    void showFlumeCongurationFields(FlumeAppenderParametersDto flumeAppenderParametersDto);
-
-    FlumeBalancingTypeListBox getFlumeBalancingType();
-
-    FlexTable getHostTable();
+    HasValue<String> getCreatedUsername();
 
     void setMetadataListBox(List<LogHeaderStructureDto> header);
 
     List<LogHeaderStructureDto> getHeader();
-
-    void showFileCongurationFields();
-
-    String getPublicKey();
-
-    void setPublicKey(String publicKey);
-
-    void hideFileCongurationFields();
     
-    void showCustomConfigurationFields();
-    
-    RecordField getConfiguration();
-    
-    void setConfiguration(RecordField configuration);
-    
-    void hideCustomConfigurationFields();
+    HasValue<RecordField> getConfiguration();
 }

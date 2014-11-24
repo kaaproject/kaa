@@ -23,8 +23,8 @@ import org.apache.flume.FlumeException;
 import org.apache.flume.event.EventBuilder;
 import org.junit.Before;
 import org.junit.Test;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeNode;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeNodes;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 
 public class BalancingFlumeClientManagerTest extends FlumeClientManagerTest<FlumeNodes> {
 

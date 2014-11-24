@@ -21,18 +21,13 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.nio.charset.Charset;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FileSystemLogEventServiceImplTest {
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
-
-    private static final Logger LOG = LoggerFactory.getLogger(FileSystemLogEventServiceImplTest.class);
 
     private static final String TEST_FILE = "/test";
     private static final String TEST_TEXT = "test text";

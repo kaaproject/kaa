@@ -24,8 +24,8 @@ import java.util.concurrent.Executors;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
-import org.kaaproject.kaa.server.appenders.cdap.config.CdapConfig;
-import org.kaaproject.kaa.server.common.log.shared.appender.CustomLogAppender;
+import org.kaaproject.kaa.server.appenders.cdap.config.gen.CdapConfig;
+import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-public class CdapLogAppender extends CustomLogAppender<CdapConfig> {
+public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CdapLogAppender.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -111,10 +111,13 @@ public class CdapLogAppender extends CustomLogAppender<CdapConfig> {
     public void close() {
         closed = true;
         try {
-            streamClient.close();
+            if (streamClient != null) {
+                streamClient.close();
+            }
         } catch (IOException e) {
             LOG.error("Failed to close stream client: ", e);
         }
+        streamClient = null;
         LOG.debug("Stopped Cdap log appender.");
     }
 

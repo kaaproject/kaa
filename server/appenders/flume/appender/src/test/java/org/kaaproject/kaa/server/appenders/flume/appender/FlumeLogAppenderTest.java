@@ -27,12 +27,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
 import org.kaaproject.kaa.server.appenders.flume.appender.client.FlumeClientManager;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeConfig;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeNode;
-import org.kaaproject.kaa.server.appenders.flume.config.FlumeNodes;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +70,6 @@ public class FlumeLogAppenderTest {
         logAppender.setApplicationId(APPLICATION_ID);
         logAppender.setId(APPENDER_ID);
 
-        LogAppenderParametersDto parameters = new LogAppenderParametersDto();
-        CustomAppenderParametersDto customParameters = new CustomAppenderParametersDto();
-
         FlumeNodes nodes = FlumeNodes
                 .newBuilder()
                 .setFlumeNodes(
@@ -86,9 +81,7 @@ public class FlumeLogAppenderTest {
         AvroByteArrayConverter<FlumeConfig> converter = new AvroByteArrayConverter<>(FlumeConfig.class);
         byte[] rawConfiguration = converter.toByteArray(flumeConfig);
         
-        customParameters.setRawConfiguration(rawConfiguration);
-        parameters.setParameters(customParameters);
-        logAppender.setProperties(parameters);
+        logAppender.setRawConfiguration(rawConfiguration);
 
         appender.init(logAppender);
         appender.close();

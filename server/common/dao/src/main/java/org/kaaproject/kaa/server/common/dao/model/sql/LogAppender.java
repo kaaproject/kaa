@@ -22,14 +22,16 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_DESCRIPTION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_LOG_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_PROPERTIES;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TYPE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_APPENDER_CLASS_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_RAW_CONFIGURATION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_STATUS;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TYPE;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -50,9 +52,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
-import org.kaaproject.kaa.server.common.dao.model.sql.avro.DaoAvroUtil;
 
 @Entity
 @Table(name = LOG_APPENDER_TABLE_NAME)
@@ -78,10 +78,6 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     @Enumerated(EnumType.STRING)
     private LogAppenderStatusDto status;
 
-    @Column(name = LOG_APPENDER_TYPE)
-    @Enumerated(EnumType.STRING)
-    private LogAppenderTypeDto type;
-
     @Column(name = LOG_APPENDER_DESCRIPTION, length = 1000)
     private String description;
 
@@ -91,9 +87,15 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     @Column(name = LOG_APPENDER_CREATED_TIME)
     private long createdTime;
 
+    @Column(name = LOG_APPENDER_TYPE_NAME)
+    private String typeName;
+    
+    @Column(name = LOG_APPENDER_APPENDER_CLASS_NAME)
+    private String appenderClassName;
+
     @Lob
-    @Column(name = LOG_APPENDER_PROPERTIES)
-    private byte[] properties;
+    @Column(name = LOG_APPENDER_RAW_CONFIGURATION)
+    private byte[] rawConfiguration;
 
     @ElementCollection(targetClass = LogHeaderStructureDto.class)
     @Enumerated(EnumType.STRING)
@@ -116,9 +118,10 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
             this.description = dto.getDescription();
             this.createdUsername = dto.getCreatedUsername();
             this.createdTime = dto.getCreatedTime();
-            this.type = dto.getType();
+            this.typeName = dto.getTypeName();
+            this.appenderClassName = dto.getAppenderClassName();
+            this.rawConfiguration = dto.getRawConfiguration();
             this.headerStructure = dto.getHeaderStructure();
-            this.properties = DaoAvroUtil.convertParametersToBytes(dto.getProperties());
         }
     }
 
@@ -154,20 +157,28 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         this.status = status;
     }
 
-    public LogAppenderTypeDto getType() {
-        return type;
+    public String getTypeName() {
+        return typeName;
     }
 
-    public void setType(LogAppenderTypeDto type) {
-        this.type = type;
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
-    public byte[] getProperties() {
-        return properties;
+    public String getAppenderClassName() {
+        return appenderClassName;
     }
 
-    public void setProperties(byte[] properties) {
-        this.properties = properties;
+    public void setAppenderClassName(String appenderClassName) {
+        this.appenderClassName = appenderClassName;
+    }
+
+    public byte[] getRawConfiguration() {
+        return rawConfiguration;
+    }
+
+    public void setRawConfiguration(byte[] rawConfiguration) {
+        this.rawConfiguration = rawConfiguration;
     }
 
     public List<LogHeaderStructureDto> getHeaderStructure() {
@@ -191,9 +202,10 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         dto.setDescription(description);
         dto.setSchema(new SchemaDto(logSchema.getStringId(), logSchema.getMajorVersion(), logSchema.getMinorVersion()));
         dto.setStatus(status);
+        dto.setTypeName(typeName);
+        dto.setAppenderClassName(appenderClassName);
+        dto.setRawConfiguration(rawConfiguration);
         dto.setHeaderStructure(headerStructure != null ? new ArrayList<>(headerStructure) : new ArrayList<LogHeaderStructureDto>());
-        dto.setType(type);
-        dto.setProperties(DaoAvroUtil.convertParametersFromBytes(properties));
         return dto;
     }
 
@@ -204,8 +216,14 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
 
     @Override
     public String toString() {
-        return "LogAppender [name=" + name + ", status=" + status + ", type="
-                + type + ", description=" + description + ", createdUsername="
-                + createdUsername + ", createdTime=" + createdTime + "]";
+        return "LogAppender [name=" + name + ", application=" + application
+                + ", logSchema=" + logSchema + ", status=" + status
+                + ", description=" + description + ", createdUsername="
+                + createdUsername + ", createdTime=" + createdTime
+                + ", typeName=" + typeName + ", appenderClassName="
+                + appenderClassName + ", rawConfiguration="
+                + Arrays.toString(rawConfiguration) + ", headerStructure="
+                + headerStructure + "]";
     }
+
 }

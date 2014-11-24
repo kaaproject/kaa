@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.appenders.file.appender;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.server.appenders.file.config.FileConfig;
+import org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig;
 
 /**
  * The interface FileSystemLogEventService service.

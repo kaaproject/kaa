@@ -19,8 +19,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.tenant;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -56,7 +57,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
     @Override
     protected void initDetailsTable() {
 
-        tenantName = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        tenantName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         tenantName.setWidth("100%");
         tenantName.addInputHandler(this);
 
@@ -65,7 +66,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         detailsTable.setWidget(0, 0, titleLabel);
         detailsTable.setWidget(0, 1, tenantName);
 
-        userName = new SizedTextBox(DEFAULT_TEXTBOX_SIZE, create);
+        userName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE, create);
         userName.setWidth("100%");
         userName.addInputHandler(this);
 
@@ -76,7 +77,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         detailsTable.setWidget(1, 0, userLabel);
         detailsTable.setWidget(1, 1, userName);
 
-        email = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        email = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         email.setWidth("100%");
         email.addInputHandler(this);
 

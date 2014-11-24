@@ -1,0 +1,8 @@
+{
+    "namespace": "org.kaaproject.kaa.server.common.avro.ui.test",
+    "type": "record",
+    "name": "Test",
+    "fields": [
+            {"name": "test", "displayName": "Test field", "maxLength": 1000, "default": "", "type": "string"}
+    ]
+}
