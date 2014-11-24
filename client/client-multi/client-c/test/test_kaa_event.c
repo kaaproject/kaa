@@ -18,6 +18,7 @@
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 
 #include "kaa_test.h"
+#include "kaa_log.h"
 
 #include "kaa_context.h"
 #include "kaa_mem.h"
@@ -28,6 +29,8 @@ static int specific_events_counter = 0;
 
 void test_kaa_create_event_manager()
 {
+    KAA_TRACE_IN;
+
     kaa_event_manager_t *event_manager = NULL;
     kaa_error_t err_code = kaa_create_event_manager(&event_manager);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
@@ -37,6 +40,8 @@ void test_kaa_create_event_manager()
 
 void test_kaa_event_compile_request()
 {
+    KAA_TRACE_IN;
+
     kaa_context_t *context;
     kaa_create_context(&context);
 
@@ -112,6 +117,8 @@ static void kaa_destroy_event(void* data)
 
 void test_kaa_add_on_event_callback()
 {
+    KAA_TRACE_IN;
+
     kaa_context_t *context;
     kaa_create_context(&context);
 
@@ -161,6 +168,8 @@ void test_kaa_add_on_event_callback()
 #endif
 int main(int argc, char **argv)
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     test_kaa_create_event_manager();
     test_kaa_event_compile_request();

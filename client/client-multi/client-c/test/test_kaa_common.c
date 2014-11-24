@@ -18,10 +18,14 @@
 #include <string.h>
 
 #include "kaa_test.h"
+#include "kaa_log.h"
 #include "kaa_common.h"
 #include "kaa_error.h"
 
-void test_profile_update() {
+void test_profile_update()
+{
+    KAA_TRACE_IN;
+
     char* pattern = "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3";
 
     kaa_error_t err;
@@ -48,6 +52,8 @@ void test_profile_update() {
 
 int main(int argc, char **argv)
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
     test_profile_update();
 
     return 0;
