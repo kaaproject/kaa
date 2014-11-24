@@ -157,7 +157,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
         return Boolean.FALSE;
     }
 
-    private void checkIfArray(Map<String, Object> fieldType, List<Object> union) {
+    private void addResetTypeIfArray(Map<String, Object> fieldType, List<Object> union) {
         if (fieldType.get(TYPE_FIELD).equals(ARRAY_FIELD_VALUE) && strategy.isArrayEditable()) {
             union.add(0, getResetType());
         }
@@ -222,7 +222,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             if (field.get(TYPE_FIELD) instanceof Map) {
                 newUnion.add(field.get(TYPE_FIELD));
                 Map<String, Object> fieldType = (Map<String, Object>) field.get(TYPE_FIELD);
-                checkIfArray(fieldType, newUnion);
+                addResetTypeIfArray(fieldType, newUnion);
                 convert(fieldType);
             } else if (field.get(TYPE_FIELD) instanceof List) {
                 // Looks like the type of the field is union
@@ -230,7 +230,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
                 for (Object unionIter : oldUnion){
                     if (unionIter instanceof Map) {
                         Map<String, Object> fieldType = (Map<String, Object>) unionIter;
-                        checkIfArray(fieldType, newUnion);
+                        addResetTypeIfArray(fieldType, newUnion);
                         convert(fieldType);
                     }
                 }
