@@ -43,8 +43,6 @@
 	<bean id="deltaCalculatorFactory" class="org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory" />
 	<bean id="keyStoreService" class="org.kaaproject.kaa.server.operations.service.security.FileKeyStoreService" />
 	<bean id="endpointUserService" class="org.kaaproject.kaa.server.operations.service.user.DefaultEndpointUserService" />
-	<bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender" />
-    <bean id="fileSystemLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.filesystem.FileSystemLogAppender" />
     <bean id="logAppenderService" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderService" />
     <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderBuilder" />
     <bean id="metricsService" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultMerticsService" init-method="startReport" destroy-method="stopReport">

@@ -24,11 +24,13 @@ import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseStructGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
@@ -86,7 +88,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     protected void initDetailsTable() {
 
         Label authorLabel = new Label(Utils.constants.author());
-        createdUsername = new SizedTextBox(-1, false);
+        createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");
         detailsTable.setWidget(0, 0, authorLabel);
         detailsTable.setWidget(0, 1, createdUsername);
@@ -95,7 +97,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         createdUsername.setVisible(!create);
 
         Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
-        createdDateTime = new SizedTextBox(-1, false);
+        createdDateTime = new KaaAdminSizedTextBox(-1, false);
         createdDateTime.setWidth("100%");
         detailsTable.setWidget(1, 0, dateTimeCreatedLabel);
         detailsTable.setWidget(1, 1, createdDateTime);
@@ -104,7 +106,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         createdDateTime.setVisible(!create);
 
         Label endpointCountLabel = new Label(Utils.constants.numberOfEndpoints());
-        endpointCount = new SizedTextBox(-1, false);
+        endpointCount = new KaaAdminSizedTextBox(-1, false);
         endpointCount.setWidth("100%");
         detailsTable.setWidget(2, 0, endpointCountLabel);
         detailsTable.setWidget(2, 1, endpointCount);
@@ -112,7 +114,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         endpointCountLabel.setVisible(!create);
         endpointCount.setVisible(!create);
 
-        name = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         name.setWidth("100%");
         nameLabel = new Label(Utils.constants.name());
         detailsTable.setWidget(3, 0, nameLabel);
@@ -126,7 +128,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         detailsTable.setWidget(4, 1, weight);
         weight.addChangeHandler(this);
 
-        description = new SizedTextArea(1024);
+        description = new KaaAdminSizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         description.getTextArea().getElement().getStyle().setPropertyPx("maxWidth", 487);

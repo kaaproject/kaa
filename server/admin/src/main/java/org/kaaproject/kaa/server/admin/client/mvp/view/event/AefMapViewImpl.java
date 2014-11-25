@@ -23,9 +23,10 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.EcfListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -94,7 +95,7 @@ public class AefMapViewImpl extends BaseDetailsViewImpl implements AefMapView {
     protected void initDetailsTable() {
         
         Label authorLabel = new Label(Utils.constants.author());
-        createdUsername = new SizedTextBox(-1, false);
+        createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");
         detailsTable.setWidget(0, 0, authorLabel);
         detailsTable.setWidget(0, 1, createdUsername);
@@ -103,7 +104,7 @@ public class AefMapViewImpl extends BaseDetailsViewImpl implements AefMapView {
         createdUsername.setVisible(!create);
 
         Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
-        createdDateTime = new SizedTextBox(-1, false);
+        createdDateTime = new KaaAdminSizedTextBox(-1, false);
         createdDateTime.setWidth("100%");
         detailsTable.setWidget(1, 0, dateTimeCreatedLabel);
         detailsTable.setWidget(1, 1, createdDateTime);

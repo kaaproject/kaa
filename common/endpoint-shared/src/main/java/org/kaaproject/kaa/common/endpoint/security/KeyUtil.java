@@ -34,6 +34,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,9 +58,17 @@ public abstract class KeyUtil {
     public static void saveKeyPair(KeyPair keyPair, String privateKeyFile, String publicKeyFile) throws IOException {
         File privateFile = makeDirs(privateKeyFile);
         File publicFile = makeDirs(publicKeyFile);
-        OutputStream privateKeyOutput = new FileOutputStream(privateFile);
-        OutputStream publicKeyOutput = new FileOutputStream(publicFile);
-        saveKeyPair(keyPair, privateKeyOutput, publicKeyOutput);
+        OutputStream privateKeyOutput = null;
+        OutputStream publicKeyOutput = null;
+        try {
+            privateKeyOutput = new FileOutputStream(privateFile);
+            publicKeyOutput = new FileOutputStream(publicFile);
+            saveKeyPair(keyPair, privateKeyOutput, publicKeyOutput);
+        }
+        finally {
+            IOUtils.closeQuietly(privateKeyOutput);
+            IOUtils.closeQuietly(publicKeyOutput);
+        }
     }
     
     /**
@@ -77,20 +86,12 @@ public abstract class KeyUtil {
         // Store Public Key.
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(
                 publicKey.getEncoded());
-        try{
-            publicKeyOutput.write(x509EncodedKeySpec.getEncoded());
-        }finally{
-            publicKeyOutput.close();
-        }
+        publicKeyOutput.write(x509EncodedKeySpec.getEncoded());
 
         // Store Private Key.
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(
                 privateKey.getEncoded());
-        try{
-            privateKeyOutput.write(pkcs8EncodedKeySpec.getEncoded());
-        }finally{
-            privateKeyOutput.close();
-        }
+        privateKeyOutput.write(pkcs8EncodedKeySpec.getEncoded());
     }
 
     /**
@@ -157,13 +158,17 @@ public abstract class KeyUtil {
      * @throws Exception the exception
      */
     public static PublicKey getPublic(File f) throws Exception { //NOSONAR
-        FileInputStream fis = new FileInputStream(f);
-        DataInputStream dis = new DataInputStream(fis);
-        byte[] keyBytes = new byte[(int) f.length()];
-        dis.readFully(keyBytes);
-        dis.close();
-
-        return getPublic(keyBytes);
+        DataInputStream dis = null;
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            dis = new DataInputStream(fis);
+            byte[] keyBytes = new byte[(int) f.length()];
+            dis.readFully(keyBytes);
+            return getPublic(keyBytes);
+        }
+        finally {
+            IOUtils.closeQuietly(dis);
+        }
     }
     
     /**
@@ -180,7 +185,6 @@ public abstract class KeyUtil {
         while (-1 != (n = input.read(buffer))) {
             output.write(buffer, 0, n);
         }
-        input.close();
         byte[] keyBytes = output.toByteArray();
         
         return getPublic(keyBytes);
@@ -208,13 +212,17 @@ public abstract class KeyUtil {
      * @throws Exception the exception
      */
     public static PrivateKey getPrivate(File f) throws Exception { //NOSONAR
-        FileInputStream fis = new FileInputStream(f);
-        DataInputStream dis = new DataInputStream(fis);
-        byte[] keyBytes = new byte[(int) f.length()];
-        dis.readFully(keyBytes);
-        dis.close();
-
-        return getPrivate(keyBytes);
+        DataInputStream dis = null;
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            dis = new DataInputStream(fis);
+            byte[] keyBytes = new byte[(int) f.length()];
+            dis.readFully(keyBytes);
+            return getPrivate(keyBytes);
+        }
+        finally {
+            IOUtils.closeQuietly(dis);
+        }
     }
     
     /**
@@ -231,7 +239,6 @@ public abstract class KeyUtil {
         while (-1 != (n = input.read(buffer))) {
             output.write(buffer, 0, n);
         }
-        input.close();
         byte[] keyBytes = output.toByteArray();
         
         return getPrivate(keyBytes);

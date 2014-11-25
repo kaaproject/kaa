@@ -41,19 +41,11 @@
     <bean id="deltaCalculatorFactory" class="org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory" />
     <bean id="keyStoreService" class="org.kaaproject.kaa.server.operations.service.security.FileKeyStoreService" />
     <bean id="endpointUserService" class="org.kaaproject.kaa.server.operations.service.user.DefaultEndpointUserService" />
-    <bean id="mongoDBLogAppender" class="org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender">
-        <constructor-arg name="name" value="appenderName"></constructor-arg>
-    </bean>
     <bean id="logAppenderService" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderService" />
     <bean id="logAppenderResolver" class="org.kaaproject.kaa.server.operations.service.logs.DefaultLogAppenderBuilder" />
     <bean id="metricsService" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultMerticsService" init-method="startReport" destroy-method="stopReport">
         <property name="enabled" value="#{properties[metrics_enabled]}"/>
     </bean>
-
-    <util:map id="appenderMap">
-        <entry key="mongoDBLogAppender" value-ref="mongoDBLogAppender" />
-    </util:map>
-
 
     <!-- Configuration from properties file -->
 

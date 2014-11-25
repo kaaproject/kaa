@@ -20,9 +20,10 @@ import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -65,7 +66,7 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto> extends
             schema.addValueChangeHandler(this);
         }
         else {
-            schemaVersion = new SizedTextBox(-1, false);
+            schemaVersion = new KaaAdminSizedTextBox(-1, false);
             schemaVersion.setWidth("100%");
             detailsTable.setWidget(0, 1, schemaVersion);
         }

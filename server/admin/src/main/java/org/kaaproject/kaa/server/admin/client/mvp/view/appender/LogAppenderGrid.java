@@ -17,8 +17,6 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
-import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
 import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
@@ -67,12 +65,7 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
                 new StringValueProvider<LogAppenderDto>() {
             @Override
             public String getValue(LogAppenderDto item) {
-                if (item.getType() == LogAppenderTypeDto.CUSTOM) {
-                    return ((CustomAppenderParametersDto)item.getProperties().getParameters()).getName();
-                }
-                else {
-                    return item.getType().getLabel();
-                }
+                return item.getTypeName();
             }
         }, 80);
 

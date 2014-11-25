@@ -227,11 +227,6 @@ service ControlThriftService extends cli.CliThriftService{
   void deleteEndpointUser(1: id endpointUserId) throws(1: ControlThriftException ControlException)
   string generateEndpointUserAccessToken(1: string externalUid, 2: string tenantId) throws(1: ControlThriftException ControlException)
 
-/**
-*   MongoDBCollectionsCreation
-*/
-  void createSecureCollection(1: id applicationId, 2: string password) throws(1: ControlThriftException ControlException)
-
   /**
   * Log Appenders
   */

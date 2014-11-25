@@ -39,6 +39,7 @@ import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.utils.Charsets;
+import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
@@ -107,8 +108,10 @@ public class KaaClientPropertiesState implements KaaClientState {
 
         state = new Properties();
         if (storage.exists(stateFileLocation)) {
+            InputStream stream = null;
             try {
-                state.load(storage.openForRead(stateFileLocation));
+                stream = storage.openForRead(stateFileLocation);
+                state.load(stream);
 
                 if (isSDKPropertiesUpdated(properties, state)) {
                     LOG.info("SDK properties were updated");
@@ -156,6 +159,9 @@ public class KaaClientPropertiesState implements KaaClientState {
 
             } catch (IOException e) {
                 LOG.error("Can't load state file", e);
+            }
+            finally {
+                IOUtils.closeQuietly(stream);
             }
         } else {
             LOG.info("First SDK start");
@@ -212,13 +218,16 @@ public class KaaClientPropertiesState implements KaaClientState {
         state.setProperty(ATTACHED_ENDPOINTS, attachedEndpointsString.toString());
         state.setProperty(EVENT_SEQ_NUM, ""+eventSequence.get());
 
+        OutputStream os = null;
         try {
             storage.renameTo(stateFileLocation, stateFileLocation+ "_bckp");
-            OutputStream os = storage.openForWrite(stateFileLocation);
+            os = storage.openForWrite(stateFileLocation);
             state.store(os, null);
-            os.close();
         } catch (IOException e) {
             LOG.error("Can't persist state file", e);
+        }
+        finally {
+            IOUtils.closeQuietly(os);
         }
     }
 
@@ -227,25 +236,35 @@ public class KaaClientPropertiesState implements KaaClientState {
         PrivateKey privateKey = null;
         LOG.debug("Check if key exists {}", clientPrivateKeyFileLocation);
         if (storage.exists(clientPrivateKeyFileLocation)) {
+            InputStream input = null;
             try {
-                InputStream input = storage.openForRead(clientPrivateKeyFileLocation);
+                input = storage.openForRead(clientPrivateKeyFileLocation);
                 privateKey = KeyUtil.getPrivate(input);
             } catch (Exception e) {
                 LOG.error("Error loading Client Private Key", e);
                 throw new RuntimeException(e); //NOSONAR
             }
+            finally {
+                IOUtils.closeQuietly(input);
+            }
         }
         if (privateKey == null) {
             LOG.debug("Generating Client Key pair");
+            OutputStream privateKeyOutput = null;
+            OutputStream publicKeyOutput = null;
             try {
-                OutputStream privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
-                OutputStream publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
+                privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
+                publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
                 KeyPair kp = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
                 updateEndpointKeyHash(kp);
                 privateKey = kp.getPrivate();
             } catch (IOException e) {
                 LOG.error("Error generating Client Key pair", e);
                 throw new RuntimeException(e);
+            }
+            finally {
+                IOUtils.closeQuietly(privateKeyOutput);
+                IOUtils.closeQuietly(publicKeyOutput);
             }
         }
         return privateKey;
@@ -256,25 +275,35 @@ public class KaaClientPropertiesState implements KaaClientState {
         PublicKey publicKey = null;
         LOG.debug("Check if key exists {}", clientPublicKeyFileLocation);
         if (storage.exists(clientPublicKeyFileLocation)) {
+            InputStream input = null;
             try {
-                InputStream input = storage.openForRead(clientPublicKeyFileLocation);
+                input = storage.openForRead(clientPublicKeyFileLocation);
                 publicKey = KeyUtil.getPublic(input);
             } catch (Exception e) {
                 LOG.error("Error loading Client Public Key", e);
                 throw new RuntimeException(e); //NOSONAR
             }
+            finally {
+                IOUtils.closeQuietly(input);
+            }
         }
         if (publicKey == null) {
             LOG.debug("Generating Client Key pair");
+            OutputStream privateKeyOutput = null;
+            OutputStream publicKeyOutput = null;
             try {
-                OutputStream privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
-                OutputStream publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
+                privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
+                publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
                 KeyPair kp = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
                 updateEndpointKeyHash(kp);
                 publicKey = kp.getPublic();
             } catch (IOException e) {
                 LOG.error("Error generating Client Key pair", e);
                 throw new RuntimeException(e);
+            }
+            finally {
+                IOUtils.closeQuietly(privateKeyOutput);
+                IOUtils.closeQuietly(publicKeyOutput);
             }
         }
         return publicKey;

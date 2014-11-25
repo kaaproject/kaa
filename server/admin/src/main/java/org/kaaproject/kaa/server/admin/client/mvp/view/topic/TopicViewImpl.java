@@ -18,9 +18,11 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.topic;
 
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -48,7 +50,7 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
     protected void initDetailsTable() {
 
         Label authorLabel = new Label(Utils.constants.author());
-        createdUsername = new SizedTextBox(-1, false);
+        createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");
         detailsTable.setWidget(0, 0, authorLabel);
         detailsTable.setWidget(0, 1, createdUsername);
@@ -57,7 +59,7 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         createdUsername.setVisible(!create);
 
         Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
-        createdDateTime = new SizedTextBox(-1, false);
+        createdDateTime = new KaaAdminSizedTextBox(-1, false);
         createdDateTime.setWidth("100%");
         detailsTable.setWidget(1, 0, dateTimeCreatedLabel);
         detailsTable.setWidget(1, 1, createdDateTime);
@@ -65,7 +67,7 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         dateTimeCreatedLabel.setVisible(!create);
         createdDateTime.setVisible(!create);
 
-        name = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         name.setWidth("100%");
         Label nameLabel = new Label(Utils.constants.name());
         nameLabel.addStyleName("required");
@@ -80,7 +82,7 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         detailsTable.setWidget(3, 1, mandatory);
         mandatory.addValueChangeHandler(this);
 
-        description = new SizedTextArea(1024);
+        description = new KaaAdminSizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());

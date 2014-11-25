@@ -19,12 +19,12 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
-import org.kaaproject.kaa.server.admin.client.mvp.event.input.InputEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.input.InputEventHandler;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.ExtendedPasswordTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ExtendedPasswordTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

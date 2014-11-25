@@ -1,0 +1,13 @@
+{
+    "namespace": "org.kaaproject.kaa.server.appenders.file.config.gen",
+    "type": "record",
+    "name": "FileConfig",
+    "fields": [
+            {"name": "publicKey", "displayName": "Public Key", "maxLength": 1000, "default": "", "type": "string"},
+            {"name": "logsRootPath", "displayName": "Logs root path", "default": "/kaa_log_uploads", "type": "string"},
+            {"name": "rollingFileNamePatern", "displayName": "Rolling file name pattern", "default": "logFile.%d{yyyy-MM-dd}.log", "type": "string"},
+            {"name": "rollingMaxHistory", "displayName": "Rolling max history", "default": 30, "type": "int"},
+            {"name": "triggerMaxFileSize", "displayName": "Trigger max file size", "default": "1GB", "type": "string"},
+            {"name": "encoderPattern", "displayName": "Encoder pattern", "default": "%-4relative [%thread] %-5level %logger{35} - %msg%n", "type": "string"}
+    ]
+}

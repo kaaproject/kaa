@@ -69,16 +69,8 @@ import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.logs.avro.CustomAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FileAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
-import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
-import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.MongoAppenderParametersDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
 import org.kaaproject.kaa.server.common.core.configuration.BaseDataFactory;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
@@ -91,25 +83,20 @@ import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
-import org.kaaproject.kaa.server.common.dao.LogEventService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserService;
-import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogEventDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.model.mongo.LogEvent;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -118,11 +105,9 @@ import org.kaaproject.kaa.server.common.dao.model.sql.History;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.mongodb.DB;
 
@@ -166,11 +151,7 @@ public class AbstractTest {
     @Autowired
     private DataSource dataSource;
     @Autowired
-    protected LogEventDao<LogEvent> logEventDao;
-    @Autowired
     protected LogSchemaDao<LogSchema> logSchemaDao;
-    @Autowired
-    protected LogEventService logEventService;
     @Autowired
     protected LogSchemaService logSchemaService;
     @Autowired
@@ -652,7 +633,7 @@ public class AbstractTest {
         return endpointUser;
     }
 
-    protected LogAppenderDto generateLogAppender(String appId, String schemaId, LogAppenderTypeDto type, LogAppenderStatusDto status) {
+    protected LogAppenderDto generateLogAppender(String appId, String schemaId, LogAppenderStatusDto status) {
         LogAppenderDto logAppender = null;
         ApplicationDto app = null;
         LogSchemaDto schema = null;
@@ -673,30 +654,6 @@ public class AbstractTest {
         logAppender.setTenantId(app.getTenantId());
         logAppender.setStatus(status != null ? status : LogAppenderStatusDto.REGISTERED);
         logAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
-        logAppender.setType(type != null ? type : LogAppenderTypeDto.FILE);
-
-        LogAppenderParametersDto parameters = new LogAppenderParametersDto();
-
-
-        switch(logAppender.getType()) {
-            case FILE:
-                parameters.setParameters(new FileAppenderParametersDto("testPath", "testUsername", "testSshKey"));
-                break;
-            case FLUME:
-                FlumeAppenderParametersDto flumeProp = new FlumeAppenderParametersDto();
-                flumeProp.setBalancingType(FlumeBalancingTypeDto.PRIORITIZED);
-                HostInfoDto host = new HostInfoDto(DEFAULT_FLUME_HOST, DEFAULT_FLUME_PORT, DEFAULT_FLUME_PRIORITY);
-                flumeProp.setHosts(Arrays.asList(host));
-                parameters.setParameters(flumeProp);
-                break;
-            case MONGO:
-                parameters.setParameters(new MongoAppenderParametersDto("testCollections"));
-                break;
-            case CUSTOM:
-                parameters.setParameters(new CustomAppenderParametersDto("CustomAppender", "org.kaaproject.TestAppender", "config"));
-                break;
-        }
-        logAppender.setProperties(parameters);
         return logAppendersService.saveLogAppender(logAppender);
     }
 }

@@ -40,6 +40,12 @@
             <artifactId>log-shared</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>    
+            <classifier>cdap</classifier>
+        </dependency>        
+        <dependency>
             <groupId>co.cask.cdap</groupId>
             <artifactId>cdap-stream-client</artifactId>
             <version>1.0.1</version>            

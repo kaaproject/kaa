@@ -29,7 +29,6 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -79,12 +78,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderTypeDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeAppenderParametersDto;
-import org.kaaproject.kaa.common.dto.logs.avro.FlumeBalancingTypeDto;
-import org.kaaproject.kaa.common.dto.logs.avro.HostInfoDto;
-import org.kaaproject.kaa.common.dto.logs.avro.LogAppenderParametersDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
@@ -833,7 +827,7 @@ public abstract class AbstractTestControlServer {
      * @throws IOException
      *             Signals that an I/O exception has occurred.
      */
-    protected LogAppenderDto createLogAppender(ApplicationDto application, LogSchemaDto schema, LogAppenderTypeDto type, FlumeBalancingTypeDto balancingTypeDto)
+    protected LogAppenderDto createLogAppender(ApplicationDto application, LogSchemaDto schema)
             throws TException, IOException {
         LogAppenderDto appender = new LogAppenderDto();
         appender.setName(generateString("Test Schema"));
@@ -851,17 +845,6 @@ public abstract class AbstractTestControlServer {
         }
         appender.setSchema(schema);
         appender.setStatus(LogAppenderStatusDto.REGISTERED);
-        LogAppenderParametersDto parametersDto = new LogAppenderParametersDto();
-        if (type == null) {
-            type = LogAppenderTypeDto.FILE;
-        } else if (type.equals(LogAppenderTypeDto.FLUME)) {
-            FlumeAppenderParametersDto flumeAppenderParametersDto = new FlumeAppenderParametersDto();
-            flumeAppenderParametersDto.setBalancingType(balancingTypeDto != null ? balancingTypeDto : FlumeBalancingTypeDto.ROUND_ROBIN);
-            flumeAppenderParametersDto.setHosts(Arrays.asList(new HostInfoDto("localhost", 12121, 0), new HostInfoDto("localhost", 12122, 0)));
-            parametersDto.setParameters(flumeAppenderParametersDto);
-        }
-
-        appender.setProperties(parametersDto);
 
         LogAppenderDto savedLogAppender = toDto(client.editLogAppender(toDataStruct(appender)));
         return savedLogAppender;

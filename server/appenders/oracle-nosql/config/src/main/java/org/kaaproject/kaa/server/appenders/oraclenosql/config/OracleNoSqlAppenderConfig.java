@@ -15,27 +15,15 @@
  */
 package org.kaaproject.kaa.server.appenders.oraclenosql.config;
 
-import java.io.IOException;
-
+import org.apache.avro.Schema;
+import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig;
 import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
 import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
-import org.kaaproject.kaa.server.common.utils.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @KaaAppenderConfig
 public class OracleNoSqlAppenderConfig implements AppenderConfig{
 
-    private static final Logger LOG = LoggerFactory.getLogger(OracleNoSqlAppenderConfig.class);
-    
-    private String defaultConfig;
-    
     public OracleNoSqlAppenderConfig() {
-        try {
-            defaultConfig = FileUtils.readResource("oracle-nosql-appender-default.properties");
-        } catch (IOException e) {
-            LOG.error("Unable to load default config!", e);
-        }
     }
     
     @Override
@@ -49,8 +37,8 @@ public class OracleNoSqlAppenderConfig implements AppenderConfig{
     }
 
     @Override
-    public String getDefaultConfig() {
-        return defaultConfig;
+    public Schema getConfigSchema() {
+        return OracleNoSqlConfig.getClassSchema();
     }
 
 }

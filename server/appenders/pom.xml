@@ -26,14 +26,18 @@
     <artifactId>appenders</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa Custom Appenders</name>
+    <name>Kaa Appenders</name>
     <url>http://kaaproject.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../..</main.dir>
     </properties>
-
+    <modules>
+        <module>file</module>
+        <module>mongo</module>
+        <module>flume</module>
+    </modules>
     <profiles>
         <profile>
             <id>cdap</id>
@@ -48,5 +52,21 @@
             </modules>
         </profile>
     </profiles>
-
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>${rat.version}</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/gen/*.java</exclude>
+                            <exclude>**/*.avsc</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

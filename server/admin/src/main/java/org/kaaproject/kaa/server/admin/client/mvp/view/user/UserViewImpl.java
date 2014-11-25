@@ -23,8 +23,9 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -61,7 +62,7 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
     @Override
     protected void initDetailsTable() {
 
-        userName = new SizedTextBox(DEFAULT_TEXTBOX_SIZE, create);
+        userName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE, create);
         userName.setWidth("100%");
         userName.addInputHandler(this);
 
@@ -72,7 +73,7 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
         detailsTable.setWidget(0, 0, userLabel);
         detailsTable.setWidget(0, 1, userName);
 
-        email = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        email = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         email.setWidth("100%");
         email.addInputHandler(this);
 

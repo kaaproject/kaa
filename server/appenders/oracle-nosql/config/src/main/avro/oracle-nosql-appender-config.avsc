@@ -1,0 +1,36 @@
+{
+    "namespace": "org.kaaproject.kaa.server.appenders.oraclenosql.config.gen",
+    "type": "record",
+    "name": "OracleNoSqlConfig",
+    "fields": [
+            {"name": "storeName", "displayName": "KVStore name", "default": "kvstore", "type": "string"},
+            {
+               "name": "kvStoreNodes", 
+               "displayName": "KVStore nodes",
+               "minRowCount": 1,
+               "type": {
+                  "type": "array",
+                  "items": {
+                      "namespace": "org.kaaproject.kaa.server.appenders.oraclenosql.config.gen",
+                      "type": "record",
+                      "name": "KvStoreNode",
+                      "fields": [
+                          {"name": "host", "displayName": "Host", "weight": 0.75, "default": "localhost", "type": "string"},
+                          {"name": "port", "displayName": "Port", "weight": 0.25, "default": 5000, "type": "int"}
+                      ]
+                  }
+               }
+            },
+            {"name": "username", "displayName": "Username", "optional": true, "type": ["string", "null"]},
+            {"name": "walletDir", "displayName": "Oracle Wallet directory", "optional": true, "type": ["string", "null"]},
+            {"name": "pwdFile", "displayName": "Password store file", "optional": true, "type": ["string", "null"]},
+            {"name": "securityFile", "displayName": "Security properties file", "optional": true, "type": ["string", "null"]},
+            {"name": "transport", "displayName": "KVStore communication transport", "optional": true, "type": ["string", "null"]},
+            {"name": "ssl", "displayName": "Security transport", "optional": true, "type": ["string", "null"]},
+            {"name": "sslCipherSuites", "displayName": "SSL/TLS cipher suites", "optional": true, "type": ["string", "null"]},
+            {"name": "sslProtocols", "displayName": "SSL/TLS procotols", "optional": true, "type": ["string", "null"]},
+            {"name": "sslHostnameVerifier", "displayName": "SSL/TLS hostname verifier", "optional": true, "type": ["string", "null"]},
+            {"name": "sslTrustStore", "displayName": "Java truststore file location", "optional": true, "type": ["string", "null"]},
+            {"name": "sslTrustStoreType", "displayName": "Java truststore type", "optional": true, "type": ["string", "null"]}
+    ]
+}

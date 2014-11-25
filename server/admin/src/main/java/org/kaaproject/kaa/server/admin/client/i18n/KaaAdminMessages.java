@@ -56,9 +56,6 @@ public interface KaaAdminMessages extends Messages {
     @DefaultMessage("<h1 title=\"Please login\">Please login</h1>")
     String loginTitle();
 
-    @DefaultMessage("{0} of {1} characters")
-    String charactersLength(int length, int maxLenght);
-
     @DefaultMessage("Page {0} of {1}")
     String pagerText(int current, int total);
 

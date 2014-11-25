@@ -70,7 +70,6 @@ import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
-import org.kaaproject.kaa.server.common.dao.LogEventService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
@@ -161,9 +160,6 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     @Autowired
     private LogSchemaService logSchemaService;
-
-    @Autowired
-    private LogEventService logEventService;
 
     @Autowired
     private LogAppendersService logAppenderService;
@@ -1514,16 +1510,6 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     @Override
     public String generateEndpointUserAccessToken(String externalUid, String tenantId) throws ControlThriftException, TException {
         return endpointService.generateEndpointUserAccessToken(externalUid, tenantId);
-    }
-
-    @Override
-    public void createSecureCollection(String applicationId, String password) throws ControlThriftException, TException {
-        String collectionName = applicationService.findAppById(applicationId).getApplicationToken() + "_logs";
-        String roleName = applicationService.findAppById(applicationId).getApplicationToken() + "_role";
-        String userName = applicationService.findAppById(applicationId).getApplicationToken() + "_user";
-        logEventService.createCollection(collectionName);
-        logEventService.createRole(roleName, collectionName);
-        logEventService.createUser(userName, password, roleName);
     }
 
     @Override

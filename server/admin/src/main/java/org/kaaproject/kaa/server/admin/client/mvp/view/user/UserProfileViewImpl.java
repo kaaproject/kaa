@@ -18,8 +18,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.user;
 
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
@@ -56,14 +57,14 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
     @Override
     protected void initDetailsTable() {
 
-        authority = new SizedTextBox(-1, false);
+        authority = new KaaAdminSizedTextBox(-1, false);
         authority.setWidth("100%");
 
         Label authorityLabel = new Label(Utils.constants.accountRole());
         detailsTable.setWidget(0, 0, authorityLabel);
         detailsTable.setWidget(0, 1, authority);
 
-        firstName = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        firstName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         firstName.setWidth("100%");
         firstName.addInputHandler(this);
 
@@ -71,7 +72,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
         detailsTable.setWidget(1, 0, firstNameLabel);
         detailsTable.setWidget(1, 1, firstName);
 
-        lastName = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        lastName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         lastName.setWidth("100%");
         lastName.addInputHandler(this);
 
@@ -79,7 +80,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
         detailsTable.setWidget(2, 0, lastNameLabel);
         detailsTable.setWidget(2, 1, lastName);
 
-        email = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        email = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         email.setWidth("100%");
         email.addInputHandler(this);
 

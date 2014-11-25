@@ -32,13 +32,13 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.appenders.mongo.appender.LogEventDao;
+import org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
-import org.kaaproject.kaa.server.common.dao.LogEventService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
-import org.kaaproject.kaa.server.operations.service.logs.mongo.MongoDBLogAppender;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class DefaultLogAppenderServiceTest {
@@ -61,13 +61,14 @@ public class DefaultLogAppenderServiceTest {
     private LogAppenderService logAppenderService;
     private ApplicationService applicationService;
     private LogSchemaService logSchemaService;
-    private LogEventService logEventService;
+    private LogEventDao logEventDao;
 
     private LogAppendersService logAppendersService;
 
     @Before
     public void beforeTest() throws IOException {
-        mongoDBLogAppender = new MongoDBLogAppender(APPENDER_NAME);
+        mongoDBLogAppender = new MongoDbLogAppender();
+        mongoDBLogAppender.setName(APPENDER_NAME);
         appenderMap = new HashMap<>();
         appenderMap.put(APPENDER_NAME, mongoDBLogAppender);
         logAppenderResolver = mock(DefaultLogAppenderBuilder.class);
@@ -75,13 +76,13 @@ public class DefaultLogAppenderServiceTest {
         logAppenderService = new DefaultLogAppenderService();
         applicationService = mock(ApplicationService.class);
         logSchemaService = mock(LogSchemaService.class);
-        logEventService = mock(LogEventService.class);
+        logEventDao = mock(LogEventDao.class);
         logAppendersService = mock(LogAppendersService.class);
 
         ReflectionTestUtils.setField(logAppenderService, "logSchemaService", logSchemaService);
         ReflectionTestUtils.setField(logAppenderService, "logAppenderResolver", logAppenderResolver);
 
-        ReflectionTestUtils.setField(mongoDBLogAppender, "logEventService", logEventService);
+        ReflectionTestUtils.setField(mongoDBLogAppender, "logEventDao", logEventDao);
 
         ReflectionTestUtils.setField(logAppenderService, "logAppendersService", logAppendersService);
     }

@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.control;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
 
@@ -28,31 +27,26 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ControlServerLogAppenderIT extends AbstractTestControlServer {
 
-    /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(ControlServerLogAppenderIT.class);
-
     @Test
     public void getLogAppendersByApplicationIdTest() throws TException, IOException {
-        LogAppenderDto appenderDto = createLogAppender(null, null, null, null);
+        LogAppenderDto appenderDto = createLogAppender(null, null);
         List<LogAppenderDto> found = toDtoList(client.getLogAppendersByApplicationId(appenderDto.getApplicationId()));
         Assert.assertEquals(1, found.size());
     }
 
     @Test
     public void getLogAppendersByIdTest() throws TException, IOException {
-        LogAppenderDto appenderDto = createLogAppender(null, null, null, null);
+        LogAppenderDto appenderDto = createLogAppender(null, null);
         LogAppenderDto found = toDto(client.getLogAppender(appenderDto.getId()));
         Assert.assertEquals(appenderDto, found);
     }
 
     @Test
     public void registerLogAppenderTest() throws TException, IOException {
-        LogAppenderDto appenderDto = createLogAppender(null, null, null, null);
+        LogAppenderDto appenderDto = createLogAppender(null, null);
         client.unregisterLogAppender(appenderDto.getId());
         LogAppenderDto found = toDto(client.registerLogAppender(appenderDto.getId()));
         Assert.assertEquals(appenderDto, found);
@@ -60,14 +54,14 @@ public class ControlServerLogAppenderIT extends AbstractTestControlServer {
 
     @Test
     public void unregisterLogAppenderTest() throws TException, IOException {
-        LogAppenderDto appenderDto = createLogAppender(null, null, null, null);
+        LogAppenderDto appenderDto = createLogAppender(null, null);
         LogAppenderDto found = toDto(client.unregisterLogAppender(appenderDto.getId()));
         Assert.assertEquals(LogAppenderStatusDto.UNREGISTERED, found.getStatus());
     }
 
     @Test
     public void deleteLogAppenderTest() throws TException, IOException {
-        LogAppenderDto appenderDto = createLogAppender(null, null, null, null);
+        LogAppenderDto appenderDto = createLogAppender(null, null);
         client.deleteLogAppender(appenderDto.getId());
         LogAppenderDto found = toDto(client.getLogAppender(appenderDto.getId()));
         Assert.assertNull(found);

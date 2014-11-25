@@ -18,10 +18,12 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
 
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextArea;
-import org.kaaproject.kaa.server.admin.client.mvp.view.input.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FileUploadForm;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -47,7 +49,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
     protected void initDetailsTable() {
 
         Label versionLabel = new Label(Utils.constants.version());
-        version = new SizedTextBox(-1, false);
+        version = new KaaAdminSizedTextBox(-1, false);
         version.setWidth("100%");
         detailsTable.setWidget(0, 0, versionLabel);
         detailsTable.setWidget(0, 1, version);
@@ -55,7 +57,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         version.setVisible(!create);
 
         Label authorLabel = new Label(Utils.constants.author());
-        createdUsername = new SizedTextBox(-1, false);
+        createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");
         detailsTable.setWidget(1, 0, authorLabel);
         detailsTable.setWidget(1, 1, createdUsername);
@@ -64,7 +66,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         createdUsername.setVisible(!create);
 
         Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
-        createdDateTime = new SizedTextBox(-1, false);
+        createdDateTime = new KaaAdminSizedTextBox(-1, false);
         createdDateTime.setWidth("100%");
         detailsTable.setWidget(2, 0, dateTimeCreatedLabel);
         detailsTable.setWidget(2, 1, createdDateTime);
@@ -73,7 +75,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         createdDateTime.setVisible(!create);
 
         Label endpointCountLabel = new Label(Utils.constants.numberOfEndpoints());
-        endpointCount = new SizedTextBox(-1, false);
+        endpointCount = new KaaAdminSizedTextBox(-1, false);
         endpointCount.setWidth("100%");
         detailsTable.setWidget(3, 0, endpointCountLabel);
         detailsTable.setWidget(3, 1, endpointCount);
@@ -81,7 +83,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         endpointCountLabel.setVisible(!create);
         endpointCount.setVisible(!create);
 
-        name = new SizedTextBox(DEFAULT_TEXTBOX_SIZE);
+        name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         name.setWidth("100%");
         Label nameLabel = new Label(Utils.constants.name());
         nameLabel.addStyleName("required");
@@ -89,7 +91,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         detailsTable.setWidget(4, 1, name);
         name.addInputHandler(this);
 
-        description = new SizedTextArea(1024);
+        description = new KaaAdminSizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
@@ -111,7 +113,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
             detailsTable.setWidget(6, 1, schemaFileUpload);
         }
         else {
-            schema = new SizedTextArea(524288);
+            schema = new KaaAdminSizedTextArea(524288);
             schema.setWidth("500px");
             schema.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 300);
             schema.getTextArea().setReadOnly(true);

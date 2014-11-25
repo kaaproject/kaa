@@ -15,28 +15,15 @@
  */
 package org.kaaproject.kaa.server.appenders.cdap.config;
 
-import java.io.IOException;
-
+import org.apache.avro.Schema;
+import org.kaaproject.kaa.server.appenders.cdap.config.gen.CdapConfig;
 import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
 import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
-import org.kaaproject.kaa.server.common.utils.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @KaaAppenderConfig
 public class CdapAppenderConfig implements AppenderConfig{
 
-    private static final Logger LOG = LoggerFactory.getLogger(CdapAppenderConfig.class);
-    
-    private String defaultConfig;
-    
-    public CdapAppenderConfig() {
-        try {
-            defaultConfig = FileUtils.readResource("cdap-appender-default.properties");
-        } catch (IOException e) {
-            LOG.error("Unable to load default config!", e);
-        }
-    }
+    public CdapAppenderConfig() {}
     
     @Override
     public String getName() {
@@ -49,8 +36,8 @@ public class CdapAppenderConfig implements AppenderConfig{
     }
 
     @Override
-    public String getDefaultConfig() {
-        return defaultConfig;
+    public Schema getConfigSchema() {
+        return CdapConfig.getClassSchema();
     }
 
 }
