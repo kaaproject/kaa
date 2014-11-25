@@ -35,7 +35,7 @@ kaa_error_t kaa_create_event_manager(kaa_event_manager_t **);
 void kaa_destroy_event_manager(kaa_event_manager_t *);
 
 kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId);
-void kaa_event_handle_sync(void *ctx, size_t request_id, kaa_list_t *events);
+void kaa_event_handle_sync(void *ctx, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
 
 kaa_trx_id kaa_event_create_transaction(void *context);
 void kaa_event_finish_transaction(void *context, kaa_trx_id trx_id);

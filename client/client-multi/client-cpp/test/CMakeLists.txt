@@ -144,7 +144,7 @@ set ( KAA_TEST_SOURCES
         impl/security/KeyUtilsTest.cpp
 ##        impl/event/EventFamilyFactoryTest.cpp
 ##        impl/event/EventListenersResolverTest.cpp
-#        impl/event/EventTransportTest.cpp
+        impl/event/EventTransportTest.cpp
         impl/channel/AbstractServerInfoTest.cpp
         impl/channel/KaaChannelManagerTest.cpp
         impl/notification/NotificationTransportTest.cpp

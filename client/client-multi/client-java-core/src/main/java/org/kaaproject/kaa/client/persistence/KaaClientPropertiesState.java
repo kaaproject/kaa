@@ -447,7 +447,17 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public int getAndIncrementEventSeqNum() {
-        return eventSequence.incrementAndGet();
+        return eventSequence.getAndIncrement();
+    }
+
+    @Override
+    public int getEventSeqNum() {
+        return eventSequence.get();
+    }
+
+    @Override
+    public void setEventSeqNum(int newSeqNum) {
+        eventSequence.set(newSeqNum);
     }
 
     @Override

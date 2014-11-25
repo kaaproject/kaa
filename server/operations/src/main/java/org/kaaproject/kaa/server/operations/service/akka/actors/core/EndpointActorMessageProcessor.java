@@ -33,6 +33,7 @@ import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
+import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
@@ -271,7 +272,7 @@ public class EndpointActorMessageProcessor {
 
             if (endpointProfile != null) {
                 processLogUpload(context, request, responseHolder);
-                processEvents(context, request);
+                processEvents(context, request, responseHolder);
                 processUserAttachDetachResults(context, request, responseHolder);
             } else {
                 LOG.warn("[{}][{}] Endpoint profile is not set after request processing!", endpointKey, actorKey);
@@ -304,14 +305,29 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processEvents(ActorContext context, SyncRequest request) {
+    private void processEvents(ActorContext context, SyncRequest request, SyncResponseHolder responseHolder) {
         if (isValidForEvents(endpointProfile)) {
             updateUserConnection(context);
-            sendEventsIfPresent(context, request.getEventSyncRequest());
+            if(request.getEventSyncRequest() != null){
+                EventSyncRequest eventRequest = request.getEventSyncRequest();
+                processSeqNumber(eventRequest, responseHolder);
+                sendEventsIfPresent(context, eventRequest);
+            }
         } else {
             LOG.debug(
                     "[{}][{}] Endpoint profile is not valid for send/receive events. Either no assigned user or no event families in sdk",
                     endpointKey, actorKey);
+        }
+    }
+
+    private void processSeqNumber(EventSyncRequest request, SyncResponseHolder responseHolder) {
+        if (request.getEventSequenceNumberRequest() != null) {
+            EventSyncResponse response = responseHolder.getResponse().getEventSyncResponse();
+            if(response == null){
+                response = new EventSyncResponse();
+                responseHolder.getResponse().setEventSyncResponse(response);
+            }
+            response.setEventSequenceNumberResponse(new EventSequenceNumberResponse(Math.max(processedEventSeqNum, 0)));
         }
     }
 
@@ -591,6 +607,9 @@ public class EndpointActorMessageProcessor {
             return null;
         }
         EventSyncResponse copy = new EventSyncResponse();
+        if(source.getEventSequenceNumberResponse() != null){
+            copy.setEventSequenceNumberResponse(source.getEventSequenceNumberResponse());
+        }
         if (source.getEvents() != null) {
             copy.setEvents(new ArrayList<>(source.getEvents()));
         }
@@ -667,29 +686,27 @@ public class EndpointActorMessageProcessor {
     }
 
     protected void sendEventsIfPresent(ActorContext context, EventSyncRequest request) {
-        if (request != null) {
-            List<Event> events = request.getEvents();
-            if (userId != null && events != null && !events.isEmpty()) {
-                LOG.debug("[{}][{}] Processing events {} with seq number > {}", endpointKey, actorKey, events,
-                        processedEventSeqNum);
-                List<Event> eventsToSend = new ArrayList<>(events.size());
-                int maxSentEventSeqNum = processedEventSeqNum;
-                for (Event event : events) {
-                    if (event.getSeqNum() > processedEventSeqNum) {
-                        event.setSource(endpointKey);
-                        eventsToSend.add(event);
-                        maxSentEventSeqNum = Math.max(event.getSeqNum(), maxSentEventSeqNum);
-                    } else {
-                        LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}", endpointKey,
-                                actorKey, events, processedEventSeqNum);
-                    }
+        List<Event> events = request.getEvents();
+        if (userId != null && events != null && !events.isEmpty()) {
+            LOG.debug("[{}][{}] Processing events {} with seq number > {}", endpointKey, actorKey, events,
+                    processedEventSeqNum);
+            List<Event> eventsToSend = new ArrayList<>(events.size());
+            int maxSentEventSeqNum = processedEventSeqNum;
+            for (Event event : events) {
+                if (event.getSeqNum() > processedEventSeqNum) {
+                    event.setSource(endpointKey);
+                    eventsToSend.add(event);
+                    maxSentEventSeqNum = Math.max(event.getSeqNum(), maxSentEventSeqNum);
+                } else {
+                    LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}", endpointKey,
+                            actorKey, events, processedEventSeqNum);
                 }
-                processedEventSeqNum = maxSentEventSeqNum;
-                if (!eventsToSend.isEmpty()) {
-                    EndpointEventSendMessage message = new EndpointEventSendMessage(userId, eventsToSend, key,
-                            appToken, context.self());
-                    context.parent().tell(message, context.self());
-                }
+            }
+            processedEventSeqNum = maxSentEventSeqNum;
+            if (!eventsToSend.isEmpty()) {
+                EndpointEventSendMessage message = new EndpointEventSendMessage(userId, eventsToSend, key,
+                        appToken, context.self());
+                context.parent().tell(message, context.self());
             }
         }
     }
