@@ -48,12 +48,10 @@
         <dependency>
         	<groupId>com.oracle.kv</groupId>
         	<artifactId>oracle-nosql-client</artifactId>
-        	<version>3.0.14</version>
         </dependency>
         <dependency>
             <groupId>com.oracle.kv</groupId>
             <artifactId>kvstore</artifactId>
-            <version>3.1.7</version>
             <scope>test</scope>
         </dependency>        
         <dependency>
