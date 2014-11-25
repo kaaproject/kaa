@@ -117,8 +117,8 @@ kaa_user_sync_request_t* kaa_user_compile_request(void *ctx, size_t requestId)
 
     kaa_user_sync_request_t *request = kaa_create_user_sync_request();
 
-    request->endpoint_attach_requests = kaa_create_array_endpoint_attach_request_array_null_union_null_branch();
-    request->endpoint_detach_requests = kaa_create_array_endpoint_detach_request_array_null_union_null_branch();
+    request->endpoint_attach_requests = kaa_create_array_endpoint_attach_request_null_union_null_branch();
+    request->endpoint_detach_requests = kaa_create_array_endpoint_detach_request_null_union_null_branch();
     kaa_user_manager_t * user_manager = context->user_manager;
 
     if (user_manager->user_info && user_manager->is_waiting_user_attach_response == 0) {

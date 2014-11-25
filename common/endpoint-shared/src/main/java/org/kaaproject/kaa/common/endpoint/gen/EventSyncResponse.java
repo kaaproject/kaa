@@ -7,8 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EventSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"eventListenersResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EventListenersResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"listeners\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"null\"]},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}],\"direction\":\"in\"}},\"null\"]},{\"name\":\"events\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Event\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"},{\"name\":\"eventClassFQN\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventData\",\"type\":\"bytes\"},{\"name\":\"source\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"target\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]}},\"null\"]}],\"direction\":\"in\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EventSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"eventSequenceNumberResponse\",\"type\":[{\"type\":\"record\",\"name\":\"EventSequenceNumberResponse\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"}],\"direction\":\"in\"},\"null\"]},{\"name\":\"eventListenersResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EventListenersResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"listeners\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"null\"]},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}],\"direction\":\"in\"}},\"null\"]},{\"name\":\"events\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Event\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"},{\"name\":\"eventClassFQN\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventData\",\"type\":\"bytes\"},{\"name\":\"source\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"target\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]}},\"null\"]}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
+   private org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse eventSequenceNumberResponse;
    private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse> eventListenersResponses;
    private java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> events;
 
@@ -22,7 +23,8 @@ public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBa
   /**
    * All-args constructor.
    */
-  public EventSyncResponse(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse> eventListenersResponses, java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> events) {
+  public EventSyncResponse(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse eventSequenceNumberResponse, java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse> eventListenersResponses, java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> events) {
+    this.eventSequenceNumberResponse = eventSequenceNumberResponse;
     this.eventListenersResponses = eventListenersResponses;
     this.events = events;
   }
@@ -31,8 +33,9 @@ public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBa
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return eventListenersResponses;
-    case 1: return events;
+    case 0: return eventSequenceNumberResponse;
+    case 1: return eventListenersResponses;
+    case 2: return events;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -40,10 +43,26 @@ public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBa
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: eventListenersResponses = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse>)value$; break;
-    case 1: events = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event>)value$; break;
+    case 0: eventSequenceNumberResponse = (org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse)value$; break;
+    case 1: eventListenersResponses = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse>)value$; break;
+    case 2: events = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
+  }
+
+  /**
+   * Gets the value of the 'eventSequenceNumberResponse' field.
+   */
+  public org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse getEventSequenceNumberResponse() {
+    return eventSequenceNumberResponse;
+  }
+
+  /**
+   * Sets the value of the 'eventSequenceNumberResponse' field.
+   * @param value the value to set.
+   */
+  public void setEventSequenceNumberResponse(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse value) {
+    this.eventSequenceNumberResponse = value;
   }
 
   /**
@@ -97,6 +116,7 @@ public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBa
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<EventSyncResponse>
     implements org.apache.avro.data.RecordBuilder<EventSyncResponse> {
 
+    private org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse eventSequenceNumberResponse;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse> eventListenersResponses;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> events;
 
@@ -108,27 +128,60 @@ public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBa
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.eventListenersResponses)) {
-        this.eventListenersResponses = data().deepCopy(fields()[0].schema(), other.eventListenersResponses);
+      if (isValidValue(fields()[0], other.eventSequenceNumberResponse)) {
+        this.eventSequenceNumberResponse = data().deepCopy(fields()[0].schema(), other.eventSequenceNumberResponse);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.events)) {
-        this.events = data().deepCopy(fields()[1].schema(), other.events);
+      if (isValidValue(fields()[1], other.eventListenersResponses)) {
+        this.eventListenersResponses = data().deepCopy(fields()[1].schema(), other.eventListenersResponses);
         fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.events)) {
+        this.events = data().deepCopy(fields()[2].schema(), other.events);
+        fieldSetFlags()[2] = true;
       }
     }
     
     /** Creates a Builder by copying an existing EventSyncResponse instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse other) {
             super(org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse.SCHEMA$);
-      if (isValidValue(fields()[0], other.eventListenersResponses)) {
-        this.eventListenersResponses = data().deepCopy(fields()[0].schema(), other.eventListenersResponses);
+      if (isValidValue(fields()[0], other.eventSequenceNumberResponse)) {
+        this.eventSequenceNumberResponse = data().deepCopy(fields()[0].schema(), other.eventSequenceNumberResponse);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.events)) {
-        this.events = data().deepCopy(fields()[1].schema(), other.events);
+      if (isValidValue(fields()[1], other.eventListenersResponses)) {
+        this.eventListenersResponses = data().deepCopy(fields()[1].schema(), other.eventListenersResponses);
         fieldSetFlags()[1] = true;
       }
+      if (isValidValue(fields()[2], other.events)) {
+        this.events = data().deepCopy(fields()[2].schema(), other.events);
+        fieldSetFlags()[2] = true;
+      }
+    }
+
+    /** Gets the value of the 'eventSequenceNumberResponse' field */
+    public org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse getEventSequenceNumberResponse() {
+      return eventSequenceNumberResponse;
+    }
+    
+    /** Sets the value of the 'eventSequenceNumberResponse' field */
+    public org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse.Builder setEventSequenceNumberResponse(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse value) {
+      validate(fields()[0], value);
+      this.eventSequenceNumberResponse = value;
+      fieldSetFlags()[0] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'eventSequenceNumberResponse' field has been set */
+    public boolean hasEventSequenceNumberResponse() {
+      return fieldSetFlags()[0];
+    }
+    
+    /** Clears the value of the 'eventSequenceNumberResponse' field */
+    public org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse.Builder clearEventSequenceNumberResponse() {
+      eventSequenceNumberResponse = null;
+      fieldSetFlags()[0] = false;
+      return this;
     }
 
     /** Gets the value of the 'eventListenersResponses' field */
@@ -138,21 +191,21 @@ public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBa
     
     /** Sets the value of the 'eventListenersResponses' field */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse.Builder setEventListenersResponses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse> value) {
-      validate(fields()[0], value);
+      validate(fields()[1], value);
       this.eventListenersResponses = value;
-      fieldSetFlags()[0] = true;
+      fieldSetFlags()[1] = true;
       return this; 
     }
     
     /** Checks whether the 'eventListenersResponses' field has been set */
     public boolean hasEventListenersResponses() {
-      return fieldSetFlags()[0];
+      return fieldSetFlags()[1];
     }
     
     /** Clears the value of the 'eventListenersResponses' field */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse.Builder clearEventListenersResponses() {
       eventListenersResponses = null;
-      fieldSetFlags()[0] = false;
+      fieldSetFlags()[1] = false;
       return this;
     }
 
@@ -163,21 +216,21 @@ public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBa
     
     /** Sets the value of the 'events' field */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse.Builder setEvents(java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> value) {
-      validate(fields()[1], value);
+      validate(fields()[2], value);
       this.events = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'events' field has been set */
     public boolean hasEvents() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'events' field */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse.Builder clearEvents() {
       events = null;
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -185,8 +238,9 @@ public class EventSyncResponse extends org.apache.avro.specific.SpecificRecordBa
     public EventSyncResponse build() {
       try {
         EventSyncResponse record = new EventSyncResponse();
-        record.eventListenersResponses = fieldSetFlags()[0] ? this.eventListenersResponses : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse>) defaultValue(fields()[0]);
-        record.events = fieldSetFlags()[1] ? this.events : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event>) defaultValue(fields()[1]);
+        record.eventSequenceNumberResponse = fieldSetFlags()[0] ? this.eventSequenceNumberResponse : (org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse) defaultValue(fields()[0]);
+        record.eventListenersResponses = fieldSetFlags()[1] ? this.eventListenersResponses : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse>) defaultValue(fields()[1]);
+        record.events = fieldSetFlags()[2] ? this.events : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event>) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

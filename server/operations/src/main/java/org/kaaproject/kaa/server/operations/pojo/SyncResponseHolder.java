@@ -182,6 +182,9 @@ public class SyncResponseHolder {
             return true;
         }
         if (response.getEventSyncResponse() != null) {
+            if(response.getEventSyncResponse().getEventSequenceNumberResponse() != null){
+                return true;
+            }
             if(response.getEventSyncResponse().getEvents() != null && !response.getEventSyncResponse().getEvents().isEmpty()){
                 return true;
             }

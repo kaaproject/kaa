@@ -186,6 +186,22 @@
  ]
 },
 {
+    "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+    "type": "record",
+    "name": "EventSequenceNumberRequest",
+    "direction": "out",
+    "fields": []
+},
+{
+    "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+    "type": "record",
+    "name": "EventSequenceNumberResponse",
+    "direction": "in",
+    "fields": [
+         {"name": "seqNum", "type": "int"}
+    ]
+},
+{
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "name": "Notification",
@@ -283,6 +299,7 @@
  "name": "EventSyncRequest",
  "direction": "out",
  "fields": [
+     {"name": "eventSequenceNumberRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest", "null"]},
      {"name": "eventListenersRequests", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest"}, "null"]},
      {"name": "events", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.Event"}, "null"]}
  ]
@@ -349,6 +366,7 @@
  "name": "EventSyncResponse",
  "direction": "in",
  "fields": [
+     {"name": "eventSequenceNumberResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse", "null"]},
      {"name": "eventListenersResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse"}, "null"]},
      {"name": "events", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.Event"}, "null"]} 
  ]

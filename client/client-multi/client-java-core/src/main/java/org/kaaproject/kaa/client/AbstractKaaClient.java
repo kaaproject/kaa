@@ -173,7 +173,7 @@ public abstract class AbstractKaaClient implements KaaClient {
 
         BootstrapTransport bootstratpTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
         ProfileTransport profileTransport = new DefaultProfileTransport();
-        EventTransport eventTransport = new DefaultEventTransport();
+        EventTransport eventTransport = new DefaultEventTransport(kaaClientState);
         NotificationTransport notificationTransport = new DefaultNotificationTransport();
         ConfigurationTransport configurationTransport = new DefaultConfigurationTransport();
         UserTransport userTransport = new DefaultUserTransport();

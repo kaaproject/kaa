@@ -17,9 +17,8 @@
 #ifndef EVENTMANAGER_HPP_
 #define EVENTMANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #ifdef KAA_USE_EVENTS
+
 
 #include <set>
 #include <list>
@@ -27,6 +26,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "kaa/KaaDefaults.hpp"
 #include "kaa/KaaThread.hpp"
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/event/IEventManager.hpp"
@@ -98,7 +98,6 @@ private:
     void onEventFromServer(const std::string& eventClassFQN
                          , const std::vector<std::uint8_t>& data
                          , const std::string& source);
-
 
     void generateUniqueRequestId(std::string& requstId);
 private:

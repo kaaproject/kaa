@@ -163,7 +163,8 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_USE_EVENTS
     IUserTransportPtr userTransport(new UserTransport(*registrationManager_, *channelManager_));
-    IEventTransportPtr eventTransport(new EventTransport(*eventManager_, *channelManager_));
+    IEventTransportPtr eventTransport(new EventTransport(*eventManager_, *channelManager_, status_));
+    dynamic_cast<EventTransport*>(eventTransport.get())->setClientState(status_);
 #endif
 #ifdef KAA_USE_LOGGING
     ILoggingTransportPtr loggingTransport(new LoggingTransport(*channelManager_, *logCollector_));

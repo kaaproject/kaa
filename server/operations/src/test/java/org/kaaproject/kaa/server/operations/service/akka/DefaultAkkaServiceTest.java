@@ -50,6 +50,8 @@ import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
+import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest;
+import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
@@ -909,8 +911,75 @@ public class DefaultAkkaServiceTest {
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] response = responseConverter.toByteArray(eventResponse);
         byte[] encodedData = targetCrypt.encodeData(response);
+
         Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
+    
+    @Test
+    public void testEndpointEventSeqNumberBasic() throws Exception {
+        ChannelHandlerContext channelContextMock = Mockito.mock(ChannelHandlerContext.class);
+
+        EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
+        
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest sourceRequest = new SyncRequest();
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(clientPublicKeyHash);
+        md.setTimeout(TIMEOUT * 1L);
+        sourceRequest.setSyncRequestMetaData(md);
+
+        EventSyncRequest eventRequest = new EventSyncRequest();
+        eventRequest.setEventSequenceNumberRequest(new EventSequenceNumberRequest());
+        sourceRequest.setEventSyncRequest(eventRequest);
+
+        SyncResponse sourceResponse = new SyncResponse();
+        sourceResponse.setStatus(SyncResponseResultType.SUCCESS);
+        SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
+        sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+
+        when(operationsService.sync(sourceRequest, null)).thenReturn(sourceResponseHolder);
+
+        when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
+        when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(
+                ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION))).thenReturn(
+                Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        ResponseBuilder responseBuilder = Mockito.mock(ResponseBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        MessageEncoderDecoder sourceCrypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
+                serverPair.getPublic());
+        SessionInitRequest sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock,
+                sourceRequest, responseBuilder, errorBuilder, sourceCrypt);
+        akkaService.process(sourceMessage);
+
+        // sourceRequest
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(SyncRequest.class),
+                Mockito.any(EndpointProfileDto.class));
+
+        SyncResponse eventResponse = new SyncResponse();
+        eventResponse.setStatus(SyncResponseResultType.SUCCESS);
+        eventResponse.setEventSyncResponse(new EventSyncResponse());
+        eventResponse.getEventSyncResponse().setEventSequenceNumberResponse(new EventSequenceNumberResponse(0));
+
+        AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        byte[] response = responseConverter.toByteArray(eventResponse);
+        byte[] encodedData = sourceCrypt.encodeData(response);
+        
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+    
 
     @Test
     public void testRemoteIncomingEndpointEventBasic() throws Exception {

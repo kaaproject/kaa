@@ -136,6 +136,12 @@ static event_callback_t find_event_callback(kaa_list_t *head, const char * fqn)
     return NULL;
 }
 
+typedef enum kaa_event_sequence_number_status_t {
+    KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED,
+    KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS,
+    KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED
+} kaa_event_sequence_number_status_t;
+
 typedef struct event_transaction_t_ {
     kaa_trx_id      id;
     kaa_list_t *    events;
@@ -171,6 +177,7 @@ struct kaa_event_manager_t {
     kaa_list_t *        event_callbacks;
     kaa_list_t *        transactions;
     event_callback_t    global_event_callback;
+    kaa_event_sequence_number_status_t sequence_number_status;
 };
 
 kaa_error_t kaa_create_event_manager(kaa_event_manager_t ** event_manager_p)
@@ -184,6 +191,7 @@ kaa_error_t kaa_create_event_manager(kaa_event_manager_t ** event_manager_p)
     event_manager->event_callbacks = NULL;
     event_manager->transactions = NULL;
     event_manager->global_event_callback = NULL;
+    event_manager->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED;
     *event_manager_p = event_manager;
     return KAA_ERR_NONE;
 }
@@ -224,7 +232,23 @@ kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId)
     kaa_context_t * context = (kaa_context_t *)ctx;
     kaa_event_manager_t * event_manager = context->event_manager;
 
-    // LOL (lots of logic)
+    kaa_event_sync_request_t* request = kaa_create_event_sync_request();
+    request->event_listeners_requests = kaa_create_array_event_listeners_request_null_union_null_branch();
+
+    if (event_manager->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED) {
+        request->event_sequence_number_request = kaa_create_record_event_sequence_number_request_null_union_event_sequence_number_request_branch();
+        request->event_sequence_number_request->data = kaa_create_event_sequence_number_request();
+        request->events = kaa_create_array_event_null_union_null_branch();
+        event_manager->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS;
+        return request;
+    } else {
+        request->event_sequence_number_request = kaa_create_record_event_sequence_number_request_null_union_null_branch();
+        if (event_manager->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS) {
+            request->events = kaa_create_array_event_null_union_null_branch();
+            return request;
+        }
+    }
+
     kaa_list_t *events_to_resend_head = event_manager->sent_events;
     event_manager->sent_events = NULL;
     kaa_list_t *events_to_resend = events_to_resend_head;
@@ -256,8 +280,8 @@ kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId)
         }
 
         event_copy->seq_num = event_source->seq_number;
-        event_copy->event_classfqn = KAA_CALLOC(event_source->fqn_size + 1, sizeof(char));
-        memcpy(event_copy->event_classfqn, event_source->fqn, event_source->fqn_size);
+        event_copy->event_class_fqn = KAA_CALLOC(event_source->fqn_size + 1, sizeof(char));
+        memcpy(event_copy->event_class_fqn, event_source->fqn, event_source->fqn_size);
         event_copy->event_data = KAA_MALLOC(kaa_bytes_t);
         event_copy->event_data->size = event_source->data_size;
         event_copy->event_data->buffer = KAA_CALLOC(event_source->data_size, sizeof(char));
@@ -280,24 +304,37 @@ kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId)
         new_events = kaa_list_next(new_events);
     }
 
-    kaa_event_sync_request_t* request = kaa_create_event_sync_request();
-    request->event_listeners_requests = kaa_create_array_event_listeners_request_array_null_union_null_branch();
     if (new_events_copy == NULL) {
-        request->events = kaa_create_array_event_array_null_union_null_branch();
+        request->events = kaa_create_array_event_null_union_null_branch();
         request->events->data = NULL;
     } else {
-        request->events = kaa_create_array_event_array_null_union_array_branch();
+        request->events = kaa_create_array_event_null_union_array_branch();
         request->events->data = new_events_copy;
     }
     return request;
 }
 
-void kaa_event_handle_sync(void *ctx, size_t request_id, kaa_list_t *events)
+void kaa_event_handle_sync(void *ctx, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events)
 {
     kaa_context_t * context = (kaa_context_t *)ctx;
     kaa_event_manager_t * event_manager = context->event_manager;
 
-    // LOL again
+    if (event_manager->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS
+            && event_sn_response != NULL) {
+        int32_t server_sn = event_sn_response->seq_num > 0 ? event_sn_response->seq_num : 0;
+        kaa_list_t *pending_events = event_manager->pending_events;
+        size_t events_count = kaa_list_get_size(pending_events);
+        if (event_sequence_number - events_count != server_sn) {
+            event_sequence_number = server_sn;
+            while (pending_events) {
+                event_t *event = kaa_list_get_data(pending_events);
+                event->seq_number = ++event_sequence_number;
+                pending_events = kaa_list_next(pending_events);
+            }
+        }
+        event_manager->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED;
+    }
+
 
     kaa_list_t * sent_events = event_manager->sent_events;
     while (sent_events) {
@@ -311,11 +348,11 @@ void kaa_event_handle_sync(void *ctx, size_t request_id, kaa_list_t *events)
 
     kaa_event_t * event = (kaa_event_t *)kaa_list_get_data(events);
     while (event) {
-        event_callback_t cb = find_event_callback(event_manager->event_callbacks, event->event_classfqn);
+        event_callback_t cb = find_event_callback(event_manager->event_callbacks, event->event_class_fqn);
         if (cb) {
-            (*cb)((const char *)(event->event_classfqn), (const char *)(event->event_data->buffer), event->event_data->size);
+            (*cb)((const char *)(event->event_class_fqn), (const char *)(event->event_data->buffer), event->event_data->size);
         } else if (event_manager->global_event_callback != NULL) {
-            (*event_manager->global_event_callback)((const char *)(event->event_classfqn), (const char *)(event->event_data->buffer), event->event_data->size);
+            (*event_manager->global_event_callback)((const char *)(event->event_class_fqn), (const char *)(event->event_data->buffer), event->event_data->size);
         }
 
         events = kaa_list_next(events);

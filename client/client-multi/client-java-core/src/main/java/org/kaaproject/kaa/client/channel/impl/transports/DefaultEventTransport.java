@@ -16,30 +16,42 @@
 
 package org.kaaproject.kaa.client.channel.impl.transports;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.event.EventManager;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
+import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultEventTransport extends AbstractKaaTransport implements
-        EventTransport {
-
+public class DefaultEventTransport extends AbstractKaaTransport implements EventTransport
+{
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEventTransport.class);
+
+    private final KaaClientState clientState;
+
     private final Map<Integer, List<Event>> sentEvents = new HashMap<Integer, List<Event>>();
     private EventManager manager;
     private final EventComparator eventComparator = new EventComparator();
+
+    private boolean isEventSNSynchronized = false;
+    private int startEventSN;
+
+    public DefaultEventTransport(KaaClientState state) {
+        clientState = state;
+        startEventSN = clientState.getEventSeqNum();
+    }
 
     @Override
     public EventSyncRequest createEventRequest(Integer requestId) {
@@ -48,25 +60,49 @@ public class DefaultEventTransport extends AbstractKaaTransport implements
 
             manager.fillEventListenersSyncRequest(request);
 
-            List<Event> events = new LinkedList<Event>();
-            if (!sentEvents.isEmpty()) {
-                for (Map.Entry<Integer, List<Event>> pendingEvents : sentEvents.entrySet()) {
-                    LOG.debug("Have not received response for {} events sent with request id {}",
-                            pendingEvents.getValue().size(), pendingEvents.getKey());
-                    events.addAll(pendingEvents.getValue());
+            if (isEventSNSynchronized) {
+                List<Event> events = new LinkedList<Event>();
+
+                if (!sentEvents.isEmpty()) {
+                    for (Map.Entry<Integer, List<Event>> pendingEvents : sentEvents.entrySet()) {
+                        LOG.debug("Have not received response for {} events sent with request id {}",
+                                pendingEvents.getValue().size(), pendingEvents.getKey());
+                        events.addAll(pendingEvents.getValue());
+                    }
+                    sentEvents.clear();
                 }
-                sentEvents.clear();
+
+                events.addAll(manager.getPendingEvents());
+
+                if (!events.isEmpty()) {
+                    Collections.sort(events, eventComparator);
+
+                    if (events.get(0).getSeqNum() != startEventSN) {
+                        clientState.setEventSeqNum(startEventSN + events.size());
+
+                        LOG.info("Put in order event sequence numbers (expected: {}, actual: {})"
+                                                        , startEventSN , events.get(0).getSeqNum());
+
+                        for (Event e : events) {
+                            e.setSeqNum(startEventSN++);
+                        }
+                    } else {
+                        startEventSN += events.size();
+                    }
+
+                    LOG.debug("Going to send {} event{}", events.size()
+                            , (events.size() == 1 ? "" : "s")); //NOSONAR
+                    request.setEvents(events);
+                    sentEvents.put(requestId, events);
+                }
+
+                request.setEventSequenceNumberRequest(null);
+            } else {
+                request.setEventSequenceNumberRequest(new EventSequenceNumberRequest());
+                LOG.trace("Sending event sequence number request: "
+                                    + "restored_sn = {}", startEventSN);
             }
 
-            events.addAll(manager.getPendingEvents());
-
-            if (!events.isEmpty()) {
-                Collections.sort(events, eventComparator);
-                LOG.debug("Going to send {} event{}", events.size()
-                        , (events.size() == 1 ? "" : "s")); //NOSONAR
-                request.setEvents(events);
-                sentEvents.put(requestId, events);
-            }
             return request;
         }
         return null;
@@ -75,6 +111,22 @@ public class DefaultEventTransport extends AbstractKaaTransport implements
     @Override
     public void onEventResponse(EventSyncResponse response) {
         if (manager != null) {
+            if (!isEventSNSynchronized && response.getEventSequenceNumberResponse() != null)
+            {
+                int lastSN = response.getEventSequenceNumberResponse().getSeqNum();
+                int expectedSN = (lastSN > 0 ? lastSN + 1 : lastSN);
+
+                if (startEventSN != expectedSN) {
+                    startEventSN = expectedSN;
+                    clientState.setEventSeqNum(startEventSN);
+                    LOG.info("Event sequence number is unsynchronized. Set to {}", startEventSN);
+                } else {
+                    LOG.info("Event sequence number is up to date: {}", startEventSN);
+                }
+
+                isEventSNSynchronized = true;
+            }
+
             if (response.getEvents() != null && !response.getEvents().isEmpty()) {
                 List<Event> events = new ArrayList<>(response.getEvents());
                 Collections.sort(events, eventComparator);
@@ -86,7 +138,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements
                 manager.eventListenersResponseReceived(response.getEventListenersResponses());
             }
         }
-        LOG.info("Processed event response.");
+        LOG.trace("Processed event response");
     }
 
     @Override
