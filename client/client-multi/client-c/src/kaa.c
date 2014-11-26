@@ -81,10 +81,16 @@ kaa_error_t kaa_init()
     if (result == KAA_ERR_NONE) {
         char *pub_key_buffer;
         size_t pub_key_buffer_size;
-        kaa_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size);
+        bool need_deallocation = false;
 
+        kaa_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
         kaa_digest d;
         result = kaa_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, d);
+
+        if (need_deallocation && pub_key_buffer_size > 0) {
+            KAA_FREE(pub_key_buffer);
+        }
+
         if (result == KAA_ERR_NONE) {
             kaa_status_set_endpoint_public_key_hash(kaa_context_->status, d);
             kaa_initialized = true;
@@ -105,10 +111,10 @@ kaa_error_t kaa_deinit()
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_set_user_attached_callback(user_response_handler_t callback)
+kaa_error_t kaa_set_user_attached_callback(kaa_attachment_status_listeners_t callback)
 {
     KAA_CHECK_INITED
-    return kaa_set_attachment_callback(kaa_context_, callback);
+    return kaa_set_attachment_listeners(kaa_context_, callback);
 }
 
 kaa_error_t kaa_set_endpoint_access_token(const char *token)
@@ -210,7 +216,7 @@ kaa_error_t kaa_compile_request(kaa_sync_request_t **request_p, size_t *result_s
         request->sync_request_meta_data->data = create_sync_request_meta_data(kaa_context_);
 
         request->user_sync_request = kaa_create_record_user_sync_request_null_union_user_sync_request_branch();
-        request->user_sync_request->data = kaa_user_compile_request(kaa_context_, global_request_id);
+        kaa_user_compile_request(kaa_context_, (kaa_user_sync_request_t **)&request->user_sync_request->data, global_request_id);
 
         request->event_sync_request = kaa_create_record_event_sync_request_null_union_null_branch();
         request->log_sync_request = kaa_create_record_log_sync_request_null_union_null_branch();

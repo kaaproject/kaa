@@ -46,7 +46,14 @@ typedef enum kaa_server_response_result_t {
         } \
     } while (0);\
 
-typedef void (* user_response_handler_t)(bool is_attached);
+
+typedef struct kaa_attachment_status_listeners_t
+{
+    void (* on_attached_callback)(const char * user_external_id, const char * endpoint_access_token);
+    void (* on_detached_callback)(const char * endpoint_access_token);
+    void (* on_response_callback)(bool is_attached);
+} kaa_attachment_status_listeners_t;
+
 typedef void (* event_callback_t)(const char * event_fqn, const char * event_data, size_t event_data_size);
 
 typedef enum {

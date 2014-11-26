@@ -55,7 +55,7 @@ kaa_error_t kaa_create_status(kaa_status_t ** kaa_status_p)
 
     char *  read_buf = NULL, * read_buf_head = NULL;
     size_t  read_size = 0;
-    int     needs_deallocation = 0;
+    bool    needs_deallocation = false;
     kaa_read_status_ext(&read_buf, &read_size, &needs_deallocation);
     read_buf_head = read_buf;
     if (read_size >= KAA_STATUS_STATIC_SIZE + sizeof(size_t)) {

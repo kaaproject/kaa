@@ -97,6 +97,21 @@ bool kaa_profile_need_profile_resync(void *ctx)
     return context->profile_manager->need_resync;
 }
 
+static void kaa_no_destroy_bytes(void *data)
+{
+    kaa_union_t *kaa_union = (kaa_union_t*)data;
+
+    switch (kaa_union->type) {
+    case KAA_BYTES_NULL_UNION_BYTES_BRANCH:
+    {
+        KAA_FREE(kaa_union->data);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
     kaa_context_t *context = (kaa_context_t *) ctx;
 
@@ -133,8 +148,12 @@ kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
     } else {
         request->endpoint_public_key = kaa_create_bytes_null_union_bytes_branch();
         kaa_bytes_t *pub_key = KAA_CALLOC(1, sizeof(kaa_bytes_t));
-        kaa_get_endpoint_public_key((char **)&pub_key->buffer, (size_t *)&pub_key->size);
+        bool need_deallocation = false;
+        kaa_get_endpoint_public_key((char **)&pub_key->buffer, (size_t *)&pub_key->size, &need_deallocation);
         request->endpoint_public_key->data = pub_key;
+        if (!need_deallocation) {
+            request->endpoint_public_key->destruct = &kaa_no_destroy_bytes;
+        }
     }
     return request;
 }

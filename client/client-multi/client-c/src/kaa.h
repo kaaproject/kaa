@@ -68,20 +68,33 @@ kaa_error_t kaa_set_profile(kaa_profile_t *profile_body);
  */
 
 /**
- * Set callback function to receive notification when current endpoint is being
+ * Set callback functions to receive notification when current endpoint is being
  * attached or detached to (from) user.<br>
  * <br>
  * callback function example:<br>
  * <pre>
+ * void on_attached(const char * user_external_id, const char * endpoint_access_token)
+ * {
+ *      printf("Attached to user %s by endpoint %s\n", user_external_id, endpoint_access_token);
+ * }
+ * void on_detached(const char * endpoint_access_token)
+ * {
+ *      printf("Detached from user entity by endpoint %s\n", endpoint_access_token);
+ * }
  * void on_attach_status_changed(bool is_attached)
  * {
  *     printf("Attached status is %d\n", is_attached);
  * }
  * ...
- * kaa_set_user_attached_callback(&on_attach_status_changed);
+ * kaa_attachment_status_listeners_t callbacks;
+ * callbacks.on_attached_callback = &on_attached;
+ * callbacks.on_detached_callback = &on_detached;
+ * callbacks.on_response_callback = &on_attach_status_changed;
+ *
+ * kaa_set_user_attached_callback(callbacks);
  * </pre>
  */
-kaa_error_t kaa_set_user_attached_callback(user_response_handler_t callback);
+kaa_error_t kaa_set_user_attached_callback(kaa_attachment_status_listeners_t callback);
 
 /**
  * Set endpoint access token.<br>
