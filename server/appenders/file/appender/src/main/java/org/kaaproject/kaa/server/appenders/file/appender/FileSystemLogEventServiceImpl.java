@@ -49,8 +49,7 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
 
     @Override
     public void createUserAndGroup(LogAppenderDto appender, FileConfig config, String path) {
-        String applicationId = appender.getApplicationId();
-        LOG.debug("Starting create user and group for application with id: {}", applicationId);
+        LOG.debug("Starting create user and group for application with id: {}", appender.getApplicationId());
         String userName = "kaa_log_user_" + appender.getApplicationToken();
         String groupName = "kaa_log_group_" + appender.getApplicationToken();
         String publicKey = config.getPublicKey();
@@ -58,7 +57,7 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
         File tmpKeyFile = null;
         File createUserScript = null;
         try {
-            tmpKeyFile = File.createTempFile("app_" + applicationId, "_pub.key");
+            tmpKeyFile = File.createTempFile("app_" + appender.getApplicationToken(), "_pub.key");
             PrintWriter out = new PrintWriter(tmpKeyFile);
             out.write(publicKey);
             out.close();
