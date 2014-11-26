@@ -99,15 +99,15 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
         fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName);
     }
 
-    private void createApplicationLogDirectory(String applicationId) {
-        applicationDirName = "application_" + applicationId;
+    private void createApplicationLogDirectory(String applicationToken) {
+        applicationDirName = "application_" + applicationToken;
         fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName + "/" + applicationDirName);
     }
 
     private void initLogDirectories(LogAppenderDto appender) {
         fileSystemLogEventService.createRootLogDirCommand(logsRootPath);
         createTenantLogDirectory(appender.getTenantId());
-        createApplicationLogDirectory(appender.getApplicationId());
+        createApplicationLogDirectory(appender.getApplicationToken());
     }
 
     @Override
