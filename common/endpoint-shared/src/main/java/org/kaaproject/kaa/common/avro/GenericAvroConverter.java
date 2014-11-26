@@ -189,16 +189,39 @@ public class GenericAvroConverter<T extends GenericContainer> {
         Schema schema = new Schema.Parser().parse(dataSchema);
         GenericAvroConverter<GenericContainer> converter = new GenericAvroConverter<GenericContainer>(schema);
 
-        String profileJson;
+        String json;
 
         try {
             GenericContainer record = converter.decodeBinary(rawData);
-            profileJson = converter.endcodeToJson(record);
+            json = converter.endcodeToJson(record);
         } catch (IOException e) {
             LOG.warn("Can't parse profile raw data", e);
             throw new RuntimeException(e); //NOSONAR
         }
-        return profileJson;
+        return json;
+    }
+    
+    /**
+     * Convert json string using schema to binary data
+     *
+     * @param json the json string
+     * @param dataSchema the encoded data schema
+     * @return the byte[]
+     */
+    public static byte[] toRawData(String json, String dataSchema) {
+        Schema schema = new Schema.Parser().parse(dataSchema);
+        GenericAvroConverter<GenericContainer> converter = new GenericAvroConverter<GenericContainer>(schema);
+
+        byte[] rawData;
+
+        try {
+            GenericContainer record = converter.decodeJson(json);
+            rawData = converter.encode(record);
+        } catch (IOException e) {
+            LOG.warn("Can't parse json data", e);
+            throw new RuntimeException(e); //NOSONAR
+        }
+        return rawData;
     }
 
 }

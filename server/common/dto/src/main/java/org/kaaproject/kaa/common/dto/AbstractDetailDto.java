@@ -26,6 +26,16 @@ public abstract class AbstractDetailDto implements Serializable {
     protected String description;
     protected String createdUsername;
     protected long createdTime;
+    
+    public AbstractDetailDto() {
+    }
+    
+    public AbstractDetailDto(AbstractDetailDto detailsDto) {
+        this.name = detailsDto.getName();
+        this.description = detailsDto.getDescription();
+        this.createdUsername = detailsDto.getCreatedUsername();
+        this.createdTime = detailsDto.getCreatedTime();
+    }
 
     public String getName() {
         return name;

@@ -17,14 +17,13 @@
 package org.kaaproject.kaa.common.dto.logs;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.AbstractDetailDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 
-public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializable {
+public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 8035147059935996619L;
 
@@ -36,15 +35,38 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
     private LogAppenderStatusDto status;
     private String typeName;
     private String appenderClassName;
-    private byte[] rawConfiguration;
+    private String configuration;
     private List<LogHeaderStructureDto> headerStructure;
     
-    public LogAppenderDto() {
+    public LogAppenderRestDto() {
         super();
     }
     
-    public LogAppenderDto(AbstractDetailDto detailsDto) {
-        super(detailsDto);
+    public LogAppenderRestDto(LogAppenderDto logAppenderDto) {
+        super(logAppenderDto);
+        this.id = logAppenderDto.getId();
+        this.applicationId = logAppenderDto.getApplicationId();
+        this.applicationToken = logAppenderDto.getApplicationToken();
+        this.tenantId = logAppenderDto.getTenantId();
+        this.schema = logAppenderDto.getSchema();
+        this.status = logAppenderDto.getStatus();
+        this.typeName = logAppenderDto.getTypeName();
+        this.appenderClassName = logAppenderDto.getAppenderClassName();
+        this.headerStructure = logAppenderDto.getHeaderStructure();
+    }
+    
+    public LogAppenderDto toLogAppenderDto() {
+        LogAppenderDto logAppenderDto = new LogAppenderDto(this);
+        logAppenderDto.setId(this.id);
+        logAppenderDto.setApplicationId(this.applicationId);
+        logAppenderDto.setApplicationToken(this.applicationToken);
+        logAppenderDto.setTenantId(this.tenantId);
+        logAppenderDto.setSchema(this.schema);
+        logAppenderDto.setStatus(this.status);
+        logAppenderDto.setTypeName(this.typeName);
+        logAppenderDto.setAppenderClassName(this.appenderClassName);
+        logAppenderDto.setHeaderStructure(this.headerStructure);
+        return logAppenderDto;
     }
 
     @Override
@@ -113,12 +135,12 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
         this.appenderClassName = appenderClassName;
     }
 
-    public byte[] getRawConfiguration() {
-        return rawConfiguration;
+    public String getConfiguration() {
+        return configuration;
     }
 
-    public void setRawConfiguration(byte[] rawConfiguration) {
-        this.rawConfiguration = rawConfiguration;
+    public void setConfiguration(String configuration) {
+        this.configuration = configuration;
     }
 
     public List<LogHeaderStructureDto> getHeaderStructure() {
@@ -151,9 +173,10 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
                 * result
                 + ((applicationToken == null) ? 0 : applicationToken.hashCode());
         result = prime * result
+                + ((configuration == null) ? 0 : configuration.hashCode());
+        result = prime * result
                 + ((headerStructure == null) ? 0 : headerStructure.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + Arrays.hashCode(rawConfiguration);
         result = prime * result + ((schema == null) ? 0 : schema.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result
@@ -174,7 +197,7 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
         if (getClass() != obj.getClass()) {
             return false;
         }
-        LogAppenderDto other = (LogAppenderDto) obj;
+        LogAppenderRestDto other = (LogAppenderRestDto) obj;
         if (appenderClassName == null) {
             if (other.appenderClassName != null) {
                 return false;
@@ -196,6 +219,13 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
         } else if (!applicationToken.equals(other.applicationToken)) {
             return false;
         }
+        if (configuration == null) {
+            if (other.configuration != null) {
+                return false;
+            }
+        } else if (!configuration.equals(other.configuration)) {
+            return false;
+        }
         if (headerStructure == null) {
             if (other.headerStructure != null) {
                 return false;
@@ -208,9 +238,6 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
                 return false;
             }
         } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (!Arrays.equals(rawConfiguration, other.rawConfiguration)) {
             return false;
         }
         if (schema == null) {
@@ -242,13 +269,12 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
 
     @Override
     public String toString() {
-        return "LogAppenderDto [id=" + id + ", applicationId=" + applicationId
-                + ", applicationToken=" + applicationToken + ", tenantId="
-                + tenantId + ", schema=" + schema + ", status=" + status
-                + ", typeName=" + typeName + ", appenderClassName="
-                + appenderClassName + ", rawConfiguration="
-                + Arrays.toString(rawConfiguration) + ", headerStructure="
-                + headerStructure + "]";
+        return "LogAppenderRestDto [id=" + id + ", applicationId="
+                + applicationId + ", applicationToken=" + applicationToken
+                + ", tenantId=" + tenantId + ", schema=" + schema + ", status="
+                + status + ", typeName=" + typeName + ", appenderClassName="
+                + appenderClassName + ", configuration=" + configuration
+                + ", headerStructure=" + headerStructure + "]";
     }
 
 }
