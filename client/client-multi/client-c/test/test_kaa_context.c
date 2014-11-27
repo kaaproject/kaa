@@ -39,6 +39,18 @@ void test_create_bootstrap_manager()
     kaa_destroy_context(context);
 }
 
-KAA_SUITE_MAIN(Context, NULL, NULL
+int test_init(void)
+{
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+    return 0;
+}
+
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Context, test_init, test_deinit
         , KAA_TEST_CASE(create_context, test_create_bootstrap_manager)
 )

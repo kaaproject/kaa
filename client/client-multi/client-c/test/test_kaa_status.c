@@ -170,8 +170,13 @@ int status_test_init(void)
     return 0;
 }
 
-KAA_SUITE_MAIN(Status, status_test_init, NULL
-        ,
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Status, status_test_init, test_deinit,
         KAA_TEST_CASE(create, test_create_status)
         KAA_TEST_CASE(persistence, test_status_persistense)
 )

@@ -134,8 +134,19 @@ void test_add_get_operation_server()
     kaa_destroy_bootstrap_manager(manager);
 }
 
-KAA_SUITE_MAIN(Bootstrap, NULL, NULL
-        ,
+int test_init(void)
+{
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+    return 0;
+}
+
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Bootstrap, test_init, test_deinit,
         KAA_TEST_CASE(create_bootstrap_manager, test_create_bootstrap_manager)
         KAA_TEST_CASE(null_operations_server, test_null_operation_server)
         KAA_TEST_CASE(add_get_operation_server, test_add_get_operation_server)

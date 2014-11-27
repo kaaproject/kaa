@@ -172,10 +172,21 @@ void test_kaa_add_on_event_callback()
 
 #endif
 
-KAA_SUITE_MAIN(Event, NULL, NULL
+int test_init(void)
+{
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+    return 0;
+}
+
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Event, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_EVENTS
         ,
-          kaa_log_init(KAA_LOG_TRACE, NULL);
           KAA_TEST_CASE(create_event_manager, test_kaa_create_event_manager)
           KAA_TEST_CASE(compile_event_request, test_kaa_event_compile_request)
           KAA_TEST_CASE(add_on_event_callback, test_kaa_add_on_event_callback)

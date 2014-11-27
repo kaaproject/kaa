@@ -22,6 +22,7 @@
 #include "log/kaa_memory_log_storage.h"
 #include "kaa_test.h"
 #include "kaa_mem.h"
+#include "kaa_log.h"
 #include <stdio.h>
 
 void test_create_log_collector()
@@ -125,7 +126,19 @@ void test_add_log()
 
 #endif
 
-KAA_SUITE_MAIN(Log, NULL, NULL
+int test_init(void)
+{
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+    return 0;
+}
+
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Log, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_LOGGING
        ,
        KAA_TEST_CASE(create_log_collector, test_create_log_collector)
