@@ -32,11 +32,11 @@ typedef struct kaa_status_t kaa_status_t;
 kaa_error_t kaa_create_status(kaa_status_t **);
 void        kaa_destroy_status(kaa_status_t *);
 
-KAA_BOOL    kaa_is_endpoint_registered(kaa_status_t *);
-kaa_error_t kaa_set_endpoint_registered(kaa_status_t *, KAA_BOOL);
+bool        kaa_is_endpoint_registered(kaa_status_t *);
+kaa_error_t kaa_set_endpoint_registered(kaa_status_t *, bool);
 
-KAA_BOOL    kaa_is_endpoint_attached_to_user(kaa_status_t *);
-kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *, KAA_BOOL);
+bool        kaa_is_endpoint_attached_to_user(kaa_status_t *);
+kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *, bool);
 
 char *      kaa_status_get_endpoint_access_token(kaa_status_t *);
 kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *, const char *);

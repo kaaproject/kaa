@@ -17,6 +17,8 @@
 #include "kaa_status.h"
 #include "kaa_test.h"
 #include "kaa_mem.h"
+#include "kaa_log.h"
+
 
 #include <string.h>
 #include <stdio.h>
@@ -27,12 +29,12 @@ kaa_digest test_profile_hash= {0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0
 #define KAA_STATUS_STORAGE "status.conf"
 
 #include "kaa_external.h"
-void    kaa_read_status_ext(char **buffer, size_t *buffer_size, int *needs_deallocation)
+void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;
     //FIXME: memory leak in case of status file exists
-    *needs_deallocation = 0;
+    *needs_deallocation = false;
 
     FILE* status_file = fopen(KAA_STATUS_STORAGE, "rb");
 
@@ -45,15 +47,17 @@ void    kaa_read_status_ext(char **buffer, size_t *buffer_size, int *needs_deall
     *buffer = (char*)calloc(*buffer_size, sizeof(char));
 
     if (*buffer == NULL) {
+        *buffer_size = 0;
         fclose(status_file);
         return;
     }
 
     fseek(status_file, 0, SEEK_SET);
     if (fread(*buffer, *buffer_size, 1, status_file) == 0) {
+        *buffer_size = 0;
         free(*buffer);
     }
-
+    *needs_deallocation = true;
     fclose(status_file);
 }
 
@@ -71,14 +75,17 @@ void    kaa_store_status_ext(const char *buffer, size_t buffer_size)
     }
 }
 
-void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size)
+void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *need_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;
+    *need_deallocation = false;
 }
 
 void test_create_status()
 {
+    KAA_TRACE_IN;
+
     kaa_status_t *status;
     kaa_error_t err_code = kaa_create_status(&status);
 
@@ -90,6 +97,8 @@ void test_create_status()
 
 void test_status_persistense()
 {
+    KAA_TRACE_IN;
+
     kaa_status_t *status;
     kaa_error_t err_code = kaa_create_status(&status);
 
@@ -156,6 +165,8 @@ void test_status_persistense()
 
 int main(int argc, char **argv)
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
     remove(KAA_STATUS_STORAGE);
     test_create_status();
     test_status_persistense();

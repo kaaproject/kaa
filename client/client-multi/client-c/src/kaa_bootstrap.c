@@ -39,13 +39,15 @@ kaa_error_t kaa_create_bootstrap_manager(kaa_bootstrap_manager_t ** bm_p)
 
 void kaa_destroy_bootstrap_manager(kaa_bootstrap_manager_t *bm)
 {
-    for (int i = 0; i < KAA_CHANNEL_TYPE_COUNT; ++i) {
-        if (bm->ops_list[i]) {
-            kaa_list_destroy(bm->ops_list[i], NULL); // FIXME: who should deallocate data in the list?
+    if (bm) {
+        for (int i = 0; i < KAA_CHANNEL_TYPE_COUNT; ++i) {
+            if (bm->ops_list[i]) {
+                kaa_list_destroy(bm->ops_list[i], NULL); // FIXME: who should deallocate data in the list?
+            }
         }
-    }
 
-    KAA_FREE(bm);
+        KAA_FREE(bm);
+    }
 }
 
 kaa_error_t kaa_add_operation_server(kaa_bootstrap_manager_t *bm, kaa_ops_t* new_s)

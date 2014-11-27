@@ -19,34 +19,76 @@
 
 kaa_error_t kaa_create_context(kaa_context_t ** context_p)
 {
-    int error_c = 0;
     kaa_context_t *context = KAA_MALLOC(kaa_context_t);
 
-    if (!context) {
-        return KAA_ERR_NOMEM;
+    KAA_NOT_VOID(context, KAA_ERR_NOMEM)
+
+    kaa_error_t error = kaa_create_status(&(context->status));
+    if (error != KAA_ERR_NONE) {
+        goto error_status;
+    }
+    error = kaa_create_user_manager(&(context->user_manager));
+    if (error != KAA_ERR_NONE) {
+        goto error_user_manager;
+    }
+    error = kaa_create_profile_manager(&(context->profile_manager));
+    if (error != KAA_ERR_NONE) {
+        goto error_profile_manager;
     }
 
-    error_c |= kaa_create_status(&(context->status));
-    error_c |= kaa_create_user_manager(&(context->user_manager));
-    error_c |= kaa_create_profile_manager(&(context->profile_manager));
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    error_c |= kaa_create_event_manager(&(context->event_manager));
+    error = kaa_create_event_manager(&(context->event_manager));
+    if (error != KAA_ERR_NONE) {
+        goto error_event_manager;
+    }
 #endif
-    error_c |= kaa_create_bootstrap_manager(&(context->bootstrap_manager));
-    error_c |= kaa_channel_manager_create(&(context->channel_manager));
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-    error_c |= kaa_create_log_collector(&(context->log_collector));
-#endif
-    if (error_c) {
-        return KAA_ERR_NOMEM;
+
+    error = kaa_create_bootstrap_manager(&(context->bootstrap_manager));
+    if (error != KAA_ERR_NONE) {
+        goto error_bootstrap_manager;
     }
 
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    error = kaa_create_log_collector(&(context->log_collector));
+    if (error != KAA_ERR_NONE) {
+        goto error_log_collector;
+    }
+#endif
+
+    error = kaa_channel_manager_create(&(context->channel_manager));
+    if (error != KAA_ERR_NONE) {
+        goto error_channel_manager;
+    }
     *context_p = context;
     return KAA_ERR_NONE;
+
+error_channel_manager:
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    kaa_destroy_log_collector(context->log_collector);
+error_log_collector:
+#endif
+    kaa_destroy_bootstrap_manager(context->bootstrap_manager);
+error_bootstrap_manager:
+
+#ifndef KAA_DISABLE_FEATURE_EVENTS
+    kaa_destroy_event_manager(context->event_manager);
+error_event_manager:
+#endif
+    kaa_destroy_profile_manager(context->profile_manager);
+error_profile_manager:
+    kaa_destroy_user_manager(context->user_manager);
+error_user_manager:
+    kaa_destroy_status(context->status);
+error_status:
+    KAA_FREE(context);
+    return error;
 }
 
 kaa_error_t kaa_destroy_context(kaa_context_t * context)
 {
+    KAA_NOT_VOID(context, KAA_ERR_BADPARAM)
+
     kaa_destroy_user_manager(context->user_manager);
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     kaa_destroy_event_manager(context->event_manager);

@@ -19,13 +19,13 @@
 #ifdef KAA_TRACE_MEMORY_ALLOCATIONS
 void *malloc_stub(size_t s, const char *file, int line) {
     void *ptr = malloc(s);
-    printf("[%s:%i] mallocated %zu bytes at {%p}\n",file, line, s, ptr);
+    kaa_log_write(file, line, KAA_LOG_TRACE, KAA_ERR_NONE, "Allocated (using malloc) %zu bytes at {%p}", s, ptr);
     return ptr;
 }
 
 void *calloc_stub(size_t n, size_t s, const char *file, int line) {
     void *ptr = calloc(n, s);
-    printf("[%s:%i] callocated %zu bytes at {%p}\n",file, line, n*s, ptr);
+    kaa_log_write(file, line, KAA_LOG_TRACE, KAA_ERR_NONE, "Allocated (using calloc) %zu blocks of %zu bytes (total %zu) at {%p}", n, s, n*s, ptr);
     return ptr;
 }
 #endif

@@ -17,12 +17,15 @@
 #include <string.h>
 
 #include "kaa_test.h"
+#include "kaa_log.h"
 
 #include "kaa_bootstrap.h"
 #include "kaa_mem.h"
 
 void test_create_bootstrap_manager()
 {
+    KAA_TRACE_IN;
+
     kaa_bootstrap_manager_t* manager = NULL;
     kaa_create_bootstrap_manager(&manager);
 
@@ -33,6 +36,8 @@ void test_create_bootstrap_manager()
 
 void test_null_operation_server()
 {
+    KAA_TRACE_IN;
+
     kaa_ops_t* server = NULL;
     kaa_bootstrap_manager_t* manager = NULL;
 
@@ -62,6 +67,8 @@ void test_null_operation_server()
 
 void test_add_get_operation_server()
 {
+    KAA_TRACE_IN;
+
     kaa_bootstrap_manager_t* manager = NULL;
     kaa_create_bootstrap_manager(&manager);
 
@@ -129,6 +136,8 @@ void test_add_get_operation_server()
 
 int main(int argc, char ** argv)
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
     test_create_bootstrap_manager();
     test_null_operation_server();
     test_add_get_operation_server();

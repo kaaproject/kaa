@@ -35,11 +35,12 @@ extern "C" {
 #define USER_NF_SCHEMA_VERSION          5
 #define LOG_SCHEMA_VERSION              4
 
+#include <stdint.h>
 #include "kaa_common.h"
 
 typedef struct kaa_events_schema_version_ {
     const char *    name;
-    KAA_INT32T      version;
+    uint32_t        version;
 } kaa_events_schema_version;
 
 #define KAA_EVENT_SCHEMA_VERSIONS_SIZE    2

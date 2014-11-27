@@ -16,9 +16,13 @@
 
 #include "kaa_context.h"
 #include "kaa_test.h"
+#include "kaa_log.h"
+
 
 void test_create_bootstrap_manager()
 {
+    KAA_TRACE_IN;
+
     kaa_context_t * context = NULL;
 
     kaa_error_t err_code = kaa_create_context(&context);
@@ -38,6 +42,8 @@ void test_create_bootstrap_manager()
 
 int main(int argc, char ** argv)
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
     test_create_bootstrap_manager();
     return 0;
 }

@@ -26,21 +26,19 @@ extern "C" {
 
 #include "kaa_common.h"
 #include "kaa_error.h"
+
 #include "gen/kaa_endpoint_gen.h"
 
 typedef struct kaa_user_manager_t kaa_user_manager_t;
 
-/* fwd delc */
-typedef struct kaa_context_t      kaa_context_t;
-
 kaa_error_t kaa_create_user_manager(kaa_user_manager_t **);
-void kaa_destroy_user_manager(kaa_user_manager_t *);
+void        kaa_destroy_user_manager(kaa_user_manager_t *);
 
-void kaa_user_attach_to_user(kaa_context_t *, const char *, const char *);
-void kaa_set_attachment_callback(kaa_context_t *, user_response_handler_t);
+kaa_error_t kaa_user_attach_to_user(void *ctx, const char *, const char *);
+kaa_error_t kaa_set_attachment_listeners(void *ctx, kaa_attachment_status_listeners_t);
 
-kaa_user_sync_request_t* kaa_user_compile_request(void *ctx, size_t requestId);
-void kaa_user_handle_sync(kaa_context_t *, kaa_user_attach_response_t *, kaa_user_attach_notification_t *, kaa_user_detach_notification_t *);
+kaa_error_t kaa_user_compile_request(void *ctx, kaa_user_sync_request_t** request_p, size_t requestId);
+kaa_error_t kaa_user_handle_sync(void *ctx, kaa_user_attach_response_t *, kaa_user_attach_notification_t *, kaa_user_detach_notification_t *);
 
 CLOSE_EXTERN
 #endif /* KAA_USER_H_ */

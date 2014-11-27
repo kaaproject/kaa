@@ -19,7 +19,7 @@
 #include <openssl/sha.h>
 
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest) {
-    if (!data || data_size <= 0 || !digest) {
+    if (!data || data_size == 0 || !digest) {
         return KAA_ERR_BADPARAM;
     }
 

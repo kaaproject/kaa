@@ -122,18 +122,23 @@ kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t ** manager_p)
 
 void kaa_channel_manager_destroy(kaa_context_t *context)
 {
-    kaa_list_destroy(context->channel_manager->sync_handlers, destroy_sync_details);
-    KAA_FREE(context->channel_manager);
+    if (context->channel_manager != NULL) {
+        kaa_list_destroy(context->channel_manager->sync_handlers, destroy_sync_details);
+        KAA_FREE(context->channel_manager);
+    }
 }
 
-void kaa_channel_manager_set_sync_handler(kaa_context_t *context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[])
+kaa_error_t kaa_channel_manager_set_sync_handler(kaa_context_t *context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[])
 {
-    register_sync_handler(context->channel_manager, services_count, supported_services, handler);
+    return register_sync_handler(context->channel_manager, services_count, supported_services, handler);
 }
 
-void kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa_sync_all_t handler)
+kaa_error_t kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa_sync_all_t handler)
 {
+    KAA_NOT_VOID(context, KAA_ERR_BADPARAM)
+    KAA_NOT_VOID(context->channel_manager, KAA_ERR_NOT_INITED)
     context->channel_manager->on_sync_all = handler;
+    return KAA_ERR_NONE;
 }
 
 kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_context_t *context, kaa_service_t service)

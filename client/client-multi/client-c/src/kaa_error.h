@@ -34,6 +34,13 @@ typedef enum kaa_error_t {
     KAA_ERR_READ_FAILED         = -4,
     KAA_ERR_WRITE_FAILED        = -5,
     KAA_ERR_NOT_FOUND           = -6,
+    KAA_ERR_NOT_INITED          = -7,
+    KAA_ERR_BAD_STATE           = -8,
+
+    KAA_ERR_EVENT_NOT_ATTACHED  = -41,
+    KAA_ERR_EVENT_BAD_FQN       = -42,
+    KAA_ERR_EVENT_TRX_NOT_FOUND = -43,
+
 } kaa_error_t;
 
 CLOSE_EXTERN

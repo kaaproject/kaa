@@ -18,6 +18,7 @@
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 
 #include "kaa_test.h"
+#include "kaa_log.h"
 
 #include "kaa_context.h"
 #include "kaa_mem.h"
@@ -28,6 +29,8 @@ static int specific_events_counter = 0;
 
 void test_kaa_create_event_manager()
 {
+    KAA_TRACE_IN;
+
     kaa_event_manager_t *event_manager = NULL;
     kaa_error_t err_code = kaa_create_event_manager(&event_manager);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
@@ -37,10 +40,20 @@ void test_kaa_create_event_manager()
 
 void test_kaa_event_compile_request()
 {
+    KAA_TRACE_IN;
+
     kaa_context_t *context;
     kaa_create_context(&context);
 
-    kaa_event_sync_request_t* sync_request = kaa_event_compile_request(context, 100500);
+    kaa_event_sync_request_t* sync_request = NULL;
+    kaa_event_compile_request(context, &sync_request, 100499);
+    kaa_event_sequence_number_response_t seq_n_resp;
+    seq_n_resp.seq_num = 0;
+
+    kaa_event_handle_sync(context, 100499, &seq_n_resp, NULL);
+    kaa_error_t err_code = KAA_ERR_NONE;
+    err_code = kaa_event_compile_request(context, &sync_request, 100500);
+    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
     ASSERT_NOT_NULL(sync_request);
     ASSERT_EQUAL(sync_request->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
@@ -48,7 +61,9 @@ void test_kaa_event_compile_request()
     KAA_FREE(sync_request);
 
     kaa_add_event(context, "fqn", 3, "data", 4, "target", 6);
-    kaa_event_sync_request_t* sync_request1 = kaa_event_compile_request(context, 100501);
+    kaa_event_sync_request_t* sync_request1 = NULL;
+    err_code = kaa_event_compile_request(context, &sync_request1, 100501);
+    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
     ASSERT_NOT_NULL(sync_request1);
     ASSERT_EQUAL(sync_request1->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request1->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
@@ -57,7 +72,9 @@ void test_kaa_event_compile_request()
     KAA_FREE(sync_request1);
 
     kaa_add_event(context, "fqn", 3, "data", 4, "target", 6);
-    kaa_event_sync_request_t* sync_request2 = kaa_event_compile_request(context, 100502);
+    kaa_event_sync_request_t* sync_request2 = NULL;
+    err_code = kaa_event_compile_request(context, &sync_request2, 100502);
+    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
     ASSERT_NOT_NULL(sync_request2);
     ASSERT_EQUAL(sync_request2->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request2->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
@@ -67,7 +84,9 @@ void test_kaa_event_compile_request()
 
     kaa_event_handle_sync(context, 100502, NULL, NULL);
 
-    kaa_event_sync_request_t* sync_request3 = kaa_event_compile_request(context, 100503);
+    kaa_event_sync_request_t* sync_request3 = NULL;
+    err_code = kaa_event_compile_request(context, &sync_request3, 100503);
+    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
     ASSERT_NOT_NULL(sync_request3);
     ASSERT_EQUAL(sync_request3->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request3->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
@@ -103,6 +122,8 @@ static void kaa_destroy_event(void* data)
 
 void test_kaa_add_on_event_callback()
 {
+    KAA_TRACE_IN;
+
     kaa_context_t *context;
     kaa_create_context(&context);
 
@@ -152,6 +173,8 @@ void test_kaa_add_on_event_callback()
 #endif
 int main(int argc, char **argv)
 {
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     test_kaa_create_event_manager();
     test_kaa_event_compile_request();

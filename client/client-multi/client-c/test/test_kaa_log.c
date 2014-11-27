@@ -38,7 +38,9 @@ void test_create_request()
 {
     kaa_init();
     kaa_sync_request_t *request = NULL;
-    kaa_compile_request(&request, 4, services);
+    size_t s;
+    kaa_error_t err_code = kaa_compile_request(&request, &s, 4, services);
+    ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(request);
     ASSERT_NOT_NULL(request->log_sync_request);
     ASSERT_EQUAL(request->log_sync_request->type ,KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
@@ -77,6 +79,8 @@ void test_response()
 
     kaa_logging_handle_sync(ctx, &log_sync_response);
     ASSERT_EQUAL(stub_upload_uuid_check_call_count,1);
+
+    kaa_destroy_context(ctx);
 }
 
 #define DEAFULT_LOG_RECORD 0

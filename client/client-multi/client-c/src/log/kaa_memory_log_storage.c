@@ -114,15 +114,15 @@ static kaa_list_t * memory_log_storage_get_records(kaa_uuid_t uuid, size_t max_s
 }
 
 static kaa_uuid_t uuid_for_search;
-static int find_log_block_by_uuid(void * block_p)
+static bool find_log_block_by_uuid(void * block_p)
 {
     kaa_memory_log_block_t * block = (kaa_memory_log_block_t *) block_p;
     if (block != NULL) {
         if (kaa_uuid_compare(&block->uuid, &uuid_for_search) == 0) {
-            return 1;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 
 static void memory_log_storage_upload_succeeded(kaa_uuid_t uuid)

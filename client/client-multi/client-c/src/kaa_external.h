@@ -24,6 +24,9 @@ extern "C" {
 #define CLOSE_EXTERN
 #endif
 
+#include <stddef.h>
+#include <stdbool.h>
+
 /**
  * This header contains external functions which are needed by Kaa library.
  */
@@ -36,9 +39,9 @@ extern "C" {
  *
  * If *buffer == NULL or *buffer_size == 0 Kaa library will use default values.<br>
  * <br>
- * Set *needs_deallocation = 1 if buffer should be free'd, 0 otherwise.
+ * Set *needs_deallocation = true if buffer should be free'd, false otherwise.
  */
-void    kaa_read_status_ext(char **buffer, size_t *buffer_size, int *needs_deallocation);
+void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation);
 
 /**
  * Called when Kaa library is ready to persist its state.<br>
@@ -49,7 +52,7 @@ void    kaa_store_status_ext(const char *buffer, size_t buffer_size);
 /**
  * Called to get endpoint public key.<br>
  */
-void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size);
+void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation);
 
 CLOSE_EXTERN
 #endif /* KAA_EXTERNAL_H_ */

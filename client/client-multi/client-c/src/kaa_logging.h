@@ -108,10 +108,10 @@ kaa_error_t                 kaa_init_log_collector(
                                                   , log_upload_decision_fn
                                                   );
 
-void                        kaa_add_log_record(void *ctx, kaa_user_log_record_t *entry);
+kaa_error_t                 kaa_add_log_record(void *ctx, kaa_user_log_record_t *entry);
 
-kaa_log_sync_request_t *    kaa_logging_compile_request(void *ctx);
-void                        kaa_logging_handle_sync(void *ctx, kaa_log_sync_response_t *response);
+kaa_error_t                 kaa_logging_compile_request(void *ctx, kaa_log_sync_request_t ** request_p);
+kaa_error_t                 kaa_logging_handle_sync(void *ctx, kaa_log_sync_response_t *response);
 CLOSE_EXTERN
 
 #endif
