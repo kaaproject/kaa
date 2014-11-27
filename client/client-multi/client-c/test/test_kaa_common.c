@@ -50,11 +50,6 @@ void test_profile_update()
     ASSERT_EQUAL(0, memcmp(buf, pattern, SHA_1_DIGEST_LENGTH * 2));
 }
 
-int main(int argc, char **argv)
-{
-    kaa_log_init(KAA_LOG_TRACE, NULL);
-
-    test_profile_update();
-
-    return 0;
-}
+KAA_SUITE_MAIN(Common, NULL, NULL
+        , KAA_TEST_CASE(calculate_hash, test_profile_update)
+)

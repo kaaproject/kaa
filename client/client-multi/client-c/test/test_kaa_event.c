@@ -171,14 +171,13 @@ void test_kaa_add_on_event_callback()
 }
 
 #endif
-int main(int argc, char **argv)
-{
-    kaa_log_init(KAA_LOG_TRACE, NULL);
 
+KAA_SUITE_MAIN(Event, NULL, NULL
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    test_kaa_create_event_manager();
-    test_kaa_event_compile_request();
-    test_kaa_add_on_event_callback();
+        ,
+          kaa_log_init(KAA_LOG_TRACE, NULL);
+          KAA_TEST_CASE(create_event_manager, test_kaa_create_event_manager)
+          KAA_TEST_CASE(compile_event_request, test_kaa_event_compile_request)
+          KAA_TEST_CASE(add_on_event_callback, test_kaa_add_on_event_callback)
 #endif
-    return 0;
-}
+        )

@@ -55,11 +55,8 @@ void test_profile_update()
     kaa_destroy_context(context);
 }
 
-int main(int argc, char **argv)
-{
-    kaa_log_init(KAA_LOG_TRACE, NULL);
-
-    test_profile_update();
-
-    return 0;
-}
+KAA_SUITE_MAIN(Profile, NULL, NULL
+        ,
+        kaa_log_init(KAA_LOG_TRACE, NULL);
+        KAA_TEST_CASE(profile_update, test_profile_update)
+)

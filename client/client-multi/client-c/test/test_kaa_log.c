@@ -123,15 +123,16 @@ void test_add_log()
 }
 #endif
 
-int main(int argc, char ** argv)
-{
-    test_create_log_collector();
-    test_create_request();
-    test_response();
-#if DEAFULT_LOG_RECORD
-    test_add_log();
 #endif
-    return 0;
-}
 
+KAA_SUITE_MAIN(Log, NULL, NULL
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+       ,
+       KAA_TEST_CASE(create_log_collector, test_create_log_collector)
+       KAA_TEST_CASE(create_request, test_create_request)
+       KAA_TEST_CASE(process_response, test_response)
+#if DEAFULT_LOG_RECORD
+       KAA_TEST_CASE(add_log_record, test_add_log)
 #endif
+#endif
+        )
