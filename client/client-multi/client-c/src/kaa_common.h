@@ -49,15 +49,6 @@ typedef enum kaa_server_response_result_t {
     { if (!(p1) || !(p2) || !(p3) || !(p4)) return (E); }
 
 
-#define KAA_CHECK_RET_ERR_CODE(Exp) \
-    do { \
-        kaa_error_t e = Exp; \
-        if (e != KAA_ERR_NONE) { \
-            return e; \
-        } \
-    } while (0);\
-
-
 typedef struct kaa_attachment_status_listeners_t
 {
     void (* on_attached_callback)(const char * user_external_id, const char * endpoint_access_token);

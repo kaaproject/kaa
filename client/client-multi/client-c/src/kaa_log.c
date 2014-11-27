@@ -23,8 +23,11 @@
 #include "kaa_common.h"
 #include "kaa_mem.h"
 
-// TODO: Print milliseconds
-#define KAA_LOG_PREFIX_FORMAT    "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
+/*
+ * Maximum size of a log message after which it gets truncated.
+ */
+#define KAA_LOG_MESSAGE_LENGTH  512
+#define KAA_LOG_PREFIX_FORMAT   "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
 
 /**
  * Printable loglevels
@@ -44,7 +47,7 @@ static const char* kaa_log_level_name[] =
 struct kaa_logger_t {
     FILE* sink;
     kaa_log_level_t max_log_level;
-    char log_buffer[KAA_MAX_LOG_MESSAGE_LENGTH + 1];
+    char log_buffer[KAA_LOG_MESSAGE_LENGTH];
 };
 
 
@@ -101,10 +104,8 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
     struct tm* tp = gmtime(&t);
 
     size_t consumed_len = 0;
-    const size_t log_buffer_size = sizeof(this->log_buffer) / sizeof(char);
-
     // Print log message prefix
-    int res_len = snprintf(this->log_buffer, log_buffer_size, KAA_LOG_PREFIX_FORMAT
+    int res_len = snprintf(this->log_buffer, KAA_LOG_MESSAGE_LENGTH, KAA_LOG_PREFIX_FORMAT
             , 1900 + tp->tm_year, tp->tm_mon + 1, tp->tm_mday
             , tp->tm_hour, tp->tm_min, tp->tm_sec
             , kaa_log_level_name[log_level], truncated_name, lineno, error_code);
@@ -117,7 +118,7 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
     va_list args;
     va_start(args, format);
     res_len = vsnprintf(this->log_buffer + consumed_len
-            , log_buffer_size - consumed_len
+            , KAA_LOG_MESSAGE_LENGTH - consumed_len
             , format
             , args);
     va_end(args);
@@ -127,10 +128,9 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
     }
 
     if (consumed_len > 0) {
-        if (consumed_len > KAA_MAX_LOG_MESSAGE_LENGTH) {
-            consumed_len = KAA_MAX_LOG_MESSAGE_LENGTH;
+        if (consumed_len > KAA_LOG_MESSAGE_LENGTH - 1) {    // Reserve the '\0' at the end
+            consumed_len = KAA_LOG_MESSAGE_LENGTH - 1;
         }
-
         this->log_buffer[consumed_len++] = '\n';
 
         fwrite(this->log_buffer, sizeof(char), consumed_len, this->sink);

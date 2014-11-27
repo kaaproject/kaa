@@ -28,23 +28,11 @@
 #define KAA_LOG_H_
 
 #include <stdio.h>
-
 #include "kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {
-    #define CLOSE_EXTERN }
-#else
-    #define CLOSE_EXTERN
 #endif
-
-/**
- * <p>The maximum size of a log message.</p>
- *
- * <p>If the length of a log message is greater than @link KAA_MAX_LOG_MESSAGE_LENGTH @endlink ,
- * the message will be truncated.</p>
- */
-#define KAA_MAX_LOG_MESSAGE_LENGTH   512
 
 typedef struct kaa_logger_t kaa_logger_t;
 
@@ -127,58 +115,14 @@ kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_le
 void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_log_level_t log_level
         , kaa_error_t error_code, const char* format, ...);
 
-/**
- * <p>Logs a message with the @link KAA_LOG_FATAL @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
+/*
+ * Shortcut macros for logging at various log levels
  */
 #define KAA_LOG_FATAL(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_FATAL, err, __VA_ARGS__);
-
-/**
- * <p>Logs a message with the @link KAA_LOG_ERROR @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
 #define KAA_LOG_ERROR(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_ERROR, err, __VA_ARGS__);
-
-/**
- * <p>Logs a message with the @link KAA_LOG_WARN @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
 #define KAA_LOG_WARN(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_WARN, err, __VA_ARGS__);
-
-/**
- * <p>Logs a message with the @link KAA_LOG_INFO @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
 #define KAA_LOG_INFO(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_INFO, err, __VA_ARGS__);
-
-/**
- * <p>Logs a message with the @link KAA_LOG_DEBUG @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
 #define KAA_LOG_DEBUG(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_DEBUG, err, __VA_ARGS__);
-
-/**
- * <p>Logs a message with the @link KAA_LOG_TRACE @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
 #define KAA_LOG_TRACE(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_TRACE, err, __VA_ARGS__);
 
 /*
@@ -187,5 +131,7 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
 #define KAA_TRACE_IN(logger)  KAA_LOG_TRACE(logger, KAA_ERR_NONE, "--> %s()", __FUNCTION__);
 #define KAA_TRACE_OUT(logger) KAA_LOG_TRACE(logger, KAA_ERR_NONE, "<-- %s()", __FUNCTION__);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* KAA_LOG_H_ */
