@@ -153,4 +153,30 @@ public class DefaultConfigurationPersistenceManagerTest {
         persistenceManager.setConfigurationStorage(nullStorage);
         verify(processor, times(1)).processConfigurationData(complexBuffer, true);
     }
+
+    @Test
+    public void testConfigurationLoadingWithoutSchema() throws IOException {
+        URL schemaUrl = Thread.currentThread().getContextClassLoader().getResource("configuration/manager/complexFieldsDeltaSchema.json");
+        final Schema complexSchema = new Schema.Parser().parse(new File(schemaUrl.getPath()));
+
+        ConfigurationProcessor processor = mock(ConfigurationProcessor.class);
+        DefaultConfigurationPersistenceManager persistenceManager = new DefaultConfigurationPersistenceManager();
+        persistenceManager.setConfigurationProcessor(processor);
+
+        GenericRecord complexDelta = new GenericData.Record(
+                DefaultConfigurationManagerTest.getDeltaSchemaByFullName(
+                        complexSchema, "org.kaa.config.testT"));
+        DefaultConfigurationManagerTest.fillComplexFullResyncDelta(complexDelta);
+        byte [] rawBuffer = serializeDelta(complexDelta, complexSchema);
+        final ByteBuffer complexBuffer = ByteBuffer.wrap(rawBuffer);
+        EndpointObjectHash complexHash = EndpointObjectHash.fromSHA1(rawBuffer);
+
+        ConfigurationStorage storage = mock(ConfigurationStorage.class);
+        when(storage.loadConfiguration()).thenReturn(complexBuffer);
+        persistenceManager.setConfigurationStorage(storage);
+        persistenceManager.onSchemaUpdated(complexSchema);
+
+        assertTrue(complexHash.equals(persistenceManager.getConfigurationHash()));
+
+    }
 }

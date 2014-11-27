@@ -62,6 +62,7 @@ public class DefaultConfigurationProcessorTest {
         URL schemaUrl = Thread.currentThread().getContextClassLoader().getResource("configuration/manager/complexFieldsDeltaSchema.json");
         Schema schema = new Schema.Parser().parse(new File(schemaUrl.getPath()));
         processor.onSchemaUpdated(schema);
+        processor.onSchemaUpdated(null);
 
         GenericRecord delta = new GenericData.Record(DefaultConfigurationManagerTest.getDeltaSchemaByFullName(schema, "org.kaa.config.testT"));
         byte [] rawData = getSerializedDelta(schema, delta);
@@ -98,4 +99,18 @@ public class DefaultConfigurationProcessorTest {
 
         verify(callback, times(1)).onConfigurationProcessed();
     }
+
+    @Test(expected = ConfigurationRuntimeException.class)
+    public void testUpdatesWithNullSchema() throws IOException {
+        DefaultConfigurationProcessor processor = new DefaultConfigurationProcessor();
+
+        URL schemaUrl = Thread.currentThread().getContextClassLoader().getResource("configuration/manager/complexFieldsDeltaSchema.json");
+        Schema schema = new Schema.Parser().parse(new File(schemaUrl.getPath()));
+
+        GenericRecord delta = new GenericData.Record(DefaultConfigurationManagerTest.getDeltaSchemaByFullName(schema, "org.kaa.config.testT"));
+        byte [] rawData = getSerializedDelta(schema, delta);
+
+        processor.processConfigurationData(ByteBuffer.wrap(rawData), true);
+    }
+
 }

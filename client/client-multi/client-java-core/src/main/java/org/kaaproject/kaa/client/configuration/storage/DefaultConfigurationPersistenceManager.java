@@ -32,6 +32,8 @@ import org.kaaproject.kaa.client.configuration.manager.ConfigurationReceiver;
 import org.kaaproject.kaa.client.schema.SchemaUpdatesReceiver;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link ConfigurationPersistenceManager} implementation
@@ -42,6 +44,8 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 public class DefaultConfigurationPersistenceManager implements
         ConfigurationPersistenceManager, ConfigurationReceiver,
         SchemaUpdatesReceiver, ConfigurationHashContainer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurationPersistenceManager.class);
 
     private Schema schema;
     private ConfigurationStorage storage;
@@ -60,6 +64,18 @@ public class DefaultConfigurationPersistenceManager implements
 
     public DefaultConfigurationPersistenceManager(ConfigurationProcessor processor) {
         this.processor = processor;
+    }
+
+
+    private void loadConfigurationFromStorage() throws IOException {
+        if (configurationHash == null) {
+            ByteBuffer byteBuffer = storage.loadConfiguration();
+            if (byteBuffer != null) {
+                ignoreNextUpdate = true;
+                processor.processConfigurationData(byteBuffer, true);
+                configurationHash = EndpointObjectHash.fromSHA1(byteBuffer.array());
+            }
+        }
     }
 
     @Override
@@ -90,13 +106,12 @@ public class DefaultConfigurationPersistenceManager implements
 
     @Override
     public synchronized void setConfigurationStorage(ConfigurationStorage storage) throws IOException {
-        this.storage = storage;
-        if (configurationHash == null) {
-            ByteBuffer byteBuffer = storage.loadConfiguration();
-            if (byteBuffer != null) {
-                ignoreNextUpdate = true;
-                processor.processConfigurationData(byteBuffer, true);
-                configurationHash = EndpointObjectHash.fromSHA1(byteBuffer.array());
+        if (storage != null) {
+            this.storage = storage;
+            if (this.schema != null) {
+                loadConfigurationFromStorage();
+            } else {
+                LOG.warn("Can't load configuration right now. Schema is null");
             }
         }
     }
@@ -106,8 +121,18 @@ public class DefaultConfigurationPersistenceManager implements
     }
 
     @Override
-    public void onSchemaUpdated(Schema schema) {
-        this.schema = schema;
+    public synchronized void onSchemaUpdated(Schema schema) {
+        if (schema != null) {
+            this.schema = schema;
+            if (this.storage != null) {
+                try {
+                    loadConfigurationFromStorage();
+                } catch (IOException e) {
+                    LOG.error("Failed to load the configuration data from the storage");
+                    throw new ConfigurationRuntimeException("The configuration storage data is not applicable to the schema");
+                }
+            }
+        }
     }
 
     @Override
