@@ -63,7 +63,12 @@ function execute_tests {
 function clean {
     if [[ -d build ]]
     then
-        cd build && make clean && cd .. && rm -r build
+        cd build
+        if [[ -f Makefile ]]
+        then 
+            make clean
+        fi
+        cd .. && rm -r build
     fi
 }
 
