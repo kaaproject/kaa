@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-#include <CUnit/CUnit.h>
-#include <CUnit/Automated.h>
-
 #include "kaa_context.h"
 #include "kaa_test.h"
 #include "kaa_log.h"
