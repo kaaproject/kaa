@@ -35,8 +35,19 @@ typedef enum kaa_server_response_result_t {
     KAA_FAILURE
 } kaa_server_response_result_t;
 
-#define KAA_NOT_VOID(p, E) \
-    if ((void *)0 == p) { return E; }
+
+#define KAA_RETURN_IF_NULL(p, E) \
+    { if (!(p)) return (E); }
+
+#define KAA_RETURN_IF_NULL2(p1, p2, E) \
+    { if (!(p1) || !(p2)) return (E); }
+
+#define KAA_RETURN_IF_NULL3(p1, p2, p3, E) \
+    { if (!(p1) || !(p2) || !(p3)) return (E); }
+
+#define KAA_RETURN_IF_NULL4(p1, p2, p3, p4, E) \
+    { if (!(p1) || !(p2) || !(p3) || !(p4)) return (E); }
+
 
 #define KAA_CHECK_RET_ERR_CODE(Exp) \
     do { \

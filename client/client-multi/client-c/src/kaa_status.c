@@ -44,7 +44,7 @@ struct kaa_status_t {
 kaa_error_t kaa_create_status(kaa_status_t ** kaa_status_p)
 {
     kaa_status_t * kaa_status = KAA_MALLOC(kaa_status_t);
-    KAA_NOT_VOID(kaa_status, KAA_ERR_NOMEM)
+    KAA_RETURN_IF_NULL(kaa_status, KAA_ERR_NOMEM);
 
     kaa_status->is_registered = 0;
     kaa_status->is_attached = 0;
@@ -226,7 +226,7 @@ kaa_error_t kaa_status_set_log_bucket_id(kaa_status_t* status, uint32_t id)
 
 kaa_error_t kaa_status_save(kaa_status_t *status)
 {
-    KAA_NOT_VOID(status, KAA_ERR_BADPARAM)
+    KAA_RETURN_IF_NULL(status, KAA_ERR_BADPARAM);
 
     size_t endpoint_access_token_length = status->endpoint_access_token ? strlen(status->endpoint_access_token) : 0;
     size_t buffer_size = KAA_STATUS_STATIC_SIZE + sizeof(endpoint_access_token_length) + (endpoint_access_token_length );

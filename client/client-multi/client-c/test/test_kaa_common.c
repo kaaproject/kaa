@@ -22,9 +22,11 @@
 #include "kaa_common.h"
 #include "kaa_error.h"
 
+static kaa_logger_t *logger = NULL;
+
 void test_profile_update()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     char* pattern = "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3";
 
@@ -52,9 +54,10 @@ void test_profile_update()
 
 int main(int argc, char **argv)
 {
-    kaa_log_init(KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_LOG_TRACE, NULL);
 
     test_profile_update();
 
+    kaa_log_destroy(logger);
     return 0;
 }

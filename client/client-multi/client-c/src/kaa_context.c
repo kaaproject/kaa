@@ -17,11 +17,12 @@
 #include "kaa_context.h"
 #include "kaa_mem.h"
 
-kaa_error_t kaa_create_context(kaa_context_t ** context_p)
+kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
 {
     kaa_context_t *context = KAA_MALLOC(kaa_context_t);
+    KAA_RETURN_IF_NULL(context, KAA_ERR_NOMEM);
 
-    KAA_NOT_VOID(context, KAA_ERR_NOMEM)
+    context->logger = logger;
 
     kaa_error_t error = kaa_create_status(&(context->status));
     if (error != KAA_ERR_NONE) {
@@ -85,9 +86,9 @@ error_status:
     return error;
 }
 
-kaa_error_t kaa_destroy_context(kaa_context_t * context)
+kaa_error_t kaa_context_destroy(kaa_context_t * context)
 {
-    KAA_NOT_VOID(context, KAA_ERR_BADPARAM)
+    KAA_RETURN_IF_NULL(context, KAA_ERR_BADPARAM);
 
     kaa_destroy_user_manager(context->user_manager);
 #ifndef KAA_DISABLE_FEATURE_EVENTS

@@ -24,6 +24,8 @@
 #include "kaa_mem.h"
 #include <stdio.h>
 
+static kaa_logger_t *logger = NULL;
+
 void test_create_log_collector()
 {
     kaa_log_collector_t * collector = NULL;
@@ -66,7 +68,7 @@ void test_response()
     kaa_uuid_fill(&test_uuid, 42);
 
     kaa_context_t *ctx = NULL;
-    kaa_create_context(&ctx);
+    kaa_context_create(&ctx, logger);
 
     kaa_log_storage_t *ls = get_memory_log_storage();
     ls->upload_failed = &stub_upload_uuid_check;
@@ -80,11 +82,11 @@ void test_response()
     kaa_logging_handle_sync(ctx, &log_sync_response);
     ASSERT_EQUAL(stub_upload_uuid_check_call_count,1);
 
-    kaa_destroy_context(ctx);
+    kaa_context_destroy(ctx);
 }
 
-#define DEAFULT_LOG_RECORD 0
-#if DEAFULT_LOG_RECORD
+#define DEFAULT_LOG_RECORD 0
+#if DEFAULT_LOG_RECORD
 static kaa_log_upload_decision_t decision(kaa_storage_status_t *status)
 {
     if ((* status->get_records_count)() == 2) {
@@ -125,12 +127,16 @@ void test_add_log()
 
 int main(int argc, char ** argv)
 {
+    kaa_log_create(&logger, KAA_LOG_TRACE, NULL);
+
     test_create_log_collector();
     test_create_request();
     test_response();
-#if DEAFULT_LOG_RECORD
+#if DEFAULT_LOG_RECORD
     test_add_log();
 #endif
+
+    kaa_log_destroy(logger);
     return 0;
 }
 

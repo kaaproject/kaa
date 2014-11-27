@@ -25,6 +25,7 @@ extern "C" {
 #endif
 
 #include "kaa_error.h"
+#include "kaa_log.h"
 #include "kaa_user.h"
 #include "kaa_event.h"
 #include "kaa_profile.h"
@@ -34,6 +35,7 @@ extern "C" {
 #include "kaa_channel_manager.h"
 
 typedef struct kaa_context_t {
+    kaa_logger_t            *logger;
     kaa_profile_manager_t   *   profile_manager;
     kaa_user_manager_t      *   user_manager;
 #ifndef KAA_DISABLE_FEATURE_EVENTS
@@ -47,8 +49,8 @@ typedef struct kaa_context_t {
 #endif
 } kaa_context_t;
 
-kaa_error_t kaa_create_context(kaa_context_t ** context);
-kaa_error_t kaa_destroy_context(kaa_context_t * context);
+kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
+kaa_error_t kaa_context_destroy(kaa_context_t * context);
 
 /** Channel manager API */
 kaa_error_t     kaa_channel_manager_create(kaa_channel_manager_t **);

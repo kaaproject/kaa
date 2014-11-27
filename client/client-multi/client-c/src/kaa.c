@@ -72,43 +72,60 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
 
 kaa_error_t kaa_init()
 {
-    kaa_log_init(KAA_LOG_TRACE, NULL);
+    // Initialize logger
+    kaa_logger_t *logger = NULL;
+    kaa_error_t error = kaa_log_create(&logger, KAA_LOG_TRACE, NULL);  // TODO: make log destination and level configurable
+    if (error)
+        return error;
 
-    KAA_LOG_INFO(KAA_ERR_NONE, "Version: %s, commit hash: %s", BUILD_VERSION, BUILD_COMMIT_HASH);
+    KAA_LOG_INFO(logger, KAA_ERR_NONE, "Kaa SDK version %s, commit hash %s", BUILD_VERSION, BUILD_COMMIT_HASH);
 
+    // Initialize general Kaa context
     kaa_context_ = NULL;
-    kaa_error_t result = kaa_create_context(&kaa_context_);
-    if (result == KAA_ERR_NONE) {
-        char *pub_key_buffer;
-        size_t pub_key_buffer_size;
-        bool need_deallocation = false;
-
-        kaa_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
-        kaa_digest d;
-        result = kaa_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, d);
-
-        if (need_deallocation && pub_key_buffer_size > 0) {
-            KAA_FREE(pub_key_buffer);
-        }
-
-        if (result == KAA_ERR_NONE) {
-            kaa_status_set_endpoint_public_key_hash(kaa_context_->status, d);
-            kaa_initialized = true;
-        } else {
-            kaa_destroy_context(kaa_context_);
-            kaa_context_ = NULL;
-        }
+    error = kaa_context_create(&kaa_context_, logger);
+    if (error) {
+        KAA_LOG_FATAL(logger, error, "Failed to create Kaa context");
+        kaa_log_destroy(logger);
+        return error;
     }
-    return result;
+
+    // Initialize endpoint identity
+    char *pub_key_buffer = NULL;
+    size_t pub_key_buffer_size = 0;
+    bool need_deallocation = false;
+
+    kaa_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
+    kaa_digest d;
+    error = kaa_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, d);
+
+    if (need_deallocation && pub_key_buffer_size > 0) {
+        KAA_FREE(pub_key_buffer);
+    }
+
+    if (error) {
+        KAA_LOG_FATAL(logger, error, "Failed to calculate EP ID");
+        kaa_context_destroy(kaa_context_);
+        kaa_context_ = NULL;
+        kaa_log_destroy(logger);
+        return error;
+    }
+
+    kaa_status_set_endpoint_public_key_hash(kaa_context_->status, d);
+    kaa_initialized = true;
+
+    return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_deinit()
 {
     KAA_CHECK_INITED
-    kaa_destroy_context(kaa_context_);
+    kaa_logger_t *logger = kaa_context_->logger;
+    kaa_error_t error = kaa_context_destroy(kaa_context_);
+    if (error)
+        KAA_LOG_ERROR(logger, error, "Failed to destroy Kaa context");
     kaa_context_ = NULL;
-    kaa_log_deinit();
-    return KAA_ERR_NONE;
+    kaa_log_destroy(logger);
+    return error;
 }
 
 kaa_error_t kaa_set_user_attached_callback(kaa_attachment_status_listeners_t callback)
@@ -133,7 +150,7 @@ kaa_error_t kaa_attach_to_user(const char *user_external_id, const char * user_a
 kaa_error_t kaa_send_event(const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size)
 {
     KAA_CHECK_INITED
-    KAA_NOT_VOID(kaa_context_->status, KAA_ERR_NOT_INITED)
+    KAA_RETURN_IF_NULL(kaa_context_->status, KAA_ERR_NOT_INITED);
 
     if (kaa_is_endpoint_attached_to_user(kaa_context_->status)) {
         return kaa_add_event(
@@ -272,8 +289,7 @@ kaa_error_t kaa_compile_request(kaa_sync_request_t **request_p, size_t *result_s
 
 kaa_error_t kaa_serialize_request(kaa_sync_request_t *request, char *buffer, size_t request_size)
 {
-    KAA_NOT_VOID(request, KAA_ERR_BADPARAM)
-    KAA_NOT_VOID(buffer, KAA_ERR_BADPARAM)
+    KAA_RETURN_IF_NULL2(request, buffer, KAA_ERR_BADPARAM);
     avro_writer_t writer = avro_writer_memory(buffer, request_size);
     request->serialize(writer, request);
     avro_writer_free(writer);

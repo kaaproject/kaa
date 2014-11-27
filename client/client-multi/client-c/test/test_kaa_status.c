@@ -29,6 +29,9 @@ kaa_digest test_profile_hash= {0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0
 #define KAA_STATUS_STORAGE "status.conf"
 
 #include "kaa_external.h"
+
+static kaa_logger_t *logger = NULL;
+
 void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = NULL;
@@ -84,7 +87,7 @@ void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *ne
 
 void test_create_status()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_status_t *status;
     kaa_error_t err_code = kaa_create_status(&status);
@@ -97,7 +100,7 @@ void test_create_status()
 
 void test_status_persistense()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_status_t *status;
     kaa_error_t err_code = kaa_create_status(&status);
@@ -165,12 +168,13 @@ void test_status_persistense()
 
 int main(int argc, char **argv)
 {
-    kaa_log_init(KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_LOG_TRACE, NULL);
 
     remove(KAA_STATUS_STORAGE);
     test_create_status();
     test_status_persistense();
 
+    kaa_log_destroy(logger);
     return 0;
 }
 
