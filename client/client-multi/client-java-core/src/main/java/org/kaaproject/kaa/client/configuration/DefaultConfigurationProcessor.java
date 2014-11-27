@@ -48,6 +48,9 @@ public class DefaultConfigurationProcessor implements
     @Override
     public synchronized void processConfigurationData(ByteBuffer buffer, boolean fullResync) throws IOException {
         if (buffer != null) {
+            if (schema == null) {
+                throw new ConfigurationRuntimeException("Can't process configuration update. Schema is null");
+            }
             GenericAvroConverter<GenericArray<GenericRecord>> converter = new GenericAvroConverter<GenericArray<GenericRecord>>(schema);
             GenericArray<GenericRecord> deltaArray = converter.decodeBinary(buffer.array());
 
@@ -66,8 +69,10 @@ public class DefaultConfigurationProcessor implements
     }
 
     @Override
-    public void onSchemaUpdated(Schema schema) {
-        this.schema = schema;
+    public synchronized void onSchemaUpdated(Schema schema) {
+        if (schema != null) {
+            this.schema = schema;
+        }
     }
 
     @Override

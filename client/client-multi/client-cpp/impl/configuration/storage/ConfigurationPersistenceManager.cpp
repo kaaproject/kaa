@@ -35,9 +35,10 @@ void ConfigurationPersistenceManager::setConfigurationStorage(IConfigurationStor
         KAA_MUTEX_LOCKED("confPersistenceGuard_");
 
         storage_ = storage;
-        auto hash = configurationHash_.getHash();
-        if (!hash.first || !hash.second) {
-            readStoredConfiugration();
+        if (schema_) {
+            readStoredConfiguration();
+        } else {
+            KAA_LOG_WARN("Can't load configuration right now. Schema is null");
         }
     }
 }
@@ -117,6 +118,9 @@ void ConfigurationPersistenceManager::onSchemaUpdated(std::shared_ptr<avro::Vali
     KAA_MUTEX_LOCKED("schemaGuard_");
 
     schema_ = schema;
+    if (storage_) {
+        readStoredConfiguration();
+    }
 }
 
 EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()
@@ -124,27 +128,25 @@ EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()
     return configurationHash_;
 }
 
-void ConfigurationPersistenceManager::readStoredConfiugration()
+void ConfigurationPersistenceManager::readStoredConfiguration()
 {
-    if (!storage_) {
-        throw KaaException("Can not read stored configuration: Configuration storage is empty.");
-    }
+    auto hash = configurationHash_.getHash();
+    if (!hash.first || !hash.second) {
+        KAA_LOG_DEBUG("Going to read stored configuration.");
 
-    KAA_LOG_DEBUG("Going to read stored confguration.");
+        std::vector<std::uint8_t> bytes = storage_->loadConfiguration();
 
-    std::vector<std::uint8_t> bytes = storage_->loadConfiguration();
+        if (!bytes.empty()) {
+            if (processor_) {
+                ignoreConfigurationUpdate_ = true;
+                processor_->processConfigurationData(bytes.data(), bytes.size(), true);
+            }
 
-    if (!bytes.empty()) {
-        if (processor_) {
-            ignoreConfigurationUpdate_ = true;
-            processor_->processConfigurationData(bytes.data(), bytes.size(), true);
+            EndpointObjectHash temp(bytes.data(), bytes.size());
+            configurationHash_ = temp;
+            KAA_LOG_INFO(boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(configurationHash_.getHash()));
         }
-
-        EndpointObjectHash temp(bytes.data(), bytes.size());
-        configurationHash_ = temp;
-        KAA_LOG_INFO(boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(configurationHash_.getHash()));
     }
-
 }
 
 }  // namespace kaa

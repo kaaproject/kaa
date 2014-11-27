@@ -26,7 +26,7 @@
 
 namespace kaa {
 
-void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, std::size_t data_length, bool full_resync)
+void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, std::size_t dataLength, bool fullResync)
 {
     KAA_MUTEX_LOCKING("confProcessorMutex_");
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_);
@@ -40,7 +40,7 @@ void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, 
 
     AvroByteArrayConverter<avro::GenericDatum> converter;
     avro::GenericDatum datumArray(*schema_) ;
-    converter.fromByteArray(data, data_length, datumArray);
+    converter.fromByteArray(data, dataLength, datumArray);
 
     if (datumArray.type() != avro::AVRO_ARRAY) {
         throw KaaException("Configuration data is not an array!");
@@ -55,7 +55,7 @@ void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, 
         const avro::GenericRecord &record = it->value<avro::GenericRecord>();
         const avro::GenericDatum &datum = record.field("delta");
         int index = datum.unionBranch();
-        deltaReceivers_(index, datum, full_resync);
+        deltaReceivers_(index, datum, fullResync);
     }
 
     onProcessedObservers_();

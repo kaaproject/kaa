@@ -74,7 +74,7 @@ public:
      */
     void setConfigurationProcessor(IConfigurationProcessor *processor);
 private:
-    void readStoredConfiugration();
+    void readStoredConfiguration();
 
     KAA_MUTEX_DECLARE(schemaGuard_);
     KAA_MUTEX_DECLARE(confPersistenceGuard_);
