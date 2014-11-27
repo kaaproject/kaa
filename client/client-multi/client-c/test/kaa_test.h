@@ -30,7 +30,7 @@
 #define ASSERT_TRUE(Exp)        CU_ASSERT_TRUE_FATAL(Exp)
 #define ASSERT_FALSE(Exp)       CU_ASSERT_FALSE_FATAL(Exp)
 
-#define BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN)  \
+#define KAA_BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN)  \
     int main(int argc, char ** argv) \
     { \
         CU_initialize_registry(); \
@@ -40,10 +40,10 @@
 #define KAA_TEST_CASE(TEST_NAME, TEST_FN) \
         CU_add_test(testSuite, #TEST_NAME, &TEST_FN); \
 
-#define RUN_TESTS \
+#define KAA_RUN_TESTS \
         CU_automated_run_tests(); \
 
-#define END_SUITE \
+#define KAA_END_TEST_SUITE \
         CU_cleanup_registry(); \
         return 0; \
     }
@@ -67,7 +67,7 @@
 typedef int (*init_fn)(void);
 typedef int (*cleanup_fn)(void);
 
-#define BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN)  \
+#define KAA_BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN)  \
     int main(int argc, char ** argv) \
     { \
         init_fn init = INIT_FN; \
@@ -76,12 +76,12 @@ typedef int (*cleanup_fn)(void);
             init(); \
         } \
 
-#define  KAA_TEST_CASE(TEST_NAME, TEST_FN) \
+#define KAA_TEST_CASE(TEST_NAME, TEST_FN) \
         TEST_FN();
 
-#define RUN_TESTS
+#define KAA_RUN_TESTS
 
-#define END_SUITE \
+#define KAA_END_TEST_SUITE \
         if (cleanup != NULL) { \
             cleanup(); \
         } \
@@ -90,11 +90,12 @@ typedef int (*cleanup_fn)(void);
 
 #endif
 
+
 #define KAA_SUITE_MAIN(SUITE_NAME, INIT_FN, CLEANUP_FN, ...) \
-    BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN) \
+    KAA_BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN) \
     __VA_ARGS__ \
-    RUN_TESTS \
-    END_SUITE \
+    KAA_RUN_TESTS \
+    KAA_END_TEST_SUITE \
 
 
 #endif /* KAA_TEST_H_ */
