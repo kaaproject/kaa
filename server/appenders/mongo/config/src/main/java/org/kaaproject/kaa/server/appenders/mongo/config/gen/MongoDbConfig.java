@@ -7,9 +7,10 @@ package org.kaaproject.kaa.server.appenders.mongo.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"MongoDbConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.mongo.config.gen\",\"fields\":[{\"name\":\"mongoServers\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"MongoDbServer\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"localhost\",\"displayName\":\"Host\",\"weight\":0.75},{\"name\":\"port\",\"type\":\"int\",\"default\":27017,\"displayName\":\"Port\",\"weight\":0.25}]}},\"displayName\":\"MongoDB nodes\",\"minRowCount\":1},{\"name\":\"dbName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"MongoDB database name\"},{\"name\":\"connectionsPerHost\",\"type\":[\"int\",\"null\"],\"default\":30,\"displayName\":\"Max connections per host\",\"optional\":true},{\"name\":\"maxWaitTime\",\"type\":[\"int\",\"null\"],\"default\":120000,\"displayName\":\"Max wait time (ms)\",\"optional\":true},{\"name\":\"connectionTimeout\",\"type\":[\"int\",\"null\"],\"default\":5000,\"displayName\":\"Connection timeout (ms)\",\"optional\":true},{\"name\":\"socketTimeout\",\"type\":[\"int\",\"null\"],\"default\":0,\"displayName\":\"Socket timeout (ms)\",\"optional\":true},{\"name\":\"socketKeepalive\",\"type\":[\"boolean\",\"null\"],\"default\":false,\"displayName\":\"Turn on socket keepalive\",\"optional\":true},{\"name\":\"autoConnectRetry\",\"type\":[\"boolean\",\"null\"],\"default\":true,\"displayName\":\"Automatic reconnect on errors\",\"optional\":true}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"MongoDbConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.mongo.config.gen\",\"fields\":[{\"name\":\"mongoServers\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"MongoDbServer\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"localhost\",\"displayName\":\"Host\",\"weight\":0.75},{\"name\":\"port\",\"type\":\"int\",\"default\":27017,\"displayName\":\"Port\",\"weight\":0.25}]}},\"displayName\":\"MongoDB nodes\",\"minRowCount\":1},{\"name\":\"mongoCredentials\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"MongoDBCredential\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"user\",\"displayName\":\"User\",\"weight\":0.5},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"password\",\"displayName\":\"Password\",\"weight\":0.5}]}},\"displayName\":\"Authentication credentials\",\"minRowCount\":0},{\"name\":\"dbName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"MongoDB database name\"},{\"name\":\"connectionsPerHost\",\"type\":[\"int\",\"null\"],\"default\":30,\"displayName\":\"Max connections per host\",\"optional\":true},{\"name\":\"maxWaitTime\",\"type\":[\"int\",\"null\"],\"default\":120000,\"displayName\":\"Max wait time (ms)\",\"optional\":true},{\"name\":\"connectionTimeout\",\"type\":[\"int\",\"null\"],\"default\":5000,\"displayName\":\"Connection timeout (ms)\",\"optional\":true},{\"name\":\"socketTimeout\",\"type\":[\"int\",\"null\"],\"default\":0,\"displayName\":\"Socket timeout (ms)\",\"optional\":true},{\"name\":\"socketKeepalive\",\"type\":[\"boolean\",\"null\"],\"default\":false,\"displayName\":\"Turn on socket keepalive\",\"optional\":true},{\"name\":\"autoConnectRetry\",\"type\":[\"boolean\",\"null\"],\"default\":true,\"displayName\":\"Automatic reconnect on errors\",\"optional\":true}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> mongoServers;
+   private java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> mongoCredentials;
    private java.lang.String dbName;
    private java.lang.Integer connectionsPerHost;
    private java.lang.Integer maxWaitTime;
@@ -28,8 +29,9 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
   /**
    * All-args constructor.
    */
-  public MongoDbConfig(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> mongoServers, java.lang.String dbName, java.lang.Integer connectionsPerHost, java.lang.Integer maxWaitTime, java.lang.Integer connectionTimeout, java.lang.Integer socketTimeout, java.lang.Boolean socketKeepalive, java.lang.Boolean autoConnectRetry) {
+  public MongoDbConfig(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> mongoServers, java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> mongoCredentials, java.lang.String dbName, java.lang.Integer connectionsPerHost, java.lang.Integer maxWaitTime, java.lang.Integer connectionTimeout, java.lang.Integer socketTimeout, java.lang.Boolean socketKeepalive, java.lang.Boolean autoConnectRetry) {
     this.mongoServers = mongoServers;
+    this.mongoCredentials = mongoCredentials;
     this.dbName = dbName;
     this.connectionsPerHost = connectionsPerHost;
     this.maxWaitTime = maxWaitTime;
@@ -44,13 +46,14 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return mongoServers;
-    case 1: return dbName;
-    case 2: return connectionsPerHost;
-    case 3: return maxWaitTime;
-    case 4: return connectionTimeout;
-    case 5: return socketTimeout;
-    case 6: return socketKeepalive;
-    case 7: return autoConnectRetry;
+    case 1: return mongoCredentials;
+    case 2: return dbName;
+    case 3: return connectionsPerHost;
+    case 4: return maxWaitTime;
+    case 5: return connectionTimeout;
+    case 6: return socketTimeout;
+    case 7: return socketKeepalive;
+    case 8: return autoConnectRetry;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -59,13 +62,14 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: mongoServers = (java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer>)value$; break;
-    case 1: dbName = (java.lang.String)value$; break;
-    case 2: connectionsPerHost = (java.lang.Integer)value$; break;
-    case 3: maxWaitTime = (java.lang.Integer)value$; break;
-    case 4: connectionTimeout = (java.lang.Integer)value$; break;
-    case 5: socketTimeout = (java.lang.Integer)value$; break;
-    case 6: socketKeepalive = (java.lang.Boolean)value$; break;
-    case 7: autoConnectRetry = (java.lang.Boolean)value$; break;
+    case 1: mongoCredentials = (java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential>)value$; break;
+    case 2: dbName = (java.lang.String)value$; break;
+    case 3: connectionsPerHost = (java.lang.Integer)value$; break;
+    case 4: maxWaitTime = (java.lang.Integer)value$; break;
+    case 5: connectionTimeout = (java.lang.Integer)value$; break;
+    case 6: socketTimeout = (java.lang.Integer)value$; break;
+    case 7: socketKeepalive = (java.lang.Boolean)value$; break;
+    case 8: autoConnectRetry = (java.lang.Boolean)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -83,6 +87,21 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
    */
   public void setMongoServers(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> value) {
     this.mongoServers = value;
+  }
+
+  /**
+   * Gets the value of the 'mongoCredentials' field.
+   */
+  public java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> getMongoCredentials() {
+    return mongoCredentials;
+  }
+
+  /**
+   * Sets the value of the 'mongoCredentials' field.
+   * @param value the value to set.
+   */
+  public void setMongoCredentials(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> value) {
+    this.mongoCredentials = value;
   }
 
   /**
@@ -212,6 +231,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     implements org.apache.avro.data.RecordBuilder<MongoDbConfig> {
 
     private java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> mongoServers;
+    private java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> mongoCredentials;
     private java.lang.String dbName;
     private java.lang.Integer connectionsPerHost;
     private java.lang.Integer maxWaitTime;
@@ -232,33 +252,37 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
         this.mongoServers = data().deepCopy(fields()[0].schema(), other.mongoServers);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.dbName)) {
-        this.dbName = data().deepCopy(fields()[1].schema(), other.dbName);
+      if (isValidValue(fields()[1], other.mongoCredentials)) {
+        this.mongoCredentials = data().deepCopy(fields()[1].schema(), other.mongoCredentials);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.connectionsPerHost)) {
-        this.connectionsPerHost = data().deepCopy(fields()[2].schema(), other.connectionsPerHost);
+      if (isValidValue(fields()[2], other.dbName)) {
+        this.dbName = data().deepCopy(fields()[2].schema(), other.dbName);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.maxWaitTime)) {
-        this.maxWaitTime = data().deepCopy(fields()[3].schema(), other.maxWaitTime);
+      if (isValidValue(fields()[3], other.connectionsPerHost)) {
+        this.connectionsPerHost = data().deepCopy(fields()[3].schema(), other.connectionsPerHost);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.connectionTimeout)) {
-        this.connectionTimeout = data().deepCopy(fields()[4].schema(), other.connectionTimeout);
+      if (isValidValue(fields()[4], other.maxWaitTime)) {
+        this.maxWaitTime = data().deepCopy(fields()[4].schema(), other.maxWaitTime);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.socketTimeout)) {
-        this.socketTimeout = data().deepCopy(fields()[5].schema(), other.socketTimeout);
+      if (isValidValue(fields()[5], other.connectionTimeout)) {
+        this.connectionTimeout = data().deepCopy(fields()[5].schema(), other.connectionTimeout);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.socketKeepalive)) {
-        this.socketKeepalive = data().deepCopy(fields()[6].schema(), other.socketKeepalive);
+      if (isValidValue(fields()[6], other.socketTimeout)) {
+        this.socketTimeout = data().deepCopy(fields()[6].schema(), other.socketTimeout);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.autoConnectRetry)) {
-        this.autoConnectRetry = data().deepCopy(fields()[7].schema(), other.autoConnectRetry);
+      if (isValidValue(fields()[7], other.socketKeepalive)) {
+        this.socketKeepalive = data().deepCopy(fields()[7].schema(), other.socketKeepalive);
         fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.autoConnectRetry)) {
+        this.autoConnectRetry = data().deepCopy(fields()[8].schema(), other.autoConnectRetry);
+        fieldSetFlags()[8] = true;
       }
     }
     
@@ -269,33 +293,37 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
         this.mongoServers = data().deepCopy(fields()[0].schema(), other.mongoServers);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.dbName)) {
-        this.dbName = data().deepCopy(fields()[1].schema(), other.dbName);
+      if (isValidValue(fields()[1], other.mongoCredentials)) {
+        this.mongoCredentials = data().deepCopy(fields()[1].schema(), other.mongoCredentials);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.connectionsPerHost)) {
-        this.connectionsPerHost = data().deepCopy(fields()[2].schema(), other.connectionsPerHost);
+      if (isValidValue(fields()[2], other.dbName)) {
+        this.dbName = data().deepCopy(fields()[2].schema(), other.dbName);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.maxWaitTime)) {
-        this.maxWaitTime = data().deepCopy(fields()[3].schema(), other.maxWaitTime);
+      if (isValidValue(fields()[3], other.connectionsPerHost)) {
+        this.connectionsPerHost = data().deepCopy(fields()[3].schema(), other.connectionsPerHost);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.connectionTimeout)) {
-        this.connectionTimeout = data().deepCopy(fields()[4].schema(), other.connectionTimeout);
+      if (isValidValue(fields()[4], other.maxWaitTime)) {
+        this.maxWaitTime = data().deepCopy(fields()[4].schema(), other.maxWaitTime);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.socketTimeout)) {
-        this.socketTimeout = data().deepCopy(fields()[5].schema(), other.socketTimeout);
+      if (isValidValue(fields()[5], other.connectionTimeout)) {
+        this.connectionTimeout = data().deepCopy(fields()[5].schema(), other.connectionTimeout);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.socketKeepalive)) {
-        this.socketKeepalive = data().deepCopy(fields()[6].schema(), other.socketKeepalive);
+      if (isValidValue(fields()[6], other.socketTimeout)) {
+        this.socketTimeout = data().deepCopy(fields()[6].schema(), other.socketTimeout);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.autoConnectRetry)) {
-        this.autoConnectRetry = data().deepCopy(fields()[7].schema(), other.autoConnectRetry);
+      if (isValidValue(fields()[7], other.socketKeepalive)) {
+        this.socketKeepalive = data().deepCopy(fields()[7].schema(), other.socketKeepalive);
         fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.autoConnectRetry)) {
+        this.autoConnectRetry = data().deepCopy(fields()[8].schema(), other.autoConnectRetry);
+        fieldSetFlags()[8] = true;
       }
     }
 
@@ -324,6 +352,31 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
+    /** Gets the value of the 'mongoCredentials' field */
+    public java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> getMongoCredentials() {
+      return mongoCredentials;
+    }
+    
+    /** Sets the value of the 'mongoCredentials' field */
+    public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setMongoCredentials(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> value) {
+      validate(fields()[1], value);
+      this.mongoCredentials = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'mongoCredentials' field has been set */
+    public boolean hasMongoCredentials() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'mongoCredentials' field */
+    public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearMongoCredentials() {
+      mongoCredentials = null;
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
     /** Gets the value of the 'dbName' field */
     public java.lang.String getDbName() {
       return dbName;
@@ -331,21 +384,21 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'dbName' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setDbName(java.lang.String value) {
-      validate(fields()[1], value);
+      validate(fields()[2], value);
       this.dbName = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'dbName' field has been set */
     public boolean hasDbName() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'dbName' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearDbName() {
       dbName = null;
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -356,21 +409,21 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'connectionsPerHost' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setConnectionsPerHost(java.lang.Integer value) {
-      validate(fields()[2], value);
+      validate(fields()[3], value);
       this.connectionsPerHost = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[3] = true;
       return this; 
     }
     
     /** Checks whether the 'connectionsPerHost' field has been set */
     public boolean hasConnectionsPerHost() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[3];
     }
     
     /** Clears the value of the 'connectionsPerHost' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearConnectionsPerHost() {
       connectionsPerHost = null;
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[3] = false;
       return this;
     }
 
@@ -381,21 +434,21 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'maxWaitTime' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setMaxWaitTime(java.lang.Integer value) {
-      validate(fields()[3], value);
+      validate(fields()[4], value);
       this.maxWaitTime = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[4] = true;
       return this; 
     }
     
     /** Checks whether the 'maxWaitTime' field has been set */
     public boolean hasMaxWaitTime() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[4];
     }
     
     /** Clears the value of the 'maxWaitTime' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearMaxWaitTime() {
       maxWaitTime = null;
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[4] = false;
       return this;
     }
 
@@ -406,21 +459,21 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'connectionTimeout' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setConnectionTimeout(java.lang.Integer value) {
-      validate(fields()[4], value);
+      validate(fields()[5], value);
       this.connectionTimeout = value;
-      fieldSetFlags()[4] = true;
+      fieldSetFlags()[5] = true;
       return this; 
     }
     
     /** Checks whether the 'connectionTimeout' field has been set */
     public boolean hasConnectionTimeout() {
-      return fieldSetFlags()[4];
+      return fieldSetFlags()[5];
     }
     
     /** Clears the value of the 'connectionTimeout' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearConnectionTimeout() {
       connectionTimeout = null;
-      fieldSetFlags()[4] = false;
+      fieldSetFlags()[5] = false;
       return this;
     }
 
@@ -431,21 +484,21 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'socketTimeout' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setSocketTimeout(java.lang.Integer value) {
-      validate(fields()[5], value);
+      validate(fields()[6], value);
       this.socketTimeout = value;
-      fieldSetFlags()[5] = true;
+      fieldSetFlags()[6] = true;
       return this; 
     }
     
     /** Checks whether the 'socketTimeout' field has been set */
     public boolean hasSocketTimeout() {
-      return fieldSetFlags()[5];
+      return fieldSetFlags()[6];
     }
     
     /** Clears the value of the 'socketTimeout' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearSocketTimeout() {
       socketTimeout = null;
-      fieldSetFlags()[5] = false;
+      fieldSetFlags()[6] = false;
       return this;
     }
 
@@ -456,21 +509,21 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'socketKeepalive' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setSocketKeepalive(java.lang.Boolean value) {
-      validate(fields()[6], value);
+      validate(fields()[7], value);
       this.socketKeepalive = value;
-      fieldSetFlags()[6] = true;
+      fieldSetFlags()[7] = true;
       return this; 
     }
     
     /** Checks whether the 'socketKeepalive' field has been set */
     public boolean hasSocketKeepalive() {
-      return fieldSetFlags()[6];
+      return fieldSetFlags()[7];
     }
     
     /** Clears the value of the 'socketKeepalive' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearSocketKeepalive() {
       socketKeepalive = null;
-      fieldSetFlags()[6] = false;
+      fieldSetFlags()[7] = false;
       return this;
     }
 
@@ -481,21 +534,21 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'autoConnectRetry' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setAutoConnectRetry(java.lang.Boolean value) {
-      validate(fields()[7], value);
+      validate(fields()[8], value);
       this.autoConnectRetry = value;
-      fieldSetFlags()[7] = true;
+      fieldSetFlags()[8] = true;
       return this; 
     }
     
     /** Checks whether the 'autoConnectRetry' field has been set */
     public boolean hasAutoConnectRetry() {
-      return fieldSetFlags()[7];
+      return fieldSetFlags()[8];
     }
     
     /** Clears the value of the 'autoConnectRetry' field */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearAutoConnectRetry() {
       autoConnectRetry = null;
-      fieldSetFlags()[7] = false;
+      fieldSetFlags()[8] = false;
       return this;
     }
 
@@ -504,13 +557,14 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       try {
         MongoDbConfig record = new MongoDbConfig();
         record.mongoServers = fieldSetFlags()[0] ? this.mongoServers : (java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer>) defaultValue(fields()[0]);
-        record.dbName = fieldSetFlags()[1] ? this.dbName : (java.lang.String) defaultValue(fields()[1]);
-        record.connectionsPerHost = fieldSetFlags()[2] ? this.connectionsPerHost : (java.lang.Integer) defaultValue(fields()[2]);
-        record.maxWaitTime = fieldSetFlags()[3] ? this.maxWaitTime : (java.lang.Integer) defaultValue(fields()[3]);
-        record.connectionTimeout = fieldSetFlags()[4] ? this.connectionTimeout : (java.lang.Integer) defaultValue(fields()[4]);
-        record.socketTimeout = fieldSetFlags()[5] ? this.socketTimeout : (java.lang.Integer) defaultValue(fields()[5]);
-        record.socketKeepalive = fieldSetFlags()[6] ? this.socketKeepalive : (java.lang.Boolean) defaultValue(fields()[6]);
-        record.autoConnectRetry = fieldSetFlags()[7] ? this.autoConnectRetry : (java.lang.Boolean) defaultValue(fields()[7]);
+        record.mongoCredentials = fieldSetFlags()[1] ? this.mongoCredentials : (java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential>) defaultValue(fields()[1]);
+        record.dbName = fieldSetFlags()[2] ? this.dbName : (java.lang.String) defaultValue(fields()[2]);
+        record.connectionsPerHost = fieldSetFlags()[3] ? this.connectionsPerHost : (java.lang.Integer) defaultValue(fields()[3]);
+        record.maxWaitTime = fieldSetFlags()[4] ? this.maxWaitTime : (java.lang.Integer) defaultValue(fields()[4]);
+        record.connectionTimeout = fieldSetFlags()[5] ? this.connectionTimeout : (java.lang.Integer) defaultValue(fields()[5]);
+        record.socketTimeout = fieldSetFlags()[6] ? this.socketTimeout : (java.lang.Integer) defaultValue(fields()[6]);
+        record.socketKeepalive = fieldSetFlags()[7] ? this.socketKeepalive : (java.lang.Boolean) defaultValue(fields()[7]);
+        record.autoConnectRetry = fieldSetFlags()[8] ? this.autoConnectRetry : (java.lang.Boolean) defaultValue(fields()[8]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
