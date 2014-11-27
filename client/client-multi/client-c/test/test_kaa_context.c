@@ -18,23 +18,23 @@
 #include "kaa_test.h"
 #include "kaa_log.h"
 
-void test_create_bootstrap_manager()
+void test_create_context()
 {
     KAA_TRACE_IN;
 
     kaa_context_t * context = NULL;
 
     kaa_error_t err_code = kaa_create_context(&context);
-    CU_ASSERT_EQUAL_FATAL(err_code, KAA_ERR_NONE);
-    CU_ASSERT_PTR_NOT_NULL_FATAL(context);
-    CU_ASSERT_PTR_NOT_NULL_FATAL(context->bootstrap_manager);
-    CU_ASSERT_PTR_NOT_NULL_FATAL(context->channel_manager);
+    ASSERT_EQUAL(err_code, KAA_ERR_NONE);
+    ASSERT_NOT_NULL(context);
+    ASSERT_NOT_NULL(context->bootstrap_manager);
+    ASSERT_NOT_NULL(context->channel_manager);
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    CU_ASSERT_PTR_NOT_NULL_FATAL(context->event_manager);
+    ASSERT_NOT_NULL(context->event_manager);
 #endif
-    CU_ASSERT_PTR_NOT_NULL_FATAL(context->profile_manager);
-    CU_ASSERT_PTR_NOT_NULL_FATAL(context->status);
-    CU_ASSERT_PTR_NOT_NULL_FATAL(context->user_manager);
+    ASSERT_NOT_NULL(context->profile_manager);
+    ASSERT_NOT_NULL(context->status);
+    ASSERT_NOT_NULL(context->user_manager);
 
     kaa_destroy_context(context);
 }
@@ -52,5 +52,5 @@ int test_deinit(void)
 }
 
 KAA_SUITE_MAIN(Context, test_init, test_deinit
-        , KAA_TEST_CASE(create_context, test_create_bootstrap_manager)
+        , KAA_TEST_CASE(create_context, test_create_context)
 )
