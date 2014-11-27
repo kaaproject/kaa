@@ -448,6 +448,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/support-v4/**</exclude>
                         <exclude>**/bin/**</exclude>
                         <exclude>**/thirdparty/**</exclude>
+                        <exclude>**/security.policy</exclude>
                     </excludes>
                 </configuration>
             </plugin>

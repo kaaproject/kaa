@@ -4,7 +4,7 @@
     "name": "MongoDbConfig",
     "fields": 
     [
-           {
+        {
             "name": "mongoServers", 
             "displayName": "MongoDB nodes",
             "minRowCount": 1,
@@ -17,6 +17,23 @@
                     "fields": [
                         {"name": "host", "displayName": "Host", "weight": 0.75, "default": "localhost", "type": "string"},
                         {"name": "port", "displayName": "Port", "weight": 0.25, "default": 27017, "type": "int"}
+                    ]
+                }
+            }
+        },
+        {
+            "name": "mongoCredentials", 
+            "displayName": "Authentication credentials",
+            "minRowCount": 0,
+            "type": {
+                "type": "array",
+                "items": {
+                    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config.gen",
+                    "type": "record",
+                    "name": "MongoDBCredential",
+                    "fields": [
+                        {"name": "user", "displayName": "User", "weight": 0.5, "default": "user", "type": "string"},
+                        {"name": "password", "displayName": "Password", "weight": 0.5, "default": "password", "type": "string"}
                     ]
                 }
             }
