@@ -42,7 +42,10 @@ void kaa_destroy_bootstrap_manager(kaa_bootstrap_manager_t *bm)
     if (bm) {
         for (int i = 0; i < KAA_CHANNEL_TYPE_COUNT; ++i) {
             if (bm->ops_list[i]) {
-                kaa_list_destroy(bm->ops_list[i], NULL); // FIXME: who should deallocate data in the list?
+                // Hence operations server data is not copied by Kaa sdk,
+                // memory management of kaa_ops_t * provided using #kaa_add_operation_server(...)
+                // belongs to the user of the library.
+                kaa_list_destroy_no_data_cleanup(bm->ops_list[i]);
             }
         }
 

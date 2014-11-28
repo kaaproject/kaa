@@ -47,6 +47,9 @@ void test_kaa_event_compile_request()
 
     kaa_event_sync_request_t* sync_request = NULL;
     kaa_event_compile_request(context, &sync_request, 100499);
+    sync_request->destruct(sync_request);
+    KAA_FREE(sync_request);
+
     kaa_event_sequence_number_response_t seq_n_resp;
     seq_n_resp.seq_num = 0;
 

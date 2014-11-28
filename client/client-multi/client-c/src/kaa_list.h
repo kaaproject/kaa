@@ -79,6 +79,11 @@ kaa_list_t *kaa_list_create(void *data);
 void kaa_list_destroy(kaa_list_t *head, deallocate_list_data deallocator);
 
 /**
+ * Frees data occupied by list, data will not be deallocated.
+ */
+void kaa_list_destroy_no_data_cleanup(kaa_list_t * head);
+
+/**
  * Removes element from list at given position. Position must be valid iterator
  * to the element in the given list. Deallocates released data using given deallocator.
  * Returns iterator pointing to the position before removed element or pointer
