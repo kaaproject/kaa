@@ -16,11 +16,10 @@
 
 /**
  * @file kaa_log.h
- * @brief Simple logger for Kaa C EP.
+ * @brief Simple logger for Kaa C Endpoint.
  *
- * Simple logger for Kaa C EP.
  * Supports runtime limitation of the maximum log level to be logged.
- * Expects externally provided and managed valid FILE* reference to log data to.
+ * Expects externally provided and managed valid @c FILE* reference to log data to.
  * Not thread safe.
  */
 
@@ -35,11 +34,15 @@
 extern "C" {
 #endif
 
+/**
+ * @brief Kaa logger type
+ */
 typedef struct kaa_logger_t kaa_logger_t;
 
-/** Log levels
+/**
+ * @brief Log levels
  */
-typedef enum kaa_log_level_t {
+typedef enum {
     KAA_LOG_NONE,   /**< Use as the max log level to switch logging off */
     KAA_LOG_FATAL,  /**< Use for severe errors that cause premature program termination */
     KAA_LOG_ERROR,  /**< Use for runtime errors or unexpected conditions that the program might gracefully recover from */
@@ -50,20 +53,18 @@ typedef enum kaa_log_level_t {
 } kaa_log_level_t;
 
 /**
- * <p>Creates and initializes a logger instance.</p>
+ * @brief Creates and initializes a logger instance.
  *
  * @param[in,out]   logger          Address of a pointer to the newly created logger.
  * @param[in]       buffer_size     Size of the log message buffer to allocate to the logger.
  * @param[in]       max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
- * @param[in]       sink            Valid, opened file to write logs to. Will use <i>stdout</i> if <i>NULL</i> is provided.
+ * @param[in]       sink            Valid, opened file to write logs to. Will use @c stdout if @c NULL is provided.
  * @return                          Error code.
- *
- * @see kaa_log_level_t
  */
 kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink);
 
 /**
- * <p>Deinitializes and destroys the logger instance.</p>
+ * @brief Deinitializes and destroys the logger instance.
  *
  * @param[in,out]   logger  Pointer to a logger.
  * @return                  Error code.
@@ -71,7 +72,7 @@ kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_
 kaa_error_t kaa_log_destroy(kaa_logger_t *logger);
 
 /**
- * <p>Retrieves the current log level.</p>
+ * @brief Retrieves the current log level.
  *
  * @param[in]   this    Pointer to a logger.
  * @return              Log level. Returns @link KAA_LOG_NONE @endlink if this is NULL.
@@ -79,38 +80,33 @@ kaa_error_t kaa_log_destroy(kaa_logger_t *logger);
 kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *this);
 
 /**
- * <p>Sets the maximum log level.</p>
+ * @brief Sets the maximum log level.
  *
  * @param[in]   this            Pointer to a logger.
  * @param[in]   max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
  * @return                      Error code.
- *
- * @see kaa_log_level_t
  */
 kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_level);
 
 /**
- * <p>Compiles a log message and puts it into the sink.</p>
+ * @brief Compiles a log message and puts it into the sink.
  *
- * <p>The message format is as follows:
- * "YYYY/MM/DD HH:MM:SS [LOG LEVEL] [FILE:LINENO] (ERROR_CODE) - MESSAGE"</p>
+ * The message format is as follows:
+ * @code YYYY/MM/DD HH:MM:SS [LOG LEVEL] [FILE:LINENO] (ERROR_CODE) - MESSAGE @endcode
  *
- * <p><b>NOTE:</b> Do not use directly. Use one of @link KAA_LOG_FATAL @endlink,
+ * <b>NOTE:</b> Do not use directly. Use one of @link KAA_LOG_FATAL @endlink,
  * @link KAA_LOG_ERROR @endlink, @link KAA_LOG_WARN @endlink,
  * @link KAA_LOG_INFO @endlink, @link KAA_LOG_DEBUG @endlink,
- * @link KAA_LOG_TRACE @endlink macros instead.</p>
+ * @link KAA_LOG_TRACE @endlink macros instead.
  *
- * <p>If the log message is longer than @link buffer_size @endlink , it gets truncated.</p>
+ * The log message gets truncated if it is longer than @c buffer_size specified to @link kaa_log_create @endlink.
  *
  * @param[in] this          Pointer to a logger.
  * @param[in] source_file   The source file that the message is logged from.
  * @param[in] lineno        The line number in the source file that the message is logged from.
- * @param[in] log_level     The message log level to log.
+ * @param[in] log_level     The message log level to log with.
  * @param[in] error_code    The message error code.
  * @param[in] format        The format of the message to log.
- *
- * @see kaa_log_level_t
- * @see kaa_error_t
  */
 void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_log_level_t log_level
         , kaa_error_t error_code, const char* format, ...);
