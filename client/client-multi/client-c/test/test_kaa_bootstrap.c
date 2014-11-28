@@ -22,9 +22,11 @@
 #include "kaa_bootstrap.h"
 #include "kaa_mem.h"
 
+static kaa_logger_t *logger = NULL;
+
 void test_create_bootstrap_manager()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_bootstrap_manager_t* manager = NULL;
     kaa_create_bootstrap_manager(&manager);
@@ -36,7 +38,7 @@ void test_create_bootstrap_manager()
 
 void test_null_operation_server()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_ops_t* server = NULL;
     kaa_bootstrap_manager_t* manager = NULL;
@@ -67,7 +69,7 @@ void test_null_operation_server()
 
 void test_add_get_operation_server()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_bootstrap_manager_t* manager = NULL;
     kaa_create_bootstrap_manager(&manager);
@@ -136,13 +138,13 @@ void test_add_get_operation_server()
 
 int test_init(void)
 {
-    kaa_log_init(KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
     return 0;
 }
 
 int test_deinit(void)
 {
-    kaa_log_deinit();
+    kaa_log_destroy(logger);
     return 0;
 }
 

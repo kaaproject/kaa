@@ -27,9 +27,11 @@
 static int global_events_counter = 0;
 static int specific_events_counter = 0;
 
+static kaa_logger_t *logger = NULL;
+
 void test_kaa_create_event_manager()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_event_manager_t *event_manager = NULL;
     kaa_error_t err_code = kaa_create_event_manager(&event_manager);
@@ -40,10 +42,10 @@ void test_kaa_create_event_manager()
 
 void test_kaa_event_compile_request()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_context_t *context;
-    kaa_create_context(&context);
+    kaa_context_create(&context, logger);
 
     kaa_event_sync_request_t* sync_request = NULL;
     kaa_event_compile_request(context, &sync_request, 100499);
@@ -96,7 +98,7 @@ void test_kaa_event_compile_request()
     sync_request3->destruct(sync_request3);
     KAA_FREE(sync_request3);
 
-    kaa_destroy_context(context);
+    kaa_context_destroy(context);
     context = NULL;
 }
 
@@ -125,10 +127,10 @@ static void kaa_destroy_event(void* data)
 
 void test_kaa_add_on_event_callback()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_context_t *context;
-    kaa_create_context(&context);
+    kaa_context_create(&context, logger);
 
     kaa_add_on_event_callback(context->event_manager, "fqn", 3, specific_event_cb);
     kaa_add_on_event_callback(context->event_manager, NULL, 0, global_event_cb);
@@ -169,7 +171,7 @@ void test_kaa_add_on_event_callback()
 
     kaa_list_destroy(list2, &kaa_destroy_event);
 
-    kaa_destroy_context(context);
+    kaa_context_destroy(context);
     context = NULL;
 }
 
@@ -177,13 +179,13 @@ void test_kaa_add_on_event_callback()
 
 int test_init(void)
 {
-    kaa_log_init(KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
     return 0;
 }
 
 int test_deinit(void)
 {
-    kaa_log_deinit();
+    kaa_log_destroy(logger);
     return 0;
 }
 

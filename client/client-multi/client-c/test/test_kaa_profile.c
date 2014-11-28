@@ -26,12 +26,14 @@
 #include "kaa_profile.h"
 #include "gen/kaa_profile_gen.h"
 
+static kaa_logger_t *logger = NULL;
+
 void test_profile_update()
 {
-    KAA_TRACE_IN;
+    KAA_TRACE_IN(logger);
 
     kaa_context_t * context = NULL;
-    kaa_error_t err_code = kaa_create_context(&context);
+    kaa_error_t err_code = kaa_context_create(&context, logger);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
 
     char* profile_body1 = KAA_CALLOC(6, sizeof(char));
@@ -57,18 +59,18 @@ void test_profile_update()
     profile->destruct(profile);
     KAA_FREE(profile);
 
-    kaa_destroy_context(context);
+    kaa_context_destroy(context);
 }
 
 int test_init(void)
 {
-    kaa_log_init(KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
     return 0;
 }
 
 int test_deinit(void)
 {
-    kaa_log_deinit();
+    kaa_log_destroy(logger);
     return 0;
 }
 
