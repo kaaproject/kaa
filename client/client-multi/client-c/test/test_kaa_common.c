@@ -54,7 +54,7 @@ void test_profile_update()
 
 int main(int argc, char **argv)
 {
-    kaa_log_create(&logger, KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
 
     test_profile_update();
 

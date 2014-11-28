@@ -74,7 +74,7 @@ kaa_error_t kaa_init()
 {
     // Initialize logger
     kaa_logger_t *logger = NULL;
-    kaa_error_t error = kaa_log_create(&logger, KAA_LOG_TRACE, NULL);  // TODO: make log destination and level configurable
+    kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);  // TODO: make log destination and level configurable
     if (error)
         return error;
 

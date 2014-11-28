@@ -127,7 +127,7 @@ void test_add_log()
 
 int main(int argc, char ** argv)
 {
-    kaa_log_create(&logger, KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
 
     test_create_log_collector();
     test_create_request();

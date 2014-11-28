@@ -175,7 +175,7 @@ void test_kaa_add_on_event_callback()
 #endif
 int main(int argc, char **argv)
 {
-    kaa_log_create(&logger, KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     test_kaa_create_event_manager();

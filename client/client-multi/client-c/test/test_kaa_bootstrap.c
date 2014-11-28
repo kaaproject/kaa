@@ -138,7 +138,7 @@ void test_add_get_operation_server()
 
 int main(int argc, char ** argv)
 {
-    kaa_log_create(&logger, KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
 
     test_create_bootstrap_manager();
     test_null_operation_server();

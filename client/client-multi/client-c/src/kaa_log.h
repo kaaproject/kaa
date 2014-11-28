@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include "kaa_error.h"
+#define KAA_MAX_LOG_MESSAGE_LENGTH  256
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,13 +53,14 @@ typedef enum kaa_log_level_t {
  * <p>Creates and initializes a logger instance.</p>
  *
  * @param[in,out]   logger          Address of a pointer to the newly created logger.
+ * @param[in]       buffer_size     Size of the log message buffer to allocate to the logger.
  * @param[in]       max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
  * @param[in]       sink            Valid, opened file to write logs to. Will use <i>stdout</i> if <i>NULL</i> is provided.
  * @return                          Error code.
  *
  * @see kaa_log_level_t
  */
-kaa_error_t kaa_log_create(kaa_logger_t **logger_p, kaa_log_level_t max_log_level, FILE* sink);
+kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink);
 
 /**
  * <p>Deinitializes and destroys the logger instance.</p>
@@ -98,7 +100,7 @@ kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_le
  * @link KAA_LOG_INFO @endlink, @link KAA_LOG_DEBUG @endlink,
  * @link KAA_LOG_TRACE @endlink macros instead.</p>
  *
- * <p>If the log message is longer than KAA_LOG_MESSAGE_LENGTH, it gets truncated.</p>
+ * <p>If the log message is longer than @link buffer_size @endlink , it gets truncated.</p>
  *
  * @param[in] this          Pointer to a logger.
  * @param[in] source_file   The source file that the message is logged from.

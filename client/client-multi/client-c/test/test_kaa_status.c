@@ -168,7 +168,7 @@ void test_status_persistense()
 
 int main(int argc, char **argv)
 {
-    kaa_log_create(&logger, KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
 
     remove(KAA_STATUS_STORAGE);
     test_create_status();
