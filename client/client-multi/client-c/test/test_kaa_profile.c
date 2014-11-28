@@ -34,7 +34,7 @@ void test_profile_update()
     kaa_error_t err_code = kaa_create_context(&context);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
 
-    char* profile_body1 = calloc(6, sizeof(char));
+    char* profile_body1 = KAA_CALLOC(6, sizeof(char));
     memcpy(profile_body1, "dummy", 6);
 
     kaa_profile_t *profile = kaa_profile_create_basic_endpoint_profile_test();
@@ -46,20 +46,32 @@ void test_profile_update()
     kaa_profile_update_profile(context, profile);
 
     ASSERT_FALSE(kaa_profile_need_profile_resync(context));
+    KAA_FREE(profile->profile_body);
 
     profile->profile_body = "new_dummy";
     kaa_profile_update_profile(context, profile);
 
     ASSERT_TRUE(kaa_profile_need_profile_resync(context));
+    profile->profile_body = NULL;
+
+    profile->destruct(profile);
+    KAA_FREE(profile);
 
     kaa_destroy_context(context);
 }
 
-int main(int argc, char **argv)
+int test_init(void)
 {
     kaa_log_init(KAA_LOG_TRACE, NULL);
-
-    test_profile_update();
-
     return 0;
 }
+
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Profile, test_init, test_deinit,
+        KAA_TEST_CASE(profile_update, test_profile_update)
+)

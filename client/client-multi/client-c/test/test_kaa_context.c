@@ -18,8 +18,7 @@
 #include "kaa_test.h"
 #include "kaa_log.h"
 
-
-void test_create_bootstrap_manager()
+void test_create_context()
 {
     KAA_TRACE_IN;
 
@@ -40,10 +39,18 @@ void test_create_bootstrap_manager()
     kaa_destroy_context(context);
 }
 
-int main(int argc, char ** argv)
+int test_init(void)
 {
     kaa_log_init(KAA_LOG_TRACE, NULL);
-
-    test_create_bootstrap_manager();
     return 0;
 }
+
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Context, test_init, test_deinit
+        , KAA_TEST_CASE(create_context, test_create_context)
+)

@@ -163,14 +163,20 @@ void test_status_persistense()
     kaa_destroy_status(status);
 }
 
-int main(int argc, char **argv)
+int status_test_init(void)
 {
     kaa_log_init(KAA_LOG_TRACE, NULL);
-
     remove(KAA_STATUS_STORAGE);
-    test_create_status();
-    test_status_persistense();
-
     return 0;
 }
 
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Status, status_test_init, test_deinit,
+        KAA_TEST_CASE(create, test_create_status)
+        KAA_TEST_CASE(persistence, test_status_persistense)
+)

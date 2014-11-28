@@ -47,6 +47,9 @@ void test_kaa_event_compile_request()
 
     kaa_event_sync_request_t* sync_request = NULL;
     kaa_event_compile_request(context, &sync_request, 100499);
+    sync_request->destruct(sync_request);
+    KAA_FREE(sync_request);
+
     kaa_event_sequence_number_response_t seq_n_resp;
     seq_n_resp.seq_num = 0;
 
@@ -171,14 +174,24 @@ void test_kaa_add_on_event_callback()
 }
 
 #endif
-int main(int argc, char **argv)
+
+int test_init(void)
 {
     kaa_log_init(KAA_LOG_TRACE, NULL);
-
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-    test_kaa_create_event_manager();
-    test_kaa_event_compile_request();
-    test_kaa_add_on_event_callback();
-#endif
     return 0;
 }
+
+int test_deinit(void)
+{
+    kaa_log_deinit();
+    return 0;
+}
+
+KAA_SUITE_MAIN(Event, test_init, test_deinit
+#ifndef KAA_DISABLE_FEATURE_EVENTS
+        ,
+          KAA_TEST_CASE(create_event_manager, test_kaa_create_event_manager)
+          KAA_TEST_CASE(compile_event_request, test_kaa_event_compile_request)
+          KAA_TEST_CASE(add_on_event_callback, test_kaa_add_on_event_callback)
+#endif
+        )
