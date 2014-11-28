@@ -34,7 +34,8 @@ public class PriorityFlumeClientManagerTest extends FlumeClientManagerTest<Prior
         flumeNodes = PrioritizedFlumeNodes
                 .newBuilder()
                 .setFlumeNodes(
-                        Arrays.asList(new PrioritizedFlumeNode("localhost", 12121, 1))).build();
+                        Arrays.asList(new PrioritizedFlumeNode("localhost", 12121, 1),
+                                      new PrioritizedFlumeNode("localhost", 12122, 2))).build();
         configuration.setHostsBalancing(flumeNodes);
     }
 
