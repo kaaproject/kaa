@@ -44,7 +44,6 @@ void test_create_context()
 int test_init(void)
 {
     kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
-    kaa_log_init(KAA_LOG_TRACE, NULL);
     return 0;
 }
 
