@@ -38,6 +38,7 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
@@ -109,9 +110,11 @@ public class MongoDBLogAppenderTest {
         for (ServerAddress serverAddress : serverAddresses) {
             servers.add(new MongoDbServer(serverAddress.getHost(), serverAddress.getPort()));
         }
+        List<MongoDBCredential> credentials = new ArrayList<>();
         
         MongoDbConfig mongoDbConfig = MongoDbConfig.newBuilder().
                                                     setMongoServers(servers).
+                                                    setMongoCredentials(credentials).
                                                     setDbName(dbName).build();
         
         AvroByteArrayConverter<MongoDbConfig> converter = new AvroByteArrayConverter<>(MongoDbConfig.class);
