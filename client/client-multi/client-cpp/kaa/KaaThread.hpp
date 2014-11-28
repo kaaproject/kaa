@@ -22,6 +22,7 @@
 #ifdef KAA_THREADSAFE
 
 #include <mutex>
+#include <atomic>
 #include <condition_variable>
 
 #define KAA_MUTEX       std::mutex
@@ -47,6 +48,8 @@
 #define KAA_MUTEX_UNIQUE_DECLARE(name, mtx)     KAA_MUTEX_UNIQUE name(mtx)
 #define KAA_R_MUTEX_UNIQUE_DECLARE(name, mtx)   KAA_R_MUTEX_UNIQUE name(mtx)
 
+typedef std::atomic_bool bool_type;
+
 #else
 
 #define KAA_MUTEX
@@ -71,6 +74,8 @@
 #define KAA_R_MUTEX_MUTABLE_DECLARE(name)
 #define KAA_MUTEX_UNIQUE_DECLARE(name, mtx)
 #define KAA_R_MUTEX_UNIQUE_DECLARE(name, mtx)
+
+typedef bool bool_type;
 
 #endif
 

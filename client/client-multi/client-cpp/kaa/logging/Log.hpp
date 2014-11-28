@@ -81,7 +81,7 @@ void kaa_log(const ILogger & logger, LogLevel level, const boost::format& messag
     #define KAA_LOG_FATAL(message)
 #endif
 
-#if defined(KAA_MUTEX_LOGGING_ENABLED) && KAA_LOG_LEVEL > 4
+#if defined(KAA_THREADSAFE) && defined(KAA_MUTEX_LOGGING_ENABLED) && KAA_LOG_LEVEL > 4
 template <typename LockType, typename MutableObject>
 class MutexScopedLockLogger {
 public:
