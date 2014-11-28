@@ -26,7 +26,7 @@
 /*
  * Maximum size of a log message after which it gets truncated.
  */
-#define KAA_LOG_MESSAGE_LENGTH  512
+#define KAA_LOG_MESSAGE_LENGTH  256
 #define KAA_LOG_PREFIX_FORMAT   "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
 
 /**
@@ -110,30 +110,35 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
             , tp->tm_hour, tp->tm_min, tp->tm_sec
             , kaa_log_level_name[log_level], truncated_name, lineno, error_code);
 
-    if (res_len > 0) {
+    if (res_len <= 0)   // Something terrible happened
+        return;
+    consumed_len += res_len;
+
+    if (consumed_len > KAA_LOG_MESSAGE_LENGTH - 1) {
+        // Ran out of buffer space already (greedy log buffer:). Reserve space for '\n' at the end.
+        consumed_len = KAA_LOG_MESSAGE_LENGTH - 1;
+    } else {
+        // There's buffer space remaining: print log message body
+        va_list args;
+        va_start(args, format);
+        res_len = vsnprintf(this->log_buffer + consumed_len
+                , KAA_LOG_MESSAGE_LENGTH - consumed_len
+                , format
+                , args);
+        va_end(args);
+
+        if (res_len <= 0)   // Something terrible happened
+            return;
         consumed_len += res_len;
-    }
-
-    // Print log message body
-    va_list args;
-    va_start(args, format);
-    res_len = vsnprintf(this->log_buffer + consumed_len
-            , KAA_LOG_MESSAGE_LENGTH - consumed_len
-            , format
-            , args);
-    va_end(args);
-
-    if (res_len > 0) {
-        consumed_len += res_len;
-    }
-
-    if (consumed_len > 0) {
-        if (consumed_len > KAA_LOG_MESSAGE_LENGTH - 1) {    // Reserve the '\0' at the end
+        if (consumed_len > KAA_LOG_MESSAGE_LENGTH - 1) {
+            // Ran out of buffer space
             consumed_len = KAA_LOG_MESSAGE_LENGTH - 1;
         }
-        this->log_buffer[consumed_len++] = '\n';
-
-        fwrite(this->log_buffer, sizeof(char), consumed_len, this->sink);
-        fflush(this->sink);
     }
+
+    // Terminate buffer with '\n'. Null-termination is not important because the buffer length is specified in fwrite() below
+    this->log_buffer[consumed_len++] = '\n';
+
+    fwrite(this->log_buffer, sizeof(char), consumed_len, this->sink);
+    fflush(this->sink);
 }

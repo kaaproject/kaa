@@ -98,8 +98,7 @@ kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_le
  * @link KAA_LOG_INFO @endlink, @link KAA_LOG_DEBUG @endlink,
  * @link KAA_LOG_TRACE @endlink macros instead.</p>
  *
- * <p>If the length of a log message is greater than @link KAA_MAX_LOG_MESSAGE_LENGTH @endlink ,
- * the message will be truncated to match the @link KAA_MAX_LOG_MESSAGE_LENGTH @endlink .</p>
+ * <p>If the log message is longer than KAA_LOG_MESSAGE_LENGTH, it gets truncated.</p>
  *
  * @param[in] this          Pointer to a logger.
  * @param[in] source_file   The source file that the message is logged from.
@@ -108,7 +107,6 @@ kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_le
  * @param[in] error_code    The message error code.
  * @param[in] format        The format of the message to log.
  *
- * @see KAA_MAX_LOG_MESSAGE_LENGTH
  * @see kaa_log_level_t
  * @see kaa_error_t
  */
