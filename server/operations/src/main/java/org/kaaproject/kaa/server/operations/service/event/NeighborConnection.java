@@ -49,8 +49,7 @@ import com.twitter.common.thrift.ThriftFactory;
 public final class NeighborConnection {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(NeighborConnection.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NeighborConnection.class);
 
     /** Default maximum number of opened connections to neighbor */
     private static final int DEFAULT_MAX_NUMBER_OF_CONNECTION_TO_NEIGHBOR = 2;
@@ -69,7 +68,7 @@ public final class NeighborConnection {
     private ConnectionInfo connectionInfo;
 
     /** Real maximum number of opened connections to neighbor, if not set use default */
-    private int maxNumberConnection = DEFAULT_MAX_NUMBER_OF_CONNECTION_TO_NEIGHBOR;
+    private int maxNumberConnection;
 
     /** Real SOCKET_TIMEOUT on opened connection, if not set used default */
     private long socketTimeout = DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR;
@@ -102,7 +101,8 @@ public final class NeighborConnection {
      */
     public class EventWorker implements Runnable {
 
-        private final int uniqueId = rnd.nextInt(maxNumberConnection*1000);
+        private final int uniqueId = rnd.nextInt(getMaxNumberConnection() * 1000);
+        private OperationsThriftService.Iface client = getClient();
         private boolean operate = true;
         /* (non-Javadoc)
          * @see java.lang.Runnable#run()
@@ -110,14 +110,12 @@ public final class NeighborConnection {
         @Override
         public void run() {
             LinkedList<EventMessage> messages = new LinkedList<>(); //NOSONAR
-            OperationsThriftService.Iface client = null;
             while(operate) {
                 try {
                     EventMessage event = messageQueue.poll(1, TimeUnit.HOURS);
                     if (event != null) {
                         messages.push(event);
                         messageQueue.drainTo(messages);
-                        client = getClient();
                         client.sendEventMessage(messages);
                         LOG.debug("EventWorker [{}:<{}>] {} messages sent", getId(), uniqueId, messages.size());
                         messages.clear();
@@ -152,9 +150,7 @@ public final class NeighborConnection {
      * @param connectionInfo neighbor operations server ConnectionInfo
      */
     public NeighborConnection(DefaultEventService eventService, ConnectionInfo connectionInfo) {
-        this.eventService = eventService;
-        setConnectionInfo(connectionInfo);
-        init();
+        this(eventService, connectionInfo, eventService.getMaxNumberNeighborConnections(), DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR);
     }
 
     /**
@@ -170,7 +166,7 @@ public final class NeighborConnection {
         InetSocketAddress address = new InetSocketAddress(connectionInfo.getThriftHost().toString(), connectionInfo.getThriftPort());
         Set<InetSocketAddress> backends = new HashSet<InetSocketAddress>();
         backends.add(address);
-        thrift = clientFactory.withMaxConnectionsPerEndpoint(maxNumberConnection).withSocketTimeout(Amount.of(socketTimeout, Time.SECONDS)).build(backends);
+        thrift = clientFactory.withMaxConnectionsPerEndpoint(getMaxNumberConnection()).withSocketTimeout(Amount.of(socketTimeout, Time.SECONDS)).build(backends);
         initWorkers();
     }
 
@@ -265,7 +261,11 @@ public final class NeighborConnection {
      * @return the maxNumberConnection
      */
     public int getMaxNumberConnection() {
-        return maxNumberConnection;
+        if (maxNumberConnection <= 0) {
+            return DEFAULT_MAX_NUMBER_OF_CONNECTION_TO_NEIGHBOR;
+        } else {
+            return maxNumberConnection;
+        }
     }
 
     /**
