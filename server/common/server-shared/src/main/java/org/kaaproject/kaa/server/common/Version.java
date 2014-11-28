@@ -30,7 +30,7 @@ public final class Version {
     public static final String PROJECT_VERSION = "0.6.1-SNAPSHOT";
     
     /** The Constant COMMIT_HASH. */
-    public static final String COMMIT_HASH = "2";
+    public static final String COMMIT_HASH = "";
 
     /**
      * Instantiates a new version.

@@ -399,7 +399,7 @@ public class DefaultEventService implements EventService {
      * @return long
      */
     private long getEventId() {
-        return eventSequence.incrementAndGet();
+        return eventSequence.getAndIncrement();
     }
 
     /* (non-Javadoc)
