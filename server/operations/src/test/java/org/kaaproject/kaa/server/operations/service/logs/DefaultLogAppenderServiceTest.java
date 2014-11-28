@@ -102,7 +102,7 @@ public class DefaultLogAppenderServiceTest {
     }
 
     @Test
-    public void getApplicationAppendersTest() {
+    public void getApplicationAppendersTest() throws ReflectiveOperationException {
         ApplicationDto dto = new ApplicationDto();
         dto.setApplicationToken(APPLICATION_TOKEN);
         dto.setTenantId(TENANT_ID);
@@ -116,6 +116,21 @@ public class DefaultLogAppenderServiceTest {
         Assert.assertEquals(1, appenders.size());
         Assert.assertEquals(mongoDBLogAppender.getName(), appenders.get(0).getName());
     }
+    
+    @Test
+    public void getErrorApplicationAppendersTest() throws ReflectiveOperationException {
+        ApplicationDto dto = new ApplicationDto();
+        dto.setApplicationToken(APPLICATION_TOKEN);
+        dto.setTenantId(TENANT_ID);
+        dto.setLogAppendersNames(APPENDER_NAME);
+
+        when(logAppendersService.findRegisteredLogAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
+        when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
+
+        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID, APPLICATION_TOKEN);
+
+        Assert.assertEquals(0, appenders.size());
+    }
 
     @Test
     public void getApplicationAppendersWithErrorTest() {
@@ -125,7 +140,7 @@ public class DefaultLogAppenderServiceTest {
     }
 
     @Test
-    public void getApplicationAppenderTest() {
+    public void getApplicationAppenderTest() throws ReflectiveOperationException {
         ApplicationDto dto = new ApplicationDto();
         dto.setApplicationToken(APPLICATION_TOKEN);
         dto.setTenantId(TENANT_ID);
@@ -138,6 +153,21 @@ public class DefaultLogAppenderServiceTest {
 
         Assert.assertNotNull(appender);
         Assert.assertEquals(mongoDBLogAppender.getName(), appender.getName());
+    }
+    
+    @Test
+    public void getErrorApplicationAppenderTest() throws ReflectiveOperationException {
+        ApplicationDto dto = new ApplicationDto();
+        dto.setApplicationToken(APPLICATION_TOKEN);
+        dto.setTenantId(TENANT_ID);
+        dto.setLogAppendersNames(APPENDER_NAME);
+
+        when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
+        when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
+
+        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID, APPLICATION_TOKEN);
+
+        Assert.assertNull(appender);
     }
 
     @Test
