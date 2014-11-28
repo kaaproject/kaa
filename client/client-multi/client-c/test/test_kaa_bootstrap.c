@@ -136,14 +136,21 @@ void test_add_get_operation_server()
     kaa_destroy_bootstrap_manager(manager);
 }
 
-int main(int argc, char ** argv)
+int test_init(void)
 {
     kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
+    return 0;
+}
 
-    test_create_bootstrap_manager();
-    test_null_operation_server();
-    test_add_get_operation_server();
-
+int test_deinit(void)
+{
     kaa_log_destroy(logger);
     return 0;
 }
+
+KAA_SUITE_MAIN(Bootstrap, test_init, test_deinit,
+        KAA_TEST_CASE(create_bootstrap_manager, test_create_bootstrap_manager)
+        KAA_TEST_CASE(null_operations_server, test_null_operation_server)
+        KAA_TEST_CASE(add_get_operation_server, test_add_get_operation_server)
+)
+

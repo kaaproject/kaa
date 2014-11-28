@@ -52,12 +52,18 @@ void test_profile_update()
     ASSERT_EQUAL(0, memcmp(buf, pattern, SHA_1_DIGEST_LENGTH * 2));
 }
 
-int main(int argc, char **argv)
+int test_init(void)
 {
     kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
+    return 0;
+}
 
-    test_profile_update();
-
+int test_deinit(void)
+{
     kaa_log_destroy(logger);
     return 0;
 }
+
+KAA_SUITE_MAIN(Common, test_init, test_deinit
+        , KAA_TEST_CASE(calculate_hash, test_profile_update)
+)

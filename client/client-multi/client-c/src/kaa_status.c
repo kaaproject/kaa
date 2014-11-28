@@ -46,9 +46,10 @@ kaa_error_t kaa_create_status(kaa_status_t ** kaa_status_p)
     kaa_status_t * kaa_status = KAA_MALLOC(kaa_status_t);
     KAA_RETURN_IF_NULL(kaa_status, KAA_ERR_NOMEM);
 
-    kaa_status->is_registered = 0;
-    kaa_status->is_attached = 0;
+    kaa_status->is_registered = false;
+    kaa_status->is_attached = false;
     kaa_status->event_seq_n = 0;
+    kaa_status->log_bucket_id = 0;
     memset(kaa_status->endpoint_public_key_hash, 0, SHA_1_DIGEST_LENGTH);
     memset(kaa_status->profile_hash, 0, SHA_1_DIGEST_LENGTH);
     kaa_status->endpoint_access_token = NULL;

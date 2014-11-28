@@ -20,7 +20,7 @@
 
 static kaa_logger_t *logger = NULL;
 
-void test_create_bootstrap_manager()
+void test_create_context()
 {
     KAA_TRACE_IN(logger);
 
@@ -41,12 +41,19 @@ void test_create_bootstrap_manager()
     kaa_context_destroy(context);
 }
 
-int main(int argc, char ** argv)
+int test_init(void)
 {
     kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
+    kaa_log_init(KAA_LOG_TRACE, NULL);
+    return 0;
+}
 
-    test_create_bootstrap_manager();
-
+int test_deinit(void)
+{
     kaa_log_destroy(logger);
     return 0;
 }
+
+KAA_SUITE_MAIN(Context, test_init, test_deinit
+        , KAA_TEST_CASE(create_context, test_create_context)
+)

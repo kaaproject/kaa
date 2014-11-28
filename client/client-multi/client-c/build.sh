@@ -28,30 +28,16 @@ then
     help
 fi
 
-function prepare_plain_build {
-    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=0 ..; cd ..
-}
-
-function prepare_test_build {
+function prepare_build {
     mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=1 ..; cd ..
 }
 
-for cmd in $@
-do
-
-case "$cmd" in
-    build)
-    prepare_plain_build
+function build {
     cd build && make && cd ..
-    ;;
+}
 
-    install)
-    cd build && make install && cd ..
-    ;;
-
-    test)
-    prepare_test_build
-    cd build && make
+function execute_tests {
+    cd build
     FAILUTE_COUNTER=0
     FAILED_TESTS=""
     for test in test_*
@@ -71,10 +57,43 @@ case "$cmd" in
     else
         echo -e "\nTESTS WERE SUCCESSFULLY PASSED\n"
     fi
+}
+
+
+function clean {
+    if [[ -d build ]]
+    then
+        cd build
+        if [[ -f Makefile ]]
+        then 
+            make clean
+        fi
+        cd .. && rm -r build
+    fi
+}
+
+for cmd in $@
+do
+
+case "$cmd" in
+    build)
+    prepare_build
+    build
+    execute_tests
+    ;;
+
+    install)
+    cd build && make install && cd ..
+    ;;
+
+    test)
+    prepare_build
+    build
+    execute_tests
     ;;
 
     clean)
-        cd build && make clean && cd .. && rm -r build
+        clean
     ;;
     
     *)
