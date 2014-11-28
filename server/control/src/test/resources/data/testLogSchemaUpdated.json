@@ -1,0 +1,21 @@
+{
+    "type": "record",
+    "name": "BasicLog",
+    "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+    "fields": [
+        {
+            "name": "logBodyUpdated",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "newLogBodyField",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        }
+    ]
+}

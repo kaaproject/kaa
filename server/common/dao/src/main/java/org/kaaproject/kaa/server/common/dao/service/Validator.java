@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 
 import org.apache.commons.lang.StringUtils;
-import org.bson.types.ObjectId;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.slf4j.Logger;
@@ -82,11 +81,7 @@ public class Validator {
     public static boolean isValidObject(HasId id) {
         boolean correct = false;
         if (id != null) {
-            if (StringUtils.isNotEmpty(id.getId()) && !ObjectId.isValid(id.getId())) {
-                correct = false;
-            } else {
-                correct = true;
-            }
+            correct = true;
         }
         return correct;
     }

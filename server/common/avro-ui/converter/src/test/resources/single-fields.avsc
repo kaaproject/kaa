@@ -1,0 +1,19 @@
+{
+    "namespace": "org.kaaproject.kaa.server.common.avro.ui.test",
+    "type": "record",
+    "name": "Test",
+    "fields": [
+            {"name": "testString", "displayName": "Test string field", "maxLength": 1000, "default": "default string", "type": "string"},
+            {"name": "testInteger", "displayName": "Test integer field", "maxLength": 1000, "default": 20, "type": "int"},
+            {"name": "testLong", "displayName": "Test long field", "maxLength": 1000, "default": 30, "type": "long"},
+            {"name": "testBoolean", "displayName": "Test boolean field", "default": true, "type": "boolean"},
+            {"name": "testEnum", "displayName": "Test enum field", "default": "VALUE_TWO", "displayNames" : ["Value One", "Value Two", "Value Three"],
+                    "type": {
+                         "namespace": "org.kaaproject.kaa.server.common.avro.ui.test",
+                         "type": "enum",
+                         "name": "TestEnum",
+                         "symbols" : ["VALUE_ONE", "VALUE_TWO", "VALUE_THREE"]
+                    }
+            }                            
+    ]
+}

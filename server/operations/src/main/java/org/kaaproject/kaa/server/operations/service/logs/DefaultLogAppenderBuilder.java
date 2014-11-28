@@ -19,8 +19,6 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,33 +26,32 @@ public class DefaultLogAppenderBuilder implements LogAppenderBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogAppenderBuilder.class);
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     public DefaultLogAppenderBuilder() {
+        super();
     }
 
     @Override
-    public LogAppender getAppender(LogAppenderDto appenderConfig) {
-        LogAppender logAppender = null;
-        if (appenderConfig != null) {
-            try {
-                @SuppressWarnings("unchecked")
-                Class<LogAppender> appenderClass = (Class<LogAppender>) Class.forName(appenderConfig.getAppenderClassName());
-                logAppender = appenderClass.newInstance();
-            } catch (ClassNotFoundException e) {
-                LOG.error("Unable to find custom appender class " + appenderConfig.getAppenderClassName(), e);
-            } catch (InstantiationException | IllegalAccessException e) {
-                LOG.error("Unable to instantiate custom appender from class " + appenderConfig.getAppenderClassName(), e);
-            } 
+    public LogAppender getAppender(LogAppenderDto appenderConfig) throws ReflectiveOperationException {
+        if (appenderConfig == null) {
+            throw new IllegalArgumentException("appender config can't be null");
         }
-        if (logAppender != null) {
+        try {
+            @SuppressWarnings("unchecked")
+            Class<LogAppender> appenderClass = (Class<LogAppender>) Class
+                    .forName(appenderConfig.getAppenderClassName());
+            LogAppender logAppender = appenderClass.newInstance();
             LOG.debug("Init log appender [{}] with appender configuration {[]}.", logAppender, appenderConfig);
             logAppender.setName(appenderConfig.getName());
             logAppender.setAppenderId(appenderConfig.getId());
             logAppender.setApplicationToken(appenderConfig.getApplicationToken());
             logAppender.init(appenderConfig);
+            return logAppender;
+        } catch (ClassNotFoundException e) {
+            LOG.error("Unable to find custom appender class {}", appenderConfig.getAppenderClassName());
+            throw e;
+        } catch (InstantiationException | IllegalAccessException e) {
+            LOG.error("Unable to instantiate custom appender from class {}", appenderConfig.getAppenderClassName());
+            throw e;
         }
-        return logAppender;
     }
 }

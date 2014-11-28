@@ -81,7 +81,6 @@ public class LogSchemaServiceImpl implements LogSchemaService {
 
     @Override
     public LogSchemaDto saveLogSchema(LogSchemaDto logSchemaDto) {
-        validateLogSchemaObject(logSchemaDto);
         String id = logSchemaDto.getId();
         if (StringUtils.isBlank(id)) {
             LogSchema logSchema = logSchemaDao.findLatestLogSchemaByAppId(logSchemaDto.getApplicationId());
@@ -125,10 +124,4 @@ public class LogSchemaServiceImpl implements LogSchemaService {
         LOG.debug("Removed log schema [{}]", id);
     }
 
-    private void validateLogSchemaObject(LogSchemaDto dto) {
-        validateObject(dto, "Invalid log schema object");
-        if (isBlank(dto.getApplicationId()) && !isValidId(dto.getApplicationId())) {
-            throw new IncorrectParameterException("Invalid log schema object. Check applicationId.");
-        }
-    }
 }
