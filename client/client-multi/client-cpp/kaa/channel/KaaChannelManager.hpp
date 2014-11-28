@@ -21,6 +21,7 @@
 #include <set>
 #include <list>
 
+#include "kaa/KaaThread.hpp"
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/common/TransportType.hpp"
@@ -53,8 +54,7 @@ public:
     virtual void clearChannelList();
 
     virtual IServerInfoPtr getPingServer() {
-        //FIXME: propose more proper way to get current ping-able server
-        return (*lastServers_.begin()).second;
+        return (*lastBSServers_.begin()).second;
     }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker);
@@ -79,15 +79,20 @@ private:
 private:
     IBootstrapManager&   bootstrapManager_;
 
-    bool isShutdown_;
-    bool isPaused_;
+    bool_type isShutdown_;
+    bool_type isPaused_;
 
     std::map<ChannelType, std::list<IServerInfoPtr>> bootstrapServers_;
 
-    std::map<ChannelType, IServerInfoPtr>    lastServers_;
+    KAA_MUTEX_DECLARE(lastOpsServersGuard_);
+    std::map<ChannelType, IServerInfoPtr>    lastOpsServers_;
+
     std::map<ChannelType, IServerInfoPtr>    lastBSServers_;
 
+    KAA_MUTEX_DECLARE(channelGuard_);
     std::set<IDataChannelPtr>                   channels_;
+
+    KAA_R_MUTEX_DECLARE(mappedChannelGuard_);
     std::map<TransportType, IDataChannelPtr>    mappedChannels_;
 
     ConnectivityCheckerPtr connectivityChecker_;

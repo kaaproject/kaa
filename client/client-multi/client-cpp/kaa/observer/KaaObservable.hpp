@@ -20,8 +20,8 @@
 #include <functional>
 #include <unordered_map>
 #include <unordered_set>
-#include <atomic>
 #include <memory>
+
 #include "kaa/KaaThread.hpp"
 
 namespace kaa {
@@ -90,12 +90,6 @@ public:
     }
 
 private:
-#ifdef KAA_THREADSAFE
-    typedef std::atomic_bool bool_type;
-#else
-    typedef bool bool_type;
-#endif
-
     class CallbackWrapper
     {
     public:
