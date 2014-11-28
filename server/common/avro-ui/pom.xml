@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.kaaproject.kaa.server</groupId>
     <artifactId>common</artifactId>
-    <version>0.6.1-SNAPSHOT</version>
+    <version>0.6.1</version>
   </parent>
 
   <artifactId>avro-ui</artifactId>
