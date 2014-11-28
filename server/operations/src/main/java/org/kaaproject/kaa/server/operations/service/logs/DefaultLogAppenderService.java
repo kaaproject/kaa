@@ -88,5 +88,4 @@ public class DefaultLogAppenderService implements LogAppenderService {
         }
         return logSchema;
     }
-
 }

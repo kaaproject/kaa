@@ -25,5 +25,5 @@ public interface LogAppenderBuilder {
      * @param appenderConfig
      * @return
      */
-    LogAppender getAppender(LogAppenderDto appenderConfig);
+    LogAppender getAppender(LogAppenderDto appenderConfig) throws ReflectiveOperationException;
 }
