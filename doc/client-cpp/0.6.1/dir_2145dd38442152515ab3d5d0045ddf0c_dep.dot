@@ -1,0 +1,10 @@
+digraph "/var/lib/jenkins/workspace/kaa_v0.6.1/client/client-multi/client-cpp/kaa/configuration/delta/manager" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_f6d10d372c0bfc1420a7a5dec99b6cc3 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="delta" fontname="FreeSans", fontsize="10", URL="dir_f6d10d372c0bfc1420a7a5dec99b6cc3.html"]
+  dir_2145dd38442152515ab3d5d0045ddf0c [shape=box, label="manager", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_2145dd38442152515ab3d5d0045ddf0c.html"];
+  }
+}

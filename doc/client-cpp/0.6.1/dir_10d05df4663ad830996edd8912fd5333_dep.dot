@@ -1,0 +1,12 @@
+digraph "/var/lib/jenkins/workspace/kaa_v0.6.1/client/client-multi/client-cpp/kaa/channel/connectivity" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_d9d7199942c2f288f00a32468f8a9f83 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="channel" fontname="FreeSans", fontsize="10", URL="dir_d9d7199942c2f288f00a32468f8a9f83.html"]
+  dir_10d05df4663ad830996edd8912fd5333 [shape=box, label="connectivity", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_10d05df4663ad830996edd8912fd5333.html"];
+  }
+  dir_bd1504183ab89e977c6cde985ca80854 [shape=box label="server" URL="dir_bd1504183ab89e977c6cde985ca80854.html"];
+  dir_10d05df4663ad830996edd8912fd5333->dir_bd1504183ab89e977c6cde985ca80854 [headlabel="1", labeldistance=1.5 headhref="dir_000011_000013.html"];
+}

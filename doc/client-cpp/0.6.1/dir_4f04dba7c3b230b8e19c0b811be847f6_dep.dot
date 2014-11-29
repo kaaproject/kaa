@@ -1,0 +1,15 @@
+digraph "/var/lib/jenkins/workspace/kaa_v0.6.1/client/client-multi/client-cpp/kaa/transact" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_2187fc7953f42afcb142bb157d033f37 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_2187fc7953f42afcb142bb157d033f37.html"]
+  dir_4f04dba7c3b230b8e19c0b811be847f6 [shape=box, label="transact", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_4f04dba7c3b230b8e19c0b811be847f6.html"];
+  }
+  dir_e0f3ae09ffbe6da389e47381d4865adb [shape=box label="logging" URL="dir_e0f3ae09ffbe6da389e47381d4865adb.html"];
+  dir_cf70ad735266259c1e40a9de56cc6362 [shape=box label="common" color="red" URL="dir_cf70ad735266259c1e40a9de56cc6362.html"];
+  dir_e0f3ae09ffbe6da389e47381d4865adb->dir_cf70ad735266259c1e40a9de56cc6362 [headlabel="2", labeldistance=1.5 headhref="dir_000028_000015.html"];
+  dir_4f04dba7c3b230b8e19c0b811be847f6->dir_e0f3ae09ffbe6da389e47381d4865adb [headlabel="1", labeldistance=1.5 headhref="dir_000035_000028.html"];
+  dir_4f04dba7c3b230b8e19c0b811be847f6->dir_cf70ad735266259c1e40a9de56cc6362 [headlabel="1", labeldistance=1.5 headhref="dir_000035_000015.html"];
+}

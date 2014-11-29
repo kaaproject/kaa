@@ -1,0 +1,48 @@
+digraph "/var/lib/jenkins/workspace/kaa_v0.6.1/client/client-multi/client-cpp/kaa" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_c30091675b3cfdb725c5099cd7d1419e {
+    graph [ bgcolor="#ddddee", pencolor="black", label="client-cpp" fontname="FreeSans", fontsize="10", URL="dir_c30091675b3cfdb725c5099cd7d1419e.html"]
+  subgraph clusterdir_2187fc7953f42afcb142bb157d033f37 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_2187fc7953f42afcb142bb157d033f37.html"];
+    dir_2187fc7953f42afcb142bb157d033f37 [shape=plaintext label="kaa"];
+    dir_d2fd957c124d11c887434342ceebd04f [shape=box label="bootstrap" color="black" fillcolor="white" style="filled" URL="dir_d2fd957c124d11c887434342ceebd04f.html"];
+    dir_d9d7199942c2f288f00a32468f8a9f83 [shape=box label="channel" color="red" fillcolor="white" style="filled" URL="dir_d9d7199942c2f288f00a32468f8a9f83.html"];
+    dir_cf70ad735266259c1e40a9de56cc6362 [shape=box label="common" color="red" fillcolor="white" style="filled" URL="dir_cf70ad735266259c1e40a9de56cc6362.html"];
+    dir_e7fd2bad5fdf4320a4fa1ff45d5a0aa5 [shape=box label="configuration" color="red" fillcolor="white" style="filled" URL="dir_e7fd2bad5fdf4320a4fa1ff45d5a0aa5.html"];
+    dir_d6ef1d7878d656ee2d8a6ea3671b2af1 [shape=box label="event" color="red" fillcolor="white" style="filled" URL="dir_d6ef1d7878d656ee2d8a6ea3671b2af1.html"];
+    dir_4a246493f402881a87418376bc0be62e [shape=box label="http" color="black" fillcolor="white" style="filled" URL="dir_4a246493f402881a87418376bc0be62e.html"];
+    dir_ff407ee8c0877073a36709db856aa839 [shape=box label="kaatcp" color="black" fillcolor="white" style="filled" URL="dir_ff407ee8c0877073a36709db856aa839.html"];
+    dir_1ebeb71f5a70833e8efef4b58dcd4c68 [shape=box label="log" color="black" fillcolor="white" style="filled" URL="dir_1ebeb71f5a70833e8efef4b58dcd4c68.html"];
+    dir_e0f3ae09ffbe6da389e47381d4865adb [shape=box label="logging" color="black" fillcolor="white" style="filled" URL="dir_e0f3ae09ffbe6da389e47381d4865adb.html"];
+    dir_5138cb080ded5147801620838fb2519d [shape=box label="notification" color="black" fillcolor="white" style="filled" URL="dir_5138cb080ded5147801620838fb2519d.html"];
+    dir_91af711ec35180085fbde428d2426781 [shape=box label="observer" color="black" fillcolor="white" style="filled" URL="dir_91af711ec35180085fbde428d2426781.html"];
+    dir_aaaace2cc6e7b5d38013998286af922b [shape=box label="profile" color="black" fillcolor="white" style="filled" URL="dir_aaaace2cc6e7b5d38013998286af922b.html"];
+    dir_be5aafd80c828951e4aba6e82d3883c7 [shape=box label="schema" color="red" fillcolor="white" style="filled" URL="dir_be5aafd80c828951e4aba6e82d3883c7.html"];
+    dir_601f49bd8e4f68c77460c04403aa0a55 [shape=box label="security" color="black" fillcolor="white" style="filled" URL="dir_601f49bd8e4f68c77460c04403aa0a55.html"];
+    dir_4f04dba7c3b230b8e19c0b811be847f6 [shape=box label="transact" color="black" fillcolor="white" style="filled" URL="dir_4f04dba7c3b230b8e19c0b811be847f6.html"];
+    dir_e5ad01cfef3392176bd0acbf78954a02 [shape=box label="transport" color="black" fillcolor="white" style="filled" URL="dir_e5ad01cfef3392176bd0acbf78954a02.html"];
+  }
+  }
+  dir_e0f3ae09ffbe6da389e47381d4865adb->dir_cf70ad735266259c1e40a9de56cc6362 [headlabel="2", labeldistance=1.5 headhref="dir_000028_000015.html"];
+  dir_ff407ee8c0877073a36709db856aa839->dir_cf70ad735266259c1e40a9de56cc6362 [headlabel="1", labeldistance=1.5 headhref="dir_000026_000015.html"];
+  dir_2187fc7953f42afcb142bb157d033f37->dir_5138cb080ded5147801620838fb2519d [headlabel="1", labeldistance=1.5 headhref="dir_000008_000029.html"];
+  dir_2187fc7953f42afcb142bb157d033f37->dir_601f49bd8e4f68c77460c04403aa0a55 [headlabel="1", labeldistance=1.5 headhref="dir_000008_000034.html"];
+  dir_2187fc7953f42afcb142bb157d033f37->dir_d6ef1d7878d656ee2d8a6ea3671b2af1 [headlabel="2", labeldistance=1.5 headhref="dir_000008_000023.html"];
+  dir_2187fc7953f42afcb142bb157d033f37->dir_be5aafd80c828951e4aba6e82d3883c7 [headlabel="2", labeldistance=1.5 headhref="dir_000008_000032.html"];
+  dir_2187fc7953f42afcb142bb157d033f37->dir_1ebeb71f5a70833e8efef4b58dcd4c68 [headlabel="1", labeldistance=1.5 headhref="dir_000008_000027.html"];
+  dir_2187fc7953f42afcb142bb157d033f37->dir_aaaace2cc6e7b5d38013998286af922b [headlabel="2", labeldistance=1.5 headhref="dir_000008_000031.html"];
+  dir_2187fc7953f42afcb142bb157d033f37->dir_e7fd2bad5fdf4320a4fa1ff45d5a0aa5 [headlabel="4", labeldistance=1.5 headhref="dir_000008_000018.html"];
+  dir_e5ad01cfef3392176bd0acbf78954a02->dir_cf70ad735266259c1e40a9de56cc6362 [headlabel="1", labeldistance=1.5 headhref="dir_000036_000015.html"];
+  dir_4f04dba7c3b230b8e19c0b811be847f6->dir_e0f3ae09ffbe6da389e47381d4865adb [headlabel="1", labeldistance=1.5 headhref="dir_000035_000028.html"];
+  dir_4f04dba7c3b230b8e19c0b811be847f6->dir_cf70ad735266259c1e40a9de56cc6362 [headlabel="1", labeldistance=1.5 headhref="dir_000035_000015.html"];
+  dir_aaaace2cc6e7b5d38013998286af922b->dir_cf70ad735266259c1e40a9de56cc6362 [headlabel="6", labeldistance=1.5 headhref="dir_000031_000015.html"];
+  dir_aaaace2cc6e7b5d38013998286af922b->dir_d9d7199942c2f288f00a32468f8a9f83 [headlabel="3", labeldistance=1.5 headhref="dir_000031_000010.html"];
+  dir_d2fd957c124d11c887434342ceebd04f->dir_4a246493f402881a87418376bc0be62e [headlabel="1", labeldistance=1.5 headhref="dir_000009_000025.html"];
+  dir_d2fd957c124d11c887434342ceebd04f->dir_d9d7199942c2f288f00a32468f8a9f83 [headlabel="2", labeldistance=1.5 headhref="dir_000009_000010.html"];
+  dir_d9d7199942c2f288f00a32468f8a9f83->dir_cf70ad735266259c1e40a9de56cc6362 [headlabel="8", labeldistance=1.5 headhref="dir_000010_000015.html"];
+  dir_d9d7199942c2f288f00a32468f8a9f83->dir_4a246493f402881a87418376bc0be62e [headlabel="1", labeldistance=1.5 headhref="dir_000010_000025.html"];
+  dir_d9d7199942c2f288f00a32468f8a9f83->dir_d2fd957c124d11c887434342ceebd04f [headlabel="1", labeldistance=1.5 headhref="dir_000010_000009.html"];
+}
