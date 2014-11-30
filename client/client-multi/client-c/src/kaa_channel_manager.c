@@ -136,7 +136,7 @@ kaa_error_t kaa_channel_manager_set_sync_handler(kaa_context_t *context, kaa_syn
 kaa_error_t kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa_sync_all_t handler)
 {
     KAA_RETURN_IF_NULL(context, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NULL(context->channel_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->channel_manager, KAA_ERR_NOT_INITIALIZED);
 
     context->channel_manager->on_sync_all = handler;
     return KAA_ERR_NONE;

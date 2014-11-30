@@ -85,7 +85,7 @@ kaa_error_t kaa_init_log_collector(
                             , log_upload_decision_fn need_upl
                            )
 {
-    KAA_RETURN_IF_NULL(collector, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(collector, KAA_ERR_NOT_INITIALIZED);
 
     if (storage == NULL || status == NULL || need_upl == NULL || properties == NULL) {
         return KAA_ERR_BADPARAM;
@@ -128,7 +128,7 @@ kaa_error_t kaa_add_log_record(void *ctx, kaa_user_log_record_t *entry)
     KAA_RETURN_IF_NULL2(ctx, entry, KAA_ERR_BADPARAM);
 
     kaa_context_t *context = (kaa_context_t *)ctx;
-    KAA_RETURN_IF_NULL(context->log_collector, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->log_collector, KAA_ERR_NOT_INITIALIZED);
 
     kaa_log_collector_t * collector = context->log_collector;
     if (collector->log_storage && collector->is_upload_needed_fn && collector->log_storage_status) {
@@ -167,11 +167,11 @@ static void noop(void *p) {
 
 kaa_error_t kaa_logging_compile_request(void *ctx, kaa_log_sync_request_t ** request_p)
 {
-    KAA_RETURN_IF_NULL2(ctx, request_p, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL2(ctx, request_p, KAA_ERR_NOT_INITIALIZED);
     kaa_log_sync_request_t * request = NULL;
     kaa_context_t *context = (kaa_context_t *)ctx;
 
-    KAA_RETURN_IF_NULL(context->log_collector, KAA_ERR_NOT_INITED)
+    KAA_RETURN_IF_NULL(context->log_collector, KAA_ERR_NOT_INITIALIZED)
     kaa_log_collector_t *collector = context->log_collector;
     if (collector->log_storage) {
         kaa_uuid_t uuid;
@@ -218,7 +218,7 @@ kaa_error_t kaa_logging_handle_sync(void *ctx, kaa_log_sync_response_t *response
     KAA_RETURN_IF_NULL2(ctx, response, KAA_ERR_BADPARAM);
 
     kaa_context_t *context = (kaa_context_t *)ctx;
-    KAA_RETURN_IF_NULL(context->log_collector, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->log_collector, KAA_ERR_NOT_INITIALIZED);
     kaa_log_collector_t *collector = context->log_collector;
 
     if (collector->log_storage != NULL) {

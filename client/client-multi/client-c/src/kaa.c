@@ -33,7 +33,7 @@ static bool            kaa_initialized = false;
 #endif
 #define KAA_CHECK_INITED \
     if (!kaa_initialized) { \
-        return KAA_ERR_NOT_INITED; \
+        return KAA_ERR_NOT_INITIALIZED; \
     }
 
 
@@ -150,7 +150,7 @@ kaa_error_t kaa_attach_to_user(const char *user_external_id, const char * user_a
 kaa_error_t kaa_send_event(const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size)
 {
     KAA_CHECK_INITED
-    KAA_RETURN_IF_NULL(kaa_context_->status, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(kaa_context_->status, KAA_ERR_NOT_INITIALIZED);
 
     if (kaa_is_endpoint_attached_to_user(kaa_context_->status)) {
         return kaa_add_event(

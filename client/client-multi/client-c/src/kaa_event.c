@@ -240,13 +240,13 @@ void kaa_destroy_event_manager(kaa_event_manager_t *event_manager)
 
 kaa_error_t kaa_add_event(void *ctx, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size)
 {
-    KAA_RETURN_IF_NULL(ctx, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(ctx, KAA_ERR_NOT_INITIALIZED);
     if (fqn == NULL || fqn_length == 0) {
         return KAA_ERR_EVENT_BAD_FQN;
     }
     kaa_context_t * context = (kaa_context_t*)ctx;
 
-    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITIALIZED);
     kaa_event_manager_t * event_manager = context->event_manager;
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -271,7 +271,7 @@ kaa_error_t kaa_event_compile_request(void *ctx, kaa_event_sync_request_t** requ
     KAA_RETURN_IF_NULL2(ctx, request_p, KAA_ERR_BADPARAM);
     kaa_context_t * context = (kaa_context_t *)ctx;
 
-    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITIALIZED);
     kaa_event_manager_t * event_manager = context->event_manager;
 
     kaa_event_sync_request_t* request = kaa_create_event_sync_request();
@@ -365,10 +365,10 @@ kaa_error_t kaa_event_compile_request(void *ctx, kaa_event_sync_request_t** requ
 
 kaa_error_t kaa_event_handle_sync(void *ctx, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events)
 {
-    KAA_RETURN_IF_NULL(ctx, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(ctx, KAA_ERR_NOT_INITIALIZED);
     kaa_context_t * context = (kaa_context_t *)ctx;
 
-    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITIALIZED);
     kaa_event_manager_t * event_manager = context->event_manager;
 
     if (event_manager->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS
@@ -445,10 +445,10 @@ kaa_error_t kaa_add_on_event_callback(kaa_event_manager_t *event_manager, const 
 
 kaa_error_t kaa_event_create_transaction(void *ctx, kaa_trx_id *trx_id)
 {
-    KAA_RETURN_IF_NULL2(ctx, trx_id, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL2(ctx, trx_id, KAA_ERR_NOT_INITIALIZED);
     kaa_context_t * context = (kaa_context_t *)ctx;
 
-    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITIALIZED);
     kaa_event_manager_t * event_manager = context->event_manager;
 
     kaa_trx_id new_id = ++trx_counter;
@@ -468,7 +468,7 @@ kaa_error_t kaa_event_finish_transaction(void *ctx, kaa_trx_id trx_id)
     KAA_RETURN_IF_NULL(ctx, KAA_ERR_BADPARAM);
     kaa_context_t * context = (kaa_context_t *)ctx;
 
-    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITIALIZED);
     kaa_event_manager_t * event_manager = context->event_manager;
     if (event_manager->transactions != NULL) {
         trx_search_arg0 = trx_id;
@@ -497,7 +497,7 @@ kaa_error_t kaa_event_remove_transaction(void *ctx, kaa_trx_id trx_id)
     KAA_RETURN_IF_NULL(ctx, KAA_ERR_BADPARAM);
     kaa_context_t * context = (kaa_context_t *)ctx;
 
-    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITIALIZED);
     kaa_event_manager_t * event_manager = context->event_manager;
     if (event_manager->transactions != NULL) {
         trx_search_arg0 = trx_id;
@@ -512,14 +512,14 @@ kaa_error_t kaa_event_remove_transaction(void *ctx, kaa_trx_id trx_id)
 
 kaa_error_t kaa_add_event_to_transaction(void *ctx, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size)
 {
-    KAA_RETURN_IF_NULL(ctx, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(ctx, KAA_ERR_NOT_INITIALIZED);
     if (fqn == NULL || fqn_length == 0) {
         return KAA_ERR_EVENT_BAD_FQN;
     }
 
     kaa_context_t * context = (kaa_context_t *)ctx;
 
-    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->event_manager, KAA_ERR_NOT_INITIALIZED);
     kaa_event_manager_t * event_manager = context->event_manager;
     if (event_manager->transactions != NULL) {
         trx_search_arg0 = trx_id;

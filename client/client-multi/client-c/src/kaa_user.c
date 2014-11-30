@@ -105,7 +105,7 @@ kaa_error_t kaa_user_attach_to_user(void *ctx, const char *ext_id, const char *a
     KAA_RETURN_IF_NULL(ctx, KAA_ERR_BADPARAM);
 
     kaa_context_t * context = (kaa_context_t *)ctx;
-    KAA_RETURN_IF_NULL(context->user_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->user_manager, KAA_ERR_NOT_INITIALIZED);
 
     kaa_user_manager_t * user_manager = context->user_manager;
     if (user_manager->is_waiting_user_attach_response) {
@@ -128,7 +128,7 @@ kaa_error_t kaa_set_attachment_listeners(void *ctx, kaa_attachment_status_listen
     KAA_RETURN_IF_NULL(ctx, KAA_ERR_BADPARAM);
 
     kaa_context_t * context = (kaa_context_t *)ctx;
-    KAA_RETURN_IF_NULL2(context->user_manager, context->status, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL2(context->user_manager, context->status, KAA_ERR_NOT_INITIALIZED);
 
     kaa_user_manager_t *user_manager = context->user_manager;
     user_manager->attachment_listeners = listeners;
@@ -145,7 +145,7 @@ kaa_error_t kaa_user_compile_request(void *ctx, kaa_user_sync_request_t** reques
     *request_p = NULL;
     kaa_context_t * context = (kaa_context_t *)ctx;
 
-    KAA_RETURN_IF_NULL(context->user_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL(context->user_manager, KAA_ERR_NOT_INITIALIZED);
     kaa_user_manager_t * user_manager = context->user_manager;
 
     kaa_user_sync_request_t *request = kaa_create_user_sync_request();
@@ -203,7 +203,7 @@ kaa_error_t kaa_user_handle_sync(void *ctx, kaa_user_attach_response_t * usr_att
     }
 
     kaa_context_t * context = (kaa_context_t *)ctx;
-    KAA_RETURN_IF_NULL2(context->status, context->user_manager, KAA_ERR_NOT_INITED);
+    KAA_RETURN_IF_NULL2(context->status, context->user_manager, KAA_ERR_NOT_INITIALIZED);
 
     kaa_status_t * status = context->status;
     kaa_user_manager_t * manager = context->user_manager;
