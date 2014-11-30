@@ -3070,7 +3070,7 @@ public class ControlApiCommandProcessor {
             try {
                 String appId = line.getOptionValue("a");
                 List<? extends HasId> dtos = ThriftDtoConverter.<NotificationDto> toDtoList(client.getLogSchemasByApplicationId(appId));
-                writer.println("List of LogSchema:");
+                writer.println("List of Log Schemas:");
                 writer.println();
                 for (HasId dto : dtos) {
                     writer.println(dto);

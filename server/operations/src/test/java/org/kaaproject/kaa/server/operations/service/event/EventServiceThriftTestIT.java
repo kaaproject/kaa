@@ -229,6 +229,7 @@ public class EventServiceThriftTestIT {
             this.thriftHost = thriftHost;
             this.thriftPort = thriftPort;
             DefaultEventService eventServiceInst = new DefaultEventService();
+            eventServiceInst.initBean();
             OperationsServerConfig config = new OperationsServerConfig();
             ReflectionTestUtils.setField(eventServiceInst, "operationsServerConfig", config);
 
@@ -355,7 +356,7 @@ public class EventServiceThriftTestIT {
         }
 
         /**
-         * @param b
+         * @param onEvent
          */
         public void setOnEvent(boolean onEvent) {
             this.onEvent  = onEvent;

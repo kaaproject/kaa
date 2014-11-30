@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -41,7 +42,10 @@ import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 /**
  * EventService interface realization Class.
@@ -55,11 +59,13 @@ import org.springframework.stereotype.Service;
 public class DefaultEventService implements EventService {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DefaultEventService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultEventService.class);
+
+    /** The Constant RND. */
+    private static final Random RND = new Random();
 
     /** neigbors collector */
-    private final Neighbors neighbors;
+    private Neighbors neighbors;
 
     private OperationsNode operationsNode;
 
@@ -68,16 +74,17 @@ public class DefaultEventService implements EventService {
     private OperationsServerConfig operationsServerConfig;
 
     /** Listeners list which registered to receive event from thrift server. */
-    private final List<EventServiceListener> listeners;
+    private List<EventServiceListener> listeners;
 
     /** event sequence, used to mark every EventMessage */
-    private static long eventSequence = 0;
+    private volatile static AtomicLong eventSequence = new AtomicLong();
+
+    @Value("#{properties[max_number_neighbor_connections]}")
+    private int maxNumberNeighborConnections;
 
     /** Used as random sequence shift, to achieve unique event message id across all operations servers */
     static {
-        Random rnd = new Random();
-        eventSequence = rnd.nextInt(1000000);
-        eventSequence = eventSequence * 1000000000;
+        eventSequence.set(RND.nextInt(1000000) * 1000000000);
     }
 
     /** AVRO event converter */
@@ -93,6 +100,11 @@ public class DefaultEventService implements EventService {
      * Default constructor.
      */
     public DefaultEventService() {
+    }
+
+    @PostConstruct
+    public void initBean() {
+        LOG.info("Init default event service.");
         listeners = Collections.synchronizedList(new LinkedList<EventServiceListener>());
         neighbors = new Neighbors(this);
     }
@@ -386,8 +398,8 @@ public class DefaultEventService implements EventService {
      * Next event sequence getter.
      * @return long
      */
-    private synchronized long getEventId() {
-        return eventSequence++;
+    private long getEventId() {
+        return eventSequence.getAndIncrement();
     }
 
     /* (non-Javadoc)
@@ -457,7 +469,7 @@ public class DefaultEventService implements EventService {
 
     /**
      * Transform UserRouteInfo message from thrift service into UserRouteInfo and push it to EventService listeners.
-     * @param UserRouteInfo
+     * @param userRoute UserRouteInfo object
      */
     private void onUserRouteInfo(UserRouteInfo userRoute) {
         LOG.debug("eventUserRouteInfo .... User routes updates in {} listeners", listeners.size());
@@ -522,4 +534,11 @@ public class DefaultEventService implements EventService {
         return operationsNode;
     }
 
+    public int getMaxNumberNeighborConnections() {
+        return maxNumberNeighborConnections;
+    }
+
+    public void setMaxNumberNeighborConnections(int maxNumberNeighborConnections) {
+        this.maxNumberNeighborConnections = maxNumberNeighborConnections;
+    }
 }

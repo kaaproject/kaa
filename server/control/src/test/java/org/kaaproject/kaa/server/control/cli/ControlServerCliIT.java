@@ -589,6 +589,27 @@ public class ControlServerCliIT {
         listNotificationSchemasCli(cli, applicationId, false);
         listNotificationSchemasCli(cli, applicationId, true);
     }
+    
+    /**
+     * Test execute log schema commands from cli.
+     *
+     * @throws TException             the t exception
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
+    @Test
+    public void testExecuteLogSchemaCommandFromCli() throws TException, UnsupportedEncodingException {
+        controlClientConnect();
+        ControlApiCliThriftClient cli = new ControlApiCliThriftClient();
+        String applicationId = editApplicationCli(cli, null, "testApplication", null, "testTenant", false);
+        String logSchemaId = editLogSchemaCli(cli, null, applicationId, null, null, true);
+        logSchemaId = editLogSchemaCli(cli, null, applicationId, null, null, false);
+        Assert.assertFalse(strIsEmpty(logSchemaId));
+        editLogSchemaCli(cli, logSchemaId, applicationId, null, null, false);
+        editLogSchemaCli(cli, FAKE_SQL_ID, applicationId, null, null, false);
+        showEntityCli(cli, logSchemaId, EntityType.LOG_SCHEMA);
+        listLogSchemasCli(cli, applicationId, false);
+        listLogSchemasCli(cli, applicationId, true);
+    }
 
     /**
      * Test execute notification commands from cli.
@@ -1220,6 +1241,53 @@ public class ControlServerCliIT {
             return profileSchemaId;
         }
     }
+    
+    /**
+     * Edits/Creates the log schema from cli.
+     *
+     * @param cli the control cli client
+     * @param logSchemaId the log schema id (if null new log schema will be created)
+     * @param applicationId the application Id
+     * @param createOut create output file with object id
+     * @return the logSchemaId
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
+    private String editLogSchemaCli(ControlApiCliThriftClient cli, String logSchemaId, String applicationId, String applicationName, String tenantName, boolean createOut) throws UnsupportedEncodingException {
+        cliOut.reset();
+        boolean create = strIsEmpty(logSchemaId);
+        int result = -1;
+        if (create) {
+            if (strIsEmpty(applicationId)) {
+                applicationId = editApplicationCli(cli, null, applicationId, null, tenantName, false);
+                cliOut.reset();
+            }
+            String cmdLine = "createLogSchema -f " + getTestFile("testLogSchema.json") + " -a " + applicationId;
+            if (createOut) {
+                cmdLine += " -o dummy.out";
+            }
+            else {
+                cmdLine += " -vo dummy.ver";
+            }
+            result = cli.processLine(cmdLine);
+        }
+        else {
+            result = cli.processLine("editLogSchema -f " + getTestFile("testLogSchemaUpdated.json") + " -i " + logSchemaId);
+        }
+        Assert.assertEquals(result, 0);
+        String output = cliOut.toString("UTF-8");
+        if (create) {
+            String id = output.trim().substring("Created new Log Schema with id: ".length()).trim();
+            return id;
+        }
+        else if (logSchemaId.equals(FAKE_SQL_ID)) {
+            Assert.assertTrue(output.trim().startsWith("Log Schema with id " + FAKE_SQL_ID + " not found!"));
+            return logSchemaId;
+        }
+        else {
+            Assert.assertTrue(output.trim().startsWith("Log Schema updated."));
+            return logSchemaId;
+        }
+    }
 
     /**
      * Lists the notification schemas from cli.
@@ -1279,6 +1347,26 @@ public class ControlServerCliIT {
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
         Assert.assertTrue(output.trim().startsWith("List of Profile Schemas:"));
+    }
+    
+    /**
+     * Lists the log schemas from cli.
+     *
+     * @param cli the control cli client
+     * @param applicationId the application Id
+     * @param createOut create output file with object id
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
+    private void listLogSchemasCli(ControlApiCliThriftClient cli, String applicationId, boolean createOut) throws UnsupportedEncodingException {
+        cliOut.reset();
+        String cmdLine = "listLogSchemas -a " + applicationId;
+        if (createOut) {
+            cmdLine += " -o dummy.obj";
+        }
+        int result = cli.processLine(cmdLine);
+        Assert.assertEquals(result, 0);
+        String output = cliOut.toString("UTF-8");
+        Assert.assertTrue(output.trim().startsWith("List of Log Schemas:"));
     }
 
     /**

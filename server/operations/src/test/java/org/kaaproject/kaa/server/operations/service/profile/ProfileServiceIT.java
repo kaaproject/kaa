@@ -133,7 +133,7 @@ public class ProfileServiceIT extends AbstractTest {
         profileSchema2.setMinorVersion(0);
         profileSchema2.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         profileSchema2.setApplication(application);
-        profileSchema2 = profileSchemaDao.save(profileSchema2);       
+        profileSchema2 = profileSchemaDao.save(profileSchema2);
     }
 
     @After

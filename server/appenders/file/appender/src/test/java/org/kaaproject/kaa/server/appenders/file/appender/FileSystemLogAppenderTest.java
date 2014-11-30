@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.appenders.file.appender;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,23 +52,36 @@ public class FileSystemLogAppenderTest {
         FileSystemLogAppender appender = new FileSystemLogAppender();
         appender.setName("test");
         FileSystemLogEventService service = Mockito.mock(FileSystemLogEventService.class);
-        FileSystemLogger logger = Mockito.mock(FileSystemLogger.class);
+        //FileSystemLogger logger = new LogbackFileSystemLogger();
         ReflectionTestUtils.setField(appender, "fileSystemLogEventService", service);
-        ReflectionTestUtils.setField(appender, "logger", logger);
-        ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
-        GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
-        BasicEndpointProfile theLog = new BasicEndpointProfile("test");
+        //ReflectionTestUtils.setField(appender, "logger", logger);
+        appender.setName(APPENDER_NAME);
+        appender.setAppenderId(APPENDER_ID);
 
-        LogSchemaDto schemaDto = new LogSchemaDto();
-        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        LogSchema schema = new LogSchema(schemaDto);
-        LogEvent logEvent = new LogEvent();
-
-        logEvent.setLogData(converter.encode(theLog));
-        LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
-        appender.doAppend(logEventPack);
-
-        Mockito.verify(logger).append(Mockito.anyString());
+        LogAppenderDto logAppenderDto = prepareConfig();
+        logAppenderDto.setApplicationId(APPLICATION_ID);
+        logAppenderDto.setName("test");
+        logAppenderDto.setTenantId(TENANT_ID);
+        
+        try {
+            appender.init(logAppenderDto);
+            
+            ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
+            GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+            BasicEndpointProfile theLog = new BasicEndpointProfile("test");
+    
+            LogSchemaDto schemaDto = new LogSchemaDto();
+            schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+            LogSchema schema = new LogSchema(schemaDto);
+            LogEvent logEvent = new LogEvent();
+    
+            logEvent.setLogData(converter.encode(theLog));
+            LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
+            appender.doAppend(logEventPack);
+        } finally {
+            appender.close();
+        }
+        //Mockito.verify(logger).append(Mockito.anyString());
     }
 
     @Test
@@ -80,7 +94,7 @@ public class FileSystemLogAppenderTest {
         appender.setName(APPENDER_NAME);
         appender.setAppenderId(APPENDER_ID);
 
-        LogAppenderDto logAppenderDto = prepateConfig();
+        LogAppenderDto logAppenderDto = prepareConfig();
         logAppenderDto.setApplicationId(APPLICATION_ID);
         logAppenderDto.setName("test");
         logAppenderDto.setTenantId(TENANT_ID);
@@ -94,13 +108,14 @@ public class FileSystemLogAppenderTest {
         }
     }
     
-    private LogAppenderDto prepateConfig() throws IOException {
+    private LogAppenderDto prepareConfig() throws IOException {
         LogAppenderDto logAppenderDto = new LogAppenderDto();
         logAppenderDto.setApplicationId(APPLICATION_ID);
         logAppenderDto.setName("test");
         logAppenderDto.setTenantId(TENANT_ID);
         
-        FileConfig fileConfig = FileConfig.newBuilder().build();
+        FileConfig fileConfig = FileConfig.newBuilder().
+                setLogsRootPath(System.getProperty("java.io.tmpdir") + File.separator + "tmp_logs_"+System.currentTimeMillis()).build();
         
         AvroByteArrayConverter<FileConfig> converter = new AvroByteArrayConverter<>(FileConfig.class);
         byte[] rawConfiguration = converter.toByteArray(fileConfig);

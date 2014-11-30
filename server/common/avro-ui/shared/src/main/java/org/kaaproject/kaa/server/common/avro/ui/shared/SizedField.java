@@ -46,5 +46,12 @@ public abstract class SizedField extends FormField {
     public void setMaxLength(int maxLength) {
         this.maxLength = Integer.valueOf(maxLength);
     }
+    
+    @Override
+    protected void copyFields(FormField cloned) {
+        super.copyFields(cloned);
+        SizedField clonedSizedField = (SizedField)cloned;
+        clonedSizedField.maxLength = maxLength;
+    }
 
 }

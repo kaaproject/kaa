@@ -66,6 +66,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -1119,6 +1120,45 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
+    
+    @Override
+    public List<LogAppenderRestDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException {
+        List<LogAppenderDto> logAppenders = getLogAppendersByApplicationId(appId);
+        List<LogAppenderRestDto> restLogAppenders = new ArrayList<>(logAppenders.size());
+        for (LogAppenderDto logAppender : logAppenders) {
+            restLogAppenders.add(toRestLogAppender(logAppender));
+        }
+        return restLogAppenders;
+    }
+
+    @Override
+    public LogAppenderRestDto getRestLogAppender(String appenderId) throws KaaAdminServiceException {
+        LogAppenderDto logAppender = getLogAppender(appenderId);
+        return toRestLogAppender(logAppender);
+    }
+
+    @Override
+    public LogAppenderRestDto editRestLogAppender(LogAppenderRestDto restLogAppender) throws KaaAdminServiceException {
+        LogAppenderDto logAppender = toLogAppender(restLogAppender);
+        LogAppenderDto savedLogAppender = editLogAppender(logAppender);
+        return toRestLogAppender(savedLogAppender);
+    }
+
+    private LogAppenderRestDto toRestLogAppender(LogAppenderDto logAppender) {
+        LogAppenderRestDto restLogAppender = new LogAppenderRestDto(logAppender);
+        Schema schema = appenderConfigSchemas.get(restLogAppender.getAppenderClassName());
+        String configuration = GenericAvroConverter.toJson(logAppender.getRawConfiguration(), schema.toString());
+        restLogAppender.setConfiguration(configuration);
+        return restLogAppender;
+    }
+    
+    private LogAppenderDto toLogAppender(LogAppenderRestDto restLogAppender) {
+        LogAppenderDto logAppender = restLogAppender.toLogAppenderDto();
+        Schema schema = appenderConfigSchemas.get(restLogAppender.getAppenderClassName());
+        byte[] rawConfiguration = GenericAvroConverter.toRawData(restLogAppender.getConfiguration(), schema.toString());
+        logAppender.setRawConfiguration(rawConfiguration);
+        return logAppender;
+    }
 
     @Override
     public LogAppenderFormWrapper getLogAppenderForm(String appenderId) throws KaaAdminServiceException {
@@ -1566,5 +1606,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw new KaaAdminServiceException(ServiceErrorCode.NOT_AUTHORIZED);
         }
     }
+
 
 }

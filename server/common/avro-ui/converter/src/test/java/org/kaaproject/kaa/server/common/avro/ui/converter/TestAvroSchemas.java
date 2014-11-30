@@ -21,8 +21,8 @@ import org.apache.avro.Schema;
 
 public class TestAvroSchemas {
 
-    private static final String SINGLE_FIELD = "single-field.avsc";
-    private static Schema singleFieldSchema;
+    private static final String SINGLE_FIELDS = "single-fields.avsc";
+    private static Schema singleFieldsSchema;
 
     private static final String ARRAY = "array.avsc";
     private static Schema arraySchema;
@@ -30,11 +30,11 @@ public class TestAvroSchemas {
     private static final String UNION = "union.avsc";
     private static Schema unionSchema;
     
-    public static Schema getSingleFieldSchema() throws IOException {
-        if (singleFieldSchema == null) {
-            singleFieldSchema = new Schema.Parser().parse(Thread.currentThread().getContextClassLoader().getResourceAsStream(SINGLE_FIELD));
+    public static Schema getSingleFieldsSchema() throws IOException {
+        if (singleFieldsSchema == null) {
+            singleFieldsSchema = new Schema.Parser().parse(Thread.currentThread().getContextClassLoader().getResourceAsStream(SINGLE_FIELDS));
         }
-        return singleFieldSchema;
+        return singleFieldsSchema;
     }
 
     public static Schema getArraySchema() throws IOException {

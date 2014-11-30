@@ -51,7 +51,7 @@ public:
     /**
      * \c IConfigurationProcessor implementation
      */
-    void processConfigurationData(const std::uint8_t *data, std::size_t data_length, bool full_resync);
+    void processConfigurationData(const std::uint8_t *data, std::size_t dataLength, bool fullResync);
 
     /**
      * \c IDecodedDeltaObservable implementation

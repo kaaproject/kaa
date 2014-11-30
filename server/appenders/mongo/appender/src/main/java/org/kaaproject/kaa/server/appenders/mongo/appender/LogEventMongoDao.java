@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
+import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer;
 import org.slf4j.Logger;
@@ -35,23 +36,32 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
 public class LogEventMongoDao implements LogEventDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogEventMongoDao.class);
-    
+
     private MongoClient mongoClient;
     private MongoTemplate mongoTemplate;
-    
+
     @SuppressWarnings("deprecation")
     public LogEventMongoDao(MongoDbConfig configuration) throws Exception {
-        
+
         List<ServerAddress> seeds = new ArrayList<>(configuration.getMongoServers().size());
         for (MongoDbServer server : configuration.getMongoServers()) {
             seeds.add(new ServerAddress(server.getHost(), server.getPort()));
         }
-        
+
+        List<MongoCredential> credentials = new ArrayList<>();
+        if (configuration.getMongoCredentials() != null) {
+            for (MongoDBCredential credential : configuration.getMongoCredentials()) {
+                credentials.add(MongoCredential.createMongoCRCredential(credential.getUser(), configuration.getDbName(), 
+                        credential.getPassword().toCharArray()));
+            }
+        }
+
         MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
         if (configuration.getConnectionsPerHost() != null) {
             optionsBuilder.connectionsPerHost(configuration.getConnectionsPerHost());
@@ -71,30 +81,30 @@ public class LogEventMongoDao implements LogEventDao {
         if (configuration.getAutoConnectRetry() != null) {
             optionsBuilder.autoConnectRetry(configuration.getAutoConnectRetry());
         }
-        
+
         MongoClientOptions options = optionsBuilder.build();
-        mongoClient = new MongoClient(seeds, options);
-        
+        mongoClient = new MongoClient(seeds, credentials, options);
+
         MongoDbFactory dbFactory = new SimpleMongoDbFactory(mongoClient, configuration.getDbName());
-        
+
         MappingMongoConverter converter = new MappingMongoConverter(dbFactory, new MongoMappingContext());
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-        
+
         mongoTemplate = new MongoTemplate(dbFactory, converter);
         mongoTemplate.setWriteResultChecking(WriteResultChecking.EXCEPTION);
     }
-    
+
     @Override
     public void createCollection(String collectionName) {
-        try{
-            if(!mongoTemplate.collectionExists(collectionName)){
+        try {
+            if (!mongoTemplate.collectionExists(collectionName)) {
                 mongoTemplate.createCollection(collectionName);
             }
-        }catch(UncategorizedMongoDbException e){
+        } catch (UncategorizedMongoDbException e) {
             LOG.warn("Failed to create collection {} due to", collectionName, e.getMessage());
         }
     }
-    
+
     @Override
     public List<LogEvent> save(List<LogEventDto> logEventDtos, String collectionName) {
         List<LogEvent> logEvents = new ArrayList<>(logEventDtos.size());
@@ -105,18 +115,18 @@ public class LogEventMongoDao implements LogEventDao {
         mongoTemplate.insert(logEvents, collectionName);
         return logEvents;
     }
-    
+
     @Override
     public void removeAll(String collectionName) {
         LOG.debug("Remove all documents from [{}] collection.", collectionName);
         mongoTemplate.dropCollection(collectionName);
     }
-    
+
     @Override
     public void close() {
         if (mongoClient != null) {
             mongoClient.close();
         }
     }
-    
+
 }
