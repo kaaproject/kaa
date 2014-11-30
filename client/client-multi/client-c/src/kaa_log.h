@@ -128,6 +128,6 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
 #define KAA_TRACE_OUT(logger) KAA_LOG_TRACE(logger, KAA_ERR_NONE, "<-- %s()", __FUNCTION__);
 
 #ifdef __cplusplus
-} // extern "C"
+}      /* extern "C" */
 #endif
 #endif /* KAA_LOG_H_ */

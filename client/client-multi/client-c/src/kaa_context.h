@@ -17,13 +17,6 @@
 #ifndef KAA_CONTEXT_H_
 #define KAA_CONTEXT_H_
 
-#ifdef __cplusplus
-extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
-
 #include "kaa_error.h"
 #include "kaa_log.h"
 #include "kaa_user.h"
@@ -34,7 +27,11 @@ extern "C" {
 #include "kaa_logging.h"
 #include "kaa_channel_manager.h"
 
-typedef struct kaa_context_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct {
     kaa_logger_t            *logger;
     kaa_profile_manager_t   *   profile_manager;
     kaa_user_manager_t      *   user_manager;
@@ -47,6 +44,7 @@ typedef struct kaa_context_t {
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     kaa_log_collector_t     *   log_collector;
 #endif
+    uint32_t                    global_request_id;  // FIXME: find a better place for this
 } kaa_context_t;
 
 kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
@@ -61,5 +59,7 @@ kaa_error_t     kaa_channel_manager_set_sync_all_handler(kaa_context_t *context,
 kaa_sync_t      kaa_channel_manager_get_sync_handler(kaa_context_t *context, kaa_service_t service);
 kaa_sync_all_t  kaa_channel_manager_get_sync_all_handler(kaa_context_t *context);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_CONTEXT_H_ */

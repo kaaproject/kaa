@@ -18,7 +18,7 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "kaa_context.h"
+#include "kaa.h"
 #include "log/kaa_memory_log_storage.h"
 #include "kaa_test.h"
 #include "kaa_mem.h"
@@ -39,18 +39,20 @@ void test_create_log_collector()
 static kaa_service_t services[4] = { KAA_SERVICE_PROFILE, KAA_SERVICE_USER, KAA_SERVICE_EVENT, KAA_SERVICE_LOGGING };
 void test_create_request()
 {
-    kaa_init();
+    kaa_context_t *kaa_context = NULL;
+    kaa_init(&kaa_context);
+
     kaa_sync_request_t *request = NULL;
     size_t s;
-    kaa_error_t err_code = kaa_compile_request(&request, &s, 4, services);
+    kaa_error_t err_code = kaa_compile_request(kaa_context, &request, &s, 4, services);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(request);
     ASSERT_NOT_NULL(request->log_sync_request);
-    ASSERT_EQUAL(request->log_sync_request->type ,KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
+    ASSERT_EQUAL(request->log_sync_request->type, KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
 
     request->destruct(request);
     KAA_FREE(request);
-    kaa_deinit();
+    kaa_deinit(kaa_context);
 }
 
 static kaa_uuid_t test_uuid;

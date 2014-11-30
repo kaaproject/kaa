@@ -17,19 +17,15 @@
 #ifndef KAA_CHANNEL_MANAGER_H_
 #define KAA_CHANNEL_MANAGER_H_
 
+#include "kaa_common.h"
+
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
-
-#include "kaa_common.h"
-#include "kaa.h"
 
 typedef struct kaa_channel_manager_t kaa_channel_manager_t;
 
-
-
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_CHANNEL_MANAGER_H_ */
