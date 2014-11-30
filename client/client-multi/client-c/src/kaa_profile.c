@@ -26,6 +26,8 @@
 #include "kaa_context.h"
 #include "kaa_external.h"
 
+extern kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+
 static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
 
 struct kaa_profile_manager_t {
@@ -165,8 +167,7 @@ void kaa_profile_handle_sync(void *ctx,
     if (response != NULL ) {
         if (response->response_status == ENUM_SYNC_RESPONSE_STATUS_RESYNC) {
             context->profile_manager->need_resync = true;
-            kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context,
-                    profile_sync_services[0]);
+            kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context->channel_manager, profile_sync_services[0]);
             if (sync != NULL ) {
                 (*sync)(1, profile_sync_services);
             }
@@ -213,8 +214,7 @@ kaa_error_t kaa_profile_update_profile(void *ctx, kaa_profile_t * profile_body) 
 
     profile_manager->need_resync = true;
 
-    kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context,
-            profile_sync_services[0]);
+    kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context->channel_manager, profile_sync_services[0]);
     if (sync) {
         (*sync)(1, profile_sync_services);
     }

@@ -25,6 +25,11 @@
 #include "kaa_defaults.h"
 #include "kaa_log.h"
 
+extern kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *this
+        , kaa_user_attach_response_t * user_attach_response, kaa_user_attach_notification_t *attach, kaa_user_detach_notification_t *detach);
+extern kaa_error_t kaa_user_compile_request(kaa_user_manager_t *this, kaa_user_sync_request_t** request_p, size_t requestId);
+
+
 static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
 {
     kaa_context_t *context = (kaa_context_t *)ctx;
@@ -116,22 +121,10 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context)
     return error;
 }
 
-kaa_error_t kaa_set_user_attached_callback(kaa_context_t *kaa_context, kaa_attachment_status_listeners_t callback)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_set_attachment_listeners(kaa_context, callback);
-}
-
 kaa_error_t kaa_set_endpoint_access_token(kaa_context_t *kaa_context, const char *token)
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
     return kaa_status_set_endpoint_access_token(kaa_context->status, token);
-}
-
-kaa_error_t kaa_attach_to_user(kaa_context_t *kaa_context, const char *user_external_id, const char * user_access_token)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_user_attach_to_user(kaa_context, user_external_id, user_access_token);
 }
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
@@ -223,7 +216,7 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
         request->sync_request_meta_data->data = create_sync_request_meta_data(kaa_context);
 
         request->user_sync_request = kaa_create_record_user_sync_request_null_union_user_sync_request_branch();
-        kaa_user_compile_request(kaa_context, (kaa_user_sync_request_t **)&request->user_sync_request->data, kaa_context->global_request_id);
+        kaa_user_compile_request(kaa_context->user_manager, (kaa_user_sync_request_t **)&request->user_sync_request->data, kaa_context->global_request_id);
 
         request->event_sync_request = kaa_create_record_event_sync_request_null_union_null_branch();
         request->log_sync_request = kaa_create_record_log_sync_request_null_union_null_branch();
@@ -337,7 +330,8 @@ kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer
                 {
                     usr_detach_notif = usr_response->user_detach_notification->data;
                 }
-                kaa_user_handle_sync(kaa_context, usr_attach_response, usr_attach_notif, usr_detach_notif);
+                kaa_user_manager_handle_sync(kaa_context->user_manager
+                        , usr_attach_response, usr_attach_notif, usr_detach_notif);
             }
         }
     }

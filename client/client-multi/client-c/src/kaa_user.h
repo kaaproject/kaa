@@ -19,26 +19,63 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
-#include "kaa_common.h"
 #include "kaa_error.h"
-
 #include "gen/kaa_endpoint_gen.h"
 
 typedef struct kaa_user_manager_t kaa_user_manager_t;
 
-kaa_error_t kaa_create_user_manager(kaa_user_manager_t **);
-void        kaa_destroy_user_manager(kaa_user_manager_t *);
+/**
+ * Attach current endpoint to user.<br>
+ * <br>
+ * After Kaa is initialized and running use this to attach current endpoint to
+ * user instance. Only attached endpoints are allowed to send and received events.<br>
+ * <br>
+ * \param user_external_id  null-terminated string representing user id
+ * \param user_access_token null-terminated string representing user external id
+ *
+ */
+kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *this, const char *user_external_id, const char *access_token);
 
-kaa_error_t kaa_user_attach_to_user(void *ctx, const char *, const char *);
-kaa_error_t kaa_set_attachment_listeners(void *ctx, kaa_attachment_status_listeners_t);
 
-kaa_error_t kaa_user_compile_request(void *ctx, kaa_user_sync_request_t** request_p, size_t requestId);
-kaa_error_t kaa_user_handle_sync(void *ctx, kaa_user_attach_response_t *, kaa_user_attach_notification_t *, kaa_user_detach_notification_t *);
+typedef struct {
+    void (*on_attached_callback)(const char *user_external_id, const char *endpoint_access_token);
+    void (*on_detached_callback)(const char *endpoint_access_token);
+    void (*on_response_callback)(bool is_attached);
+} kaa_attachment_status_listeners_t;
 
-CLOSE_EXTERN
+
+/**
+ * Set callback functions to receive notification when current endpoint is being
+ * attached or detached to (from) user.<br>
+ * <br>
+ * callback function example:<br>
+ * <pre>
+ * void on_attached(const char * user_external_id, const char * endpoint_access_token)
+ * {
+ *      printf("Attached to user %s by endpoint %s\n", user_external_id, endpoint_access_token);
+ * }
+ * void on_detached(const char * endpoint_access_token)
+ * {
+ *      printf("Detached from user entity by endpoint %s\n", endpoint_access_token);
+ * }
+ * void on_attach_status_changed(bool is_attached)
+ * {
+ *     printf("Attached status is %d\n", is_attached);
+ * }
+ * ...
+ * kaa_attachment_status_listeners_t callbacks;
+ * callbacks.on_attached_callback = &on_attached;
+ * callbacks.on_detached_callback = &on_detached;
+ * callbacks.on_response_callback = &on_attach_status_changed;
+ *
+ * kaa_set_user_attached_callback(callbacks);
+ * </pre>
+ */
+kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *this, kaa_attachment_status_listeners_t listeners);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_USER_H_ */

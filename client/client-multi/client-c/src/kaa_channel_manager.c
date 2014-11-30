@@ -83,26 +83,6 @@ static kaa_error_t remove_sync_handler(kaa_channel_manager_t* manager, kaa_sync_
     return KAA_ERR_NOT_FOUND;
 }
 
-static kaa_sync_t get_sync_handler_by_service_type(kaa_channel_manager_t* manager, kaa_service_t service_type)
-{
-    kaa_list_t *handlers = manager->sync_handlers;
-
-    kaa_sync_details * details = kaa_list_get_data(handlers);
-    while (details != NULL) {
-        size_t service_count = details->supported_services_size;
-        kaa_service_t* services = details->supported_services;
-        for (;service_count--;) {
-            if (*services++ == service_type) {
-                return details->sync_fn;
-            }
-        }
-        handlers = kaa_list_next(handlers);
-        details = kaa_list_get_data(handlers);
-    }
-
-    return NULL;
-}
-
 /**
  * PUBLIC STUFF
  */
@@ -120,11 +100,11 @@ kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t ** manager_p)
     return KAA_ERR_NONE;
 }
 
-void kaa_channel_manager_destroy(kaa_context_t *context)
+void kaa_channel_manager_destroy(kaa_channel_manager_t *this)
 {
-    if (context->channel_manager != NULL) {
-        kaa_list_destroy(context->channel_manager->sync_handlers, destroy_sync_details);
-        KAA_FREE(context->channel_manager);
+    if (this) {
+        kaa_list_destroy(this->sync_handlers, destroy_sync_details);
+        KAA_FREE(this);
     }
 }
 
@@ -142,9 +122,26 @@ kaa_error_t kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa
     return KAA_ERR_NONE;
 }
 
-kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_context_t *context, kaa_service_t service)
+kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type)
 {
-    return get_sync_handler_by_service_type(context->channel_manager, service);
+    KAA_RETURN_IF_NIL(this, NULL);
+
+    kaa_list_t *handlers = this->sync_handlers;
+
+    kaa_sync_details *details = kaa_list_get_data(handlers);
+    while (details) {
+        size_t service_count = details->supported_services_size;
+        kaa_service_t* services = details->supported_services;
+        for (;service_count--;) {
+            if (*services++ == service_type) {
+                return details->sync_fn;
+            }
+        }
+        handlers = kaa_list_next(handlers);
+        details = kaa_list_get_data(handlers);
+    }
+
+    return NULL;
 }
 
 kaa_sync_all_t kaa_channel_manager_get_sync_all_handler(kaa_context_t *context)

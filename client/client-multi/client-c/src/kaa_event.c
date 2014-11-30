@@ -26,6 +26,8 @@
 #include "kaa_context.h"
 #include "kaa_mem.h"
 
+extern kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+
 static int32_t event_sequence_number = 0;
 
 typedef struct event_t {
@@ -259,7 +261,7 @@ kaa_error_t kaa_add_event(void *ctx, const char * fqn, size_t fqn_length, const 
     } else {
         event_manager->pending_events = kaa_list_create(event);
     }
-    kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context, event_sync_services[0]);
+    kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context->channel_manager, event_sync_services[0]);
     if (sync) {
         (*sync)(1, event_sync_services);
     }
@@ -482,7 +484,7 @@ kaa_error_t kaa_event_finish_transaction(void *ctx, kaa_trx_id trx_id)
                 trx->events = NULL;
             }
             kaa_list_remove_at(&event_manager->transactions, it, &destroy_transaction);
-            kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context, event_sync_services[0]);
+            kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context->channel_manager, event_sync_services[0]);
             if (need_sync && sync) {
                 (*sync)(1, event_sync_services);
             }
