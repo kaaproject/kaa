@@ -72,7 +72,7 @@ kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_
 
 kaa_error_t kaa_log_destroy(kaa_logger_t *logger)
 {
-    KAA_RETURN_IF_NULL(logger, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(logger, KAA_ERR_BADPARAM);
 
     KAA_FREE(logger->log_buffer);
     KAA_FREE(logger);
@@ -86,7 +86,7 @@ kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *this)
 
 kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_level)
 {
-    KAA_RETURN_IF_NULL(this, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(this, KAA_ERR_BADPARAM);
 
     this->max_log_level = max_log_level;
     return KAA_ERR_NONE;

@@ -20,7 +20,7 @@
 kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
 {
     kaa_context_t *context = KAA_MALLOC(kaa_context_t);
-    KAA_RETURN_IF_NULL(context, KAA_ERR_NOMEM);
+    KAA_RETURN_IF_NIL(context, KAA_ERR_NOMEM);
 
     context->logger = logger;
     context->global_request_id = 0;
@@ -89,7 +89,7 @@ error_status:
 
 kaa_error_t kaa_context_destroy(kaa_context_t * context)
 {
-    KAA_RETURN_IF_NULL(context, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
 
     kaa_destroy_user_manager(context->user_manager);
 #ifndef KAA_DISABLE_FEATURE_EVENTS
