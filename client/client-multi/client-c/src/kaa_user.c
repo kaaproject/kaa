@@ -22,7 +22,7 @@
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
 
-extern kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
 
 typedef struct {
     char   *user_external_id;
@@ -118,9 +118,9 @@ kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *this, const char
     if (!this->user_info)
         return KAA_ERR_NOMEM;
 
-    kaa_sync_t sync = kaa_channel_manager_get_sync_handler(this->channel_manager, user_sync_services[0]);
+    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(this->channel_manager, user_sync_services[0]);
     if (sync)
-        (*sync)(1, user_sync_services);
+        (*sync)(user_sync_services, 1);
     return KAA_ERR_NONE;
 }
 
