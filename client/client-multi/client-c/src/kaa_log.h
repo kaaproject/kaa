@@ -27,6 +27,7 @@
 #define KAA_LOG_H_
 
 #include <stdio.h>
+#include <stdint.h>
 #include "kaa_error.h"
 #define KAA_MAX_LOG_MESSAGE_LENGTH  256
 
@@ -34,16 +35,33 @@
 extern "C" {
 #endif
 
+
+/**< Use as the max log level to switch logging off */
+#define KAA_LOG_LEVEL_NONE  0
+/**< Use for severe errors that cause premature program termination */
+#define KAA_LOG_LEVEL_FATAL 1
+/**< Use for runtime errors or unexpected conditions that the program might gracefully recover from */
+#define KAA_LOG_LEVEL_ERROR 2
+/**< Use for unexpected or undesirable runtime conditions that are not necessarily affecting the program */
+#define KAA_LOG_LEVEL_WARN  3
+/**< Use for important or interesting runtime events that help understanding what the program is doing */
+#define KAA_LOG_LEVEL_INFO  4
+/**< Use to log detailed information on the logic flow through the system */
+#define KAA_LOG_LEVEL_DEBUG 5
+/**< Use to log most detailed information intended for development and debugging purposes only */
+#define KAA_LOG_LEVEL_TRACE 6
+
 #ifndef KAA_MAX_LOG_LEVEL
-#define KAA_MAX_LOG_LEVEL   6   /**< Using KAA_LOG_TRACE as the max log level by default */
+/**< Using KAA_LOG_TRACE as the max log level by default */
+#define KAA_MAX_LOG_LEVEL   KAA_LOG_LEVEL_TRACE
 #endif
 
-#define KAA_LOG_LEVEL_FATAL_ENABLED     (KAA_MAX_LOG_LEVEL > 0)
-#define KAA_LOG_LEVEL_ERROR_ENABLED     (KAA_MAX_LOG_LEVEL > 1)
-#define KAA_LOG_LEVEL_WARN_ENABLED      (KAA_MAX_LOG_LEVEL > 2)
-#define KAA_LOG_LEVEL_INFO_ENABLED      (KAA_MAX_LOG_LEVEL > 3)
-#define KAA_LOG_LEVEL_DEBUG_ENABLED     (KAA_MAX_LOG_LEVEL > 4)
-#define KAA_LOG_LEVEL_TRACE_ENABLED     (KAA_MAX_LOG_LEVEL > 5)
+#define KAA_LOG_LEVEL_FATAL_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL)
+#define KAA_LOG_LEVEL_ERROR_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_ERROR)
+#define KAA_LOG_LEVEL_WARN_ENABLED      (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_WARN)
+#define KAA_LOG_LEVEL_INFO_ENABLED      (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_INFO)
+#define KAA_LOG_LEVEL_DEBUG_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_DEBUG)
+#define KAA_LOG_LEVEL_TRACE_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE)
 
 /**
  * @brief Kaa logger type
@@ -51,29 +69,9 @@ extern "C" {
 typedef struct kaa_logger_t kaa_logger_t;
 
 /**
- * @brief Log levels
+ * @brief Log level type
  */
-typedef enum {
-    KAA_LOG_NONE,   /**< Use as the max log level to switch logging off */
-#if KAA_LOG_LEVEL_FATAL_ENABLED
-    KAA_LOG_FATAL,  /**< Use for severe errors that cause premature program termination */
-#if KAA_LOG_LEVEL_ERROR_ENABLED
-    KAA_LOG_ERROR,  /**< Use for runtime errors or unexpected conditions that the program might gracefully recover from */
-#if KAA_LOG_LEVEL_WARN_ENABLED
-    KAA_LOG_WARN,   /**< Use for unexpected or undesirable runtime conditions that are not necessarily affecting the program */
-#if KAA_LOG_LEVEL_INFO_ENABLED
-    KAA_LOG_INFO,   /**< Use for important or interesting runtime events that help understanding what the program is doing */
-#if KAA_LOG_LEVEL_DEBUG_ENABLED
-    KAA_LOG_DEBUG,  /**< Use to log detailed information on the logic flow through the system */
-#if KAA_LOG_LEVEL_TRACE_ENABLED
-    KAA_LOG_TRACE   /**< Use to log most detailed information intended for development and debugging purposes only */
-#endif // KAA_LOG_LEVEL_TRACE_ENABLED
-#endif // KAA_LOG_LEVEL_DEBUG_ENABLED
-#endif // KAA_LOG_LEVEL_INFO_ENABLED
-#endif // KAA_LOG_LEVEL_WARN_ENABLED
-#endif // KAA_LOG_LEVEL_ERROR_ENABLED
-#endif // KAA_LOG_LEVEL_FATAL_ENABLED
-} kaa_log_level_t;
+typedef uint8_t kaa_log_level_t;
 
 /**
  * @brief Creates and initializes a logger instance.
@@ -138,37 +136,37 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
  * Shortcut macros for logging at various log levels
  */
 #if KAA_LOG_LEVEL_FATAL_ENABLED
-#define KAA_LOG_FATAL(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_FATAL, err, __VA_ARGS__);
+#define KAA_LOG_FATAL(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_FATAL, err, __VA_ARGS__);
 #else
 #define KAA_LOG_FATAL(...)
 #endif
 
 #if KAA_LOG_LEVEL_ERROR_ENABLED
-#define KAA_LOG_ERROR(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_ERROR, err, __VA_ARGS__);
+#define KAA_LOG_ERROR(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_ERROR, err, __VA_ARGS__);
 #else
 #define KAA_LOG_ERROR(...)
 #endif
 
 #if KAA_LOG_LEVEL_WARN_ENABLED
-#define KAA_LOG_WARN(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_WARN, err, __VA_ARGS__);
+#define KAA_LOG_WARN(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_WARN, err, __VA_ARGS__);
 #else
 #define KAA_LOG_WARN(...)
 #endif
 
 #if KAA_LOG_LEVEL_INFO_ENABLED
-#define KAA_LOG_INFO(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_INFO, err, __VA_ARGS__);
+#define KAA_LOG_INFO(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_INFO, err, __VA_ARGS__);
 #else
 #define KAA_LOG_INFO(...)
 #endif
 
 #if KAA_LOG_LEVEL_DEBUG_ENABLED
-#define KAA_LOG_DEBUG(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_DEBUG, err, __VA_ARGS__);
+#define KAA_LOG_DEBUG(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_DEBUG, err, __VA_ARGS__);
 #else
 #define KAA_LOG_DEBUG(...)
 #endif
 
 #if KAA_LOG_LEVEL_TRACE_ENABLED
-#define KAA_LOG_TRACE(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_TRACE, err, __VA_ARGS__);
+#define KAA_LOG_TRACE(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_TRACE, err, __VA_ARGS__);
 #else
 #define KAA_LOG_TRACE(...)
 #endif
