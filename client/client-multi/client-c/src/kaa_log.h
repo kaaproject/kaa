@@ -36,23 +36,23 @@ extern "C" {
 #endif
 
 
-/**< Use as the max log level to switch logging off */
+/** Use as the max log level to switch logging off */
 #define KAA_LOG_LEVEL_NONE  0
-/**< Use for severe errors that cause premature program termination */
+/** Use for severe errors that cause premature program termination */
 #define KAA_LOG_LEVEL_FATAL 1
-/**< Use for runtime errors or unexpected conditions that the program might gracefully recover from */
+/** Use for runtime errors or unexpected conditions that the program might gracefully recover from */
 #define KAA_LOG_LEVEL_ERROR 2
-/**< Use for unexpected or undesirable runtime conditions that are not necessarily affecting the program */
+/** Use for unexpected or undesirable runtime conditions that are not necessarily affecting the program */
 #define KAA_LOG_LEVEL_WARN  3
-/**< Use for important or interesting runtime events that help understanding what the program is doing */
+/** Use for important or interesting runtime events that help understanding what the program is doing */
 #define KAA_LOG_LEVEL_INFO  4
-/**< Use to log detailed information on the logic flow through the system */
+/** Use to log detailed information on the logic flow through the system */
 #define KAA_LOG_LEVEL_DEBUG 5
-/**< Use to log most detailed information intended for development and debugging purposes only */
+/** Use to log most detailed information intended for development and debugging purposes only */
 #define KAA_LOG_LEVEL_TRACE 6
 
 #ifndef KAA_MAX_LOG_LEVEL
-/**< Using KAA_LOG_TRACE as the max log level by default */
+/** Use KAA_LOG_TRACE as the max log level by default */
 #define KAA_MAX_LOG_LEVEL   KAA_LOG_LEVEL_TRACE
 #endif
 
