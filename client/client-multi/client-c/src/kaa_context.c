@@ -22,7 +22,7 @@
  */
 extern kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
 extern void        kaa_user_manager_destroy(kaa_user_manager_t *user_manager);
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **context_p);
+extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
 extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *this);
 
 
@@ -42,7 +42,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
     if (error) {
         KAA_LOG_ERROR(logger, error, failed_msg, "status");
     } else {
-        error = kaa_channel_manager_create(&((*context_p)->channel_manager));
+        error = kaa_channel_manager_create(&((*context_p)->channel_manager), logger);
         if (error) {
             KAA_LOG_ERROR(logger, error, failed_msg, "channel manager");
         } else {

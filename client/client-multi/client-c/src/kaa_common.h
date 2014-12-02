@@ -41,6 +41,7 @@ extern "C" {
 
 // TODO: move to kaa_event.h
 typedef void (*event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size);
+typedef size_t kaa_trx_id;
 
 typedef enum {
     KAA_SERVICE_BOOTSTRAP = 0,
@@ -49,10 +50,6 @@ typedef enum {
     KAA_SERVICE_EVENT = 3,
     KAA_SERVICE_LOGGING = 4,
 } kaa_service_t;
-
-// TODO: move these two to kaa_channel_manager.h
-typedef void (*kaa_sync_t)(size_t service_count, const kaa_service_t services[]);
-typedef void (*kaa_sync_all_t)();
 
 /**
  * SHA1 hash
@@ -68,9 +65,6 @@ typedef enum {
     HTTP_LP,
     KAATCP
 } kaa_channel_type_t;
-
-// TODO: move to kaa_event.h
-typedef size_t kaa_trx_id;
 
 #ifdef __cplusplus
 }      /* extern "C" */

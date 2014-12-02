@@ -27,7 +27,7 @@
 
 #include "avro_src/avro/io.h"
 
-extern kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
 
 static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
 static uint32_t log_bucket_id   = 0;
@@ -114,9 +114,9 @@ static void update_storage(kaa_context_t *context)
             (* collector->log_storage->shrink_to_size)(collector->log_properties->max_log_storage_volume);
             break;
         case UPLOAD: {
-            kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context->channel_manager, logging_sync_services[0]);
+            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(context->channel_manager, logging_sync_services[0]);
             if (sync) {
-                (*sync)(1, logging_sync_services);
+                (*sync)(logging_sync_services, 1);
             }
             break;
         }

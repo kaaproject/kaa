@@ -50,11 +50,6 @@ typedef struct {
 kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
 kaa_error_t kaa_context_destroy(kaa_context_t * context);
 
-/** Channel manager API */
-kaa_error_t     kaa_channel_manager_set_sync_handler(kaa_context_t *context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[]);
-kaa_error_t     kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa_sync_all_t handler);
-kaa_sync_all_t  kaa_channel_manager_get_sync_all_handler(kaa_context_t *context);
-
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

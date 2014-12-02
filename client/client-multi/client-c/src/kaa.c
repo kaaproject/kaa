@@ -196,12 +196,6 @@ kaa_error_t kaa_register_event_listener(kaa_context_t *kaa_context, const char *
 }
 #endif
 
-kaa_error_t kaa_set_sync_handler(kaa_context_t *kaa_context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[])
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_channel_manager_set_sync_handler(kaa_context, handler, services_count, supported_services);
-}
-
 kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t **request_p, size_t *result_size, size_t service_count, const kaa_service_t services[])
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);

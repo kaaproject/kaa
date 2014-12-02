@@ -135,21 +135,6 @@ kaa_error_t kaa_register_event_listener(kaa_context_t *kaa_context, const char *
 #endif
 
 /**
- * Channel management
- */
-
-/**
- * Set user transport channel.<br>
- * <br>
- * Kaa library will call \c handler when it is needed to send a request to
- * Operations server.<br>
- * \param handler               sync handler function \see kaa_sync_t
- * \param services_count        size of array of supported services by this handler
- * \param supported_services    array of supported services names
- */
-kaa_error_t    kaa_set_sync_handler(kaa_context_t *kaa_context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[]);
-
-/**
  * Create a Sync Request.<br>
  * <br>
  * Use this to create a valid sync request.<br>
