@@ -56,7 +56,7 @@ void test_profile_update()
     ASSERT_TRUE(kaa_profile_need_profile_resync(context));
     profile->profile_body = NULL;
 
-    profile->destruct(profile);
+    profile->destroy(profile);
     KAA_FREE(profile);
 
     kaa_context_destroy(context);

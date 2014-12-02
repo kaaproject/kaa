@@ -30,10 +30,10 @@ extern "C" {
 
 #include "kaa_list.h"
 
-typedef void (*serialize)(avro_writer_t writer, void *data);
-typedef void* (*deserialize)(avro_reader_t reader);
-typedef size_t (*get_size)(void *data);
-typedef void (*destruct)(void *data);
+typedef void (*serialize_fn)(avro_writer_t writer, void *data);
+typedef void* (*deserialize_fn)(avro_reader_t reader);
+typedef size_t (*get_size_fn)(void *data);
+typedef void (*destroy_fn)(void *data);
 
 typedef struct kaa_bytes_t_ {
     uint8_t* buffer;
@@ -44,9 +44,9 @@ typedef struct kaa_union_t_ {
     uint8_t type;
     void   *data;
 
-    serialize serialize;
-    get_size  get_size;
-    destruct  destruct;
+    serialize_fn serialize;
+    get_size_fn  get_size;
+    destroy_fn   destroy;
 } kaa_union_t;
 
 void kaa_serialize_string(avro_writer_t writer, void* data);
@@ -68,9 +68,9 @@ void kaa_serialize_long(avro_writer_t writer, void* data);
 int64_t* kaa_deserialize_long(avro_reader_t reader);
 size_t size_long(int64_t l);
 
-void kaa_serialize_array(avro_writer_t writer, kaa_list_t* array, serialize s);
-kaa_list_t *kaa_deserialize_array(avro_reader_t reader, deserialize ds);
-size_t kaa_array_size(kaa_list_t* array, get_size s);
+void kaa_serialize_array(avro_writer_t writer, kaa_list_t* array, serialize_fn s);
+kaa_list_t *kaa_deserialize_array(avro_reader_t reader, deserialize_fn ds);
+size_t kaa_array_size(kaa_list_t* array, get_size_fn s);
 
 void kaa_destroy_null(void *data);
 

@@ -50,7 +50,7 @@ void test_create_request()
     ASSERT_NOT_NULL(request->log_sync_request);
     ASSERT_EQUAL(request->log_sync_request->type, KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
 
-    request->destruct(request);
+    request->destroy(request);
     KAA_FREE(request);
     kaa_deinit(kaa_context);
 }
@@ -109,7 +109,7 @@ static void handler(size_t service_count, const kaa_service_t services[])
     ASSERT_NOT_NULL(request->log_sync_request);
     ASSERT_EQUAL(request->log_sync_request->type ,KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_LOG_SYNC_REQUEST_BRANCH);
 
-    request->destruct(request);
+    request->destroy(request);
     KAA_FREE(request);
 }
 void test_add_log()

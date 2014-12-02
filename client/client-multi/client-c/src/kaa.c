@@ -228,7 +228,7 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
             switch (services[service_count]) {
 #ifndef KAA_DISABLE_FEATURE_EVENTS
                 case KAA_SERVICE_EVENT: {
-                    request->event_sync_request->destruct(request->event_sync_request);
+                    request->event_sync_request->destroy(request->event_sync_request);
                     KAA_FREE(request->event_sync_request);
                     request->event_sync_request = kaa_create_record_event_sync_request_null_union_event_sync_request_branch();
                     kaa_event_compile_request(kaa_context, (kaa_event_sync_request_t**)&request->event_sync_request->data, kaa_context->global_request_id);
@@ -237,7 +237,7 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
 #endif
                 case KAA_SERVICE_PROFILE: {
                     if (kaa_profile_need_profile_resync(kaa_context)) {
-                        request->profile_sync_request->destruct(request->profile_sync_request);
+                        request->profile_sync_request->destroy(request->profile_sync_request);
                         KAA_FREE(request->profile_sync_request);
                         kaa_profile_sync_request_t *profile_request = kaa_profile_compile_request(kaa_context);
                         request->profile_sync_request = kaa_create_record_profile_sync_request_null_union_profile_sync_request_branch();
@@ -250,7 +250,7 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
                     kaa_log_sync_request_t *log_request = NULL;
                     kaa_logging_compile_request(kaa_context, &log_request);
                     if (log_request) {
-                        request->log_sync_request->destruct(request->log_sync_request);
+                        request->log_sync_request->destroy(request->log_sync_request);
                         KAA_FREE(request->log_sync_request);
                         request->log_sync_request = kaa_create_record_log_sync_request_null_union_log_sync_request_branch();
                         request->log_sync_request->data = log_request;
@@ -349,7 +349,7 @@ kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer
 #endif
 
     kaa_status_save(kaa_context->status);
-    response->destruct(response);
+    response->destroy(response);
     KAA_FREE(response);
 
     return KAA_ERR_NONE;
