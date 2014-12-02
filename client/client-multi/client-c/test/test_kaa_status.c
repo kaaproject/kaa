@@ -47,7 +47,7 @@ void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deal
 
     fseek(status_file, 0, SEEK_END);
     *buffer_size = ftell(status_file);
-    *buffer = (char*)calloc(*buffer_size, sizeof(char));
+    *buffer = KAA_CALLOC(*buffer_size, sizeof(char));
 
     if (*buffer == NULL) {
         *buffer_size = 0;
@@ -58,7 +58,7 @@ void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deal
     fseek(status_file, 0, SEEK_SET);
     if (fread(*buffer, *buffer_size, 1, status_file) == 0) {
         *buffer_size = 0;
-        free(*buffer);
+        KAA_FREE(*buffer);
     }
     *needs_deallocation = true;
     fclose(status_file);
@@ -168,7 +168,7 @@ void test_status_persistense()
 
 int status_test_init(void)
 {
-    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     remove(KAA_STATUS_STORAGE);
     return 0;
 }

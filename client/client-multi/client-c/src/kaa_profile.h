@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include <stdbool.h>
@@ -39,5 +36,9 @@ kaa_error_t                     kaa_profile_update_profile(void *, kaa_profile_t
 bool                            kaa_profile_need_profile_resync(void *);
 kaa_profile_sync_request_t *    kaa_profile_compile_request(void *);
 void                            kaa_profile_handle_sync(void *, kaa_profile_sync_response_t *);
-CLOSE_EXTERN
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 #endif /* KAA_PROFILE_H_ */

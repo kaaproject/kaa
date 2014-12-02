@@ -18,21 +18,34 @@
 #define KAA_MEM_H_
 
 #ifdef KAA_TRACE_MEMORY_ALLOCATIONS
-#include <stdlib.h>
-#include "kaa_log.h"
-void *malloc_stub(size_t s, const char *file, int line);
-void *calloc_stub(size_t n, size_t s, const char *file, int line);
 
-#define KAA_MALLOC(T)           (T*)malloc_stub(sizeof(T), __FILE__, __LINE__)
-#define KAA_CALLOC(N,S)         calloc_stub(N, S, __FILE__, __LINE__)
-#define KAA_FREE(P)             kaa_log_write(__FILE__, __LINE__, KAA_LOG_TRACE, KAA_ERR_NONE, "Going to deallocate memory at {%p}",  P);     free((void *)P)
-#else
+#include "kaa_log.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void *  kaa_trace_memory_allocs_malloc(size_t s, const char *file, int line);
+void *  kaa_trace_memory_allocs_calloc(size_t n, size_t s, const char *file, int line);
+void    kaa_trace_memory_allocs_free(void * p, const char *file, int line);
+void    kaa_trace_memory_allocs_set_logger(kaa_logger_t *logger);
+
+#define KAA_MALLOC(T)           (T*)kaa_trace_memory_allocs_malloc(sizeof(T), __FILE__, __LINE__)
+#define KAA_CALLOC(N,S)         kaa_trace_memory_allocs_calloc((N), (S), __FILE__, __LINE__)
+#define KAA_FREE(P)             kaa_trace_memory_allocs_free((P), __FILE__, __LINE__)
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#else // defined KAA_TRACE_MEMORY_ALLOCATIONS
+
 #include <stdlib.h>
 
 #define KAA_MALLOC(T)           (T*)malloc(sizeof(T))
 #define KAA_CALLOC(N,S)         calloc(N, S)
 #define KAA_FREE(P)             free(P)
-#endif
 
+#endif // defined KAA_TRACE_MEMORY_ALLOCATIONS
 
 #endif /* KAA_MEM_H_ */

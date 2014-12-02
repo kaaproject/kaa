@@ -39,6 +39,10 @@ if (KAA_WITHOUT_LOGGING)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
 endif()
 
+# set max log level
+# TODO: add switch for Debug/Release versions
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
+
 find_package (OpenSSL REQUIRED)
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src

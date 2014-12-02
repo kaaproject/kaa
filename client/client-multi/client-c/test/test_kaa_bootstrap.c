@@ -138,7 +138,7 @@ void test_add_get_operation_server()
 
 int test_init(void)
 {
-    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_LOG_TRACE, NULL);
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     return 0;
 }
 
