@@ -147,9 +147,15 @@ static kaatcp_error_t kaatcp_parser_message_done(kaatcp_parser_t *parser)
 
             memcpy(sync_header.protocol_name, cursor, sync_header.protocol_name_length);
             sync_header.protocol_name[sync_header.protocol_name_length] = '\0';
+            if (strcmp(sync_header.protocol_name, KAA_TCP_NAME)) {
+                return KAATCP_ERR_INVALID_PROTOCOL;
+            }
             cursor += sync_header.protocol_name_length;
 
             sync_header.protocol_version = *(cursor++);
+            if (sync_header.protocol_version != PROTOCOL_VERSION) {
+                return KAATCP_ERR_INVALID_PROTOCOL;
+            }
 
             sync_header.message_id = ntohs(*(uint16_t *) cursor);
             cursor += 2;
