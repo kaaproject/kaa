@@ -183,15 +183,15 @@ ${prefix}_${recordName}_t* ${prefix}_deserialize_${recordName}(avro_reader_t rea
         #if ($TypeConverter.isEnumType($elementSchema))
             #set ($type = "long")
         #end
-        record->${fieldName} = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_${type});
+        record->${fieldName} = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_${type});
     #elseif ($TypeConverter.isBytes($elementSchema))
-        record->${fieldName} = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_bytes);
+        record->${fieldName} = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_bytes);
     #elseif ($TypeConverter.isRecordType($elementSchema))
         #set ($recordElementName = $StyleUtils.toLowerUnderScore($elementSchema.getName()))
-        record->${fieldName} = kaa_deserialize_array(reader, (deserialize)${prefix}_deserialize_${recordElementName});
+        record->${fieldName} = kaa_deserialize_array(reader, (deserialize_fn)${prefix}_deserialize_${recordElementName});
     #elseif ($TypeConverter.isUnionType($elementSchema))
         #set ($unionElementName = $TypeConverter.generateUnionName($elementSchema).toLowerCase())
-        record->${fieldName} = kaa_deserialize_array(reader, (deserialize)${prefix}_deserialize_${unionElementName});
+        record->${fieldName} = kaa_deserialize_array(reader, (deserialize_fn)${prefix}_deserialize_${unionElementName});
     #end
 #elseif ($TypeConverter.isEnumType($field.schema()))
     int64_t ${fieldName}_value;
