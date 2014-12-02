@@ -427,6 +427,7 @@
  "type": "record",
  "name": "TopicSubscriptionInfo",
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "direction": "in",
  "fields": [
      {"name": "topicInfo", "type":"org.kaaproject.kaa.common.endpoint.gen.Topic"},
      {"name": "seqNumber", "type": "int"}

@@ -49,7 +49,7 @@ void test_kaa_event_compile_request()
 
     kaa_event_sync_request_t* sync_request = NULL;
     kaa_event_compile_request(context, &sync_request, 100499);
-    sync_request->destruct(sync_request);
+    sync_request->destroy(sync_request);
     KAA_FREE(sync_request);
 
     kaa_event_sequence_number_response_t seq_n_resp;
@@ -62,7 +62,7 @@ void test_kaa_event_compile_request()
     ASSERT_NOT_NULL(sync_request);
     ASSERT_EQUAL(sync_request->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
-    sync_request->destruct(sync_request);
+    sync_request->destroy(sync_request);
     KAA_FREE(sync_request);
 
     kaa_add_event(context, "fqn", 3, "data", 4, "target", 6);
@@ -73,7 +73,7 @@ void test_kaa_event_compile_request()
     ASSERT_EQUAL(sync_request1->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request1->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
     ASSERT_EQUAL(kaa_list_get_size(sync_request1->events->data), 1);
-    sync_request1->destruct(sync_request1);
+    sync_request1->destroy(sync_request1);
     KAA_FREE(sync_request1);
 
     kaa_add_event(context, "fqn", 3, "data", 4, "target", 6);
@@ -84,7 +84,7 @@ void test_kaa_event_compile_request()
     ASSERT_EQUAL(sync_request2->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request2->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
     ASSERT_EQUAL(kaa_list_get_size(sync_request2->events->data), 2);
-    sync_request2->destruct(sync_request2);
+    sync_request2->destroy(sync_request2);
     KAA_FREE(sync_request2);
 
     kaa_event_handle_sync(context, 100502, NULL, NULL);
@@ -95,7 +95,7 @@ void test_kaa_event_compile_request()
     ASSERT_NOT_NULL(sync_request3);
     ASSERT_EQUAL(sync_request3->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request3->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
-    sync_request3->destruct(sync_request3);
+    sync_request3->destroy(sync_request3);
     KAA_FREE(sync_request3);
 
     kaa_context_destroy(context);
@@ -119,9 +119,9 @@ static void kaa_destroy_event(void* data)
     KAA_FREE(record->event_class_fqn);
     kaa_destroy_bytes(record->event_data);
     KAA_FREE(record->event_data);
-    record->source->destruct(record->source);
+    record->source->destroy(record->source);
     KAA_FREE(record->source);
-    record->target->destruct(record->target);
+    record->target->destroy(record->target);
     KAA_FREE(record->target);
 }
 

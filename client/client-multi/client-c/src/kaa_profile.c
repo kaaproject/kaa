@@ -154,7 +154,7 @@ kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
         kaa_get_endpoint_public_key((char **)&pub_key->buffer, (size_t *)&pub_key->size, &need_deallocation);
         request->endpoint_public_key->data = pub_key;
         if (!need_deallocation) {
-            request->endpoint_public_key->destruct = &kaa_no_destroy_bytes;
+            request->endpoint_public_key->destroy = &kaa_no_destroy_bytes;
         }
     }
     return request;

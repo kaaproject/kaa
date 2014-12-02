@@ -199,7 +199,7 @@ kaa_error_t kaa_logging_compile_request(void *ctx, kaa_log_sync_request_t ** req
                 return KAA_ERR_NOMEM;
             }
             request->log_entries->data = logs;
-            request->log_entries->destruct = &noop;
+            request->log_entries->destroy = &noop;
             request->request_id = kaa_create_string_null_union_string_branch();
             if (request->request_id == NULL) {
                 KAA_FREE(request->log_entries);

@@ -16,7 +16,6 @@
 
 #set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
-
 #set ($recordName = $StyleUtils.toLowerUnderScore($schema.getName()))
 typedef struct ${prefix}_${recordName}_t_ {
 #foreach ($field in $schema.getFields())
@@ -25,10 +24,10 @@ typedef struct ${prefix}_${recordName}_t_ {
 #end
 
 #if ($TypeConverter.isTypeOut($schema))
-    serialize serialize;
-    get_size  get_size;
+    serialize_fn serialize;
+    get_size_fn  get_size;
 #end
-    destruct  destruct;
+    destroy_fn   destroy;
 } ${prefix}_${recordName}_t;
 
 #if ($TypeConverter.isTypeOut($schema))

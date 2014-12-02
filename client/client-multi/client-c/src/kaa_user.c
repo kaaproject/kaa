@@ -151,7 +151,7 @@ kaa_error_t kaa_user_compile_request(kaa_user_manager_t *this, kaa_user_sync_req
 
     request->endpoint_detach_requests = kaa_create_array_endpoint_detach_request_null_union_null_branch();
     if (!request->endpoint_detach_requests) {
-        request->endpoint_attach_requests->destruct(request->endpoint_attach_requests);
+        request->endpoint_attach_requests->destroy(request->endpoint_attach_requests);
         KAA_FREE(request->endpoint_attach_requests);
         KAA_FREE(request);
         return KAA_ERR_NOMEM;
@@ -172,7 +172,7 @@ kaa_error_t kaa_user_compile_request(kaa_user_manager_t *this, kaa_user_sync_req
     } else {
         request->user_attach_request = kaa_create_record_user_attach_request_null_union_null_branch();
         if (!request->user_attach_request) {
-            request->destruct(request);
+            request->destroy(request);
             KAA_FREE(request);
             return KAA_ERR_NOMEM;
         }
