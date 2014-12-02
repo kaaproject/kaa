@@ -32,12 +32,24 @@
 static const char* kaa_log_level_name[] =
 {
       "NONE"
+#if KAA_LOG_LEVEL_FATAL_ENABLED
     , "FATAL"
+#if KAA_LOG_LEVEL_ERROR_ENABLED
     , "ERROR"
+#if KAA_LOG_LEVEL_WARN_ENABLED
     , "WARNING"
+#if KAA_LOG_LEVEL_INFO_ENABLED
     , "INFO"
+#if KAA_LOG_LEVEL_DEBUG_ENABLED
     , "DEBUG"
+#if KAA_LOG_LEVEL_TRACE_ENABLED
     , "TRACE"
+#endif // KAA_LOG_LEVEL_TRACE_ENABLED
+#endif // KAA_LOG_LEVEL_DEBUG_ENABLED
+#endif // KAA_LOG_LEVEL_INFO_ENABLED
+#endif // KAA_LOG_LEVEL_WARN_ENABLED
+#endif // KAA_LOG_LEVEL_ERROR_ENABLED
+#endif // KAA_LOG_LEVEL_FATAL_ENABLED
 };
 
 struct kaa_logger_t {
@@ -50,7 +62,7 @@ struct kaa_logger_t {
 
 kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink)
 {
-    if (!logger_p || (buffer_size < 2))
+    if (!logger_p || (buffer_size < 2) || max_log_level > KAA_MAX_LOG_LEVEL)
         return KAA_ERR_BADPARAM;
 
     *logger_p = KAA_MALLOC(kaa_logger_t);
@@ -67,13 +79,18 @@ kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_
     (*logger_p)->buffer_size = buffer_size;
     (*logger_p)->sink = sink ? sink : stdout;
     (*logger_p)->max_log_level = max_log_level;
+#ifdef KAA_TRACE_MEMORY_ALLOCATIONS
+    kaa_trace_memory_allocs_set_logger(*logger_p);
+#endif
     return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_log_destroy(kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL(logger, KAA_ERR_BADPARAM);
-
+#ifdef KAA_TRACE_MEMORY_ALLOCATIONS
+    kaa_trace_memory_allocs_set_logger(NULL);
+#endif
     KAA_FREE(logger->log_buffer);
     KAA_FREE(logger);
     return KAA_ERR_NONE;
@@ -87,7 +104,9 @@ kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *this)
 kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_level)
 {
     KAA_RETURN_IF_NIL(this, KAA_ERR_BADPARAM);
-
+    if (max_log_level > KAA_MAX_LOG_LEVEL) {
+        return KAA_ERR_BADPARAM;
+    }
     this->max_log_level = max_log_level;
     return KAA_ERR_NONE;
 }
