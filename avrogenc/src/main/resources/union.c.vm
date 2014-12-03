@@ -177,7 +177,7 @@ static void ${prefix}_serialize_${unionNameLower}(avro_writer_t writer, void *da
 #end
 static kaa_union_t* ${prefix}_create_${unionNameLower}()
 {
-    kaa_union_t* kaa_union = KAA_MALLOC(kaa_union_t);
+    kaa_union_t* kaa_union = (kaa_union_t *) KAA_MALLOC(sizeof(kaa_union_t));
     kaa_union->data = NULL;
 #if ($generationContext.isTypeOut())
     kaa_union->serialize = ${prefix}_serialize_${unionNameLower};

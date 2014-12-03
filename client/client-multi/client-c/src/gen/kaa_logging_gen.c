@@ -55,7 +55,7 @@ static void kaa_serialize_test_log_record(avro_writer_t writer, void* data)
 
 kaa_test_log_record_t* kaa_create_test_log_record()
 {
-    kaa_test_log_record_t* record = KAA_MALLOC(kaa_test_log_record_t);
+    kaa_test_log_record_t* record = (kaa_test_log_record_t *) KAA_MALLOC(sizeof(kaa_test_log_record_t));
     record->serialize = kaa_serialize_test_log_record;
     record->get_size = kaa_get_size_test_log_record;
     record->destroy = kaa_destroy_test_log_record;
@@ -64,7 +64,7 @@ kaa_test_log_record_t* kaa_create_test_log_record()
 
 kaa_test_log_record_t* kaa_deserialize_test_log_record(avro_reader_t reader)
 {
-    kaa_test_log_record_t* record = KAA_MALLOC(kaa_test_log_record_t);
+    kaa_test_log_record_t* record = (kaa_test_log_record_t *) KAA_MALLOC(sizeof(kaa_test_log_record_t));
     record->serialize = kaa_serialize_test_log_record;
     record->get_size = kaa_get_size_test_log_record;
     record->destroy = kaa_destroy_test_log_record;

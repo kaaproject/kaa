@@ -44,7 +44,7 @@ size_t kaa_get_size_string(void *data)
 
 kaa_bytes_t* kaa_deserialize_bytes(avro_reader_t reader)
 {
-    kaa_bytes_t* data = KAA_MALLOC(kaa_bytes_t);
+    kaa_bytes_t* data = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
     int64_t size;
     avro_binary_encoding.read_bytes(reader, (char**)&data->buffer, &size);
     data->size = size;
@@ -77,7 +77,7 @@ void kaa_serialize_boolean(avro_writer_t writer, void* data)
 
 int8_t* kaa_deserialize_boolean(avro_reader_t reader)
 {
-    int8_t* data = KAA_MALLOC(int8_t);
+    int8_t* data = (int8_t *) KAA_MALLOC(sizeof(int8_t));
     avro_binary_encoding.read_boolean(reader, data);
     return data;
 }
@@ -90,7 +90,7 @@ void kaa_serialize_int(avro_writer_t writer, void* data)
 
 int32_t* kaa_deserialize_int(avro_reader_t reader)
 {
-    int32_t* data = KAA_MALLOC(int32_t);
+    int32_t* data = (int32_t *) KAA_MALLOC(sizeof(int32_t));
     avro_binary_encoding.read_int(reader, data);
     return data;
 }
@@ -103,7 +103,7 @@ void kaa_serialize_long(avro_writer_t writer, void* data)
 
 int64_t* kaa_deserialize_long(avro_reader_t reader)
 {
-    int64_t* data = KAA_MALLOC(int64_t);
+    int64_t* data = (int64_t *) KAA_MALLOC(sizeof(int64_t));
     avro_binary_encoding.read_long(reader, data);
     return data;
 }

@@ -53,7 +53,7 @@ static void kaa_serialize_basic_endpoint_profile_test(avro_writer_t writer, void
 
 kaa_profile_basic_endpoint_profile_test_t* kaa_profile_create_basic_endpoint_profile_test()
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = KAA_MALLOC(kaa_profile_basic_endpoint_profile_test_t);
+    kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t *) KAA_MALLOC(sizeof(kaa_profile_basic_endpoint_profile_test_t));
     record->serialize = kaa_serialize_basic_endpoint_profile_test;
     record->get_size = kaa_get_size_basic_endpoint_profile_test;
     record->destroy = kaa_destroy_basic_endpoint_profile_test;
@@ -62,7 +62,7 @@ kaa_profile_basic_endpoint_profile_test_t* kaa_profile_create_basic_endpoint_pro
 
 kaa_profile_basic_endpoint_profile_test_t* kaa_deserialize_basic_endpoint_profile_test(avro_reader_t reader)
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = KAA_MALLOC(kaa_profile_basic_endpoint_profile_test_t);
+    kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t *) KAA_MALLOC(sizeof(kaa_profile_basic_endpoint_profile_test_t));
     record->serialize = kaa_serialize_basic_endpoint_profile_test;
     record->get_size = kaa_get_size_basic_endpoint_profile_test;
     record->destroy = kaa_destroy_basic_endpoint_profile_test;

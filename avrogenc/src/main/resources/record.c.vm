@@ -135,7 +135,7 @@ static void ${prefix}_serialize_${recordName}(avro_writer_t writer, void* data)
 
 ${prefix}_${recordName}_t* ${prefix}_create_${recordName}()
 {
-    ${prefix}_${recordName}_t* record = KAA_MALLOC(${prefix}_${recordName}_t);
+    ${prefix}_${recordName}_t* record = (${prefix}_${recordName}_t *) KAA_MALLOC(sizeof(${prefix}_${recordName}_t));
     record->serialize = ${prefix}_serialize_${recordName};
     record->get_size = ${prefix}_get_size_${recordName};
 #if ($isRecordNeedDeallocator)
@@ -150,7 +150,7 @@ ${prefix}_${recordName}_t* ${prefix}_create_${recordName}()
 
 ${prefix}_${recordName}_t* ${prefix}_deserialize_${recordName}(avro_reader_t reader)
 {
-    ${prefix}_${recordName}_t* record = KAA_MALLOC(${prefix}_${recordName}_t);
+    ${prefix}_${recordName}_t* record = (${prefix}_${recordName}_t *) KAA_MALLOC(sizeof(${prefix}_${recordName}_t));
 #if ($TypeConverter.isTypeOut($schema))
     record->serialize = ${prefix}_serialize_${recordName};
     record->get_size = ${prefix}_get_size_${recordName};
