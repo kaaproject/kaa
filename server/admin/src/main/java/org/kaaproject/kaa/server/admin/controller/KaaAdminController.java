@@ -372,13 +372,28 @@ public class KaaAdminController {
             HttpServletRequest request,
             HttpServletResponse response) throws KaaAdminServiceException {
         try {
-            Sdk sdk = cacheService.getSdk(key);
-            response.setContentType(key.getTargetPlatform().getContentType());
-            ServletUtils.prepareDisposition(request, response, sdk.getFileName());
-            response.setContentLength(sdk.getData().length);
+            org.kaaproject.kaa.server.admin.shared.file.FileData sdkData = kaaAdminService.getSdk(key);
+            response.setContentType(sdkData.getContentType());
+            ServletUtils.prepareDisposition(request, response, sdkData.getFileName());
+            response.setContentLength(sdkData.getFileData().length);
             response.setBufferSize(BUFFER);
-            response.getOutputStream().write(sdk.getData());
+            response.getOutputStream().write(sdkData.getFileData());
             response.flushBuffer();
+        }
+        catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    /**
+     * Flushes all cached Sdks within tenant.
+     *
+     */
+    @RequestMapping(value="flushSdkCache", method=RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void flushSdkCache() throws KaaAdminServiceException {
+        try {
+            kaaAdminService.flushSdkCache();
         }
         catch (Exception e) {
             throw Utils.handleException(e);

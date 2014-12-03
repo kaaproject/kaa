@@ -23,15 +23,21 @@ import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.admin.FileData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CacheServiceImpl implements CacheService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CacheServiceImpl.class);
+    
     @Autowired
     private AdminClientProvider clientProvider;
     
@@ -68,5 +74,22 @@ public class CacheServiceImpl implements CacheService {
     public FileData putProjectFile(ProjectDataKey key, FileData data) {
         return data;
     }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value="sdkCache", allEntries=true),
+            @CacheEvict(value="fileCache", allEntries=true)     
+        })  
+    public void flushAllCaches() throws SandboxServiceException {
+        AdminClient client = clientProvider.getClient();
+        client.login(tenantDeveloperUser, tenantDeveloperPassword);
+        try {
+            client.flushSdkCache();
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+
+        LOG.info("All caches have been completely flushed");        
+    }  
 
 }

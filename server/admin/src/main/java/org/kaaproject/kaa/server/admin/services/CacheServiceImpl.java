@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.ehcache.Ehcache;
+
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
@@ -27,6 +32,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -37,9 +43,11 @@ public class CacheServiceImpl implements CacheService {
     @Autowired
     private ControlThriftClientProvider clientProvider;
 
+    @Autowired
+    private CacheManager cacheManager;
 
     @Override
-    @Cacheable("sdkCache")
+    @Cacheable(value = "sdkCache", key = "#key")
     public Sdk getSdk(SdkKey key) throws KaaAdminServiceException {
         SdkPlatform targetPlatform = toSdkPlatform(key.getTargetPlatform());
         try {
@@ -49,6 +57,26 @@ public class CacheServiceImpl implements CacheService {
         } catch (TException e) {
             throw Utils.handleException(e);
         }
+    }
+
+    @Override
+    @CacheEvict(value = "sdkCache", key = "#key")
+    public void flushSdk(SdkKey key) {
+    }
+    
+    public List<SdkKey> getCachedSdkKeys(String applicationId) {
+        List<SdkKey> keys = new ArrayList<>();
+        Ehcache cache = (Ehcache) cacheManager.getCache("sdkCache").getNativeCache();
+        List<?> cachedKeys = cache.getKeysWithExpiryCheck();
+        for (Object cachedKey : cachedKeys) {
+            if (cachedKey instanceof SdkKey) {
+                SdkKey cachedSdkKey = (SdkKey)cachedKey;
+                if (applicationId.equals(cachedSdkKey.getApplicationId())) {
+                    keys.add(cachedSdkKey);
+                }
+            }
+        }
+        return keys;
     }
 
     @Override
@@ -96,5 +124,5 @@ public class CacheServiceImpl implements CacheService {
     @CacheEvict(value = "fileUploadCache", key = "#key")
     public void removeUploadedFile(String key) {
     }
-
+    
 }

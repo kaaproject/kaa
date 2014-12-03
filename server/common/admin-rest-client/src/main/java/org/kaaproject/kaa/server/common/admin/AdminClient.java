@@ -280,6 +280,10 @@ public class AdminClient {
         return data;
     }
     
+    public void flushSdkCache() throws Exception {
+        restTemplate.postForLocation(url + "flushSdkCache", null);
+    }
+    
     private static final Pattern fileNamePattern = Pattern.compile("^(.+?)filename=\"(.+?)\"");
     
     private static class FileResponseExtractor implements ResponseExtractor<Object>
