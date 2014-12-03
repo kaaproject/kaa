@@ -29,13 +29,20 @@ extern "C" {
 typedef kaa_profile_basic_endpoint_profile_test_t kaa_profile_t;
 typedef struct kaa_profile_manager_t kaa_profile_manager_t;
 
-kaa_error_t                     kaa_create_profile_manager(kaa_profile_manager_t **);
-void                            kaa_destroy_profile_manager(kaa_profile_manager_t *);
-
-kaa_error_t                     kaa_profile_update_profile(void *, kaa_profile_t *);
-bool                            kaa_profile_need_profile_resync(void *);
-kaa_profile_sync_request_t *    kaa_profile_compile_request(void *);
-void                            kaa_profile_handle_sync(void *, kaa_profile_sync_response_t *);
+/**
+ * Updates user profile.<br>
+ * After profile is set a request to Operations server will be sent.<br>
+ * <br>
+ * Provide a valid pointer to user-defined profile structure. kaa_profile_t is
+ * an alias of a given profile structure name.<br>
+ * <br>
+ * Use this to set profile before kaa_init() is called to provide default
+ * profile value in order to perform successful registration in Operations server.
+ */
+kaa_error_t                     kaa_profile_update_profile(kaa_profile_manager_t *kaa_context, kaa_profile_t *profile);
+kaa_error_t                     kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
+kaa_error_t                     kaa_profile_compile_request(kaa_profile_manager_t *kaa_context, kaa_profile_sync_request_t **result);
+kaa_error_t                     kaa_profile_handle_sync(kaa_profile_manager_t *kaa_context, kaa_profile_sync_response_t *profile);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -230,11 +230,26 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
                 }
 #endif
                 case KAA_SERVICE_PROFILE: {
-                    if (kaa_profile_need_profile_resync(kaa_context)) {
+                    bool need_resync = false;
+                    kaa_error_t rval = kaa_profile_need_profile_resync(kaa_context->profile_manager, &need_resync);
+                    if (rval) {
+                        request->destroy(request);
+                        return rval;
+                    }
+                    if (need_resync) {
                         request->profile_sync_request->destroy(request->profile_sync_request);
                         KAA_FREE(request->profile_sync_request);
-                        kaa_profile_sync_request_t *profile_request = kaa_profile_compile_request(kaa_context);
+                        kaa_profile_sync_request_t *profile_request = NULL;
+                        rval = kaa_profile_compile_request(kaa_context->profile_manager, &profile_request);
+                        if (rval) {
+                            request->destroy(request);
+                            return rval;
+                        }
                         request->profile_sync_request = kaa_create_record_profile_sync_request_null_union_profile_sync_request_branch();
+                        if (!request->profile_sync_request) {
+                            request->destroy(request);
+                            return KAA_ERR_NOMEM;
+                        }
                         request->profile_sync_request->data = profile_request;
                     }
                     break;
@@ -332,7 +347,7 @@ kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer
 
     if (response->profile_sync_response != NULL
             && response->profile_sync_response->type == KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_PROFILE_SYNC_REQUEST_BRANCH) {
-        kaa_profile_handle_sync(kaa_context, (kaa_profile_sync_response_t *)response->profile_sync_response->data);
+        kaa_profile_handle_sync(kaa_context->profile_manager, (kaa_profile_sync_response_t *)response->profile_sync_response->data);
     }
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
@@ -347,12 +362,6 @@ kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer
     KAA_FREE(response);
 
     return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_set_profile(kaa_context_t *kaa_context, kaa_profile_t *profile_body)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_profile_update_profile(kaa_context, profile_body);
 }
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING

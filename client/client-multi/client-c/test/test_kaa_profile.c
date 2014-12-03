@@ -41,19 +41,23 @@ void test_profile_update()
 
     kaa_profile_t *profile = kaa_profile_create_basic_endpoint_profile_test();
     profile->profile_body = profile_body1;
-    kaa_profile_update_profile(context, profile);
+    kaa_profile_update_profile(context->profile_manager, profile);
 
-    ASSERT_TRUE(kaa_profile_need_profile_resync(context));
+    bool need_resync = false;
+    ASSERT_EQUAL(kaa_profile_need_profile_resync(context->profile_manager, &need_resync), KAA_ERR_NONE);
+    ASSERT_TRUE(need_resync);
 
-    kaa_profile_update_profile(context, profile);
+    kaa_profile_update_profile(context->profile_manager, profile);
 
-    ASSERT_FALSE(kaa_profile_need_profile_resync(context));
+    ASSERT_EQUAL(kaa_profile_need_profile_resync(context->profile_manager, &need_resync), KAA_ERR_NONE);
+    ASSERT_FALSE(need_resync);
     KAA_FREE(profile->profile_body);
 
     profile->profile_body = "new_dummy";
-    kaa_profile_update_profile(context, profile);
+    kaa_profile_update_profile(context->profile_manager, profile);
 
-    ASSERT_TRUE(kaa_profile_need_profile_resync(context));
+    ASSERT_EQUAL(kaa_profile_need_profile_resync(context->profile_manager, &need_resync), KAA_ERR_NONE);
+    ASSERT_TRUE(need_resync);
     profile->profile_body = NULL;
 
     profile->destroy(profile);
