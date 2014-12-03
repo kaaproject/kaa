@@ -36,13 +36,13 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
 
     kaa_sync_request_meta_data_t *request = kaa_create_sync_request_meta_data();
     size_t len = strlen(APPLICATION_TOKEN);
-    request->application_token = KAA_CALLOC(len + 1, sizeof(char));
-    memcpy(request->application_token, APPLICATION_TOKEN, len);
+    request->application_token = (char *) KAA_MALLOC((len + 1) * sizeof(char));
+    strcpy(request->application_token, APPLICATION_TOKEN);
     request->timeout = 60000L;
 
-    request->endpoint_public_key_hash = KAA_CALLOC(1, sizeof(kaa_bytes_t));
+    request->endpoint_public_key_hash = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
     request->endpoint_public_key_hash->size = SHA_1_DIGEST_LENGTH;
-    request->endpoint_public_key_hash->buffer = KAA_CALLOC(SHA_1_DIGEST_LENGTH, sizeof(char));
+    request->endpoint_public_key_hash->buffer = (uint8_t *) KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
     kaa_digest* pub_key_hash = kaa_status_get_endpoint_public_key_hash(context->status);
     if (pub_key_hash) {
         memcpy(request->endpoint_public_key_hash->buffer, *pub_key_hash, SHA_1_DIGEST_LENGTH);
@@ -51,9 +51,9 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
     kaa_digest * profile_hash = kaa_status_get_profile_hash(context->status);
     if (profile_hash) {
         request->profile_hash = kaa_create_bytes_null_union_bytes_branch();
-        kaa_bytes_t * hash = KAA_CALLOC(1, sizeof(kaa_bytes_t));
+        kaa_bytes_t * hash = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
         hash->size = SHA_1_DIGEST_LENGTH;
-        hash->buffer = KAA_CALLOC(SHA_1_DIGEST_LENGTH, sizeof(char));
+        hash->buffer = (uint8_t *) KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
         memcpy(hash->buffer, *profile_hash, SHA_1_DIGEST_LENGTH);
         request->profile_hash->data = hash;
     } else {
@@ -203,7 +203,7 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
     kaa_sync_request_t *request = kaa_create_sync_request();
     if (request != NULL) {
         request->request_id = kaa_create_int_null_union_int_branch();
-        request->request_id->data = KAA_MALLOC(uint32_t);
+        request->request_id->data = (uint32_t *) KAA_MALLOC(sizeof(uint32_t));
         *((uint32_t *)request->request_id->data) = kaa_context->global_request_id;
 
         request->sync_request_meta_data = kaa_create_record_sync_request_meta_data_null_union_sync_request_meta_data_branch();

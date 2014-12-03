@@ -46,7 +46,7 @@ kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
 {
     KAA_RETURN_IF_NIL(channel_manager_p, KAA_ERR_BADPARAM);
 
-    *channel_manager_p = KAA_MALLOC(kaa_channel_manager_t);
+    *channel_manager_p = (kaa_channel_manager_t *) KAA_MALLOC(sizeof(kaa_channel_manager_t));
     if (!(*channel_manager_p))
         return KAA_ERR_NOMEM;
 
@@ -69,14 +69,14 @@ kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *this
 {
     KAA_RETURN_IF_NIL4(this, handler, supported_services, services_count, KAA_ERR_BADPARAM);
 
-    kaa_sync_details *sync = KAA_MALLOC(kaa_sync_details);
+    kaa_sync_details *sync = (kaa_sync_details *) KAA_MALLOC(sizeof(kaa_sync_details));
     if (!sync)
         return KAA_ERR_NOMEM;
 
     sync->sync_fn = handler;
     sync->supported_services_size = services_count;
-    sync->supported_services = KAA_CALLOC(services_count, sizeof(kaa_service_t));
-    for (;services_count--;)
+    sync->supported_services = (kaa_service_t *) KAA_MALLOC(services_count * sizeof(kaa_service_t));
+    while (services_count--)
         sync->supported_services[services_count] = supported_services[services_count];
 
     // Add to the list of handlers (or create the list if there's none yet)

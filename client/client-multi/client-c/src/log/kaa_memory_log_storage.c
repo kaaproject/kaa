@@ -45,7 +45,9 @@ typedef struct kaa_memory_log_block_t {
 
 static kaa_memory_log_block_t * create_memory_log_block(kaa_uuid_t uuid, kaa_list_t *logs)
 {
-    kaa_memory_log_block_t *block = (kaa_memory_log_block_t *) KAA_CALLOC(1, sizeof(kaa_memory_log_block_t));
+    kaa_memory_log_block_t *block = (kaa_memory_log_block_t *) KAA_MALLOC(sizeof(kaa_memory_log_block_t));
+    if (!block)
+        return NULL;
     kaa_uuid_copy(&block->uuid, &uuid);
     block->logs = logs;
     block->block_size = 0;
@@ -102,6 +104,8 @@ static kaa_list_t * memory_log_storage_get_records(kaa_uuid_t uuid, size_t max_s
     }
 
     kaa_memory_log_block_t *block = create_memory_log_block(uuid, ret_head);
+    if (!block)
+        return NULL;
     if (log_storage->uploading_blocks == NULL) {
         log_storage->uploading_blocks = kaa_list_create(block);
     } else {
@@ -199,7 +203,7 @@ static void init_memory_log_storage()
     if (log_storage != NULL) {
         return;
     }
-    log_storage = KAA_CALLOC(1, sizeof(kaa_memory_log_storage_t));
+    log_storage = (kaa_memory_log_storage_t *) KAA_MALLOC(sizeof(kaa_memory_log_storage_t));
     log_storage->occupied_size = 0;
     log_storage->logs = NULL;
     log_storage->uploading_blocks = NULL;

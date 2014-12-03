@@ -45,26 +45,26 @@ static user_info_t* create_user_info(const char *external_id, const char *user_a
 {
     KAA_RETURN_IF_NIL2(external_id, user_access_token, NULL);
 
-    user_info_t *user_info = KAA_MALLOC(user_info_t);
+    user_info_t *user_info = (user_info_t *) KAA_MALLOC(sizeof(user_info_t));
     KAA_RETURN_IF_NIL(user_info, NULL);
 
     user_info->user_external_id_len = strlen(external_id);
     user_info->user_access_token_len = strlen(user_access_token);
 
-    user_info->user_external_id = KAA_CALLOC(user_info->user_external_id_len + 1, sizeof(char));
+    user_info->user_external_id =(char *) KAA_MALLOC((user_info->user_external_id_len + 1) * sizeof(char));
     if (!user_info->user_external_id) {
         KAA_FREE(user_info);
         return NULL;
     }
-    memcpy(user_info->user_external_id, external_id, user_info->user_external_id_len + 1);
+    strcpy(user_info->user_external_id, external_id);
 
-    user_info->user_access_token = KAA_CALLOC(user_info->user_access_token_len + 1, sizeof(char));
+    user_info->user_access_token = (char *) KAA_MALLOC((user_info->user_access_token_len + 1) * sizeof(char));
     if (!user_info->user_access_token) {
         KAA_FREE(user_info->user_external_id);
         KAA_FREE(user_info);
         return NULL;
     }
-    memcpy(user_info->user_access_token, user_access_token, user_info->user_access_token_len + 1);
+    strcpy(user_info->user_access_token, user_access_token);
 
     return user_info;
 }
@@ -82,7 +82,7 @@ kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_sta
 {
     KAA_RETURN_IF_NIL2(user_manager_p, status, KAA_ERR_BADPARAM);
 
-    *user_manager_p = KAA_MALLOC(kaa_user_manager_t);
+    *user_manager_p = (kaa_user_manager_t *) KAA_MALLOC(sizeof(kaa_user_manager_t));
     KAA_RETURN_IF_NIL((*user_manager_p), KAA_ERR_NOMEM);
 
     (*user_manager_p)->attachment_listeners.on_attached_callback = NULL;
@@ -161,10 +161,10 @@ kaa_error_t kaa_user_compile_request(kaa_user_manager_t *this, kaa_user_sync_req
         // FIXME: handle out of memory
         kaa_user_attach_request_t *user_attach_request = kaa_create_user_attach_request();
 
-        user_attach_request->user_external_id = KAA_CALLOC(this->user_info->user_external_id_len + 1, sizeof(char));
-        memcpy(user_attach_request->user_external_id, this->user_info->user_external_id, this->user_info->user_external_id_len);
-        user_attach_request->user_access_token = KAA_CALLOC(this->user_info->user_access_token_len + 1, sizeof(char));
-        memcpy(user_attach_request->user_access_token, this->user_info->user_access_token, this->user_info->user_access_token_len);
+        user_attach_request->user_external_id = (char *) KAA_MALLOC((this->user_info->user_external_id_len + 1) * sizeof(char));
+        strcpy(user_attach_request->user_external_id, this->user_info->user_external_id);
+        user_attach_request->user_access_token = (char *) KAA_MALLOC((this->user_info->user_access_token_len + 1) * sizeof(char));
+        strcpy(user_attach_request->user_access_token, this->user_info->user_access_token);
 
         this->is_waiting_user_attach_response = true;
         request->user_attach_request = kaa_create_record_user_attach_request_null_union_user_attach_request_branch();

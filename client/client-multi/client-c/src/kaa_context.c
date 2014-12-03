@@ -30,7 +30,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL2(context_p, logger, KAA_ERR_BADPARAM);
 
-    *context_p = KAA_MALLOC(kaa_context_t);
+    *context_p = (kaa_context_t *) KAA_MALLOC(sizeof(kaa_context_t));
     KAA_RETURN_IF_NIL(*context_p, KAA_ERR_NOMEM);
 
     (*context_p)->logger = logger;

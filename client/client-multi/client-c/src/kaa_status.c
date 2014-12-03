@@ -43,7 +43,7 @@ struct kaa_status_t {
 
 kaa_error_t kaa_create_status(kaa_status_t ** kaa_status_p)
 {
-    kaa_status_t * kaa_status = KAA_MALLOC(kaa_status_t);
+    kaa_status_t * kaa_status = (kaa_status_t *) KAA_MALLOC(sizeof(kaa_status_t));
     KAA_RETURN_IF_NIL(kaa_status, KAA_ERR_NOMEM);
 
     kaa_status->is_registered = false;
@@ -71,8 +71,9 @@ kaa_error_t kaa_create_status(kaa_status_t ** kaa_status_p)
         READ_BUFFER(read_buf, &enpoint_access_token_length, sizeof(enpoint_access_token_length))
 
         if (enpoint_access_token_length > 0) {
-            kaa_status->endpoint_access_token = KAA_CALLOC(enpoint_access_token_length + 1, sizeof(char));
-            READ_BUFFER(read_buf, kaa_status->endpoint_access_token, enpoint_access_token_length)
+            kaa_status->endpoint_access_token = (char * ) KAA_MALLOC((enpoint_access_token_length + 1) * sizeof(char));
+            READ_BUFFER(read_buf, kaa_status->endpoint_access_token, enpoint_access_token_length);
+            kaa_status->endpoint_access_token[enpoint_access_token_length] = '\0';
         }
     }
 
@@ -143,12 +144,13 @@ kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t * status, const ch
     }
 
     size_t len = strlen(token);
-    status->endpoint_access_token = KAA_CALLOC(len + 1, sizeof(char));
+    status->endpoint_access_token = (char *) KAA_MALLOC((len + 1) * sizeof(char));
     if (!status->endpoint_access_token) {
         return KAA_ERR_NOMEM;
     }
 
     memcpy(status->endpoint_access_token, token, len);
+    status->endpoint_access_token[len] = '\0';
     return KAA_ERR_NONE;
 }
 
@@ -232,7 +234,7 @@ kaa_error_t kaa_status_save(kaa_status_t *status)
     size_t endpoint_access_token_length = status->endpoint_access_token ? strlen(status->endpoint_access_token) : 0;
     size_t buffer_size = KAA_STATUS_STATIC_SIZE + sizeof(endpoint_access_token_length) + (endpoint_access_token_length );
 
-    char *buffer_head = KAA_CALLOC(buffer_size, sizeof(char));
+    char *buffer_head = (char *) KAA_MALLOC(buffer_size * sizeof(char));
     if (buffer_head == NULL) {
         return KAA_ERR_NOMEM;
     }

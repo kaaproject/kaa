@@ -35,7 +35,7 @@ void kaa_uuid_to_string(char **dst, kaa_uuid_t *uuid)
 {
     char buf[11];
     size_t len = sprintf(buf, KAA_UUID_FORMAT, *uuid);
-    *dst = KAA_CALLOC(len + 1, sizeof(char));
+    *dst = (char *) KAA_MALLOC((len + 1) * sizeof(char));
     strcpy(*dst, buf);
 }
 

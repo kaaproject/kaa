@@ -52,8 +52,9 @@ static kaa_endpoint_version_info_t * create_versions_info() {
             kaa_event_class_family_version_info_t *ecfv =
                     kaa_create_event_class_family_version_info();
             size_t len = strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name);
-            ecfv->name = KAA_CALLOC(len + 1, sizeof(char));
+            ecfv->name = (char * ) KAA_MALLOC((len + 1) * sizeof(char));
             memcpy(ecfv->name, KAA_EVENT_SCHEMA_VERSIONS[i].name, len);
+            ecfv->name[len] = '\0';
             ecfv->version = KAA_EVENT_SCHEMA_VERSIONS[i].version;
             if (vi->event_family_versions->data != NULL) {
                 kaa_list_push_back(vi->event_family_versions->data, ecfv);
@@ -73,7 +74,7 @@ static kaa_endpoint_version_info_t * create_versions_info() {
  */
 kaa_error_t kaa_create_profile_manager(
         kaa_profile_manager_t ** profile_manager_p) {
-    kaa_profile_manager_t * profile_manager = KAA_MALLOC(kaa_profile_manager_t);
+    kaa_profile_manager_t * profile_manager = (kaa_profile_manager_t *) KAA_MALLOC(sizeof(kaa_profile_manager_t));
     if (profile_manager == NULL ) {
         return KAA_ERR_NOMEM;
     }
@@ -124,8 +125,10 @@ kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
         request->endpoint_access_token =
                 kaa_create_string_null_union_string_branch();
         size_t len = strlen(ep_acc_token);
-        request->endpoint_access_token->data = KAA_CALLOC(len + 1, sizeof(char));
-        memcpy(request->endpoint_access_token->data, ep_acc_token, len);
+        char *access_token_data = (char *) KAA_MALLOC((len + 1) * sizeof(char));
+        memcpy(access_token_data, ep_acc_token, len);
+        access_token_data[len] = '\0';
+        request->endpoint_access_token->data = access_token_data;
     } else {
         request->endpoint_access_token =
                 kaa_create_string_null_union_null_branch();
@@ -133,11 +136,11 @@ kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
 
     kaa_profile_manager_t *profile_manager = context->profile_manager;
 
-    request->profile_body = KAA_MALLOC(kaa_bytes_t);
+    request->profile_body = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
     request->profile_body->size = profile_manager->profile_body.size;
     if (request->profile_body->size > 0) {
         request->profile_body->buffer =
-                KAA_CALLOC(request->profile_body->size, sizeof(char));
+                (uint8_t *) KAA_MALLOC(request->profile_body->size * sizeof(uint8_t));
         memcpy(request->profile_body->buffer,
                 profile_manager->profile_body.buffer,
                 profile_manager->profile_body.size);
@@ -149,7 +152,7 @@ kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
         request->endpoint_public_key = kaa_create_bytes_null_union_null_branch();
     } else {
         request->endpoint_public_key = kaa_create_bytes_null_union_bytes_branch();
-        kaa_bytes_t *pub_key = KAA_CALLOC(1, sizeof(kaa_bytes_t));
+        kaa_bytes_t *pub_key = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
         bool need_deallocation = false;
         kaa_get_endpoint_public_key((char **)&pub_key->buffer, (size_t *)&pub_key->size, &need_deallocation);
         request->endpoint_public_key->data = pub_key;
@@ -183,7 +186,7 @@ kaa_error_t kaa_profile_update_profile(void *ctx, kaa_profile_t * profile_body) 
     }
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
-    char* serialized_profile = KAA_CALLOC(serialized_profile_size, sizeof(char));
+    char* serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
 
     avro_writer_t writer = avro_writer_memory(serialized_profile, serialized_profile_size);
     profile_body->serialize(writer, profile_body);

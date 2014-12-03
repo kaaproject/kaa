@@ -56,11 +56,11 @@ kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_
     if (!logger_p || (buffer_size < KAA_MINIMAL_BUFFER_SIZE) || (max_log_level > KAA_MAX_LOG_LEVEL))
         return KAA_ERR_BADPARAM;
 
-    *logger_p = KAA_MALLOC(kaa_logger_t);
+    *logger_p = (kaa_logger_t *) KAA_MALLOC(sizeof(kaa_logger_t));
     if (!*logger_p)
         return KAA_ERR_NOMEM;
 
-    (*logger_p)->log_buffer = KAA_CALLOC(buffer_size, sizeof(char));
+    (*logger_p)->log_buffer = (char *) KAA_MALLOC(buffer_size * sizeof(char));
     if (!(*logger_p)->log_buffer) {
         KAA_FREE(*logger_p);
         *logger_p = NULL;

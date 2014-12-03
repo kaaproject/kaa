@@ -47,7 +47,7 @@ void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deal
 
     fseek(status_file, 0, SEEK_END);
     *buffer_size = ftell(status_file);
-    *buffer = KAA_CALLOC(*buffer_size, sizeof(char));
+    *buffer = (char *) KAA_MALLOC((*buffer_size) * sizeof(char));
 
     if (*buffer == NULL) {
         *buffer_size = 0;

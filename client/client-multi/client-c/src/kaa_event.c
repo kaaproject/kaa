@@ -42,7 +42,7 @@ typedef struct event_t {
 
 static event_t * create_event(size_t seq_n, const char *FQN, size_t fqn_len, const char *DATA, size_t data_len, const char *TARGET, size_t target_len, kaa_error_t *error_code)
 {
-    event_t * event = KAA_MALLOC(event_t);
+    event_t * event = (event_t *) KAA_MALLOC(sizeof(event_t));
     if (event == NULL) {
         *error_code = KAA_ERR_NOMEM;
         return NULL;
@@ -51,17 +51,18 @@ static event_t * create_event(size_t seq_n, const char *FQN, size_t fqn_len, con
     event->seq_number = seq_n;
 
     event->fqn_size = fqn_len;
-    event->fqn = KAA_CALLOC(sizeof(char), fqn_len);
+    event->fqn = (char *) KAA_MALLOC(sizeof(char) * (fqn_len + 1));
     if (event->fqn == NULL) {
         *error_code = KAA_ERR_NOMEM;
         KAA_FREE(event);
         return NULL;
     }
     memcpy(event->fqn, FQN, fqn_len);
+    event->fqn[fqn_len] = '\0';
 
     if (data_len > 0) {
         event->data_size = data_len;
-        event->data = KAA_CALLOC(sizeof(char), data_len);
+        event->data = (char *) KAA_MALLOC(sizeof(char) * data_len);
         if (event->data == NULL) {
             *error_code = KAA_ERR_NOMEM;
             KAA_FREE(event->fqn);
@@ -75,7 +76,7 @@ static event_t * create_event(size_t seq_n, const char *FQN, size_t fqn_len, con
     }
     if (target_len > 0) {
         event->target_size = target_len;
-        event->target = KAA_CALLOC(sizeof(char), target_len);
+        event->target = KAA_MALLOC(sizeof(char) * (target_len + 1));
         if (event->target == NULL) {
             *error_code = KAA_ERR_NOMEM;
             KAA_FREE(event->data);
@@ -84,6 +85,7 @@ static event_t * create_event(size_t seq_n, const char *FQN, size_t fqn_len, con
             return NULL;
         }
         memcpy(event->target, TARGET, target_len);
+        event->target[target_len] = '\0';
     } else {
         event->target_size = 0;
         event->target  = NULL;
@@ -114,7 +116,7 @@ typedef struct sent_events_tuple_t {
 
 static sent_events_tuple_t * create_events_tuple(size_t id, kaa_list_t *events_head)
 {
-    sent_events_tuple_t * tuple = KAA_MALLOC(sent_events_tuple_t);
+    sent_events_tuple_t * tuple = (sent_events_tuple_t *) KAA_MALLOC(sizeof(sent_events_tuple_t));
     if (tuple == NULL) {
         return NULL;
     }
@@ -137,16 +139,17 @@ typedef struct event_callback_pair_t_ {
 
 static event_callback_pair_t * create_event_callback_pair(const char * fqn, size_t fqn_length, event_callback_t callback)
 {
-    event_callback_pair_t * pair = KAA_MALLOC(event_callback_pair_t);
+    event_callback_pair_t * pair = (event_callback_pair_t *) KAA_MALLOC(sizeof(event_callback_pair_t));
     if (pair == NULL) {
         return NULL;
     }
-    pair->fqn = KAA_CALLOC(fqn_length + 1, sizeof(char));
+    pair->fqn = (char *) KAA_MALLOC((fqn_length + 1) * sizeof(char));
     if (pair->fqn == NULL) {
         KAA_FREE(pair);
         return NULL;
     }
     memcpy(pair->fqn, fqn, fqn_length);
+    pair->fqn[fqn_length] = '\0';
     pair->cb = callback;
     return pair;
 }
@@ -182,7 +185,7 @@ typedef struct event_transaction_t_ {
 
 static event_transaction_t * create_transaction(kaa_trx_id id)
 {
-    event_transaction_t * trx = KAA_MALLOC(event_transaction_t);
+    event_transaction_t * trx = (event_transaction_t *) KAA_MALLOC(sizeof(event_transaction_t));
     trx->id = id;
     trx->events = NULL;
     return trx;
@@ -215,7 +218,7 @@ struct kaa_event_manager_t {
 
 kaa_error_t kaa_create_event_manager(kaa_event_manager_t ** event_manager_p)
 {
-    kaa_event_manager_t * event_manager = KAA_MALLOC(kaa_event_manager_t);
+    kaa_event_manager_t * event_manager = (kaa_event_manager_t *) KAA_MALLOC(sizeof(kaa_event_manager_t));
     if (event_manager == NULL) {
         return KAA_ERR_NOMEM;
     }
@@ -329,17 +332,22 @@ kaa_error_t kaa_event_compile_request(void *ctx, kaa_event_sync_request_t** requ
         }
 
         event_copy->seq_num = event_source->seq_number;
-        event_copy->event_class_fqn = KAA_CALLOC(event_source->fqn_size + 1, sizeof(char));
+
+        event_copy->event_class_fqn = (char *) KAA_MALLOC((event_source->fqn_size + 1) * sizeof(char));
         memcpy(event_copy->event_class_fqn, event_source->fqn, event_source->fqn_size);
-        event_copy->event_data = KAA_MALLOC(kaa_bytes_t);
+        event_copy->event_class_fqn[event_source->fqn_size] = '\0';
+
+        event_copy->event_data = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
         event_copy->event_data->size = event_source->data_size;
-        event_copy->event_data->buffer = KAA_CALLOC(event_source->data_size, sizeof(char));
+        event_copy->event_data->buffer = (uint8_t *) KAA_MALLOC(event_source->data_size * sizeof(uint8_t));
         memcpy(event_copy->event_data->buffer, event_source->data, event_source->data_size);
 
         if (event_source->target_size > 0) {
             event_copy->target = kaa_create_string_null_union_string_branch();
-            event_copy->target->data = KAA_CALLOC(event_source->target_size + 1, sizeof(char));
-            memcpy(event_copy->target->data, event_source->target, event_source->target_size);
+            char *target_data = (char *) KAA_MALLOC((event_source->target_size + 1) * sizeof(char));
+            memcpy(target_data, event_source->target, event_source->target_size);
+            target_data[event_source->target_size] = '\0';
+            event_copy->target->data = target_data;
         } else {
             event_copy->target = kaa_create_string_null_union_null_branch();
         }
