@@ -76,6 +76,7 @@ import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
@@ -86,6 +87,7 @@ import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
 import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -406,6 +408,37 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkApplicationId(applicationId);
             SdkKey sdkKey = new SdkKey(applicationId, configurationSchemaVersion, profileSchemaVersion, notificationSchemaVersion, logSchemaVersion, targetPlatform, aefMapIds);
             return Base64.encodeObject(sdkKey, Base64.URL_SAFE);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public FileData getSdk(SdkKey key) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(key.getApplicationId());
+            Sdk sdk = cacheService.getSdk(key);
+            FileData data = new FileData();
+            data.setFileName(sdk.getFileName());
+            data.setContentType(key.getTargetPlatform().getContentType());
+            data.setFileData(sdk.getData());
+            return data;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public void flushSdkCache() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            List<ApplicationDto> applications = getApplications();
+            for (ApplicationDto application : applications) {
+                for (SdkKey key : cacheService.getCachedSdkKeys(application.getId())) {
+                    cacheService.flushSdk(key);
+                }
+            }
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1606,6 +1639,5 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw new KaaAdminServiceException(ServiceErrorCode.NOT_AUTHORIZED);
         }
     }
-
 
 }

@@ -95,8 +95,8 @@ interceptors = {
 })
 public class SandboxServiceImpl implements SandboxService, InitializingBean {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(SandboxServiceImpl.class);
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(SandboxServiceImpl.class);
     
     private static final String DEMO_PROJECTS_FOLDER = "demo_projects";
    
@@ -123,9 +123,9 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     public void afterPropertiesSet() throws Exception {
         try {
             
-            logger.info("Initializing Sandbox Service...");
-            logger.info("sandboxHome [{}]", sandboxHome);
-            logger.info("guiChangeHostEnabled [{}]", guiChangeHostEnabled);
+            LOG.info("Initializing Sandbox Service...");
+            LOG.info("sandboxHome [{}]", sandboxHome);
+            LOG.info("guiChangeHostEnabled [{}]", guiChangeHostEnabled);
             
             JAXBContext jc = JAXBContext.newInstance("org.kaaproject.kaa.sandbox.demo.projects");
             Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -135,7 +135,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             ProjectsConfig projectsConfig = (ProjectsConfig) unmarshaller.unmarshal(new File(demoProkectsXmlFile));
             for (Project project : projectsConfig.getProjects()) {
                 projectsMap.put(project.getId(), project);
-                logger.info("Demo project: id [{}] name [{}]", project.getId(), project.getName());
+                LOG.info("Demo project: id [{}] name [{}]", project.getId(), project.getName());
             }
             
             if (sandboxEnv == null) {
@@ -147,19 +147,19 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                 for (Object key : sandboxEnvProperties.keySet()) {
                     String keyValue = key + "=" + sandboxEnvProperties.getProperty(key.toString());
                     sandboxEnv[i++] = keyValue;
-                    logger.info("Sandbox env: [{}]", keyValue);
+                    LOG.info("Sandbox env: [{}]", keyValue);
                 }
             }
-            logger.info("Initialized Sandbox Service.");
+            LOG.info("Initialized Sandbox Service.");
         } catch (JAXBException e) {
-            logger.error("Unable to initialize Sandbox Service", e);
+            LOG.error("Unable to initialize Sandbox Service", e);
             throw e;
         }
     }
     
     @Ready
     public void onReady(final AtmosphereResource r) {
-    	logger.info("Received RPC GET, uuid: {}", r.uuid());
+    	LOG.info("Received RPC GET, uuid: {}", r.uuid());
     	r.getBroadcaster().broadcast(r.uuid(), r);
     }
     
@@ -175,6 +175,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
         	ClientMessageOutputStream outStream = new ClientMessageOutputStream(res);
         	if (guiChangeHostEnabled) {
         	    executeCommand(outStream, new String[]{"sudo",sandboxHome + "/change_kaa_host.sh",host}, null);
+        	    cacheService.flushAllCaches();
         	}
         	else {
         	    outStream.println("WARNING: change host from GUI is disabled!");

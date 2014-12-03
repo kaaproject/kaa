@@ -27,5 +27,7 @@ public interface CacheService {
        FileData getProjectFile(ProjectDataKey key);
        
        FileData putProjectFile(ProjectDataKey key, FileData data);
+       
+       void flushAllCaches() throws SandboxServiceException;
         
 }
