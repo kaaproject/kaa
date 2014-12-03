@@ -38,6 +38,9 @@ public class CacheServiceImpl implements CacheService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CacheServiceImpl.class);
     
+    private static final String SDK_CACHE = "sdkCache";
+    private static final String FILE_CACHE = "fileCache";
+    
     @Autowired
     private AdminClientProvider clientProvider;
     
@@ -50,7 +53,7 @@ public class CacheServiceImpl implements CacheService {
     private String tenantDeveloperPassword;
     
     @Override
-    @Cacheable("sdkCache")
+    @Cacheable(SDK_CACHE)
     public FileData getSdk(SdkKey key) throws SandboxServiceException {
         AdminClient client = clientProvider.getClient();
         client.login(tenantDeveloperUser, tenantDeveloperPassword);
@@ -64,21 +67,21 @@ public class CacheServiceImpl implements CacheService {
     }
     
     @Override
-    @Cacheable(value = "fileCache", key = "#key", unless="#result == null")
+    @Cacheable(value = FILE_CACHE, key = "#key", unless="#result == null")
     public FileData getProjectFile(ProjectDataKey key) {
         return null;
     }
     
     @Override
-    @CachePut(value = "fileCache", key = "#key")
+    @CachePut(value = FILE_CACHE, key = "#key")
     public FileData putProjectFile(ProjectDataKey key, FileData data) {
         return data;
     }
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value="sdkCache", allEntries=true),
-            @CacheEvict(value="fileCache", allEntries=true)     
+            @CacheEvict(value=SDK_CACHE, allEntries=true),
+            @CacheEvict(value=FILE_CACHE, allEntries=true)     
         })  
     public void flushAllCaches() throws SandboxServiceException {
         AdminClient client = clientProvider.getClient();
@@ -89,7 +92,7 @@ public class CacheServiceImpl implements CacheService {
             throw Utils.handleException(e);
         }
 
-        LOG.info("All caches have been completely flushed");        
+        LOG.info("All caches have been completely flushed.");        
     }  
 
 }

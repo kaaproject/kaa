@@ -61,7 +61,6 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
-import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spring4gwt.server.SpringGwtRemoteServiceServlet;
@@ -155,8 +154,7 @@ public class KaaAdminController {
         SpringGwtRemoteServiceServlet.setRequest(request);
         try {
             return kaaAuthService.checkAuth();
-        }
-        finally {
+        } finally {
             SpringGwtRemoteServiceServlet.setRequest(null);
         }
     }
@@ -225,8 +223,7 @@ public class KaaAdminController {
                 tenant.setTempPassword(result.getPassword());
             }
             return tenant;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
@@ -336,8 +333,7 @@ public class KaaAdminController {
                 userDto.setTempPassword(result.getPassword());
             }
             return userDto;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
@@ -379,8 +375,7 @@ public class KaaAdminController {
             response.setBufferSize(BUFFER);
             response.getOutputStream().write(sdkData.getFileData());
             response.flushBuffer();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
@@ -394,8 +389,7 @@ public class KaaAdminController {
     public void flushSdkCache() throws KaaAdminServiceException {
         try {
             kaaAdminService.flushSdkCache();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
@@ -1046,8 +1040,7 @@ public class KaaAdminController {
             logger.debug("Uploading file with name '{}'", file.getOriginalFilename());
             try {
                 return file.getBytes();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw Utils.handleException(e);
             }
         } else {

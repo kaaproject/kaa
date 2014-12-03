@@ -39,6 +39,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CacheServiceImpl implements CacheService {
+    
+    private static final String SDK_CACHE = "sdkCache";
+    private static final String RECORD_LIBRARY_CACHE = "recordLibraryCache";
+    private static final String RECORD_SCHEMA_CACHE = "recordSchemaCache";
+    private static final String FILE_UPLOAD_CACHE = "fileUploadCache";
 
     @Autowired
     private ControlThriftClientProvider clientProvider;
@@ -47,7 +52,7 @@ public class CacheServiceImpl implements CacheService {
     private CacheManager cacheManager;
 
     @Override
-    @Cacheable(value = "sdkCache", key = "#key")
+    @Cacheable(value = SDK_CACHE, key = "#key")
     public Sdk getSdk(SdkKey key) throws KaaAdminServiceException {
         SdkPlatform targetPlatform = toSdkPlatform(key.getTargetPlatform());
         try {
@@ -60,13 +65,13 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    @CacheEvict(value = "sdkCache", key = "#key")
+    @CacheEvict(value = SDK_CACHE, key = "#key")
     public void flushSdk(SdkKey key) {
     }
     
     public List<SdkKey> getCachedSdkKeys(String applicationId) {
         List<SdkKey> keys = new ArrayList<>();
-        Ehcache cache = (Ehcache) cacheManager.getCache("sdkCache").getNativeCache();
+        Ehcache cache = (Ehcache) cacheManager.getCache(SDK_CACHE).getNativeCache();
         List<?> cachedKeys = cache.getKeysWithExpiryCheck();
         for (Object cachedKey : cachedKeys) {
             if (cachedKey instanceof SdkKey) {
@@ -80,7 +85,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    @Cacheable("recordLibraryCache")
+    @Cacheable(RECORD_LIBRARY_CACHE)
     public FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException {
         try {
             return clientProvider.getClient().generateRecordStructureLibrary(key.getApplicationId(), key.getLogSchemaVersion());
@@ -90,7 +95,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    @Cacheable("recordSchemaCache")
+    @Cacheable(RECORD_SCHEMA_CACHE)
     public FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException {
         try {
             return clientProvider.getClient().getRecordStructureSchema(key.getApplicationId(), key.getLogSchemaVersion());
@@ -115,13 +120,13 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    @Cacheable(value = "fileUploadCache", key = "#key")
+    @Cacheable(value = FILE_UPLOAD_CACHE, key = "#key")
     public byte[] uploadedFile(String key, byte[] data) {
         return data;
     }
 
     @Override
-    @CacheEvict(value = "fileUploadCache", key = "#key")
+    @CacheEvict(value = FILE_UPLOAD_CACHE, key = "#key")
     public void removeUploadedFile(String key) {
     }
     

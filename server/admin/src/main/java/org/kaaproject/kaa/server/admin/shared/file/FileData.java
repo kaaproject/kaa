@@ -1,5 +1,3 @@
-package org.kaaproject.kaa.server.admin.shared.file;
-
 /*
  * Copyright 2014 CyberVision, Inc.
  *
@@ -15,6 +13,8 @@ package org.kaaproject.kaa.server.admin.shared.file;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.kaaproject.kaa.server.admin.shared.file;
 
 import java.io.Serializable;
 
