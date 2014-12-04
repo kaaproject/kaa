@@ -25,10 +25,11 @@
 #include "kaa_defaults.h"
 #include "kaa_log.h"
 
-extern kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *this
+extern kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *self
         , kaa_user_attach_response_t * user_attach_response, kaa_user_attach_notification_t *attach, kaa_user_detach_notification_t *detach);
-extern kaa_error_t kaa_user_compile_request(kaa_user_manager_t *this, kaa_user_sync_request_t** request_p, size_t requestId);
-
+extern kaa_error_t kaa_user_compile_request(kaa_user_manager_t *self, kaa_user_sync_request_t** request_p, size_t requestId);
+extern kaa_error_t kaa_event_compile_request(kaa_event_manager_t *self, kaa_event_sync_request_t** request_p, size_t requestId);
+extern kaa_error_t kaa_event_handle_sync(kaa_event_manager_t *self, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
 
 static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
 {
@@ -127,75 +128,6 @@ kaa_error_t kaa_set_endpoint_access_token(kaa_context_t *kaa_context, const char
     return kaa_status_set_endpoint_access_token(kaa_context->status, token);
 }
 
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-kaa_error_t kaa_send_event(kaa_context_t *kaa_context, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(kaa_context->status, KAA_ERR_NOT_INITIALIZED);
-
-    if (kaa_is_endpoint_attached_to_user(kaa_context->status)) {
-        return kaa_add_event(
-                  kaa_context
-                , fqn
-                , fqn_length
-                , event_data
-                , event_data_size
-                , event_target
-                , event_target_size
-        );
-    }
-    return KAA_ERR_EVENT_NOT_ATTACHED;
-}
-
-kaa_error_t kaa_start_event_block(kaa_context_t *kaa_context, kaa_trx_id* trx_id)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_event_create_transaction(kaa_context, trx_id);
-}
-
-kaa_error_t kaa_event_add_to_transaction(kaa_context_t *kaa_context, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-
-    if (kaa_is_endpoint_attached_to_user(kaa_context->status)) {
-        return kaa_add_event_to_transaction(
-                  kaa_context
-                , trx_id
-                , fqn
-                , fqn_length
-                , event_data
-                , event_data_size
-                , event_target
-                , event_target_size
-        );
-    }
-    return KAA_ERR_EVENT_NOT_ATTACHED;
-}
-
-kaa_error_t kaa_send_events_block(kaa_context_t *kaa_context, kaa_trx_id trx_id)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_event_finish_transaction(kaa_context, trx_id);
-}
-
-kaa_error_t kaa_remove_event_block(kaa_context_t *kaa_context, kaa_trx_id trx_id)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_event_remove_transaction(kaa_context, trx_id);
-}
-
-kaa_error_t kaa_register_event_listener(kaa_context_t *kaa_context, const char *fqn, size_t fqn_length, event_callback_t listener)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_add_on_event_callback(
-            kaa_context->event_manager
-            , fqn
-            , fqn_length
-            , listener
-    );
-}
-#endif
-
 kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t **request_p, size_t *result_size, size_t service_count, const kaa_service_t services[])
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
@@ -225,7 +157,7 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
                     request->event_sync_request->destroy(request->event_sync_request);
                     KAA_FREE(request->event_sync_request);
                     request->event_sync_request = kaa_create_record_event_sync_request_null_union_event_sync_request_branch();
-                    kaa_event_compile_request(kaa_context, (kaa_event_sync_request_t**)&request->event_sync_request->data, kaa_context->global_request_id);
+                    kaa_event_compile_request(kaa_context->event_manager, (kaa_event_sync_request_t**)&request->event_sync_request->data, kaa_context->global_request_id);
                     break;
                 }
 #endif
@@ -315,7 +247,7 @@ kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer
             }
         }
     }
-    kaa_event_handle_sync(kaa_context, responseId, event_sn_response, received_events);
+    kaa_event_handle_sync(kaa_context->event_manager, responseId, event_sn_response, received_events);
 #endif
     if (response->user_sync_response != NULL) {
         if (response->user_sync_response->type == KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_USER_SYNC_RESPONSE_BRANCH) {

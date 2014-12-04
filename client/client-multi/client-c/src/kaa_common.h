@@ -40,8 +40,7 @@ extern "C" {
     { if (!(p1) || !(p2) || !(p3) || !(p4)) return (E); }
 
 // TODO: move to kaa_event.h
-typedef void (*event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size);
-typedef size_t kaa_trx_id;
+
 
 typedef enum {
     KAA_SERVICE_BOOTSTRAP = 0,

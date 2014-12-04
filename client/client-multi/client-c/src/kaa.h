@@ -72,68 +72,6 @@ kaa_error_t kaa_set_profile(kaa_context_t *kaa_context, kaa_profile_t *profile_b
  */
 kaa_error_t kaa_set_endpoint_access_token(kaa_context_t *kaa_context, const char *token);
 
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-/**
- * Event management
- */
-
-/**
- * Sends raw event<br>
- * <br>
- * It is not recommended to use this function directly. Instead you should use
- * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
- */
-kaa_error_t kaa_send_event(kaa_context_t *kaa_context, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size);
-#ifdef kaa_broadcast_event
-#undef kaa_broadcast_event
-#endif
-#define kaa_broadcast_event(context, fqn, fqn_length, event_data, event_data_size) \
-    kaa_send_event((context), (fqn), (fqn_length), (event_data), (event_data_size), NULL, 0)
-
-/**
- * Adds a raw event to the transaction<br>
- * <br>
- * It is not recommended to use this function directly. Instead you should use
- * functions contained in EventClassFamily auto-generated headers (kaa_add_*_event_to_block(...))
- */
-kaa_error_t kaa_event_add_to_transaction(kaa_context_t *kaa_context, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *event_target, size_t event_target_size);
-
-/**
- * Start a new event block<br>
- * <br>
- * Returns a new id which must be used to add an event to the block.
- * \return new events block id.
- */
-kaa_error_t kaa_start_event_block(kaa_context_t *kaa_context, kaa_trx_id* trx_id);
-
-/**
- * Send all the events from the event block at once.<br>
- * <br>
- * The event block is identified by the given trx_id.
- * \param trx_id    The ID of the event block to be sent.
- */
-kaa_error_t kaa_send_event_block(kaa_context_t *kaa_context, kaa_trx_id trx_id);
-
-/**
- * Removes the event block without sending events.<br>
- * <br>
- * \param trx_id    The ID of the event block to be removed.
- */
-kaa_error_t kaa_remove_event_block(kaa_context_t *kaa_context, kaa_trx_id trx_id);
-
-/**
- * Register listener to an event.<br>
- * <br>
- * It is not recommended to use this function directly. Instead you should use
- * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
- */
-kaa_error_t kaa_register_event_listener(kaa_context_t *kaa_context, const char *fqn, size_t fqn_length, event_callback_t listener);
-#ifdef kaa_set_global_event_callback
-#undef kaa_set_global_event_callback
-#endif
-#define kaa_set_global_event_callback(context, callback) kaa_register_event_listener((context), NULL, 0, (callback))
-#endif
-
 /**
  * Create a Sync Request.<br>
  * <br>

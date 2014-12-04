@@ -25,8 +25,9 @@ extern void        kaa_user_manager_destroy(kaa_user_manager_t *user_manager);
 extern kaa_error_t kaa_create_profile_manager(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
 extern void kaa_destroy_profile_manager(kaa_profile_manager_t *);
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
-extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *this);
-
+extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
+extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
+extern void        kaa_event_manager_destroy(kaa_event_manager_t *self);
 
 kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
 {
@@ -53,7 +54,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
                 KAA_LOG_ERROR(logger, error, failed_msg, "profile manager");
             } else {
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-                error = kaa_create_event_manager(&((*context_p)->event_manager));
+                error = kaa_event_manager_create(&((*context_p)->event_manager), (*context_p)->status, (*context_p)->channel_manager, (*context_p)->logger);
                 if (error) {
                     KAA_LOG_ERROR(logger, error, failed_msg, "event manager");
                 } else {
@@ -81,7 +82,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
                     }
 #ifndef KAA_DISABLE_FEATURE_EVENTS
                     if (error)
-                        kaa_destroy_event_manager((*context_p)->event_manager);
+                        kaa_event_manager_destroy((*context_p)->event_manager);
                 }
 #endif
                 if (error)
@@ -106,7 +107,7 @@ kaa_error_t kaa_context_destroy(kaa_context_t * context)
 
     kaa_user_manager_destroy(context->user_manager);
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    kaa_destroy_event_manager(context->event_manager);
+    kaa_event_manager_destroy(context->event_manager);
 #endif
     kaa_destroy_profile_manager(context->profile_manager);
     kaa_destroy_bootstrap_manager(context->bootstrap_manager);

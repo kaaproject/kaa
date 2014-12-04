@@ -25,25 +25,112 @@ extern "C" {
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-#include "kaa_common.h"
+#include <stddef.h>
 #include "kaa_error.h"
-#include "gen/kaa_endpoint_gen.h"
+
+typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size, const char *event_source);
+typedef size_t kaa_event_block_id;
 
 typedef struct kaa_event_manager_t kaa_event_manager_t;
 
-kaa_error_t kaa_create_event_manager(kaa_event_manager_t **);
-void        kaa_destroy_event_manager(kaa_event_manager_t *);
+/**
+ * @brief Sends raw event
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ * @param[in]       event_data          Serialized event object.
+ * @param[in]       event_data_size     Size of data in event_data parameter.
+ * @param[in]       target              The target endpoint of the event. If @code NULL @endcode event will be broadcasted.
+ * @param[in]       target_size         Size of data in target parameter.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_add_event(kaa_event_manager_t *self, const char * fqn, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
+#ifdef kaa_broadcast_event
+#undef kaa_broadcast_event
+#endif
+#define kaa_broadcast_event(context, fqn, fqn_length, event_data, event_data_size) \
+    kaa_send_event((context), (fqn), (fqn_length), (event_data), (event_data_size), NULL, 0)
 
-kaa_error_t kaa_event_compile_request(void *ctx, kaa_event_sync_request_t** request_p, size_t requestId);
-kaa_error_t kaa_event_handle_sync(void *ctx, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
 
-kaa_error_t kaa_event_create_transaction(void *context, kaa_trx_id *trx_id);
-kaa_error_t kaa_event_finish_transaction(void *context, kaa_trx_id trx_id);
-kaa_error_t kaa_event_remove_transaction(void *context, kaa_trx_id trx_id);
-kaa_error_t kaa_add_event_to_transaction(void *context, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
+/**
+ * @brief Register listener to an event.
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ *                                      If @code NULL @endcode, this callback will be invoked for
+ *                                      all events which do not have registered specific callback.
+ * @param[in]       callback            Event callback function.
+ *
+ * @return  Error code.
+ */
+kaa_error_t kaa_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback);
 
-kaa_error_t kaa_add_event(void *context, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
-kaa_error_t kaa_add_on_event_callback(kaa_event_manager_t *event_manager, const char *fqn, size_t fqn_length, event_callback_t callback);
+/**
+ * @brief Start a new event block.
+ *
+ * Returns a new id which must be used to add an event to the block.
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in,out]   trx_id              Pointer to the @link kaa_event_block_id @endlink instance which will be fulfilled with a corresponding ID.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_block_id *trx_id);
+
+/**
+ * @brief Send all the events from the event block at once.
+ *
+ * The event block is identified by the given trx_id.
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       trx_id              The ID of the event block to be sent.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id);
+
+/**
+ * @brief Removes the event block without sending events.
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       trx_id              The ID of the event block to be sent.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_event_remove_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id);
+
+/**
+ * @brief Adds a raw event to the transaction.
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (@code kaa_add_*_event_to_block(...) @endcode)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       trx_id              The ID of the event block to be sent.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ * @param[in]       event_data          Serialized event object.
+ * @param[in]       event_data_size     Size of data in event_data parameter.
+ * @param[in]       target              The target endpoint of the event. If @code NULL @endcode event will be broadcasted.
+ * @param[in]       target_size         Size of data in target parameter.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
+
+/**
+ * @brief Find class family name of the event by its fully-qualified name.
+ *
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ *
+ * @return Null-terminated string if corresponding event class family was found, @code NULL @endcode otherwise.
+ */
 
 const char *kaa_find_class_family_name(const char *fqn);
 

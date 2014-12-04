@@ -27,7 +27,7 @@
 #include "kaa_channel_manager.h"
 #include "kaa_status.h"
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
 
 static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
 
