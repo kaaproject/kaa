@@ -25,9 +25,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 typedef kaa_test_log_record_t               kaa_user_log_record_t;
@@ -97,10 +94,7 @@ typedef enum kaa_log_upload_decision_t {
 
 typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_t *);
 
-kaa_error_t                 kaa_create_log_collector(kaa_log_collector_t **);
-void                        kaa_destroy_log_collector(kaa_log_collector_t *);
-
-kaa_error_t                 kaa_init_log_collector(
+kaa_error_t                 kaa_logging_init(
                                                     kaa_log_collector_t *
                                                   , kaa_log_storage_t *
                                                   , kaa_log_upload_properties_t *
@@ -108,11 +102,11 @@ kaa_error_t                 kaa_init_log_collector(
                                                   , log_upload_decision_fn
                                                   );
 
-kaa_error_t                 kaa_add_log_record(void *ctx, kaa_user_log_record_t *entry);
+kaa_error_t                 kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
 
-kaa_error_t                 kaa_logging_compile_request(void *ctx, kaa_log_sync_request_t ** request_p);
-kaa_error_t                 kaa_logging_handle_sync(void *ctx, kaa_log_sync_response_t *response);
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
 

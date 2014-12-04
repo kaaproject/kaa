@@ -39,6 +39,10 @@ extern kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *kaa_contex
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
 extern kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *kaa_context, kaa_profile_sync_response_t *profile);
 
+/** External logging API */
+extern kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_request_t **result);
+extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_response_t *response);
+
 static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
 {
     kaa_context_t *context = (kaa_context_t *)ctx;
@@ -203,7 +207,7 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
 #ifndef KAA_DISABLE_FEATURE_LOGGING
                 case KAA_SERVICE_LOGGING: {
                     kaa_log_sync_request_t *log_request = NULL;
-                    kaa_logging_compile_request(kaa_context, &log_request);
+                    kaa_logging_compile_request(kaa_context->log_collector, &log_request);
                     if (log_request) {
                         request->log_sync_request->destroy(request->log_sync_request);
                         KAA_FREE(request->log_sync_request);
@@ -299,7 +303,7 @@ kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     if (response->log_sync_response != NULL
             && response->log_sync_response->type == KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_LOG_SYNC_REQUEST_BRANCH) {
-        kaa_logging_handle_sync(kaa_context, (kaa_log_sync_response_t *)response->log_sync_response->data);
+        kaa_logging_handle_sync(kaa_context->log_collector, (kaa_log_sync_response_t *)response->log_sync_response->data);
     }
 #endif
 
@@ -321,13 +325,13 @@ kaa_error_t kaa_init_log_storage(
       )
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_init_log_collector(kaa_context->log_collector, storage, properties, status, need_upl);
+    return kaa_logging_init(kaa_context->log_collector, storage, properties, status, need_upl);
 }
 
 kaa_error_t kaa_add_log(kaa_context_t *kaa_context, kaa_user_log_record_t *entry)
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_add_log_record(kaa_context, entry);
+    return kaa_logging_add_record(kaa_context, entry);
 }
 
 #endif

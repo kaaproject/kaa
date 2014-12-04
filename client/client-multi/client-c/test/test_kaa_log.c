@@ -25,16 +25,9 @@
 #include "kaa_log.h"
 #include <stdio.h>
 
-static kaa_logger_t *logger = NULL;
+extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_response_t *response);
 
-void test_create_log_collector()
-{
-    kaa_log_collector_t * collector = NULL;
-    kaa_error_t err_code = kaa_create_log_collector(&collector);
-    ASSERT_EQUAL(err_code, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(collector);
-    kaa_destroy_log_collector(collector);
-}
+static kaa_logger_t *logger = NULL;
 
 static kaa_service_t services[4] = { KAA_SERVICE_PROFILE, KAA_SERVICE_USER, KAA_SERVICE_EVENT, KAA_SERVICE_LOGGING };
 void test_create_request()
@@ -80,9 +73,9 @@ void test_response()
     kaa_storage_status_t *ss = get_memory_log_storage_status();
     kaa_log_upload_properties_t *lp = get_memory_log_upload_properties();
 
-    kaa_init_log_collector(ctx->log_collector, ls, lp, ss, &memory_log_storage_is_upload_needed);
+    kaa_logging_init(ctx->log_collector, ls, lp, ss, &memory_log_storage_is_upload_needed);
 
-    kaa_logging_handle_sync(ctx, &log_sync_response);
+    kaa_logging_handle_sync(ctx->log_collector, &log_sync_response);
     ASSERT_EQUAL(stub_upload_uuid_check_call_count,1);
 
     kaa_context_destroy(ctx);
@@ -145,7 +138,6 @@ int test_deinit(void)
 KAA_SUITE_MAIN(Log, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_LOGGING
        ,
-       KAA_TEST_CASE(create_log_collector, test_create_log_collector)
        KAA_TEST_CASE(create_request, test_create_request)
        KAA_TEST_CASE(process_response, test_response)
 #if DEAFULT_LOG_RECORD
