@@ -93,7 +93,7 @@ static kaa_endpoint_version_info_t * create_versions_info() {
 /**
  * PUBLIC FUNCTIONS
  */
-kaa_error_t kaa_create_profile_manager(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager) {
+kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager) {
     KAA_RETURN_IF_NIL3(profile_manager_p, channel_manager, status, KAA_ERR_BADPARAM);
 
     kaa_profile_manager_t * profile_manager = (kaa_profile_manager_t *) KAA_MALLOC(sizeof(kaa_profile_manager_t));
@@ -111,7 +111,7 @@ kaa_error_t kaa_create_profile_manager(kaa_profile_manager_t ** profile_manager_
     return KAA_ERR_NONE;
 }
 
-void kaa_destroy_profile_manager(kaa_profile_manager_t *self) {
+void kaa_profile_manager_destroy(kaa_profile_manager_t *self) {
     if (self != NULL) {
         kaa_destroy_bytes(&self->profile_body);
         KAA_FREE(self);
@@ -177,7 +177,12 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
     request->profile_body->size = self->profile_body.size;
     request->profile_body->buffer = self->profile_body.buffer;  // destructor for buffer is not needed
 
-    if (kaa_is_endpoint_registered(self->status)) {
+    bool is_registered = false;
+    kaa_error_t rval = kaa_is_endpoint_registered(self->status, &is_registered);
+    if (rval)
+        return KAA_ERR_BAD_STATE;
+
+    if (is_registered) {
         request->endpoint_public_key = kaa_create_bytes_null_union_null_branch();
         if (!request->endpoint_public_key) {
             request->destroy(request);
@@ -217,7 +222,12 @@ kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_syn
         kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, profile_sync_services[0]);
         if (sync)
             (*sync)(profile_sync_services, 1);
-    } else if (!kaa_is_endpoint_registered(self->status)) {
+    }
+    bool is_registered = false;
+    kaa_error_t rval = kaa_is_endpoint_registered(self->status, &is_registered);
+    if (rval)
+        return KAA_ERR_BAD_STATE;
+    if (!is_registered) {
         kaa_set_endpoint_registered(self->status, true);
     }
     return KAA_ERR_NONE;
@@ -242,7 +252,7 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
     kaa_digest new_hash;
     kaa_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
 
-    kaa_digest * old_hash = kaa_status_get_profile_hash(self->status);
+    const kaa_digest * old_hash = kaa_status_get_profile_hash(self->status);
 
     if (old_hash && !memcmp(new_hash, *old_hash, SHA_1_DIGEST_LENGTH)) {
         self->need_resync = false;

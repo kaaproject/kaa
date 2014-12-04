@@ -47,12 +47,12 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
     request->endpoint_public_key_hash = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
     request->endpoint_public_key_hash->size = SHA_1_DIGEST_LENGTH;
     request->endpoint_public_key_hash->buffer = (uint8_t *) KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
-    kaa_digest* pub_key_hash = kaa_status_get_endpoint_public_key_hash(context->status);
+    const kaa_digest* pub_key_hash = kaa_status_get_endpoint_public_key_hash(context->status);
     if (pub_key_hash) {
         memcpy(request->endpoint_public_key_hash->buffer, *pub_key_hash, SHA_1_DIGEST_LENGTH);
     }
 
-    kaa_digest * profile_hash = kaa_status_get_profile_hash(context->status);
+    const kaa_digest * profile_hash = kaa_status_get_profile_hash(context->status);
     if (profile_hash) {
         request->profile_hash = kaa_create_bytes_null_union_bytes_branch();
         kaa_bytes_t * hash = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
@@ -137,7 +137,12 @@ kaa_error_t kaa_send_event(kaa_context_t *kaa_context, const char * fqn, size_t 
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(kaa_context->status, KAA_ERR_NOT_INITIALIZED);
 
-    if (kaa_is_endpoint_attached_to_user(kaa_context->status)) {
+    bool is_attached = false;
+    kaa_error_t rval = kaa_is_endpoint_attached_to_user(kaa_context->status, &is_attached);
+    if (rval)
+        return KAA_ERR_BAD_STATE;
+
+    if (is_attached) {
         return kaa_add_event(
                   kaa_context
                 , fqn
@@ -161,7 +166,12 @@ kaa_error_t kaa_event_add_to_transaction(kaa_context_t *kaa_context, kaa_trx_id 
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
 
-    if (kaa_is_endpoint_attached_to_user(kaa_context->status)) {
+    bool is_attached = false;
+    kaa_error_t rval = kaa_is_endpoint_attached_to_user(kaa_context->status, &is_attached);
+    if (rval)
+        return KAA_ERR_BAD_STATE;
+
+    if (is_attached) {
         return kaa_add_event_to_transaction(
                   kaa_context
                 , trx_id
