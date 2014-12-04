@@ -103,45 +103,6 @@ kaa_error_t    kaa_serialize_request(kaa_sync_request_t *request, char *buffer, 
  */
 kaa_error_t    kaa_response_received(kaa_context_t *kaa_context, const char *buffer, size_t buffer_size);
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-
-/**
- * Log management
- */
-
-/**
- * Provide log storage to Kaa.<br>
- * <br>
- *
- * \param i_storage     Structure containing pointers to functions which are used
- * to manage log storage.
- * \param i_status      Structure containing pointers to functions describing
- * state of the storage (occupied size, records count etc.)
- * \param upload_properties     Properties which are used to control log storage
- * size and log upload neediness.
- * \param is_upload_needed  Pointer to function which will be used to decide
- * which operation (NO_OPERATION, UPLOAD or CLEANUP) should be performed on log storage.
- */
-kaa_error_t   kaa_init_log_storage(
-        kaa_context_t *kaa_context
-      , kaa_log_storage_t * i_storage
-      , kaa_storage_status_t * i_status
-      , kaa_log_upload_properties_t * upload_properties
-      , log_upload_decision_fn is_upload_needed
-      );
-
-/**
- * Add log record to log storage.<br>
- * <br>
- * Use this to add the log entry to the predefined log storage.<br>
- * Log record will be serialized and pushed to a log storage interface via
- * <pre>
- * void            (* add_log_record)  (kaa_log_entry_t * record);
- * </pre>
- * See also \see kaa_log_storage_t
- */
-kaa_error_t    kaa_add_log(kaa_context_t *kaa_context, kaa_user_log_record_t *entry);
-#endif
 
 #ifdef __cplusplus
 }      /* extern "C" */

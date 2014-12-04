@@ -313,25 +313,3 @@ kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer
 
     return KAA_ERR_NONE;
 }
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-
-kaa_error_t kaa_init_log_storage(
-        kaa_context_t *kaa_context
-      , kaa_log_storage_t * storage
-      , kaa_storage_status_t * status
-      , kaa_log_upload_properties_t *properties
-      , log_upload_decision_fn need_upl
-      )
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_logging_init(kaa_context->log_collector, storage, properties, status, need_upl);
-}
-
-kaa_error_t kaa_add_log(kaa_context_t *kaa_context, kaa_user_log_record_t *entry)
-{
-    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-    return kaa_logging_add_record(kaa_context, entry);
-}
-
-#endif
