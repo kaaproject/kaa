@@ -56,18 +56,18 @@ kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
     return KAA_ERR_NONE;
 }
 
-void kaa_channel_manager_destroy(kaa_channel_manager_t *this)
+void kaa_channel_manager_destroy(kaa_channel_manager_t *self)
 {
-    if (this) {
-        kaa_list_destroy(this->sync_handlers, destroy_sync_details);
-        KAA_FREE(this);
+    if (self) {
+        kaa_list_destroy(self->sync_handlers, destroy_sync_details);
+        KAA_FREE(self);
     }
 }
 
-kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *this
+kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *self
         , kaa_sync_handler_fn handler, const kaa_service_t *supported_services, size_t services_count)
 {
-    KAA_RETURN_IF_NIL4(this, handler, supported_services, services_count, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL4(self, handler, supported_services, services_count, KAA_ERR_BADPARAM);
 
     kaa_sync_details *sync = (kaa_sync_details *) KAA_MALLOC(sizeof(kaa_sync_details));
     if (!sync)
@@ -80,21 +80,21 @@ kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *this
         sync->supported_services[services_count] = supported_services[services_count];
 
     // Add to the list of handlers (or create the list if there's none yet)
-    this->sync_handlers = this->sync_handlers
-            ? kaa_list_push_front(this->sync_handlers, sync)
+    self->sync_handlers = self->sync_handlers
+            ? kaa_list_push_front(self->sync_handlers, sync)
             : kaa_list_create(sync);
 
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *this, kaa_sync_handler_fn handler)
+kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *self, kaa_sync_handler_fn handler)
 {
-    kaa_list_t *handlers = this->sync_handlers;
+    kaa_list_t *handlers = self->sync_handlers;
     kaa_sync_details *details = kaa_list_get_data(handlers);
 
     while (details) {
         if (details->sync_fn == handler) {
-            kaa_list_remove_at(&this->sync_handlers, handlers, destroy_sync_details);
+            kaa_list_remove_at(&self->sync_handlers, handlers, destroy_sync_details);
             return KAA_ERR_NONE;
         }
         handlers = kaa_list_next(handlers);
@@ -104,11 +104,11 @@ kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *this,
     return KAA_ERR_NOT_FOUND;
 }
 
-kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type)
+kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type)
 {
-    KAA_RETURN_IF_NIL(this, NULL);
+    KAA_RETURN_IF_NIL(self, NULL);
 
-    kaa_list_t *handlers = this->sync_handlers;
+    kaa_list_t *handlers = self->sync_handlers;
     kaa_sync_details *details = (kaa_sync_details *) kaa_list_get_data(handlers);
     while (details) {
         size_t service_count = details->supported_services_size;
@@ -124,15 +124,15 @@ kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *
     return NULL;
 }
 
-kaa_error_t kaa_channel_manager_set_sync_all_handler(kaa_channel_manager_t *this, kaa_sync_all_handler_fn handler)
+kaa_error_t kaa_channel_manager_set_sync_all_handler(kaa_channel_manager_t *self, kaa_sync_all_handler_fn handler)
 {
-    KAA_RETURN_IF_NIL(this, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    this->on_sync_all = handler;
+    self->on_sync_all = handler;
     return KAA_ERR_NONE;
 }
 
-kaa_sync_all_handler_fn kaa_channel_manager_get_sync_all_handler(kaa_channel_manager_t *this)
+kaa_sync_all_handler_fn kaa_channel_manager_get_sync_all_handler(kaa_channel_manager_t *self)
 {
-    return this ? this->on_sync_all : NULL;
+    return self ? self->on_sync_all : NULL;
 }

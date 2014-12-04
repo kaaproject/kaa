@@ -28,7 +28,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 if (CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
+# TODO: add switch for Debug/Release versions
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -g")
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
 endif ()
 
 if (KAA_WITHOUT_EVENTS)
@@ -89,6 +91,11 @@ if (CUNIT_FOUND)
     set (CUNIT_LIB_NAME ${CUNIT_LIBRARIES})
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TEST_CUNIT_ENABLED")
 endif()
+
+configure_file (
+                    "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties.in"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties"
+)
 
 add_executable  (test_context
                     test/test_kaa_context.c

@@ -27,7 +27,7 @@
 
 #include "avro_src/avro/io.h"
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
 
 static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
 static uint32_t log_bucket_id   = 0;
