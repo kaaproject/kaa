@@ -52,18 +52,26 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
     request->endpoint_public_key_hash = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
     request->endpoint_public_key_hash->size = SHA_1_DIGEST_LENGTH;
     request->endpoint_public_key_hash->buffer = (uint8_t *) KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
-    const kaa_digest* pub_key_hash = kaa_status_get_endpoint_public_key_hash(context->status);
+
+    kaa_digest_p pub_key_hash = NULL;
+    if (kaa_status_get_endpoint_public_key_hash(context->status, &pub_key_hash)) {
+        // FIXME: error handling
+    }
     if (pub_key_hash) {
-        memcpy(request->endpoint_public_key_hash->buffer, *pub_key_hash, SHA_1_DIGEST_LENGTH);
+        memcpy(request->endpoint_public_key_hash->buffer, pub_key_hash, SHA_1_DIGEST_LENGTH);
     }
 
-    const kaa_digest * profile_hash = kaa_status_get_profile_hash(context->status);
+    kaa_digest_p profile_hash = NULL;
+    if (kaa_status_get_profile_hash(context->status, &profile_hash)) {
+        // FIXME: error handling
+    }
+
     if (profile_hash) {
         request->profile_hash = kaa_create_bytes_null_union_bytes_branch();
         kaa_bytes_t * hash = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
         hash->size = SHA_1_DIGEST_LENGTH;
         hash->buffer = (uint8_t *) KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
-        memcpy(hash->buffer, *profile_hash, SHA_1_DIGEST_LENGTH);
+        memcpy(hash->buffer, profile_hash, SHA_1_DIGEST_LENGTH);
         request->profile_hash->data = hash;
     } else {
         request->profile_hash = kaa_create_bytes_null_union_null_branch();
@@ -113,9 +121,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
         return error;
     }
 
-    kaa_status_set_endpoint_public_key_hash((*kaa_context_p)->status, d);
-
-    return KAA_ERR_NONE;
+    return kaa_status_set_endpoint_public_key_hash((*kaa_context_p)->status, d);
 }
 
 kaa_error_t kaa_deinit(kaa_context_t *kaa_context)

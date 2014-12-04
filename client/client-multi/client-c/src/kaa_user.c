@@ -132,8 +132,7 @@ kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self, 
 
     if (listeners.on_response_callback) {
         bool is_attached = false;
-        kaa_error_t rval = kaa_is_endpoint_attached_to_user(self->status, &is_attached);
-        if (rval)
+        if (kaa_is_endpoint_attached_to_user(self->status, &is_attached))
             return KAA_ERR_BAD_STATE;
         (*listeners.on_response_callback)(is_attached);
     }
@@ -199,17 +198,20 @@ kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *self
         self->user_info = NULL;
         self->is_waiting_user_attach_response = false;
         if (user_attach_response->result == ENUM_SYNC_RESPONSE_RESULT_TYPE_SUCCESS)
-            kaa_set_endpoint_attached_to_user(self->status, true);
+            if (kaa_set_endpoint_attached_to_user(self->status, true))
+                return KAA_ERR_BAD_STATE;
         if (self->attachment_listeners.on_response_callback)
             (*self->attachment_listeners.on_response_callback)(true);
     }
     if (attach) {
-        kaa_set_endpoint_attached_to_user(self->status, true);
+        if (kaa_set_endpoint_attached_to_user(self->status, true))
+            return KAA_ERR_BAD_STATE;
         if (self->attachment_listeners.on_attached_callback)
             (*self->attachment_listeners.on_attached_callback)(attach->user_external_id, attach->endpoint_access_token);
     }
     if (detach) {
-        kaa_set_endpoint_attached_to_user(self->status, false);
+        if (kaa_set_endpoint_attached_to_user(self->status, false))
+            return KAA_ERR_BAD_STATE;
         if (self->attachment_listeners.on_detached_callback)
             (*self->attachment_listeners.on_detached_callback)(detach->endpoint_access_token);
     }

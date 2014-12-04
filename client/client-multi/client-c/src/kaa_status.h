@@ -32,13 +32,13 @@ kaa_error_t kaa_set_endpoint_registered(kaa_status_t *self, bool is_registered);
 kaa_error_t kaa_is_endpoint_attached_to_user(kaa_status_t *self, bool *result);
 kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *self, bool is_attached);
 
-const char *kaa_status_get_endpoint_access_token(kaa_status_t *self);
+kaa_error_t kaa_status_get_endpoint_access_token(kaa_status_t *self, const char **result);
 kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
-const kaa_digest* kaa_status_get_endpoint_public_key_hash(kaa_status_t *self);
+kaa_error_t kaa_status_get_endpoint_public_key_hash(kaa_status_t *self, kaa_digest_p *result);
 kaa_error_t kaa_status_set_endpoint_public_key_hash(kaa_status_t *self, const kaa_digest hash);
 
-const kaa_digest* kaa_status_get_profile_hash(kaa_status_t *self);
+kaa_error_t kaa_status_get_profile_hash(kaa_status_t *self, kaa_digest_p *result);
 kaa_error_t kaa_status_set_profile_hash(kaa_status_t *self, const kaa_digest hash);
 
 kaa_error_t kaa_status_get_event_sequence_number(kaa_status_t *self, uint32_t *result);

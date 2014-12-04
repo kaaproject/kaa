@@ -153,7 +153,12 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
         return KAA_ERR_NOMEM;
     }
 
-    const char * ep_acc_token = kaa_status_get_endpoint_access_token(self->status);
+    const char * ep_acc_token = NULL;
+    if (kaa_status_get_endpoint_access_token(self->status, &ep_acc_token)) {
+        request->destroy(request);
+        return KAA_ERR_BAD_STATE;
+    }
+
     if (ep_acc_token) {
         request->endpoint_access_token = kaa_create_string_null_union_string_branch();
         if (!request->endpoint_access_token) {
@@ -178,9 +183,10 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
     request->profile_body->buffer = self->profile_body.buffer;  // destructor for buffer is not needed
 
     bool is_registered = false;
-    kaa_error_t rval = kaa_is_endpoint_registered(self->status, &is_registered);
-    if (rval)
+    if (kaa_is_endpoint_registered(self->status, &is_registered)) {
+        request->destroy(request);
         return KAA_ERR_BAD_STATE;
+    }
 
     if (is_registered) {
         request->endpoint_public_key = kaa_create_bytes_null_union_null_branch();
@@ -224,12 +230,10 @@ kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_syn
             (*sync)(profile_sync_services, 1);
     }
     bool is_registered = false;
-    kaa_error_t rval = kaa_is_endpoint_registered(self->status, &is_registered);
-    if (rval)
+    if (kaa_is_endpoint_registered(self->status, &is_registered))
         return KAA_ERR_BAD_STATE;
-    if (!is_registered) {
-        kaa_set_endpoint_registered(self->status, true);
-    }
+    if (!is_registered && kaa_set_endpoint_registered(self->status, true))
+        return KAA_ERR_BAD_STATE;
     return KAA_ERR_NONE;
 }
 
@@ -252,15 +256,22 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
     kaa_digest new_hash;
     kaa_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
 
-    const kaa_digest * old_hash = kaa_status_get_profile_hash(self->status);
+    kaa_digest_p old_hash = NULL;
+    if (kaa_status_get_profile_hash(self->status, &old_hash)) {
+        KAA_FREE(serialized_profile);
+        return KAA_ERR_BAD_STATE;
+    }
 
-    if (old_hash && !memcmp(new_hash, *old_hash, SHA_1_DIGEST_LENGTH)) {
+    if (old_hash && !memcmp(new_hash, old_hash, SHA_1_DIGEST_LENGTH)) {
         self->need_resync = false;
         KAA_FREE(serialized_profile);
         return KAA_ERR_NONE;
     }
 
-    kaa_status_set_profile_hash(self->status, new_hash);
+    if (kaa_status_set_profile_hash(self->status, new_hash)) {
+        KAA_FREE(serialized_profile);
+        return KAA_ERR_BAD_STATE;
+    }
 
     if (self->profile_body.size > 0) {
         KAA_FREE(self->profile_body.buffer);

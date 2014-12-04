@@ -127,11 +127,11 @@ kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *self, bool is_attach
     return KAA_ERR_NONE;
 }
 
-const char * kaa_status_get_endpoint_access_token(kaa_status_t *self)
+kaa_error_t kaa_status_get_endpoint_access_token(kaa_status_t *self, const char **result)
 {
-    if (self)
-        return self->endpoint_access_token;
-    return NULL;
+    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
+    *result = self->endpoint_access_token;
+    return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t * self, const char *token)
@@ -149,11 +149,11 @@ kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t * self, const char
     return KAA_ERR_NONE;
 }
 
-const kaa_digest * kaa_status_get_endpoint_public_key_hash(kaa_status_t *self)
+kaa_error_t kaa_status_get_endpoint_public_key_hash(kaa_status_t *self, kaa_digest_p *result)
 {
-    if (self)
-        return &self->endpoint_public_key_hash;
-    return NULL;
+    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
+    *result = self->endpoint_public_key_hash;
+    return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_status_set_endpoint_public_key_hash(kaa_status_t *self, const kaa_digest hash)
@@ -163,11 +163,11 @@ kaa_error_t kaa_status_set_endpoint_public_key_hash(kaa_status_t *self, const ka
     return KAA_ERR_NONE;
 }
 
-const kaa_digest* kaa_status_get_profile_hash(kaa_status_t *self)
+kaa_error_t kaa_status_get_profile_hash(kaa_status_t *self, kaa_digest_p *result)
 {
-    if (self)
-        return &self->profile_hash;
-    return NULL;
+    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
+    *result = self->profile_hash;
+    return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_status_set_profile_hash(kaa_status_t *self, const kaa_digest hash)

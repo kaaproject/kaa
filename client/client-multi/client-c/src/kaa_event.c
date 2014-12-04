@@ -167,9 +167,10 @@ kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_
     (*event_manager_p)->trx_counter = 0;
     (*event_manager_p)->global_event_callback = NULL;
 
-    kaa_error_t rval = kaa_status_get_event_sequence_number(status, (uint32_t *)&(*event_manager_p)->event_sequence_number);
-    if (rval)
+    if (kaa_status_get_event_sequence_number(status, (uint32_t *)&(*event_manager_p)->event_sequence_number)) {
+        KAA_FREE(*event_manager_p);
         return KAA_ERR_BAD_STATE;
+    }
 
     (*event_manager_p)->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED;
 

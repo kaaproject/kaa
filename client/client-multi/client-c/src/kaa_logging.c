@@ -178,16 +178,14 @@ kaa_error_t kaa_logging_compile_request(void *ctx, kaa_log_sync_request_t ** req
     if (collector->log_storage) {
         kaa_uuid_t uuid;
 
-        if (!log_bucket_id) {
-            kaa_error_t rval = kaa_status_get_log_bucket_id(context->status, &log_bucket_id);
-            if (rval)
-                return KAA_ERR_BAD_STATE;
-        }
+        if (!log_bucket_id && kaa_status_get_log_bucket_id(context->status, &log_bucket_id))
+            return KAA_ERR_BAD_STATE;
         log_bucket_id++;
         kaa_uuid_fill(&uuid, log_bucket_id);
         kaa_list_t * logs = (* collector->log_storage->get_records)(uuid, collector->log_properties->max_log_block_size);
         if (logs) {
-            kaa_status_set_log_bucket_id(context->status, log_bucket_id);
+            if (kaa_status_set_log_bucket_id(context->status, log_bucket_id))
+                return KAA_ERR_BAD_STATE;
 
             request = kaa_create_log_sync_request();
             if (request == NULL) {
