@@ -49,53 +49,44 @@ static kaa_endpoint_version_info_t * create_versions_info() {
     vi->profile_version = PROFILE_SCHEMA_VERSION;
     vi->system_nf_version = SYSTEM_NF_SCHEMA_VERSION;
     vi->user_nf_version = USER_NF_SCHEMA_VERSION;
-    if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
-        vi->event_family_versions = kaa_create_array_event_class_family_version_info_null_union_array_branch();
-        if (!vi->event_family_versions) {
+#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
+    vi->event_family_versions = kaa_create_array_event_class_family_version_info_null_union_array_branch();
+    if (!vi->event_family_versions) {
+        vi->destroy(vi);
+        return NULL;
+    }
+    vi->event_family_versions->data = NULL;
+
+    size_t i = 0;
+    for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
+        kaa_event_class_family_version_info_t *ecfv = kaa_create_event_class_family_version_info();
+        if (!ecfv) {
             vi->destroy(vi);
             return NULL;
         }
-        vi->event_family_versions->data = NULL;
 
-        size_t i = 0;
-        for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
-            kaa_event_class_family_version_info_t *ecfv = kaa_create_event_class_family_version_info();
-            if (!ecfv) {
-                vi->destroy(vi);
-                return NULL;
-            }
-
-            size_t len = strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name);
-            ecfv->name = (char *) KAA_MALLOC((len + 1) * sizeof(char));
-            // FIXME: avro destructor for string
-            if (!ecfv->name) {
+        ecfv->name = (char *) KAA_EVENT_SCHEMA_VERSIONS[i].name; // destructor is not needed
+        ecfv->version = KAA_EVENT_SCHEMA_VERSIONS[i].version;
+        if (vi->event_family_versions->data != NULL) {
+            kaa_list_push_back(vi->event_family_versions->data, ecfv);
+            // FIXME: check error
+        } else {
+            vi->event_family_versions->data = kaa_list_create(ecfv);
+            if (!vi->event_family_versions->data) {
+                KAA_FREE(ecfv->name);
                 KAA_FREE(ecfv);
                 vi->destroy(vi);
                 return NULL;
             }
-            strcpy(ecfv->name, KAA_EVENT_SCHEMA_VERSIONS[i].name);
-
-            ecfv->version = KAA_EVENT_SCHEMA_VERSIONS[i].version;
-            if (vi->event_family_versions->data != NULL) {
-                kaa_list_push_back(vi->event_family_versions->data, ecfv);
-                // FIXME: check error
-            } else {
-                vi->event_family_versions->data = kaa_list_create(ecfv);
-                if (!vi->event_family_versions->data) {
-                    KAA_FREE(ecfv->name);
-                    KAA_FREE(ecfv);
-                    vi->destroy(vi);
-                    return NULL;
-                }
-            }
-        }
-    } else {
-        vi->event_family_versions = kaa_create_array_event_class_family_version_info_null_union_null_branch();
-        if (!vi->event_family_versions) {
-            vi->destroy(vi);
-            return NULL;
         }
     }
+#else
+    vi->event_family_versions = kaa_create_array_event_class_family_version_info_null_union_null_branch();
+    if (!vi->event_family_versions) {
+        vi->destroy(vi);
+        return NULL;
+    }
+#endif
     return vi;
 }
 
@@ -120,17 +111,17 @@ kaa_error_t kaa_create_profile_manager(kaa_profile_manager_t ** profile_manager_
     return KAA_ERR_NONE;
 }
 
-void kaa_destroy_profile_manager(kaa_profile_manager_t *profile_manager) {
-    if (profile_manager != NULL) {
-        kaa_destroy_bytes(&profile_manager->profile_body);
-        KAA_FREE(profile_manager);
+void kaa_destroy_profile_manager(kaa_profile_manager_t *self) {
+    if (self != NULL) {
+        kaa_destroy_bytes(&self->profile_body);
+        KAA_FREE(self);
     }
 }
 
-kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *ctx, bool *result)
+kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *result)
 {
-    KAA_RETURN_IF_NIL2(ctx, result, KAA_ERR_BADPARAM);
-    *result = ctx->need_resync;
+    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
+    *result = self->need_resync;
     return KAA_ERR_NONE;
 }
 
@@ -148,9 +139,9 @@ static void kaa_no_destroy_bytes(void *data)
     }
 }
 
-kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *ctx, kaa_profile_sync_request_t **result)
+kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile_sync_request_t **result)
 {
-    KAA_RETURN_IF_NIL2(ctx, result, KAA_ERR_NOMEM);
+    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_NOMEM);
 
     kaa_profile_sync_request_t *request = kaa_create_profile_sync_request();
     if (!request)
@@ -162,23 +153,14 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *ctx, kaa_profile_
         return KAA_ERR_NOMEM;
     }
 
-    char * ep_acc_token = kaa_status_get_endpoint_access_token(ctx->status);
+    const char * ep_acc_token = kaa_status_get_endpoint_access_token(self->status);
     if (ep_acc_token) {
         request->endpoint_access_token = kaa_create_string_null_union_string_branch();
         if (!request->endpoint_access_token) {
             request->destroy(request);
             return KAA_ERR_NOMEM;
         }
-
-        size_t len = strlen(ep_acc_token);
-        char *access_token_data = (char *) KAA_MALLOC((len + 1) * sizeof(char));
-        if (!access_token_data) {
-            request->destroy(request);
-            return KAA_ERR_NOMEM;
-        }
-        strcpy(access_token_data, ep_acc_token);
-        request->endpoint_access_token->data = access_token_data;
-        // FIXME: avro destructor for string
+        request->endpoint_access_token->data = (void *) ep_acc_token; // destructor is not needed
     } else {
         request->endpoint_access_token = kaa_create_string_null_union_null_branch();
         if (!request->endpoint_access_token) {
@@ -192,22 +174,10 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *ctx, kaa_profile_
         request->destroy(request);
         return KAA_ERR_NOMEM;
     }
-    request->profile_body->size = ctx->profile_body.size;
-    if (request->profile_body->size > 0) {
-        request->profile_body->buffer = (uint8_t *) KAA_MALLOC(request->profile_body->size * sizeof(uint8_t));
-        if (!request->profile_body->buffer) {
-            request->destroy(request);
-            return KAA_ERR_NOMEM;
-        }
-        // FIXME: avro destructor for bytes
-        memcpy(request->profile_body->buffer,
-                ctx->profile_body.buffer,
-                ctx->profile_body.size);
-    } else {
-        request->profile_body->buffer = NULL;
-    }
+    request->profile_body->size = self->profile_body.size;
+    request->profile_body->buffer = self->profile_body.buffer;  // destructor for buffer is not needed
 
-    if (kaa_is_endpoint_registered(ctx->status)) {
+    if (kaa_is_endpoint_registered(self->status)) {
         request->endpoint_public_key = kaa_create_bytes_null_union_null_branch();
         if (!request->endpoint_public_key) {
             request->destroy(request);
@@ -238,23 +208,23 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *ctx, kaa_profile_
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *ctx, kaa_profile_sync_response_t *response) {
-    KAA_RETURN_IF_NIL2(ctx, response, KAA_ERR_BADPARAM);
+kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_sync_response_t *response) {
+    KAA_RETURN_IF_NIL2(self, response, KAA_ERR_BADPARAM);
 
-    ctx->need_resync = false;
+    self->need_resync = false;
     if (response->response_status == ENUM_SYNC_RESPONSE_STATUS_RESYNC) {
-        ctx->need_resync = true;
-        kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(ctx->channel_manager, profile_sync_services[0]);
+        self->need_resync = true;
+        kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, profile_sync_services[0]);
         if (sync)
             (*sync)(profile_sync_services, 1);
-    } else if (!kaa_is_endpoint_registered(ctx->status)) {
-        kaa_set_endpoint_registered(ctx->status, true);
+    } else if (!kaa_is_endpoint_registered(self->status)) {
+        kaa_set_endpoint_registered(self->status, true);
     }
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *ctx, kaa_profile_t * profile_body) {
-    KAA_RETURN_IF_NIL2(ctx, profile_body, KAA_ERR_BADPARAM);
+kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_t * profile_body) {
+    KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
     char* serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
@@ -272,27 +242,27 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *ctx, kaa_profile_t
     kaa_digest new_hash;
     kaa_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
 
-    kaa_digest * old_hash = kaa_status_get_profile_hash(ctx->status);
+    kaa_digest * old_hash = kaa_status_get_profile_hash(self->status);
 
-    if (old_hash != NULL && 0 == memcmp(new_hash, *old_hash, SHA_1_DIGEST_LENGTH)) {
-        ctx->need_resync = false;
+    if (old_hash && !memcmp(new_hash, *old_hash, SHA_1_DIGEST_LENGTH)) {
+        self->need_resync = false;
         KAA_FREE(serialized_profile);
         return KAA_ERR_NONE;
     }
 
-    kaa_status_set_profile_hash(ctx->status, new_hash);
+    kaa_status_set_profile_hash(self->status, new_hash);
 
-    if (ctx->profile_body.size > 0) {
-        KAA_FREE(ctx->profile_body.buffer);
-        ctx->profile_body.buffer = NULL;
+    if (self->profile_body.size > 0) {
+        KAA_FREE(self->profile_body.buffer);
+        self->profile_body.buffer = NULL;
     }
 
-    ctx->profile_body.buffer = (uint8_t*)serialized_profile;
-    ctx->profile_body.size = serialized_profile_size;
+    self->profile_body.buffer = (uint8_t*)serialized_profile;
+    self->profile_body.size = serialized_profile_size;
 
-    ctx->need_resync = true;
+    self->need_resync = true;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(ctx->channel_manager, profile_sync_services[0]);
+    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, profile_sync_services[0]);
     if (sync)
         (*sync)(profile_sync_services, 1);
 

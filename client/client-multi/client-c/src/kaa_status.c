@@ -148,9 +148,7 @@ kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t * status, const ch
     if (!status->endpoint_access_token) {
         return KAA_ERR_NOMEM;
     }
-
-    memcpy(status->endpoint_access_token, token, len);
-    status->endpoint_access_token[len] = '\0';
+    strcpy(status->endpoint_access_token, token);
     return KAA_ERR_NONE;
 }
 

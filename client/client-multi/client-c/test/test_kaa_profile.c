@@ -28,6 +28,8 @@
 
 static kaa_logger_t *logger = NULL;
 
+extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
+
 void test_profile_update()
 {
     KAA_TRACE_IN(logger);

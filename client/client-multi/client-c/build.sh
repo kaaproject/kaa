@@ -105,19 +105,19 @@ function run_valgrind {
         chmod 0666 ./valgrindReports/$test.memreport.xml
     done
     cd ..
-    echo "Valgrind analysis ended."
+    echo "Valgrind analysis finished."
 }
 
 function run_cppcheck {
     echo "Starting Cppcheck..."
     cppcheck --enable=all --std=c99 --xml src/ test/ 2>build/cppcheck.xml > build/cppcheck.log
-    echo "Cppcheck analysis ended."
+    echo "Cppcheck analysis finished."
 }
 
 function run_rats {
     echo "Starting RATS..."
     rats --xml `find src/ -name *.[ch]` > build/rats-report.xml
-    echo "RATS analysis ended."
+    echo "RATS analysis finished."
 }
 
 function run_analysis {

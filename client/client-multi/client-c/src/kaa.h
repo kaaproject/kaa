@@ -51,18 +51,6 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context);
  */
 
 /**
- * Sets user profile.<br>
- * After profile is set a request to Operations server will be sent.<br>
- * <br>
- * Provide a valid pointer to user-defined profile structure. kaa_profile_t is
- * an alias of a given profile structure name.<br>
- * <br>
- * Use this to set profile before kaa_init() is called to provide default
- * profile value in order to perform successful registration in Operations server.
- */
-kaa_error_t kaa_set_profile(kaa_context_t *kaa_context, kaa_profile_t *profile_body);
-
-/**
  * Set endpoint access token.<br>
  * <br>
  * Provide unique string token to Kaa library.<br>
