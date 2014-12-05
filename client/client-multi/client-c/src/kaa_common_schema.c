@@ -17,98 +17,148 @@
 #include "kaa_common_schema.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "avro_src/avro/io.h"
 #include "avro_src/encoding.h"
 
 #include "kaa_mem.h"
 
-void kaa_serialize_string(avro_writer_t writer, void* data)
+void kaa_string_serialize(avro_writer_t writer, void* data)
 {
-    avro_binary_encoding.write_string(writer, (char*)data);
+    if (data) {
+        kaa_string_t* str = (kaa_string_t*)data;
+        avro_binary_encoding.write_string(writer, str->data);
+    }
 }
 
-char* kaa_deserialize_string(avro_reader_t reader)
+void kaa_string_destroy(void *data)
 {
-    char* str;
-    int64_t size;
-    avro_binary_encoding.read_bytes(reader, &str, &size);
+    if (data) {
+        kaa_string_t* str = (kaa_string_t*)data;
+        if (str->data && str->destroy) {
+            str->destroy(str->data);
+        }
+        kaa_data_destroy(str);
+    }
+}
+
+kaa_string_t* kaa_string_deserialize(avro_reader_t reader)
+{
+    kaa_string_t* str = KAA_MALLOC(kaa_string_t);
+    if (str) {
+        avro_binary_encoding.read_string(reader, &str->data, NULL);
+        str->destroy = kaa_data_destroy;
+    }
     return str;
 }
 
-size_t kaa_get_size_string(void *data)
+size_t kaa_string_get_size(void *data)
 {
-    size_t len = strlen(data);
-    return size_long(len) + len;
+    if (data) {
+        kaa_string_t* str = (kaa_string_t*)data;
+        if (str->data) {
+            size_t len = strlen(str->data);
+            return kaa_long_get_size(len) + len;
+        }
+    }
+    return 0;
 }
 
-kaa_bytes_t* kaa_deserialize_bytes(avro_reader_t reader)
+void kaa_bytes_destroy(void *data)
 {
-    kaa_bytes_t* data = KAA_MALLOC(kaa_bytes_t);
-    int64_t size;
-    avro_binary_encoding.read_bytes(reader, (char**)&data->buffer, &size);
-    data->size = size;
-    return data;
+    if (data) {
+        kaa_bytes_t* bytes = (kaa_bytes_t*)data;
+        if (bytes->buffer && bytes->destroy) {
+            bytes->destroy(bytes->buffer);
+        }
+        kaa_data_destroy(bytes);
+    }
 }
 
-void kaa_serialize_bytes(avro_writer_t writer, void* data)
+kaa_bytes_t* kaa_bytes_deserialize(avro_reader_t reader)
 {
-    kaa_bytes_t* bytes = (kaa_bytes_t*)data;
-    avro_binary_encoding.write_bytes(writer, (char*)bytes->buffer, bytes->size);
+    kaa_bytes_t* bytes = KAA_CALLOC(1, sizeof(kaa_bytes_t));
+    if (bytes) {
+        int64_t size;
+        avro_binary_encoding.read_bytes(reader, (char**)&bytes->buffer, &size);
+        bytes->size = size;
+        bytes->destroy = kaa_data_destroy;
+    }
+    return bytes;
 }
 
-void kaa_destroy_bytes(void *data)
+void kaa_bytes_serialize(avro_writer_t writer, void* data)
 {
-    kaa_bytes_t* bytes = (kaa_bytes_t*)data;
-    KAA_FREE(bytes->buffer);
+    if (data) {
+        kaa_bytes_t* bytes = (kaa_bytes_t*)data;
+        avro_binary_encoding.write_bytes(writer, (char*)bytes->buffer, bytes->size);
+    }
 }
 
-size_t kaa_get_size_bytes(void *data)
+size_t kaa_bytes_get_size(void *data)
 {
-    kaa_bytes_t* bytes = (kaa_bytes_t*)data;
-    return size_long(bytes->size) + bytes->size;
+    if (data) {
+        kaa_bytes_t* bytes = (kaa_bytes_t*)data;
+        if (bytes->buffer && bytes->size > 0) {
+            return kaa_long_get_size(bytes->size) + bytes->size;
+        }
+    }
+    return 0;
 }
 
-void kaa_serialize_boolean(avro_writer_t writer, void* data)
+void kaa_boolean_serialize(avro_writer_t writer, void* data)
 {
-    int8_t* val = (int8_t*)data;
-    avro_binary_encoding.write_boolean(writer, *val);
+    if (data) {
+        int8_t* val = (int8_t*)data;
+        avro_binary_encoding.write_boolean(writer, *val);
+    }
 }
 
-int8_t* kaa_deserialize_boolean(avro_reader_t reader)
+int8_t* kaa_boolean_deserialize(avro_reader_t reader)
 {
     int8_t* data = KAA_MALLOC(int8_t);
-    avro_binary_encoding.read_boolean(reader, data);
+    if (data) {
+        avro_binary_encoding.read_boolean(reader, data);
+    }
     return data;
 }
 
-void kaa_serialize_int(avro_writer_t writer, void* data)
+void kaa_int_serialize(avro_writer_t writer, void* data)
 {
-    int32_t* val = (int32_t*)data;
-    avro_binary_encoding.write_int(writer, *val);
+    if (data) {
+        int32_t* val = (int32_t*)data;
+        avro_binary_encoding.write_int(writer, *val);
+    }
 }
 
-int32_t* kaa_deserialize_int(avro_reader_t reader)
+int32_t* kaa_int_deserialize(avro_reader_t reader)
 {
     int32_t* data = KAA_MALLOC(int32_t);
-    avro_binary_encoding.read_int(reader, data);
+    if (data) {
+        avro_binary_encoding.read_int(reader, data);
+    }
     return data;
 }
 
-void kaa_serialize_long(avro_writer_t writer, void* data)
+void kaa_long_serialize(avro_writer_t writer, void* data)
 {
-    int64_t* val = (int64_t*)data;
-    avro_binary_encoding.write_long(writer, *val);
+    if (data) {
+        int64_t* val = (int64_t*)data;
+        avro_binary_encoding.write_long(writer, *val);
+    }
 }
 
-int64_t* kaa_deserialize_long(avro_reader_t reader)
+int64_t* kaa_long_deserialize(avro_reader_t reader)
 {
     int64_t* data = KAA_MALLOC(int64_t);
-    avro_binary_encoding.read_long(reader, data);
+    if (data) {
+        avro_binary_encoding.read_long(reader, data);
+    }
     return data;
 }
 
-size_t size_long(int64_t l)
+size_t kaa_long_get_size(int64_t l)
 {
     int64_t len = 0;
     uint64_t n = (l << 1) ^ (l >> 63);
@@ -120,61 +170,98 @@ size_t size_long(int64_t l)
     return len;
 }
 
-void kaa_serialize_array(avro_writer_t writer, kaa_list_t* array, serialize_fn s)
+void kaa_array_serialize(avro_writer_t writer, kaa_list_t* array, serialize_fn serialize)
 {
-    int64_t element_count = kaa_list_get_size(array);
-    if (element_count > 0) {
-        avro_binary_encoding.write_long(writer, element_count);
+    if (array) {
+        int64_t element_count = kaa_list_get_size(array);
 
-        while (array) {
-            s(writer, kaa_list_get_data(array));
-            array = kaa_list_next(array);
+        if (element_count > 0) {
+            avro_binary_encoding.write_long(writer, element_count);
+            if (serialize) {
+                while (array) {
+                    serialize(writer, kaa_list_get_data(array));
+                    array = kaa_list_next(array);
+                }
+            }
         }
     }
 
     avro_binary_encoding.write_long(writer, 0);
 }
 
-kaa_list_t *kaa_deserialize_array(avro_reader_t reader, deserialize_fn ds)
+kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deserialize)
 {
     kaa_list_t *array = NULL;
-    int64_t element_count;
 
-    avro_binary_encoding.read_long(reader, &element_count);
-    if (element_count > 0) {
-        void* data = ds(reader);
-        array = kaa_list_create(data);
-
-        while (--element_count > 0) {
-            void* data = ds(reader);
-            array = kaa_list_push_front(array, data);
-        }
+    if (deserialize) {
+        int64_t temp;
+        int64_t element_count;
 
         avro_binary_encoding.read_long(reader, &element_count);
+
+        while (element_count != 0) {
+            if (element_count < 0) {
+                element_count *= (-1);
+                avro_binary_encoding.read_long(reader, &temp);
+            }
+
+            array = kaa_list_create(deserialize(reader));
+
+            while (--element_count > 0) {
+                array = kaa_list_push_front(array, deserialize(reader));
+            }
+
+            avro_binary_encoding.read_long(reader, &element_count);
+        }
     }
 
     return array;
 }
 
-size_t kaa_array_size(kaa_list_t* cursor, get_size_fn s)
+size_t kaa_array_get_size(kaa_list_t* cursor, get_size_fn get_size)
 {
     size_t array_size = 0;
-    size_t count = 0;
 
-    if (cursor && s) {
+    if (cursor && get_size) {
+        size_t count = 0;
         while (cursor) {
-            array_size += s(kaa_list_get_data(cursor));
+            array_size += get_size(kaa_list_get_data(cursor));
             ++count;
             cursor = kaa_list_next(cursor);
         }
+
+        array_size += kaa_long_get_size(count);
     }
 
-    array_size += size_long(count);
-    array_size += size_long(0);
+    array_size += kaa_long_get_size(0);
 
     return array_size;
 }
 
-void kaa_destroy_null(void *data) {}
+void kaa_null_serialize(avro_writer_t writer, void*)
+{
+}
+
+void* kaa_null_deserialize(avro_reader_t reader)
+{
+    return NULL;
+}
+
+void kaa_null_destroy(void *data)
+{
+}
+
+size_t kaa_null_get_size()
+{
+    return 0;
+}
+
+void kaa_data_destroy(void *data)
+{
+    if (data) {
+        KAA_FREE(data);
+    }
+}
+
 
 

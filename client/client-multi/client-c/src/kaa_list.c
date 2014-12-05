@@ -93,8 +93,9 @@ void kaa_list_destroy(kaa_list_t * head, deallocate_list_data deallocator)
         kaa_list_t *new_head = head->next;
         if (deallocator) {
             (*deallocator)(head->data);
+        } else {
+            KAA_FREE(head->data);
         }
-        KAA_FREE(head->data);
         KAA_FREE(head);
         head = new_head;
     }

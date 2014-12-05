@@ -81,12 +81,11 @@ static int read_bytes(avro_reader_t reader, char **bytes, int64_t * len)
 	int rval;
 	check_prefix(rval, read_long(reader, len),
 		     "Cannot read bytes length: ");
-	*bytes = (char *) malloc(*len + 1);
+	*bytes = (char *) malloc(*len);
 	if (!*bytes) {
 		return ENOMEM;
 	}
 	AVRO_READ(reader, *bytes, *len);
-	(*bytes)[*len] = '\0';
 	return 0;
 }
 
@@ -109,8 +108,7 @@ static int read_string(avro_reader_t reader, char **s, int64_t *len)
 	int rval;
 	check_prefix(rval, read_long(reader, &str_len),
 		     "Cannot read string length: ");
-	*len = str_len + 1;
-	*s = (char *) malloc(*len);
+	*s = (char *) malloc(str_len + 1);
 	if (!*s) {
 		return ENOMEM;
 	}

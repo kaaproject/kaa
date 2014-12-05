@@ -26,43 +26,41 @@ import org.junit.Test;
 public class TypeConverterTest {
     @Test
     public void testTypes() {
-        Assert.assertTrue(TypeConverter.isBytes(Schema.create(Type.BYTES)));
-        Assert.assertFalse(TypeConverter.isBytes(Schema.create(Type.STRING)));
+        Assert.assertTrue(TypeConverter.isAvroBytes(Schema.create(Type.BYTES)));
+        Assert.assertFalse(TypeConverter.isAvroBytes(Schema.create(Type.STRING)));
 
-        Assert.assertTrue(TypeConverter.isArrayType(Schema.createArray(Schema.create(Type.BYTES))));
-        Assert.assertFalse(TypeConverter.isArrayType(Schema.create(Type.BYTES)));
+        Assert.assertTrue(TypeConverter.isAvroArray(Schema.createArray(Schema.create(Type.BYTES))));
+        Assert.assertFalse(TypeConverter.isAvroArray(Schema.create(Type.BYTES)));
 
-        Assert.assertTrue(TypeConverter.isBytesOrString(Schema.create(Type.BYTES)));
-        Assert.assertTrue(TypeConverter.isBytesOrString(Schema.create(Type.STRING)));
-        Assert.assertFalse(TypeConverter.isBytesOrString(Schema.create(Type.BOOLEAN)));
+        Assert.assertTrue(TypeConverter.isAvroString(Schema.create(Type.STRING)));
+        Assert.assertFalse(TypeConverter.isAvroString(Schema.create(Type.BOOLEAN)));
 
-        Assert.assertTrue(TypeConverter.isEnumType(Schema.createEnum("name", "doc", "namespace", Arrays.asList("node"))));
-        Assert.assertFalse(TypeConverter.isEnumType(Schema.create(Type.BOOLEAN)));
+        Assert.assertTrue(TypeConverter.isAvroEnum(Schema.createEnum("name", "doc", "namespace", Arrays.asList("node"))));
+        Assert.assertFalse(TypeConverter.isAvroEnum(Schema.create(Type.BOOLEAN)));
 
-        Assert.assertTrue(TypeConverter.isNullType(Schema.create(Type.NULL)));
-        Assert.assertFalse(TypeConverter.isNullType(Schema.create(Type.BOOLEAN)));
+        Assert.assertTrue(TypeConverter.isAvroNull(Schema.create(Type.NULL)));
+        Assert.assertFalse(TypeConverter.isAvroNull(Schema.create(Type.BOOLEAN)));
 
-        Assert.assertTrue(TypeConverter.isPrimitiveType(Schema.create(Type.BOOLEAN)));
-        Assert.assertTrue(TypeConverter.isPrimitiveType(Schema.create(Type.INT)));
-        Assert.assertTrue(TypeConverter.isPrimitiveType(Schema.create(Type.LONG)));
-        Assert.assertTrue(TypeConverter.isPrimitiveType(Schema.createEnum("name", "doc", "namespace", Arrays.asList("node"))));
-        Assert.assertTrue(TypeConverter.isPrimitiveType(Schema.create(Type.STRING)));
-        Assert.assertFalse(TypeConverter.isPrimitiveType(Schema.create(Type.BYTES)));
+        Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.create(Type.BOOLEAN)));
+        Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.create(Type.INT)));
+        Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.create(Type.LONG)));
+        Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.createEnum("name", "doc", "namespace", Arrays.asList("node"))));
+        Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.create(Type.STRING)));
+        Assert.assertFalse(TypeConverter.isAvroPrimitive(Schema.create(Type.BYTES)));
 
-        Assert.assertTrue(TypeConverter.isRecordOrUnion(Schema.createRecord("name", "doc", "namespace", false)));
-        Assert.assertTrue(TypeConverter.isRecordOrUnion(Schema.createUnion(
+        Assert.assertTrue(TypeConverter.isAvroUnion(Schema.createUnion(
                 Arrays.asList(Schema.create(Type.BYTES), Schema.create(Type.STRING)))));
-        Assert.assertFalse(TypeConverter.isRecordOrUnion(Schema.create(Type.STRING)));
+        Assert.assertFalse(TypeConverter.isAvroUnion(Schema.create(Type.STRING)));
 
-        Assert.assertTrue(TypeConverter.isRecordType(Schema.createRecord("name", "doc", "namespace", false)));
-        Assert.assertFalse(TypeConverter.isRecordType(Schema.create(Type.STRING)));
+        Assert.assertTrue(TypeConverter.isAvroRecord(Schema.createRecord("name", "doc", "namespace", false)));
+        Assert.assertFalse(TypeConverter.isAvroRecord(Schema.create(Type.STRING)));
 
-        Assert.assertTrue(TypeConverter.isUnionType(Schema.createUnion(
+        Assert.assertTrue(TypeConverter.isAvroUnion(Schema.createUnion(
                 Arrays.asList(Schema.create(Type.BYTES), Schema.create(Type.STRING)))));
-        Assert.assertFalse(TypeConverter.isUnionType(Schema.create(Type.STRING)));
+        Assert.assertFalse(TypeConverter.isAvroUnion(Schema.create(Type.STRING)));
 
-        Assert.assertTrue(TypeConverter.isStringType(Schema.create(Type.STRING)));
-        Assert.assertFalse(TypeConverter.isStringType(Schema.create(Type.INT)));
+        Assert.assertTrue(TypeConverter.isAvroString(Schema.create(Type.STRING)));
+        Assert.assertFalse(TypeConverter.isAvroString(Schema.create(Type.INT)));
     }
 
     @Test

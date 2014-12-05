@@ -14,195 +14,231 @@
 ## limitations under the License.
 ##
 
-#set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
-
-#set ($recordName = $StyleUtils.toLowerUnderScore($schema.getName()))
-#set ($isRecordNeedDeallocator = $TypeConverter.isRecordNeedDeallocator($schema))
-#if ($isRecordNeedDeallocator)
-static void ${prefix}_destroy_${recordName}(void* data)
+#set ($record_name = $StyleUtils.toLowerUnderScore($schema.getName()))
+#set ($is_destructor_needed = $TypeConverter.isRecordNeedDeallocator($schema))
+#if ($is_destructor_needed)
+static void ${prefix}_${record_name}_destroy(void* data)
 {
-    ${prefix}_${recordName}_t* record = (${prefix}_${recordName}_t*)data;
+    if (data) {
+        ${prefix}_${record_name}_t* record = (${prefix}_${record_name}_t*)data;
 
 #foreach ($field in $schema.getFields())
-#set ($fieldName = $StyleUtils.toLowerUnderScore($field.name()))
-#if ($TypeConverter.isBytesOrString($field.schema()))
-#if ($TypeConverter.isBytes($field.schema()))
-    kaa_destroy_bytes(record->$fieldName);
-#end
-    KAA_FREE(record->$fieldName);
-#elseif ($TypeConverter.isRecordOrUnion($field.schema()))
-#if ($TypeConverter.isUnionType($field.schema()) || $TypeConverter.isRecordNeedDeallocator($field.schema()))
-    record->${fieldName}->destroy(record->$fieldName);
-#end
-    KAA_FREE(record->$fieldName);
-#elseif ($TypeConverter.isArrayType($field.schema()))
-#set ($arrayElementSchema = $field.schema().getElementType())
-    #if ($TypeConverter.isPrimitiveType($arrayElementSchema))
-        kaa_list_destroy(record->${fieldName}, NULL);
-    #elseif ($TypeConverter.isBytes($arrayElementSchema))
-        kaa_list_destroy(record->${fieldName}, kaa_destroy_bytes);
-    #elseif ($TypeConverter.isUnionType($arrayElementSchema))
-    #set ($unionElementName = $TypeConverter.generateUnionName($arrayElementSchema).toLowerCase())
-        kaa_list_destroy(record->${fieldName}, ${prefix}_destroy_${unionElementName});
-    #elseif (!$TypeConverter.isRecordNeedDeallocator($arrayElementSchema))
-        kaa_list_destroy(record->${fieldName}, NULL);
-    #else
-        #set ($elementName = $StyleUtils.toLowerUnderScore($arrayElementSchema.getName()))
-        kaa_list_destroy(record->${fieldName}, ${prefix}_destroy_${elementName});
-    #end
-#end
-#end
-}
-#end
-#if ($TypeConverter.isTypeOut($schema))
-static size_t ${prefix}_get_size_${recordName}(void* data)
-{
-    size_t record_size = 0;
-    ${prefix}_${recordName}_t* record = (${prefix}_${recordName}_t*)data;
-
-#foreach ($field in $schema.getFields())
-#set ($fieldName = $StyleUtils.toLowerUnderScore($field.name()))
-#if ($TypeConverter.isRecordOrUnion($field.schema()))
-    record_size += record->${fieldName}->get_size(record->${fieldName});
-#elseif ($TypeConverter.isStringType($field.schema()))
-    record_size += kaa_get_size_string(record->${fieldName});
-#elseif ($TypeConverter.isBytes($field.schema()))
-    record_size += kaa_get_size_bytes(record->${fieldName});
-#elseif ($TypeConverter.isPrimitiveType($field.schema()))
-    record_size += size_long((int64_t)record->${fieldName});
-#elseif ($TypeConverter.isArrayType($field.schema()))
-#set ($arrayElementSchema = $field.schema().getElementType())
-    #if ($TypeConverter.isStringType($arrayElementSchema))
-        record_size += kaa_array_size(record->${fieldName}, kaa_get_size_string);
-    #elseif ($TypeConverter.isBytes($arrayElementSchema))
-        record_size += kaa_array_size(record->${fieldName}, kaa_get_size_bytes);
-    #elseif ($TypeConverter.isPrimitiveType($field.schema()))
-        //TODO: implement calculating size for array of primitives (bool, int, long, enum)
-    #elseif ($TypeConverter.isUnionType($arrayElementSchema))
-    #set ($unionElementName = $TypeConverter.generateUnionName($arrayElementSchema).toLowerCase())
-        record_size += kaa_array_size(record->${fieldName}, ${prefix}_get_size_${unionElementName});
-    #else
-    #set ($elementName = $StyleUtils.toLowerUnderScore($arrayElementSchema.getName()))
-        record_size += kaa_array_size(record->${fieldName}, ${prefix}_get_size_${elementName});
-    #end
-#end
-#end
-
-    return record_size;
-}
-
-static void ${prefix}_serialize_${recordName}(avro_writer_t writer, void* data)
-{
-    ${prefix}_${recordName}_t* record = (${prefix}_${recordName}_t*)data;
-
-#foreach ($field in $schema.getFields())
-#set ($fieldName = $StyleUtils.toLowerUnderScore($field.name()))
-#if ($TypeConverter.isRecordOrUnion($field.schema()))
-    record->${fieldName}->serialize(writer, record->${fieldName});
-#elseif ($TypeConverter.isBytesOrString($field.schema()))
-#if ($TypeConverter.isBytes($field.schema()))
-    kaa_serialize_bytes(writer, record->${fieldName});
-#else
-    avro_binary_encoding.write_string(writer, record->${fieldName});
-#end
-#elseif ($TypeConverter.isArrayType($field.schema()))
-#set ($arrayElementSchema = $field.schema().getElementType())
-    #if ($TypeConverter.isPrimitiveType($arrayElementSchema))
-        #set ($type = $arrayElementSchema.getType().toString().toLowerCase())
-        #if ($TypeConverter.isEnumType($arrayElementSchema))
-        #set ($type = "long")
+#set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroRecord($field_schema) || $TypeConverter.isAvroUnion($field_schema))
+        if (record->${field_name} && record->${field_name}->destroy) {
+            record->${field_name}->destroy(record->${field_name});
+        }
+#elseif ($TypeConverter.isAvroBytes($field_schema))
+        kaa_bytes_destroy(record->${field_name});
+#elseif ($TypeConverter.isAvroString($field_schema))
+        kaa_string_destroy(record->${field_name});
+#elseif ($TypeConverter.isAvroArray($field_schema))
+#set ($array_element_schema = $field_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+        #if ($TypeConverter.isRecordNeedDeallocator($array_element_schema))
+        #set ($array_record_name = $StyleUtils.toLowerUnderScore($array_element_schema.getName()))
+            kaa_list_destroy(record->${field_name}, ${prefix}_${array_record_name}_destroy);
+        #else
+            kaa_list_destroy(record->${field_name}, kaa_destroy_data);
         #end
-        kaa_serialize_array(writer, record->${fieldName}, kaa_serialize_${type});
-    #elseif ($TypeConverter.isBytes($arrayElementSchema))
-        kaa_serialize_array(writer, record->${fieldName}, kaa_serialize_bytes);
-    #elseif ($TypeConverter.isRecordType($arrayElementSchema))
-        #set ($recordElementName = $StyleUtils.toLowerUnderScore($arrayElementSchema.getName()))
-        kaa_serialize_array(writer, record->${fieldName}, ${prefix}_serialize_${recordElementName});
-    #elseif ($TypeConverter.isUnionType($arrayElementSchema))
-        #set ($unionElementName = $TypeConverter.generateUnionName($arrayElementSchema).toLowerCase())
-        kaa_serialize_array(writer, record->${fieldName}, ${prefix}_serialize_${unionElementName});
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+    #set ($array_union_name = $TypeConverter.generateUnionName($array_element_schema).toLowerCase())
+        kaa_list_destroy(record->${field_name}, ${prefix}_${array_union_name}_destroy);
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+        kaa_list_destroy(record->${field_name}, kaa_bytes_destroy);
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+        kaa_list_destroy(record->${field_name}, kaa_string_destroy);
+    #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
+        kaa_list_destroy(record->${field_name}, kaa_destroy_data);
     #end
-#else
-#set ($type = $field.schema().getType().toString().toLowerCase())
-#if ($TypeConverter.isEnumType($field.schema()))
-    #set ($type = "long")
-#end
-    avro_binary_encoding.write_${type}(writer, record->${fieldName});
 #end
 #end
+        kaa_destroy_data(record);
+    }
+}
+#end
+
+#if ($TypeConverter.isTypeOut($schema))
+#if ($schema.getFields().size() > 0)
+static void ${prefix}_${record_name}_serialize(avro_writer_t writer, void* data)
+{
+    if (data) {
+        ${prefix}_${record_name}_t* record = (${prefix}_${record_name}_t*)data;
+
+#foreach ($field in $schema.getFields())
+#set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroRecord($field_schema) && $field_schema.getFields().size() > 0)
+        record->${field_name}->serialize(writer, record->${field_name});
+#elseif ($TypeConverter.isAvroUnion($field_schema))
+        record->${field_name}->serialize(writer, record->${field_name});
+#elseif ($TypeConverter.isAvroBytes($field_schema))
+        kaa_bytes_serialize(writer, record->${field_name});
+#elseif ($TypeConverter.isAvroString($field_schema))
+        kaa_string_serialize(writer, record->${field_name});
+#elseif ($TypeConverter.isAvroPrimitive($field_schema))
+#set ($primitive_type = $field_schema.getType().toString().toLowerCase())
+    #if ($TypeConverter.isAvroEnum($field_schema))
+    #set ($primitive_type = "long")
+    #end
+        avro_binary_encoding.write_${primitive_type}(writer, record->${field_name});
+#elseif ($TypeConverter.isAvroArray($field_schema))
+#set ($array_element_schema = $field_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+        #if ($array_element_schema.getFields().size() > 0)
+        #set ($record_element_name = $StyleUtils.toLowerUnderScore($array_element_schema.getName()))
+        kaa_array_serialize(writer, record->${field_name}, ${prefix}_${record_element_name}_serialize);
+        #else
+        kaa_array_serialize(writer, record->${field_name}, NULL);
+        #end
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+    #set ($union_element_name = $TypeConverter.generateUnionName($array_element_schema).toLowerCase())
+        kaa_array_serialize(writer, record->${field_name}, ${prefix}_${union_element_name}_serialize);
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+        kaa_array_serialize(writer, record->${field_name}, kaa_bytes_serialize);
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+        kaa_array_serialize(writer, record->${field_name}, kaa_string_serialize);
+    #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
+    #set ($primitive_type = $array_element_schema.getType().toString().toLowerCase())
+        #if ($TypeConverter.isAvroEnum($array_element_schema))
+        #set ($primitive_type = "long")
+        #end
+        kaa_array_serialize(writer, record->${field_name}, kaa_${primitive_type}_serialize);
+    #end
+#end
+#end
+    }
 }
 
-${prefix}_${recordName}_t* ${prefix}_create_${recordName}()
+static size_t ${prefix}_${record_name}_get_size(void* data)
 {
-    ${prefix}_${recordName}_t* record = KAA_MALLOC(${prefix}_${recordName}_t);
-    record->serialize = ${prefix}_serialize_${recordName};
-    record->get_size = ${prefix}_get_size_${recordName};
-#if ($isRecordNeedDeallocator)
-    record->destroy = ${prefix}_destroy_${recordName};
-#else
-    record->destroy = kaa_destroy_null;
+    if (data) {
+        size_t record_size = 0;
+        ${prefix}_${record_name}_t* record = (${prefix}_${record_name}_t*)data;
+
+#foreach ($field in $schema.getFields())
+#set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroRecord($field_schema) && $field_schema.getFields().size() > 0)
+        record_size += record->${field_name}->get_size(record->${field_name});
+#elseif ($TypeConverter.isAvroUnion($field_schema))
+        record_size += record->${field_name}->get_size(record->${field_name});
+#elseif ($TypeConverter.isAvroBytes($field_schema))
+        record_size += kaa_bytes_get_size(record->${field_name});
+#elseif ($TypeConverter.isAvroString($field_schema))
+        record_size += kaa_string_get_size(record->${field_name});
+#elseif ($TypeConverter.isAvroPrimitive($field_schema))
+        record_size += kaa_long_get_size((int64_t)record->${field_name});
+#elseif ($TypeConverter.isAvroArray($field_schema))
+#set ($array_element_schema = $field_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+        #if ($array_element_schema.getFields().size() > 0)
+        #set ($array_record_name = $StyleUtils.toLowerUnderScore($array_element_schema.getName()))
+        record_size += kaa_array_get_size(record->${field_name}, ${prefix}_${array_record_name}_get_size);
+        #else
+        record_size += kaa_array_get_size(record->${field_name}, kaa_null_get_size);
+        #end
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+    #set ($array_union_name = $TypeConverter.generateUnionName($array_element_schema).toLowerCase())
+        record_size += kaa_array_get_size(record->${field_name}, ${prefix}_${array_union_name}_get_size);
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+        record_size += kaa_array_get_size(record->${field_name}, kaa_bytes_get_size);
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+        record_size += kaa_array_get_size(record->${field_name}, kaa_string_get_size);
+    #elseif ($TypeConverter.isAvroPrimitive($field_schema))
+        //TODO: implement calculating size for array of primitives (bool, int, long, enum)
+    #end
 #end
+#end
+
+        return record_size;
+    }
+
+    return 0;
+}
+#end
+
+${prefix}_${record_name}_t* ${prefix}_${record_name}_create()
+{
+    ${prefix}_${record_name}_t* record = 
+            (${prefix}_${record_name}_t*)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
+    if (record) {
+#if ($schema.getFields().size() > 0)
+        record->serialize = ${prefix}_${record_name}_serialize;
+        record->get_size = ${prefix}_${record_name}_get_size;
+#end
+#if ($is_destructor_needed)
+        record->destroy = ${prefix}_${record_name}_destroy;
+#else
+        record->destroy = kaa_data_destroy;
+#end
+    }
+
     return record;
 }
 #end
 #if ($TypeConverter.isTypeIn($schema))
 
-${prefix}_${recordName}_t* ${prefix}_deserialize_${recordName}(avro_reader_t reader)
+${prefix}_${record_name}_t* ${prefix}_${record_name}_deserialize(avro_reader_t reader)
 {
-    ${prefix}_${recordName}_t* record = KAA_MALLOC(${prefix}_${recordName}_t);
-#if ($TypeConverter.isTypeOut($schema))
-    record->serialize = ${prefix}_serialize_${recordName};
-    record->get_size = ${prefix}_get_size_${recordName};
+    ${prefix}_${record_name}_t* record = (${prefix}_${record_name}_t*)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
+
+    if (record) {
+#if ($TypeConverter.isTypeOut($schema) && $schema.getFields().size() > 0)
+        record->serialize = ${prefix}_${record_name}_serialize;
+        record->get_size = ${prefix}_${record_name}_get_size;
 #end
-#if ($isRecordNeedDeallocator)
-    record->destroy = ${prefix}_destroy_${recordName};
+#if ($is_destructor_needed)
+        record->destroy = ${prefix}_${record_name}_destroy;
 #else
-    record->destroy = kaa_destroy_null;
+        record->destroy = kaa_data_destroy;
 #end
-    
+
 #foreach ($field in $schema.getFields())
-#set ($fieldName = $StyleUtils.toLowerUnderScore($field.name()))
-#if ($TypeConverter.isRecordType($field.schema()))
-    #set ($recordFieldName = $StyleUtils.toLowerUnderScore($field.schema().getName()))
-    record->$fieldName = ${prefix}_deserialize_${recordFieldName}(reader);
-#elseif ($TypeConverter.isUnionType($field.schema()))
-#set ($unionFieldName = $TypeConverter.generateUnionName($field.schema()).toLowerCase())
-    record->$fieldName = ${prefix}_deserialize_${unionFieldName}(reader);
-#elseif ($TypeConverter.isBytesOrString($field.schema()))
-    #if ($TypeConverter.isBytes($field.schema()))
-        record->${fieldName} = kaa_deserialize_bytes(reader); 
-    #else
-    int64_t ${fieldName}_size;
-    avro_binary_encoding.read_string(reader, &record->${fieldName}, &${fieldName}_size);
-    #end
-#elseif ($TypeConverter.isArrayType($field.schema()))
-#set ($elementSchema = $field.schema().getElementType())
-    #if ($TypeConverter.isPrimitiveType($elementSchema))
-        #set ($type = $elementSchema.getType().toString().toLowerCase())
-        #if ($TypeConverter.isEnumType($elementSchema))
-            #set ($type = "long")
+#set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroRecord($field_schema))
+#set ($record_field_name = $StyleUtils.toLowerUnderScore($field_schema.getName()))
+        record->$field_name = ${prefix}_${record_field_name}_deserialize(reader);
+#elseif ($TypeConverter.isAvroUnion($field_schema))
+#set ($union_field_name = $TypeConverter.generateUnionName($field_schema).toLowerCase())
+        record->$field_name = ${prefix}_${union_field_name}_deserialize(reader);
+#elseif ($TypeConverter.isAvroBytes($field_schema))
+        record->${field_name} = kaa_bytes_deserialize(reader);
+#elseif ($TypeConverter.isAvroString($field_schema))
+        record->${field_name} = kaa_string_deserialize(reader);
+#elseif ($TypeConverter.isAvroEnum($field_schema))
+        int64_t ${field_name}_value;
+        avro_binary_encoding.read_long(reader, &${field_name}_value);
+        record->$field_name = ${field_name}_value;
+#elseif ($TypeConverter.isAvroPrimitive($field_schema))
+#set ($primitive_type = $field_schema.getType().toString().toLowerCase())
+        avro_binary_encoding.read_${primitive_type}(reader, &record->${field_name});
+#elseif ($TypeConverter.isAvroArray($field_schema))
+#set ($array_element_schema = $field_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+    #set ($record_element_name = $StyleUtils.toLowerUnderScore($array_element_schema.getName()))
+        record->${field_name} = kaa_array_deserialize(reader, (deserialize_fn)${prefix}_${record_element_name}_deserialize);
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+    #set ($union_element_name = $TypeConverter.generateUnionName($array_element_schema).toLowerCase())
+        record->${field_name} = kaa_array_deserialize(reader, (deserialize_fn)${prefix}_${union_element_name}_deserialize);
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+        record->${field_name} = kaa_array_deserialize(reader, (deserialize_fn)kaa_bytes_deserialize);
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+        record->${field_name} = kaa_array_deserialize(reader, (deserialize_fn)kaa_string_deserialize);
+    #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
+    #set ($primitive_type = $array_element_schema.getType().toString().toLowerCase())
+        #if ($TypeConverter.isAvroEnum($array_element_schema))
+        #set ($primitive_type = "long")
         #end
-        record->${fieldName} = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_${type});
-    #elseif ($TypeConverter.isBytes($elementSchema))
-        record->${fieldName} = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_bytes);
-    #elseif ($TypeConverter.isRecordType($elementSchema))
-        #set ($recordElementName = $StyleUtils.toLowerUnderScore($elementSchema.getName()))
-        record->${fieldName} = kaa_deserialize_array(reader, (deserialize_fn)${prefix}_deserialize_${recordElementName});
-    #elseif ($TypeConverter.isUnionType($elementSchema))
-        #set ($unionElementName = $TypeConverter.generateUnionName($elementSchema).toLowerCase())
-        record->${fieldName} = kaa_deserialize_array(reader, (deserialize_fn)${prefix}_deserialize_${unionElementName});
+        record->${field_name} = kaa_array_deserialize(reader, (deserialize_fn)kaa_${primitive_type}_deserialize);
     #end
-#elseif ($TypeConverter.isEnumType($field.schema()))
-    int64_t ${fieldName}_value;
-    avro_binary_encoding.read_long(reader, &${fieldName}_value);
-    record->$fieldName = ${fieldName}_value;
-#else
-    #set ($type = $field.schema().getType().toString().toLowerCase())
-    avro_binary_encoding.read_${type}(reader, &record->$fieldName);
 #end
 #end
-    
+    }
+
     return record;
 }
 #end

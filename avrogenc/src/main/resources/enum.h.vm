@@ -14,28 +14,28 @@
 ## limitations under the License.
 ##
 
-#set ($ENUMNAME = $StyleUtils.toUpperUnderScore($schema.getName()))
-#set ($enumName = $StyleUtils.toLowerUnderScore($schema.getName()))
+#set ($ENUM_NAME = $StyleUtils.toUpperUnderScore($schema.getName()))
+#set ($enum_name = $StyleUtils.toLowerUnderScore($schema.getName()))
 
 #set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
-typedef enum ${prefix}_${enumName}_t_ {
+typedef enum ${prefix}_${enum_name}_t_ {
 #foreach ($symbol in $schema.getEnumSymbols())
-    ENUM_${ENUMNAME}_$symbol,
+    ENUM_${ENUM_NAME}_$symbol,
 #end
-} ${prefix}_${enumName}_t;
+} ${prefix}_${enum_name}_t;
 
 #ifdef GENC_ENUM_DEFINE_ALIASES
 #foreach ($symbol in $schema.getEnumSymbols())
-\#define $symbol ENUM_${ENUMNAME}_$symbol
+\#define $symbol ENUM_${ENUM_NAME}_$symbol
 #end
 # endif // GENC_ENUM_DEFINE_ALIASES
 
 #ifdef GENC_ENUM_STRING_LITERALS
-#set($symCount = $schema.getEnumSymbols().size())
-const char* ${PREFIX}_${ENUMNAME}_SYMBOLS[$symCount] = {
+#set($sym_count = $schema.getEnumSymbols().size())
+const char* ${PREFIX}_${ENUM_NAME}_SYMBOLS[$sym_count] = {
 #foreach ($symbol in $schema.getEnumSymbols())
-    "${symbol}"#set($symCount = $symCount - 1)#if ($symCount > 0),
+    "${symbol}"#set($sym_count = $sym_count - 1)#if ($sym_count > 0),
 #end
 #end
 };
