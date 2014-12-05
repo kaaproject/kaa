@@ -132,15 +132,19 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
         kaa_log_entry_t *record = kaa_log_entry_create();
         KAA_RETURN_IF_NIL(record, KAA_ERR_NOMEM);
 
-        record->data = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
+        record->data = (kaa_bytes_t *) KAA_CALLOC(1, sizeof(kaa_bytes_t));
         if (!record->data) {
             record->destroy(record);
             return KAA_ERR_NOMEM;
         }
 
+        record->data->destroy = kaa_data_destroy;
         record->data->size = entry->get_size(entry);
-        record->data->buffer = (uint8_t *) KAA_MALLOC(record->data->size * sizeof(uint8_t));
-        // TODO: destructor for bytes
+
+        if (record->data->size > 0) {
+            record->data->buffer = (uint8_t *) KAA_MALLOC(record->data->size * sizeof(uint8_t));
+        }
+
         if (!record->data->buffer) {
             record->destroy(record);
             return KAA_ERR_NOMEM;
@@ -151,6 +155,7 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
             record->destroy(record);
             return KAA_ERR_NOMEM;
         }
+
         entry->serialize(writer, entry);
         avro_writer_free(writer);
 

@@ -36,6 +36,7 @@ void test_create_request()
     kaa_init(&kaa_context);
 
     kaa_sync_request_t *request = NULL;
+
     size_t s;
     kaa_error_t err_code = kaa_compile_request(kaa_context, &request, &s, 4, services);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
@@ -43,8 +44,7 @@ void test_create_request()
     ASSERT_NOT_NULL(request->log_sync_request);
     ASSERT_EQUAL(request->log_sync_request->type, KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
 
-    // FIXME: uncomment when the string destructor will be fixed
-//    request->destroy(request);
+    request->destroy(request);
     kaa_deinit(kaa_context);
 }
 

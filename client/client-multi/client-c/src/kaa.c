@@ -51,16 +51,13 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
     request->application_token = kaa_string_move_create(APPLICATION_TOKEN, NULL);
     request->timeout = 60000L;
 
-    request->endpoint_public_key_hash = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
-    request->endpoint_public_key_hash->size = SHA_1_DIGEST_LENGTH;
-    request->endpoint_public_key_hash->buffer = (uint8_t *) KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
-
     kaa_digest_p pub_key_hash = NULL;
     if (kaa_status_get_endpoint_public_key_hash(context->status, &pub_key_hash)) {
         // FIXME: error handling
     }
     if (pub_key_hash) {
-        memcpy(request->endpoint_public_key_hash->buffer, pub_key_hash, SHA_1_DIGEST_LENGTH);
+        request->endpoint_public_key_hash =
+                kaa_bytes_copy_create(pub_key_hash, SHA_1_DIGEST_LENGTH, kaa_data_destroy);
     }
 
     kaa_digest_p profile_hash = NULL;
@@ -70,11 +67,10 @@ static kaa_sync_request_meta_data_t * create_sync_request_meta_data(void *ctx)
 
     if (profile_hash) {
         request->profile_hash = kaa_bytes_null_union_bytes_branch_create();
-        kaa_bytes_t * hash = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
-        hash->size = SHA_1_DIGEST_LENGTH;
-        hash->buffer = (uint8_t *) KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
-        memcpy(hash->buffer, profile_hash, SHA_1_DIGEST_LENGTH);
-        request->profile_hash->data = hash;
+        if (request->profile_hash) {
+            request->profile_hash->data = kaa_bytes_copy_create(
+                    profile_hash, SHA_1_DIGEST_LENGTH, kaa_data_destroy);
+        }
     } else {
         request->profile_hash = kaa_bytes_null_union_null_branch_create();
     }
@@ -171,7 +167,6 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
 #ifndef KAA_DISABLE_FEATURE_EVENTS
                 case KAA_SERVICE_EVENT: {
                     request->event_sync_request->destroy(request->event_sync_request);
-                    KAA_FREE(request->event_sync_request);
                     request->event_sync_request = kaa_record_event_sync_request_null_union_event_sync_request_branch_create();
                     kaa_event_compile_request(kaa_context->event_manager, (kaa_event_sync_request_t**)&request->event_sync_request->data, kaa_context->global_request_id);
                     break;
@@ -186,19 +181,21 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
                     }
                     if (need_resync) {
                         request->profile_sync_request->destroy(request->profile_sync_request);
-                        KAA_FREE(request->profile_sync_request);
-                        kaa_profile_sync_request_t *profile_request = NULL;
-                        rval = kaa_profile_compile_request(kaa_context->profile_manager, &profile_request);
-                        if (rval) {
-                            request->destroy(request);
-                            return rval;
-                        }
-                        request->profile_sync_request = kaa_record_profile_sync_request_null_union_profile_sync_request_branch_create();
+                        request->profile_sync_request =
+                                kaa_record_profile_sync_request_null_union_profile_sync_request_branch_create();
+
                         if (!request->profile_sync_request) {
                             request->destroy(request);
                             return KAA_ERR_NOMEM;
                         }
-                        request->profile_sync_request->data = profile_request;
+
+                        rval = kaa_profile_compile_request(kaa_context->profile_manager
+                                , (kaa_profile_sync_request_t **)&request->profile_sync_request->data);
+
+                        if (rval) {
+                            request->destroy(request);
+                            return rval;
+                        }
                     }
                     break;
                 }
@@ -208,7 +205,6 @@ kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t *
                     kaa_logging_compile_request(kaa_context->log_collector, &log_request);
                     if (log_request) {
                         request->log_sync_request->destroy(request->log_sync_request);
-                        KAA_FREE(request->log_sync_request);
                         request->log_sync_request = kaa_record_log_sync_request_null_union_log_sync_request_branch_create();
                         request->log_sync_request->data = log_request;
                     }
@@ -307,7 +303,6 @@ kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer
 
     kaa_status_save(kaa_context->status);
     response->destroy(response);
-    KAA_FREE(response);
 
     return KAA_ERR_NONE;
 }

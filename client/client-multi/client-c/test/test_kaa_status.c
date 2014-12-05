@@ -35,12 +35,11 @@ extern void        kaa_status_destroy(kaa_status_t *self);
 
 static kaa_logger_t *logger = NULL;
 
-void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+void kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;
-    //FIXME: memory leak in case of status file exists
-    *needs_deallocation = false;
+    *needs_deallocation = true;
 
     FILE* status_file = fopen(KAA_STATUS_STORAGE, "rb");
 
@@ -67,7 +66,7 @@ void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deal
     fclose(status_file);
 }
 
-void    kaa_store_status_ext(const char *buffer, size_t buffer_size)
+void kaa_store_status_ext(const char *buffer, size_t buffer_size)
 {
     if (!buffer || buffer_size == 0) {
         return;
@@ -81,7 +80,7 @@ void    kaa_store_status_ext(const char *buffer, size_t buffer_size)
     }
 }
 
-void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *need_deallocation)
+void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *need_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;

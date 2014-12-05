@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef KAA_PROFILE_GEN_H_
-#define KAA_PROFILE_GEN_H_
+# ifndef KAA_PROFILE_GEN_H_
+# define KAA_PROFILE_GEN_H_
 
-#ifdef __cplusplus
-extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
+# ifdef __cplusplus
+    extern "C" {
+    # define CLOSE_EXTERN }
+# else
+    # define CLOSE_EXTERN
+# endif
 
-#include "kaa_common_schema.h"
-#include "kaa_list.h"
+# include "kaa_common_schema.h"
+# include "kaa_list.h"
+
 
 typedef struct kaa_profile_basic_endpoint_profile_test_t_ {
-    char* profile_body; 
+    kaa_string_t* profile_body; 
 
     serialize_fn serialize;
     get_size_fn  get_size;
@@ -36,7 +37,7 @@ typedef struct kaa_profile_basic_endpoint_profile_test_t_ {
 } kaa_profile_basic_endpoint_profile_test_t;
 
 kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create();
-kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_deserialize(avro_reader_t reader);
+
 
 CLOSE_EXTERN
 #endif
