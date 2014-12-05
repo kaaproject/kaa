@@ -52,7 +52,7 @@ static void ${prefix}_${union_name}_destroy(void *data)
         #set ($array_record_name = $StyleUtils.toLowerUnderScore($array_element_schema.getName()))
                 kaa_list_destroy(kaa_union->data, ${prefix}_${array_record_name}_destroy);
         #else
-                kaa_list_destroy(kaa_union->data, kaa_destroy_data);
+                kaa_list_destroy(kaa_union->data, kaa_data_destroy);
         #end
     #elseif ($TypeConverter.isAvroUnion($array_element_schema))
     #set ($array_union_name = $TypeConverter.generateUnionName($array_element_schema).toLowerCase())
@@ -211,6 +211,7 @@ static void ${prefix}_${union_name}_serialize(avro_writer_t writer, void *data)
 static kaa_union_t* ${prefix}_${union_name}_create()
 {
     kaa_union_t* kaa_union = KAA_CALLOC(1, sizeof(kaa_union_t));
+
     if (kaa_union) {
 #if ($generationContext.isTypeOut())
         kaa_union->serialize = ${prefix}_${union_name}_serialize;
@@ -224,7 +225,7 @@ static kaa_union_t* ${prefix}_${union_name}_create()
 #if ($generationContext.isTypeOut())
 #foreach ($branch_schema in $schema.getTypes())
 
-kaa_union_t* ${prefix}_${union_name}_${StyleUtils.toLowerUnderScore($branch_schema.getName())}_create_branch()
+kaa_union_t* ${prefix}_${union_name}_${StyleUtils.toLowerUnderScore($branch_schema.getName())}_branch_create()
 {
     kaa_union_t *kaa_union = ${prefix}_${union_name}_create();
     if (kaa_union) {

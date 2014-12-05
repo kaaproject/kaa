@@ -22,7 +22,7 @@
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
 
 typedef struct {
     char   *user_external_id;
@@ -45,26 +45,26 @@ static user_info_t* create_user_info(const char *external_id, const char *user_a
 {
     KAA_RETURN_IF_NIL2(external_id, user_access_token, NULL);
 
-    user_info_t *user_info = KAA_MALLOC(user_info_t);
+    user_info_t *user_info = (user_info_t *) KAA_MALLOC(sizeof(user_info_t));
     KAA_RETURN_IF_NIL(user_info, NULL);
 
     user_info->user_external_id_len = strlen(external_id);
     user_info->user_access_token_len = strlen(user_access_token);
 
-    user_info->user_external_id = KAA_CALLOC(user_info->user_external_id_len + 1, sizeof(char));
+    user_info->user_external_id =(char *) KAA_MALLOC((user_info->user_external_id_len + 1) * sizeof(char));
     if (!user_info->user_external_id) {
         KAA_FREE(user_info);
         return NULL;
     }
-    memcpy(user_info->user_external_id, external_id, user_info->user_external_id_len + 1);
+    strcpy(user_info->user_external_id, external_id);
 
-    user_info->user_access_token = KAA_CALLOC(user_info->user_access_token_len + 1, sizeof(char));
+    user_info->user_access_token = (char *) KAA_MALLOC((user_info->user_access_token_len + 1) * sizeof(char));
     if (!user_info->user_access_token) {
         KAA_FREE(user_info->user_external_id);
         KAA_FREE(user_info);
         return NULL;
     }
-    memcpy(user_info->user_access_token, user_access_token, user_info->user_access_token_len + 1);
+    strcpy(user_info->user_access_token, user_access_token);
 
     return user_info;
 }
@@ -82,7 +82,7 @@ kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_sta
 {
     KAA_RETURN_IF_NIL2(user_manager_p, status, KAA_ERR_BADPARAM);
 
-    *user_manager_p = KAA_MALLOC(kaa_user_manager_t);
+    *user_manager_p = (kaa_user_manager_t *) KAA_MALLOC(sizeof(kaa_user_manager_t));
     KAA_RETURN_IF_NIL((*user_manager_p), KAA_ERR_NOMEM);
 
     (*user_manager_p)->attachment_listeners.on_attached_callback = NULL;
@@ -96,84 +96,92 @@ kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_sta
     return KAA_ERR_NONE;
 }
 
-void kaa_user_manager_destroy(kaa_user_manager_t *this)
+void kaa_user_manager_destroy(kaa_user_manager_t *self)
 {
-    if (this) {
-        destroy_user_info(this->user_info);
-        KAA_FREE(this);
+    if (self) {
+        destroy_user_info(self->user_info);
+        KAA_FREE(self);
     }
 }
 
-kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *this, const char *user_external_id, const char *access_token)
+kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self, const char *user_external_id, const char *access_token)
 {
-    KAA_RETURN_IF_NIL3(this, user_external_id, access_token, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(self, user_external_id, access_token, KAA_ERR_BADPARAM);
 
-    if (this->is_waiting_user_attach_response) {
-        destroy_user_info(this->user_info);
-        this->user_info = NULL;
-        this->is_waiting_user_attach_response = false;
+    if (self->is_waiting_user_attach_response) {
+        destroy_user_info(self->user_info);
+        self->user_info = NULL;
+        self->is_waiting_user_attach_response = false;
     }
 
-    this->user_info = create_user_info(user_external_id, access_token);
-    if (!this->user_info)
+    self->user_info = create_user_info(user_external_id, access_token);
+    if (!self->user_info)
         return KAA_ERR_NOMEM;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(this->channel_manager, user_sync_services[0]);
+    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, user_sync_services[0]);
     if (sync)
         (*sync)(user_sync_services, 1);
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *this, kaa_attachment_status_listeners_t listeners)
+kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self, kaa_attachment_status_listeners_t listeners)
 {
-    KAA_RETURN_IF_NIL(this, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    this->attachment_listeners = listeners;
+    self->attachment_listeners = listeners;
 
-    if (listeners.on_response_callback)
-        (*listeners.on_response_callback)(kaa_is_endpoint_attached_to_user(this->status));
+    if (listeners.on_response_callback) {
+        bool is_attached = false;
+        if (kaa_is_endpoint_attached_to_user(self->status, &is_attached))
+            return KAA_ERR_BAD_STATE;
+        (*listeners.on_response_callback)(is_attached);
+    }
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_user_compile_request(kaa_user_manager_t *this, kaa_user_sync_request_t** request_p, size_t requestId)
+kaa_error_t kaa_user_compile_request(kaa_user_manager_t *self, kaa_user_sync_request_t** request_p, size_t requestId)
 {
-    KAA_RETURN_IF_NIL2(this, request_p, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(self, request_p, KAA_ERR_BADPARAM);
     *request_p = NULL;
 
-    kaa_user_sync_request_t *request = kaa_create_user_sync_request();
+    kaa_user_sync_request_t *request = kaa_user_sync_request_create();
     KAA_RETURN_IF_NIL(request, KAA_ERR_NOMEM);
 
-    request->endpoint_attach_requests = kaa_create_array_endpoint_attach_request_null_union_null_branch();
+    request->endpoint_attach_requests = kaa_array_endpoint_attach_request_null_union_null_branch_create();
     if (!request->endpoint_attach_requests) {
-        KAA_FREE(request);
+        request->destroy(request);
         return KAA_ERR_NOMEM;
     }
 
-    request->endpoint_detach_requests = kaa_create_array_endpoint_detach_request_null_union_null_branch();
+    request->endpoint_detach_requests = kaa_array_endpoint_detach_request_null_union_null_branch_create();
     if (!request->endpoint_detach_requests) {
-        request->endpoint_attach_requests->destroy(request->endpoint_attach_requests);
-        KAA_FREE(request->endpoint_attach_requests);
-        KAA_FREE(request);
+        request->destroy(request);
         return KAA_ERR_NOMEM;
     }
 
-    if (this->user_info && !this->is_waiting_user_attach_response) {
-        // FIXME: handle out of memory
-        kaa_user_attach_request_t *user_attach_request = kaa_create_user_attach_request();
+    if (self->user_info && !self->is_waiting_user_attach_response) {
+        kaa_user_attach_request_t *user_attach_request = kaa_user_attach_request_create();
+        if (!user_attach_request) {
+            request->destroy(request);
+            return KAA_ERR_NOMEM;
+        }
 
-        user_attach_request->user_external_id = KAA_CALLOC(this->user_info->user_external_id_len + 1, sizeof(char));
-        memcpy(user_attach_request->user_external_id, this->user_info->user_external_id, this->user_info->user_external_id_len);
-        user_attach_request->user_access_token = KAA_CALLOC(this->user_info->user_access_token_len + 1, sizeof(char));
-        memcpy(user_attach_request->user_access_token, this->user_info->user_access_token, this->user_info->user_access_token_len);
+        user_attach_request->user_external_id =
+                kaa_string_move_create(self->user_info->user_external_id, NULL); // destructor is not needed
+        user_attach_request->user_access_token =
+                kaa_string_move_create(self->user_info->user_access_token, NULL); // destructor is not needed
 
-        this->is_waiting_user_attach_response = true;
-        request->user_attach_request = kaa_create_record_user_attach_request_null_union_user_attach_request_branch();
-        request->user_attach_request->data = user_attach_request;
-    } else {
-        request->user_attach_request = kaa_create_record_user_attach_request_null_union_null_branch();
+        self->is_waiting_user_attach_response = true;
+        request->user_attach_request = kaa_record_user_attach_request_null_union_user_attach_request_branch_create();
         if (!request->user_attach_request) {
             request->destroy(request);
-            KAA_FREE(request);
+            return KAA_ERR_NOMEM;
+        }
+        request->user_attach_request->data = user_attach_request;
+    } else {
+        request->user_attach_request = kaa_record_user_attach_request_null_union_null_branch_create();
+        if (!request->user_attach_request) {
+            request->destroy(request);
             return KAA_ERR_NOMEM;
         }
     }
@@ -182,29 +190,32 @@ kaa_error_t kaa_user_compile_request(kaa_user_manager_t *this, kaa_user_sync_req
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *this
+kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *self
         , kaa_user_attach_response_t * user_attach_response, kaa_user_attach_notification_t *attach, kaa_user_detach_notification_t *detach)
 {
-    KAA_RETURN_IF_NIL(this, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
     if (user_attach_response) {
-        destroy_user_info(this->user_info);
-        this->user_info = NULL;
-        this->is_waiting_user_attach_response = false;
+        destroy_user_info(self->user_info);
+        self->user_info = NULL;
+        self->is_waiting_user_attach_response = false;
         if (user_attach_response->result == ENUM_SYNC_RESPONSE_RESULT_TYPE_SUCCESS)
-            kaa_set_endpoint_attached_to_user(this->status, true);
-        if (this->attachment_listeners.on_response_callback)
-            (*this->attachment_listeners.on_response_callback)(true);
+            if (kaa_set_endpoint_attached_to_user(self->status, true))
+                return KAA_ERR_BAD_STATE;
+        if (self->attachment_listeners.on_response_callback)
+            (*self->attachment_listeners.on_response_callback)(true);
     }
     if (attach) {
-        kaa_set_endpoint_attached_to_user(this->status, true);
-        if (this->attachment_listeners.on_attached_callback)
-            (*this->attachment_listeners.on_attached_callback)(attach->user_external_id, attach->endpoint_access_token);
+        if (kaa_set_endpoint_attached_to_user(self->status, true))
+            return KAA_ERR_BAD_STATE;
+        if (self->attachment_listeners.on_attached_callback)
+            (*self->attachment_listeners.on_attached_callback)(attach->user_external_id->data, attach->endpoint_access_token->data);
     }
     if (detach) {
-        kaa_set_endpoint_attached_to_user(this->status, false);
-        if (this->attachment_listeners.on_detached_callback)
-            (*this->attachment_listeners.on_detached_callback)(detach->endpoint_access_token);
+        if (kaa_set_endpoint_attached_to_user(self->status, false))
+            return KAA_ERR_BAD_STATE;
+        if (self->attachment_listeners.on_detached_callback)
+            (*self->attachment_listeners.on_detached_callback)(detach->endpoint_access_token->data);
     }
 
     return KAA_ERR_NONE;

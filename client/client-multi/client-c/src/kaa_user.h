@@ -42,13 +42,13 @@ typedef struct kaa_user_manager_t kaa_user_manager_t;
  * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
  * credentials. Only endpoints associated with the same user entity can exchange events.
  *
- * @param[in]   this                Valid pointer to the user manager instance.
+ * @param[in]   self                Valid pointer to the user manager instance.
  * @param[in]   user_external_id    Null-terminated string representing external user ID.
  * @param[in]   user_access_token   Null-terminated string representing external access token.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *this, const char *user_external_id, const char *access_token);
+kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self, const char *user_external_id, const char *access_token);
 
 /**
  * @brief Structure of user attachment status events listeners.
@@ -79,12 +79,12 @@ typedef struct {
 /**
  * @brief Sets callback functions to receive notifications when the endpoint gets attached or detached to (from) user.
  *
- * @param[in]   this                Valid pointer to the user manager instance.
+ * @param[in]   self                Valid pointer to the user manager instance.
  * @param[in]   listeners           A filled in @link kaa_attachment_status_listeners_t @endlink structure.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *this, kaa_attachment_status_listeners_t listeners);
+kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self, kaa_attachment_status_listeners_t listeners);
 
 #ifdef __cplusplus
 }      /* extern "C" */

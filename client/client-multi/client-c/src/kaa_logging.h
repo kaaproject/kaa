@@ -25,9 +25,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 typedef kaa_test_log_record_t               kaa_user_log_record_t;
@@ -97,10 +94,20 @@ typedef enum kaa_log_upload_decision_t {
 
 typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_t *);
 
-kaa_error_t                 kaa_create_log_collector(kaa_log_collector_t **);
-void                        kaa_destroy_log_collector(kaa_log_collector_t *);
-
-kaa_error_t                 kaa_init_log_collector(
+/**
+ * Provide log storage to Kaa.<br>
+ * <br>
+ *
+ * \param i_storage     Structure containing pointers to functions which are used
+ * to manage log storage.
+ * \param i_status      Structure containing pointers to functions describing
+ * state of the storage (occupied size, records count etc.)
+ * \param upload_properties     Properties which are used to control log storage
+ * size and log upload neediness.
+ * \param is_upload_needed  Pointer to function which will be used to decide
+ * which operation (NO_OPERATION, UPLOAD or CLEANUP) should be performed on log storage.
+ */
+kaa_error_t                 kaa_logging_init(
                                                     kaa_log_collector_t *
                                                   , kaa_log_storage_t *
                                                   , kaa_log_upload_properties_t *
@@ -108,11 +115,21 @@ kaa_error_t                 kaa_init_log_collector(
                                                   , log_upload_decision_fn
                                                   );
 
-kaa_error_t                 kaa_add_log_record(void *ctx, kaa_user_log_record_t *entry);
+/**
+ * Add log record to log storage.<br>
+ * <br>
+ * Use this to add the log entry to the predefined log storage.<br>
+ * Log record will be serialized and pushed to a log storage interface via
+ * <pre>
+ * void            (* add_log_record)  (kaa_log_entry_t * record);
+ * </pre>
+ * See also \see kaa_log_storage_t
+ */
+kaa_error_t                 kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
 
-kaa_error_t                 kaa_logging_compile_request(void *ctx, kaa_log_sync_request_t ** request_p);
-kaa_error_t                 kaa_logging_handle_sync(void *ctx, kaa_log_sync_response_t *response);
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
 

@@ -35,8 +35,8 @@ typedef struct kaa_test_log_record_t_ {
     destroy_fn   destroy;
 } kaa_test_log_record_t;
 
-kaa_test_log_record_t* kaa_create_test_log_record();
-kaa_test_log_record_t* kaa_deserialize_test_log_record(avro_reader_t reader);
+kaa_test_log_record_t* kaa_test_log_record_create();
+kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader);
 
 
 CLOSE_EXTERN

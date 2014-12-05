@@ -30,44 +30,44 @@
 
 
 
-static void kaa_destroy_test_log_record(void* data)
+static void kaa_test_log_record_destroy(void* data)
 {
     kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
 
     KAA_FREE(record->data);
 }
-static size_t kaa_get_size_test_log_record(void* data)
+static size_t kaa_test_log_record_get_size(void* data)
 {
     size_t record_size = 0;
     kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
 
-    record_size += kaa_get_size_string(record->data);
+    record_size += kaa_string_get_size(record->data);
 
     return record_size;
 }
 
-static void kaa_serialize_test_log_record(avro_writer_t writer, void* data)
+static void kaa_test_log_record_serialize(avro_writer_t writer, void* data)
 {
     kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
 
     avro_binary_encoding.write_string(writer, record->data);
 }
 
-kaa_test_log_record_t* kaa_create_test_log_record()
+kaa_test_log_record_t* kaa_test_log_record_create()
 {
-    kaa_test_log_record_t* record = KAA_MALLOC(kaa_test_log_record_t);
-    record->serialize = kaa_serialize_test_log_record;
-    record->get_size = kaa_get_size_test_log_record;
-    record->destroy = kaa_destroy_test_log_record;
+    kaa_test_log_record_t* record = (kaa_test_log_record_t *) KAA_MALLOC(sizeof(kaa_test_log_record_t));
+    record->serialize = kaa_test_log_record_serialize;
+    record->get_size = kaa_test_log_record_get_size;
+    record->destroy = kaa_test_log_record_destroy;
     return record;
 }
 
-kaa_test_log_record_t* kaa_deserialize_test_log_record(avro_reader_t reader)
+kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader)
 {
-    kaa_test_log_record_t* record = KAA_MALLOC(kaa_test_log_record_t);
-    record->serialize = kaa_serialize_test_log_record;
-    record->get_size = kaa_get_size_test_log_record;
-    record->destroy = kaa_destroy_test_log_record;
+    kaa_test_log_record_t* record = (kaa_test_log_record_t *) KAA_MALLOC(sizeof(kaa_test_log_record_t));
+    record->serialize = kaa_test_log_record_serialize;
+    record->get_size = kaa_test_log_record_get_size;
+    record->destroy = kaa_test_log_record_destroy;
     
         int64_t data_size;
     avro_binary_encoding.read_string(reader, &record->data, &data_size);

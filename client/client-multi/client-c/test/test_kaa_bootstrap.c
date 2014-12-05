@@ -80,7 +80,7 @@ void test_add_get_operation_server()
     char* const host = "test.com";
     uint8_t host_len = strlen(host);
 
-    kaa_ops_ip_t* ops1 = KAA_MALLOC(kaa_ops_ip_t);
+    kaa_ops_ip_t* ops1 = (kaa_ops_ip_t *) KAA_MALLOC(sizeof(kaa_ops_ip_t));
 
     ops1->channel_type = HTTP;
     ops1->priority = 5;
@@ -90,7 +90,7 @@ void test_add_get_operation_server()
     ops1->public_key = encoded_public_key;
     ops1->public_key_length = key_size;
 
-    kaa_ops_ip_t* ops2 = KAA_MALLOC(kaa_ops_ip_t);
+    kaa_ops_ip_t* ops2 = (kaa_ops_ip_t *) KAA_MALLOC(sizeof(kaa_ops_ip_t));
 
     ops2->channel_type = HTTP;
     ops2->priority = 0;
@@ -100,7 +100,7 @@ void test_add_get_operation_server()
     ops2->public_key = encoded_public_key;
     ops2->public_key_length = key_size;
 
-    kaa_ops_ip_t* ops3 = KAA_MALLOC(kaa_ops_ip_t);
+    kaa_ops_ip_t* ops3 = (kaa_ops_ip_t *) KAA_MALLOC(sizeof(kaa_ops_ip_t));
 
     ops3->channel_type = HTTP;
     ops3->priority = 3;

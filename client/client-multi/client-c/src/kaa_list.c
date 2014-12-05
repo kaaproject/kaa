@@ -81,7 +81,7 @@ size_t kaa_list_get_size(kaa_list_t * position)
 }
 
 kaa_list_t *kaa_list_create(void *data) {
-    kaa_list_t * new_head = KAA_MALLOC(kaa_list_t);
+    kaa_list_t * new_head = (kaa_list_t *) KAA_MALLOC(sizeof(kaa_list_t));
     new_head->data = data;
     new_head->next = NULL;
     return new_head;

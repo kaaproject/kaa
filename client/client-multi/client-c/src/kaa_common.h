@@ -40,8 +40,7 @@ extern "C" {
     { if (!(p1) || !(p2) || !(p3) || !(p4)) return (E); }
 
 // TODO: move to kaa_event.h
-typedef void (*event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size);
-typedef size_t kaa_trx_id;
+
 
 typedef enum {
     KAA_SERVICE_BOOTSTRAP = 0,
@@ -56,6 +55,7 @@ typedef enum {
  */
 #define SHA_1_DIGEST_LENGTH 20
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
+typedef const unsigned char* kaa_digest_p;
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
 // TODO: move to kaa_channel_manager.h and do something about the kaa_defaults.h

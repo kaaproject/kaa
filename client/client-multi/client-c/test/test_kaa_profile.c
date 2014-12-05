@@ -28,6 +28,8 @@
 
 static kaa_logger_t *logger = NULL;
 
+extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
+
 void test_profile_update()
 {
     KAA_TRACE_IN(logger);
@@ -36,24 +38,28 @@ void test_profile_update()
     kaa_error_t err_code = kaa_context_create(&context, logger);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
 
-    char* profile_body1 = KAA_CALLOC(6, sizeof(char));
-    memcpy(profile_body1, "dummy", 6);
+    char* profile_body1 = (char *) KAA_MALLOC(6 * sizeof(char));
+    strcpy(profile_body1, "dummy");
 
-    kaa_profile_t *profile = kaa_profile_create_basic_endpoint_profile_test();
+    kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
     profile->profile_body = profile_body1;
-    kaa_profile_update_profile(context, profile);
+    kaa_profile_update_profile(context->profile_manager, profile);
 
-    ASSERT_TRUE(kaa_profile_need_profile_resync(context));
+    bool need_resync = false;
+    ASSERT_EQUAL(kaa_profile_need_profile_resync(context->profile_manager, &need_resync), KAA_ERR_NONE);
+    ASSERT_TRUE(need_resync);
 
-    kaa_profile_update_profile(context, profile);
+    kaa_profile_update_profile(context->profile_manager, profile);
 
-    ASSERT_FALSE(kaa_profile_need_profile_resync(context));
+    ASSERT_EQUAL(kaa_profile_need_profile_resync(context->profile_manager, &need_resync), KAA_ERR_NONE);
+    ASSERT_FALSE(need_resync);
     KAA_FREE(profile->profile_body);
 
     profile->profile_body = "new_dummy";
-    kaa_profile_update_profile(context, profile);
+    kaa_profile_update_profile(context->profile_manager, profile);
 
-    ASSERT_TRUE(kaa_profile_need_profile_resync(context));
+    ASSERT_EQUAL(kaa_profile_need_profile_resync(context->profile_manager, &need_resync), KAA_ERR_NONE);
+    ASSERT_TRUE(need_resync);
     profile->profile_body = NULL;
 
     profile->destroy(profile);

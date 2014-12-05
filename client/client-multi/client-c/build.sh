@@ -51,14 +51,92 @@ function execute_tests {
             FAILED_TESTS="$test\n$FAILED_TESTS"
         fi
     done
+    if [[ -f ../gcovr ]]
+    then
+        chmod +x ../gcovr
+        ../gcovr -d -x -f ".*" -e ".*(test|avro|gen).*" -o ./gcovr-report.xml -v > ./gcovr.log
+    fi
     if [ "$FAILUTE_COUNTER" -ne "0" ]
     then
         echo -e "\n$FAILUTE_COUNTER TEST(S) FAILED:\n$FAILED_TESTS"
     else
         echo -e "\nTESTS WERE SUCCESSFULLY PASSED\n"
     fi
+    cd ..
+    
 }
 
+function check_installed_software {
+    RATS_VERSION="$(rats -h)"
+    if [[ $RATS_VERSION = RATS* ]] 
+    then
+        RATS_INSTALLED=1
+    else
+        RATS_INSTALLED=0
+    fi
+    
+    CPPCHECK_VERSION="$(cppcheck --version)"
+    if [[ $CPPCHECK_VERSION = Cppcheck* ]] 
+    then
+        CPPCHECK_INTSALLED=1
+    else
+        CPPCHECK_INSTALLED=0
+    fi
+    
+    VALGRIND_VERSION="$(valgrind --version)"
+    if [[ $VALGRIND_VERSION = valgrind* ]] 
+    then
+        VALGRIND_INSTALLED=1
+    else
+        VALGRIND_INSTALLED=0
+    fi
+}
+
+function run_valgrind {
+    echo "Starting valgrind..." 
+    cd build
+    if [[ ! -d valgrindReports ]]
+    then
+        mkdir valgrindReports
+    fi
+    for test in test_*
+    do
+        valgrind --leak-check=full --show-reachable=yes --trace-children=yes -v --log-file=./valgrind.log --xml=yes --xml-file=./valgrindReports/$test.memreport.xml ./$test
+        chmod 0666 ./valgrindReports/$test.memreport.xml
+    done
+    cd ..
+    echo "Valgrind analysis finished."
+}
+
+function run_cppcheck {
+    echo "Starting Cppcheck..."
+    cppcheck --enable=all --std=c99 --xml src/ test/ 2>build/cppcheck.xml > build/cppcheck.log
+    echo "Cppcheck analysis finished."
+}
+
+function run_rats {
+    echo "Starting RATS..."
+    rats --xml `find src/ -name *.[ch]` > build/rats-report.xml
+    echo "RATS analysis finished."
+}
+
+function run_analysis {
+    check_installed_software
+    if [[ VALGRIND_INSTALLED -eq 1 ]]
+    then
+        run_valgrind
+    fi
+    
+    if [[ CPPCHECK_INTSALLED -eq 1 ]]
+    then
+        run_cppcheck
+    fi
+    
+    if [[ RATS_INSTALLED -eq 1 ]]
+    then
+        run_rats
+    fi
+} 
 
 function clean {
     if [[ -d build ]]
@@ -77,19 +155,20 @@ do
 
 case "$cmd" in
     build)
-    prepare_build
-    build
-    execute_tests
+        prepare_build
+        build
+        execute_tests
     ;;
 
     install)
-    cd build && make install && cd ..
+        cd build && make install && cd ..
     ;;
 
     test)
-    prepare_build
-    build
-    execute_tests
+        prepare_build
+        build
+        execute_tests
+        run_analysis
     ;;
 
     clean)
@@ -97,7 +176,7 @@ case "$cmd" in
     ;;
     
     *)
-    help
+        help
     ;;
 esac
 

@@ -29,7 +29,7 @@
 
 #if ($generationContext.isTypeOut())
 #foreach ($branchSchema in $schema.getTypes())
-kaa_union_t* ${prefix}_${union_name}_${StyleUtils.toLowerUnderScore($branchSchema.getName())}_create_branch();
+kaa_union_t* ${prefix}_${union_name}_${StyleUtils.toLowerUnderScore($branchSchema.getName())}_branch_create();
 #end
 
 #end

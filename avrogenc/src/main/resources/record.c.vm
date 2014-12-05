@@ -41,7 +41,7 @@ static void ${prefix}_${record_name}_destroy(void* data)
         #set ($array_record_name = $StyleUtils.toLowerUnderScore($array_element_schema.getName()))
             kaa_list_destroy(record->${field_name}, ${prefix}_${array_record_name}_destroy);
         #else
-            kaa_list_destroy(record->${field_name}, kaa_destroy_data);
+            kaa_list_destroy(record->${field_name}, kaa_data_destroy);
         #end
     #elseif ($TypeConverter.isAvroUnion($array_element_schema))
     #set ($array_union_name = $TypeConverter.generateUnionName($array_element_schema).toLowerCase())
@@ -51,11 +51,11 @@ static void ${prefix}_${record_name}_destroy(void* data)
     #elseif ($TypeConverter.isAvroString($array_element_schema))
         kaa_list_destroy(record->${field_name}, kaa_string_destroy);
     #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
-        kaa_list_destroy(record->${field_name}, kaa_destroy_data);
+        kaa_list_destroy(record->${field_name}, kaa_data_destroy);
     #end
 #end
 #end
-        kaa_destroy_data(record);
+        kaa_data_destroy(record);
     }
 }
 #end
@@ -164,6 +164,7 @@ ${prefix}_${record_name}_t* ${prefix}_${record_name}_create()
 {
     ${prefix}_${record_name}_t* record = 
             (${prefix}_${record_name}_t*)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
+
     if (record) {
 #if ($schema.getFields().size() > 0)
         record->serialize = ${prefix}_${record_name}_serialize;
@@ -183,7 +184,8 @@ ${prefix}_${record_name}_t* ${prefix}_${record_name}_create()
 
 ${prefix}_${record_name}_t* ${prefix}_${record_name}_deserialize(avro_reader_t reader)
 {
-    ${prefix}_${record_name}_t* record = (${prefix}_${record_name}_t*)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
+    ${prefix}_${record_name}_t* record = 
+            (${prefix}_${record_name}_t*)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
 
     if (record) {
 #if ($TypeConverter.isTypeOut($schema) && $schema.getFields().size() > 0)

@@ -22,15 +22,27 @@
  */
 extern kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
 extern void        kaa_user_manager_destroy(kaa_user_manager_t *user_manager);
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
-extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *this);
 
+extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
+extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
+
+extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
+extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
+
+extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
+extern void        kaa_status_destroy(kaa_status_t *self);
+
+extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
+extern void        kaa_event_manager_destroy(kaa_event_manager_t *self);
+
+extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
+extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
 
 kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL2(context_p, logger, KAA_ERR_BADPARAM);
 
-    *context_p = KAA_MALLOC(kaa_context_t);
+    *context_p = (kaa_context_t *) KAA_MALLOC(sizeof(kaa_context_t));
     KAA_RETURN_IF_NIL(*context_p, KAA_ERR_NOMEM);
 
     (*context_p)->logger = logger;
@@ -38,7 +50,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
 
     static const char failed_msg[] = "Failed to create Kaa %s";
 
-    kaa_error_t error = kaa_create_status(&((*context_p)->status));
+    kaa_error_t error = kaa_status_create(&((*context_p)->status));
     if (error) {
         KAA_LOG_ERROR(logger, error, failed_msg, "status");
     } else {
@@ -46,12 +58,12 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
         if (error) {
             KAA_LOG_ERROR(logger, error, failed_msg, "channel manager");
         } else {
-            error = kaa_create_profile_manager(&((*context_p)->profile_manager));
+            error = kaa_profile_manager_create(&((*context_p)->profile_manager), (*context_p)->status, (*context_p)->channel_manager);
             if (error) {
                 KAA_LOG_ERROR(logger, error, failed_msg, "profile manager");
             } else {
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-                error = kaa_create_event_manager(&((*context_p)->event_manager));
+                error = kaa_event_manager_create(&((*context_p)->event_manager), (*context_p)->status, (*context_p)->channel_manager, (*context_p)->logger);
                 if (error) {
                     KAA_LOG_ERROR(logger, error, failed_msg, "event manager");
                 } else {
@@ -61,7 +73,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
                         KAA_LOG_ERROR(logger, error, failed_msg, "bootstrap manager");
                     } else {
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-                        error = kaa_create_log_collector(&((*context_p)->log_collector));
+                        error = kaa_log_collector_create(&((*context_p)->log_collector), (*context_p)->status, (*context_p)->channel_manager);
                         if (error) {
                             KAA_LOG_ERROR(logger, error, failed_msg, "log collector");
                         } else {
@@ -70,7 +82,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
                             if (error) {
                                 KAA_LOG_ERROR(logger, error, failed_msg, "user manager");
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-                                kaa_destroy_log_collector((*context_p)->log_collector);
+                                kaa_log_collector_destroy((*context_p)->log_collector);
                             }
 #endif
                         }
@@ -79,17 +91,17 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
                     }
 #ifndef KAA_DISABLE_FEATURE_EVENTS
                     if (error)
-                        kaa_destroy_event_manager((*context_p)->event_manager);
+                        kaa_event_manager_destroy((*context_p)->event_manager);
                 }
 #endif
                 if (error)
-                    kaa_destroy_profile_manager((*context_p)->profile_manager);
+                    kaa_profile_manager_destroy((*context_p)->profile_manager);
             }
             if (error)
                 kaa_channel_manager_destroy((*context_p)->channel_manager);
         }
         if (error)
-            kaa_destroy_status((*context_p)->status);
+            kaa_status_destroy((*context_p)->status);
     }
     if (error) {
         KAA_FREE(*context_p);
@@ -104,14 +116,14 @@ kaa_error_t kaa_context_destroy(kaa_context_t * context)
 
     kaa_user_manager_destroy(context->user_manager);
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    kaa_destroy_event_manager(context->event_manager);
+    kaa_event_manager_destroy(context->event_manager);
 #endif
-    kaa_destroy_profile_manager(context->profile_manager);
+    kaa_profile_manager_destroy(context->profile_manager);
     kaa_destroy_bootstrap_manager(context->bootstrap_manager);
     kaa_channel_manager_destroy(context->channel_manager);
-    kaa_destroy_status(context->status);
+    kaa_status_destroy(context->status);
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-    kaa_destroy_log_collector(context->log_collector);
+    kaa_log_collector_destroy(context->log_collector);
 #endif
     KAA_FREE(context);
     return KAA_ERR_NONE;

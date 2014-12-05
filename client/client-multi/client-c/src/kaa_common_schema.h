@@ -59,11 +59,15 @@ typedef struct kaa_union_t_ {
 
 void kaa_string_serialize(avro_writer_t writer, void* data);
 kaa_string_t* kaa_string_deserialize(avro_reader_t reader);
+kaa_string_t* kaa_string_move_create(const char* data, destroy_fn destroy);
+kaa_string_t* kaa_string_copy_create(const char* data, destroy_fn destroy);
 void kaa_string_destroy(void *data);
 size_t kaa_string_get_size(void *data);
 
 kaa_bytes_t* kaa_bytes_deserialize(avro_reader_t reader);
 void kaa_bytes_serialize(avro_writer_t writer, void* data);
+kaa_bytes_t* kaa_bytes_move_create(const uint8_t* data, size_t data_len, destroy_fn destroy);
+kaa_bytes_t* kaa_bytes_copy_create(const uint8_t* data, size_t data_len, destroy_fn destroy);
 void kaa_bytes_destroy(void *data);
 size_t kaa_bytes_get_size(void *data);
 

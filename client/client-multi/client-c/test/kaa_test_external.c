@@ -34,7 +34,7 @@ void    kaa_store_status_ext(const char *buffer, size_t buffer_size)
 
 void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-    *buffer = KAA_CALLOC(20, sizeof(char));
+    *buffer = (char *) KAA_MALLOC(20 * sizeof(char));
     if (*buffer != NULL) {
         memcpy(*buffer, test_ep_key, 20);
         *buffer_size = 20;
