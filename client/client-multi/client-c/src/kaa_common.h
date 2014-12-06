@@ -58,7 +58,7 @@ typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
 typedef const unsigned char* kaa_digest_p;
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
-// TODO: move to kaa_channel_manager.h and do something about the kaa_defaults.h
+// TODO: Channel types must be represented as a list managed in runtime by the channel_manager
 #define KAA_CHANNEL_TYPE_COUNT 3
 typedef enum {
     HTTP,
