@@ -43,14 +43,9 @@ struct kaa_log_collector {
 
 void destroy_log_record(void *record_p)
 {
-    if (record_p == NULL) {
-        return;
-    }
-    kaa_log_entry_t * record = (kaa_log_entry_t *) record_p;
-    if (record->data)
-    {
-        kaa_bytes_destroy(record->data);
-        KAA_FREE(record->data);
+    if (record_p ) {
+        kaa_log_entry_t * record = (kaa_log_entry_t *) record_p;
+        record->destroy(record);
     }
 }
 
@@ -73,9 +68,8 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa
 void kaa_log_collector_destroy(kaa_log_collector_t *self)
 {
     if (self) {
-        if (self->log_storage != NULL) {
+        if (self->log_storage)
             (*self->log_storage->destroy)();
-        }
         KAA_FREE(self);
     }
 }
@@ -88,13 +82,10 @@ kaa_error_t kaa_logging_init(
                             , log_upload_decision_fn need_upl
                            )
 {
-    KAA_RETURN_IF_NIL(collector, KAA_ERR_NOT_INITIALIZED);
+    KAA_RETURN_IF_NIL(collector, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL4(storage, status, need_upl, properties, KAA_ERR_BADPARAM);
 
-    if (storage == NULL || status == NULL || need_upl == NULL || properties == NULL) {
-        return KAA_ERR_BADPARAM;
-    }
-
-    if (collector->log_storage != NULL) {
+    if (collector->log_storage) {
         (*collector->log_storage->destroy)();
     }
 
@@ -161,10 +152,6 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     return KAA_ERR_BAD_STATE;
 }
 
-static void noop(void *p) {
-    (void)p;
-}
-
 kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_request_t ** result)
 {
     KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
@@ -196,7 +183,7 @@ kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_
             }
 
             request->log_entries->data = logs;
-            request->log_entries->destroy = &noop;
+            request->log_entries->destroy = &kaa_data_destroy;
             request->request_id = kaa_string_null_union_string_branch_create();
             if (!request->request_id) {
                 request->destroy(request);
