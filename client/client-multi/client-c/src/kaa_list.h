@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include "kaa_common.h"
@@ -34,7 +31,7 @@ typedef void (* deallocate_list_data)(void *);
 /**
  * Adds new element to the end of the list.
  */
-void kaa_list_push_back(kaa_list_t * head, void *data);
+kaa_list_t * kaa_list_push_back(kaa_list_t * head, void *data);
 
 /**
  * Adds new element to the begin of the list, returns new list head.
@@ -86,8 +83,8 @@ void kaa_list_destroy_no_data_cleanup(kaa_list_t * head);
 /**
  * Removes element from list at given position. Position must be valid iterator
  * to the element in the given list. Deallocates released data using given deallocator.
- * Returns iterator pointing to the position before removed element or pointer
- * to the head of the list if (*head == position)
+ * Returns iterator pointing to the position before removed element, pointer
+ * to the head of the list if (*head == position) or NULL if the position was not found.
  */
 kaa_list_t *kaa_list_remove_at(kaa_list_t **head, kaa_list_t *position, deallocate_list_data deallocator);
 
@@ -121,5 +118,7 @@ kaa_list_t * kaa_list_find_last_occurance(kaa_list_t * from, match_predicate pre
 
 kaa_list_t * kaa_list_split_after(kaa_list_t * head, kaa_list_t * after, kaa_list_t **tail);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* KAA_LIST_H_ */
