@@ -27,7 +27,7 @@ extern "C" {
 #include "kaa_common_schema.h"
 #include "kaa_list.h"
 
-typedef struct kaa_test_log_record_t_ {
+typedef struct {
     char* data; 
 
     serialize_fn serialize;

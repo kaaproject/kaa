@@ -29,6 +29,7 @@ static int specific_events_counter = 0;
 
 static kaa_logger_t *logger = NULL;
 
+extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void        kaa_event_manager_destroy(kaa_event_manager_t *self);
 extern kaa_error_t kaa_event_compile_request(kaa_event_manager_t *self, kaa_event_sync_request_t** request_p, size_t requestId);
@@ -55,11 +56,15 @@ void test_kaa_create_event_manager()
 {
     KAA_TRACE_IN(logger);
 
+    kaa_status_t* status = NULL;
+    kaa_status_create(&status);
     kaa_event_manager_t *event_manager = NULL;
-    kaa_error_t err_code = kaa_event_manager_create(&event_manager, NULL, NULL, logger);
+    kaa_error_t err_code = kaa_event_manager_create(&event_manager, status, NULL, logger);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(event_manager);
     kaa_event_manager_destroy(event_manager);
+
+    KAA_FREE(status);
 }
 
 void test_kaa_event_compile_request()
@@ -69,11 +74,10 @@ void test_kaa_event_compile_request()
     kaa_context_t *context;
     kaa_context_create(&context, logger);
 
-    kaa_event_sync_request_t* sync_request = NULL;
-    kaa_event_compile_request(context->event_manager, &sync_request, 100499);
+    kaa_event_sync_request_t* sync_request1 = NULL;
+    kaa_event_compile_request(context->event_manager, &sync_request1, 100499);
 
-    sync_request->destroy(sync_request);
-    KAA_FREE(sync_request);
+    sync_request1->destroy(sync_request1);
 
     kaa_event_sequence_number_response_t seq_n_resp;
     seq_n_resp.seq_num = 0;
@@ -81,46 +85,42 @@ void test_kaa_event_compile_request()
     kaa_event_handle_sync(context->event_manager, 100499, &seq_n_resp, NULL);
     kaa_error_t err_code = KAA_ERR_NONE;
 
-    err_code = kaa_event_compile_request(context->event_manager, &sync_request, 100500);
-    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
-    ASSERT_NOT_NULL(sync_request);
-    ASSERT_EQUAL(sync_request->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
-    ASSERT_EQUAL(sync_request->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
-    sync_request->destroy(sync_request);
-    KAA_FREE(sync_request);
-
-    kaa_add_event(context->event_manager, "fqn", "data", 4, "target", 6);
-    kaa_event_sync_request_t* sync_request1 = NULL;
-    err_code = kaa_event_compile_request(context->event_manager, &sync_request1, 100501);
+    err_code = kaa_event_compile_request(context->event_manager, &sync_request1, 100500);
     ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
     ASSERT_NOT_NULL(sync_request1);
     ASSERT_EQUAL(sync_request1->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
-    ASSERT_EQUAL(sync_request1->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
-    ASSERT_EQUAL(kaa_list_get_size(sync_request1->events->data), 1);
+    ASSERT_EQUAL(sync_request1->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
     sync_request1->destroy(sync_request1);
-    KAA_FREE(sync_request1);
 
     kaa_add_event(context->event_manager, "fqn", "data", 4, "target", 6);
     kaa_event_sync_request_t* sync_request2 = NULL;
-    err_code = kaa_event_compile_request(context->event_manager, &sync_request2, 100502);
+    err_code = kaa_event_compile_request(context->event_manager, &sync_request2, 100501);
     ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
     ASSERT_NOT_NULL(sync_request2);
     ASSERT_EQUAL(sync_request2->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request2->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
-    ASSERT_EQUAL(kaa_list_get_size(sync_request2->events->data), 2);
+    ASSERT_EQUAL(kaa_list_get_size(sync_request2->events->data), 1);
     sync_request2->destroy(sync_request2);
-    KAA_FREE(sync_request2);
 
-    kaa_event_handle_sync(context->event_manager, 100502, NULL, NULL);
-
+    kaa_add_event(context->event_manager, "fqn", "data", 4, "target", 6);
     kaa_event_sync_request_t* sync_request3 = NULL;
-    err_code = kaa_event_compile_request(context->event_manager, &sync_request3, 100503);
+    err_code = kaa_event_compile_request(context->event_manager, &sync_request3, 100502);
     ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
     ASSERT_NOT_NULL(sync_request3);
     ASSERT_EQUAL(sync_request3->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
-    ASSERT_EQUAL(sync_request3->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
+    ASSERT_EQUAL(sync_request3->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
+    ASSERT_EQUAL(kaa_list_get_size(sync_request3->events->data), 2);
     sync_request3->destroy(sync_request3);
-    KAA_FREE(sync_request3);
+
+    kaa_event_handle_sync(context->event_manager, 100502, NULL, NULL);
+
+    kaa_event_sync_request_t* sync_request4 = NULL;
+    err_code = kaa_event_compile_request(context->event_manager, &sync_request4, 100503);
+    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
+    ASSERT_NOT_NULL(sync_request4);
+    ASSERT_EQUAL(sync_request4->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
+    ASSERT_EQUAL(sync_request4->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
+    sync_request4->destroy(sync_request4);
 
     kaa_context_destroy(context);
     context = NULL;

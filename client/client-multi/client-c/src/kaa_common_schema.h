@@ -35,20 +35,20 @@ typedef void* (*deserialize_fn)(avro_reader_t reader);
 typedef size_t (*get_size_fn)(void *data);
 typedef void (*destroy_fn)(void *data);
 
-typedef struct kaa_bytes_t_ {
+typedef struct {
     uint8_t* buffer;
     int32_t  size;
 
     destroy_fn  destroy;
 } kaa_bytes_t;
 
-typedef struct kaa_string_t_ {
+typedef struct {
     char* data;
 
     destroy_fn  destroy;
 } kaa_string_t;
 
-typedef struct kaa_union_t_ {
+typedef struct {
     uint8_t type;
     void   *data;
 

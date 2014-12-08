@@ -38,6 +38,10 @@ extern void        kaa_event_manager_destroy(kaa_event_manager_t *self);
 extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
 extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
 
+extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_logger_t *logger);
+extern void        kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
+
+
 kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL2(context_p, logger, KAA_ERR_BADPARAM);
@@ -68,7 +72,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
                     KAA_LOG_ERROR(logger, error, failed_msg, "event manager");
                 } else {
 #endif
-                    error = kaa_create_bootstrap_manager(&((*context_p)->bootstrap_manager));
+                    error = kaa_bootstrap_manager_create(&((*context_p)->bootstrap_manager), (*context_p)->logger);
                     if (error) {
                         KAA_LOG_ERROR(logger, error, failed_msg, "bootstrap manager");
                     } else {
@@ -87,7 +91,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
 #endif
                         }
                         if (error)
-                            kaa_destroy_bootstrap_manager((*context_p)->bootstrap_manager);
+                            kaa_bootstrap_manager_destroy((*context_p)->bootstrap_manager);
                     }
 #ifndef KAA_DISABLE_FEATURE_EVENTS
                     if (error)
@@ -119,7 +123,7 @@ kaa_error_t kaa_context_destroy(kaa_context_t * context)
     kaa_event_manager_destroy(context->event_manager);
 #endif
     kaa_profile_manager_destroy(context->profile_manager);
-    kaa_destroy_bootstrap_manager(context->bootstrap_manager);
+    kaa_bootstrap_manager_destroy(context->bootstrap_manager);
     kaa_channel_manager_destroy(context->channel_manager);
     kaa_status_destroy(context->status);
 #ifndef KAA_DISABLE_FEATURE_LOGGING

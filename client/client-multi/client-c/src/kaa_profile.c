@@ -73,15 +73,14 @@ static kaa_endpoint_version_info_t * create_versions_info() {
         } else {
             vi->event_family_versions->data = kaa_list_create(ecfv);
             if (!vi->event_family_versions->data) {
-                KAA_FREE(ecfv->name);
-                KAA_FREE(ecfv);
                 vi->destroy(vi);
                 return NULL;
             }
         }
     }
 #else
-    vi->event_family_versions = kaa_array_event_class_family_version_info_null_union_null_branch_create();
+    vi->event_family_versions =
+            kaa_array_event_class_family_version_info_null_union_null_branch_create();
     if (!vi->event_family_versions) {
         vi->destroy(vi);
         return NULL;
@@ -113,7 +112,9 @@ kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_
 
 void kaa_profile_manager_destroy(kaa_profile_manager_t *self) {
     if (self != NULL) {
-        kaa_bytes_destroy(&self->profile_body);
+        if (self->profile_body.buffer && self->profile_body.size > 0) {
+            KAA_FREE(self->profile_body.buffer);
+        }
         KAA_FREE(self);
     }
 }
@@ -123,20 +124,6 @@ kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *r
     KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
     *result = self->need_resync;
     return KAA_ERR_NONE;
-}
-
-static void kaa_no_destroy_bytes(void *data)
-{
-    if (data) {
-        kaa_union_t *kaa_union = (kaa_union_t*)data;
-        switch (kaa_union->type) {
-            case KAA_BYTES_NULL_UNION_BYTES_BRANCH:
-                KAA_FREE(kaa_union->data);
-                break;
-            default:
-                break;
-        }
-    }
 }
 
 kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile_sync_request_t **result)
@@ -165,7 +152,7 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
             request->destroy(request);
             return KAA_ERR_NOMEM;
         }
-        request->endpoint_access_token->data = (void *) ep_acc_token; // destructor is not needed
+        request->endpoint_access_token->data = kaa_string_move_create(ep_acc_token, NULL); // destructor is not needed
     } else {
         request->endpoint_access_token = kaa_string_null_union_null_branch_create();
         if (!request->endpoint_access_token) {
@@ -174,13 +161,12 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
         }
     }
 
-    request->profile_body = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
+    request->profile_body = kaa_bytes_move_create(
+            self->profile_body.buffer, self->profile_body.size, NULL); // destructor for buffer is not needed
     if (!request->profile_body) {
         request->destroy(request);
         return KAA_ERR_NOMEM;
     }
-    request->profile_body->size = self->profile_body.size;
-    request->profile_body->buffer = self->profile_body.buffer;  // destructor for buffer is not needed
 
     bool is_registered = false;
     if (kaa_is_endpoint_registered(self->status, &is_registered)) {
@@ -201,18 +187,22 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
             return KAA_ERR_NOMEM;
         }
 
-        kaa_bytes_t *pub_key = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
-        if (!pub_key) {
+        kaa_bytes_t pub_key;
+        bool need_deallocation = false;
+
+        kaa_get_endpoint_public_key((char **)&pub_key.buffer, (size_t *)&pub_key.size, &need_deallocation);
+
+        if (pub_key.buffer && pub_key.size > 0) {
+            request->endpoint_public_key->data = kaa_bytes_move_create(
+                        pub_key.buffer, pub_key.size, (need_deallocation ? kaa_bytes_destroy : NULL));
+        }
+
+        if (!request->endpoint_public_key->data) {
+            if (need_deallocation && pub_key.buffer) {
+                KAA_FREE(pub_key.buffer);
+            }
             request->destroy(request);
             return KAA_ERR_NOMEM;
-        }
-        // FIXME: avro destructor for bytes
-
-        bool need_deallocation = false;
-        kaa_get_endpoint_public_key((char **)&pub_key->buffer, (size_t *)&pub_key->size, &need_deallocation);
-        request->endpoint_public_key->data = pub_key;
-        if (!need_deallocation) {
-            request->endpoint_public_key->destroy = &kaa_no_destroy_bytes;
         }
     }
     *result = request;
