@@ -31,8 +31,8 @@
 extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
 
 static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
-static uint32_t log_bucket_id   = 0;
 struct kaa_log_collector {
+    uint32_t                        log_bucket_id;
     kaa_log_storage_t           *   log_storage;
     kaa_log_upload_properties_t *   log_properties;
     kaa_storage_status_t        *   log_storage_status;
@@ -55,6 +55,7 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa
     kaa_log_collector_t * collector = (kaa_log_collector_t *) KAA_MALLOC(sizeof(kaa_log_collector_t));
     KAA_RETURN_IF_NIL(collector, KAA_ERR_NOMEM);
 
+    collector->log_bucket_id        = 0;
     collector->log_storage          = NULL;
     collector->log_storage_status   = NULL;
     collector->log_properties       = NULL;
@@ -85,9 +86,8 @@ kaa_error_t kaa_logging_init(
     KAA_RETURN_IF_NIL(collector, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL4(storage, status, need_upl, properties, KAA_ERR_BADPARAM);
 
-    if (collector->log_storage) {
+    if (collector->log_storage)
         (*collector->log_storage->destroy)();
-    }
 
     collector->log_storage = storage;
     collector->log_properties = properties;
@@ -123,36 +123,39 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
         kaa_log_entry_t *record = kaa_log_entry_create();
         KAA_RETURN_IF_NIL(record, KAA_ERR_NOMEM);
 
-        record->data = (kaa_bytes_t *) KAA_CALLOC(1, sizeof(kaa_bytes_t));
+        record->data = (kaa_bytes_t *) KAA_MALLOC(sizeof(kaa_bytes_t));
         if (!record->data) {
             record->destroy(record);
             return KAA_ERR_NOMEM;
         }
 
-        record->data->destroy = kaa_data_destroy;
+        record->data->destroy = &kaa_data_destroy;
         record->data->size = entry->get_size(entry);
 
         if (record->data->size > 0) {
             record->data->buffer = (uint8_t *) KAA_MALLOC(record->data->size * sizeof(uint8_t));
-        }
+            if (!record->data->buffer) {
+                record->destroy(record);
+                return KAA_ERR_NOMEM;
+            }
+            avro_writer_t writer = avro_writer_memory((char *)record->data->buffer, record->data->size);
+            if (!writer) {
+                record->destroy(record);
+                return KAA_ERR_NOMEM;
+            }
 
-        if (!record->data->buffer) {
+            entry->serialize(writer, entry);
+            avro_writer_free(writer);
+
+            (*self->log_storage->add_log_record)(record);
+            update_storage(self);
+            return KAA_ERR_NONE;
+        } else {
+            record->data->buffer = NULL;
             record->destroy(record);
-            return KAA_ERR_NOMEM;
+            return KAA_ERR_BADPARAM;
         }
 
-        avro_writer_t writer = avro_writer_memory((char *)record->data->buffer, record->data->size);
-        if (!writer) {
-            record->destroy(record);
-            return KAA_ERR_NOMEM;
-        }
-
-        entry->serialize(writer, entry);
-        avro_writer_free(writer);
-
-        (*self->log_storage->add_log_record)(record);
-        update_storage(self);
-        return KAA_ERR_NONE;
     }
     return KAA_ERR_BAD_STATE;
 }
@@ -165,14 +168,14 @@ kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_
     if (self->log_storage) {
         kaa_uuid_t uuid;
 
-        if (!log_bucket_id && kaa_status_get_log_bucket_id(self->status, &log_bucket_id))
+        if (!self->log_bucket_id && kaa_status_get_log_bucket_id(self->status, &self->log_bucket_id))
             return KAA_ERR_BAD_STATE;
 
-        log_bucket_id++;
-        kaa_uuid_fill(&uuid, log_bucket_id);
+        self->log_bucket_id++;
+        kaa_uuid_fill(&uuid, self->log_bucket_id);
         kaa_list_t * logs = (*self->log_storage->get_records)(uuid, self->log_properties->max_log_block_size);
         if (logs) {
-            if (kaa_status_set_log_bucket_id(self->status, log_bucket_id))
+            if (kaa_status_set_log_bucket_id(self->status, self->log_bucket_id))
                 return KAA_ERR_BAD_STATE;
 
             request = kaa_log_sync_request_create();
@@ -218,7 +221,6 @@ kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_resp
         }
         update_storage(self);
     }
-
     return KAA_ERR_NONE;
 }
 
