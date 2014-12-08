@@ -16,7 +16,7 @@
 
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
 #set ($record_name = $StyleUtils.toLowerUnderScore($schema.getName()))
-typedef struct ${prefix}_${record_name}_t_ {
+typedef struct {
 #foreach ($field in $schema.getFields())
 #set ($field_type = $TypeConverter.convertToCType($prefix, $field.schema()))
 #set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))

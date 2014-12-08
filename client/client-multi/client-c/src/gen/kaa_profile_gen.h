@@ -28,7 +28,7 @@
 # include "kaa_list.h"
 
 
-typedef struct kaa_profile_basic_endpoint_profile_test_t_ {
+typedef struct {
     kaa_string_t* profile_body; 
 
     serialize_fn serialize;

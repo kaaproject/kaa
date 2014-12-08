@@ -43,6 +43,7 @@ public class TypeConverter {
             cType = "kaa_string_t*";
             break;
         case BYTES:
+        case FIXED:
             cType = "kaa_bytes_t*";
             break;
         case ARRAY:
@@ -100,8 +101,8 @@ public class TypeConverter {
         if (schema.getType() == Type.RECORD) {
             for (Field f : schema.getFields()) {
                 Type type = f.schema().getType();
-                if (type == Type.ARRAY || type == Type.BYTES || type == Type.STRING
-                        || type == Type.RECORD || type == Type.UNION)
+                if (type == Type.ARRAY || type == Type.BYTES || type == Type.STRING ||
+                    type == Type.FIXED || type == Type.RECORD || type == Type.UNION)
                 {
                     return true;
                 }
@@ -118,6 +119,10 @@ public class TypeConverter {
 
     public static boolean isAvroNull(Schema schema) {
         return (schema.getType() == Type.NULL);
+    }
+
+    public static boolean isAvroFixed(Schema schema) {
+        return (schema.getType() == Type.FIXED);
     }
 
     public static boolean isAvroRecord(Schema schema) {
