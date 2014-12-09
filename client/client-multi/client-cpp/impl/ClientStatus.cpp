@@ -423,7 +423,7 @@ void ClientStatus::checkConfigVersionForUpdates()
 {
     auto parameter_it = parameters_.find(ClientParameterT::CONFIGURATION_VERSION);
     if (parameter_it != parameters_.end()) {
-        isConfigVersionUpdated = ((int32_t)CONFIG_VERSION != boost::any_cast<std::int32_t>(
+        isConfigVersionUpdated = ((std::int32_t)CONFIG_VERSION != boost::any_cast<std::int32_t>(
                                     parameter_it->second->getValue()));
         if (isConfigVersionUpdated) {
             parameter_it->second->setValue((std::int32_t)CONFIG_VERSION);

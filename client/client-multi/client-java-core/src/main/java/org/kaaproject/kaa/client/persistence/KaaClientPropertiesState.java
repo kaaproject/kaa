@@ -124,8 +124,6 @@ public class KaaClientPropertiesState implements KaaClientState {
                     LOG.info("SDK properties are up to date");
                 }
 
-                checkConfigVersionForUpdates(properties);
-
                 BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(
                         state.getProperty(NF_SUBSCRIPTIONS).getBytes(), null);
                 SpecificDatumReader<TopicSubscriptionInfo> avroReader =
@@ -170,18 +168,19 @@ public class KaaClientPropertiesState implements KaaClientState {
         } else {
             LOG.info("First SDK start");
             setPropertiesHash(properties.getPropertiesHash());
-            state.setProperty(CONFIGURATION_VERSION, Integer.toString(
-                        properties.getVersionInfo().getConfigVersion()));
         }
+
+        checkConfigVersionForUpdates(properties);
     }
 
     private void checkConfigVersionForUpdates(KaaClientProperties sdkProperties) {
         int configVersionFromProperties = sdkProperties.getVersionInfo().getConfigVersion();
-        int persistedConfigVersion = Integer.parseInt(state.getProperty(CONFIGURATION_VERSION
-                , Integer.toString(configVersionFromProperties)));
+        String loadedConfigVersionStr = state.getProperty(CONFIGURATION_VERSION);
 
-        isConfigVersionUpdated = (configVersionFromProperties != persistedConfigVersion);
-        if (isConfigVersionUpdated) {
+        isConfigVersionUpdated = (loadedConfigVersionStr != null ?
+                (configVersionFromProperties != Integer.parseInt(loadedConfigVersionStr)) : false);
+
+        if (isConfigVersionUpdated || (loadedConfigVersionStr == null)) {
             state.setProperty(CONFIGURATION_VERSION, Integer.toString(configVersionFromProperties));
         }
     }
