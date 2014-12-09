@@ -89,6 +89,7 @@ static void destroy_event_callback_pair(void *pair_p)
 {
     event_callback_pair_t * pair = (event_callback_pair_t *)pair_p;
     KAA_FREE(pair->fqn);
+    KAA_FREE(pair);
 }
 
 static kaa_event_callback_t find_event_callback(kaa_list_t *head, const char * fqn)
@@ -428,13 +429,11 @@ kaa_error_t kaa_add_on_event_callback(kaa_event_manager_t *self, const char *fqn
 
     if (fqn) {
         event_callback_pair_t * pair = create_event_callback_pair(fqn, callback);
-        if (!pair) {
-            return KAA_ERR_NOMEM;
-        }
-        if (self->event_callbacks == NULL) {
+        KAA_RETURN_IF_NIL(pair, KAA_ERR_NOMEM);
+        if (!self->event_callbacks) {
             self->event_callbacks = kaa_list_create(pair);
             if (!self->event_callbacks) {
-                // FIXME: destroy event callback pair
+                destroy_event_callback_pair(pair);
                 return KAA_ERR_NOMEM;
             }
         } else {
@@ -442,13 +441,13 @@ kaa_error_t kaa_add_on_event_callback(kaa_event_manager_t *self, const char *fqn
             while (head) {
                 event_callback_pair_t *data = (event_callback_pair_t *)kaa_list_get_data(head);
                 if (strcmp(fqn, data->fqn) == 0) {
-                    kaa_list_set_data_at(head, pair, destroy_event_callback_pair);
+                    kaa_list_set_data_at(head, pair, &destroy_event_callback_pair);
                     return KAA_ERR_NONE;
                 }
                 head = kaa_list_next(head);
             }
             if (!kaa_list_push_back(self->event_callbacks, pair)) {
-                // FIXME: destroy event callback pair
+                destroy_event_callback_pair(pair);
                 return KAA_ERR_NOMEM;
             }
         }
