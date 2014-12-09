@@ -195,10 +195,11 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
 
         kaa_get_endpoint_public_key((char **)&pub_key.buffer, (size_t *)&pub_key.size, &need_deallocation);
 
-        if (pub_key.buffer && pub_key.size > 0) {
-            request->endpoint_public_key->data = kaa_bytes_move_create(
-                        pub_key.buffer, pub_key.size, (need_deallocation ? kaa_bytes_destroy : NULL));
-        }
+        if (!pub_key.buffer || pub_key.size <= 0)
+            return KAA_ERR_INVALID_PUB_KEY;
+
+        request->endpoint_public_key->data = kaa_bytes_move_create(
+                    pub_key.buffer, pub_key.size, (need_deallocation ? &kaa_data_destroy : NULL));
 
         if (!request->endpoint_public_key->data) {
             if (need_deallocation && pub_key.buffer) {

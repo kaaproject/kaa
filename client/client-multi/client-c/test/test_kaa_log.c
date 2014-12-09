@@ -23,6 +23,7 @@
 #include "kaa_test.h"
 #include "kaa_mem.h"
 #include "kaa_log.h"
+#include "kaa_profile.h"
 #include <stdio.h>
 
 extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_response_t *response);
@@ -35,6 +36,10 @@ void test_create_request()
     kaa_context_t *kaa_context = NULL;
     kaa_init(&kaa_context);
 
+    kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
+    profile->profile_body = kaa_string_move_create("body", NULL);
+    kaa_profile_update_profile(kaa_context->profile_manager, profile);
+
     kaa_sync_request_t *request = NULL;
 
     size_t s;
@@ -45,6 +50,7 @@ void test_create_request()
     ASSERT_EQUAL(request->log_sync_request->type, KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
 
     request->destroy(request);
+    profile->destroy(profile);
     kaa_deinit(kaa_context);
 }
 
