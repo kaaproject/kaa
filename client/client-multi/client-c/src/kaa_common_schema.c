@@ -283,7 +283,6 @@ kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deseriali
 
             while (--element_count > 0) {
                 array = kaa_list_push_front(array, deserialize(reader));
-                KAA_RETURN_IF_NIL(array, NULL);
             }
 
             avro_binary_encoding.read_long(reader, &element_count);

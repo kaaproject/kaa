@@ -95,17 +95,18 @@ typedef enum kaa_log_upload_decision_t {
 typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_t *);
 
 /**
- * Provide log storage to Kaa.<br>
- * <br>
+ * @brief Provide log storage to Kaa.
  *
- * \param i_storage     Structure containing pointers to functions which are used
+ * @param[in]   i_storage   Structure containing pointers to functions which are used
  * to manage log storage.
- * \param i_status      Structure containing pointers to functions describing
+ * @param[in]   i_status      Structure containing pointers to functions describing
  * state of the storage (occupied size, records count etc.)
- * \param upload_properties     Properties which are used to control log storage
+ * @param[in]   upload_properties     Properties which are used to control log storage
  * size and log upload neediness.
- * \param is_upload_needed  Pointer to function which will be used to decide
+ * @param[in]   s_upload_needed  Pointer to function which will be used to decide
  * which operation (NO_OPERATION, UPLOAD or CLEANUP) should be performed on log storage.
+ *
+ * @return      Error code.
  */
 kaa_error_t                 kaa_logging_init(
                                                     kaa_log_collector_t *
@@ -116,14 +117,20 @@ kaa_error_t                 kaa_logging_init(
                                                   );
 
 /**
- * Add log record to log storage.<br>
- * <br>
- * Use this to add the log entry to the predefined log storage.<br>
+ * @brief Add log record to log storage.
+ *
+ * Use this to add the log entry to the predefined log storage.
  * Log record will be serialized and pushed to a log storage interface via
  * <pre>
  * void            (* add_log_record)  (kaa_log_entry_t * record);
  * </pre>
- * See also \see kaa_log_storage_t
+ * See also @see kaa_log_storage_t.
+ *
+ * @param[in]   self    Valid pointer to log collector instance.
+ * @param[in]   entry   Valid pointer to log entry which is going to be added.
+ *
+ * @return      Error code.
+ *
  */
 kaa_error_t                 kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
 

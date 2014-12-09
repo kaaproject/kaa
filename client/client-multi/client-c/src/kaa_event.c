@@ -334,8 +334,12 @@ kaa_error_t kaa_event_compile_request(kaa_event_manager_t *self
     kaa_list_destroy(events_to_resend_head, &destroy_events_tuple);
 
     sent_events_tuple_t *sent_events = create_events_tuple(requestId, new_events);
-    if (sent_events != NULL) {
+    if (sent_events) {
         self->sent_events = kaa_list_create(sent_events);
+        if (!self->sent_events) {
+            request->destroy(request);
+            return KAA_ERR_NOMEM;
+        }
     }
 
     kaa_list_t *new_events_head = new_events;
@@ -374,6 +378,9 @@ kaa_error_t kaa_event_handle_sync(kaa_event_manager_t *self
         int32_t server_sn = event_sn_response->seq_num > 0 ? event_sn_response->seq_num : 0;
         kaa_list_t *pending_events = self->pending_events;
         size_t events_count = kaa_list_get_size(pending_events);
+        if (events_count < 0)
+            return KAA_ERR_BAD_STATE;
+
         if (self->event_sequence_number - events_count != server_sn) {
             self->event_sequence_number = server_sn;
             while (pending_events) {
@@ -459,8 +466,7 @@ kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_bl
 
     if (self->transactions == NULL) {
         self->transactions = kaa_list_create(create_transaction(new_id));
-        if (!self->transactions)
-            return KAA_ERR_NOMEM;
+        KAA_RETURN_IF_NIL(self->transactions, KAA_ERR_NOMEM);
     } else {
         if (!kaa_list_push_back(self->transactions, create_transaction(new_id)))
             return KAA_ERR_NOMEM;
@@ -479,7 +485,7 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
         if (it != NULL) {
             event_transaction_t * trx = kaa_list_get_data(it);
             bool need_sync = false;
-            if (trx->events != NULL && kaa_list_get_size(trx->events) > 0) {
+            if (trx->events && kaa_list_get_size(trx->events) > 0) {
                 kaa_lists_merge(self->pending_events, trx->events);
                 need_sync = true;
                 trx->events = NULL;

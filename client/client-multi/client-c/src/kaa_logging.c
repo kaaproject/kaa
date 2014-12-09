@@ -31,8 +31,7 @@
 extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
 
 static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
-struct kaa_log_collector
-{
+struct kaa_log_collector {
     uint32_t                        log_bucket_id;
     kaa_log_storage_t           *   log_storage;
     kaa_log_upload_properties_t *   log_properties;

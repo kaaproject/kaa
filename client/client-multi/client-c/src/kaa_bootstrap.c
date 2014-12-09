@@ -68,6 +68,7 @@ kaa_error_t kaa_bootstrap_manager_add_operations_server(kaa_bootstrap_manager_t 
     kaa_list_t *ops_list = self->ops_list[server->channel_type];
     if (!ops_list) {
         self->ops_list[server->channel_type] = kaa_list_create(server);
+        KAA_RETURN_IF_NIL(self->ops_list[server->channel_type], KAA_ERR_NOMEM);
     } else {
         kaa_list_t *current_server = ops_list
                 , *previous_server = NULL;
@@ -84,7 +85,7 @@ kaa_error_t kaa_bootstrap_manager_add_operations_server(kaa_bootstrap_manager_t 
         if (!previous_server) {
             // Add to the front of the list
             self->ops_list[server->channel_type] = kaa_list_push_front(current_server, server);
-            KAA_RETURN_IF_NILL(self->ops_list[server->channel_type], KAA_ERR_NOMEM);
+            KAA_RETURN_IF_NIL(self->ops_list[server->channel_type], KAA_ERR_NOMEM);
         } else if (!current_server) {
             // Add to the end of the list
             if (!kaa_list_push_back(previous_server, server))

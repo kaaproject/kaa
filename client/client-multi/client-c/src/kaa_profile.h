@@ -30,14 +30,17 @@ typedef kaa_profile_basic_endpoint_profile_test_t kaa_profile_t;
 typedef struct kaa_profile_manager_t kaa_profile_manager_t;
 
 /**
- * Updates user profile.<br>
- * After profile is set a request to Operations server will be sent.<br>
- * <br>
- * Provide a valid pointer to user-defined profile structure. kaa_profile_t is
- * an alias of a given profile structure name.<br>
- * <br>
+ * @brief Updates user profile.
+ *
+ * After profile is set a request to Operations server will be sent.
+ * Provide a valid pointer to user-defined profile structure.
  * Use this to set profile before kaa_init() is called to provide default
  * profile value in order to perform successful registration in Operations server.
+ *
+ * @param[in]   self    Valid pointer to profile manager instance.
+ * @param[in]   profile Valid pointer of the user-defined profile data.
+ *
+ * @return      Error code.
  */
 kaa_error_t                     kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile);
 

@@ -99,7 +99,8 @@ kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *self,
 
     while (details) {
         if (details->sync_fn == handler) {
-            kaa_list_remove_at(&self->sync_handlers, handlers, destroy_sync_details);
+            if (!kaa_list_remove_at(&self->sync_handlers, handlers, destroy_sync_details))
+                return KAA_ERR_BAD_STATE;
             return KAA_ERR_NONE;
         }
         handlers = kaa_list_next(handlers);

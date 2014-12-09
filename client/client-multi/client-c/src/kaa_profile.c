@@ -31,8 +31,7 @@ extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_mana
 
 static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
 
-struct kaa_profile_manager_t
-{
+struct kaa_profile_manager_t {
     bool need_resync;
     kaa_bytes_t profile_body;
     kaa_digest profile_hash;
