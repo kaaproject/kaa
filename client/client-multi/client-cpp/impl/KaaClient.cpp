@@ -54,11 +54,9 @@ KaaClient::KaaClient()
 
 void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 {
-    KAA_LOG_INFO(boost::format("Starting Kaa C++ sdk version %1%, commit hash %2%. Start options: %3%")
-        % BUILD_VERSION % BUILD_COMMIT_HASH % options);
-
     options_ = options;
-    KAA_LOG_INFO(boost::format("Initializing Kaa with options %1%") % options_);
+    KAA_LOG_INFO(boost::format("Starting Kaa C++ sdk version %1%, commit hash %2%. Options: %3%")
+        % BUILD_VERSION % BUILD_COMMIT_HASH % options);
 
     initClientKeys();
 
@@ -121,7 +119,7 @@ void KaaClient::resume()
 void KaaClient::initKaaConfiguration()
 {
 #ifdef KAA_USE_CONFIGURATION
-    ConfigurationPersistenceManager *cpm = new ConfigurationPersistenceManager;
+    ConfigurationPersistenceManager *cpm = new ConfigurationPersistenceManager(status_);
     cpm->setConfigurationProcessor(configurationProcessor_.get());
     configurationPersistenceManager_.reset(cpm);
 

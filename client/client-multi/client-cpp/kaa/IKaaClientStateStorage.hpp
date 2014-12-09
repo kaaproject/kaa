@@ -78,6 +78,8 @@ public:
     virtual std::string getEndpointKeyHash() const = 0;
     virtual void setEndpointKeyHash(const std::string& keyHash) = 0;
 
+    virtual bool isConfigurationVersionUpdated() const = 0;
+
     virtual void read() = 0;
     virtual void save() = 0;
 };

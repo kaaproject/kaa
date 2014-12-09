@@ -34,7 +34,8 @@ enum class ClientParameterT {
     EP_ACCESS_TOKEN,
     EP_ATTACH_STATUS,
     EP_KEY_HASH,
-    PROPERTIES_HASH
+    PROPERTIES_HASH,
+    CONFIGURATION_VERSION
 };
 
 class IPersistentParameter {
@@ -49,15 +50,16 @@ public:
 static bimap create_bimap()
 {
     bimap bi;
-    bi.left.insert(bimap::left_value_type(ClientParameterT::APPSEQUENCENUMBER,  "app_seq_number"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::ISREGISTERED,       "is_registered"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::TOPICLIST,          "topic_list"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::PROFILEHASH,        "profile_hash"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::ATTACHED_ENDPOINTS, "attached_endpoints"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ACCESS_TOKEN,    "access_token"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ATTACH_STATUS,   "ep_attach_status"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_KEY_HASH,        "ep_key_hash"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::PROPERTIES_HASH,    "properties_hash"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::APPSEQUENCENUMBER,     "app_seq_number"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::ISREGISTERED,          "is_registered"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::TOPICLIST,             "topic_list"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::PROFILEHASH,           "profile_hash"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::ATTACHED_ENDPOINTS,    "attached_endpoints"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ACCESS_TOKEN,       "access_token"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ATTACH_STATUS,      "ep_attach_status"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_KEY_HASH,           "ep_key_hash"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::PROPERTIES_HASH,       "properties_hash"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::CONFIGURATION_VERSION, "configuration_version"));
     return bi;
 }
 
@@ -123,7 +125,7 @@ void ClientParameter<SequenceNumber>::save(std::ostream &os)
 }
 
 template<>
-void ClientParameter<int32_t>::save(std::ostream &os)
+void ClientParameter<std::int32_t>::save(std::ostream &os)
 {
     os << attributeName_ << "=" << value_ << std::endl;
 }
@@ -224,9 +226,9 @@ T convert(const std::string &strValue)
 }
 
 template<>
-void ClientParameter<int32_t>::read(const std::string &strValue)
+void ClientParameter<std::int32_t>::read(const std::string &strValue)
 {
-    value_ = convert<int32_t>(strValue);
+    value_ = convert<std::int32_t>(strValue);
 }
 
 template<>
@@ -325,7 +327,7 @@ void ClientParameter<SharedDataBuffer>::read(const std::string &strValue)
     }
 }
 
-ClientStatus::ClientStatus(const std::string& filename) : filename_(filename)
+ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isConfigVersionUpdated(false)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
@@ -383,9 +385,17 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename)
         parameters_.insert(std::make_pair(ClientParameterT::PROPERTIES_HASH, propertiesHash));
     }
 
+    auto configversion = parameterToToken_.left.find(ClientParameterT::CONFIGURATION_VERSION);
+    if (configversion != parameterToToken_.left.end()) {
+        std::shared_ptr<IPersistentParameter> configVersion(new ClientParameter<std::int32_t>(
+                configversion->second, (std::int32_t)CONFIG_VERSION));
+        parameters_.insert(std::make_pair(ClientParameterT::CONFIGURATION_VERSION, configVersion));
+    }
+
     this->read();
 
     checkSDKPropertiesForUpdates();
+    checkConfigVersionForUpdates();
 }
 
 void ClientStatus::checkSDKPropertiesForUpdates() {
@@ -406,6 +416,18 @@ void ClientStatus::checkSDKPropertiesForUpdates() {
         KAA_LOG_INFO("SDK properties were updated");
     } else {
         KAA_LOG_INFO("SDK properties are up to date");
+    }
+}
+
+void ClientStatus::checkConfigVersionForUpdates()
+{
+    auto parameter_it = parameters_.find(ClientParameterT::CONFIGURATION_VERSION);
+    if (parameter_it != parameters_.end()) {
+        isConfigVersionUpdated = ((int32_t)CONFIG_VERSION != boost::any_cast<std::int32_t>(
+                                    parameter_it->second->getValue()));
+        if (isConfigVersionUpdated) {
+            parameter_it->second->setValue((std::int32_t)CONFIG_VERSION);
+        }
     }
 }
 
