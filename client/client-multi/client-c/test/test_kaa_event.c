@@ -39,16 +39,7 @@ static void kaa_event_destroy(void* data)
 {
     if (data) {
         kaa_event_t* record = (kaa_event_t*)data;
-
-        kaa_string_destroy(record->event_class_fqn);
-        kaa_bytes_destroy(record->event_data);
-        if (record->source && record->source->destroy) {
-            record->source->destroy(record->source);
-        }
-        if (record->target && record->target->destroy) {
-            record->target->destroy(record->target);
-        }
-        kaa_data_destroy(record);
+        record->destroy(record);
     }
 }
 
@@ -109,7 +100,8 @@ void test_kaa_event_compile_request()
     ASSERT_NOT_NULL(sync_request3);
     ASSERT_EQUAL(sync_request3->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
     ASSERT_EQUAL(sync_request3->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
-    ASSERT_EQUAL(kaa_list_get_size(sync_request3->events->data), 2);
+    size_t events_count = kaa_list_get_size(sync_request3->events->data);
+    ASSERT_EQUAL(events_count, 2);
     sync_request3->destroy(sync_request3);
 
     kaa_event_handle_sync(context->event_manager, 100502, NULL, NULL);
