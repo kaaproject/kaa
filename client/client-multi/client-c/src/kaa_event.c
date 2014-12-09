@@ -262,14 +262,21 @@ kaa_error_t kaa_add_event(kaa_event_manager_t *self
 
     kaa_error_t error_code = kaa_fill_event_structure(event, ++self->event_sequence_number, fqn, event_data, event_data_size, target, target_size);
     if (error_code) {
-        KAA_FREE(event);
+        event->destroy(event);
         return KAA_ERR_NOMEM;
     }
 
     if (self->pending_events != NULL) {
-        kaa_list_push_back(self->pending_events, event);
+        if (!kaa_list_push_back(self->pending_events, event)) {
+            event->destroy(event);
+            return KAA_ERR_NOMEM;
+        }
     } else {
         self->pending_events = kaa_list_create(event);
+        if (!self->pending_events) {
+            event->destroy(event);
+            return KAA_ERR_NOMEM;
+        }
     }
     kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
     if (sync) {
@@ -414,11 +421,15 @@ kaa_error_t kaa_add_on_event_callback(kaa_event_manager_t *self, const char *fqn
 
     if (fqn) {
         event_callback_pair_t * pair = create_event_callback_pair(fqn, callback);
-        if (pair == NULL) {
+        if (!pair) {
             return KAA_ERR_NOMEM;
         }
         if (self->event_callbacks == NULL) {
             self->event_callbacks = kaa_list_create(pair);
+            if (!self->event_callbacks) {
+                // FIXME: destroy event callback pair
+                return KAA_ERR_NOMEM;
+            }
         } else {
             kaa_list_t * head = self->event_callbacks;
             while (head) {
@@ -429,7 +440,10 @@ kaa_error_t kaa_add_on_event_callback(kaa_event_manager_t *self, const char *fqn
                 }
                 head = kaa_list_next(head);
             }
-            kaa_list_push_back(self->event_callbacks, pair);
+            if (!kaa_list_push_back(self->event_callbacks, pair)) {
+                // FIXME: destroy event callback pair
+                return KAA_ERR_NOMEM;
+            }
         }
     } else {
         self->global_event_callback = callback;
@@ -445,8 +459,11 @@ kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_bl
 
     if (self->transactions == NULL) {
         self->transactions = kaa_list_create(create_transaction(new_id));
+        if (!self->transactions)
+            return KAA_ERR_NOMEM;
     } else {
-        kaa_list_push_back(self->transactions, create_transaction(new_id));
+        if (!kaa_list_push_back(self->transactions, create_transaction(new_id)))
+            return KAA_ERR_NOMEM;
     }
 
     *trx_id = new_id;
@@ -520,13 +537,18 @@ kaa_error_t kaa_add_event_to_transaction(kaa_event_manager_t *self
             kaa_error_t error_code = kaa_fill_event_structure(
                     event, (size_t)-1, fqn, event_data, event_data_size, target, target_size);
             if (error_code) {
-                KAA_FREE(event);
+                event->destroy(event);
                 return error_code;
             }
-            if (trx->events == NULL) {
+            if (!trx->events) {
                 trx->events = kaa_list_create(event);
-            } else {
-                kaa_list_push_back(trx->events, event);
+                if (!trx->events) {
+                    event->destroy(event);
+                    return KAA_ERR_NOMEM;
+                }
+            } else if (!kaa_list_push_back(trx->events, event)) {
+                event->destroy(event);
+                return KAA_ERR_NOMEM;
             }
             return KAA_ERR_NONE;
         }

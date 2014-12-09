@@ -84,12 +84,15 @@ kaa_error_t kaa_bootstrap_manager_add_operations_server(kaa_bootstrap_manager_t 
         if (!previous_server) {
             // Add to the front of the list
             self->ops_list[server->channel_type] = kaa_list_push_front(current_server, server);
+            KAA_RETURN_IF_NILL(self->ops_list[server->channel_type], KAA_ERR_NOMEM);
         } else if (!current_server) {
             // Add to the end of the list
-            kaa_list_push_back(previous_server, server);
+            if (!kaa_list_push_back(previous_server, server))
+                return KAA_ERR_NOMEM;
         } else {
             // Insert in the middle of the list
-            kaa_list_insert_after(previous_server, server);
+            if (!kaa_list_insert_after(previous_server, server))
+                return KAA_ERR_NOMEM;
         }
     }
 

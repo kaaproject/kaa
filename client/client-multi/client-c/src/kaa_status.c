@@ -20,7 +20,8 @@
 #include "kaa_external.h"
 #include <string.h>
 
-struct kaa_status_t {
+struct kaa_status_t
+{
 
     bool            is_registered;
     bool            is_attached;

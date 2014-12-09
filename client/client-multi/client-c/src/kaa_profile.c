@@ -31,7 +31,8 @@ extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_mana
 
 static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
 
-struct kaa_profile_manager_t {
+struct kaa_profile_manager_t
+{
     bool need_resync;
     kaa_bytes_t profile_body;
     kaa_digest profile_hash;
@@ -39,60 +40,63 @@ struct kaa_profile_manager_t {
     kaa_status_t *status;
 };
 
-static kaa_endpoint_version_info_t * create_versions_info() {
-    kaa_endpoint_version_info_t *vi = kaa_endpoint_version_info_create();
-    if (!vi)
-        return NULL;
+static kaa_endpoint_version_info_t * create_versions_info()
+{
+    kaa_endpoint_version_info_t *version_info = kaa_endpoint_version_info_create();
+    KAA_RETURN_IF_NIL(version_info, NULL);
 
-    vi->config_version = CONFIG_SCHEMA_VERSION;
-    vi->log_schema_version = LOG_SCHEMA_VERSION;
-    vi->profile_version = PROFILE_SCHEMA_VERSION;
-    vi->system_nf_version = SYSTEM_NF_SCHEMA_VERSION;
-    vi->user_nf_version = USER_NF_SCHEMA_VERSION;
+    version_info->config_version = CONFIG_SCHEMA_VERSION;
+    version_info->log_schema_version = LOG_SCHEMA_VERSION;
+    version_info->profile_version = PROFILE_SCHEMA_VERSION;
+    version_info->system_nf_version = SYSTEM_NF_SCHEMA_VERSION;
+    version_info->user_nf_version = USER_NF_SCHEMA_VERSION;
 #if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-    vi->event_family_versions = kaa_array_event_class_family_version_info_null_union_array_branch_create();
-    if (!vi->event_family_versions) {
-        vi->destroy(vi);
+    version_info->event_family_versions = kaa_array_event_class_family_version_info_null_union_array_branch_create();
+    if (!version_info->event_family_versions) {
+        version_info->destroy(version_info);
         return NULL;
     }
-    vi->event_family_versions->data = NULL;
+    version_info->event_family_versions->data = NULL;
 
     size_t i = 0;
     for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
         kaa_event_class_family_version_info_t *ecfv = kaa_event_class_family_version_info_create();
         if (!ecfv) {
-            vi->destroy(vi);
+            version_info->destroy(version_info);
             return NULL;
         }
 
         ecfv->name = kaa_string_move_create(KAA_EVENT_SCHEMA_VERSIONS[i].name, NULL); // destructor is not needed
         ecfv->version = KAA_EVENT_SCHEMA_VERSIONS[i].version;
-        if (vi->event_family_versions->data != NULL) {
-            kaa_list_push_back(vi->event_family_versions->data, ecfv);
-            // FIXME: check error
+        if (version_info->event_family_versions->data) {
+            if (!kaa_list_push_back(version_info->event_family_versions->data, ecfv)) {
+                version_info->destroy(version_info);
+                return NULL;
+            }
         } else {
-            vi->event_family_versions->data = kaa_list_create(ecfv);
-            if (!vi->event_family_versions->data) {
-                vi->destroy(vi);
+            version_info->event_family_versions->data = kaa_list_create(ecfv);
+            if (!version_info->event_family_versions->data) {
+                version_info->destroy(version_info);
                 return NULL;
             }
         }
     }
 #else
-    vi->event_family_versions =
+    version_info->event_family_versions =
             kaa_array_event_class_family_version_info_null_union_null_branch_create();
-    if (!vi->event_family_versions) {
-        vi->destroy(vi);
+    if (!version_info->event_family_versions) {
+        version_info->destroy(version_info);
         return NULL;
     }
 #endif
-    return vi;
+    return version_info;
 }
 
 /**
  * PUBLIC FUNCTIONS
  */
-kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager) {
+kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager)
+{
     KAA_RETURN_IF_NIL3(profile_manager_p, channel_manager, status, KAA_ERR_BADPARAM);
 
     kaa_profile_manager_t * profile_manager = (kaa_profile_manager_t *) KAA_MALLOC(sizeof(kaa_profile_manager_t));
@@ -110,8 +114,9 @@ kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_
     return KAA_ERR_NONE;
 }
 
-void kaa_profile_manager_destroy(kaa_profile_manager_t *self) {
-    if (self != NULL) {
+void kaa_profile_manager_destroy(kaa_profile_manager_t *self)
+{
+    if (self) {
         if (self->profile_body.buffer && self->profile_body.size > 0) {
             KAA_FREE(self->profile_body.buffer);
         }
@@ -131,8 +136,7 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
     KAA_RETURN_IF_NIL2(self, result, KAA_ERR_NOMEM);
 
     kaa_profile_sync_request_t *request = kaa_profile_sync_request_create();
-    if (!request)
-        return KAA_ERR_NOMEM;
+    KAA_RETURN_IF_NIL(request, KAA_ERR_NOMEM);
 
     request->version_info = create_versions_info();
     if (!request->version_info) {
@@ -209,7 +213,8 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_sync_response_t *response) {
+kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_sync_response_t *response)
+{
     KAA_RETURN_IF_NIL2(self, response, KAA_ERR_BADPARAM);
 
     self->need_resync = false;
@@ -227,13 +232,13 @@ kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_syn
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_t * profile_body) {
+kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_t * profile_body)
+{
     KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
-    char* serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
-    if (!serialized_profile)
-        return KAA_ERR_NOMEM;
+    char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
+    KAA_RETURN_IF_NIL(serialized_profile, KAA_ERR_NOMEM);
 
     avro_writer_t writer = avro_writer_memory(serialized_profile, serialized_profile_size);
     if (!writer) {

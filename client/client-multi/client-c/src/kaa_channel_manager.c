@@ -83,6 +83,11 @@ kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *self
     self->sync_handlers = self->sync_handlers
             ? kaa_list_push_front(self->sync_handlers, sync)
             : kaa_list_create(sync);
+    if (!self->sync_handlers) {
+        KAA_FREE(sync->supported_services);
+        KAA_FREE(sync);
+        return KAA_ERR_NOMEM;
+    }
 
     return KAA_ERR_NONE;
 }
