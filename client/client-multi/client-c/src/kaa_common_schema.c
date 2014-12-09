@@ -60,7 +60,7 @@ kaa_string_t* kaa_string_copy_create(const char* data, destroy_fn destroy)
                 memcpy(str->data, data, len);
                 str->destroy = destroy;
             } else {
-                kaa_data_destroy(str);
+                KAA_FREE(str);
             }
         }
     }
@@ -75,7 +75,7 @@ void kaa_string_destroy(void *data)
         if (str->data && str->destroy) {
             str->destroy(str->data);
         }
-        kaa_data_destroy(str);
+        KAA_FREE(str);
     }
 }
 
@@ -130,7 +130,7 @@ kaa_bytes_t* kaa_bytes_copy_create(const uint8_t* data, size_t data_len, destroy
             bytes_array->size = data_len;
             bytes_array->destroy = destroy;
         } else {
-            kaa_data_destroy(bytes_array);
+            KAA_FREE(bytes_array);
         }
     }
 
@@ -144,7 +144,7 @@ void kaa_bytes_destroy(void *data)
         if (bytes->buffer && bytes->destroy) {
             bytes->destroy(bytes->buffer);
         }
-        kaa_data_destroy(bytes);
+        KAA_FREE(bytes);
     }
 }
 
