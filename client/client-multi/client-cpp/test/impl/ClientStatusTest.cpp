@@ -41,7 +41,6 @@ BOOST_AUTO_TEST_SUITE(ClientStatusSuite);
 
 BOOST_AUTO_TEST_CASE(checkDefaults)
 {
-    cleanfile();
     ClientStatus cs(filename);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 0);
@@ -51,12 +50,12 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
     BOOST_CHECK_EQUAL(cs.getAttachedEndpoints().size(), 0);
     BOOST_CHECK_EQUAL(cs.getEndpointAccessToken().empty(), true);
     BOOST_CHECK_EQUAL(cs.getEndpointAttachStatus(), false);
+
+    cleanfile();
 }
 
 BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
-    cleanfile();
-
     ClientStatus cs(filename);
     cs.setAppSeqNumber({1,2,3});
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 1);
@@ -153,6 +152,16 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 
     BOOST_CHECK_EQUAL(cs_restored.getEndpointAttachStatus(), isAttached);
     BOOST_CHECK_EQUAL(cs_restored.getEndpointKeyHash(), endpointKeyHash);
+
+    cleanfile();
+}
+
+BOOST_AUTO_TEST_CASE(checkConfigVersionUpdates)
+{
+    const std::string filename(RESOURCE_DIR + std::string("/test_kaa_status.file"));
+    ClientStatus cs(filename);
+
+    BOOST_CHECK_MESSAGE(cs.isConfigurationVersionUpdated(), "Expect: configuration version is updated");
 }
 
 }  // namespace kaa

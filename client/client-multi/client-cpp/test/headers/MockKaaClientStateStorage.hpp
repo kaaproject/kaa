@@ -90,6 +90,10 @@ public:
     }
     virtual void setEndpointKeyHash(const std::string& ) {}
 
+    virtual bool isConfigurationVersionUpdated() const {
+        return false;
+    }
+
     virtual void read() {}
     virtual void save() {}
 };

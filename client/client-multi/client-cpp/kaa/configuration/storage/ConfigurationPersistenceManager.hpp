@@ -21,11 +21,14 @@
 
 #ifdef KAA_USE_CONFIGURATION
 
-#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 #include "kaa/KaaThread.hpp"
+#include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
+#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 
 namespace kaa {
+
+class IKaaClientStateStorage;
 
 /**
  * \class ConfigurationPersistenceManager
@@ -39,10 +42,11 @@ namespace kaa {
  */
 class ConfigurationPersistenceManager : public IConfigurationPersistenceManager {
 public:
-    ConfigurationPersistenceManager()
+    ConfigurationPersistenceManager(IKaaClientStateStoragePtr state)
         : storage_(nullptr)
         , processor_(nullptr)
         , ignoreConfigurationUpdate_(false)
+        , state_(state)
     {}
     ~ConfigurationPersistenceManager() {}
 
@@ -85,6 +89,8 @@ private:
     std::shared_ptr<avro::ValidSchema>      schema_;
     EndpointObjectHash                      configurationHash_;
     bool                                    ignoreConfigurationUpdate_;
+
+    IKaaClientStateStoragePtr               state_;
 };
 
 }  // namespace kaa
