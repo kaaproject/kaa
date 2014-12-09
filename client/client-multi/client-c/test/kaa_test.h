@@ -44,8 +44,9 @@
         CU_automated_run_tests(); \
 
 #define KAA_END_TEST_SUITE \
+        unsigned int failed_tests = CU_get_number_of_failures(); \
         CU_cleanup_registry(); \
-        return 0; \
+        return failed_tests; \
     }
 #else
 

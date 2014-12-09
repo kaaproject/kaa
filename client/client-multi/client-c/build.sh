@@ -44,8 +44,9 @@ function execute_tests {
     do
         echo -e "Starting test $test"
         ./$test
+        TEST_RESULT=$?
         echo -e "Test $test finished"
-        if [ "$?" -ne "0" ]
+        if [ $TEST_RESULT -ne 0 ]
         then
             FAILUTE_COUNTER=$((FAILUTE_COUNTER + 1))
             FAILED_TESTS="$test\n$FAILED_TESTS"
