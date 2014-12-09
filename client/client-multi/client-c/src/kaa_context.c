@@ -23,7 +23,8 @@
 extern kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
 extern void        kaa_user_manager_destroy(kaa_user_manager_t *user_manager);
 
-extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
+extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status
+        , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
 
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
@@ -62,7 +63,8 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
         if (error) {
             KAA_LOG_ERROR(logger, error, failed_msg, "channel manager");
         } else {
-            error = kaa_profile_manager_create(&((*context_p)->profile_manager), (*context_p)->status, (*context_p)->channel_manager);
+            error = kaa_profile_manager_create(&((*context_p)->profile_manager), (*context_p)->status
+                    , (*context_p)->channel_manager, (*context_p)->logger);
             if (error) {
                 KAA_LOG_ERROR(logger, error, failed_msg, "profile manager");
             } else {
