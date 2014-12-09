@@ -62,7 +62,7 @@ public class ApplicationLogActor extends UntypedActor {
     private ApplicationLogActor(LogAppenderService logAppenderService, ApplicationService applicationService, String applicationToken) {
         this.logAppenderService = logAppenderService;
         this.applicationId = applicationService.findAppByApplicationToken(applicationToken).getId();
-        this.logAppenders = logAppenderService.getApplicationAppenders(applicationId, applicationToken);
+        this.logAppenders = logAppenderService.getApplicationAppenders(applicationId);
         this.applicationToken = applicationToken;
         this.logSchemas = new HashMap<>();
     }
@@ -164,7 +164,7 @@ public class ApplicationLogActor extends UntypedActor {
 
     private void addLogAppender(String appenderId) {
         LOG.debug("Adding log appender with id [{}].", appenderId);
-        LogAppender logAppender = logAppenderService.getApplicationAppender(appenderId, applicationToken);
+        LogAppender logAppender = logAppenderService.getApplicationAppender(appenderId);
         if (logAppender != null) {
             logAppenders.add(logAppender);
         }

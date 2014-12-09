@@ -650,7 +650,9 @@ public class AbstractTest {
         logAppender = new LogAppenderDto();
         logAppender.setApplicationId(appId);
         logAppender.setName("Generated Appender");
-        logAppender.setSchema(new SchemaDto(schemaId, schema.getMajorVersion(), schema.getMinorVersion()));
+        int version = schema.getMajorVersion();
+        logAppender.setMinLogSchemaVersion(version);
+        logAppender.setMaxLogSchemaVersion(version);
         logAppender.setTenantId(app.getTenantId());
         logAppender.setStatus(status != null ? status : LogAppenderStatusDto.REGISTERED);
         logAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));

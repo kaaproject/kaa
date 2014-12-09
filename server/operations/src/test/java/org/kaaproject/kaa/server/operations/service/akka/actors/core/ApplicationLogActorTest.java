@@ -137,10 +137,10 @@ public class ApplicationLogActorTest {
 
         List<LogAppender> appenders = mock(List.class);
         ReflectionTestUtils.setField(applicationLogActor, "logAppenders", appenders);
-        when(logAppenderService.getApplicationAppender(APPENDER_ID, APP_TOKEN)).thenReturn(flumeAppender);
+        when(logAppenderService.getApplicationAppender(APPENDER_ID)).thenReturn(flumeAppender);
         ReflectionTestUtils.invokeMethod(applicationLogActor, "processLogAppenderNotification", notification);
 
-        verify(logAppenderService, times(1)).getApplicationAppender(APPENDER_ID, APP_TOKEN);
+        verify(logAppenderService, times(1)).getApplicationAppender(APPENDER_ID);
         verify(appenders, times(1)).add(any(LogAppender.class));
         ReflectionTestUtils.setField(applicationLogActor, "logAppenders", logAppenders);
     }
@@ -160,11 +160,11 @@ public class ApplicationLogActorTest {
         ReflectionTestUtils.setField(applicationLogActor, "logAppenders", appenders);
         when(appenders.size()).thenReturn(1);
         when(appenders.get(any(Integer.class))).thenReturn(flumeAppender);
-        when(logAppenderService.getApplicationAppender(APPENDER_ID, APP_TOKEN)).thenReturn(flumeAppender);
+        when(logAppenderService.getApplicationAppender(APPENDER_ID)).thenReturn(flumeAppender);
 
         ReflectionTestUtils.invokeMethod(applicationLogActor, "processLogAppenderNotification", notification);
 
-        verify(logAppenderService, times(1)).getApplicationAppender(APPENDER_ID, APP_TOKEN);
+        verify(logAppenderService, times(1)).getApplicationAppender(APPENDER_ID);
         verify(appenders, times(1)).remove(0);
         verify(appenders, times(1)).add(any(LogAppender.class));
 
@@ -186,7 +186,7 @@ public class ApplicationLogActorTest {
         ReflectionTestUtils.setField(applicationLogActor, "logAppenders", appenders);
         when(appenders.size()).thenReturn(1);
         when(appenders.get(any(Integer.class))).thenReturn(flumeAppender);
-        when(logAppenderService.getApplicationAppender(APPENDER_ID, APP_TOKEN)).thenReturn(flumeAppender);
+        when(logAppenderService.getApplicationAppender(APPENDER_ID)).thenReturn(flumeAppender);
 
         ReflectionTestUtils.invokeMethod(applicationLogActor, "processLogAppenderNotification", notification);
 

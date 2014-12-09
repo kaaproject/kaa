@@ -1139,7 +1139,7 @@ public class DefaultAkkaServiceTest {
         Mockito.when(operationsService.sync(Mockito.any(SyncRequest.class), Mockito.any(EndpointProfileDto.class)))
                 .thenReturn(noDeltaResponseWithTopicState);
         LogAppender mockAppender = Mockito.mock(LogAppender.class);
-        Mockito.when(logAppenderService.getApplicationAppenders(APP_ID, APP_TOKEN)).thenReturn(
+        Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(
                 Collections.singletonList(mockAppender));
 
         ResponseBuilder responseBuilder = Mockito.mock(ResponseBuilder.class);
