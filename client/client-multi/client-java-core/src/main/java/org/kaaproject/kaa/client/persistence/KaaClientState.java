@@ -71,5 +71,7 @@ public interface KaaClientState {
     boolean isAttachedToUser();
     void setAttachedToUser(boolean isAttached);
 
+    boolean isConfigurationVersionUpdated();
+
     void persist();
 }

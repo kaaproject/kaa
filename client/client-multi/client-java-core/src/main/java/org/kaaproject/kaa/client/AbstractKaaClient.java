@@ -124,10 +124,10 @@ public abstract class AbstractKaaClient implements KaaClient {
     private boolean isInitialized = false;
 
     private final DefaultSchemaProcessor schemaProcessor = new DefaultSchemaProcessor();
-    private final DefaultConfigurationPersistenceManager configurationPersistenceManager = new DefaultConfigurationPersistenceManager(
-            configurationProcessor);
     private final DefaultSchemaPersistenceManager schemaPersistenceManager = new DefaultSchemaPersistenceManager(
             schemaProcessor);
+    private final DefaultConfigurationPersistenceManager configurationPersistenceManager;
+
     private final DefaultConfigurationManager configurationManager = new DefaultConfigurationManager();
     private final DefaultDeltaManager deltaManager = new DefaultDeltaManager();
 
@@ -170,6 +170,9 @@ public abstract class AbstractKaaClient implements KaaClient {
         }
 
         kaaClientState = new KaaClientPropertiesState(createPersistentStorage(), properties);
+
+        configurationPersistenceManager = new DefaultConfigurationPersistenceManager(
+                                            kaaClientState, configurationProcessor);
 
         BootstrapTransport bootstratpTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
         ProfileTransport profileTransport = new DefaultProfileTransport();
