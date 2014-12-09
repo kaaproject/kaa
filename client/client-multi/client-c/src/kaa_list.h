@@ -26,43 +26,43 @@ extern "C" {
 
 typedef struct kaa_list_t kaa_list_t;
 
-typedef void (* deallocate_list_data)(void *);
+typedef void (*deallocate_list_data)(void *);
 
 /**
  * Adds new element to the end of the list.
  */
-kaa_list_t * kaa_list_push_back(kaa_list_t * head, void *data);
+kaa_list_t *kaa_list_push_back(kaa_list_t *head, void *data);
 
 /**
  * Adds new element to the begin of the list, returns new list head.
  */
-kaa_list_t * kaa_list_push_front(kaa_list_t * head, void *data);
+kaa_list_t *kaa_list_push_front(kaa_list_t *head, void *data);
 
 /**
  * Returns data on current list position.
  */
-void * kaa_list_get_data(kaa_list_t * position);
+void *kaa_list_get_data(kaa_list_t *position);
 
 /**
  * Returns size of the list.
  */
-size_t kaa_list_get_size(kaa_list_t * position);
+ssize_t kaa_list_get_size(kaa_list_t *position);
 
 /**
  * Checks if there is an element after current position.
  */
-bool kaa_list_has_next(kaa_list_t * position);
+bool kaa_list_has_next(kaa_list_t *position);
 
 /**
  * Returns next element.
  */
-kaa_list_t *kaa_list_next(kaa_list_t * position);
+kaa_list_t *kaa_list_next(kaa_list_t *position);
 
 /**
  * Adds all elements of list2 to the end of list1.
  * Returns iterator to the beginning of the inserted elements
  */
-kaa_list_t *kaa_lists_merge(kaa_list_t * list1, kaa_list_t *list2);
+kaa_list_t *kaa_lists_merge(kaa_list_t *list1, kaa_list_t *list2);
 
 /**
  * Creates list with 1 element having given data.
@@ -78,7 +78,7 @@ void kaa_list_destroy(kaa_list_t *head, deallocate_list_data deallocator);
 /**
  * Frees data occupied by list, data will not be deallocated.
  */
-void kaa_list_destroy_no_data_cleanup(kaa_list_t * head);
+void kaa_list_destroy_no_data_cleanup(kaa_list_t *head);
 
 /**
  * Removes element from list at given position. Position must be valid iterator
@@ -92,31 +92,31 @@ kaa_list_t *kaa_list_remove_at(kaa_list_t **head, kaa_list_t *position, dealloca
  * Inserts data into the given position. Deallocates memory occupied by previous
  * data using given deallocator.
  */
-void kaa_list_set_data_at(kaa_list_t * position, void * data, deallocate_list_data deallocator);
+void kaa_list_set_data_at(kaa_list_t *position, void *data, deallocate_list_data deallocator);
 
 /**
  * Insert data after a given iterator.
  * Returns iterator to an inserted item in list.
  */
-kaa_list_t * kaa_list_insert_after(kaa_list_t * position, void * data);
+kaa_list_t *kaa_list_insert_after(kaa_list_t *position, void *data);
 
 /**
  * Return 0 if data doesn't match search criteria
  */
-typedef bool (* match_predicate)(void *data);
+typedef bool (*match_predicate)(void *data);
 /**
  * Returns first element in list from given position where ((*pred)(data) != 0).
  * If nothing matched given criteria or list is empty NULL is returned.
  */
-kaa_list_t * kaa_list_find_next(kaa_list_t * from, match_predicate pred);
+kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred);
 
 /**
  * Returns last element in list from given position where ((*pred)(data) != 0).
  * If nothing matched given criteria or list is empty NULL is returned.
  */
-kaa_list_t * kaa_list_find_last_occurance(kaa_list_t * from, match_predicate pred);
+kaa_list_t *kaa_list_find_last_occurance(kaa_list_t *from, match_predicate pred);
 
-kaa_list_t * kaa_list_split_after(kaa_list_t * head, kaa_list_t * after, kaa_list_t **tail);
+kaa_list_t *kaa_list_split_after(kaa_list_t *head, kaa_list_t *after, kaa_list_t **tail);
 
 #ifdef __cplusplus
 } // extern "C"

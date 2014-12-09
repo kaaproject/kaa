@@ -378,7 +378,7 @@ kaa_error_t kaa_event_handle_sync(kaa_event_manager_t *self
             && event_sn_response != NULL) {
         int32_t server_sn = event_sn_response->seq_num > 0 ? event_sn_response->seq_num : 0;
         kaa_list_t *pending_events = self->pending_events;
-        size_t events_count = kaa_list_get_size(pending_events);
+        ssize_t events_count = kaa_list_get_size(pending_events);
         if (events_count < 0)
             return KAA_ERR_BAD_STATE;
 
