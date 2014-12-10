@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.avro.avrogenc;
 
+import java.util.List;
+
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
@@ -67,34 +69,38 @@ public class TypeConverter {
     }
 
     public static String generateUnionName(Schema schema) {
-        return generateUnionName(schema, "");
+        return generateUnionName("", schema);
     }
 
-    public static String generateUnionName(Schema schema, String parentName) {
-        String result = new String(parentName);
+    public static String generateUnionName(String prefix, Schema schema) {
+        StringBuilder builder = new StringBuilder(prefix + "_UNION_");
+        List<Schema> branches = schema.getTypes();
+        int branchCounter = branches.size();
 
-        for (Schema branchSchema : schema.getTypes()) {
-            result += branchSchema.getType();
+        for (Schema branchSchema : branches) {
             switch (branchSchema.getType()) {
             case RECORD:
-                result += "_";
-                result += StyleUtils.toUpperUnderScore(branchSchema.getName());
+                builder.append(StyleUtils.toUpperUnderScore(branchSchema.getName()));
                 break;
             case ARRAY:
-                result += "_";
-                result += StyleUtils.toUpperUnderScore(branchSchema.getElementType().getName());
+                builder.append(branchSchema.getType().toString());
+                builder.append('_');
+                builder.append(StyleUtils.toUpperUnderScore(branchSchema.getElementType().getName()));
                 break;
             case ENUM:
-                result += "_";
-                result += StyleUtils.toUpperUnderScore(branchSchema.getName());
+                builder.append(StyleUtils.toUpperUnderScore(branchSchema.getName()));
                 break;
             default:
+                builder.append(branchSchema.getType().toString());
                 break;
             }
-            result += "_";
+
+            if (--branchCounter > 0) {
+                builder.append("_OR_");
+            }
         }
-        result += "UNION";
-        return result;
+
+        return builder.toString();
     }
 
     public static boolean isRecordNeedDeallocator(Schema schema) {
