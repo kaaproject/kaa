@@ -21,6 +21,7 @@
 #include <stdio.h>
 
 #include "kaa.h"
+#include "kaa_platform_protocol.h"
 #include "log/kaa_memory_log_storage.h"
 #include "kaa_test.h"
 #include "kaa_mem.h"

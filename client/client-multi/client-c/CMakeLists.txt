@@ -62,6 +62,7 @@ set (KAA_SOURCE_FILES
                        src/kaa_event.c
                        src/kaa_bootstrap.c
                        src/kaa_status.c
+                       src/kaa_platform_protocol.c
                        src/kaa_list.c
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
