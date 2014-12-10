@@ -183,7 +183,7 @@ kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_
                 (*self->log_storage->upload_failed)(uuid);
                 return KAA_ERR_NOMEM;
             }
-            request->log_entries = kaa_array_log_entry_null_union_array_branch_create();
+            request->log_entries = kaa_union_array_log_entry_or_null_branch_0_create();
             if (!request->log_entries) {
                 request->destroy(request);
                 (*self->log_storage->upload_failed)(uuid);
@@ -192,7 +192,7 @@ kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_
 
             request->log_entries->data = logs;
             request->log_entries->destroy = &kaa_data_destroy;
-            request->request_id = kaa_string_null_union_string_branch_create();
+            request->request_id = kaa_union_string_or_null_branch_0_create();
             if (!request->request_id) {
                 request->destroy(request);
                 (*self->log_storage->upload_failed)(uuid);

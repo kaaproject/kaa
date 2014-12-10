@@ -52,7 +52,7 @@ static kaa_endpoint_version_info_t * create_versions_info()
     version_info->system_nf_version = SYSTEM_NF_SCHEMA_VERSION;
     version_info->user_nf_version = USER_NF_SCHEMA_VERSION;
 #if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-    version_info->event_family_versions = kaa_array_event_class_family_version_info_null_union_array_branch_create();
+    version_info->event_family_versions = kaa_union_array_event_class_family_version_info_or_null_branch_0_create();
     if (!version_info->event_family_versions) {
         version_info->destroy(version_info);
         return NULL;
@@ -84,7 +84,7 @@ static kaa_endpoint_version_info_t * create_versions_info()
     }
 #else
     version_info->event_family_versions =
-            kaa_array_event_class_family_version_info_null_union_null_branch_create();
+            kaa_union_array_event_class_family_version_info_or_null_branch_1_create();
     if (!version_info->event_family_versions) {
         version_info->destroy(version_info);
         return NULL;
@@ -154,21 +154,22 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
     }
 
     if (ep_acc_token) {
-        request->endpoint_access_token = kaa_string_null_union_string_branch_create();
+        request->endpoint_access_token = kaa_union_string_or_null_branch_0_create();
         if (!request->endpoint_access_token) {
             request->destroy(request);
             return KAA_ERR_NOMEM;
         }
         request->endpoint_access_token->data = kaa_string_move_create(ep_acc_token, NULL); // destructor is not needed
     } else {
-        request->endpoint_access_token = kaa_string_null_union_null_branch_create();
+        request->endpoint_access_token = kaa_union_string_or_null_branch_1_create();
         if (!request->endpoint_access_token) {
             request->destroy(request);
             return KAA_ERR_NOMEM;
         }
     }
 
-    request->profile_body = kaa_bytes_move_create(self->profile_body.buffer, self->profile_body.size, NULL); // destructor for buffer is not needed
+    request->profile_body = kaa_bytes_move_create(
+            self->profile_body.buffer, self->profile_body.size, NULL); // destructor for buffer is not needed
     if (!request->profile_body) {
         request->destroy(request);
         return KAA_ERR_NOMEM;
@@ -181,13 +182,13 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
     }
 
     if (is_registered) {
-        request->endpoint_public_key = kaa_bytes_null_union_null_branch_create();
+        request->endpoint_public_key = kaa_union_bytes_or_null_branch_1_create();
         if (!request->endpoint_public_key) {
             request->destroy(request);
             return KAA_ERR_NOMEM;
         }
     } else {
-        request->endpoint_public_key = kaa_bytes_null_union_bytes_branch_create();
+        request->endpoint_public_key = kaa_union_bytes_or_null_branch_0_create();
         if (!request->endpoint_public_key) {
             request->destroy(request);
             return KAA_ERR_NOMEM;
@@ -223,7 +224,8 @@ kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_syn
     self->need_resync = false;
     if (response->response_status == ENUM_SYNC_RESPONSE_STATUS_RESYNC) {
         self->need_resync = true;
-        kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, profile_sync_services[0]);
+        kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
+                                      self->channel_manager, profile_sync_services[0]);
         if (sync)
             (*sync)(profile_sync_services, 1);
     }
@@ -281,7 +283,8 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
 
     self->need_resync = true;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, profile_sync_services[0]);
+    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
+                                    self->channel_manager, profile_sync_services[0]);
     if (sync)
         (*sync)(profile_sync_services, 1);
 

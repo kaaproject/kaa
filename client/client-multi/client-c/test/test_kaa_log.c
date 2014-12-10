@@ -26,11 +26,15 @@
 #include "kaa_profile.h"
 #include <stdio.h>
 
-extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_response_t *response);
+extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self
+                                         , kaa_log_sync_response_t *response);
 
 static kaa_logger_t *logger = NULL;
 
-static const kaa_service_t services[4] = { KAA_SERVICE_PROFILE, KAA_SERVICE_USER, KAA_SERVICE_EVENT, KAA_SERVICE_LOGGING };
+static const kaa_service_t services[4] = { KAA_SERVICE_PROFILE
+                                         , KAA_SERVICE_USER
+                                         , KAA_SERVICE_EVENT
+                                         , KAA_SERVICE_LOGGING };
 
 
 void test_create_request()
@@ -49,7 +53,7 @@ void test_create_request()
     ASSERT_EQUAL(error, KAA_ERR_NONE);
     ASSERT_NOT_NULL(request);
     ASSERT_NOT_NULL(request->log_sync_request);
-    ASSERT_EQUAL(request->log_sync_request->type, KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
+    ASSERT_EQUAL(request->log_sync_request->type, KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_BRANCH_1);
 
     request->destroy(request);
     profile->destroy(profile);
@@ -109,7 +113,7 @@ static void handler(size_t service_count, const kaa_service_t services[])
     kaa_compile_request(&request, service_count, services);
     ASSERT_NOT_NULL(request);
     ASSERT_NOT_NULL(request->log_sync_request);
-    ASSERT_EQUAL(request->log_sync_request->type ,KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_LOG_SYNC_REQUEST_BRANCH);
+    ASSERT_EQUAL(request->log_sync_request->type ,KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_BRANCH_1);
 
     request->destroy(request);
     KAA_FREE(request);

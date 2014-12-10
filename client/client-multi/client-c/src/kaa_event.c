@@ -27,7 +27,8 @@
 #include "kaa_mem.h"
 #include "gen/kaa_endpoint_gen.h"
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self
+                                                              , kaa_service_t service_type);
 
 static void kaa_event_list_destroy_no_cleanup(void *data)
 {
@@ -52,9 +53,11 @@ typedef struct event_callback_pair_t_ {
     kaa_event_callback_t cb;
 } event_callback_pair_t;
 
-static event_callback_pair_t * create_event_callback_pair(const char * fqn, kaa_event_callback_t callback)
+static event_callback_pair_t * create_event_callback_pair(const char * fqn
+                                                        , kaa_event_callback_t callback)
 {
-    event_callback_pair_t * pair = (event_callback_pair_t *) KAA_MALLOC(sizeof(event_callback_pair_t));
+    event_callback_pair_t * pair =
+            (event_callback_pair_t *) KAA_MALLOC(sizeof(event_callback_pair_t));
     if (pair == NULL) {
         return NULL;
     }
@@ -192,7 +195,7 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
                                           , size_t target_size)
 {
     event->seq_num = sequence_number;
-    event->source = kaa_string_null_union_null_branch_create();
+    event->source = kaa_union_string_or_null_branch_1_create();
     if (!event->source) {
         return KAA_ERR_NOMEM;
     }
@@ -204,7 +207,8 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
         return KAA_ERR_NOMEM;
     }
 
-    event->event_data = kaa_bytes_copy_create((const uint8_t *)event_data, event_data_size, kaa_data_destroy);
+    event->event_data = kaa_bytes_copy_create(
+            (const uint8_t *)event_data, event_data_size, kaa_data_destroy);
     if (!event->event_data) {
         kaa_string_destroy(event->event_class_fqn);
         event->source->destroy(event->source);
@@ -213,12 +217,12 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
 
     bool is_target_specified = (target && target_size > 0);
     if (is_target_specified) {
-        event->target = kaa_string_null_union_string_branch_create();
+        event->target = kaa_union_string_or_null_branch_0_create();
         if (event->target) {
             event->target->data = kaa_string_copy_create(target, kaa_data_destroy);
         }
     } else {
-        event->target = kaa_string_null_union_null_branch_create();
+        event->target = kaa_union_string_or_null_branch_1_create();
     }
 
     if (!event->target || (is_target_specified && !event->target->data)) {
@@ -252,9 +256,16 @@ kaa_error_t kaa_add_event(kaa_event_manager_t *self
         return KAA_ERR_NOMEM;
     }
 
-    size_t new_sequence_number = (self->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED
-                ? ++self->event_sequence_number : (size_t) -1);
-    kaa_error_t error_code = kaa_fill_event_structure(event, new_sequence_number, fqn, event_data, event_data_size, target, target_size);
+    size_t new_sequence_number =
+            (self->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED ?
+                                        ++self->event_sequence_number : (size_t) -1);
+
+    kaa_error_t error_code = kaa_fill_event_structure(event
+                                                    , new_sequence_number
+                                                    , fqn, event_data
+                                                    , event_data_size
+                                                    , target
+                                                    , target_size);
     if (error_code) {
         event->destroy(event);
         return KAA_ERR_NOMEM;
@@ -272,7 +283,8 @@ kaa_error_t kaa_add_event(kaa_event_manager_t *self
             return KAA_ERR_NOMEM;
         }
     }
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
+    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
+                                    self->channel_manager, event_sync_services[0]);
     if (sync) {
         (*sync)(event_sync_services, 1);
     }
@@ -288,7 +300,8 @@ static kaa_error_t kaa_event_sync_request_allocate(
     (*request_p) = kaa_event_sync_request_create();
     KAA_RETURN_IF_NIL((*request_p), KAA_ERR_NOMEM);
 
-    (*request_p)->event_listeners_requests = kaa_array_event_listeners_request_null_union_null_branch_create();
+    (*request_p)->event_listeners_requests =
+            kaa_union_array_event_listeners_request_or_null_branch_1_create();
     if (!(*request_p)->event_listeners_requests) {
         KAA_FREE(*request_p);
         *request_p = NULL;
@@ -296,8 +309,7 @@ static kaa_error_t kaa_event_sync_request_allocate(
     }
 
     if (is_sequence_number_request) {
-
-        (*request_p)->events = kaa_array_event_null_union_null_branch_create();
+        (*request_p)->events = kaa_union_array_event_or_null_branch_1_create();
         if (!(*request_p)->events) {
             KAA_FREE((*request_p)->event_sequence_number_request);
             KAA_FREE((*request_p)->event_listeners_requests);
@@ -306,7 +318,8 @@ static kaa_error_t kaa_event_sync_request_allocate(
             return KAA_ERR_NOMEM;
         }
 
-        (*request_p)->event_sequence_number_request = kaa_record_event_sequence_number_request_null_union_event_sequence_number_request_branch_create();
+        (*request_p)->event_sequence_number_request =
+                kaa_union_event_sequence_number_request_or_null_branch_0_create();
         if (!(*request_p)->event_sequence_number_request) {
             KAA_FREE((*request_p)->event_listeners_requests);
             KAA_FREE(*request_p);
@@ -315,8 +328,8 @@ static kaa_error_t kaa_event_sync_request_allocate(
         }
 
     } else if (is_events_request) {
-
-        (*request_p)->event_sequence_number_request = kaa_record_event_sequence_number_request_null_union_null_branch_create();
+        (*request_p)->event_sequence_number_request =
+                kaa_union_event_sequence_number_request_or_null_branch_1_create();
         if (!(*request_p)->event_sequence_number_request) {
             KAA_FREE((*request_p)->event_listeners_requests);
             KAA_FREE(*request_p);
@@ -324,7 +337,7 @@ static kaa_error_t kaa_event_sync_request_allocate(
             return KAA_ERR_NOMEM;
         }
 
-        (*request_p)->events = kaa_array_event_null_union_array_branch_create();
+        (*request_p)->events = kaa_union_array_event_or_null_branch_0_create();
         if (!(*request_p)->events) {
             KAA_FREE((*request_p)->event_sequence_number_request);
             KAA_FREE((*request_p)->event_listeners_requests);
@@ -334,8 +347,7 @@ static kaa_error_t kaa_event_sync_request_allocate(
         }
 
     } else {
-
-        (*request_p)->events = kaa_array_event_null_union_null_branch_create();
+        (*request_p)->events = kaa_union_array_event_or_null_branch_1_create();
         if (!(*request_p)->events) {
             KAA_FREE((*request_p)->event_sequence_number_request);
             KAA_FREE((*request_p)->event_listeners_requests);
@@ -343,7 +355,9 @@ static kaa_error_t kaa_event_sync_request_allocate(
             *request_p = NULL;
             return KAA_ERR_NOMEM;
         }
-        (*request_p)->event_sequence_number_request = kaa_record_event_sequence_number_request_null_union_null_branch_create();
+
+        (*request_p)->event_sequence_number_request =
+                kaa_union_event_sequence_number_request_or_null_branch_1_create();
         if (!(*request_p)->event_sequence_number_request) {
             KAA_FREE((*request_p)->event_listeners_requests);
             KAA_FREE(*request_p);
@@ -464,9 +478,12 @@ kaa_error_t kaa_event_handle_sync(kaa_event_manager_t *self
 
     kaa_event_t * event = (kaa_event_t *)kaa_list_get_data(events);
     while (event) {
-        const char *event_source = (event->source->type == KAA_STRING_NULL_UNION_STRING_BRANCH) ? (const char *)(event->source->data) : NULL;
+        const char *event_source =
+                (event->source->type == KAA_UNION_STRING_OR_NULL_BRANCH_0) ?
+                                    (const char *)(event->source->data) : NULL;
 
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received event with fqn \"%s\" from \"%s\"", event->event_class_fqn->data, event_source);
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received event with fqn \"%s\" from \"%s\""
+                                                , event->event_class_fqn->data, event_source);
 
         kaa_event_callback_t cb = find_event_callback(self->event_callbacks, event->event_class_fqn->data);
         if (cb) {
@@ -576,7 +593,8 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
                 trx->events = NULL;
             }
             kaa_list_remove_at(&self->transactions, it, &destroy_transaction);
-            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
+            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
+                                            self->channel_manager, event_sync_services[0]);
             if (need_sync && sync) {
                 (*sync)(event_sync_services, 1);
             }

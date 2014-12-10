@@ -40,16 +40,16 @@ typedef struct {
 kaa_event_class_family_version_info_t* kaa_event_class_family_version_info_create();
 
 
-# ifndef KAA_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_NULL_UNION_H_
-# define KAA_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_OR_NULL_H_
+# define KAA_UNION_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_OR_NULL_H_
 
-# define KAA_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_event_class_family_version_info_null_union_array_branch_create();
-kaa_union_t* kaa_array_event_class_family_version_info_null_union_null_branch_create();
+kaa_union_t* kaa_union_array_event_class_family_version_info_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_event_class_family_version_info_or_null_branch_1_create();
 
-# endif // KAA_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_EVENT_CLASS_FAMILY_VERSION_INFO_OR_NULL_H_
 
 
 typedef struct {
@@ -243,18 +243,18 @@ typedef struct {
 kaa_endpoint_attach_request_t* kaa_endpoint_attach_request_create();
 
 
-# ifndef KAA_STRING_NULL_UNION_H_
-# define KAA_STRING_NULL_UNION_H_
+# ifndef KAA_UNION_STRING_OR_NULL_H_
+# define KAA_UNION_STRING_OR_NULL_H_
 
-# define KAA_STRING_NULL_UNION_STRING_BRANCH 0
-# define KAA_STRING_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_STRING_OR_NULL_BRANCH_0 0
+# define KAA_UNION_STRING_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_string_null_union_string_branch_create();
-kaa_union_t* kaa_string_null_union_null_branch_create();
+kaa_union_t* kaa_union_string_or_null_branch_0_create();
+kaa_union_t* kaa_union_string_or_null_branch_1_create();
 
-kaa_union_t* kaa_string_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_string_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_STRING_NULL_UNION_H_
+# endif // KAA_UNION_STRING_OR_NULL_H_
 
 
 typedef struct {
@@ -318,18 +318,18 @@ typedef struct {
 kaa_event_listeners_request_t* kaa_event_listeners_request_create();
 
 
-# ifndef KAA_ARRAY_STRING_NULL_UNION_H_
-# define KAA_ARRAY_STRING_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_STRING_OR_NULL_H_
+# define KAA_UNION_ARRAY_STRING_OR_NULL_H_
 
-# define KAA_ARRAY_STRING_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_STRING_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_string_null_union_array_branch_create();
-kaa_union_t* kaa_array_string_null_union_null_branch_create();
+kaa_union_t* kaa_union_array_string_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_string_or_null_branch_1_create();
 
-kaa_union_t* kaa_array_string_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_array_string_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_ARRAY_STRING_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_STRING_OR_NULL_H_
 
 
 typedef struct {
@@ -360,18 +360,18 @@ typedef struct {
 kaa_event_sequence_number_response_t* kaa_event_sequence_number_response_deserialize(avro_reader_t reader);
 
 
-# ifndef KAA_INT_NULL_UNION_H_
-# define KAA_INT_NULL_UNION_H_
+# ifndef KAA_UNION_INT_OR_NULL_H_
+# define KAA_UNION_INT_OR_NULL_H_
 
-# define KAA_INT_NULL_UNION_INT_BRANCH 0
-# define KAA_INT_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_INT_OR_NULL_BRANCH_0 0
+# define KAA_UNION_INT_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_int_null_union_int_branch_create();
-kaa_union_t* kaa_int_null_union_null_branch_create();
+kaa_union_t* kaa_union_int_or_null_branch_0_create();
+kaa_union_t* kaa_union_int_or_null_branch_1_create();
 
-kaa_union_t* kaa_int_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_int_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_INT_NULL_UNION_H_
+# endif // KAA_UNION_INT_OR_NULL_H_
 
 
 typedef struct {
@@ -409,18 +409,18 @@ typedef struct {
 kaa_log_entry_t* kaa_log_entry_create();
 
 
-# ifndef KAA_BYTES_NULL_UNION_H_
-# define KAA_BYTES_NULL_UNION_H_
+# ifndef KAA_UNION_BYTES_OR_NULL_H_
+# define KAA_UNION_BYTES_OR_NULL_H_
 
-# define KAA_BYTES_NULL_UNION_BYTES_BRANCH 0
-# define KAA_BYTES_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_BYTES_OR_NULL_BRANCH_0 0
+# define KAA_UNION_BYTES_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_bytes_null_union_bytes_branch_create();
-kaa_union_t* kaa_bytes_null_union_null_branch_create();
+kaa_union_t* kaa_union_bytes_or_null_branch_0_create();
+kaa_union_t* kaa_union_bytes_or_null_branch_1_create();
 
-kaa_union_t* kaa_bytes_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_bytes_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_BYTES_NULL_UNION_H_
+# endif // KAA_UNION_BYTES_OR_NULL_H_
 
 
 typedef struct {
@@ -463,28 +463,28 @@ typedef struct {
 kaa_configuration_sync_request_t* kaa_configuration_sync_request_create();
 
 
-# ifndef KAA_ARRAY_TOPIC_STATE_NULL_UNION_H_
-# define KAA_ARRAY_TOPIC_STATE_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_H_
+# define KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_H_
 
-# define KAA_ARRAY_TOPIC_STATE_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_TOPIC_STATE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_topic_state_null_union_array_branch_create();
-kaa_union_t* kaa_array_topic_state_null_union_null_branch_create();
+kaa_union_t* kaa_union_array_topic_state_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_topic_state_or_null_branch_1_create();
 
-# endif // KAA_ARRAY_TOPIC_STATE_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_H_
 
 
-# ifndef KAA_ARRAY_SUBSCRIPTION_COMMAND_NULL_UNION_H_
-# define KAA_ARRAY_SUBSCRIPTION_COMMAND_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_H_
+# define KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_H_
 
-# define KAA_ARRAY_SUBSCRIPTION_COMMAND_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_SUBSCRIPTION_COMMAND_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_subscription_command_null_union_array_branch_create();
-kaa_union_t* kaa_array_subscription_command_null_union_null_branch_create();
+kaa_union_t* kaa_union_array_subscription_command_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_subscription_command_or_null_branch_1_create();
 
-# endif // KAA_ARRAY_SUBSCRIPTION_COMMAND_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_H_
 
 
 typedef struct {
@@ -502,40 +502,40 @@ typedef struct {
 kaa_notification_sync_request_t* kaa_notification_sync_request_create();
 
 
-# ifndef KAA_RECORD_USER_ATTACH_REQUEST_NULL_UNION_H_
-# define KAA_RECORD_USER_ATTACH_REQUEST_NULL_UNION_H_
+# ifndef KAA_UNION_USER_ATTACH_REQUEST_OR_NULL_H_
+# define KAA_UNION_USER_ATTACH_REQUEST_OR_NULL_H_
 
-# define KAA_RECORD_USER_ATTACH_REQUEST_NULL_UNION_USER_ATTACH_REQUEST_BRANCH 0
-# define KAA_RECORD_USER_ATTACH_REQUEST_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_USER_ATTACH_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_USER_ATTACH_REQUEST_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_user_attach_request_null_union_user_attach_request_branch_create();
-kaa_union_t* kaa_record_user_attach_request_null_union_null_branch_create();
+kaa_union_t* kaa_union_user_attach_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_user_attach_request_or_null_branch_1_create();
 
-# endif // KAA_RECORD_USER_ATTACH_REQUEST_NULL_UNION_H_
-
-
-# ifndef KAA_ARRAY_ENDPOINT_ATTACH_REQUEST_NULL_UNION_H_
-# define KAA_ARRAY_ENDPOINT_ATTACH_REQUEST_NULL_UNION_H_
-
-# define KAA_ARRAY_ENDPOINT_ATTACH_REQUEST_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_ENDPOINT_ATTACH_REQUEST_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_array_endpoint_attach_request_null_union_array_branch_create();
-kaa_union_t* kaa_array_endpoint_attach_request_null_union_null_branch_create();
-
-# endif // KAA_ARRAY_ENDPOINT_ATTACH_REQUEST_NULL_UNION_H_
+# endif // KAA_UNION_USER_ATTACH_REQUEST_OR_NULL_H_
 
 
-# ifndef KAA_ARRAY_ENDPOINT_DETACH_REQUEST_NULL_UNION_H_
-# define KAA_ARRAY_ENDPOINT_DETACH_REQUEST_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_ENDPOINT_ATTACH_REQUEST_OR_NULL_H_
+# define KAA_UNION_ARRAY_ENDPOINT_ATTACH_REQUEST_OR_NULL_H_
 
-# define KAA_ARRAY_ENDPOINT_DETACH_REQUEST_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_ENDPOINT_DETACH_REQUEST_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_ENDPOINT_ATTACH_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_ENDPOINT_ATTACH_REQUEST_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_endpoint_detach_request_null_union_array_branch_create();
-kaa_union_t* kaa_array_endpoint_detach_request_null_union_null_branch_create();
+kaa_union_t* kaa_union_array_endpoint_attach_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_endpoint_attach_request_or_null_branch_1_create();
 
-# endif // KAA_ARRAY_ENDPOINT_DETACH_REQUEST_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_ENDPOINT_ATTACH_REQUEST_OR_NULL_H_
+
+
+# ifndef KAA_UNION_ARRAY_ENDPOINT_DETACH_REQUEST_OR_NULL_H_
+# define KAA_UNION_ARRAY_ENDPOINT_DETACH_REQUEST_OR_NULL_H_
+
+# define KAA_UNION_ARRAY_ENDPOINT_DETACH_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_ENDPOINT_DETACH_REQUEST_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_array_endpoint_detach_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_endpoint_detach_request_or_null_branch_1_create();
+
+# endif // KAA_UNION_ARRAY_ENDPOINT_DETACH_REQUEST_OR_NULL_H_
 
 
 typedef struct {
@@ -551,42 +551,42 @@ typedef struct {
 kaa_user_sync_request_t* kaa_user_sync_request_create();
 
 
-# ifndef KAA_RECORD_EVENT_SEQUENCE_NUMBER_REQUEST_NULL_UNION_H_
-# define KAA_RECORD_EVENT_SEQUENCE_NUMBER_REQUEST_NULL_UNION_H_
+# ifndef KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_H_
+# define KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_H_
 
-# define KAA_RECORD_EVENT_SEQUENCE_NUMBER_REQUEST_NULL_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_BRANCH 0
-# define KAA_RECORD_EVENT_SEQUENCE_NUMBER_REQUEST_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_event_sequence_number_request_null_union_event_sequence_number_request_branch_create();
-kaa_union_t* kaa_record_event_sequence_number_request_null_union_null_branch_create();
+kaa_union_t* kaa_union_event_sequence_number_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_event_sequence_number_request_or_null_branch_1_create();
 
-# endif // KAA_RECORD_EVENT_SEQUENCE_NUMBER_REQUEST_NULL_UNION_H_
-
-
-# ifndef KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_H_
-# define KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_H_
-
-# define KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_array_event_listeners_request_null_union_array_branch_create();
-kaa_union_t* kaa_array_event_listeners_request_null_union_null_branch_create();
-
-# endif // KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_H_
+# endif // KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_H_
 
 
-# ifndef KAA_ARRAY_EVENT_NULL_UNION_H_
-# define KAA_ARRAY_EVENT_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_EVENT_LISTENERS_REQUEST_OR_NULL_H_
+# define KAA_UNION_ARRAY_EVENT_LISTENERS_REQUEST_OR_NULL_H_
 
-# define KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_EVENT_LISTENERS_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_EVENT_LISTENERS_REQUEST_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_event_null_union_array_branch_create();
-kaa_union_t* kaa_array_event_null_union_null_branch_create();
+kaa_union_t* kaa_union_array_event_listeners_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_event_listeners_request_or_null_branch_1_create();
 
-kaa_union_t* kaa_array_event_null_union_deserialize(avro_reader_t reader);
+# endif // KAA_UNION_ARRAY_EVENT_LISTENERS_REQUEST_OR_NULL_H_
 
-# endif // KAA_ARRAY_EVENT_NULL_UNION_H_
+
+# ifndef KAA_UNION_ARRAY_EVENT_OR_NULL_H_
+# define KAA_UNION_ARRAY_EVENT_OR_NULL_H_
+
+# define KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_array_event_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_event_or_null_branch_1_create();
+
+kaa_union_t* kaa_union_array_event_or_null_deserialize(avro_reader_t reader);
+
+# endif // KAA_UNION_ARRAY_EVENT_OR_NULL_H_
 
 
 typedef struct {
@@ -602,16 +602,16 @@ typedef struct {
 kaa_event_sync_request_t* kaa_event_sync_request_create();
 
 
-# ifndef KAA_ARRAY_LOG_ENTRY_NULL_UNION_H_
-# define KAA_ARRAY_LOG_ENTRY_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_H_
+# define KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_H_
 
-# define KAA_ARRAY_LOG_ENTRY_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_LOG_ENTRY_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_log_entry_null_union_array_branch_create();
-kaa_union_t* kaa_array_log_entry_null_union_null_branch_create();
+kaa_union_t* kaa_union_array_log_entry_or_null_branch_0_create();
+kaa_union_t* kaa_union_array_log_entry_or_null_branch_1_create();
 
-# endif // KAA_ARRAY_LOG_ENTRY_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_H_
 
 
 typedef struct {
@@ -647,26 +647,26 @@ typedef struct {
 kaa_configuration_sync_response_t* kaa_configuration_sync_response_deserialize(avro_reader_t reader);
 
 
-# ifndef KAA_ARRAY_NOTIFICATION_NULL_UNION_H_
-# define KAA_ARRAY_NOTIFICATION_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_H_
+# define KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_H_
 
-# define KAA_ARRAY_NOTIFICATION_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_NOTIFICATION_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_notification_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_array_notification_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_ARRAY_NOTIFICATION_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_H_
 
 
-# ifndef KAA_ARRAY_TOPIC_NULL_UNION_H_
-# define KAA_ARRAY_TOPIC_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_TOPIC_OR_NULL_H_
+# define KAA_UNION_ARRAY_TOPIC_OR_NULL_H_
 
-# define KAA_ARRAY_TOPIC_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_TOPIC_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_topic_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_array_topic_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_ARRAY_TOPIC_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_TOPIC_OR_NULL_H_
 
 
 typedef struct {
@@ -681,59 +681,59 @@ typedef struct {
 kaa_notification_sync_response_t* kaa_notification_sync_response_deserialize(avro_reader_t reader);
 
 
-# ifndef KAA_RECORD_USER_ATTACH_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_USER_ATTACH_RESPONSE_NULL_UNION_H_
+# ifndef KAA_UNION_USER_ATTACH_RESPONSE_OR_NULL_H_
+# define KAA_UNION_USER_ATTACH_RESPONSE_OR_NULL_H_
 
-# define KAA_RECORD_USER_ATTACH_RESPONSE_NULL_UNION_USER_ATTACH_RESPONSE_BRANCH 0
-# define KAA_RECORD_USER_ATTACH_RESPONSE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_USER_ATTACH_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_USER_ATTACH_RESPONSE_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_user_attach_response_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_user_attach_response_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_RECORD_USER_ATTACH_RESPONSE_NULL_UNION_H_
-
-
-# ifndef KAA_RECORD_USER_ATTACH_NOTIFICATION_NULL_UNION_H_
-# define KAA_RECORD_USER_ATTACH_NOTIFICATION_NULL_UNION_H_
-
-# define KAA_RECORD_USER_ATTACH_NOTIFICATION_NULL_UNION_USER_ATTACH_NOTIFICATION_BRANCH 0
-# define KAA_RECORD_USER_ATTACH_NOTIFICATION_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_record_user_attach_notification_null_union_deserialize(avro_reader_t reader);
-
-# endif // KAA_RECORD_USER_ATTACH_NOTIFICATION_NULL_UNION_H_
+# endif // KAA_UNION_USER_ATTACH_RESPONSE_OR_NULL_H_
 
 
-# ifndef KAA_RECORD_USER_DETACH_NOTIFICATION_NULL_UNION_H_
-# define KAA_RECORD_USER_DETACH_NOTIFICATION_NULL_UNION_H_
+# ifndef KAA_UNION_USER_ATTACH_NOTIFICATION_OR_NULL_H_
+# define KAA_UNION_USER_ATTACH_NOTIFICATION_OR_NULL_H_
 
-# define KAA_RECORD_USER_DETACH_NOTIFICATION_NULL_UNION_USER_DETACH_NOTIFICATION_BRANCH 0
-# define KAA_RECORD_USER_DETACH_NOTIFICATION_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_USER_ATTACH_NOTIFICATION_OR_NULL_BRANCH_0 0
+# define KAA_UNION_USER_ATTACH_NOTIFICATION_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_user_detach_notification_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_user_attach_notification_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_RECORD_USER_DETACH_NOTIFICATION_NULL_UNION_H_
-
-
-# ifndef KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_H_
-# define KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_H_
-
-# define KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_array_endpoint_attach_response_null_union_deserialize(avro_reader_t reader);
-
-# endif // KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_H_
+# endif // KAA_UNION_USER_ATTACH_NOTIFICATION_OR_NULL_H_
 
 
-# ifndef KAA_ARRAY_ENDPOINT_DETACH_RESPONSE_NULL_UNION_H_
-# define KAA_ARRAY_ENDPOINT_DETACH_RESPONSE_NULL_UNION_H_
+# ifndef KAA_UNION_USER_DETACH_NOTIFICATION_OR_NULL_H_
+# define KAA_UNION_USER_DETACH_NOTIFICATION_OR_NULL_H_
 
-# define KAA_ARRAY_ENDPOINT_DETACH_RESPONSE_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_ENDPOINT_DETACH_RESPONSE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_USER_DETACH_NOTIFICATION_OR_NULL_BRANCH_0 0
+# define KAA_UNION_USER_DETACH_NOTIFICATION_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_endpoint_detach_response_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_user_detach_notification_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_ARRAY_ENDPOINT_DETACH_RESPONSE_NULL_UNION_H_
+# endif // KAA_UNION_USER_DETACH_NOTIFICATION_OR_NULL_H_
+
+
+# ifndef KAA_UNION_ARRAY_ENDPOINT_ATTACH_RESPONSE_OR_NULL_H_
+# define KAA_UNION_ARRAY_ENDPOINT_ATTACH_RESPONSE_OR_NULL_H_
+
+# define KAA_UNION_ARRAY_ENDPOINT_ATTACH_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_ENDPOINT_ATTACH_RESPONSE_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_array_endpoint_attach_response_or_null_deserialize(avro_reader_t reader);
+
+# endif // KAA_UNION_ARRAY_ENDPOINT_ATTACH_RESPONSE_OR_NULL_H_
+
+
+# ifndef KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_H_
+# define KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_H_
+
+# define KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_array_endpoint_detach_response_or_null_deserialize(avro_reader_t reader);
+
+# endif // KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_H_
 
 
 typedef struct {
@@ -749,26 +749,26 @@ typedef struct {
 kaa_user_sync_response_t* kaa_user_sync_response_deserialize(avro_reader_t reader);
 
 
-# ifndef KAA_RECORD_EVENT_SEQUENCE_NUMBER_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_EVENT_SEQUENCE_NUMBER_RESPONSE_NULL_UNION_H_
+# ifndef KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_H_
+# define KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_H_
 
-# define KAA_RECORD_EVENT_SEQUENCE_NUMBER_RESPONSE_NULL_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_BRANCH 0
-# define KAA_RECORD_EVENT_SEQUENCE_NUMBER_RESPONSE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_event_sequence_number_response_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_event_sequence_number_response_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_RECORD_EVENT_SEQUENCE_NUMBER_RESPONSE_NULL_UNION_H_
+# endif // KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_H_
 
 
-# ifndef KAA_ARRAY_EVENT_LISTENERS_RESPONSE_NULL_UNION_H_
-# define KAA_ARRAY_EVENT_LISTENERS_RESPONSE_NULL_UNION_H_
+# ifndef KAA_UNION_ARRAY_EVENT_LISTENERS_RESPONSE_OR_NULL_H_
+# define KAA_UNION_ARRAY_EVENT_LISTENERS_RESPONSE_OR_NULL_H_
 
-# define KAA_ARRAY_EVENT_LISTENERS_RESPONSE_NULL_UNION_ARRAY_BRANCH 0
-# define KAA_ARRAY_EVENT_LISTENERS_RESPONSE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_ARRAY_EVENT_LISTENERS_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_ARRAY_EVENT_LISTENERS_RESPONSE_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_array_event_listeners_response_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_array_event_listeners_response_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_ARRAY_EVENT_LISTENERS_RESPONSE_NULL_UNION_H_
+# endif // KAA_UNION_ARRAY_EVENT_LISTENERS_RESPONSE_OR_NULL_H_
 
 
 typedef struct {
@@ -801,88 +801,88 @@ typedef struct {
 kaa_redirect_sync_response_t* kaa_redirect_sync_response_deserialize(avro_reader_t reader);
 
 
-# ifndef KAA_RECORD_SYNC_REQUEST_META_DATA_NULL_UNION_H_
-# define KAA_RECORD_SYNC_REQUEST_META_DATA_NULL_UNION_H_
+# ifndef KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_H_
+# define KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_H_
 
-# define KAA_RECORD_SYNC_REQUEST_META_DATA_NULL_UNION_SYNC_REQUEST_META_DATA_BRANCH 0
-# define KAA_RECORD_SYNC_REQUEST_META_DATA_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_BRANCH_0 0
+# define KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_sync_request_meta_data_null_union_sync_request_meta_data_branch_create();
-kaa_union_t* kaa_record_sync_request_meta_data_null_union_null_branch_create();
+kaa_union_t* kaa_union_sync_request_meta_data_or_null_branch_0_create();
+kaa_union_t* kaa_union_sync_request_meta_data_or_null_branch_1_create();
 
-# endif // KAA_RECORD_SYNC_REQUEST_META_DATA_NULL_UNION_H_
-
-
-# ifndef KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_H_
-# define KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_H_
-
-# define KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_PROFILE_SYNC_REQUEST_BRANCH 0
-# define KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_record_profile_sync_request_null_union_profile_sync_request_branch_create();
-kaa_union_t* kaa_record_profile_sync_request_null_union_null_branch_create();
-
-# endif // KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_H_
+# endif // KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_H_
 
 
-# ifndef KAA_RECORD_CONFIGURATION_SYNC_REQUEST_NULL_UNION_H_
-# define KAA_RECORD_CONFIGURATION_SYNC_REQUEST_NULL_UNION_H_
+# ifndef KAA_UNION_PROFILE_SYNC_REQUEST_OR_NULL_H_
+# define KAA_UNION_PROFILE_SYNC_REQUEST_OR_NULL_H_
 
-# define KAA_RECORD_CONFIGURATION_SYNC_REQUEST_NULL_UNION_CONFIGURATION_SYNC_REQUEST_BRANCH 0
-# define KAA_RECORD_CONFIGURATION_SYNC_REQUEST_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_PROFILE_SYNC_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_PROFILE_SYNC_REQUEST_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_configuration_sync_request_null_union_configuration_sync_request_branch_create();
-kaa_union_t* kaa_record_configuration_sync_request_null_union_null_branch_create();
+kaa_union_t* kaa_union_profile_sync_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_profile_sync_request_or_null_branch_1_create();
 
-# endif // KAA_RECORD_CONFIGURATION_SYNC_REQUEST_NULL_UNION_H_
-
-
-# ifndef KAA_RECORD_NOTIFICATION_SYNC_REQUEST_NULL_UNION_H_
-# define KAA_RECORD_NOTIFICATION_SYNC_REQUEST_NULL_UNION_H_
-
-# define KAA_RECORD_NOTIFICATION_SYNC_REQUEST_NULL_UNION_NOTIFICATION_SYNC_REQUEST_BRANCH 0
-# define KAA_RECORD_NOTIFICATION_SYNC_REQUEST_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_record_notification_sync_request_null_union_notification_sync_request_branch_create();
-kaa_union_t* kaa_record_notification_sync_request_null_union_null_branch_create();
-
-# endif // KAA_RECORD_NOTIFICATION_SYNC_REQUEST_NULL_UNION_H_
+# endif // KAA_UNION_PROFILE_SYNC_REQUEST_OR_NULL_H_
 
 
-# ifndef KAA_RECORD_USER_SYNC_REQUEST_NULL_UNION_H_
-# define KAA_RECORD_USER_SYNC_REQUEST_NULL_UNION_H_
+# ifndef KAA_UNION_CONFIGURATION_SYNC_REQUEST_OR_NULL_H_
+# define KAA_UNION_CONFIGURATION_SYNC_REQUEST_OR_NULL_H_
 
-# define KAA_RECORD_USER_SYNC_REQUEST_NULL_UNION_USER_SYNC_REQUEST_BRANCH 0
-# define KAA_RECORD_USER_SYNC_REQUEST_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_CONFIGURATION_SYNC_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_CONFIGURATION_SYNC_REQUEST_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_user_sync_request_null_union_user_sync_request_branch_create();
-kaa_union_t* kaa_record_user_sync_request_null_union_null_branch_create();
+kaa_union_t* kaa_union_configuration_sync_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_configuration_sync_request_or_null_branch_1_create();
 
-# endif // KAA_RECORD_USER_SYNC_REQUEST_NULL_UNION_H_
-
-
-# ifndef KAA_RECORD_EVENT_SYNC_REQUEST_NULL_UNION_H_
-# define KAA_RECORD_EVENT_SYNC_REQUEST_NULL_UNION_H_
-
-# define KAA_RECORD_EVENT_SYNC_REQUEST_NULL_UNION_EVENT_SYNC_REQUEST_BRANCH 0
-# define KAA_RECORD_EVENT_SYNC_REQUEST_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_record_event_sync_request_null_union_event_sync_request_branch_create();
-kaa_union_t* kaa_record_event_sync_request_null_union_null_branch_create();
-
-# endif // KAA_RECORD_EVENT_SYNC_REQUEST_NULL_UNION_H_
+# endif // KAA_UNION_CONFIGURATION_SYNC_REQUEST_OR_NULL_H_
 
 
-# ifndef KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_H_
-# define KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_H_
+# ifndef KAA_UNION_NOTIFICATION_SYNC_REQUEST_OR_NULL_H_
+# define KAA_UNION_NOTIFICATION_SYNC_REQUEST_OR_NULL_H_
 
-# define KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_LOG_SYNC_REQUEST_BRANCH 0
-# define KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_NOTIFICATION_SYNC_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_NOTIFICATION_SYNC_REQUEST_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_log_sync_request_null_union_log_sync_request_branch_create();
-kaa_union_t* kaa_record_log_sync_request_null_union_null_branch_create();
+kaa_union_t* kaa_union_notification_sync_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_notification_sync_request_or_null_branch_1_create();
 
-# endif // KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_H_
+# endif // KAA_UNION_NOTIFICATION_SYNC_REQUEST_OR_NULL_H_
+
+
+# ifndef KAA_UNION_USER_SYNC_REQUEST_OR_NULL_H_
+# define KAA_UNION_USER_SYNC_REQUEST_OR_NULL_H_
+
+# define KAA_UNION_USER_SYNC_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_USER_SYNC_REQUEST_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_user_sync_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_user_sync_request_or_null_branch_1_create();
+
+# endif // KAA_UNION_USER_SYNC_REQUEST_OR_NULL_H_
+
+
+# ifndef KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_H_
+# define KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_H_
+
+# define KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_event_sync_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_event_sync_request_or_null_branch_1_create();
+
+# endif // KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_H_
+
+
+# ifndef KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_H_
+# define KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_H_
+
+# define KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_BRANCH_0 0
+# define KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_log_sync_request_or_null_branch_0_create();
+kaa_union_t* kaa_union_log_sync_request_or_null_branch_1_create();
+
+# endif // KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_H_
 
 
 typedef struct {
@@ -903,81 +903,81 @@ typedef struct {
 kaa_sync_request_t* kaa_sync_request_create();
 
 
-# ifndef KAA_RECORD_PROFILE_SYNC_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_PROFILE_SYNC_RESPONSE_NULL_UNION_H_
+# ifndef KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_H_
+# define KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_H_
 
-# define KAA_RECORD_PROFILE_SYNC_RESPONSE_NULL_UNION_PROFILE_SYNC_RESPONSE_BRANCH 0
-# define KAA_RECORD_PROFILE_SYNC_RESPONSE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_profile_sync_response_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_profile_sync_response_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_RECORD_PROFILE_SYNC_RESPONSE_NULL_UNION_H_
-
-
-# ifndef KAA_RECORD_CONFIGURATION_SYNC_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_CONFIGURATION_SYNC_RESPONSE_NULL_UNION_H_
-
-# define KAA_RECORD_CONFIGURATION_SYNC_RESPONSE_NULL_UNION_CONFIGURATION_SYNC_RESPONSE_BRANCH 0
-# define KAA_RECORD_CONFIGURATION_SYNC_RESPONSE_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_record_configuration_sync_response_null_union_deserialize(avro_reader_t reader);
-
-# endif // KAA_RECORD_CONFIGURATION_SYNC_RESPONSE_NULL_UNION_H_
+# endif // KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_H_
 
 
-# ifndef KAA_RECORD_NOTIFICATION_SYNC_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_NOTIFICATION_SYNC_RESPONSE_NULL_UNION_H_
+# ifndef KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_H_
+# define KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_H_
 
-# define KAA_RECORD_NOTIFICATION_SYNC_RESPONSE_NULL_UNION_NOTIFICATION_SYNC_RESPONSE_BRANCH 0
-# define KAA_RECORD_NOTIFICATION_SYNC_RESPONSE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_notification_sync_response_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_configuration_sync_response_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_RECORD_NOTIFICATION_SYNC_RESPONSE_NULL_UNION_H_
-
-
-# ifndef KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_H_
-
-# define KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_USER_SYNC_RESPONSE_BRANCH 0
-# define KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_record_user_sync_response_null_union_deserialize(avro_reader_t reader);
-
-# endif // KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_H_
+# endif // KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_H_
 
 
-# ifndef KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_H_
+# ifndef KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_H_
+# define KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_H_
 
-# define KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_EVENT_SYNC_RESPONSE_BRANCH 0
-# define KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_event_sync_response_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_notification_sync_response_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_H_
-
-
-# ifndef KAA_RECORD_REDIRECT_SYNC_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_REDIRECT_SYNC_RESPONSE_NULL_UNION_H_
-
-# define KAA_RECORD_REDIRECT_SYNC_RESPONSE_NULL_UNION_REDIRECT_SYNC_RESPONSE_BRANCH 0
-# define KAA_RECORD_REDIRECT_SYNC_RESPONSE_NULL_UNION_NULL_BRANCH 1
-
-kaa_union_t* kaa_record_redirect_sync_response_null_union_deserialize(avro_reader_t reader);
-
-# endif // KAA_RECORD_REDIRECT_SYNC_RESPONSE_NULL_UNION_H_
+# endif // KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_H_
 
 
-# ifndef KAA_RECORD_LOG_SYNC_RESPONSE_NULL_UNION_H_
-# define KAA_RECORD_LOG_SYNC_RESPONSE_NULL_UNION_H_
+# ifndef KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_H_
+# define KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_H_
 
-# define KAA_RECORD_LOG_SYNC_RESPONSE_NULL_UNION_LOG_SYNC_RESPONSE_BRANCH 0
-# define KAA_RECORD_LOG_SYNC_RESPONSE_NULL_UNION_NULL_BRANCH 1
+# define KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_record_log_sync_response_null_union_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_union_user_sync_response_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_RECORD_LOG_SYNC_RESPONSE_NULL_UNION_H_
+# endif // KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_H_
+
+
+# ifndef KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_H_
+# define KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_H_
+
+# define KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_event_sync_response_or_null_deserialize(avro_reader_t reader);
+
+# endif // KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_H_
+
+
+# ifndef KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_H_
+# define KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_H_
+
+# define KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_redirect_sync_response_or_null_deserialize(avro_reader_t reader);
+
+# endif // KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_H_
+
+
+# ifndef KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_H_
+# define KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_H_
+
+# define KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_0 0
+# define KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_1 1
+
+kaa_union_t* kaa_union_log_sync_response_or_null_deserialize(avro_reader_t reader);
+
+# endif // KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_H_
 
 
 typedef struct {
