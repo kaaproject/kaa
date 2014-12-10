@@ -13,28 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kaaproject.kaa.server.common;
-
-/*
- * This code is automatically generated. In order to change content of this class edit Version.template file 
- */
+package org.kaaproject.kaa.server.common.log.shared.appender;
 
 /**
- * The Class Version provides access to useful project version information.
- * This information is populated during pre-compilation phase.
+ * Callback interface to report status of log delivery.
  */
-public final class Version {
-
-    /** The Constant PROJECT_VERSION. */
-    public static final String PROJECT_VERSION = "0.7.0-SNAPSHOT";
-    
-    /** The Constant COMMIT_HASH. */
-    public static final String COMMIT_HASH = "N/A";
+public interface LogDeliveryCallback {
 
     /**
-     * Instantiates a new version.
+     * On successful delivery.
      */
-    private Version(){
-    }
+    void onSuccess();
+
+    void onInternalError();
+
+    void onConnectionError();
+
+    void onRemoteError();
+
 }

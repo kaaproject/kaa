@@ -16,13 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
@@ -40,18 +34,10 @@ public class ApplicationLogActor extends UntypedActor {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationLogActor.class);
-
-    private final LogAppenderService logAppenderService;
-
-    /** The log appenders */
-    private List<LogAppender> logAppenders;
-
-    private final String applicationId;
-
+    
     private final String applicationToken;
-
-    private final Map<Integer, LogSchema> logSchemas;
-
+    
+    private final ApplicationLogActorMessageProcessor messageProcessor;
     /**
      * Instantiates a new application log actor.
      *
@@ -60,11 +46,8 @@ public class ApplicationLogActor extends UntypedActor {
      *            the log appender service
      */
     private ApplicationLogActor(LogAppenderService logAppenderService, ApplicationService applicationService, String applicationToken) {
-        this.logAppenderService = logAppenderService;
-        this.applicationId = applicationService.findAppByApplicationToken(applicationToken).getId();
-        this.logAppenders = logAppenderService.getApplicationAppenders(applicationId, applicationToken);
         this.applicationToken = applicationToken;
-        this.logSchemas = new HashMap<>();
+        this.messageProcessor = new ApplicationLogActorMessageProcessor(logAppenderService, applicationService, applicationToken);
     }
 
     /**
@@ -116,71 +99,11 @@ public class ApplicationLogActor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
         LOG.debug("[{}] Received: {}", applicationToken, message);
         if (message instanceof LogEventPackMessage) {
-            processLogEventPack((LogEventPackMessage)message);
+            messageProcessor.processLogEventPack(getContext(), (LogEventPackMessage)message);
         } else if(message instanceof ThriftNotificationMessage) {
             LOG.debug("[{}] Received thrift notification message: {}", applicationToken, message);
             Notification notification = ((ThriftNotificationMessage) message).getNotification();
-            processLogAppenderNotification(notification);
-        }
-    }
-
-    private void processLogEventPack(LogEventPackMessage message) {
-        LOG.debug("[{}] Processing log event pack with {} appenders", applicationToken, logAppenders.size());
-        LogSchema logSchema = message.getLogSchema();
-        if (logSchema == null) {
-            logSchema = logSchemas.get(message.getLogSchemaVersion());
-            if (logSchema == null) {
-                logSchema = logAppenderService.getLogSchema(applicationId, message.getLogSchemaVersion());
-                logSchemas.put(message.getLogSchemaVersion(), logSchema);
-            }
-            message.setLogSchema(logSchema);
-        }
-        for (LogAppender logAppender : logAppenders) {
-            logAppender.doAppend(message.getLogEventPack());
-        }
-    }
-
-    private void processLogAppenderNotification(Notification notification) {
-        LOG.debug("Process log appender notification [{}]", notification);
-        switch (notification.getOp()) {
-            case ADD_LOG_APPENDER:
-                LOG.debug("[{}] Add new appender to list of log appenders.", applicationToken);
-                addLogAppender(notification.getAppenderId());
-                break;
-            case REMOVE_LOG_APPENDER:
-                LOG.debug("[{}] Remove appender from list of log appenders.", applicationToken);
-                removeLogAppender(notification.getAppenderId());
-                break;
-            case UPDATE_LOG_APPENDER:
-                LOG.debug("[{}] Update configuration of existing appender", applicationToken);
-                String id = notification.getAppenderId();
-                removeLogAppender(id);
-                addLogAppender(id);
-                break;
-            default:
-                LOG.debug("[{}] Operation [{}] does not support.", applicationToken, notification.getOp());
-        }
-    }
-
-    private void addLogAppender(String appenderId) {
-        LOG.debug("Adding log appender with id [{}].", appenderId);
-        LogAppender logAppender = logAppenderService.getApplicationAppender(appenderId, applicationToken);
-        if (logAppender != null) {
-            logAppenders.add(logAppender);
-        }
-        LOG.debug("Fetch log appender [{}] and add to list of log appenders.", logAppender);
-    }
-
-    private void removeLogAppender(String appenderId) {
-        LOG.debug("Removing log appender with id [{}].", appenderId);
-        for (int i = 0; i < logAppenders.size(); i++) {
-            LogAppender appender = logAppenders.get(i);
-            if (appender != null && appender.getAppenderId().equals(appenderId)) {
-                LOG.debug("Close and remo log appender with id [{}].", appenderId);
-                appender.close();
-                logAppenders.remove(i);
-                break;
-            }
+            messageProcessor.processLogAppenderNotification(notification);
         }
     }
 
@@ -201,9 +124,7 @@ public class ApplicationLogActor extends UntypedActor {
      */
     @Override
     public void postStop() {
-        for (LogAppender logAppender : logAppenders) {
-            logAppender.close();
-        }
+        messageProcessor.stop();
         LOG.info("[{}] Stoped ", applicationToken);
     }
 }

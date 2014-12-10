@@ -22,7 +22,6 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,11 +37,13 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
@@ -167,103 +168,102 @@ public class MongoDBLogAppenderTest {
         field.set(null, testLogger);
 
         logAppender.close();
-        logAppender.doAppend(new LogEventPack());
+        
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        logAppender.doAppend(new LogEventPack(), callback);
 
-        Mockito.verify(testLogger).info(Mockito.anyString(), Mockito.anyString());
+        Assert.assertTrue(callback.internallError);
     }
 
     @Test
-    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, IOException {
+    	GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+    	BasicEndpointProfile theLog = new BasicEndpointProfile("test");
         List<LogEvent> events = new ArrayList<>();
         LogEvent event1 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event1.setLogData(new byte[0]);
         LogEvent event2 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event2.setLogData(converter.encode(theLog));
         LogEvent event3 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event3.setLogData(converter.encode(theLog));
         events.add(event1);
         events.add(event2);
         events.add(event3);
         
-        LogSchemaDto dto = new LogSchemaDto();
-        dto.setSchema(EMPTY_SCHEMA);
-        dto.setMajorVersion(1);
-        LogSchema schema = new LogSchema(dto);
-        int version = dto.getMajorVersion();
-
+        LogSchemaDto schemaDto = new LogSchemaDto();
+        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        LogSchema schema = new LogSchema(schemaDto);
+        
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
-        logEventPack.setLogSchemaVersion(version);
 
-        Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
-
-        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(dto.getSchema()) {
-
-            @Override
-            public GenericRecord decodeBinary(byte[] bytes) throws IOException {
-                throw new IOException();
-            }
-
-            @Override
-            public String endcodeToJson(GenericRecord record) throws IOException {
-                throw new IOException();
-            }
-        };
-
-        converters.put(dto.getSchema(), converter);
-        ReflectionTestUtils.setField(logAppender, "converters", converters);
         LogEventDao logEventDao = Mockito.mock(LogEventDao.class);
 
         LogEventDao eventDao = (LogEventDao) ReflectionTestUtils.getField(logAppender, "logEventDao");
         ReflectionTestUtils.setField(logAppender, "logEventDao", logEventDao);
-        logAppender.doAppend(logEventPack);
+
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        logAppender.doAppend(logEventPack, callback);
+        Assert.assertTrue(callback.internallError);
         Mockito.verify(logEventDao, Mockito.never()).save(Mockito.anyList(), Mockito.anyString());
         ReflectionTestUtils.setField(logAppender, "logEventDao", eventDao);
     }
 
     @Test
-    public void doAppendTest() {
+    public void doAppendTest() throws IOException {
+    	GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+    	BasicEndpointProfile theLog = new BasicEndpointProfile("test");
         List<LogEvent> events = new ArrayList<>();
         LogEvent event1 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event1.setLogData(converter.encode(theLog));
         LogEvent event2 = new LogEvent();
-        event2.setLogData(LOG_DATA.getBytes(UTF_8));
+        event2.setLogData(converter.encode(theLog));
         LogEvent event3 = new LogEvent();
-        event3.setLogData(LOG_DATA.getBytes(UTF_8));
+        event3.setLogData(converter.encode(theLog));
         events.add(event1);
         events.add(event2);
         events.add(event3);
         
-        LogSchemaDto dto = new LogSchemaDto();
-        dto.setSchema(EMPTY_SCHEMA);
-        dto.setMajorVersion(1);
-        LogSchema schema = new LogSchema(dto);
-        int version = dto.getMajorVersion();
+        LogSchemaDto schemaDto = new LogSchemaDto();
+        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        LogSchema schema = new LogSchema(schemaDto);
         
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
-        logEventPack.setLogSchemaVersion(version);
-
-        Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
-        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(dto.getSchema()) {
-
-            @Override
-            public GenericRecord decodeBinary(byte[] bytes) {
-                return null;
-            }
-
-            @Override
-            public String endcodeToJson(GenericRecord record) {
-                return LOG_DATA;
-            }
-        };
-
-        converters.put(dto.getSchema(), converter);
-        ReflectionTestUtils.setField(logAppender, "converters", converters);
-
-
+        
         String collectionName = (String) ReflectionTestUtils.getField(logAppender, "collectionName");
         Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection(collectionName).count());
-        logAppender.doAppend(logEventPack);
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        logAppender.doAppend(logEventPack, callback);
+        Assert.assertTrue(callback.success);
         collectionName = (String) ReflectionTestUtils.getField(logAppender, "collectionName");
         Assert.assertEquals(3, MongoDBTestRunner.getDB().getCollection(collectionName).count());
+    }
+    
+    private static class TestLogDeliveryCallback implements LogDeliveryCallback{
+
+    	private volatile boolean success;
+    	private volatile boolean internallError;
+    	private volatile boolean connectionError;
+    	private volatile boolean remoteError;
+    	
+		@Override
+		public void onSuccess() {
+			success = true;
+		}
+
+		@Override
+		public void onInternalError() {
+			internallError = true;
+		}
+
+		@Override
+		public void onConnectionError() {
+			connectionError = true;
+		}
+
+		@Override
+		public void onRemoteError() {
+			remoteError = true;
+		}
+    	
     }
 }

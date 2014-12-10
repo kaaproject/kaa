@@ -22,6 +22,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.appenders.flume.appender.client.FlumeClientManager;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
@@ -41,20 +42,24 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
     }
     
     @Override
-    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
+    public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
             Event event = flumeEventBuilder.generateEvent(logEventPack, header, getApplicationToken());
             try {
                 if (flumeClientManger != null) {
                     flumeClientManger.sendEventToFlume(event);
+                    listener.onSuccess();
                 } else {
                     LOG.warn("Flume client wasn't initialized. Invoke method init before.");
+                    listener.onInternalError();
                 }
             } catch (EventDeliveryException e) {
                 LOG.warn("Can't send flume event.");
-            }            
+                listener.onConnectionError();
+            }
         } else {
             LOG.info("Attempted to append to closed appender named [{}].", getName());
+            listener.onInternalError();
         }
     }
 

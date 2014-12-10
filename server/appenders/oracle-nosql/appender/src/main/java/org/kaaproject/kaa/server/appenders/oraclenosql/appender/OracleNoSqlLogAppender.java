@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.SortedMap;
 
+import oracle.kv.FaultException;
 import oracle.kv.KVSecurityConstants;
 import oracle.kv.KVStore;
 import oracle.kv.KVStoreConfig;
@@ -55,6 +56,7 @@ import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.KvStoreNode;
 import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
@@ -79,24 +81,31 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
     }
 
     @Override
-    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
+    public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
             if (kvStore != null) {
-                LOG.debug("[{}] appending {} logs to Oracle NoSQL kvStore", this.getApplicationToken(), logEventPack.getEvents()
-                        .size());
+                LOG.debug("[{}] appending {} logs to Oracle NoSQL kvStore", this.getApplicationToken(), logEventPack
+                        .getEvents().size());
                 try {
                     doAppendGenericAvro(logEventPack, header);
+                    listener.onSuccess();
+                } catch (FaultException e) {
+                    LOG.error("Unable to append logs due to remote exception!", e);
+                    listener.onRemoteError();
                 } catch (Exception e) {
                     LOG.error("Unable to append logs!", e);
+                    listener.onInternalError();
                 }
             } else {
                 LOG.info("[{}] Attempted to append to empty kvStore.", getName());
+                listener.onInternalError();
             }
         } else {
             LOG.info("[{}] Attempted to append to closed appender.", getName());
+            listener.onInternalError();
         }
     }
-    
+
     @Override
     protected void initFromConfiguration(LogAppenderDto appender, OracleNoSqlConfig configuration) {
         try {
@@ -105,21 +114,19 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
             LOG.error("Failed to init kvStore: ", e);
         }
     }
-    
+
     private void doAppendGenericAvro(LogEventPack logEventPack, RecordHeader header) throws Exception {
         if (binding == null) {
             initialize(logEventPack);
         }
-        
+
         GenericRecord recordData = null;
-        
+
         OperationFactory of = kvStore.getOperationFactory();
         ArrayList<Operation> opList = new ArrayList<Operation>();
-        
-        List<String> majorPath = Arrays.asList(getApplicationToken(), 
-                                               logEventPack.getLogSchemaVersion()+"", 
-                                               logEventPack.getEndpointKey(), 
-                                               System.currentTimeMillis()+"");
+
+        List<String> majorPath = Arrays.asList(getApplicationToken(), logEventPack.getLogSchemaVersion() + "",
+                logEventPack.getEndpointKey(), System.currentTimeMillis() + "");
 
         int counter = 0;
 
@@ -129,23 +136,23 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
                 recordData = datumReader.read(recordData, binaryDecoder);
             } catch (IOException e) {
                 LOG.error("[{}] Unable to read log event!", e);
-                continue;
+                throw e;
             }
             wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD, header);
             wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_DATA_FIELD, recordData);
-            
-            Key key = Key.createKey(majorPath,
-                                    Arrays.asList((counter++)+""));
-            
+
+            Key key = Key.createKey(majorPath, Arrays.asList((counter++) + ""));
+
             opList.add(of.createPut(key, binding.toValue(wrapperRecord)));
         }
-        
+
         kvStore.execute(opList);
     }
-    
+
     private void initialize(LogEventPack logEventPack) throws Exception {
         try {
-            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logEventPack.getLogSchema().getSchema());
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logEventPack
+                    .getLogSchema().getSchema());
             checkSchemaUploaded(recordWrapperSchema);
             AvroCatalog avroCatalog = kvStore.getAvroCatalog();
             binding = avroCatalog.getGenericBinding(recordWrapperSchema);
@@ -156,16 +163,16 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
             LOG.error("[{}] Unable to initialize parameters for log event pack.", getName());
             throw e;
         }
-        
+
     }
-    
+
     private void checkSchemaUploaded(Schema schema) {
         String schemaText = schema.toString(true);
         AvroDdl avroDdl = new AvroDdl(kvStore);
         SortedMap<String, SchemaSummary> schemaSummaries = avroDdl.getSchemaSummaries(false);
         boolean uploaded = false;
         boolean evolve = schemaSummaries.containsKey(schema.getFullName());
-        
+
         if (evolve) {
             for (String key : schemaSummaries.keySet()) {
                 SchemaSummary summary = schemaSummaries.get(key);
@@ -175,31 +182,29 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
                 }
             }
         }
-        
+
         if (!uploaded) {
-            AvroSchemaMetadata metadata = new AvroSchemaMetadata(AvroSchemaStatus.ACTIVE, 
-                    System.currentTimeMillis(), username, getHostName());
-            
-            AddSchemaOptions options =
-                    new AddSchemaOptions(evolve, true);
-            
+            AvroSchemaMetadata metadata = new AvroSchemaMetadata(AvroSchemaStatus.ACTIVE, System.currentTimeMillis(),
+                    username, getHostName());
+
+            AddSchemaOptions options = new AddSchemaOptions(evolve, true);
+
             AddSchemaResult result = avroDdl.addSchema(metadata, schemaText, options, KVVersion.CURRENT_VERSION);
-            
+
             LOG.info("[{}] Uploaded new schema to store, extra message [{}].", getName(), result.getExtraMessage());
         }
     }
-    
+
     private boolean checkSchemaUploaded(AvroDdl avroDdl, SchemaSummary summary, String schemaText) {
         SchemaDetails details = avroDdl.getSchemaDetails(summary.getId());
         if (details.getText().equals(schemaText)) {
             return true;
-        }
-        else if (summary.getPreviousVersion() != null) {
+        } else if (summary.getPreviousVersion() != null) {
             return checkSchemaUploaded(avroDdl, summary.getPreviousVersion(), schemaText);
         }
         return false;
     }
-    
+
     private static String getHostName() {
         try {
             return InetAddress.getLocalHost().getHostName();
@@ -207,7 +212,6 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
             return "";
         }
     }
-
 
     @Override
     public void close() {
@@ -224,19 +228,18 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
     private KVStore initKvStore(OracleNoSqlConfig configuration) throws Exception {
         List<KvStoreNode> kvStoreNodes = configuration.getKvStoreNodes();
         String[] helperHostPorts = new String[kvStoreNodes.size()];
-        for (int i=0;i<kvStoreNodes.size();i++) {
+        for (int i = 0; i < kvStoreNodes.size(); i++) {
             KvStoreNode node = kvStoreNodes.get(i);
             helperHostPorts[i] = node.getHost() + ":" + node.getPort();
         }
 
         KVStoreConfig config = new KVStoreConfig(configuration.getStoreName(), helperHostPorts);
-        
+
         Properties securityProperties = new Properties();
         if (configuration.getUsername() != null) {
             username = configuration.getUsername();
             securityProperties.put(KVSecurityConstants.AUTH_USERNAME_PROPERTY, configuration.getUsername());
-        }
-        else {
+        } else {
             username = "";
         }
         if (configuration.getWalletDir() != null) {
@@ -261,19 +264,21 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
             securityProperties.put(KVSecurityConstants.SSL_PROTOCOLS_PROPERTY, configuration.getSslProtocols());
         }
         if (configuration.getSslHostnameVerifier() != null) {
-            securityProperties.put(KVSecurityConstants.SSL_HOSTNAME_VERIFIER_PROPERTY, configuration.getSslHostnameVerifier());
+            securityProperties.put(KVSecurityConstants.SSL_HOSTNAME_VERIFIER_PROPERTY,
+                    configuration.getSslHostnameVerifier());
         }
         if (configuration.getSslTrustStore() != null) {
             securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY, configuration.getSslTrustStore());
         }
         if (configuration.getSslTrustStoreType() != null) {
-            securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_TYPE_PROPERTY, configuration.getSslTrustStoreType());
+            securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_TYPE_PROPERTY,
+                    configuration.getSslTrustStoreType());
         }
         config.setSecurityProperties(securityProperties);
-        
+
         KVStore kvStore = KVStoreFactory.getStore(config);
-        
+
         return kvStore;
     }
- 
+
 }

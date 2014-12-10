@@ -16,16 +16,21 @@
 
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mongodb.MongoException.Network;
+import com.mongodb.MongoInternalException;
 
 public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
     
@@ -40,17 +45,30 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
     }
     
     @Override
-    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
+    public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
-            LOG.debug("[{}] appending {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
-            List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
-            LOG.debug("[{}] saving {} objects", collectionName, dtos.size());
-            if (!dtos.isEmpty()) {
-                logEventDao.save(dtos, collectionName);
-                LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
+            try{
+                LOG.debug("[{}] appending {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
+                List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
+                LOG.debug("[{}] saving {} objects", collectionName, dtos.size());
+                if (!dtos.isEmpty()) {
+                    logEventDao.save(dtos, collectionName);
+                    LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
+                }
+                listener.onSuccess();
+            }catch(Network e){
+                LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to network error",  getName()), e);
+                listener.onConnectionError();
+            }catch(MongoInternalException e){
+                LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to remote error",  getName()), e);
+                listener.onRemoteError();
+            }catch(Exception e){
+                LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to internal error",  getName()), e);
+                listener.onInternalError();
             }
         } else {
             LOG.info("Attempted to append to closed appender named [{}].", getName());
+            listener.onInternalError();
         }
     }
 

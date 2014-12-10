@@ -66,7 +66,7 @@ public interface LogAppender {
      *
      * @param logEventPack the log event pack
      */
-    void doAppend(LogEventPack logEventPack);
+    void doAppend(LogEventPack logEventPack, LogDeliveryCallback listener);
 
     /**
      * Release any resources allocated within the appender such as file handles, network connections, etc.

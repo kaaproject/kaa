@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 
 public class DefaultLogAppenderBuilderTest {
@@ -88,7 +89,7 @@ public class DefaultLogAppenderBuilderTest {
         }
 
         @Override
-        public void doAppend(LogEventPack logEventPack) {
+        public void doAppend(LogEventPack logEventPack, LogDeliveryCallback callback) {
             // TODO Auto-generated method stub
 
         }

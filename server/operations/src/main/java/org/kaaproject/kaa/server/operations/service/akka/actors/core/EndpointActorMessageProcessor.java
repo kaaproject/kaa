@@ -16,8 +16,10 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
@@ -36,6 +38,8 @@ import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
@@ -60,6 +64,7 @@ import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
@@ -114,6 +119,8 @@ public class EndpointActorMessageProcessor {
     /** The actor key. */
     private final String endpointKey;
 
+    private final Map<String, LogDeliveryMessage> logUploadResponseMap;
+
     /** The sync time. */
     private long syncTime;
 
@@ -136,6 +143,7 @@ public class EndpointActorMessageProcessor {
         this.actorKey = actorKey;
         this.endpointKey = Base64Util.encode(key.getData());
         this.channelMap = new ChannelMap(this.endpointKey, this.actorKey);
+        this.logUploadResponseMap = new HashMap<>();
     }
 
     public void processEndpointSync(ActorContext context, SyncRequestMessage message) {
@@ -173,16 +181,17 @@ public class EndpointActorMessageProcessor {
         for (ChannelMetaData channel : channels) {
             SyncRequest originalRequest = channel.getRequestMessage().getRequest();
             SyncResponse syncResponse = channel.getResponseHolder().getResponse();
-            
+
             SyncRequest newRequest = new SyncRequest();
             newRequest.setRequestId(originalRequest.getRequestId());
             newRequest.setSyncRequestMetaData(originalRequest.getSyncRequestMetaData());
             if (originalRequest.getConfigurationSyncRequest() != null) {
                 ConfigurationSyncRequest configurationSyncRequest = originalRequest.getConfigurationSyncRequest();
-                if(syncResponse.getConfigurationSyncResponse() != null){
+                if (syncResponse.getConfigurationSyncResponse() != null) {
                     int newSeqNumber = syncResponse.getConfigurationSyncResponse().getAppStateSeqNumber();
-                    LOG.debug("[{}][{}] Change original configuration request {} appSeqNumber from {} to {}", endpointKey,
-                            actorKey, originalRequest, configurationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
+                    LOG.debug("[{}][{}] Change original configuration request {} appSeqNumber from {} to {}",
+                            endpointKey, actorKey, originalRequest, configurationSyncRequest.getAppStateSeqNumber(),
+                            newSeqNumber);
                     configurationSyncRequest.setAppStateSeqNumber(newSeqNumber);
                 }
                 newRequest.setConfigurationSyncRequest(configurationSyncRequest);
@@ -190,10 +199,11 @@ public class EndpointActorMessageProcessor {
             }
             if (originalRequest.getNotificationSyncRequest() != null) {
                 NotificationSyncRequest notificationSyncRequest = originalRequest.getNotificationSyncRequest();
-                if(syncResponse.getNotificationSyncResponse() != null){
+                if (syncResponse.getNotificationSyncResponse() != null) {
                     int newSeqNumber = syncResponse.getNotificationSyncResponse().getAppStateSeqNumber();
-                    LOG.debug("[{}][{}] Change original notification request {} appSeqNumber from {} to {}", endpointKey,
-                            actorKey, originalRequest, notificationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
+                    LOG.debug("[{}][{}] Change original notification request {} appSeqNumber from {} to {}",
+                            endpointKey, actorKey, originalRequest, notificationSyncRequest.getAppStateSeqNumber(),
+                            newSeqNumber);
                     notificationSyncRequest.setAppStateSeqNumber(newSeqNumber);
                 }
                 newRequest.setNotificationSyncRequest(notificationSyncRequest);
@@ -256,7 +266,8 @@ public class EndpointActorMessageProcessor {
                 } else {
                     LOG.debug("[{}][{}] Updating request for async channel {}", endpointKey, actorKey, channel);
                     request = channel.mergeRequest(requestMessage);
-                    LOG.trace("[{}][{}] Updated request for async channel {} : {}", endpointKey, actorKey, channel, request);
+                    LOG.trace("[{}][{}] Updated request for async channel {} : {}", endpointKey, actorKey, channel,
+                            request);
                 }
             } else {
                 request = channel.getRequestMessage().getRequest();
@@ -308,7 +319,7 @@ public class EndpointActorMessageProcessor {
     private void processEvents(ActorContext context, SyncRequest request, SyncResponseHolder responseHolder) {
         if (isValidForEvents(endpointProfile)) {
             updateUserConnection(context);
-            if(request.getEventSyncRequest() != null){
+            if (request.getEventSyncRequest() != null) {
                 EventSyncRequest eventRequest = request.getEventSyncRequest();
                 processSeqNumber(eventRequest, responseHolder);
                 sendEventsIfPresent(context, eventRequest);
@@ -323,7 +334,7 @@ public class EndpointActorMessageProcessor {
     private void processSeqNumber(EventSyncRequest request, SyncResponseHolder responseHolder) {
         if (request.getEventSequenceNumberRequest() != null) {
             EventSyncResponse response = responseHolder.getResponse().getEventSyncResponse();
-            if(response == null){
+            if (response == null) {
                 response = new EventSyncResponse();
                 responseHolder.getResponse().setEventSyncResponse(response);
             }
@@ -345,10 +356,30 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processLogUpload(ActorContext context, SyncRequest request, SyncResponseHolder responseHolder) {
-        if (requireLogUpload(request)) {
-            responseHolder.getResponse().setLogSyncResponse(
-                    sendLogs(context, endpointProfile, request.getLogSyncRequest()));
+    private void processLogUpload(ActorContext context, SyncRequest syncRequest, SyncResponseHolder responseHolder) {
+        LogSyncRequest request = syncRequest.getLogSyncRequest();
+        if (request != null) {
+            if(request.getLogEntries() != null && request.getLogEntries().size() > 0){
+                LOG.debug("[{}][{}] Processing log upload request {}", endpointKey, actorKey, request.getLogEntries()
+                        .size());
+                LogEventPack logPack = new LogEventPack();
+                logPack.setDateCreated(System.currentTimeMillis());
+                logPack.setEndpointKey(Base64Util.encode(key.getData()));
+                List<LogEvent> logEvents = new ArrayList<>(request.getLogEntries().size());
+                for (LogEntry logEntry : request.getLogEntries()) {
+                    LogEvent logEvent = new LogEvent();
+                    logEvent.setLogData(logEntry.getData().array());
+                    logEvents.add(logEvent);
+                }
+                logPack.setEvents(logEvents);
+                logPack.setLogSchemaVersion(responseHolder.getEndpointProfile().getLogSchemaVersion());
+                context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack),
+                        context.self());
+            }
+            if(logUploadResponseMap.size() > 0){
+                responseHolder.getResponse().setLogSyncResponse(toLogDeliveryStatus());
+                logUploadResponseMap.clear();
+            }
         }
     }
 
@@ -465,30 +496,6 @@ public class EndpointActorMessageProcessor {
         processedEventSeqNum = Integer.MIN_VALUE;
     }
 
-    protected LogSyncResponse sendLogs(ActorContext context, EndpointProfileDto profile, LogSyncRequest logUploadRequest) {
-        LOG.debug("[{}][{}] Processing log upload request {}", endpointKey, actorKey, logUploadRequest.getLogEntries()
-                .size());
-        LogEventPack logPack = new LogEventPack();
-        logPack.setDateCreated(System.currentTimeMillis());
-        logPack.setEndpointKey(Base64Util.encode(key.getData()));
-        List<LogEvent> logEvents = new ArrayList<>(logUploadRequest.getLogEntries().size());
-        for (LogEntry logEntry : logUploadRequest.getLogEntries()) {
-            LogEvent logEvent = new LogEvent();
-            logEvent.setLogData(logEntry.getData().array());
-            logEvents.add(logEvent);
-        }
-        logPack.setEvents(logEvents);
-        logPack.setLogSchemaVersion(profile.getLogSchemaVersion());
-        context.parent().tell(new LogEventPackMessage(logPack), context.self());
-        return new LogSyncResponse(logUploadRequest.getRequestId(), SyncResponseResultType.SUCCESS);
-    }
-
-    private boolean requireLogUpload(SyncRequest request) {
-        return request != null && request.getLogSyncRequest() != null
-                && request.getLogSyncRequest().getLogEntries() != null
-                && request.getLogSyncRequest().getLogEntries().size() > 0;
-    }
-
     protected void scheduleActorTimeout(ActorContext context) {
         if (channelMap.isEmpty()) {
             scheduleTimeoutMessage(context, new ActorTimeoutMessage(lastActivityTime),
@@ -565,7 +572,7 @@ public class EndpointActorMessageProcessor {
         }
 
         SyncResponse copy = deepCopy(syncResponse);
-        
+
         NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, request
                 .getCommand().getResponseBuilder(), request.getCommand().getErrorBuilder());
 
@@ -607,7 +614,7 @@ public class EndpointActorMessageProcessor {
             return null;
         }
         EventSyncResponse copy = new EventSyncResponse();
-        if(source.getEventSequenceNumberResponse() != null){
+        if (source.getEventSequenceNumberResponse() != null) {
             copy.setEventSequenceNumberResponse(source.getEventSequenceNumberResponse());
         }
         if (source.getEvents() != null) {
@@ -623,7 +630,15 @@ public class EndpointActorMessageProcessor {
         if (source == null) {
             return null;
         }
-        return new LogSyncResponse(source.getRequestId(), source.getResult());
+        if(source.getDeliveryStatuses() != null){
+            List<LogDeliveryStatus> statusList = new ArrayList<>(source.getDeliveryStatuses().size());
+            for(LogDeliveryStatus status : source.getDeliveryStatuses()){
+                statusList.add(new LogDeliveryStatus(status.getRequestId(), status.getResult(), status.getErrorCode()));
+            }
+            return new LogSyncResponse(statusList);
+        }else{
+            return new LogSyncResponse();
+        }
     }
 
     private NotificationSyncResponse deepCopy(NotificationSyncResponse source) {
@@ -698,14 +713,14 @@ public class EndpointActorMessageProcessor {
                     eventsToSend.add(event);
                     maxSentEventSeqNum = Math.max(event.getSeqNum(), maxSentEventSeqNum);
                 } else {
-                    LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}", endpointKey,
-                            actorKey, events, processedEventSeqNum);
+                    LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}", endpointKey, actorKey,
+                            events, processedEventSeqNum);
                 }
             }
             processedEventSeqNum = maxSentEventSeqNum;
             if (!eventsToSend.isEmpty()) {
-                EndpointEventSendMessage message = new EndpointEventSendMessage(userId, eventsToSend, key,
-                        appToken, context.self());
+                EndpointEventSendMessage message = new EndpointEventSendMessage(userId, eventsToSend, key, appToken,
+                        context.self());
                 context.parent().tell(message, context.self());
             }
         }
@@ -822,5 +837,46 @@ public class EndpointActorMessageProcessor {
             LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
             return false;
         }
+    }
+
+    public void processLogDeliveryMessage(ActorContext context, LogDeliveryMessage message) {
+        LOG.debug("[{}][{}] Received log delivery message for request [{}] with status {}", endpointKey, actorKey,
+                message.getRequestId(), message.isSuccess());
+        logUploadResponseMap.put(message.getRequestId(), message);
+        List<ChannelMetaData> channels = channelMap.getByTransportType(TransportType.LOGGING);
+        if(channels.size() > 0){
+            ChannelMetaData channel = channels.get(0);
+            SyncRequestMessage pendingRequest = channel.getRequestMessage();
+            SyncResponse pendingResponse = channel.getResponseHolder().getResponse();
+
+            pendingResponse.setLogSyncResponse(toLogDeliveryStatus());
+            logUploadResponseMap.clear();
+
+            LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
+            sendReply(context, pendingRequest, pendingResponse);
+            if (!channel.getType().isAsync()) {
+                channelMap.removeChannel(channel);
+            }
+        }
+    }
+
+    private LogSyncResponse toLogDeliveryStatus() {
+        List<LogDeliveryStatus> statusList = new ArrayList<>();
+        for(Entry<String, LogDeliveryMessage> response: logUploadResponseMap.entrySet()){
+        	LogDeliveryMessage message = response.getValue();
+            statusList.add(new LogDeliveryStatus(response.getKey(), message.isSuccess() ? SyncResponseResultType.SUCCESS
+                    : SyncResponseResultType.FAILURE, toErrorCode(message.getErrorCode())));
+        }
+        return new LogSyncResponse(statusList);
+    }
+    
+    private static LogDeliveryErrorCode toErrorCode(org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode errorCode){
+    	switch (errorCode) {
+			case APPENDER_INTERNAL_ERROR: return LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR;
+			case NO_APPENDERS_CONFIGURED: return LogDeliveryErrorCode.NO_APPENDERS_CONFIGURED;
+			case REMOTE_CONNECTION_ERROR: return LogDeliveryErrorCode.REMOTE_CONNECTION_ERROR;
+			case REMOTE_INTERNAL_ERROR: return LogDeliveryErrorCode.REMOTE_INTERNAL_ERROR;
+			default: return null;
+		}
     }
 }
