@@ -39,6 +39,7 @@ static void destroy_sync_details(void *data)
         sync_details->supported_services_size = 0;
         KAA_FREE(sync_details->supported_services);
         sync_details->supported_services = NULL;
+        KAA_FREE(sync_details);
     }
 }
 
