@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.sandbox.web.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
@@ -42,6 +41,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("api")
 public class SandboxController {
+
+    private static final String DATA_TYPE = "dataType";
+
+    private static final String PROJECT_ID = "projectId";
 
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(SandboxController.class);
@@ -73,8 +76,8 @@ public class SandboxController {
     @RequestMapping(value="isProjectDataExists", method=RequestMethod.GET)
     @ResponseBody
     public boolean checkProjectDataExists(
-            @RequestParam(value="projectId") String projectId,
-            @RequestParam(value="dataType") String dataType) throws SandboxServiceException {
+            @RequestParam(value=PROJECT_ID) String projectId,
+            @RequestParam(value=DATA_TYPE) String dataType) throws SandboxServiceException {
         return sandboxService.checkProjectDataExists(projectId, ProjectDataType.valueOf(dataType.toUpperCase()));
     }
     
@@ -85,13 +88,12 @@ public class SandboxController {
     @RequestMapping(value="buildProjectData", method=RequestMethod.POST)
     @ResponseBody
     public byte[] buildProjectData(
-            @RequestParam(value="projectId") String projectId, 
-            @RequestParam(value="dataType") String dataType) throws SandboxServiceException {
+            @RequestParam(value=PROJECT_ID) String projectId, 
+            @RequestParam(value=DATA_TYPE) String dataType) throws SandboxServiceException {
         BuildOutputData buildOutputData = new BuildOutputData();
         try {
             sandboxService.buildProjectData(null, buildOutputData, projectId, ProjectDataType.valueOf(dataType.toUpperCase()));
-        }
-        catch (SandboxServiceException e) {
+        } catch (SandboxServiceException e) {
             LOG.error("Failed to build project data!", e);
         }
         return buildOutputData.getOutputData();

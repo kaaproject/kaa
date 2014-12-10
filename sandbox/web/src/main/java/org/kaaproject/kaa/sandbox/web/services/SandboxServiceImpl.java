@@ -179,12 +179,10 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
         	if (guiChangeHostEnabled) {
         	    executeCommand(outStream, new String[]{"sudo",sandboxHome + "/change_kaa_host.sh",host}, null);
         	    cacheService.flushAllCaches();
-        	}
-        	else {
+        	} else {
         	    outStream.println("WARNING: change host from GUI is disabled!");
         	}
-        } 
-        finally {
+        } finally {
             res.getBroadcaster().broadcast(uuid + " finished", res);
         }
     }
@@ -256,8 +254,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                             sourceFileData.setFileData(sourceFileBytes);
                             sourceFileData.setContentType("application/x-compressed");
                             cacheService.putProjectFile(dataKey, sourceFileData);
-                        }
-                        else {
+                        } else {
                             outStream.println("Building binary file...");
                             File projectFolder = rootDir;
                             if (project.getProjectFolder() != null && !project.getProjectFolder().trim().isEmpty()) {
@@ -278,29 +275,24 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                             binaryFileData.setFileData(binaryFileBytes);
                             if (project.getPlatform()==Platform.ANDROID) {
                                 binaryFileData.setContentType("application/vnd.android.package-archive");
-                            }
-                            else if (project.getPlatform()==Platform.JAVA) {
+                            } else if (project.getPlatform()==Platform.JAVA) {
                                 binaryFileData.setContentType("application/x-compressed");
                             }
                             cacheService.putProjectFile(dataKey, binaryFileData);
                         }
-                    }
-                    finally {
+                    } finally {
                         FileUtils.deleteDirectory(rootDir);
                     }
-                }
-                else {
+                } else {
                     outStream.println("Unable to get/create SDK for requested project!");
                 }
-            }
-            else {
+            } else {
                 outStream.println("No project configuration found!");
             }
             
         } catch (Exception e) {
             throw Utils.handleException(e);
-        }
-        finally {
+        } finally {
             if (res != null) {
                 res.getBroadcaster().broadcast(uuid + " finished", res);
             }

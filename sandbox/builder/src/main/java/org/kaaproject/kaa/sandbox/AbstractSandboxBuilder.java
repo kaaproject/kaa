@@ -135,12 +135,10 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             stopBox();
             cleanupBox();
             exportBox();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Failed to build sandbox image!", e);
             throw e;
-        }
-        finally {
+        } finally {
             if (boxLoaded()) {
                 if (boxRunning()) {
                     stopBox();
@@ -274,8 +272,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
                 LOG.error("Unable to delete previous output image file '{}'", imageOutputFile.getAbsoluteFile());
                 throw new RuntimeException("Failed to export sandbox image!");
             }
-        }
-        else if (!imageOutputFile.getParentFile().exists()){
+        } else if (!imageOutputFile.getParentFile().exists()){
             imageOutputFile.getParentFile().mkdirs();
         }
         exportBoxImpl();
