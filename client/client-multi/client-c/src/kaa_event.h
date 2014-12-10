@@ -48,7 +48,7 @@ typedef struct kaa_event_manager_t kaa_event_manager_t;
  *
  * @return Error code.
  */
-kaa_error_t kaa_add_event(kaa_event_manager_t *self, const char * fqn, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
+kaa_error_t kaa_add_event(kaa_event_manager_t *self, const char *fqn, const char *event_data, size_t event_data_size, const char *target, size_t target_size);
 #ifdef kaa_broadcast_event
 #undef kaa_broadcast_event
 #endif
@@ -122,7 +122,7 @@ kaa_error_t kaa_event_remove_transaction(kaa_event_manager_t *self, kaa_event_bl
  *
  * @return Error code.
  */
-kaa_error_t kaa_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
+kaa_error_t kaa_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char *fqn, size_t fqn_length, const char *event_data, size_t event_data_size, const char *target, size_t target_size);
 
 /**
  * @brief Find class family name of the event by its fully-qualified name.
