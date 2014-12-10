@@ -116,11 +116,11 @@ static void destroy_transaction(void *trx_p)
     KAA_FREE(trx);
 }
 
-static kaa_event_block_id trx_search_arg0 = 0;
-static bool transaction_search_by_id_predicate(void *trx_p)
+static bool transaction_search_by_id_predicate(void *trx_p, void *context)
 {
     event_transaction_t *trx = (event_transaction_t *) trx_p;
-    return trx_search_arg0 == trx->id;
+    kaa_event_block_id *matcher = (kaa_event_block_id *) context;
+    return (matcher && trx) ? ((*matcher) == trx->id) : false;
 }
 
 /* Public stuff */
@@ -551,8 +551,7 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to send events from event batch with id %zu", trx_id);
 
     if (self->transactions) {
-        trx_search_arg0 = trx_id;
-        kaa_list_t *it = kaa_list_find_next(self->transactions, transaction_search_by_id_predicate);
+        kaa_list_t *it = kaa_list_find_next(self->transactions, &transaction_search_by_id_predicate, &trx_id);
         if (it) {
             event_transaction_t *trx = kaa_list_get_data(it);
             bool need_sync = false;
@@ -586,8 +585,7 @@ kaa_error_t kaa_event_remove_transaction(kaa_event_manager_t *self, kaa_event_bl
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to remove events batch with id %zu", trx_id);
 
     if (self->transactions) {
-        trx_search_arg0 = trx_id;
-        kaa_list_t *it = kaa_list_find_next(self->transactions, transaction_search_by_id_predicate);
+        kaa_list_t *it = kaa_list_find_next(self->transactions, &transaction_search_by_id_predicate, &trx_id);
         if (it) {
             kaa_list_remove_at(&self->transactions, it, &destroy_transaction);
             return KAA_ERR_NONE;
@@ -615,8 +613,7 @@ kaa_error_t kaa_add_event_to_transaction(kaa_event_manager_t *self
     KAA_RETURN_IF_NIL2(fqn, fqn_length, KAA_ERR_EVENT_BAD_FQN);
 
     if (self->transactions) {
-        trx_search_arg0 = trx_id;
-        kaa_list_t *it = kaa_list_find_next(self->transactions, transaction_search_by_id_predicate);
+        kaa_list_t *it = kaa_list_find_next(self->transactions, &transaction_search_by_id_predicate, &trx_id);
         if (it) {
             event_transaction_t *trx = kaa_list_get_data(it);
             kaa_event_t *event = kaa_event_create();

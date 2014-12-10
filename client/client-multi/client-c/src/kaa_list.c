@@ -171,11 +171,11 @@ kaa_list_t *kaa_list_insert_after(kaa_list_t *position, void *data)
     return new_element;
 }
 
-kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred)
+kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred, void *context)
 {
     KAA_RETURN_IF_NIL2(from, pred, NULL);
     while (from) {
-        if ((*pred)(from->data)) {
+        if ((*pred)(from->data, context)) {
             return from;
         }
         from = from->next;
@@ -183,12 +183,12 @@ kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred)
     return NULL;
 }
 
-kaa_list_t *kaa_list_find_last_occurance(kaa_list_t *from, match_predicate pred)
+kaa_list_t *kaa_list_find_last_occurance(kaa_list_t *from, match_predicate pred, void *context)
 {
     KAA_RETURN_IF_NIL2(from, pred, NULL);
     kaa_list_t *it = NULL;
     while (from) {
-        if ((*pred)(from->data)) {
+        if ((*pred)(from->data, context)) {
             it = from;
         }
         from = from->next;

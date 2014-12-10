@@ -78,16 +78,11 @@ static void memory_log_storage_add_log_record(kaa_log_entry_t * record)
     log_storage->occupied_size += (size_t)record->data->size;
 }
 
-static kaa_uuid_t uuid_for_search;
-static bool find_log_block_by_uuid(void * block_p)
+static bool find_log_block_by_uuid(void * block_p, void *context)
 {
-    kaa_memory_log_block_t * block = (kaa_memory_log_block_t *) block_p;
-    if (block != NULL) {
-        if (kaa_uuid_compare(&block->uuid, &uuid_for_search) == 0) {
-            return true;
-        }
-    }
-    return false;
+    kaa_memory_log_block_t *block = (kaa_memory_log_block_t *) block_p;
+    kaa_uuid_t *matcher = (kaa_uuid_t *) context;
+    return (block && matcher) ? (kaa_uuid_compare(&block->uuid, matcher) == 0) : false;
 }
 
 static kaa_log_entry_t * memory_log_storage_get_record(kaa_uuid_t uuid)
@@ -138,8 +133,7 @@ static kaa_log_entry_t * memory_log_storage_get_record(kaa_uuid_t uuid)
 
 static void memory_log_storage_upload_succeeded(kaa_uuid_t uuid)
 {
-    kaa_uuid_copy(&uuid_for_search, &uuid);
-    kaa_list_t * block = kaa_list_find_next(log_storage->uploading_blocks, &find_log_block_by_uuid);
+    kaa_list_t * block = kaa_list_find_next(log_storage->uploading_blocks, &find_log_block_by_uuid, &uuid);
     if (block) {
         kaa_list_remove_at(&log_storage->uploading_blocks, block, &destroy_memory_log_block);
     }
@@ -147,8 +141,7 @@ static void memory_log_storage_upload_succeeded(kaa_uuid_t uuid)
 
 static void memory_log_storage_upload_failed(kaa_uuid_t uuid)
 {
-    kaa_uuid_copy(&uuid_for_search, &uuid);
-    kaa_list_t * it = kaa_list_find_next(log_storage->uploading_blocks, &find_log_block_by_uuid);
+    kaa_list_t * it = kaa_list_find_next(log_storage->uploading_blocks, &find_log_block_by_uuid, &uuid);
     if (it) {
         kaa_memory_log_block_t *block = kaa_list_get_data(it);
         kaa_list_remove_at(&log_storage->uploading_blocks, it, &kaa_null_destroy);

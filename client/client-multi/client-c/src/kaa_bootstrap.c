@@ -104,6 +104,8 @@ kaa_error_t kaa_bootstrap_manager_add_operations_server(kaa_bootstrap_manager_t 
 kaa_ops_t* kaa_bootstrap_manager_get_current_operations_server(kaa_bootstrap_manager_t *self, kaa_channel_type_t channel_type)
 {
     KAA_RETURN_IF_NIL(self, NULL);
+    if (channel_type >= KAA_CHANNEL_TYPE_COUNT)
+        return NULL;
 
     if (self->current_server[channel_type]) {
         return (kaa_ops_t*) kaa_list_get_data(self->current_server[channel_type]);
@@ -118,6 +120,8 @@ kaa_ops_t* kaa_bootstrap_manager_get_current_operations_server(kaa_bootstrap_man
 kaa_ops_t* kaa_bootstrap_manager_get_next_operations_server(kaa_bootstrap_manager_t *self, kaa_channel_type_t channel_type)
 {
     KAA_RETURN_IF_NIL(self, NULL);
+    if (channel_type >= KAA_CHANNEL_TYPE_COUNT)
+        return NULL;
 
     if (!self->current_server[channel_type]) {
         return kaa_bootstrap_manager_get_current_operations_server(self, channel_type);

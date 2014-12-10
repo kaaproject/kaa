@@ -104,18 +104,18 @@ kaa_list_t *kaa_list_insert_after(kaa_list_t *position, void *data);
 /**
  * Return 0 if data doesn't match search criteria
  */
-typedef bool (*match_predicate)(void *data);
+typedef bool (*match_predicate)(void *data, void *context);
 /**
- * Returns first element in list from given position where ((*pred)(data) != 0).
+ * Returns first element in list from given position where ((*pred)(data, context) != 0).
  * If nothing matched given criteria or list is empty NULL is returned.
  */
-kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred);
+kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred, void *context);
 
 /**
- * Returns last element in list from given position where ((*pred)(data) != 0).
+ * Returns last element in list from given position where ((*pred)(data, context) != 0).
  * If nothing matched given criteria or list is empty NULL is returned.
  */
-kaa_list_t *kaa_list_find_last_occurance(kaa_list_t *from, match_predicate pred);
+kaa_list_t *kaa_list_find_last_occurance(kaa_list_t *from, match_predicate pred, void *context);
 
 kaa_list_t *kaa_list_split_after(kaa_list_t *head, kaa_list_t *after, kaa_list_t **tail);
 
