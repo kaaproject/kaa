@@ -76,6 +76,18 @@
             <servlet-class>org.kaaproject.kaa.sandbox.web.servlet.ProjectFileServlet</servlet-class>
             <load-on-startup>1</load-on-startup>
         </servlet>
+        
+        <servlet>
+            <servlet-name>sandboxRestServlet</servlet-name>
+            <servlet-class>
+                org.springframework.web.servlet.DispatcherServlet
+            </servlet-class>
+            <init-param>
+                <param-name>contextConfigLocation</param-name>
+                <param-value>/WEB-INF/rest-servlet.xml</param-value>
+            </init-param>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
     	
         <servlet-mapping>
             <servlet-name>springGwtRemoteServiceServlet</servlet-name>
@@ -90,6 +102,11 @@
 	    <servlet-mapping>
             <servlet-name>sandboxProjectFileServlet</servlet-name>
             <url-pattern>/sandbox/servlet/sandboxProjectFileServlet</url-pattern>
+        </servlet-mapping>
+        
+        <servlet-mapping>
+            <servlet-name>sandboxRestServlet</servlet-name>
+            <url-pattern>/rest/*</url-pattern>
         </servlet-mapping>
         
          <!-- Default page to serve -->

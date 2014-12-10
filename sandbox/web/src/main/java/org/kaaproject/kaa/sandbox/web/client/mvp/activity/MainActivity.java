@@ -204,7 +204,7 @@ public class MainActivity extends AbstractActivity implements MainView.Presenter
 
                         @Override
                         public void onStart(String uuid, final ConsoleDialog dialog, final AsyncCallback<Void> callback) {
-                            Sandbox.getSandboxService().buildProjectData(uuid, projectId, type, new AsyncCallback<Void>() {
+                            Sandbox.getSandboxService().buildProjectData(uuid, null, projectId, type, new AsyncCallback<Void>() {
                               @Override
                               public void onFailure(Throwable caught) {
                                   callback.onFailure(caught);

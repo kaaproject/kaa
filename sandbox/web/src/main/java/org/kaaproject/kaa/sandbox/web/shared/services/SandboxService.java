@@ -19,6 +19,7 @@ package org.kaaproject.kaa.sandbox.web.shared.services;
 import java.util.List;
 
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
+import org.kaaproject.kaa.sandbox.web.shared.dto.BuildOutputData;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataType;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -35,5 +36,5 @@ public interface SandboxService extends RemoteService {
     
     public boolean checkProjectDataExists(String projectId, ProjectDataType dataType) throws SandboxServiceException;
  
-    public void buildProjectData(String uuid, String projectId, ProjectDataType dataType) throws SandboxServiceException;
+    public void buildProjectData(String uuid, BuildOutputData outputData, String projectId, ProjectDataType dataType) throws SandboxServiceException;
 }
