@@ -72,10 +72,6 @@ static void destroy_memory_log_block(void * block_p)
     }
 }
 
-static void noop(void * block_p)
-{
-}
-
 static void memory_log_storage_add_log_record(kaa_log_entry_t * record)
 {
     kaa_deque_push_back_data(log_storage->logs, record); // FIXME: handle error if any;
@@ -155,8 +151,7 @@ static void memory_log_storage_upload_failed(kaa_uuid_t uuid)
     kaa_list_t * it = kaa_list_find_next(log_storage->uploading_blocks, &find_log_block_by_uuid);
     if (it) {
         kaa_memory_log_block_t *block = kaa_list_get_data(it);
-        kaa_list_remove_at(&log_storage->uploading_blocks, it, &noop);
-
+        kaa_list_remove_at(&log_storage->uploading_blocks, it, &kaa_null_destroy);
         log_storage->logs = kaa_deque_merge_move(block->logs, log_storage->logs);
     }
 }
