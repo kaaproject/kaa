@@ -60,6 +60,7 @@ import org.kaaproject.kaa.sandbox.demo.DemoBuilder;
 import org.kaaproject.kaa.sandbox.demo.DemoBuildersRegistry;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.demo.projects.ProjectsConfig;
+import org.kaaproject.kaa.sandbox.rest.SandboxClient;
 import org.kaaproject.kaa.sandbox.ssh.SandboxSshExec;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
@@ -68,7 +69,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxConstants {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractSandboxBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractSandboxBuilder.class);
     private static final String MD5 = "MD5";
     private static final String MD5_FILE_EXT = ".md5";
 
@@ -109,7 +110,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
     @Override
     public void buildSandboxImage() throws Exception {
         if (boxLoaded()) {
-            logger.info("Box with name '{}' already exists. Going to unload old instance ...", boxName);
+            LOG.info("Box with name '{}' already exists. Going to unload old instance ...", boxName);
             if (boxRunning()) {
                 stopBox();
             }
@@ -122,20 +123,22 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             provisionBox();
             schedulePackagesInstall();
             scheduleServicesStart();
-            logger.info("Executing remote ssh commands...");
+            LOG.info("Executing remote ssh commands...");
             executeScheduledSshCommands();
-            logger.info("Remote ssh commands execution is completed.");
-            logger.info("Sleeping 80 sec.");
+            LOG.info("Remote ssh commands execution is completed.");
+            LOG.info("Sleeping 80 sec.");
             Thread.sleep(80000);
             initBoxData();
-            logger.info("Sleeping 20 sec.");
+            LOG.info("Sleeping 20 sec.");
             Thread.sleep(20000);
             unprovisionBox();
             stopBox();
             cleanupBox();
             exportBox();
-        }
-        finally {
+        } catch (Exception e) {
+            LOG.error("Failed to build sandbox image!", e);
+            throw e;
+        } finally {
             if (boxLoaded()) {
                 if (boxRunning()) {
                     stopBox();
@@ -146,20 +149,20 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
     }
 
     private void loadBox() throws Exception {
-        logger.info("Loading box '{}' ...", boxName);
+        LOG.info("Loading box '{}' ...", boxName);
         String fileName = FilenameUtils.getName(baseImageUrl.toString());
         baseImageFile = new File(System.getProperty("java.io.tmpdir"), fileName);
-        logger.info("Downloading base image to file '{}'...", baseImageFile.getAbsolutePath());
+        LOG.info("Downloading base image to file '{}'...", baseImageFile.getAbsolutePath());
         downloadFile(baseImageUrl, baseImageFile);
         
         if (baseImageFile.exists() && baseImageFile.isFile()) {
-            logger.info("Downloaded base image to file '{}'.", baseImageFile.getAbsolutePath());
+            LOG.info("Downloaded base image to file '{}'.", baseImageFile.getAbsolutePath());
         } else {
-            logger.error("Unable to download image file to '{}'", baseImageFile.getAbsolutePath());
+            LOG.error("Unable to download image file to '{}'", baseImageFile.getAbsolutePath());
             throw new RuntimeException("Unable to download image file!");
         }
         loadBoxImpl();
-        logger.info("Box '{}' is loaded.", boxName);
+        LOG.info("Box '{}' is loaded.", boxName);
     }
 
     private static final int EOF = -1;
@@ -172,7 +175,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             String checksumFileUrl = sourceUrl.toString() + MD5_FILE_EXT;
             String md5sum = downloadCheckSumFile(httpClient, context, checksumFileUrl);
             boolean result = compareChecksum(targetFile, md5sum);
-            logger.debug("Compare checksum result is {}", result);
+            LOG.debug("Compare checksum result is {}", result);
             if (!result) {
                 targetFile.delete();
                 downloadFile(httpClient, context, sourceUrl, targetFile);
@@ -183,7 +186,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
     }
 
     private void downloadFile(HttpClient httpClient, HttpContext context, URL sourceUrl, File targetFile) throws Exception {
-        logger.debug("Download {} to file {}", sourceUrl.toString(), targetFile.getAbsolutePath());
+        LOG.debug("Download {} to file {}", sourceUrl.toString(), targetFile.getAbsolutePath());
         HttpEntity entity = null;
         try {
             HttpGet httpGet = new HttpGet(sourceUrl.toURI());
@@ -204,14 +207,14 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             throws IOException {
         long count = 0;
         int n = 0;
-        logger.info("0%");
+        LOG.info("0%");
         int loggedPercents = 0;
         while (EOF != (n = input.read(buffer))) {
             output.write(buffer, 0, n);
             count += n;
             int percentsComplete = (int)((double)count/(double)length*100f);
             if (percentsComplete-loggedPercents>=10) {
-                logger.info(percentsComplete+"%");
+                LOG.info(percentsComplete+"%");
                 loggedPercents = percentsComplete;
             }
         }
@@ -219,15 +222,15 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
     }
 
     private void prepareBox() throws Exception {
-        logger.info("Preparing box '{}' ...", boxName);
+        LOG.info("Preparing box '{}' ...", boxName);
         prepareBoxImpl();
-        logger.info("Box '{}' is prepared.", boxName);
+        LOG.info("Box '{}' is prepared.", boxName);
     }
 
     private void startBox() throws Exception {
-        logger.info("Starting box '{}' ...", boxName);
+        LOG.info("Starting box '{}' ...", boxName);
         startBoxImpl();
-        logger.info("Box '{}' is started.", boxName);
+        LOG.info("Box '{}' is started.", boxName);
     }
 
     private void provisionBox() throws Exception {
@@ -239,9 +242,9 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         scheduleSudoSshCommand("chown -R "+SSH_USERNAME+":"+SSH_USERNAME+" " + SANDBOX_FOLDER);
         executeScheduledSshCommands();
 
-        logger.info("Transfering sandbox data...");
+        LOG.info("Transfering sandbox data...");
         transferAllFromDir(basePath.getAbsolutePath(), "/"+SHARED_FOLDER);
-        logger.info("Sandbox data transfered");
+        LOG.info("Sandbox data transfered");
 
     }
 
@@ -251,36 +254,35 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
     }
 
     private void stopBox() throws Exception {
-        logger.info("Stopping box '{}' ...", boxName);
+        LOG.info("Stopping box '{}' ...", boxName);
         stopBoxImpl();
-        logger.info("Box '{}' is stopped.", boxName);
+        LOG.info("Box '{}' is stopped.", boxName);
     }
 
     private void cleanupBox() throws Exception {
-        logger.info("Cleaning box '{}' ...", boxName);
+        LOG.info("Cleaning box '{}' ...", boxName);
         cleanupBoxImpl();
-        logger.info("Box '{}' is cleaned.", boxName);
+        LOG.info("Box '{}' is cleaned.", boxName);
     }
 
     private void exportBox() throws Exception {
-        logger.info("Exporting box '{}' ...", boxName);
+        LOG.info("Exporting box '{}' ...", boxName);
         if (imageOutputFile.exists()) {
             if (!imageOutputFile.delete()) {
-                logger.error("Unable to delete previous output image file '{}'", imageOutputFile.getAbsoluteFile());
+                LOG.error("Unable to delete previous output image file '{}'", imageOutputFile.getAbsoluteFile());
                 throw new RuntimeException("Failed to export sandbox image!");
             }
-        }
-        else if (!imageOutputFile.getParentFile().exists()){
+        } else if (!imageOutputFile.getParentFile().exists()){
             imageOutputFile.getParentFile().mkdirs();
         }
         exportBoxImpl();
-        logger.info("Box '{}' was exported.", boxName);
+        LOG.info("Box '{}' was exported.", boxName);
     }
 
     private void unloadBox() throws Exception {
-        logger.info("Unloading box '{}' ...", boxName);
+        LOG.info("Unloading box '{}' ...", boxName);
         unloadBoxImpl();
-        logger.info("Box '{}' was unloaded.", boxName);
+        LOG.info("Box '{}' was unloaded.", boxName);
     }
 
     protected abstract void loadBoxImpl() throws Exception;
@@ -394,6 +396,10 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         scheduleSudoSshCommand("sed -i \"s/\\(tenant_developer_user=\\).*\\$/\\1"+AbstractDemoBuilder.tenantDeveloperUser+"/\" " + ADMIN_FOLDER +"/conf/sandbox-server.properties");
         scheduleSudoSshCommand("sed -i \"s/\\(tenant_developer_password=\\).*\\$/\\1"+AbstractDemoBuilder.tenantDeveloperPassword+"/\" " + ADMIN_FOLDER +"/conf/sandbox-server.properties");
 
+        String stopAdminCommand = osType.getStopServiceTemplate().
+                replaceAll(SERVICE_NAME_VAR, KaaPackage.ADMIN.getServiceName());
+        scheduleSudoSshCommand(stopAdminCommand);
+
         executeScheduledSshCommands();
 
         transferFile(changeKaaHostFile.getAbsolutePath(), SANDBOX_FOLDER);
@@ -402,6 +408,32 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
 
         executeSudoSsh("chmod +x " + SANDBOX_FOLDER + "/"+CHANGE_KAA_HOST);
         executeSudoSsh("chmod +x " + SANDBOX_FOLDER + "/"+SANDBOX_SPLASH_PY);
+        
+        String startAdminCommand = osType.getStartServiceTemplate().
+                replaceAll(SERVICE_NAME_VAR, KaaPackage.ADMIN.getServiceName());        
+        executeSudoSsh(startAdminCommand);
+        
+        LOG.info("Sleeping 50 sec.");
+        Thread.sleep(50000);
+        
+        LOG.info("Building demo applications...");
+        SandboxClient sandboxClient = new SandboxClient(DEFAULT_HOST, webAdminForwardPort);
+        
+        List<Project> sandboxProjects = sandboxClient.getDemoProjects();
+        if (projects.size() != sandboxProjects.size()) {
+            LOG.error("Demo projects count mismatch, expected {}, actual {}", projects.size(), sandboxProjects.size());
+            throw new RuntimeException("Demo projects count mismatch!");
+        }
+        for (Project sandboxProject : sandboxProjects) {
+            LOG.info("[{}] Building Demo Project...", sandboxProject.getName());
+            String output = sandboxClient.buildProjectBinary(sandboxProject.getId());
+            LOG.info("[{}] Build output:\n{}", sandboxProject.getName(), output);
+            if (!sandboxClient.isProjectBinaryDataExists(sandboxProject.getId())) {
+                LOG.error("Failed to build demo project '{}'", sandboxProject.getName());
+                throw new RuntimeException("Failed to build demo project '" + sandboxProject.getName() + "'!");
+            }
+        }
+        LOG.info("Finihed building demo applications!");
     }
 
     protected boolean isWin32() {
@@ -433,7 +465,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         BufferedWriter writer = new BufferedWriter(output);
         while ((line = reader.readLine()) != null) {
             if (logOutput) {
-                logger.info(line);
+                LOG.info(line);
             }
             writer.write(line);
             writer.newLine();
@@ -512,15 +544,15 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             }
             byte[] digestBytes = messageDigest.digest();
             checkSum = DatatypeConverter.printHexBinary(digestBytes);
-            logger.debug("Calculated checksum for filer[{}]: [{}], downloaded is [{}]", targetFile.getAbsolutePath(), checkSum, downloadedCheckSum);
+            LOG.debug("Calculated checksum for filer[{}]: [{}], downloaded is [{}]", targetFile.getAbsolutePath(), checkSum, downloadedCheckSum);
         } catch (IOException | NoSuchAlgorithmException e) {
-            logger.debug("Can't calculate checksum for file [{}]", targetFile.getAbsolutePath());
+            LOG.debug("Can't calculate checksum for file [{}]", targetFile.getAbsolutePath());
         }
         return checkSum.equalsIgnoreCase(downloadedCheckSum);
     }
     
     public String downloadCheckSumFile(HttpClient httpClient, HttpContext context, String url) throws Exception {
-        logger.debug("Starting download [{}] ...", url);
+        LOG.debug("Starting download [{}] ...", url);
         HttpGet httpGet = new HttpGet(URI.create(url));
         HttpResponse response = httpClient.execute(httpGet, context);
         HttpEntity entity = response.getEntity();
