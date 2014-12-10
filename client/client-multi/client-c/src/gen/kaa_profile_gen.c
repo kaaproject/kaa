@@ -65,7 +65,7 @@ static size_t kaa_profile_basic_endpoint_profile_test_get_size(void* data)
 kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create()
 {
     kaa_profile_basic_endpoint_profile_test_t* record = 
-            (kaa_profile_basic_endpoint_profile_test_t*)KAA_MALLOC(sizeof(kaa_profile_basic_endpoint_profile_test_t));
+            (kaa_profile_basic_endpoint_profile_test_t*)KAA_CALLOC(1, sizeof(kaa_profile_basic_endpoint_profile_test_t));
 
     if (record) {
         record->serialize = kaa_profile_basic_endpoint_profile_test_serialize;

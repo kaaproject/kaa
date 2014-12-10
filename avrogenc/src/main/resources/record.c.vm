@@ -164,7 +164,7 @@ static size_t ${prefix}_${record_name}_get_size(void* data)
 ${prefix}_${record_name}_t* ${prefix}_${record_name}_create()
 {
     ${prefix}_${record_name}_t* record = 
-            (${prefix}_${record_name}_t*)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
+            (${prefix}_${record_name}_t*)KAA_CALLOC(1, sizeof(${prefix}_${record_name}_t));
 
     if (record) {
 #if ($schema.getFields().size() > 0)

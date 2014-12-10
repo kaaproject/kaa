@@ -67,7 +67,7 @@ static size_t kaa_event_class_family_version_info_get_size(void* data)
 kaa_event_class_family_version_info_t* kaa_event_class_family_version_info_create()
 {
     kaa_event_class_family_version_info_t* record = 
-            (kaa_event_class_family_version_info_t*)KAA_MALLOC(sizeof(kaa_event_class_family_version_info_t));
+            (kaa_event_class_family_version_info_t*)KAA_CALLOC(1, sizeof(kaa_event_class_family_version_info_t));
 
     if (record) {
         record->serialize = kaa_event_class_family_version_info_serialize;
@@ -226,7 +226,7 @@ static size_t kaa_endpoint_version_info_get_size(void* data)
 kaa_endpoint_version_info_t* kaa_endpoint_version_info_create()
 {
     kaa_endpoint_version_info_t* record = 
-            (kaa_endpoint_version_info_t*)KAA_MALLOC(sizeof(kaa_endpoint_version_info_t));
+            (kaa_endpoint_version_info_t*)KAA_CALLOC(1, sizeof(kaa_endpoint_version_info_t));
 
     if (record) {
         record->serialize = kaa_endpoint_version_info_serialize;
@@ -276,7 +276,7 @@ static size_t kaa_topic_state_get_size(void* data)
 kaa_topic_state_t* kaa_topic_state_create()
 {
     kaa_topic_state_t* record = 
-            (kaa_topic_state_t*)KAA_MALLOC(sizeof(kaa_topic_state_t));
+            (kaa_topic_state_t*)KAA_CALLOC(1, sizeof(kaa_topic_state_t));
 
     if (record) {
         record->serialize = kaa_topic_state_serialize;
@@ -326,7 +326,7 @@ static size_t kaa_subscription_command_get_size(void* data)
 kaa_subscription_command_t* kaa_subscription_command_create()
 {
     kaa_subscription_command_t* record = 
-            (kaa_subscription_command_t*)KAA_MALLOC(sizeof(kaa_subscription_command_t));
+            (kaa_subscription_command_t*)KAA_CALLOC(1, sizeof(kaa_subscription_command_t));
 
     if (record) {
         record->serialize = kaa_subscription_command_serialize;
@@ -377,7 +377,7 @@ static size_t kaa_user_attach_request_get_size(void* data)
 kaa_user_attach_request_t* kaa_user_attach_request_create()
 {
     kaa_user_attach_request_t* record = 
-            (kaa_user_attach_request_t*)KAA_MALLOC(sizeof(kaa_user_attach_request_t));
+            (kaa_user_attach_request_t*)KAA_CALLOC(1, sizeof(kaa_user_attach_request_t));
 
     if (record) {
         record->serialize = kaa_user_attach_request_serialize;
@@ -501,7 +501,7 @@ static size_t kaa_endpoint_attach_request_get_size(void* data)
 kaa_endpoint_attach_request_t* kaa_endpoint_attach_request_create()
 {
     kaa_endpoint_attach_request_t* record = 
-            (kaa_endpoint_attach_request_t*)KAA_MALLOC(sizeof(kaa_endpoint_attach_request_t));
+            (kaa_endpoint_attach_request_t*)KAA_CALLOC(1, sizeof(kaa_endpoint_attach_request_t));
 
     if (record) {
         record->serialize = kaa_endpoint_attach_request_serialize;
@@ -707,7 +707,7 @@ static size_t kaa_endpoint_detach_request_get_size(void* data)
 kaa_endpoint_detach_request_t* kaa_endpoint_detach_request_create()
 {
     kaa_endpoint_detach_request_t* record = 
-            (kaa_endpoint_detach_request_t*)KAA_MALLOC(sizeof(kaa_endpoint_detach_request_t));
+            (kaa_endpoint_detach_request_t*)KAA_CALLOC(1, sizeof(kaa_endpoint_detach_request_t));
 
     if (record) {
         record->serialize = kaa_endpoint_detach_request_serialize;
@@ -799,7 +799,7 @@ static size_t kaa_event_get_size(void* data)
 kaa_event_t* kaa_event_create()
 {
     kaa_event_t* record = 
-            (kaa_event_t*)KAA_MALLOC(sizeof(kaa_event_t));
+            (kaa_event_t*)KAA_CALLOC(1, sizeof(kaa_event_t));
 
     if (record) {
         record->serialize = kaa_event_serialize;
@@ -870,7 +870,7 @@ static size_t kaa_event_listeners_request_get_size(void* data)
 kaa_event_listeners_request_t* kaa_event_listeners_request_create()
 {
     kaa_event_listeners_request_t* record = 
-            (kaa_event_listeners_request_t*)KAA_MALLOC(sizeof(kaa_event_listeners_request_t));
+            (kaa_event_listeners_request_t*)KAA_CALLOC(1, sizeof(kaa_event_listeners_request_t));
 
     if (record) {
         record->serialize = kaa_event_listeners_request_serialize;
@@ -1042,7 +1042,7 @@ kaa_event_listeners_response_t* kaa_event_listeners_response_deserialize(avro_re
 kaa_event_sequence_number_request_t* kaa_event_sequence_number_request_create()
 {
     kaa_event_sequence_number_request_t* record = 
-            (kaa_event_sequence_number_request_t*)KAA_MALLOC(sizeof(kaa_event_sequence_number_request_t));
+            (kaa_event_sequence_number_request_t*)KAA_CALLOC(1, sizeof(kaa_event_sequence_number_request_t));
 
     if (record) {
         record->destroy = kaa_data_destroy;
@@ -1298,7 +1298,7 @@ static size_t kaa_log_entry_get_size(void* data)
 kaa_log_entry_t* kaa_log_entry_create()
 {
     kaa_log_entry_t* record = 
-            (kaa_log_entry_t*)KAA_MALLOC(sizeof(kaa_log_entry_t));
+            (kaa_log_entry_t*)KAA_CALLOC(1, sizeof(kaa_log_entry_t));
 
     if (record) {
         record->serialize = kaa_log_entry_serialize;
@@ -1478,7 +1478,7 @@ static size_t kaa_sync_request_meta_data_get_size(void* data)
 kaa_sync_request_meta_data_t* kaa_sync_request_meta_data_create()
 {
     kaa_sync_request_meta_data_t* record = 
-            (kaa_sync_request_meta_data_t*)KAA_MALLOC(sizeof(kaa_sync_request_meta_data_t));
+            (kaa_sync_request_meta_data_t*)KAA_CALLOC(1, sizeof(kaa_sync_request_meta_data_t));
 
     if (record) {
         record->serialize = kaa_sync_request_meta_data_serialize;
@@ -1541,7 +1541,7 @@ static size_t kaa_profile_sync_request_get_size(void* data)
 kaa_profile_sync_request_t* kaa_profile_sync_request_create()
 {
     kaa_profile_sync_request_t* record = 
-            (kaa_profile_sync_request_t*)KAA_MALLOC(sizeof(kaa_profile_sync_request_t));
+            (kaa_profile_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_profile_sync_request_t));
 
     if (record) {
         record->serialize = kaa_profile_sync_request_serialize;
@@ -1593,7 +1593,7 @@ static size_t kaa_configuration_sync_request_get_size(void* data)
 kaa_configuration_sync_request_t* kaa_configuration_sync_request_create()
 {
     kaa_configuration_sync_request_t* record = 
-            (kaa_configuration_sync_request_t*)KAA_MALLOC(sizeof(kaa_configuration_sync_request_t));
+            (kaa_configuration_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_configuration_sync_request_t));
 
     if (record) {
         record->serialize = kaa_configuration_sync_request_serialize;
@@ -1858,7 +1858,7 @@ static size_t kaa_notification_sync_request_get_size(void* data)
 kaa_notification_sync_request_t* kaa_notification_sync_request_create()
 {
     kaa_notification_sync_request_t* record = 
-            (kaa_notification_sync_request_t*)KAA_MALLOC(sizeof(kaa_notification_sync_request_t));
+            (kaa_notification_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_notification_sync_request_t));
 
     if (record) {
         record->serialize = kaa_notification_sync_request_serialize;
@@ -2218,7 +2218,7 @@ static size_t kaa_user_sync_request_get_size(void* data)
 kaa_user_sync_request_t* kaa_user_sync_request_create()
 {
     kaa_user_sync_request_t* record = 
-            (kaa_user_sync_request_t*)KAA_MALLOC(sizeof(kaa_user_sync_request_t));
+            (kaa_user_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_user_sync_request_t));
 
     if (record) {
         record->serialize = kaa_user_sync_request_serialize;
@@ -2585,7 +2585,7 @@ static size_t kaa_event_sync_request_get_size(void* data)
 kaa_event_sync_request_t* kaa_event_sync_request_create()
 {
     kaa_event_sync_request_t* record = 
-            (kaa_event_sync_request_t*)KAA_MALLOC(sizeof(kaa_event_sync_request_t));
+            (kaa_event_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_event_sync_request_t));
 
     if (record) {
         record->serialize = kaa_event_sync_request_serialize;
@@ -2739,7 +2739,7 @@ static size_t kaa_log_sync_request_get_size(void* data)
 kaa_log_sync_request_t* kaa_log_sync_request_create()
 {
     kaa_log_sync_request_t* record = 
-            (kaa_log_sync_request_t*)KAA_MALLOC(sizeof(kaa_log_sync_request_t));
+            (kaa_log_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_log_sync_request_t));
 
     if (record) {
         record->serialize = kaa_log_sync_request_serialize;
@@ -4290,7 +4290,7 @@ static size_t kaa_sync_request_get_size(void* data)
 kaa_sync_request_t* kaa_sync_request_create()
 {
     kaa_sync_request_t* record = 
-            (kaa_sync_request_t*)KAA_MALLOC(sizeof(kaa_sync_request_t));
+            (kaa_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_sync_request_t));
 
     if (record) {
         record->serialize = kaa_sync_request_serialize;
