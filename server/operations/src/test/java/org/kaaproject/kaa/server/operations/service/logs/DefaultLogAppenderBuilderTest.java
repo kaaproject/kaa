@@ -98,5 +98,11 @@ public class DefaultLogAppenderBuilderTest {
             // TODO Auto-generated method stub
 
         }
+
+		@Override
+		public boolean isSchemaVersionSupported(int version) {
+			// TODO Auto-generated method stub
+			return true;
+		}
     }
 }

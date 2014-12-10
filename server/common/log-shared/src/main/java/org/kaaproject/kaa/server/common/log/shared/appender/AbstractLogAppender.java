@@ -55,6 +55,8 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
 
     /** The header. */
     private List<LogHeaderStructureDto> header;
+    
+    private int minSchemaVersion, maxSchemaVersion;
 
     /** The converters. */
     Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
@@ -82,6 +84,8 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     protected abstract void initFromConfiguration(LogAppenderDto appender, T configuration);
 
     public void initLogAppender(LogAppenderDto appender) {
+    	this.minSchemaVersion = appender.getMinLogSchemaVersion();
+    	this.maxSchemaVersion = appender.getMaxLogSchemaVersion();
         byte[] rawConfiguration = appender.getRawConfiguration();
         try {
             AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(configurationClass);
@@ -157,6 +161,11 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
         } else {
             LOG.warn("Can't append log events. LogEventPack object is null.");
         }
+    }
+    
+    @Override
+    public boolean isSchemaVersionSupported(int version){
+    	return minSchemaVersion <= version && version <= maxSchemaVersion;
     }
 
     /**

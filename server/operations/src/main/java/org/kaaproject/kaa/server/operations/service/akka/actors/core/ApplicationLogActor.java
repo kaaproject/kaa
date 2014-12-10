@@ -136,7 +136,9 @@ public class ApplicationLogActor extends UntypedActor {
             message.setLogSchema(logSchema);
         }
         for (LogAppender logAppender : logAppenders) {
-            logAppender.doAppend(message.getLogEventPack());
+        	if(logAppender.isSchemaVersionSupported(logSchema.getVersion())){
+        		logAppender.doAppend(message.getLogEventPack());
+        	}
         }
     }
 

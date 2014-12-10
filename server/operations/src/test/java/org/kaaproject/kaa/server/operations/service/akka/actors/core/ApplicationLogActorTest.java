@@ -39,6 +39,8 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @SuppressWarnings("unchecked")
@@ -65,7 +67,9 @@ public class ApplicationLogActorTest {
         logAppenderService = mock(LogAppenderService.class);
         applicationLogActor = mock(ApplicationLogActor.class);
 
-        logSchema = new LogSchema(new LogSchemaDto());
+        LogSchemaDto logSchemaDto = new LogSchemaDto();
+        logSchemaDto.setMajorVersion(1);
+        logSchema = new LogSchema(logSchemaDto);
         logSchemas = new HashMap<>();
         logAppenders = new ArrayList<>();
         logAppender = mock(LogAppender.class);
@@ -74,6 +78,8 @@ public class ApplicationLogActorTest {
         ReflectionTestUtils.setField(applicationLogActor, "logSchemas", logSchemas);
         ReflectionTestUtils.setField(applicationLogActor, "logAppenders", logAppenders);
         ReflectionTestUtils.setField(applicationLogActor, "logAppenderService", logAppenderService);
+        
+        when(logAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
     }
 
 
@@ -90,6 +96,21 @@ public class ApplicationLogActorTest {
 
         verify(logAppender).doAppend(logEventPackMessage.getLogEventPack());
     }
+    
+    @Test
+    public void proccessLogSchemaVersionNotSupported() throws Exception {
+        LogEventPackMessage logEventPackMessage = mock(LogEventPackMessage.class);
+
+        logAppenders.add(logAppender);
+
+        when(logAppender.isSchemaVersionSupported(1)).thenReturn(Boolean.FALSE);
+        when(logEventPackMessage.getLogSchema()).thenReturn(logSchema);
+        when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
+
+        ReflectionTestUtils.invokeMethod(applicationLogActor, "processLogEventPack", logEventPackMessage);
+
+        verify(logAppender, Mockito.never()).doAppend(logEventPackMessage.getLogEventPack());
+    }    
 
     @Test
     public void proccessLogSchemaVersionLogShemasHaveSchemaTest() throws Exception {
@@ -126,9 +147,9 @@ public class ApplicationLogActorTest {
     @Test
 
     public void processAddLogAppenderNotificationTest() {
-        FlumeLogAppender flumeAppender = new FlumeLogAppender();
-        flumeAppender.setName("Flume");
-        flumeAppender.setAppenderId(APPENDER_ID);
+        LogAppender mockAppender = mock(LogAppender.class);
+        Mockito.when(mockAppender.getName()).thenReturn("flume");
+        Mockito.when(mockAppender.getAppenderId()).thenReturn(APPENDER_ID);
 
         Notification notification = new Notification();
         notification.setAppenderId(APPENDER_ID);
@@ -137,7 +158,7 @@ public class ApplicationLogActorTest {
 
         List<LogAppender> appenders = mock(List.class);
         ReflectionTestUtils.setField(applicationLogActor, "logAppenders", appenders);
-        when(logAppenderService.getApplicationAppender(APPENDER_ID)).thenReturn(flumeAppender);
+        when(logAppenderService.getApplicationAppender(APPENDER_ID)).thenReturn(mockAppender);
         ReflectionTestUtils.invokeMethod(applicationLogActor, "processLogAppenderNotification", notification);
 
         verify(logAppenderService, times(1)).getApplicationAppender(APPENDER_ID);
@@ -147,7 +168,7 @@ public class ApplicationLogActorTest {
 
     @Test
     public void processUpdateLogAppenderNotificationTest() {
-        FlumeLogAppender flumeAppender = mock(FlumeLogAppender.class);
+    	LogAppender flumeAppender = mock(LogAppender.class);
         when(flumeAppender.getName()).thenReturn("Flume");
         when(flumeAppender.getAppenderId()).thenReturn(APPENDER_ID);
 
@@ -173,7 +194,7 @@ public class ApplicationLogActorTest {
 
     @Test
     public void processRemoveLogAppenderNotificationTest() {
-        FlumeLogAppender flumeAppender = mock(FlumeLogAppender.class);
+    	LogAppender flumeAppender = mock(LogAppender.class);
         when(flumeAppender.getName()).thenReturn("Flume");
         when(flumeAppender.getAppenderId()).thenReturn(APPENDER_ID);
 
