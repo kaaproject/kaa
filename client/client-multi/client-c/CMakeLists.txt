@@ -72,6 +72,7 @@ set (KAA_SOURCE_FILES
                        src/gen/kaa_endpoint_gen.c
                        src/kaa_logging.c
                        src/log/kaa_memory_log_storage.c
+                       src/collections/kaa_deque.c
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)

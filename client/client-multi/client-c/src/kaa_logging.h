@@ -50,12 +50,12 @@ void                destroy_log_record(void *record_p);
  *      void destroy(void);
  */
 typedef struct kaa_log_storage_t {
-    void            (* add_log_record)  (kaa_log_entry_t * record);
-    kaa_list_t *    (* get_records)     (kaa_uuid_t uuid, size_t max_size);
-    void            (* upload_succeeded)(kaa_uuid_t uuid);
-    void            (* upload_failed)   (kaa_uuid_t uuid);
-    void            (* shrink_to_size)  (size_t size);
-    void            (* destroy)         (void);
+    void                (* add_log_record)  (kaa_log_entry_t * record);
+    kaa_log_entry_t *   (* get_record)      (kaa_uuid_t uuid);
+    void                (* upload_succeeded)(kaa_uuid_t uuid);
+    void                (* upload_failed)   (kaa_uuid_t uuid);
+    void                (* shrink_to_size)  (size_t size);
+    void                (* destroy)         (void);
 } kaa_log_storage_t;
 
 /**

@@ -381,7 +381,7 @@ kaa_error_t kaa_event_compile_request(kaa_event_manager_t *self
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Going to compile event sync request (%zu)", requestId);
 
-    if (kaa_get_max_log_level(self->logger) > KAA_LOG_LEVEL_TRACE) {
+    if (kaa_get_max_log_level(self->logger) >= KAA_LOG_LEVEL_TRACE) {
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event sequence number synchronized: %s"
                                               ", event sequence number sync in progress: %s"
             , (self->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED ? "true" : "false")
@@ -585,7 +585,7 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
         if (it != NULL) {
             event_transaction_t * trx = kaa_list_get_data(it);
             bool need_sync = false;
-            if (kaa_get_max_log_level(self->logger) > KAA_LOG_LEVEL_TRACE) {
+            if (kaa_get_max_log_level(self->logger) >= KAA_LOG_LEVEL_TRACE) {
                 size_t events_count = kaa_list_get_size(trx->events);
                 KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Events batch with id %zu has %zu events", trx_id, events_count);
             }

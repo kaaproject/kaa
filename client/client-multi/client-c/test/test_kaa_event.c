@@ -19,7 +19,6 @@
 
 #include "kaa_test.h"
 #include "kaa_log.h"
-
 #include "kaa_context.h"
 #include "kaa_mem.h"
 #include "gen/kaa_endpoint_gen.h"
