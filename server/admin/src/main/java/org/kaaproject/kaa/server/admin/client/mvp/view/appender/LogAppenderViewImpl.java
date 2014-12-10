@@ -22,15 +22,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AppenderInfoListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.IntegerListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminRecordFieldWidget;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.RecordFieldWidget;
@@ -40,7 +39,6 @@ import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -57,15 +55,16 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     private static final String REQUIRED = "required";
 
     private SizedTextBox name;
-    private CheckBox status;
-    private SchemaListBox schema;
+    private IntegerListBox minSchemaVersion;
+    private IntegerListBox maxSchemaVersion;
     private AppenderInfoListBox appenderInfo;
     private SizedTextArea description;
     private SizedTextBox createdUsername;
     private SizedTextBox createdDateTime;
-    private Button activate;
     private ChosenListBox metadatalistBox;
     private RecordFieldWidget configuration;
+    
+    private List<Integer> schemaVersions;
     
     private static final String FULL_WIDTH = "100%";
 
@@ -101,24 +100,37 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         detailsTable.setWidget(2, 1, name);
         name.addInputHandler(this);
 
-        Label statusLabel = new Label(Utils.constants.activate());
-        status = new CheckBox();
-        status.setWidth(FULL_WIDTH);
-        status.setEnabled(false);
+        Label minSchemaVersionLabel = new Label(Utils.constants.minVersion());
+        minSchemaVersionLabel.addStyleName(REQUIRED);
+        minSchemaVersion = new IntegerListBox();
+        minSchemaVersion.setWidth("30%");
+        
+        minSchemaVersion.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Integer> event) {
+                updateMaxSchemaVersions();
+                fireChanged();
+            }
+        });
 
-        statusLabel.setVisible(!create);
-        status.setVisible(!create);
+        detailsTable.setWidget(3, 0, minSchemaVersionLabel);
+        detailsTable.setWidget(3, 1, minSchemaVersion);
 
-        detailsTable.setWidget(3, 0, statusLabel);
-        detailsTable.setWidget(3, 1, status);
+        Label maxSchemaVersionLabel = new Label(Utils.constants.maxVersion());
+        maxSchemaVersionLabel.addStyleName(REQUIRED);
+        maxSchemaVersion = new IntegerListBox();
+        maxSchemaVersion.setWidth("30%");
+        
+        maxSchemaVersion.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Integer> event) {
+                fireChanged();
+            }
+        });
 
-        Label schemaLabel = new Label(Utils.constants.schemaVersion());
-        schema = new SchemaListBox();
-        schema.setEnabled(create);
-
-        detailsTable.setWidget(4, 0, schemaLabel);
-        detailsTable.setWidget(4, 1, schema);
-
+        detailsTable.setWidget(4, 0, maxSchemaVersionLabel);
+        detailsTable.setWidget(4, 1, maxSchemaVersion);
+        
         Label logMetadata = new Label(Utils.constants.logMetada());
         generateMetadataListBox();
 
@@ -174,7 +186,8 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     @Override
     protected void resetImpl() {
         name.setValue("");
-        status.setValue(false);
+        minSchemaVersion.reset();
+        maxSchemaVersion.reset();
         description.setValue("");
         createdUsername.setValue("");
         createdDateTime.setValue("");
@@ -189,23 +202,25 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     @Override
     protected boolean validate() {
         boolean result = isNotBlank(name.getValue());
+        result &= minSchemaVersion.getValue() != null;
+        result &= maxSchemaVersion.getValue() != null;
         result &= configuration.validate();
         return result;
     }
 
     @Override
-    public ValueListBox<SchemaDto> getSchemaVersions() {
-        return schema;
+    public ValueListBox<Integer> getMinSchemaVersion() {
+        return minSchemaVersion;
     }
 
+    @Override
+    public ValueListBox<Integer> getMaxSchemaVersion() {
+        return maxSchemaVersion;
+    }
+    
     @Override
     public HasValue<String> getName() {
         return name;
-    }
-
-    @Override
-    public HasValue<Boolean> getStatus() {
-        return status;
     }
 
     @Override
@@ -226,11 +241,6 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     @Override
     public HasValue<String> getCreatedDateTime() {
         return createdDateTime;
-    }
-
-    @Override
-    public Button getActivate() {
-        return activate;
     }
 
     @Override
@@ -283,6 +293,45 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
             }
         }
         return header;
+    }
+    
+    private void updateMaxSchemaVersions() {
+        if (schemaVersions != null) {
+           Integer minVersionValue = minSchemaVersion.getValue();
+           List<Integer> maxSchemaVersions = null;
+           Integer maxVersionValue = maxSchemaVersion.getValue();
+           
+           if (minVersionValue != null) {
+               maxSchemaVersions = new ArrayList<>();
+               for (Integer version : schemaVersions) {
+                   if (version >= minVersionValue) {
+                       maxSchemaVersions.add(version);
+                   }
+               }
+               if (maxVersionValue != null && maxVersionValue < minVersionValue) {
+                   maxVersionValue = minVersionValue;
+               }
+           }
+           else {
+               maxSchemaVersions = new ArrayList<>(schemaVersions);
+           }
+           maxSchemaVersions.add(Integer.MAX_VALUE);
+           if (maxVersionValue == null) {
+               maxVersionValue = Integer.MAX_VALUE;
+           }
+           maxSchemaVersion.setValue(maxVersionValue);
+           maxSchemaVersion.setAcceptableValues(maxSchemaVersions);
+        }
+    }
+    
+    @Override
+    public void setSchemaVersions(List<Integer> schemaVersions) {
+        this.schemaVersions = schemaVersions;
+        if (minSchemaVersion.getValue() == null && !schemaVersions.isEmpty()) {
+            minSchemaVersion.setValue(schemaVersions.get(0));
+        }
+        minSchemaVersion.setAcceptableValues(schemaVersions);
+        updateMaxSchemaVersions();
     }
 
     @Override

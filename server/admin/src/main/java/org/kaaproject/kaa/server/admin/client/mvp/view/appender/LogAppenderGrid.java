@@ -17,26 +17,13 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell.ActionListener;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell.ActionValidator;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 
 public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
-
-    private Column<LogAppenderDto,LogAppenderDto> downloadLibraryColumn;
-    private Column<LogAppenderDto,LogAppenderDto> downloadSchemaColumn;
 
     public LogAppenderGrid(boolean embedded) {
         super(Unit.PX, true, embedded);
@@ -53,11 +40,24 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
                 return item.getName();
             }
         }, 80);
-        prefWidth += constructStringColumn(table, Utils.constants.version(),
+        prefWidth += constructStringColumn(table, Utils.constants.minVersion(),
                 new StringValueProvider<LogAppenderDto>() {
             @Override
             public String getValue(LogAppenderDto item) {
-                return item.getSchemaVersion();
+                return String.valueOf(item.getMinLogSchemaVersion());
+
+            }
+        }, 80);
+        prefWidth += constructStringColumn(table, Utils.constants.maxVersion(),
+                new StringValueProvider<LogAppenderDto>() {
+            @Override
+            public String getValue(LogAppenderDto item) {
+                if (item.getMaxLogSchemaVersion() == Integer.MAX_VALUE) {
+                    return Utils.constants.infinite();
+                }
+                else {
+                    return String.valueOf(item.getMaxLogSchemaVersion());
+                }
 
             }
         }, 80);
@@ -70,45 +70,6 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
         }, 80);
 
         return prefWidth;
-    }
-
-    @Override
-    protected float constructActions(DataGrid<LogAppenderDto> table, float prefWidth) {
-        if (enableActions) {
-            float result = 0;
-            if (!embedded && (downloadLibraryColumn == null || table.getColumnIndex(downloadLibraryColumn) == -1)) {
-                Header<SafeHtml> sendNotificationHeader = new SafeHtmlHeader(
-                        SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadRecordLibrary()));
-
-                downloadLibraryColumn = constructDownloadLibraryColumn("");
-                table.addColumn(downloadLibraryColumn, sendNotificationHeader);
-                table.setColumnWidth(downloadLibraryColumn, 40, Unit.PX);
-                result+= 40;
-            }
-            if (!embedded && (downloadSchemaColumn == null || table.getColumnIndex(downloadSchemaColumn) == -1)) {
-                Header<SafeHtml> sendNotificationHeader = new SafeHtmlHeader(
-                        SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadRecordSchema()));
-
-                downloadSchemaColumn = constructDownloadSchemaColumn("");
-                table.addColumn(downloadSchemaColumn, sendNotificationHeader);
-                table.setColumnWidth(downloadSchemaColumn, 40, Unit.PX);
-                result+= 40;
-            }
-            if (deleteColumn == null || table.getColumnIndex(deleteColumn) == -1) {
-                Header<SafeHtml> deleteHeader = new SafeHtmlHeader(
-                        SafeHtmlUtils.fromSafeConstant(embedded ? Utils.constants.remove() : Utils.constants.delete()));
-
-                deleteColumn = constructDeleteColumn("");
-                table.addColumn(deleteColumn, deleteHeader);
-                table.setColumnWidth(deleteColumn, 40, Unit.PX);
-                result+= 40;
-            }
-
-            return result;
-        }
-        else {
-            return 0;
-        }
     }
 
     @Override
@@ -131,51 +92,4 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
         }
     }
 
-    private Column<LogAppenderDto, LogAppenderDto> constructDownloadLibraryColumn(String text) {
-        ActionButtonCell<LogAppenderDto> cell = new ActionButtonCell<LogAppenderDto>(Utils.resources.download(), text, embedded,
-                new ActionListener<LogAppenderDto>() {
-                    @Override
-                    public void onItemAction(LogAppenderDto value) {
-                        Integer logSchemaVersion = value.getSchema().getMajorVersion();
-                        RowActionEvent<String> rowDownloadLibraryEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), RowAction.DOWNLOAD_LIBRARY);
-                        fireEvent(rowDownloadLibraryEvent);
-                    }
-                }, new ActionValidator<LogAppenderDto>() {
-                    @Override
-                    public boolean canPerformAction(LogAppenderDto value) {
-                        return !embedded;
-                    }
-                });
-        Column<LogAppenderDto, LogAppenderDto> column = new Column<LogAppenderDto, LogAppenderDto>(cell) {
-            @Override
-            public LogAppenderDto getValue(LogAppenderDto item) {
-                return item;
-            }
-        };
-        return column;
-    }
-
-    private Column<LogAppenderDto, LogAppenderDto> constructDownloadSchemaColumn(String text) {
-        ActionButtonCell<LogAppenderDto> cell = new ActionButtonCell<LogAppenderDto>(Utils.resources.download(), text, embedded,
-                new ActionListener<LogAppenderDto>() {
-                    @Override
-                    public void onItemAction(LogAppenderDto value) {
-                        Integer logSchemaVersion = value.getSchema().getMajorVersion();
-                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), RowAction.DOWNLOAD_SCHEMA);
-                        fireEvent(rowDownloadSchemaEvent);
-                    }
-                }, new ActionValidator<LogAppenderDto>() {
-                    @Override
-                    public boolean canPerformAction(LogAppenderDto value) {
-                        return !embedded;
-                    }
-                });
-        Column<LogAppenderDto, LogAppenderDto> column = new Column<LogAppenderDto, LogAppenderDto>(cell) {
-            @Override
-            public LogAppenderDto getValue(LogAppenderDto item) {
-                return item;
-            }
-        };
-        return column;
-    }
 }

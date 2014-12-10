@@ -22,7 +22,6 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
@@ -46,14 +45,16 @@ public class LogAppenderServiceImpl implements LogAppendersService {
     private LogSchemaDao<LogSchema> logSchemaDao;
 
     @Override
-    public List<LogSchemaDto> findVacantLogSchemasByLogAppenderId(String logAppenderId) {
-        return null;
-    }
-
-    @Override
     public List<LogAppenderDto> findRegisteredLogAppendersByAppId(String appId) {
         LOG.debug("Find registered log appenders by application id [{}]", appId);
         return convertDtoList(logAppenderDao.findByAppId(appId));
+    }
+
+    @Override
+    public List<LogAppenderDto> findRegisteredLogAppendersByAppIdAndSchemaVersion(
+            String appId, int schemaVersion) {
+        LOG.debug("Find registered log appenders by application id [{}] and schema version [{}]", appId, schemaVersion);
+        return convertDtoList(logAppenderDao.findByAppIdAndSchemaVersion(appId, schemaVersion));
     }
 
     @Override

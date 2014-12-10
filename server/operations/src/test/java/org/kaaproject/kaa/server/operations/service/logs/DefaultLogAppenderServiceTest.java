@@ -96,7 +96,7 @@ public class DefaultLogAppenderServiceTest {
 
         when(applicationService.findAppById(APPLICATION_ID)).thenReturn(dto);
 
-        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID, APPLICATION_TOKEN);
+        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
 
         Assert.assertEquals(0, appenders.size());
     }
@@ -111,7 +111,7 @@ public class DefaultLogAppenderServiceTest {
         when(logAppendersService.findRegisteredLogAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
 
-        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID, APPLICATION_TOKEN);
+        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
 
         Assert.assertEquals(1, appenders.size());
         Assert.assertEquals(mongoDBLogAppender.getName(), appenders.get(0).getName());
@@ -127,14 +127,14 @@ public class DefaultLogAppenderServiceTest {
         when(logAppendersService.findRegisteredLogAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
 
-        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID, APPLICATION_TOKEN);
+        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
 
         Assert.assertEquals(0, appenders.size());
     }
 
     @Test
     public void getApplicationAppendersWithErrorTest() {
-        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID, APPLICATION_TOKEN);
+        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
         Assert.assertNotNull(appenders);
         Assert.assertEquals(0, appenders.size());
     }
@@ -149,7 +149,7 @@ public class DefaultLogAppenderServiceTest {
         when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
 
-        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID, APPLICATION_TOKEN);
+        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
 
         Assert.assertNotNull(appender);
         Assert.assertEquals(mongoDBLogAppender.getName(), appender.getName());
@@ -165,14 +165,14 @@ public class DefaultLogAppenderServiceTest {
         when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
 
-        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID, APPLICATION_TOKEN);
+        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
 
         Assert.assertNull(appender);
     }
 
     @Test
     public void getApplicationAppenderWithErrorTest() {
-        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID, APPLICATION_TOKEN);
+        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
         Assert.assertNull(appender);
     }
 

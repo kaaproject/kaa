@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.SchemaDto;
@@ -31,7 +33,6 @@ import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.ValueListBox;
 
 public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderFormWrapper, LogAppenderView, LogAppenderPlace> {
 
@@ -80,42 +81,46 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
                 detailsView.setErrorMessage(Utils.getErrorMessage(caught));
             }
         });
-        
-        if (create) {
-            KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new AsyncCallback<List<SchemaDto>>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    detailsView.setErrorMessage(Utils.getErrorMessage(caught));
-                }
-
-                @Override
-                public void onSuccess(List<SchemaDto> result) {
-                    ValueListBox<SchemaDto> versions = detailsView.getSchemaVersions();
-                    versions.setValue(Utils.getMaxSchemaVersions(result));
-                    versions.setAcceptableValues(result);
-                }
-            });
-        } else {
+    
+        KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new AsyncCallback<List<SchemaDto>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+            }
+            @Override
+            public void onSuccess(List<SchemaDto> result) {
+                onSchemaVersionsRetrieved(result);
+            }
+        });
+    }
+    
+    private void onSchemaVersionsRetrieved(List<SchemaDto> result) {
+        Collections.sort(result);
+        List<Integer> versions = new ArrayList<>(result.size());
+        for (SchemaDto schema : result) {
+            versions.add(schema.getMajorVersion());
+        }
+        if (!create) {
             detailsView.getName().setValue(entity.getName());
-            detailsView.getStatus().setValue(entity.getStatus() == LogAppenderStatusDto.REGISTERED);
-
             detailsView.getDescription().setValue(entity.getDescription());
             detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
             detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
-            detailsView.getSchemaVersions().setValue(entity.getSchema());
+            detailsView.getMinSchemaVersion().setValue(entity.getMinLogSchemaVersion());
+            detailsView.getMaxSchemaVersion().setValue(entity.getMaxLogSchemaVersion());
             detailsView.setMetadataListBox(entity.getHeaderStructure());
             detailsView.getConfiguration().setValue(entity.getConfiguration());
             LogAppenderInfoDto appenderInfo = 
                     new LogAppenderInfoDto(entity.getTypeName(), entity.getConfiguration(), entity.getAppenderClassName());
             detailsView.getAppenderInfo().setValue(appenderInfo);
         }
+        detailsView.setSchemaVersions(versions);
     }
 
     @Override
     protected void onSave() {
         entity.setName(detailsView.getName().getValue());
-        entity.setSchema(detailsView.getSchemaVersions().getValue());
+        entity.setMinLogSchemaVersion(detailsView.getMinSchemaVersion().getValue());
+        entity.setMaxLogSchemaVersion(detailsView.getMaxSchemaVersion().getValue());
         entity.setStatus(LogAppenderStatusDto.REGISTERED);
         entity.setDescription(detailsView.getDescription().getValue());
         entity.setHeaderStructure(detailsView.getHeader());
