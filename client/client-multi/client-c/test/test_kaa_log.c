@@ -25,6 +25,7 @@
 #include "kaa_test.h"
 #include "kaa_mem.h"
 #include "kaa_log.h"
+#include "kaa_channel_manager.h"
 #include "kaa_profile.h"
 
 extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
@@ -100,41 +101,45 @@ void test_response()
 
 #define DEFAULT_LOG_RECORD 0
 #if DEFAULT_LOG_RECORD
+static kaa_context_t *kaa_context_ = NULL;
 static kaa_log_upload_decision_t decision(kaa_storage_status_t *status)
 {
-    if ((* status->get_records_count)() == 2) {
+    if ((* status->get_records_count)() == 1000) {
         return UPLOAD;
     }
     return NOOP;
 }
 
-static void handler(size_t service_count, const kaa_service_t services[])
+static void handler(const kaa_service_t services[], size_t service_count)
 {
     ASSERT_EQUAL(1, service_count);
     ASSERT_EQUAL(services[0], KAA_SERVICE_LOGGING);
 
     kaa_sync_request_t *request = NULL;
-    kaa_compile_request(&request, service_count, services);
+    size_t request_size = 0;
+    kaa_compile_request(kaa_context_, &request, &request_size, service_count, services);
     ASSERT_NOT_NULL(request);
     ASSERT_NOT_NULL(request->log_sync_request);
-    ASSERT_EQUAL(request->log_sync_request->type ,KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_BRANCH_1);
 
     request->destroy(request);
-    KAA_FREE(request);
+
 }
 void test_add_log()
 {
-    kaa_init();
-    kaa_set_sync_handler(&handler, 4, services);
-    kaa_init_log_storage(get_memory_log_storage(), get_memory_log_storage_status(), get_memory_log_upload_properties(), &decision);
+    ASSERT_TRUE(1);
+    kaa_init(&kaa_context_);
 
-    kaa_user_log_record_t *record = kaa_create_test_log_record();
+    kaa_channel_manager_add_sync_handler(kaa_context_->channel_manager, &handler, services, 4);
+    set_memory_log_storage_logger(kaa_context_->logger);
+    kaa_logging_init(kaa_context_->log_collector, get_memory_log_storage(), get_memory_log_upload_properties(), get_memory_log_storage_status(), &decision);
+
+    kaa_user_log_record_t *record = kaa_test_log_record_create();
+    record->data = kaa_string_move_create("Super Log Record", NULL);
     for (int i = 1000000; i--; ) {
-        kaa_add_log(record);
+        kaa_logging_add_record(kaa_context_->log_collector, record);
     }
-    kaa_deinit();
-
-    KAA_FREE(record);
+    record->destroy(record);
+    kaa_deinit(kaa_context_);
 }
 #endif
 
@@ -143,12 +148,14 @@ void test_add_log()
 int test_init(void)
 {
     kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
+    set_memory_log_storage_logger(logger);
     return 0;
 }
 
 int test_deinit(void)
 {
     kaa_log_destroy(logger);
+    set_memory_log_storage_logger(NULL);
     return 0;
 }
 
@@ -157,7 +164,7 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
        ,
        KAA_TEST_CASE(create_request, test_create_request)
        KAA_TEST_CASE(process_response, test_response)
-#if DEAFULT_LOG_RECORD
+#if DEFAULT_LOG_RECORD
        KAA_TEST_CASE(add_log_record, test_add_log)
 #endif
 #endif

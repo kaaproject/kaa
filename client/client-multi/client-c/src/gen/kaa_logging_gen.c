@@ -14,64 +14,81 @@
  * limitations under the License.
  */
 
-#include "kaa_logging_gen.h"
+# include "kaa_logging_gen.h"
 
-#include <stdio.h>
-#include <string.h>
+# include <stdio.h>
+# include <string.h>
 
-#include "avro_src/avro/io.h"
-#include "avro_src/encoding.h"
+# include "avro_src/avro/io.h"
+# include "avro_src/encoding.h"
 
-#include "kaa_mem.h"
+# include "kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE
  */
 
 
-
 static void kaa_test_log_record_destroy(void* data)
 {
-    kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
+    if (data) {
+        kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
 
-    KAA_FREE(record->data);
-}
-static size_t kaa_test_log_record_get_size(void* data)
-{
-    size_t record_size = 0;
-    kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
-
-    record_size += kaa_string_get_size(record->data);
-
-    return record_size;
+        kaa_string_destroy(record->data);
+        kaa_data_destroy(record);
+    }
 }
 
 static void kaa_test_log_record_serialize(avro_writer_t writer, void* data)
 {
-    kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
+    if (data) {
+        kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
 
-    avro_binary_encoding.write_string(writer, record->data);
+        kaa_string_serialize(writer, record->data);
+    }
+}
+
+static size_t kaa_test_log_record_get_size(void* data)
+{
+    if (data) {
+        size_t record_size = 0;
+        kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
+
+        record_size += kaa_string_get_size(record->data);
+
+        return record_size;
+    }
+
+    return 0;
 }
 
 kaa_test_log_record_t* kaa_test_log_record_create()
 {
-    kaa_test_log_record_t* record = (kaa_test_log_record_t *) KAA_MALLOC(sizeof(kaa_test_log_record_t));
-    record->serialize = kaa_test_log_record_serialize;
-    record->get_size = kaa_test_log_record_get_size;
-    record->destroy = kaa_test_log_record_destroy;
+    kaa_test_log_record_t* record = 
+            (kaa_test_log_record_t*)KAA_MALLOC(sizeof(kaa_test_log_record_t));
+
+    if (record) {
+        record->serialize = kaa_test_log_record_serialize;
+        record->get_size = kaa_test_log_record_get_size;
+        record->destroy = kaa_test_log_record_destroy;
+    }
+
     return record;
 }
 
 kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader)
 {
-    kaa_test_log_record_t* record = (kaa_test_log_record_t *) KAA_MALLOC(sizeof(kaa_test_log_record_t));
-    record->serialize = kaa_test_log_record_serialize;
-    record->get_size = kaa_test_log_record_get_size;
-    record->destroy = kaa_test_log_record_destroy;
-    
-        int64_t data_size;
-    avro_binary_encoding.read_string(reader, &record->data, &data_size);
-        
+    kaa_test_log_record_t* record = 
+            (kaa_test_log_record_t*)KAA_MALLOC(sizeof(kaa_test_log_record_t));
+
+    if (record) {
+        record->serialize = kaa_test_log_record_serialize;
+        record->get_size = kaa_test_log_record_get_size;
+        record->destroy = kaa_test_log_record_destroy;
+
+        record->data = kaa_string_deserialize(reader);
+    }
+
     return record;
 }
 

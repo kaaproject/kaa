@@ -118,8 +118,9 @@ void kaa_list_destroy(kaa_list_t *head, deallocate_list_data deallocator)
     }
 }
 
-void kaa_list_destroy_no_data_cleanup(kaa_list_t *head)
+void kaa_list_destroy_no_data_cleanup(void *head_p)
 {
+    kaa_list_t *head = (kaa_list_t *)head_p;
     while (head) {
         kaa_list_t *new_head = head->next;
         KAA_FREE(head);

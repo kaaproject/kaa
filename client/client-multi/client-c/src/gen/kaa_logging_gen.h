@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef KAA_LOG_GEN_H_
-#define KAA_LOG_GEN_H_
+# ifndef KAA_LOGGING_GEN_H_
+# define KAA_LOGGING_GEN_H_
 
-#ifdef __cplusplus
-extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
+# ifdef __cplusplus
+    extern "C" {
+    # define CLOSE_EXTERN }
+# else
+    # define CLOSE_EXTERN
+# endif
 
-#include "kaa_common_schema.h"
-#include "kaa_list.h"
+# include "kaa_common_schema.h"
+# include "kaa_list.h"
+
 
 typedef struct {
-    char* data; 
+    kaa_string_t* data; 
 
     serialize_fn serialize;
     get_size_fn  get_size;
