@@ -25,17 +25,14 @@
 #include "kaa_mem.h"
 #include "kaa_error.h"
 
-kaa_error_t kaa_string_serialize(avro_writer_t writer, void* data)
+void kaa_string_serialize(avro_writer_t writer, void* data)
 {
-    kaa_error_t error_code = KAA_ERR_BADPARAM;
     if (data) {
         kaa_string_t* str = (kaa_string_t*)data;
         if (str->data) {
-            int res = avro_binary_encoding.write_string(writer, str->data);
-            error_code = (res >= 0 ? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
+            avro_binary_encoding.write_string(writer, str->data);
         }
     }
-    return error_code;
 }
 
 kaa_string_t* kaa_string_move_create(const char* data, destroy_fn destroy)
@@ -164,17 +161,14 @@ kaa_bytes_t* kaa_bytes_deserialize(avro_reader_t reader)
     return bytes;
 }
 
-kaa_error_t kaa_bytes_serialize(avro_writer_t writer, void* data)
+void kaa_bytes_serialize(avro_writer_t writer, void* data)
 {
-    kaa_error_t error_code = KAA_ERR_BADPARAM;
     if (data) {
         kaa_bytes_t* bytes = (kaa_bytes_t*)data;
         if (bytes->buffer && bytes->size > 0) {
-            int res = avro_binary_encoding.write_bytes(writer, (char*)bytes->buffer, bytes->size);
-            error_code = (res >= 0 ? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
+            avro_binary_encoding.write_bytes(writer, (char*)bytes->buffer, bytes->size);
         }
     }
-    return error_code;
 }
 
 size_t kaa_bytes_get_size(void *data)
@@ -188,15 +182,12 @@ size_t kaa_bytes_get_size(void *data)
     return 0;
 }
 
-kaa_error_t kaa_boolean_serialize(avro_writer_t writer, void* data)
+void kaa_boolean_serialize(avro_writer_t writer, void* data)
 {
-    kaa_error_t error_code = KAA_ERR_BADPARAM;
     if (data) {
         int8_t* val = (int8_t*)data;
-        int res = avro_binary_encoding.write_boolean(writer, *val);
-        error_code = (res >= 0 ? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
+        avro_binary_encoding.write_boolean(writer, *val);
     }
-    return error_code;
 }
 
 int8_t* kaa_boolean_deserialize(avro_reader_t reader)
@@ -208,15 +199,12 @@ int8_t* kaa_boolean_deserialize(avro_reader_t reader)
     return data;
 }
 
-kaa_error_t kaa_int_serialize(avro_writer_t writer, void* data)
+void kaa_int_serialize(avro_writer_t writer, void* data)
 {
-    kaa_error_t error_code = KAA_ERR_BADPARAM;
     if (data) {
         int32_t* val = (int32_t*)data;
-        int res = avro_binary_encoding.write_int(writer, *val);
-        error_code = (res >= 0 ? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
+        avro_binary_encoding.write_int(writer, *val);
     }
-    return error_code;
 }
 
 int32_t* kaa_int_deserialize(avro_reader_t reader)
@@ -228,15 +216,12 @@ int32_t* kaa_int_deserialize(avro_reader_t reader)
     return data;
 }
 
-kaa_error_t kaa_long_serialize(avro_writer_t writer, void* data)
+void kaa_long_serialize(avro_writer_t writer, void* data)
 {
-    kaa_error_t error_code = KAA_ERR_BADPARAM;
     if (data) {
         int64_t* val = (int64_t*)data;
-        int res = avro_binary_encoding.write_long(writer, *val);
-        error_code = (res >= 0 ? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
+        avro_binary_encoding.write_long(writer, *val);
     }
-    return error_code;
 }
 
 int64_t* kaa_long_deserialize(avro_reader_t reader)
@@ -260,7 +245,7 @@ size_t kaa_long_get_size(int64_t l)
     return len;
 }
 
-kaa_error_t kaa_array_serialize(avro_writer_t writer, kaa_list_t* array, serialize_fn serialize)
+void kaa_array_serialize(avro_writer_t writer, kaa_list_t* array, serialize_fn serialize)
 {
     if (array) {
         int64_t element_count = kaa_list_get_size(array);
@@ -277,7 +262,6 @@ kaa_error_t kaa_array_serialize(avro_writer_t writer, kaa_list_t* array, seriali
     }
 
     avro_binary_encoding.write_long(writer, 0);
-    return KAA_ERR_NONE;
 }
 
 kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deserialize)
@@ -329,9 +313,8 @@ size_t kaa_array_get_size(kaa_list_t* cursor, get_size_fn get_size)
     return array_size;
 }
 
-kaa_error_t kaa_null_serialize(avro_writer_t writer, void* data)
+void kaa_null_serialize(avro_writer_t writer, void* data)
 {
-    return KAA_ERR_NONE;
 }
 
 void* kaa_null_deserialize(avro_reader_t reader)

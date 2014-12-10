@@ -60,32 +60,32 @@ typedef struct {
 kaa_string_t* kaa_string_move_create(const char* data, destroy_fn destroy);
 kaa_string_t* kaa_string_copy_create(const char* data, destroy_fn destroy);
 void kaa_string_destroy(void *data);
-kaa_error_t kaa_string_serialize(avro_writer_t writer, void* data);
+void kaa_string_serialize(avro_writer_t writer, void* data);
 kaa_string_t* kaa_string_deserialize(avro_reader_t reader);
 size_t kaa_string_get_size(void *data);
 
 kaa_bytes_t* kaa_bytes_move_create(const uint8_t* data, size_t data_len, destroy_fn destroy);
 kaa_bytes_t* kaa_bytes_copy_create(const uint8_t* data, size_t data_len, destroy_fn destroy);
 void kaa_bytes_destroy(void *data);
-kaa_error_t kaa_bytes_serialize(avro_writer_t writer, void* data);
+void kaa_bytes_serialize(avro_writer_t writer, void* data);
 kaa_bytes_t* kaa_bytes_deserialize(avro_reader_t reader);
 size_t kaa_bytes_get_size(void *data);
 
-kaa_error_t kaa_boolean_serialize(avro_writer_t writer, void* data);
+void kaa_boolean_serialize(avro_writer_t writer, void* data);
 int8_t* kaa_boolean_deserialize(avro_reader_t reader);
 
-kaa_error_t kaa_int_serialize(avro_writer_t writer, void* data);
+void kaa_int_serialize(avro_writer_t writer, void* data);
 int32_t* kaa_int_deserialize(avro_reader_t reader);
 
-kaa_error_t kaa_long_serialize(avro_writer_t writer, void* data);
+void kaa_long_serialize(avro_writer_t writer, void* data);
 int64_t* kaa_long_deserialize(avro_reader_t reader);
 size_t kaa_long_get_size(int64_t l);
 
-kaa_error_t kaa_array_serialize(avro_writer_t writer, kaa_list_t* array, serialize_fn serialize);
+void kaa_array_serialize(avro_writer_t writer, kaa_list_t* array, serialize_fn serialize);
 kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deserialize);
 size_t kaa_array_get_size(kaa_list_t* array, get_size_fn get_size);
 
-kaa_error_t kaa_null_serialize(avro_writer_t writer, void*);
+void kaa_null_serialize(avro_writer_t writer, void*);
 void* kaa_null_deserialize(avro_reader_t reader);
 void kaa_null_destroy(void *data);
 size_t kaa_null_get_size();
