@@ -130,6 +130,11 @@ EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()
 
 void ConfigurationPersistenceManager::readStoredConfiguration()
 {
+    if (state_->isConfigurationVersionUpdated()) {
+        KAA_LOG_INFO("Ignore loading configuration from storage: configuration version updated");
+        return;
+    }
+
     auto hash = configurationHash_.getHash();
     if (!hash.first || !hash.second) {
         KAA_LOG_DEBUG("Going to read stored configuration.");

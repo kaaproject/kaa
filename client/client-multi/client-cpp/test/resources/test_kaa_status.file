@@ -1,0 +1,9 @@
+app_seq_number=1;2;3;
+is_registered=1
+profile_hash=0102020304
+topic_list=[74 6f 70 69 63 31,74 6f 70 69 63 4e 61 6d 65 31,m,100],[74 6f 70 69 63 32,74 6f 70 69 63 4e 61 6d 65 32,v,200]
+attached_endpoints=[68 61 73 68 31,68 61 73 68 31],[68 61 73 68 32,68 61 73 68 32]
+ep_attach_status=1
+ep_key_hash=thisEndpointKeyHash
+properties_hash=9233963f55a970453e39fe668b102c18e43560bd
+configuration_version=60
