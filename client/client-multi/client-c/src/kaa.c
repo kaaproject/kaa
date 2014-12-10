@@ -24,6 +24,11 @@
 #include "kaa_external.h"
 #include "kaa_defaults.h"
 #include "kaa_log.h"
+#include "kaa_status.h"
+
+extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
+extern kaa_error_t kaa_context_destroy(kaa_context_t * context);
+
 
 /** External user manager API */
 extern kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *self
@@ -140,7 +145,8 @@ kaa_error_t kaa_set_endpoint_access_token(kaa_context_t *kaa_context, const char
     return kaa_status_set_endpoint_access_token(kaa_context->status, token);
 }
 
-kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t **request_p, size_t *result_size, size_t service_count, const kaa_service_t services[])
+kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t **request_p
+        , size_t *result_size, size_t service_count, const kaa_service_t services[])
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
     kaa_context->global_request_id++;

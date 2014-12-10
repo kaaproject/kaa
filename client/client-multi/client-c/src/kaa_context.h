@@ -17,38 +17,44 @@
 #ifndef KAA_CONTEXT_H_
 #define KAA_CONTEXT_H_
 
-#include "kaa_error.h"
-#include "kaa_log.h"
-#include "kaa_user.h"
-#include "kaa_event.h"
-#include "kaa_profile.h"
-#include "kaa_bootstrap.h"
-#include "kaa_status.h"
-#include "kaa_logging.h"
-#include "kaa_channel_manager.h"
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+typedef struct kaa_status_t             kaa_status_t;
+typedef struct kaa_bootstrap_manager_t  kaa_bootstrap_manager_t;
+typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
+typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
+typedef struct kaa_user_manager_t       kaa_user_manager_t;
+
+#ifndef KAA_DISABLE_FEATURE_EVENTS
+typedef struct kaa_event_manager_t      kaa_event_manager_t;
+#endif
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+typedef struct kaa_log_collector        kaa_log_collector_t;
+#endif
+
+typedef struct kaa_logger_t             kaa_logger_t;
+
+
 typedef struct {
-    kaa_logger_t               *logger;
+    kaa_status_t               *status;
+    kaa_bootstrap_manager_t    *bootstrap_manager;
+    kaa_channel_manager_t      *channel_manager;
     kaa_profile_manager_t      *profile_manager;
     kaa_user_manager_t         *user_manager;
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     kaa_event_manager_t        *event_manager;
 #endif
-    kaa_bootstrap_manager_t    *bootstrap_manager;
-    kaa_status_t               *status;
-    kaa_channel_manager_t      *channel_manager;
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     kaa_log_collector_t        *log_collector;
 #endif
+    kaa_logger_t               *logger;
     uint32_t                    global_request_id;  // FIXME: find a better place for this
 } kaa_context_t;
-
-kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
-kaa_error_t kaa_context_destroy(kaa_context_t * context);
 
 #ifdef __cplusplus
 }      /* extern "C" */

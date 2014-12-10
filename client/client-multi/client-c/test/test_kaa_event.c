@@ -22,7 +22,12 @@
 
 #include "kaa_context.h"
 #include "kaa_mem.h"
+#include "gen/kaa_endpoint_gen.h"
 #include <string.h>
+
+extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
+extern kaa_error_t kaa_context_destroy(kaa_context_t * context);
+
 
 static int global_events_counter = 0;
 static int specific_events_counter = 0;

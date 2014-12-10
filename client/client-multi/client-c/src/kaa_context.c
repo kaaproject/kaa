@@ -16,6 +16,9 @@
 
 #include "kaa_context.h"
 #include "kaa_mem.h"
+#include "kaa_log.h"
+#include "kaa_common.h"
+
 
 /*
  * External constructors and destructors from around the Kaa SDK

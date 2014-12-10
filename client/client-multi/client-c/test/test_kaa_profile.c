@@ -20,11 +20,12 @@
 #include "kaa_test.h"
 #include "kaa_mem.h"
 #include "kaa_log.h"
-
-
 #include "kaa_context.h"
 #include "kaa_profile.h"
 #include "gen/kaa_profile_gen.h"
+
+extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
+extern kaa_error_t kaa_context_destroy(kaa_context_t * context);
 
 static kaa_logger_t *logger = NULL;
 

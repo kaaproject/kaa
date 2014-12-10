@@ -18,13 +18,17 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
+#include <stdio.h>
+
 #include "kaa.h"
 #include "log/kaa_memory_log_storage.h"
 #include "kaa_test.h"
 #include "kaa_mem.h"
 #include "kaa_log.h"
 #include "kaa_profile.h"
-#include <stdio.h>
+
+extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
+extern kaa_error_t kaa_context_destroy(kaa_context_t * context);
 
 extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self
                                          , kaa_log_sync_response_t *response);
