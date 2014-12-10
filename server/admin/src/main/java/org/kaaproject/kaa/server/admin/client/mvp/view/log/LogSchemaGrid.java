@@ -47,8 +47,8 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
 
             downloadLibraryColumn = constructDownloadLibraryColumn("");
             table.addColumn(downloadLibraryColumn, downloadLibraryHeader);
-            table.setColumnWidth(downloadLibraryColumn, 40, Unit.PX);
-            result+= 40;
+            table.setColumnWidth(downloadLibraryColumn, ACTION_COLUMN_WIDTH, Unit.PX);
+            result+= ACTION_COLUMN_WIDTH;
         }
         if (!embedded && (downloadSchemaColumn == null || table.getColumnIndex(downloadSchemaColumn) == -1)) {
             Header<SafeHtml> downloadRecordSchemaHeader = new SafeHtmlHeader(
@@ -56,8 +56,8 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
 
             downloadSchemaColumn = constructDownloadSchemaColumn("");
             table.addColumn(downloadSchemaColumn, downloadRecordSchemaHeader);
-            table.setColumnWidth(downloadSchemaColumn, 40, Unit.PX);
-            result+= 40;
+            table.setColumnWidth(downloadSchemaColumn, ACTION_COLUMN_WIDTH, Unit.PX);
+            result+= ACTION_COLUMN_WIDTH;
         }
         if (enableActions) {
             if (deleteColumn == null || table.getColumnIndex(deleteColumn) == -1) {
@@ -66,8 +66,8 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
 
                 deleteColumn = constructDeleteColumn("");
                 table.addColumn(deleteColumn, deleteHeader);
-                table.setColumnWidth(deleteColumn, 40, Unit.PX);
-                result+= 40;
+                table.setColumnWidth(deleteColumn, ACTION_COLUMN_WIDTH, Unit.PX);
+                result+= ACTION_COLUMN_WIDTH;
             }
 
         }
