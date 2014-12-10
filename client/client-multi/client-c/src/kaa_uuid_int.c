@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define KAA_UUID_FORMAT     "%10u"
+#define KAA_UUID_FORMAT     "%u"
 
 void kaa_uuid_fill(kaa_uuid_t *dst, KAA_UUID_VALUE_T src)
 {

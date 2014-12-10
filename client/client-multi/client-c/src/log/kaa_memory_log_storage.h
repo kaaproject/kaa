@@ -28,6 +28,10 @@ extern "C" {
 
 #include "kaa_logging.h"
 
+#include "kaa_log.h"
+void                          set_memory_log_storage_logger(kaa_logger_t *);
+
+
 kaa_log_storage_t           * get_memory_log_storage();
 kaa_storage_status_t        * get_memory_log_storage_status();
 kaa_log_upload_properties_t * get_memory_log_upload_properties();

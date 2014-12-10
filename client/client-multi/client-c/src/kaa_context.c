@@ -39,7 +39,7 @@ extern void        kaa_status_destroy(kaa_status_t *self);
 extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void        kaa_event_manager_destroy(kaa_event_manager_t *self);
 
-extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager);
+extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
 
 extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_logger_t *logger);
@@ -82,7 +82,7 @@ kaa_error_t kaa_context_create(kaa_context_t ** context_p, kaa_logger_t *logger)
                         KAA_LOG_ERROR(logger, error, failed_msg, "bootstrap manager");
                     } else {
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-                        error = kaa_log_collector_create(&((*context_p)->log_collector), (*context_p)->status, (*context_p)->channel_manager);
+                        error = kaa_log_collector_create(&((*context_p)->log_collector), (*context_p)->status, (*context_p)->channel_manager, (*context_p)->logger);
                         if (error) {
                             KAA_LOG_ERROR(logger, error, failed_msg, "log collector");
                         } else {

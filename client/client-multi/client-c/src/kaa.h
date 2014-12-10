@@ -19,14 +19,8 @@
 
 #include <stddef.h>
 
-#include "kaa_common.h"
 #include "kaa_context.h"
-#include "kaa_external.h"
 #include "kaa_error.h"
-#include "kaa_profile.h"
-#include "kaa_logging.h"
-
-#include "gen/kaa_endpoint_gen.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,63 +39,6 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p);
  * Kaa library clean-up
  */
 kaa_error_t kaa_deinit(kaa_context_t *kaa_context);
-
-/*
- * Profile management
- */
-
-/**
- * Set endpoint access token.<br>
- * <br>
- * Provide unique string token to Kaa library.<br>
- * Endpoint access token SHOULD be provided before initialization of Kaa library.<br>
- * <br>
- * \param token  null-terminated string.
- */
-kaa_error_t kaa_set_endpoint_access_token(kaa_context_t *kaa_context, const char *token);
-
-/**
- * Create a Sync Request.<br>
- * <br>
- * Use this to create a valid sync request.<br>
- * Kaa library will allocate memory for *request itself.
- *
- * \return size of buffer which is needed to serialize the request
- * Example:<br>
- * <pre>
- * kaa_service_t services[1] = { KAA_SERVICE_EVENT };
- * kaa_sync_request_t *request = NULL;
- * size_t buffer_size = 0;
- * kaa_error_t error_code = kaa_compile_request(&request, &buffer_size, 1, services);
- * </pre>
- */
-kaa_error_t    kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t **request, size_t *result_size, size_t service_count, const kaa_service_t services[]);
-
-/**
- * Serialize Sync Request.<br>
- * <br>
- * Use this to serialize a valid sync request created using @link kaa_compile_request(...) @endlink.<br>
- * Serialized request is place to a given buffer. Buffer size must be of size
- * NOT LESS THAN the value returned by @link kaa_compile_request(...) @endlink <br>
- * <br>
- * Example:<br>
- * <pre>
- * kaa_service_t services[1] = { KAA_SERVICE_EVENT };
- * kaa_sync_request_t *request = NULL;
- * size_t buffer_size = 0;
- * kaa_error_t error_code = kaa_compile_request(&request, &buffer_size, 1, services);
- *
- * char *buffer = malloc(buffer_size * sizeof(char));
- * kaa_serialize_request(request, buffer, buffer_size);
- *
- * </pre>
- */
-kaa_error_t    kaa_serialize_request(kaa_sync_request_t *request, char *buffer, size_t request_size);
-
-/**
- * Process data received from Operations server.
- */
-kaa_error_t    kaa_response_received(kaa_context_t *kaa_context, const char *buffer, size_t buffer_size);
 
 
 #ifdef __cplusplus
