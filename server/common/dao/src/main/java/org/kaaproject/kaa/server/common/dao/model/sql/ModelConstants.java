@@ -240,7 +240,13 @@ public final class ModelConstants {
      * Log schema constants.
      */
     public static final String LOG_SCHEMA_TABLE_NAME = "log_schema";
-    
+
+    /**
+     * Notification schema constants
+     */
+    public static final String NOTIFICATION_SCHEMA_TABLE_NAME = "notification_schema";
+    public static final String NOTIFICATION_SCHEMA_TYPE_PROPERTY = "type";
+
     /**
      * Log appender constants.
      */

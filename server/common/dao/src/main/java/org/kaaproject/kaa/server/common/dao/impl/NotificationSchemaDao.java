@@ -16,20 +16,16 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
-import java.util.List;
-
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.model.NotificationSchema;
+
+import java.util.List;
 
 /**
  * The Interface NotificationSchemaDao.
  *
  * @param <T> the generic type
  */
-public interface NotificationSchemaDao<T extends NotificationSchema> extends Dao<T> {
-
-    T save(NotificationSchemaDto dto);
+public interface NotificationSchemaDao<T> extends Dao<T> {
     
     /**
      * Find notification schemas by application id.

@@ -119,7 +119,7 @@ public abstract class AbstractMongoDao<T> implements Dao<T> {
     }
 
     @Override
-    public <V> V save(V dto, Class<V> clazz) {
+    public <V> V save(V dto, Class<?> clazz) {
         LOG.debug("Save entity of {} class", clazz.getName());
         mongoTemplate.save(dto);
         return dto;

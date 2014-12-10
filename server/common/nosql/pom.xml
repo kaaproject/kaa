@@ -32,9 +32,40 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../../..</main.dir>
+        <cassandra.driver.version>2.1.3</cassandra.driver.version>
+        <cassandra.driver.mapping>2.1.2</cassandra.driver.mapping>
+        <cassandra-unit.version>2.0.2.1</cassandra-unit.version>
+        <cassandra-unit-spring.version>2.0.2.1</cassandra-unit-spring.version>
     </properties>
-	
-	<modules>
-		<module>mongo</module>
-	</modules>
+
+    <modules>
+        <module>mongo</module>
+        <module>cassandra</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.datastax.cassandra</groupId>
+                <artifactId>cassandra-driver-core</artifactId>
+                <version>${cassandra.driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.datastax.cassandra</groupId>
+                <artifactId>cassandra-driver-mapping</artifactId>
+                <version>${cassandra.driver.mapping}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cassandraunit</groupId>
+                <artifactId>cassandra-unit</artifactId>
+                <version>${cassandra-unit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.cassandraunit</groupId>
+                <artifactId>cassandra-unit-spring</artifactId>
+                <version>${cassandra-unit-spring.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

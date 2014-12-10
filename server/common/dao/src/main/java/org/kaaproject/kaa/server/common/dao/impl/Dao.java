@@ -74,7 +74,7 @@ public interface Dao<T> {
      * @param clazz
      * @return
      */
-    <V> V save(V o, Class<V> clazz);
+    <V> V save(V o, Class<?> clazz);
 
     /**
      * @param o

@@ -54,7 +54,7 @@ import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
-import org.kaaproject.kaa.server.common.dao.model.NotificationSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +112,7 @@ public class NotificationServiceImpl implements NotificationService {
                 throw new IncorrectParameterException("Invalid notification schema id: " + id);
             }
         }
-        return getDto(notificationSchemaDao.save(notificationSchemaDto));
+        return getDto(notificationSchemaDao.save(new NotificationSchema(notificationSchemaDto)));
     }
 
     @Override

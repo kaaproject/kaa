@@ -31,10 +31,12 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
@@ -45,6 +47,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
 import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
@@ -62,6 +65,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventSchemaVersion;
 import org.kaaproject.kaa.server.common.dao.model.sql.History;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
@@ -105,6 +109,8 @@ public abstract class HibernateAbstractTest {
     protected ApplicationEventFamilyMapDao<ApplicationEventFamilyMap> applicationEventFamilyMapDao;
     @Autowired
     protected LogSchemaDao<LogSchema> logSchemaDao;
+    @Autowired
+    protected NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
 
     protected Tenant generateTenant() {
         LOG.debug("Generate tenant...");
@@ -267,6 +273,33 @@ public abstract class HibernateAbstractTest {
         } catch (IOException e) {
             LOG.error("Can't generate configs {}", e);
             Assert.fail("Can't generate profile schema." + e.getMessage());
+        }
+        return schemas;
+    }
+
+    protected List<NotificationSchema> generateNotificationSchema(Application app, int count, NotificationTypeDto type) {
+        List<NotificationSchema> schemas = Collections.emptyList();
+        try {
+            if (app == null) {
+                app = generateApplication(null);
+            }
+            NotificationSchema notificationSchema;
+            schemas = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                notificationSchema = new NotificationSchema();
+                notificationSchema.setApplication(app);
+                notificationSchema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
+                notificationSchema.setCreatedUsername("Test User");
+                notificationSchema.setMajorVersion(i + 1);
+                notificationSchema.setName("Test Name");
+                notificationSchema.setType(type == null ? NotificationTypeDto.SYSTEM : type);
+                notificationSchema = notificationSchemaDao.save(notificationSchema);
+                Assert.assertNotNull(notificationSchema);
+                schemas.add(notificationSchema);
+            }
+        } catch (IOException e) {
+            LOG.error("Can't generate notification schema {}", e);
+            Assert.fail("Can't generate notification schema." + e.getMessage());
         }
         return schemas;
     }

@@ -79,7 +79,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
                     Long lid = Long.parseLong(id);
                     lids.add(lid);
                 } catch (NumberFormatException e) {
-                    LOG.warn("Can't conver string id {} to Long id", id);
+                    LOG.warn("Can't convert string id {} to Long id", id);
                 }
             }
         }
@@ -178,7 +178,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     }
 
     @Override
-    public <V> V save(V o, Class<V> clazz) {
+    public <V> V save(V o, Class<?> clazz) {
         Session session = getSession();
         session.saveOrUpdate(o);
         LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);
