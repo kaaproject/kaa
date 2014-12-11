@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_platform_protocol.h
+ * @brief Kaa platform level protocol implementation.
+ *
+ * Supplies API for serializing client sync messages to Operations server and processing server sync messages.
+ */
+
 #ifndef KAA_PLATFORM_PROTOCOL_H_
 #define KAA_PLATFORM_PROTOCOL_H_
 
@@ -26,49 +33,47 @@
 extern "C" {
 #endif
 
+/**
+ * Kaa platform protocol state structure
+ */
+typedef struct kaa_platform_protocol_t kaa_platform_protocol_t;
 
 /**
- * Create a Sync Request.<br>
- * <br>
- * Use this to create a valid sync request.<br>
- * Kaa library will allocate memory for *request itself.
- *
- * \return size of buffer which is needed to serialize the request
- * Example:<br>
- * <pre>
- * kaa_service_t services[1] = { KAA_SERVICE_EVENT };
- * kaa_sync_request_t *request = NULL;
- * size_t buffer_size = 0;
- * kaa_error_t error_code = kaa_compile_request(&request, &buffer_size, 1, services);
- * </pre>
+ * Buffer allocation callback
  */
-kaa_error_t kaa_compile_request(kaa_context_t *kaa_context, kaa_sync_request_t **request, size_t *result_size, size_t service_count, const kaa_service_t services[]);
+typedef const char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
 
 /**
- * Serialize Sync Request.<br>
- * <br>
- * Use this to serialize a valid sync request created using @link kaa_compile_request(...) @endlink.<br>
- * Serialized request is place to a given buffer. Buffer size must be of size
- * NOT LESS THAN the value returned by @link kaa_compile_request(...) @endlink <br>
- * <br>
- * Example:<br>
- * <pre>
- * kaa_service_t services[1] = { KAA_SERVICE_EVENT };
- * kaa_sync_request_t *request = NULL;
- * size_t buffer_size = 0;
- * kaa_error_t error_code = kaa_compile_request(&request, &buffer_size, 1, services);
+ * @brief Constructs a sync request for the specified list of services based on the current state of Kaa context and
+ * serializes it into the buffer returned by the allocator function.
  *
- * char *buffer = malloc(buffer_size * sizeof(char));
- * kaa_serialize_request(request, buffer, buffer_size);
+ * The required buffer size only becomes known after compiling a non-serialized sync request structure. Thus, the
+ * function expects the memory allocation callback, @c allocator, to return a buffer of the requested size. It is
+ * perfectly acceptable to return a pointer to a previously allocated buffer (even on the stack) if its size is sufficient.
  *
- * </pre>
+ * @param[in] self              Pointer to a @link kaa_platform_protocol_t @endlink instance.
+ * @param[in] services          Non-empty list of services to include into the sync message.
+ * @param[in] services_count    Number of elements in @c services.
+ * @param[in] allocator         Pointer to a buffer memory allocation function.
+ * @param[in] allocator_context Context to be passed to the @c allocator callback as @c context parameter.
+ *
+ * @return Error code.
  */
-kaa_error_t kaa_serialize_request(kaa_sync_request_t *request, char *buffer, size_t request_size);
+kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
+        , const kaa_service_t services[], size_t services_count
+        , kaa_buffer_alloc_fn allocator, void *allocator_context);
 
 /**
- * Process data received from Operations server.
+ * @brief Processes downstream data received from Operations server.
+ *
+ * @param[in] self              Pointer to a @link kaa_platform_protocol_t @endlink instance.
+ * @param[in] buffer            Pointer to a data buffer for processing received from Operations server.
+ * @param[in] buffer_size       Size of @c buffer.
+ *
+ * @return Error code.
  */
-kaa_error_t kaa_response_received(kaa_context_t *kaa_context, const char *buffer, size_t buffer_size);
+kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
+        , const char *buffer, size_t buffer_size);
 
 #ifdef __cplusplus
 }      /* extern "C" */

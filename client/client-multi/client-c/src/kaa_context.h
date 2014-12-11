@@ -17,13 +17,12 @@
 #ifndef KAA_CONTEXT_H_
 #define KAA_CONTEXT_H_
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct kaa_status_t             kaa_status_t;
+typedef struct kaa_platform_protocol_t  kaa_platform_protocol_t;
 typedef struct kaa_bootstrap_manager_t  kaa_bootstrap_manager_t;
 typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
 typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
@@ -42,6 +41,7 @@ typedef struct kaa_logger_t             kaa_logger_t;
 
 typedef struct {
     kaa_status_t               *status;
+    kaa_platform_protocol_t    *platfrom_protocol;
     kaa_bootstrap_manager_t    *bootstrap_manager;
     kaa_channel_manager_t      *channel_manager;
     kaa_profile_manager_t      *profile_manager;
@@ -53,7 +53,6 @@ typedef struct {
     kaa_log_collector_t        *log_collector;
 #endif
     kaa_logger_t               *logger;
-    uint32_t                    global_request_id;  // FIXME: find a better place for this
 } kaa_context_t;
 
 #ifdef __cplusplus

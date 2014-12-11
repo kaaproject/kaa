@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include <stdint.h>
@@ -92,5 +89,7 @@ size_t kaa_null_get_size();
 
 void kaa_data_destroy(void *data);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* KAA_COMMON_SCHEMA_H_ */

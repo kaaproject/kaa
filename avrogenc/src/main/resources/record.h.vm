@@ -20,7 +20,7 @@ typedef struct {
 #foreach ($field in $schema.getFields())
 #set ($field_type = $TypeConverter.convertToCType($prefix, $field.schema()))
 #set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
-    ${field_type} ${field_name}; 
+    ${field_type} ${field_name};
 #end
 
 #if ($TypeConverter.isTypeOut($schema) && $schema.getFields().size() > 0)
