@@ -17,8 +17,6 @@
 package org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 import org.kaaproject.kaa.server.common.avro.ui.shared.FormEnum;
 
@@ -29,12 +27,6 @@ public class FormEnumListBox extends ValueListBox<FormEnum> {
 
     public FormEnumListBox() {
         super(new FormEnumRenderer());
-    }
-
-    public void reset() {
-        List<FormEnum> emptyList = Collections.emptyList();
-        setValue(null);
-        setAcceptableValues(emptyList);
     }
 
     static class FormEnumRenderer implements Renderer<FormEnum> {

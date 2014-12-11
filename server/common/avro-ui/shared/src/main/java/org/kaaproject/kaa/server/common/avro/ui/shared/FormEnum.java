@@ -22,8 +22,12 @@ public class FormEnum implements Serializable {
 
     private static final long serialVersionUID = 816172078410943534L;
     
-    private final String enumSymbol;
-    private final String displayValue;
+    private String enumSymbol;
+    private String displayValue;
+    
+    public FormEnum() {
+        super();
+    }
     
     public FormEnum(String enumSymbol, String displayValue) {
         this.enumSymbol = enumSymbol;
@@ -34,8 +38,16 @@ public class FormEnum implements Serializable {
         return enumSymbol;
     }
 
+    public void setEnumSymbol(String enumSymbol) {
+        this.enumSymbol = enumSymbol;
+    }
+
     public String getDisplayValue() {
         return displayValue;
+    }
+
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
     }
 
     @Override

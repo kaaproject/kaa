@@ -45,6 +45,10 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
     public void sendEventToFlume(Event event) throws EventDeliveryException {
         currentClient.append(event);
     }
+    @Override
+    public void sendEventsToFlume(List<Event> events) throws EventDeliveryException {
+        currentClient.appendBatch(events);
+    }
 
     private Properties generateProperties(FlumeNodes parameters) {
         Properties props = new Properties();

@@ -25,11 +25,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 
 public class FlumeAvroEventBuilderTest {
+
+    private static final int EVENTS_COUNT = 5;
 
     private static final int SCHEMA_VERSION = 10;
 
@@ -54,29 +58,50 @@ public class FlumeAvroEventBuilderTest {
     @Test
     public void generateFromAvroEventWithEmptyLogSchemaTest() {
         eventBuilder = new FlumeAvroEventBuilder();
+        FlumeConfig flumeConfig = new FlumeConfig();
+        flumeConfig.setFlumeEventFormat(FlumeEventFormat.RECORDS_CONTAINER);
+        eventBuilder.init(flumeConfig);
         eventPack.setLogSchema(null);
-        Event event = eventBuilder.generateEvent(eventPack, null, appToken);
-        Assert.assertNull(event);
+        List<Event> events = eventBuilder.generateEvents(eventPack, null, appToken);
+        Assert.assertNull(events);
     }
 
     @Test
     public void generateFromAvroEventWithEmptyLogEventsTest() {
         eventBuilder = new FlumeAvroEventBuilder();
+        FlumeConfig flumeConfig = new FlumeConfig();
+        flumeConfig.setFlumeEventFormat(FlumeEventFormat.RECORDS_CONTAINER);
+        eventBuilder.init(flumeConfig);
         eventPack.setEvents(new ArrayList<LogEvent>());
-        Event event = eventBuilder.generateEvent(eventPack, null, appToken);
-        Assert.assertNull(event);
+        List<Event> events = eventBuilder.generateEvents(eventPack, null, appToken);
+        Assert.assertNull(events);
     }
 
     @Test
-    public void generateFromAvroEventTest() {
+    public void generateFromAvroEventRecordsContainerTest() {
         eventBuilder = new FlumeAvroEventBuilder();
-        Event event = eventBuilder.generateEvent(eventPack, null, appToken);
-        Assert.assertNotNull(event);
+        FlumeConfig flumeConfig = new FlumeConfig();
+        flumeConfig.setFlumeEventFormat(FlumeEventFormat.RECORDS_CONTAINER);
+        eventBuilder.init(flumeConfig);
+        List<Event> events = eventBuilder.generateEvents(eventPack, null, appToken);
+        Assert.assertNotNull(events);
+        Assert.assertEquals(1, events.size());
+    }
+    
+    @Test
+    public void generateFromAvroEventGenericTest() {
+        eventBuilder = new FlumeAvroEventBuilder();
+        FlumeConfig flumeConfig = new FlumeConfig();
+        flumeConfig.setFlumeEventFormat(FlumeEventFormat.GENERIC);
+        eventBuilder.init(flumeConfig);
+        List<Event> events = eventBuilder.generateEvents(eventPack, null, appToken);
+        Assert.assertNotNull(events);
+        Assert.assertEquals(EVENTS_COUNT, events.size());
     }
 
     private List<LogEvent> generateEvents() {
         List<LogEvent> events = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < EVENTS_COUNT; i++) {
             LogEvent logEvent = new LogEvent();
             logEvent.setLogData(new byte[] { 1, 2, 3, 4 });
             events.add(logEvent);
