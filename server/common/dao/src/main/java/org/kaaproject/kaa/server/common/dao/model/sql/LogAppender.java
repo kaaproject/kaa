@@ -16,17 +16,18 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_APPENDER_CLASS_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CREATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CREATED_USERNAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_DESCRIPTION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_LOG_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TYPE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_APPENDER_CLASS_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_RAW_CONFIGURATION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_STATUS;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TYPE_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 import java.io.Serializable;
@@ -49,7 +50,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
@@ -69,11 +69,12 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Application application;
 
-    @ManyToOne
-    @JoinColumn(name = LOG_APPENDER_LOG_SCHEMA_ID, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private LogSchema logSchema;
+    @Column(name = LOG_APPENDER_MIN_LOG_SCHEMA_VERSION)
+    private int minLogSchemaVersion;
 
+    @Column(name = LOG_APPENDER_MAX_LOG_SCHEMA_VERSION)
+    private int maxLogSchemaVersion;
+    
     @Column(name = LOG_APPENDER_STATUS)
     @Enumerated(EnumType.STRING)
     private LogAppenderStatusDto status;
@@ -111,8 +112,8 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
             this.id = getLongId(dto.getId());
             Long appId = getLongId(dto.getApplicationId());
             this.application = appId != null ? new Application(appId) : null;
-            Long schemaId = getLongId(dto.getSchema());
-            this.logSchema = schemaId != null ? new LogSchema(schemaId) : null;
+            this.minLogSchemaVersion = dto.getMinLogSchemaVersion();
+            this.maxLogSchemaVersion = dto.getMaxLogSchemaVersion();
             this.name = dto.getName();
             this.status = dto.getStatus();
             this.description = dto.getDescription();
@@ -141,12 +142,20 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         this.application = application;
     }
 
-    public LogSchema getLogSchema() {
-        return logSchema;
+    public int getMinLogSchemaVersion() {
+        return minLogSchemaVersion;
     }
 
-    public void setLogSchema(LogSchema logSchema) {
-        this.logSchema = logSchema;
+    public void setMinLogSchemaVersion(int minLogSchemaVersion) {
+        this.minLogSchemaVersion = minLogSchemaVersion;
+    }
+
+    public int getMaxLogSchemaVersion() {
+        return maxLogSchemaVersion;
+    }
+
+    public void setMaxLogSchemaVersion(int maxLogSchemaVersion) {
+        this.maxLogSchemaVersion = maxLogSchemaVersion;
     }
 
     public LogAppenderStatusDto getStatus() {
@@ -200,7 +209,8 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         dto.setCreatedTime(createdTime);
         dto.setCreatedUsername(createdUsername);
         dto.setDescription(description);
-        dto.setSchema(new SchemaDto(logSchema.getStringId(), logSchema.getMajorVersion(), logSchema.getMinorVersion()));
+        dto.setMinLogSchemaVersion(minLogSchemaVersion);
+        dto.setMaxLogSchemaVersion(maxLogSchemaVersion);
         dto.setStatus(status);
         dto.setTypeName(typeName);
         dto.setAppenderClassName(appenderClassName);
@@ -217,13 +227,14 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     @Override
     public String toString() {
         return "LogAppender [name=" + name + ", application=" + application
-                + ", logSchema=" + logSchema + ", status=" + status
-                + ", description=" + description + ", createdUsername="
-                + createdUsername + ", createdTime=" + createdTime
-                + ", typeName=" + typeName + ", appenderClassName="
-                + appenderClassName + ", rawConfiguration="
-                + Arrays.toString(rawConfiguration) + ", headerStructure="
-                + headerStructure + "]";
+                + ", minLogSchemaVersion=" + minLogSchemaVersion
+                + ", maxLogSchemaVersion=" + maxLogSchemaVersion + ", status="
+                + status + ", description=" + description
+                + ", createdUsername=" + createdUsername + ", createdTime="
+                + createdTime + ", typeName=" + typeName
+                + ", appenderClassName=" + appenderClassName
+                + ", rawConfiguration=" + Arrays.toString(rawConfiguration)
+                + ", headerStructure=" + headerStructure + "]";
     }
 
 }

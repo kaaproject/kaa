@@ -47,8 +47,8 @@ public class LogbackFileSystemLogger implements FileSystemLogger {
     @Override
     public void init(LogAppenderDto appenderDto, FileConfig config, Path filePath) {
         LOG.info(
-                "[{}][{}][{}] Initializing with rollingFileNamePatern: {}, rollingMaxHistory: {}, triggerMaxFileSize: {}, encoderPattern: {}",
-                appenderDto.getTenantId(), appenderDto.getApplicationId(), appenderDto.getSchemaVersion(),
+                "[{}][{}] Initializing with rollingFileNamePatern: {}, rollingMaxHistory: {}, triggerMaxFileSize: {}, encoderPattern: {}",
+                appenderDto.getTenantId(), appenderDto.getApplicationId(),
                 config.getRollingFileNamePatern(), config.getRollingMaxHistory(), config.getTriggerMaxFileSize(), config.getEncoderPattern());
         
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -79,8 +79,8 @@ public class LogbackFileSystemLogger implements FileSystemLogger {
         logger = loggerContext.getLogger(appenderDto.getTenantId() + "." + appenderDto.getApplicationToken());
         logger.setLevel(Level.ALL);
         logger.addAppender(rfAppender);
-        LOG.debug("[{}][{}][{}] Initialized with context {}", appenderDto.getTenantId(),
-                appenderDto.getApplicationId(), appenderDto.getSchemaVersion(), loggerContext);
+        LOG.debug("[{}][{}] Initialized with context {}", appenderDto.getTenantId(),
+                appenderDto.getApplicationId(), loggerContext);
     }
 
     @Override

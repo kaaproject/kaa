@@ -247,7 +247,8 @@ public final class ModelConstants {
     public static final String LOG_APPENDER_TABLE_NAME = "log_appender";
     public static final String LOG_APPENDER_NAME = "name";
     public static final String LOG_APPENDER_APPLICATION_ID = "application_id";
-    public static final String LOG_APPENDER_LOG_SCHEMA_ID = "log_schema_id";
+    public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "min_log_schema_version";
+    public static final String LOG_APPENDER_MAX_LOG_SCHEMA_VERSION = "max_log_schema_version";
     public static final String LOG_APPENDER_STATUS = "status";
     public static final String LOG_APPENDER_TYPE_NAME = "type_name";
     public static final String LOG_APPENDER_APPENDER_CLASS_NAME = "appender_class_name";

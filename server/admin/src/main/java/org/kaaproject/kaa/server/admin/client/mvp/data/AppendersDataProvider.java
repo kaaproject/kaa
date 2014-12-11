@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
-import org.kaaproject.kaa.server.admin.client.mvp.activity.LogAppendersActivity.LoadDataHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -30,14 +29,12 @@ import com.google.gwt.view.client.MultiSelectionModel;
 
 public class AppendersDataProvider  extends AbstractDataProvider<LogAppenderDto>{
     private String applicationId;
-    private LoadDataHandler handler;
 
     public AppendersDataProvider(MultiSelectionModel<LogAppenderDto> selectionModel,
                                     AsyncCallback<List<LogAppenderDto>> asyncCallback,
-                                    String applicationId, LoadDataHandler handler) {
+                                    String applicationId) {
         super(selectionModel, asyncCallback);
         this.applicationId = applicationId;
-        this.handler = handler;
     }
 
     @Override
@@ -47,12 +44,10 @@ public class AppendersDataProvider  extends AbstractDataProvider<LogAppenderDto>
                 @Override
                 public void onFailure(Throwable caught) {
                     callback.onFailure(caught);
-                    handler.onError();
                 }
                 @Override
                 public void onSuccess(List<LogAppenderDto> result) {
                     callback.onSuccess(result, display);
-                    handler.onLoad(result);
                 }
             });
         }
