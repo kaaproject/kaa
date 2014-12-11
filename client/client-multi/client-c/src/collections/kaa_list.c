@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-#include "kaa_list.h"
+#include "collections/kaa_list.h"
 #include "kaa_mem.h"
-
 
 struct kaa_list_t {
     void              *data;

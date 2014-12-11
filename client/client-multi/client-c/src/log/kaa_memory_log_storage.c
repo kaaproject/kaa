@@ -19,7 +19,7 @@
 #include "kaa_memory_log_storage.h"
 
 #include "collections/kaa_deque.h"
-#include "kaa_list.h"
+#include "collections/kaa_list.h"
 #include "kaa_uuid.h"
 #include "kaa_mem.h"
 #include <stdint.h>

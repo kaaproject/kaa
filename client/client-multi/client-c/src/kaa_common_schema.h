@@ -28,7 +28,7 @@ extern "C" {
 
 #include "avro_src/avro/io.h"
 
-#include "kaa_list.h"
+#include "collections/kaa_list.h"
 
 typedef void (*serialize_fn)(avro_writer_t writer, void *data);
 typedef void* (*deserialize_fn)(avro_reader_t reader);
