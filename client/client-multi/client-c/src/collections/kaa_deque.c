@@ -15,6 +15,8 @@
  */
 
 #include "kaa_deque.h"
+
+#include <stddef.h>
 #include "kaa_common.h"
 #include "kaa_mem.h"
 
@@ -62,6 +64,7 @@ inline kaa_deque_iterator_t *kaa_deque_iterator_next(kaa_deque_iterator_t *self)
             ? self->next
             : NULL;
 }
+
 inline kaa_deque_iterator_t *kaa_deque_iterator_previous(kaa_deque_iterator_t *self)
 {
     return self

@@ -22,7 +22,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "kaa_list.h"
+#include "collections/kaa_list.h"
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
 #include "kaa_mem.h"

@@ -25,11 +25,11 @@
 # endif
 
 # include "kaa_common_schema.h"
-# include "kaa_list.h"
+# include "collections/kaa_list.h"
 
 
 typedef struct {
-    kaa_string_t* data; 
+    kaa_string_t* data;
 
     serialize_fn serialize;
     get_size_fn  get_size;

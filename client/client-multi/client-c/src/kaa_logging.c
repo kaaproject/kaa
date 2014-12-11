@@ -19,7 +19,7 @@
 
 #include <stddef.h>
 #include <string.h>
-#include "kaa_list.h"
+#include "collections/kaa_list.h"
 #include "kaa_mem.h"
 #include "kaa_uuid.h"
 #include "kaa_common.h"

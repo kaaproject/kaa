@@ -54,25 +54,25 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src
 set (KAA_SOURCE_FILES
                        src/avro_src/io.c
                        src/avro_src/encoding_binary.c
-                       src/kaa_log.c
-                       src/kaa.c
-                       src/kaa_context.c
-                       src/kaa_profile.c
-                       src/kaa_user.c
-                       src/kaa_event.c
+                       src/collections/kaa_deque.c
+                       src/collections/kaa_list.c
+                       src/gen/kaa_endpoint_gen.c
                        src/kaa_bootstrap.c
-                       src/kaa_status.c
-                       src/kaa_platform_protocol.c
-                       src/kaa_list.c
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
-                       src/kaa_mem.c
-                       src/kaa_uuid_int.c
                        src/kaa_common.c
-                       src/gen/kaa_endpoint_gen.c
+                       src/kaa_context.c
+                       src/kaa_event.c
+                       src/kaa_log.c
                        src/kaa_logging.c
+                       src/kaa_mem.c
+                       src/kaa_platform_protocol.c
+                       src/kaa_profile.c
+                       src/kaa_status.c
+                       src/kaa_user.c
+                       src/kaa_uuid_int.c
+                       src/kaa.c
                        src/log/kaa_memory_log_storage.c
-                       src/collections/kaa_deque.c
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
