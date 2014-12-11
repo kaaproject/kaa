@@ -37,11 +37,22 @@ extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self
 
 static kaa_logger_t *logger = NULL;
 
-static const kaa_service_t services[4] = { KAA_SERVICE_PROFILE
-                                         , KAA_SERVICE_USER
-                                         , KAA_SERVICE_EVENT
-                                         , KAA_SERVICE_LOGGING };
+#define NUM_OF_SERVICES 4
+static const kaa_service_t services[NUM_OF_SERVICES] = {
+        KAA_SERVICE_PROFILE
+        , KAA_SERVICE_USER
+        , KAA_SERVICE_EVENT
+        , KAA_SERVICE_LOGGING
+};
 
+
+static const char* allocate_buffer(void* context, size_t buffer_size)
+{
+    KAA_LOG_DEBUG(logger, KAA_ERR_NONE, "In allocate_buffer(), requested size: %u", buffer_size);
+    char **buffer_to_alloc_p = (char**) context;
+    *buffer_to_alloc_p = KAA_MALLOC(buffer_size * sizeof(char));
+    return *buffer_to_alloc_p;
+}
 
 void test_create_request()
 {
@@ -53,15 +64,12 @@ void test_create_request()
     profile->profile_body = kaa_string_move_create("body", NULL);
     kaa_profile_update_profile(kaa_context->profile_manager, profile);
 
-    size_t s;
-    kaa_sync_request_t *request = NULL;
-    error = kaa_compile_request(kaa_context, &request, &s, 4, services);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(request);
-    ASSERT_NOT_NULL(request->log_sync_request);
-    ASSERT_EQUAL(request->log_sync_request->type, KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_BRANCH_1);
+    char *buffer = NULL;
+    error = kaa_platform_protocol_serialize_client_sync(kaa_context->platfrom_protocol, services, NUM_OF_SERVICES, allocate_buffer, &buffer);
 
-    request->destroy(request);
+    ASSERT_EQUAL(error, KAA_ERR_NONE);
+
+    KAA_FREE(buffer);
     profile->destroy(profile);
     kaa_deinit(kaa_context);
 }
