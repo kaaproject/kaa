@@ -98,6 +98,7 @@ void test_response()
     ASSERT_EQUAL(stub_upload_uuid_check_call_count,1);
 
     kaa_context_destroy(ctx);
+    kaa_string_destroy(log_sync_response.request_id);
 }
 
 #define DEFAULT_LOG_RECORD 0

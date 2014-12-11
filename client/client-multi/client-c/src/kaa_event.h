@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
@@ -136,5 +133,7 @@ const char *kaa_find_class_family_name(const char *fqn);
 
 #endif
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* KAA_EVENT_H_ */
