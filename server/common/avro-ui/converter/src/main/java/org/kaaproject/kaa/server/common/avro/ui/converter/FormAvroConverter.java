@@ -143,7 +143,7 @@ public class FormAvroConverter {
                     EnumField enumField = createField(fieldType, fieldName, displayName, optional);
                     List<String> enumSymbols = field.schema().getEnumSymbols();
                     List<FormEnum> enumValues = new ArrayList<>(enumSymbols.size());
-                    JsonNode displayNamesNode = field.schema().getJsonProp(DISPLAY_NAMES);
+                    JsonNode displayNamesNode = field.getJsonProp(DISPLAY_NAMES);
                     for (int i=0;i<enumSymbols.size();i++) {
                         String enumSymbol = enumSymbols.get(i);
                         String displayValue = enumSymbol;

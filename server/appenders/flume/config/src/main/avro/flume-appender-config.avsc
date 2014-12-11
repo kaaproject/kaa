@@ -4,6 +4,17 @@
     "name": "FlumeConfig",
     "fields": 
     [
+        {"name": "flumeEventFormat",
+         "displayName": "Flume event format",
+         "default": "RECORDS_CONTAINER",
+         "displayNames" : ["Records container", "Generic"],
+         "type": {
+                  "namespace": "org.kaaproject.kaa.server.appenders.flume.config.gen",
+                  "type": "enum",
+                  "name": "FlumeEventFormat",
+                  "symbols" : ["RECORDS_CONTAINER", "GENERIC"]
+                 }
+        },
         {"name": "hostsBalancing", 
          "displayName": "Hosts balancing",
          "type": 
