@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include <stdint.h>
@@ -180,8 +177,12 @@ typedef enum
     KAATCP_ERR_NONE = 0,
     KAATCP_ERR_NOMEM = -1,
     KAATCP_ERR_BUFFER_NOT_ENOUGH = -2,
-    KAATCP_ERR_BAD_PARAM = -3
+    KAATCP_ERR_BAD_PARAM = -3,
+    KAATCP_ERR_INVALID_STATE = -4,
+    KAATCP_ERR_INVALID_PROTOCOL = -5
 } kaatcp_error_t;
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAATCP_COMMON_H_ */

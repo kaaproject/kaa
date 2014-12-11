@@ -27,11 +27,12 @@ void test_kaatcp_connect()
     char *session_key = "session_key";
     char *signature = "signature";
     char *payload = "payload";
-    kaatcp_fill_connect_message(200, payload, strlen(payload), session_key, strlen(session_key), signature, strlen(signature), &connect);
+    kaatcp_error_t rval = kaatcp_fill_connect_message(200, payload, strlen(payload), session_key, strlen(session_key), signature, strlen(signature), &connect);
+    assert(rval == KAATCP_ERR_NONE);
 
     char connect_buf[1024];
     uint32_t connect_buf_size = 1024;
-    kaatcp_get_request_connect(&connect, connect_buf, &connect_buf_size);
+    assert(kaatcp_get_request_connect(&connect, connect_buf, &connect_buf_size) == KAATCP_ERR_NONE);
     unsigned char checkConnectHeader[] = { 0x10, 0x29, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x11, 0x01, 0x00, 0xC8 };
 
     assert(connect_buf_size == 43);
@@ -45,11 +46,11 @@ void test_kaatcp_connect_without_key()
 {
     kaatcp_connect_t connect;
     char *payload = "payload";
-    kaatcp_fill_connect_message(200, payload, strlen(payload), NULL, 0, NULL, 0, &connect);
+    assert(kaatcp_fill_connect_message(200, payload, strlen(payload), NULL, 0, NULL, 0, &connect) == KAATCP_ERR_NONE);
 
     char connect_buf[1024];
     uint32_t connect_buf_size = 1024;
-    kaatcp_get_request_connect(&connect, connect_buf, &connect_buf_size);
+    assert(kaatcp_get_request_connect(&connect, connect_buf, &connect_buf_size) == KAATCP_ERR_NONE);
     unsigned char checkConnectHeader[] = { 0x10, 0x15, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x00, 0x00, 0x00, 0xC8 };
 
     assert(connect_buf_size == 23);
@@ -60,11 +61,11 @@ void test_kaatcp_connect_without_key()
 void test_kaatcp_disconnect()
 {
     kaatcp_disconnect_t disconnect;
-    kaatcp_fill_disconnect_message(KAATCP_DISCONNECT_BAD_REQUEST, &disconnect);
+    assert(kaatcp_fill_disconnect_message(KAATCP_DISCONNECT_BAD_REQUEST, &disconnect) == KAATCP_ERR_NONE);
 
     char disconnect_buf[5];
     uint32_t disconnect_buf_size = 5;
-    kaatcp_get_request_disconnect(&disconnect, disconnect_buf, &disconnect_buf_size);
+    assert(kaatcp_get_request_disconnect(&disconnect, disconnect_buf, &disconnect_buf_size) == KAATCP_ERR_NONE);
 
     assert(disconnect_buf_size == 4);
 
@@ -76,11 +77,11 @@ void test_kaatcp_kaasync()
 {
     kaatcp_kaasync_t kaasync;
     char *payload = "payload";
-    kaatcp_fill_kaasync_message(payload, strlen(payload), 5, 0, 1, &kaasync);
+    assert(kaatcp_fill_kaasync_message(payload, strlen(payload), 5, 0, 1, &kaasync) == KAATCP_ERR_NONE);
 
     char kaasync_buf[128];
     uint32_t kaasync_buf_size = 128;
-    kaatcp_get_request_kaasync(&kaasync, kaasync_buf, &kaasync_buf_size);
+    assert(kaatcp_get_request_kaasync(&kaasync, kaasync_buf, &kaasync_buf_size) == KAATCP_ERR_NONE);
 
     unsigned char kaasync_message[] = { 0xF0, 0x13, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x15 };
 
@@ -93,7 +94,7 @@ void test_kaatcp_ping()
 {
     char ping_buf[5];
     uint32_t ping_buf_size = 5;
-    kaatcp_get_request_ping(ping_buf, &ping_buf_size);
+    assert(kaatcp_get_request_ping(ping_buf, &ping_buf_size) == KAATCP_ERR_NONE);
 
     unsigned char ping_message [] = { 0xD0, 0x00 };
 
@@ -106,11 +107,11 @@ void test_kaatcp_bootstrap_request()
 {
     kaatcp_bootstrap_request_t bootstrap;
     char *app_token = "app_token";
-    kaatcp_fill_bootstrap_message(app_token, 5, &bootstrap);
+    assert(kaatcp_fill_bootstrap_message(app_token, 5, &bootstrap) == KAATCP_ERR_NONE);
 
     char bootstrap_buf[128];
     uint32_t bootstrap_buf_size = 128;
-    kaatcp_get_request_bootstrap(&bootstrap, bootstrap_buf, &bootstrap_buf_size);
+    assert(kaatcp_get_request_bootstrap(&bootstrap, bootstrap_buf, &bootstrap_buf_size) == KAATCP_ERR_NONE);
 
     unsigned char bootstrap_message[] = { 0xF0, 0x15, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x21 };
 

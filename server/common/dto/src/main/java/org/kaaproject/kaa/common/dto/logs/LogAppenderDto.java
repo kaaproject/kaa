@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.AbstractDetailDto;
 import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 
 public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializable {
 
@@ -32,7 +31,8 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
     private String applicationId;
     private String applicationToken;
     private String tenantId;
-    private SchemaDto schema;
+    private int minLogSchemaVersion;
+    private int maxLogSchemaVersion;
     private LogAppenderStatusDto status;
     private String typeName;
     private String appenderClassName;
@@ -80,13 +80,21 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
     }
-
-    public SchemaDto getSchema() {
-        return schema;
+    
+    public int getMinLogSchemaVersion() {
+        return minLogSchemaVersion;
     }
 
-    public void setSchema(SchemaDto schema) {
-        this.schema = schema;
+    public void setMinLogSchemaVersion(int minLogSchemaVersion) {
+        this.minLogSchemaVersion = minLogSchemaVersion;
+    }
+
+    public int getMaxLogSchemaVersion() {
+        return maxLogSchemaVersion;
+    }
+
+    public void setMaxLogSchemaVersion(int maxLogSchemaVersion) {
+        this.maxLogSchemaVersion = maxLogSchemaVersion;
     }
 
     public LogAppenderStatusDto getStatus() {
@@ -129,14 +137,6 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
         this.headerStructure = headerStructure;
     }
 
-    public String getSchemaVersion() {
-        StringBuilder version = new StringBuilder();
-        if (schema != null) {
-            version.append(schema.getMajorVersion()).append(".").append(schema.getMinorVersion());
-        }
-        return version.toString();
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -153,8 +153,9 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
         result = prime * result
                 + ((headerStructure == null) ? 0 : headerStructure.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + maxLogSchemaVersion;
+        result = prime * result + minLogSchemaVersion;
         result = prime * result + Arrays.hashCode(rawConfiguration);
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result
                 + ((tenantId == null) ? 0 : tenantId.hashCode());
@@ -210,14 +211,13 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
         } else if (!id.equals(other.id)) {
             return false;
         }
-        if (!Arrays.equals(rawConfiguration, other.rawConfiguration)) {
+        if (maxLogSchemaVersion != other.maxLogSchemaVersion) {
             return false;
         }
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
+        if (minLogSchemaVersion != other.minLogSchemaVersion) {
+            return false;
+        }
+        if (!Arrays.equals(rawConfiguration, other.rawConfiguration)) {
             return false;
         }
         if (status != other.status) {
@@ -244,8 +244,9 @@ public class LogAppenderDto extends AbstractDetailDto implements HasId, Serializ
     public String toString() {
         return "LogAppenderDto [id=" + id + ", applicationId=" + applicationId
                 + ", applicationToken=" + applicationToken + ", tenantId="
-                + tenantId + ", schema=" + schema + ", status=" + status
-                + ", typeName=" + typeName + ", appenderClassName="
+                + tenantId + ", minLogSchemaVersion=" + minLogSchemaVersion
+                + ", maxLogSchemaVersion=" + maxLogSchemaVersion + ", status="
+                + status + ", typeName=" + typeName + ", appenderClassName="
                 + appenderClassName + ", rawConfiguration="
                 + Arrays.toString(rawConfiguration) + ", headerStructure="
                 + headerStructure + "]";

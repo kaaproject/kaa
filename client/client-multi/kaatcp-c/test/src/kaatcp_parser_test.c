@@ -145,23 +145,23 @@ void test_kaatcp_parser()
     assert(kaatcp_parser_init(&parser, &handlers) == 0);
 
     char connack_and_ping_messages[] = { 0x20, 0x02, 0x00, 0x03, 0xD0, 0x00 };
-    kaatcp_parser_process_buffer(&parser, connack_and_ping_messages, 6);
+    assert(kaatcp_parser_process_buffer(&parser, connack_and_ping_messages, 6) == KAATCP_ERR_NONE);
 
     assert(ping_received);
     assert(connack_received);
 
     unsigned char kaa_sync_message[] = { 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x14, 0xFF };
-    kaatcp_parser_process_buffer(&parser, (const char *)kaa_sync_message, 15);
+    assert(kaatcp_parser_process_buffer(&parser, (const char *)kaa_sync_message, 15) == KAATCP_ERR_NONE);
 
     assert(kaasync_received);
 
     unsigned char disconnect_message[] = { 0xE0, 0x02, 0x00, 0x01 };
-    kaatcp_parser_process_buffer(&parser, (const char *) disconnect_message, 4);
+    assert(kaatcp_parser_process_buffer(&parser, (const char *) disconnect_message, 4) == KAATCP_ERR_NONE);
 
     assert(disconnect_received);
 
     unsigned char bootstrap_message[] = {-16, -88, 2, 0, 6, 75, 97, 97, 116, 99, 112, 1, 0, 5, 32, 0, 0, 0, 2, 0, 0, 0, -120, 0, 0, 0, 7, 115, 101, 114, 118, 101, 114, 49, 0, 0, 0, 0, 10, 1, 0, 0, 16, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 3, 21, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, -120, 0, 0, 0, 8, 115, 101, 114, 118, 101, 114, 50, 50, 0, 0, 0, 20, 1, 0, 0, 16, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 26, 3, 22, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 50, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0};
-    kaatcp_parser_process_buffer(&parser, (const char *) bootstrap_message, 299);
+    assert(kaatcp_parser_process_buffer(&parser, (const char *) bootstrap_message, 299) == KAATCP_ERR_NONE);
     assert(bootstrap_received);
 }
 

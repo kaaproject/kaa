@@ -39,6 +39,9 @@ static const char * kaatcp_parser_parse_supported_channel(kaatcp_supported_chann
     cursor += 2;
 
     channel->hostname = (char *) malloc(channel->hostname_length + 1);
+    if (!channel->hostname) {
+        return NULL;
+    }
     memcpy(channel->hostname, cursor, channel->hostname_length);
     channel->hostname[channel->hostname_length] = '\0';
     cursor += channel->hostname_length;
@@ -54,6 +57,9 @@ static const char * kaatcp_parser_parse_server_record(kaatcp_server_record_t *se
     server_record->server_name_length = ntohl(*(uint32_t *) cursor);
     cursor += 4;
     server_record->server_name = (char *) malloc(server_record->server_name_length + 1);
+    if (!server_record->server_name) {
+        return NULL;
+    }
     memcpy(server_record->server_name, cursor, server_record->server_name_length);
     server_record->server_name[server_record->server_name_length] = '\0';
     cursor += server_record->server_name_length;
@@ -67,31 +73,51 @@ static const char * kaatcp_parser_parse_server_record(kaatcp_server_record_t *se
     server_record->public_key_length = ntohs(*(uint16_t *) cursor);
     cursor += 2;
 
-    server_record->public_key = (char *) malloc(server_record->public_key_length);
-    memcpy(server_record->public_key, cursor, server_record->public_key_length);
-    cursor += server_record->public_key_length;
+    if (server_record->public_key_length) {
+        server_record->public_key = (char *) malloc(server_record->public_key_length);
+        if (!server_record->public_key) {
+            return NULL;
+        }
+        memcpy(server_record->public_key, cursor, server_record->public_key_length);
+        cursor += server_record->public_key_length;
+    }
 
     server_record->supported_channels_count = ntohl(*(uint32_t *) cursor);
     cursor += 4;
-    server_record->supported_channels = (kaatcp_supported_channel_t *) malloc(sizeof(kaatcp_supported_channel_t) * server_record->supported_channels_count);
-    for (int i = 0; i < server_record->supported_channels_count; ++i) {
-        cursor = kaatcp_parser_parse_supported_channel(server_record->supported_channels + i, cursor);
+    if (server_record->supported_channels_count) {
+        server_record->supported_channels = (kaatcp_supported_channel_t *) malloc(sizeof(kaatcp_supported_channel_t) * server_record->supported_channels_count);
+        if (!server_record->supported_channels) {
+            return NULL;
+        }
+        for (int i = 0; i < server_record->supported_channels_count; ++i) {
+            cursor = kaatcp_parser_parse_supported_channel(server_record->supported_channels + i, cursor);
+            if (!cursor) {
+                return NULL;
+            }
+        }
     }
     return cursor;
 }
 
-static void kaatcp_parser_parse_bootstrap_message(kaatcp_bootstrap_response_t *bootstrap, const char *begin, const char *end)
+static kaatcp_error_t kaatcp_parser_parse_bootstrap_message(kaatcp_bootstrap_response_t *bootstrap, const char *begin, const char *end)
 {
     const char *cursor = begin;
     bootstrap->server_count = ntohl(*(uint32_t *) cursor);
     bootstrap->servers = (kaatcp_server_record_t *) malloc(sizeof(kaatcp_server_record_t) * bootstrap->server_count);
+    if (!bootstrap->servers) {
+        return KAATCP_ERR_NOMEM;
+    }
     cursor += 4;
     for (int i = 0; i < bootstrap->server_count; ++i) {
         cursor = kaatcp_parser_parse_server_record(bootstrap->servers + i, cursor);
+        if (!cursor) {
+            return KAATCP_ERR_NOMEM;
+        }
     }
+    return KAATCP_ERR_NONE;
 }
 
-static void kaatcp_parser_message_done(kaatcp_parser_t *parser)
+static kaatcp_error_t kaatcp_parser_message_done(kaatcp_parser_t *parser)
 {
     switch (parser->message_type) {
         case KAATCP_MESSAGE_CONNACK:
@@ -121,9 +147,15 @@ static void kaatcp_parser_message_done(kaatcp_parser_t *parser)
 
             memcpy(sync_header.protocol_name, cursor, sync_header.protocol_name_length);
             sync_header.protocol_name[sync_header.protocol_name_length] = '\0';
+            if (strcmp(sync_header.protocol_name, KAA_TCP_NAME)) {
+                return KAATCP_ERR_INVALID_PROTOCOL;
+            }
             cursor += sync_header.protocol_name_length;
 
             sync_header.protocol_version = *(cursor++);
+            if (sync_header.protocol_version != PROTOCOL_VERSION) {
+                return KAATCP_ERR_INVALID_PROTOCOL;
+            }
 
             sync_header.message_id = ntohs(*(uint16_t *) cursor);
             cursor += 2;
@@ -132,10 +164,16 @@ static void kaatcp_parser_message_done(kaatcp_parser_t *parser)
 
             if ((sync_header.flags & KAA_SYNC_SYNC_BIT) && parser->handlers.kaasync_handler) {
                 kaatcp_kaasync_t *kaasync = (kaatcp_kaasync_t *) malloc(sizeof(kaatcp_kaasync_t));
+                if (!kaasync) {
+                    return KAATCP_ERR_NOMEM;
+                }
                 kaasync->sync_header = sync_header;
                 kaasync->sync_request_size = parser->message_length - KAA_SYNC_HEADER_LENGTH;
                 if (kaasync->sync_request_size) {
                     kaasync->sync_request = (char *) malloc(kaasync->sync_request_size);
+                    if (!kaasync->sync_request) {
+                        return KAATCP_ERR_NOMEM;
+                    }
                     memcpy(kaasync->sync_request, cursor, kaasync->sync_request_size);
                 } else {
                     kaasync->sync_request = NULL;
@@ -143,8 +181,14 @@ static void kaatcp_parser_message_done(kaatcp_parser_t *parser)
                 parser->handlers.kaasync_handler(kaasync);
             } else if ((sync_header.flags & KAA_SYNC_BOOTSTRAP_BIT) && parser->handlers.bootstrap_handler) {
                 kaatcp_bootstrap_response_t *bootstrap = (kaatcp_bootstrap_response_t *) malloc(sizeof(kaatcp_bootstrap_response_t));
+                if (!bootstrap) {
+                    return KAATCP_ERR_NOMEM;
+                }
                 bootstrap->sync_header = sync_header;
-                kaatcp_parser_parse_bootstrap_message(bootstrap, cursor, parser->payload + parser->message_length);
+                kaatcp_error_t rval = kaatcp_parser_parse_bootstrap_message(bootstrap, cursor, parser->payload + parser->message_length);
+                if (rval) {
+                    return rval;
+                }
                 parser->handlers.bootstrap_handler(bootstrap);
             }
             break;
@@ -152,7 +196,7 @@ static void kaatcp_parser_message_done(kaatcp_parser_t *parser)
         default:
             break;
     }
-    kaatcp_parser_reset(parser);
+    return kaatcp_parser_reset(parser);
 }
 
 static void kaatcp_parser_retrieve_message_type(kaatcp_parser_t *parser, uint8_t byte)
@@ -160,7 +204,7 @@ static void kaatcp_parser_retrieve_message_type(kaatcp_parser_t *parser, uint8_t
     parser->message_type = ((byte & 0xFF) >> 4);
 }
 
-static void kaatcp_parser_process_byte(kaatcp_parser_t *parser, uint8_t byte)
+static kaatcp_error_t kaatcp_parser_process_byte(kaatcp_parser_t *parser, uint8_t byte)
 {
     switch (parser->state) {
         case KAATCP_PARSER_STATE_NONE:
@@ -174,13 +218,14 @@ static void kaatcp_parser_process_byte(kaatcp_parser_t *parser, uint8_t byte)
                 if (parser->message_length) {
                     parser->state = KAATCP_PARSER_STATE_PROCESSING_PAYLOAD;
                 } else {
-                    kaatcp_parser_message_done(parser);
+                    return kaatcp_parser_message_done(parser);
                 }
             }
             break;
         default:
-            break;
+            return KAATCP_ERR_INVALID_STATE;
     }
+    return KAATCP_ERR_NONE;
 }
 
 kaatcp_error_t kaatcp_parser_reset(kaatcp_parser_t *parser)
@@ -210,6 +255,7 @@ kaatcp_error_t kaatcp_parser_process_buffer(kaatcp_parser_t *parser, const char 
     if (!parser || !buf || !buf_size) {
         return KAATCP_ERR_BAD_PARAM;
     }
+    kaatcp_error_t rval = KAATCP_ERR_NONE;
     const char *buf_cursor = buf;
     while (buf_cursor != buf + buf_size) {
         if (parser->state == KAATCP_PARSER_STATE_PROCESSING_PAYLOAD) {
@@ -220,13 +266,19 @@ kaatcp_error_t kaatcp_parser_process_buffer(kaatcp_parser_t *parser, const char 
             parser->processed_payload_length += bytes_to_read;
             buf_cursor += bytes_to_read;
             if (parser->message_length == parser->processed_payload_length) {
-                kaatcp_parser_message_done(parser);
+                rval = kaatcp_parser_message_done(parser);
+                if (rval) {
+                    return rval;
+                }
             }
         } else {
-            kaatcp_parser_process_byte(parser, *(buf_cursor++));
+            rval = kaatcp_parser_process_byte(parser, *(buf_cursor++));
+            if (rval) {
+                return rval;
+            }
         }
     }
-    return KAATCP_ERR_NONE;
+    return rval;
 }
 
 void kaatcp_parser_kaasync_destroy(kaatcp_kaasync_t *message)

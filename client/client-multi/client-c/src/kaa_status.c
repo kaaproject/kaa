@@ -22,8 +22,8 @@
 
 struct kaa_status_t {
 
-    KAA_BOOL        is_registered;
-    KAA_BOOL        is_attached;
+    bool            is_registered;
+    bool            is_attached;
     uint32_t        event_seq_n;
     uint32_t        log_bucket_id;
     kaa_digest      endpoint_public_key_hash;
@@ -31,7 +31,7 @@ struct kaa_status_t {
 
     char *          endpoint_access_token;
 };
-#define KAA_STATUS_STATIC_SIZE      (sizeof(KAA_BOOL) + sizeof(KAA_BOOL) + sizeof(uint32_t) + sizeof(uint32_t) + SHA_1_DIGEST_LENGTH*sizeof(char) + SHA_1_DIGEST_LENGTH*sizeof(char))
+#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t) + SHA_1_DIGEST_LENGTH*sizeof(char) + SHA_1_DIGEST_LENGTH*sizeof(char))
 
 #define READ_BUFFER(FROM, TO, SIZE) \
         memcpy(TO, FROM, SIZE); \
@@ -43,21 +43,20 @@ struct kaa_status_t {
 
 kaa_error_t kaa_create_status(kaa_status_t ** kaa_status_p)
 {
-    kaa_status_t * kaa_status = KAA_CALLOC(1, sizeof(kaa_status_t));
-    if (kaa_status == NULL) {
-        return KAA_ERR_NOMEM;
-    }
+    kaa_status_t * kaa_status = KAA_MALLOC(kaa_status_t);
+    KAA_RETURN_IF_NIL(kaa_status, KAA_ERR_NOMEM);
 
-    kaa_status->is_registered = 0;
-    kaa_status->is_attached = 0;
+    kaa_status->is_registered = false;
+    kaa_status->is_attached = false;
     kaa_status->event_seq_n = 0;
+    kaa_status->log_bucket_id = 0;
     memset(kaa_status->endpoint_public_key_hash, 0, SHA_1_DIGEST_LENGTH);
     memset(kaa_status->profile_hash, 0, SHA_1_DIGEST_LENGTH);
     kaa_status->endpoint_access_token = NULL;
 
     char *  read_buf = NULL, * read_buf_head = NULL;
     size_t  read_size = 0;
-    int     needs_deallocation = 0;
+    bool    needs_deallocation = false;
     kaa_read_status_ext(&read_buf, &read_size, &needs_deallocation);
     read_buf_head = read_buf;
     if (read_size >= KAA_STATUS_STATIC_SIZE + sizeof(size_t)) {
@@ -87,16 +86,18 @@ kaa_error_t kaa_create_status(kaa_status_t ** kaa_status_p)
 
 void kaa_destroy_status(kaa_status_t *status)
 {
-    KAA_FREE(status->endpoint_access_token);
-    KAA_FREE(status);
+    if (status != NULL) {
+        KAA_FREE(status->endpoint_access_token);
+        KAA_FREE(status);
+    }
 }
 
-KAA_BOOL    kaa_is_endpoint_registered(kaa_status_t *status)
+bool    kaa_is_endpoint_registered(kaa_status_t *status)
 {
     return status->is_registered;
 }
 
-kaa_error_t kaa_set_endpoint_registered(kaa_status_t *status, KAA_BOOL is_registered)
+kaa_error_t kaa_set_endpoint_registered(kaa_status_t *status, bool is_registered)
 {
     if (status == NULL) {
         return KAA_ERR_BADPARAM;
@@ -107,12 +108,12 @@ kaa_error_t kaa_set_endpoint_registered(kaa_status_t *status, KAA_BOOL is_regist
     return KAA_ERR_NONE;
 }
 
-KAA_BOOL kaa_is_endpoint_attached_to_user(kaa_status_t *status)
+bool kaa_is_endpoint_attached_to_user(kaa_status_t *status)
 {
     return status->is_attached;
 }
 
-kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *status, KAA_BOOL is_attached)
+kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *status, bool is_attached)
 {
     if (status == NULL) {
         return KAA_ERR_BADPARAM;
@@ -226,13 +227,16 @@ kaa_error_t kaa_status_set_log_bucket_id(kaa_status_t* status, uint32_t id)
 
 kaa_error_t kaa_status_save(kaa_status_t *status)
 {
+    KAA_RETURN_IF_NIL(status, KAA_ERR_BADPARAM);
+
     size_t endpoint_access_token_length = status->endpoint_access_token ? strlen(status->endpoint_access_token) : 0;
     size_t buffer_size = KAA_STATUS_STATIC_SIZE + sizeof(endpoint_access_token_length) + (endpoint_access_token_length );
 
-    char *buffer_head = KAA_CALLOC(buffer_size, sizeof(char)), *buffer = buffer_head;
+    char *buffer_head = KAA_CALLOC(buffer_size, sizeof(char));
     if (buffer_head == NULL) {
         return KAA_ERR_NOMEM;
     }
+    char *buffer = buffer_head;
 
     WRITE_BUFFER(&status->is_registered, buffer, sizeof(status->is_registered));
     WRITE_BUFFER(&status->is_attached, buffer, sizeof(status->is_attached));

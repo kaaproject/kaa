@@ -30,9 +30,9 @@ extern "C" {
 typedef struct kaa_test_log_record_t_ {
     char* data; 
 
-    serialize serialize;
-    get_size  get_size;
-    destruct  destruct;
+    serialize_fn serialize;
+    get_size_fn  get_size;
+    destroy_fn   destroy;
 } kaa_test_log_record_t;
 
 kaa_test_log_record_t* kaa_create_test_log_record();

@@ -43,6 +43,8 @@ public class HibernateDaoConstants {
     public static final String CLASS_NAME_PROPERTY = "className";
 
     public static final String LOG_APPENDER_STATUS = "status";
+    public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "min_log_schema_version";
+    public static final String LOG_APPENDER_MAX_LOG_SCHEMA_VERSION = "max_log_schema_version";
 
     public static final String VERSION_PROPERY = "version";
 
@@ -61,14 +63,6 @@ public class HibernateDaoConstants {
     public static final String TOPIC_REFERENCE = TOPIC_ALIAS + "." + ID_PROPERTY;
     public static final String CONFIGURATION_SCHEMA_REFERENCE = CONFIGURATION_SCHEMA_ALIAS + "." + ID_PROPERTY;
     public static final String ECF_REFERENCE = ECF_ALIAS + "." + ID_PROPERTY;
-
-    public static final String LOG_APPENDER_SCHEMA_PROPERTY = "logSchema";
-    public static final String LOG_APPENDER_SCHEMA_ALIAS = "logSchema";
-    public static final String LOG_APPENDER_SCHEMA_REFERENCE = LOG_APPENDER_SCHEMA_ALIAS + "." + ID_PROPERTY;
-
-    public static final String LOG_APPENDER_PROPERTY = "logAppenders";
-    public static final String LOG_APPENDER_ALIAS = "logAppenders";
-    public static final String LOG_APPENDER_REFERENCE = LOG_APPENDER_ALIAS + "." + ID_PROPERTY;
 
     private HibernateDaoConstants() {
         throw new UnsupportedOperationException("Not supported");

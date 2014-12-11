@@ -18,10 +18,13 @@
 #include "kaa/common/types/CommonRecord.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/common/CommonTypesFactory.hpp"
+#include "kaa/ClientStatus.hpp"
 
 #include <avro/Compiler.hh>
 
 #include <boost/test/unit_test.hpp>
+
+#include "headers/MockKaaClientStateStorage.hpp"
 
 namespace kaa {
 
@@ -104,13 +107,41 @@ BOOST_AUTO_TEST_SUITE(ConfigurationPersistenceSuite)
 
 BOOST_AUTO_TEST_CASE(checkSchemaSetup)
 {
-    ConfigurationPersistenceManager cpm;
+    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)));
 
     std::shared_ptr<avro::ValidSchema> schema;
     BOOST_REQUIRE_THROW(cpm.onSchemaUpdated(schema), KaaException);
 
     schema.reset(new avro::ValidSchema());
     BOOST_REQUIRE_NO_THROW(cpm.onSchemaUpdated(schema));
+}
+
+class ConfigVersionUpdatedState : public MockKaaClientStateStorage
+{
+public:
+    virtual bool isConfigurationVersionUpdated() const {
+        return true;
+    }
+};
+
+BOOST_AUTO_TEST_CASE(checkConfigVersionUpdates)
+{
+    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ConfigVersionUpdatedState));
+
+    std::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
+            avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(root_sch.c_str()), root_sch.length())));
+    cpm.onSchemaUpdated(root_schema);
+    try {
+        ConfigurationProcessorStub cpstub;
+
+        CoonfigurationStorageStub csstub;
+        cpm.setConfigurationProcessor(&cpstub);
+        cpm.setConfigurationStorage(&csstub);
+
+        BOOST_CHECK(!csstub.isLoadCalled());
+    } catch (...) {
+        BOOST_CHECK(false);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(checkConfigurationLoad)
@@ -131,7 +162,7 @@ BOOST_AUTO_TEST_CASE(checkConfigurationLoad)
     ud.value<avro::GenericFixed>() = uuid_fixed_field;
     rec.setField("__uuid", CommonTypesFactory::createCommon<avro::AVRO_FIXED>(ud));
 
-    ConfigurationPersistenceManager cpm;
+    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)));
     BOOST_REQUIRE_THROW(cpm.onConfigurationUpdated(rec), KaaException);
 
     std::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
@@ -180,7 +211,7 @@ BOOST_AUTO_TEST_CASE(checkConfigurationLoadWithoutSchema)
     ud.value<avro::GenericFixed>() = uuid_fixed_field;
     rec.setField("__uuid", CommonTypesFactory::createCommon<avro::AVRO_FIXED>(ud));
 
-    ConfigurationPersistenceManager cpm;
+    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)));
     BOOST_REQUIRE_THROW(cpm.onConfigurationUpdated(rec), KaaException);
 
     std::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(

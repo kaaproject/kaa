@@ -18,11 +18,14 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "kaa_context.h"
+#include "kaa.h"
 #include "log/kaa_memory_log_storage.h"
 #include "kaa_test.h"
 #include "kaa_mem.h"
+#include "kaa_log.h"
 #include <stdio.h>
+
+static kaa_logger_t *logger = NULL;
 
 void test_create_log_collector()
 {
@@ -36,16 +39,20 @@ void test_create_log_collector()
 static kaa_service_t services[4] = { KAA_SERVICE_PROFILE, KAA_SERVICE_USER, KAA_SERVICE_EVENT, KAA_SERVICE_LOGGING };
 void test_create_request()
 {
-    kaa_init();
+    kaa_context_t *kaa_context = NULL;
+    kaa_init(&kaa_context);
+
     kaa_sync_request_t *request = NULL;
-    kaa_compile_request(&request, 4, services);
+    size_t s;
+    kaa_error_t err_code = kaa_compile_request(kaa_context, &request, &s, 4, services);
+    ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(request);
     ASSERT_NOT_NULL(request->log_sync_request);
-    ASSERT_EQUAL(request->log_sync_request->type ,KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
+    ASSERT_EQUAL(request->log_sync_request->type, KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_NULL_BRANCH);
 
-    request->destruct(request);
+    request->destroy(request);
     KAA_FREE(request);
-    kaa_deinit();
+    kaa_deinit(kaa_context);
 }
 
 static kaa_uuid_t test_uuid;
@@ -64,7 +71,7 @@ void test_response()
     kaa_uuid_fill(&test_uuid, 42);
 
     kaa_context_t *ctx = NULL;
-    kaa_create_context(&ctx);
+    kaa_context_create(&ctx, logger);
 
     kaa_log_storage_t *ls = get_memory_log_storage();
     ls->upload_failed = &stub_upload_uuid_check;
@@ -77,10 +84,12 @@ void test_response()
 
     kaa_logging_handle_sync(ctx, &log_sync_response);
     ASSERT_EQUAL(stub_upload_uuid_check_call_count,1);
+
+    kaa_context_destroy(ctx);
 }
 
-#define DEAFULT_LOG_RECORD 0
-#if DEAFULT_LOG_RECORD
+#define DEFAULT_LOG_RECORD 0
+#if DEFAULT_LOG_RECORD
 static kaa_log_upload_decision_t decision(kaa_storage_status_t *status)
 {
     if ((* status->get_records_count)() == 2) {
@@ -100,7 +109,7 @@ static void handler(size_t service_count, const kaa_service_t services[])
     ASSERT_NOT_NULL(request->log_sync_request);
     ASSERT_EQUAL(request->log_sync_request->type ,KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_LOG_SYNC_REQUEST_BRANCH);
 
-    request->destruct(request);
+    request->destroy(request);
     KAA_FREE(request);
 }
 void test_add_log()
@@ -119,15 +128,28 @@ void test_add_log()
 }
 #endif
 
-int main(int argc, char ** argv)
-{
-    test_create_log_collector();
-    test_create_request();
-    test_response();
-#if DEAFULT_LOG_RECORD
-    test_add_log();
 #endif
+
+int test_init(void)
+{
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     return 0;
 }
 
+int test_deinit(void)
+{
+    kaa_log_destroy(logger);
+    return 0;
+}
+
+KAA_SUITE_MAIN(Log, test_init, test_deinit
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+       ,
+       KAA_TEST_CASE(create_log_collector, test_create_log_collector)
+       KAA_TEST_CASE(create_request, test_create_request)
+       KAA_TEST_CASE(process_response, test_response)
+#if DEAFULT_LOG_RECORD
+       KAA_TEST_CASE(add_log_record, test_add_log)
 #endif
+#endif
+        )

@@ -26,10 +26,12 @@
 #include "kaa_context.h"
 #include "kaa_external.h"
 
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+
 static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
 
 struct kaa_profile_manager_t {
-    KAA_BOOL need_resync;
+    bool need_resync;
     kaa_bytes_t profile_body;
     kaa_digest profile_hash;
 };
@@ -75,7 +77,7 @@ kaa_error_t kaa_create_profile_manager(
     if (profile_manager == NULL ) {
         return KAA_ERR_NOMEM;
     }
-    profile_manager->need_resync = 1;
+    profile_manager->need_resync = true;
 
     profile_manager->profile_body.size = 0;
     profile_manager->profile_body.buffer = NULL;
@@ -85,14 +87,31 @@ kaa_error_t kaa_create_profile_manager(
 }
 
 void kaa_destroy_profile_manager(kaa_profile_manager_t *profile_manager) {
-    kaa_destroy_bytes(&profile_manager->profile_body);
-    KAA_FREE(profile_manager);
+    if (profile_manager != NULL) {
+        kaa_destroy_bytes(&profile_manager->profile_body);
+        KAA_FREE(profile_manager);
+    }
 }
 
-int kaa_profile_need_profile_resync(void *ctx)
+bool kaa_profile_need_profile_resync(void *ctx)
 {
     kaa_context_t *context = (kaa_context_t *) ctx;
     return context->profile_manager->need_resync;
+}
+
+static void kaa_no_destroy_bytes(void *data)
+{
+    kaa_union_t *kaa_union = (kaa_union_t*)data;
+
+    switch (kaa_union->type) {
+    case KAA_BYTES_NULL_UNION_BYTES_BRANCH:
+    {
+        KAA_FREE(kaa_union->data);
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
@@ -131,8 +150,12 @@ kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
     } else {
         request->endpoint_public_key = kaa_create_bytes_null_union_bytes_branch();
         kaa_bytes_t *pub_key = KAA_CALLOC(1, sizeof(kaa_bytes_t));
-        kaa_get_endpoint_public_key((char **)&pub_key->buffer, (size_t *)&pub_key->size);
+        bool need_deallocation = false;
+        kaa_get_endpoint_public_key((char **)&pub_key->buffer, (size_t *)&pub_key->size, &need_deallocation);
         request->endpoint_public_key->data = pub_key;
+        if (!need_deallocation) {
+            request->endpoint_public_key->destroy = &kaa_no_destroy_bytes;
+        }
     }
     return request;
 }
@@ -140,17 +163,16 @@ kaa_profile_sync_request_t * kaa_profile_compile_request(void *ctx) {
 void kaa_profile_handle_sync(void *ctx,
         kaa_profile_sync_response_t *response) {
     kaa_context_t *context = (kaa_context_t *) ctx;
-    context->profile_manager->need_resync = 0;
+    context->profile_manager->need_resync = false;
     if (response != NULL ) {
         if (response->response_status == ENUM_SYNC_RESPONSE_STATUS_RESYNC) {
-            context->profile_manager->need_resync = 1;
-            kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context,
-                    profile_sync_services[0]);
+            context->profile_manager->need_resync = true;
+            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(context->channel_manager, profile_sync_services[0]);
             if (sync != NULL ) {
-                (*sync)(1, profile_sync_services);
+                (*sync)(profile_sync_services, 1);
             }
         } else if (!kaa_is_endpoint_registered(context->status)) {
-            kaa_set_endpoint_registered(context->status, 1);
+            kaa_set_endpoint_registered(context->status, true);
         }
     }
 }
@@ -175,7 +197,7 @@ kaa_error_t kaa_profile_update_profile(void *ctx, kaa_profile_t * profile_body) 
 
     kaa_profile_manager_t * profile_manager = context->profile_manager;
     if (old_hash != NULL && 0 == memcmp(new_hash, *old_hash, SHA_1_DIGEST_LENGTH)) {
-        profile_manager->need_resync = 0;
+        profile_manager->need_resync = false;
         KAA_FREE(serialized_profile);
         return KAA_ERR_NONE;
     }
@@ -190,12 +212,11 @@ kaa_error_t kaa_profile_update_profile(void *ctx, kaa_profile_t * profile_body) 
     profile_manager->profile_body.buffer = (uint8_t*)serialized_profile;
     profile_manager->profile_body.size = serialized_profile_size;
 
-    profile_manager->need_resync = 1;
+    profile_manager->need_resync = true;
 
-    kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context,
-            profile_sync_services[0]);
+    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(context->channel_manager, profile_sync_services[0]);
     if (sync) {
-        (*sync)(1, profile_sync_services);
+        (*sync)(profile_sync_services, 1);
     }
 
     return KAA_ERR_NONE;

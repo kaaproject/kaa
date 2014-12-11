@@ -67,6 +67,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String NF_SUBSCRIPTIONS = "nf_subscriptions";
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
+    private static final String CONFIGURATION_VERSION = "conf_schema_version";
     public static final String STATE_FILE_LOCATION = "state.file_location";
     public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
     public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
@@ -88,6 +89,8 @@ public class KaaClientPropertiesState implements KaaClientState {
     private final Map<String, TopicSubscriptionInfo> nfSubscriptions = new HashMap<String, TopicSubscriptionInfo>();
     private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
     private final AtomicInteger eventSequence = new AtomicInteger();
+
+    private boolean isConfigVersionUpdated = false;
 
     public KaaClientPropertiesState(PersistentStorage storage, KaaClientProperties properties) {
         super();
@@ -159,25 +162,45 @@ public class KaaClientPropertiesState implements KaaClientState {
 
             } catch (IOException e) {
                 LOG.error("Can't load state file", e);
-            }
-            finally {
+            } finally {
                 IOUtils.closeQuietly(stream);
             }
         } else {
             LOG.info("First SDK start");
             setPropertiesHash(properties.getPropertiesHash());
         }
+
+        checkConfigVersionForUpdates(properties);
+    }
+
+    private void checkConfigVersionForUpdates(KaaClientProperties sdkProperties) {
+        int configVersionFromProperties = sdkProperties.getVersionInfo().getConfigVersion();
+        String loadedConfigVersionStr = state.getProperty(CONFIGURATION_VERSION);
+
+        isConfigVersionUpdated = (loadedConfigVersionStr != null ?
+                (configVersionFromProperties != Integer.parseInt(loadedConfigVersionStr)) : false);
+
+        if (isConfigVersionUpdated || (loadedConfigVersionStr == null)) {
+            state.setProperty(CONFIGURATION_VERSION, Integer.toString(configVersionFromProperties));
+        }
     }
 
     private boolean isSDKPropertiesUpdated(KaaClientProperties sdkProperties, Properties stateProperties) {
         byte[] hashFromSDK = sdkProperties.getPropertiesHash();
-        byte[] hashFromStateFile = Base64.decodeBase64(state.getProperty(PROPERTIES_HASH, new String(Base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8));
+        byte[] hashFromStateFile = Base64.decodeBase64(state.getProperty(
+                PROPERTIES_HASH, new String(Base64.encodeBase64(new byte[0]), Charsets.UTF_8))
+                                                        .getBytes(Charsets.UTF_8));
 
         return !Arrays.equals(hashFromSDK, hashFromStateFile);
     }
 
     private void setPropertiesHash(byte[] hash) {
         state.setProperty(PROPERTIES_HASH, new String(Base64.encodeBase64(hash), Charsets.UTF_8));
+    }
+
+    @Override
+    public boolean isConfigurationVersionUpdated() {
+        return isConfigVersionUpdated;
     }
 
     @Override

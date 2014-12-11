@@ -16,7 +16,6 @@
 
 #set ($unionNameUpper = $TypeConverter.generateUnionName($schema))
 #set ($unionNameLower = $TypeConverter.generateUnionName($schema).toLowerCase())
-
 #set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
 
@@ -40,11 +39,11 @@ static void ${prefix}_destroy_${unionNameLower}(void *data)
 #if ($TypeConverter.isRecordType($branchSchema) && $TypeConverter.isRecordNeedDeallocator($branchSchema))
 #set ($recordName = $StyleUtils.toLowerUnderScore($branchSchema.getName()))
         ${prefix}_${recordName}_t* record = (${prefix}_${recordName}_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
 #elseif ($TypeConverter.isUnionType($branchSchema))
 #set ($unionName = $TypeConverter.generateUnionName($branchSchema).toLowerCase())
         ${prefix}_${unionName}_t* kaa_sub_union = (${prefix}_${unionName}_t*)kaa_union->data;
-        kaa_sub_union->destruct(kaa_sub_union);
+        kaa_sub_union->destroy(kaa_sub_union);
 #end
         KAA_FREE(kaa_union->data);
 #elseif ($TypeConverter.isArrayType($branchSchema))
@@ -187,7 +186,7 @@ static kaa_union_t* ${prefix}_create_${unionNameLower}()
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
 #end
-    kaa_union->destruct = ${prefix}_destroy_${unionNameLower};
+    kaa_union->destroy = ${prefix}_destroy_${unionNameLower};
 
     return kaa_union; 
 }
@@ -235,15 +234,15 @@ kaa_union_t* ${prefix}_deserialize_${unionNameLower}(avro_reader_t reader)
         #if ($TypeConverter.isEnumType($elementSchema))
             #set ($type = "long")
         #end
-        kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_${type});
+        kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_${type});
     #elseif ($TypeConverter.isBytes($elementSchema))
-        kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_bytes);
+        kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_bytes);
     #elseif ($TypeConverter.isRecordType($elementSchema))
         #set ($recordElementName = $StyleUtils.toLowerUnderScore($elementSchema.getName()))
-        kaa_union->data = kaa_deserialize_array(reader, (deserialize)${prefix}_deserialize_${recordElementName});
+        kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)${prefix}_deserialize_${recordElementName});
     #elseif ($TypeConverter.isUnionType($elementSchema))
         #set ($unionElementName = $TypeConverter.generateUnionName($elementSchema).toLowerCase())
-        kaa_union->data = kaa_deserialize_array(reader, (deserialize)${prefix}_deserialize_${unionElementName});
+        kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)${prefix}_deserialize_${unionElementName});
     #end
 #else
     #set ($type = $branchSchema.getType().toString().toLowerCase())

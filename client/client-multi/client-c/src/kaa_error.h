@@ -19,12 +19,9 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
-typedef enum kaa_error_t {
+typedef enum {
     KAA_ERR_NONE                = 0,
 
     /* General errors */
@@ -34,7 +31,15 @@ typedef enum kaa_error_t {
     KAA_ERR_READ_FAILED         = -4,
     KAA_ERR_WRITE_FAILED        = -5,
     KAA_ERR_NOT_FOUND           = -6,
+    KAA_ERR_NOT_INITIALIZED     = -7,
+    KAA_ERR_BAD_STATE           = -8,
+
+    KAA_ERR_EVENT_NOT_ATTACHED  = -41,
+    KAA_ERR_EVENT_BAD_FQN       = -42,
+    KAA_ERR_EVENT_TRX_NOT_FOUND = -43,
 } kaa_error_t;
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_ERROR_H_ */

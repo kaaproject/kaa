@@ -77,6 +77,7 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
@@ -1140,8 +1141,10 @@ public class DefaultAkkaServiceTest {
         Mockito.when(operationsService.sync(Mockito.any(SyncRequest.class), Mockito.any(EndpointProfileDto.class)))
                 .thenReturn(noDeltaResponseWithTopicState);
         LogAppender mockAppender = Mockito.mock(LogAppender.class);
-        Mockito.when(logAppenderService.getApplicationAppenders(APP_ID, APP_TOKEN)).thenReturn(
+        Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(
                 Collections.singletonList(mockAppender));
+        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(Mockito.mock(LogSchema.class));
+        Mockito.when(mockAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(true);
 
         ResponseBuilder responseBuilder = Mockito.mock(ResponseBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);

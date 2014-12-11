@@ -356,6 +356,12 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Version")
     String version();
 
+    @DefaultStringValue("Min schema version")
+    String minVersion();
+
+    @DefaultStringValue("Max schema version")
+    String maxVersion();
+
     @DefaultStringValue("Schema")
     String schema();
 
@@ -589,4 +595,8 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
 
     @DefaultStringValue("Schema")
     String downloadRecordSchema();
+    
+    @DefaultStringValue("Infinite")
+    String infinite();
+
 }

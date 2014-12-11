@@ -30,9 +30,9 @@ extern "C" {
 typedef struct kaa_profile_basic_endpoint_profile_test_t_ {
     char* profile_body; 
 
-    serialize serialize;
-    get_size  get_size;
-    destruct  destruct;
+    serialize_fn serialize;
+    get_size_fn  get_size;
+    destroy_fn   destroy;
 } kaa_profile_basic_endpoint_profile_test_t;
 
 kaa_profile_basic_endpoint_profile_test_t* kaa_profile_create_basic_endpoint_profile_test();

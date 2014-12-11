@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-#include "kaa_common.h"
-
 #include <openssl/sha.h>
 
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest) {
-    if (!data || data_size <= 0 || !digest) {
-        return KAA_ERR_BADPARAM;
-    }
+#include "kaa_common.h"
+
+kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
+{
+    KAA_RETURN_IF_NIL3(data, data_size, digest, KAA_ERR_BADPARAM);
 
     SHA1((const unsigned char *)data, data_size, digest);
     return KAA_ERR_NONE;

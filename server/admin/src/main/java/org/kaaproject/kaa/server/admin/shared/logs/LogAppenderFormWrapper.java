@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
@@ -119,13 +118,21 @@ public class LogAppenderFormWrapper implements HasId, Serializable {
     public void setTenantId(String tenantId) {
         logAppender.setTenantId(tenantId);
     }
-
-    public SchemaDto getSchema() {
-        return logAppender.getSchema();
+    
+    public int getMinLogSchemaVersion() {
+        return logAppender.getMinLogSchemaVersion();
     }
 
-    public void setSchema(SchemaDto schema) {
-        logAppender.setSchema(schema);
+    public void setMinLogSchemaVersion(int minLogSchemaVersion) {
+        logAppender.setMinLogSchemaVersion(minLogSchemaVersion);
+    }
+
+    public int getMaxLogSchemaVersion() {
+        return logAppender.getMaxLogSchemaVersion();
+    }
+
+    public void setMaxLogSchemaVersion(int maxLogSchemaVersion) {
+        logAppender.setMaxLogSchemaVersion(maxLogSchemaVersion);
     }
 
     public LogAppenderStatusDto getStatus() {
@@ -142,10 +149,6 @@ public class LogAppenderFormWrapper implements HasId, Serializable {
 
     public void setHeaderStructure(List<LogHeaderStructureDto> headerStructure) {
         logAppender.setHeaderStructure(headerStructure);
-    }
-
-    public String getSchemaVersion() {
-        return logAppender.getSchemaVersion();
     }
 
     public String getTypeName() {

@@ -11,8 +11,22 @@ function setNewHost() {
 
 }
 
+echo "Stopping services..."
+
 ${stop_services}
+
+echo "Services stopped!"
+
+echo "Setting services host/ip to ${newHost}"
 
 ${set_new_hosts}
 
+echo "Starting services..."
+
 ${start_services}
+
+echo "Waiting 10 sec for services startup..."
+
+sleep 10
+
+echo "Done!"

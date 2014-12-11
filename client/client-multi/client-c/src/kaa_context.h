@@ -17,14 +17,8 @@
 #ifndef KAA_CONTEXT_H_
 #define KAA_CONTEXT_H_
 
-#ifdef __cplusplus
-extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
-
 #include "kaa_error.h"
+#include "kaa_log.h"
 #include "kaa_user.h"
 #include "kaa_event.h"
 #include "kaa_profile.h"
@@ -33,30 +27,30 @@ extern "C" {
 #include "kaa_logging.h"
 #include "kaa_channel_manager.h"
 
-typedef struct kaa_context_t {
-    kaa_profile_manager_t   *   profile_manager;
-    kaa_user_manager_t      *   user_manager;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct {
+    kaa_logger_t               *logger;
+    kaa_profile_manager_t      *profile_manager;
+    kaa_user_manager_t         *user_manager;
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    kaa_event_manager_t     *   event_manager;
+    kaa_event_manager_t        *event_manager;
 #endif
-    kaa_bootstrap_manager_t *   bootstrap_manager;
-    kaa_status_t            *   status;
-    kaa_channel_manager_t   *   channel_manager;
+    kaa_bootstrap_manager_t    *bootstrap_manager;
+    kaa_status_t               *status;
+    kaa_channel_manager_t      *channel_manager;
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-    kaa_log_collector_t     *   log_collector;
+    kaa_log_collector_t        *log_collector;
 #endif
+    uint32_t                    global_request_id;  // FIXME: find a better place for this
 } kaa_context_t;
 
-kaa_error_t kaa_create_context(kaa_context_t ** context);
-kaa_error_t kaa_destroy_context(kaa_context_t * context);
+kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
+kaa_error_t kaa_context_destroy(kaa_context_t * context);
 
-// Kaa channel manager API
-kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **);
-void kaa_channel_manager_destroy(kaa_context_t *context);
-void kaa_channel_manager_set_sync_handler(kaa_context_t *context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[]);
-void kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa_sync_all_t handler);
-kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_context_t *context, kaa_service_t service);
-kaa_sync_all_t kaa_channel_manager_get_sync_all_handler(kaa_context_t *context);
-
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_CONTEXT_H_ */

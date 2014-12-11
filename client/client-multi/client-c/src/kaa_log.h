@@ -14,188 +14,170 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_log.h
+ * @brief Simple logger for Kaa C Endpoint.
+ *
+ * Supports runtime limitation of the maximum log level to be logged.
+ * Expects externally provided and managed valid @c FILE* reference to log data to.
+ * Not thread safe.
+ */
+
 #ifndef KAA_LOG_H_
 #define KAA_LOG_H_
 
 #include <stdio.h>
-
+#include <stdint.h>
 #include "kaa_error.h"
+#define KAA_MAX_LOG_MESSAGE_LENGTH  256
 
 #ifdef __cplusplus
 extern "C" {
-    #define CLOSE_EXTERN }
-#else
-    #define CLOSE_EXTERN
 #endif
 
+
+/** Use as the max log level to switch logging off */
+#define KAA_LOG_LEVEL_NONE  0
+/** Use for severe errors that cause premature program termination */
+#define KAA_LOG_LEVEL_FATAL 1
+/** Use for runtime errors or unexpected conditions that the program might gracefully recover from */
+#define KAA_LOG_LEVEL_ERROR 2
+/** Use for unexpected or undesirable runtime conditions that are not necessarily affecting the program */
+#define KAA_LOG_LEVEL_WARN  3
+/** Use for important or interesting runtime events that help understanding what the program is doing */
+#define KAA_LOG_LEVEL_INFO  4
+/** Use to log detailed information on the logic flow through the system */
+#define KAA_LOG_LEVEL_DEBUG 5
+/** Use to log most detailed information intended for development and debugging purposes only */
+#define KAA_LOG_LEVEL_TRACE 6
+
+#ifndef KAA_MAX_LOG_LEVEL
+/** Use KAA_LOG_TRACE as the max log level by default */
+#define KAA_MAX_LOG_LEVEL   KAA_LOG_LEVEL_TRACE
+#endif
+
+#define KAA_LOG_LEVEL_FATAL_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL)
+#define KAA_LOG_LEVEL_ERROR_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_ERROR)
+#define KAA_LOG_LEVEL_WARN_ENABLED      (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_WARN)
+#define KAA_LOG_LEVEL_INFO_ENABLED      (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_INFO)
+#define KAA_LOG_LEVEL_DEBUG_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_DEBUG)
+#define KAA_LOG_LEVEL_TRACE_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE)
+
 /**
- * <p>The maximum size of a log message.</p>
- *
- * <p>If the length of a log message is greater than @link KAA_MAX_LOG_MESSAGE_LENGTH @endlink ,
- * the message will be truncated to match the @link KAA_MAX_LOG_MESSAGE_LENGTH @endlink .</p>
- *
+ * @brief Kaa logger type
  */
-#define KAA_MAX_LOG_MESSAGE_LENGTH   512
-
-typedef enum kaa_log_level_t {
-    /**
-     * Used to switch off logging.
-     */
-    KAA_LOG_NONE,
-
-    /**
-     * Used to configure the log level.
-     */
-    KAA_LOG_FATAL,
-    KAA_LOG_ERROR,
-    KAA_LOG_WARN,
-    KAA_LOG_INFO,
-    KAA_LOG_DEBUG,
-    KAA_LOG_TRACE,
-
-    /**
-     * <p>Used for the service purpose.</p>
-     *
-     * <p><b>NOTE:</b> Do not use these values directly.</p>
-     */
-    KAA_LOG_LEVEL_MIN = KAA_LOG_NONE,
-    KAA_LOG_LEVEL_MAX = KAA_LOG_TRACE
-} kaa_log_level_t;
+typedef struct kaa_logger_t kaa_logger_t;
 
 /**
- * <p>Initialize the logger.</p>
+ * @brief Log level type
+ */
+typedef uint8_t kaa_log_level_t;
+
+/**
+ * @brief Creates and initializes a logger instance.
  *
- * <p>To configure log level, one of @link KAA_LOG_FATAL @endlink,
+ * @param[in,out]   logger          Address of a pointer to the newly created logger.
+ * @param[in]       buffer_size     Size of the log message buffer to allocate to the logger.
+ * @param[in]       max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
+ * @param[in]       sink            Valid, opened file to write logs to. Will use @c stdout if @c NULL is provided.
+ * @return                          Error code.
+ */
+kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink);
+
+/**
+ * @brief Deinitializes and destroys the logger instance.
+ *
+ * @param[in,out]   logger  Pointer to a logger.
+ * @return                  Error code.
+ */
+kaa_error_t kaa_log_destroy(kaa_logger_t *logger);
+
+/**
+ * @brief Retrieves the current log level.
+ *
+ * @param[in]   this    Pointer to a logger.
+ * @return              Log level. Returns @link KAA_LOG_NONE @endlink if this is NULL.
+ */
+kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *this);
+
+/**
+ * @brief Sets the maximum log level.
+ *
+ * @param[in]   this            Pointer to a logger.
+ * @param[in]   max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
+ * @return                      Error code.
+ */
+kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_level);
+
+/**
+ * @brief Compiles a log message and puts it into the sink.
+ *
+ * The message format is as follows:
+ * @code YYYY/MM/DD HH:MM:SS [LOG LEVEL] [FILE:LINENO] (ERROR_CODE) - MESSAGE @endcode
+ *
+ * <b>NOTE:</b> Do not use directly. Use one of @link KAA_LOG_FATAL @endlink,
  * @link KAA_LOG_ERROR @endlink, @link KAA_LOG_WARN @endlink,
  * @link KAA_LOG_INFO @endlink, @link KAA_LOG_DEBUG @endlink,
- * @link KAA_LOG_TRACE @endlink values can be used.</p>
+ * @link KAA_LOG_TRACE @endlink macros instead.
  *
- * <p>In order to switch off logging use @link KAA_LOG_NONE @endlink .</p>
+ * The log message gets truncated if it is longer than @c buffer_size specified to @link kaa_log_create @endlink.
  *
- * <p><If <i>sink</i> parameter is set to <i>NULL</i>, standard output
- * (<i>stdout</i>) will be used.</p>
- *
- * @param level Max log level to be used.
- * @param sink Destination file for the logs.
- *
- * @see kaa_log_level_t
- *
+ * @param[in] this          Pointer to a logger.
+ * @param[in] source_file   The source file that the message is logged from.
+ * @param[in] lineno        The line number in the source file that the message is logged from.
+ * @param[in] log_level     The message log level to log with.
+ * @param[in] error_code    The message error code.
+ * @param[in] format        The format of the message to log.
  */
-void kaa_log_init(kaa_log_level_t level, FILE* sink);
+void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_log_level_t log_level
+        , kaa_error_t error_code, const char* format, ...);
 
-/**
- * <p>Deinitialize Kaa logger.</p>
- *
- * <p>Close the user sink, if it was used.</p>
- *
+/*
+ * Shortcut macros for logging at various log levels
  */
-void kaa_log_deinit();
+#if KAA_LOG_LEVEL_FATAL_ENABLED
+#define KAA_LOG_FATAL(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_FATAL, err, __VA_ARGS__);
+#else
+#define KAA_LOG_FATAL(...)
+#endif
 
-/**
- * <p>Set the sink where logs to be put.</p>
- *
- * <p><If <i>sink</i> is set to <i>NULL</i>, standard output
- * (<i>stdout</i>) will be used.</p>
- *
+#if KAA_LOG_LEVEL_ERROR_ENABLED
+#define KAA_LOG_ERROR(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_ERROR, err, __VA_ARGS__);
+#else
+#define KAA_LOG_ERROR(...)
+#endif
+
+#if KAA_LOG_LEVEL_WARN_ENABLED
+#define KAA_LOG_WARN(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_WARN, err, __VA_ARGS__);
+#else
+#define KAA_LOG_WARN(...)
+#endif
+
+#if KAA_LOG_LEVEL_INFO_ENABLED
+#define KAA_LOG_INFO(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_INFO, err, __VA_ARGS__);
+#else
+#define KAA_LOG_INFO(...)
+#endif
+
+#if KAA_LOG_LEVEL_DEBUG_ENABLED
+#define KAA_LOG_DEBUG(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_DEBUG, err, __VA_ARGS__);
+#else
+#define KAA_LOG_DEBUG(...)
+#endif
+
+#if KAA_LOG_LEVEL_TRACE_ENABLED
+#define KAA_LOG_TRACE(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_TRACE, err, __VA_ARGS__);
+#else
+#define KAA_LOG_TRACE(...)
+#endif
+
+/*
+ * Shortcut macros for tracing through the program
  */
-void kaa_set_log_sync(FILE* sink);
+#define KAA_TRACE_IN(logger)  KAA_LOG_TRACE(logger, KAA_ERR_NONE, "--> %s()", __FUNCTION__);
+#define KAA_TRACE_OUT(logger) KAA_LOG_TRACE(logger, KAA_ERR_NONE, "<-- %s()", __FUNCTION__);
 
-/**
- * <p>Retrieve the current log level.</p>
- */
-kaa_log_level_t kaa_get_log_level();
-
-/**
- * <p>Set the log level.</p>
- *
- * <p>To configure the log level, one of @link KAA_LOG_FATAL @endlink,
- * @link KAA_LOG_ERROR @endlink, @link KAA_LOG_WARN @endlink,
- * @link KAA_LOG_INFO @endlink, @link KAA_LOG_DEBUG @endlink,
- * @link KAA_LOG_TRACE @endlink values can be used.</p>
- *
- * <p>To switch off logging use @link KAA_LOG_NONE @endlink .</p>
- *
- * @param new_log_level Maximum log level to be used.
- *
- * @see kaa_log_level_t
- */
-void kaa_set_log_level(kaa_log_level_t new_log_level);
-
-/**
- * <p>Form a log message and put it in the sink..</p>
- *
- * <p>The message format is the following:
- * "YYYY/MM/DD HH:MM:SS [LOG LEVEL] [FILE:LINENO] (ERROR_CODE) - MESSAGE"</p>
- *
- * <p><b>NOTE:</b> Do not use it directly. Use @link KAA_LOG_FATAL @endlink,
- * @link KAA_LOG_ERROR @endlink, @link KAA_LOG_WARN @endlink,
- * @link KAA_LOG_INFO @endlink, @link KAA_LOG_DEBUG @endlink,
- * @link KAA_LOG_TRACE @endlink macros instead.</p>
- *
- * <p>If the length of a log message is greater than @link KAA_MAX_LOG_MESSAGE_LENGTH @endlink ,
- * the message will be truncated to match the @link KAA_MAX_LOG_MESSAGE_LENGTH @endlink .</p>
- *
- * @see KAA_MAX_LOG_MESSAGE_LENGTH
- * @see kaa_log_level_t
- * @see kaa_error_t
- *
- */
-void kaa_log_write(const char* filename, int lineno, kaa_log_level_t level
-                            , kaa_error_t error_code, const char* format, ...);
-
-/**
- * <p>The log message with the @link KAA_LOG_FATAL @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
-#define KAA_LOG_FATAL(err, ...) kaa_log_write(__FILE__, __LINE__, KAA_LOG_FATAL, err, __VA_ARGS__);
-
-/**
- * <p>The log message with the @link KAA_LOG_ERROR @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
-#define KAA_LOG_ERROR(err, ...) kaa_log_write(__FILE__, __LINE__, KAA_LOG_ERROR, err, __VA_ARGS__);
-
-/**
- * <p>The log message with the @link KAA_LOG_WARN @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
-#define KAA_LOG_WARN(err, ...)  kaa_log_write(__FILE__, __LINE__, KAA_LOG_WARN, err, __VA_ARGS__);
-
-/**
- * <p>The log message with the @link KAA_LOG_INFO @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
-#define KAA_LOG_INFO(err, ...)  kaa_log_write(__FILE__, __LINE__, KAA_LOG_INFO, err, __VA_ARGS__);
-
-/**
- * <p>The log message with the @link KAA_LOG_DEBUG @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
-#define KAA_LOG_DEBUG(err, ...) kaa_log_write(__FILE__, __LINE__, KAA_LOG_DEBUG, err, __VA_ARGS__);
-
-/**
- * <p>The log message with the @link KAA_LOG_TRACE @endlink level.</p>
- *
- * <p>For more details see @link kaa_log_write @endlink .</p>
- *
- * @see kaa_error_t
- */
-#define KAA_LOG_TRACE(err, ...) kaa_log_write(__FILE__, __LINE__, KAA_LOG_TRACE, err, __VA_ARGS__);
-
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_LOG_H_ */

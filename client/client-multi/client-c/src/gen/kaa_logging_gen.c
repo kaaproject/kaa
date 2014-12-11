@@ -58,7 +58,7 @@ kaa_test_log_record_t* kaa_create_test_log_record()
     kaa_test_log_record_t* record = KAA_MALLOC(kaa_test_log_record_t);
     record->serialize = kaa_serialize_test_log_record;
     record->get_size = kaa_get_size_test_log_record;
-    record->destruct = kaa_destroy_test_log_record;
+    record->destroy = kaa_destroy_test_log_record;
     return record;
 }
 
@@ -67,7 +67,7 @@ kaa_test_log_record_t* kaa_deserialize_test_log_record(avro_reader_t reader)
     kaa_test_log_record_t* record = KAA_MALLOC(kaa_test_log_record_t);
     record->serialize = kaa_serialize_test_log_record;
     record->get_size = kaa_get_size_test_log_record;
-    record->destruct = kaa_destroy_test_log_record;
+    record->destroy = kaa_destroy_test_log_record;
     
         int64_t data_size;
     avro_binary_encoding.read_string(reader, &record->data, &data_size);

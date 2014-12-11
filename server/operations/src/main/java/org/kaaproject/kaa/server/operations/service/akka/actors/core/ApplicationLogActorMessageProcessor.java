@@ -57,7 +57,7 @@ public class ApplicationLogActorMessageProcessor {
         this.applicationId = applicationService.findAppByApplicationToken(applicationToken).getId();
         this.logAppenders = new HashMap<>();
         this.logSchemas = new HashMap<>();
-        for (LogAppender appender : logAppenderService.getApplicationAppenders(applicationId, applicationToken)) {
+        for (LogAppender appender : logAppenderService.getApplicationAppenders(applicationId)) {
             logAppenders.put(appender.getAppenderId(), appender);
         }
     }
@@ -83,7 +83,9 @@ public class ApplicationLogActorMessageProcessor {
             }
             try {
                 for (LogAppender logAppender : logAppenders.values()) {
-                    logAppender.doAppend(message.getLogEventPack(), callback);
+                    if(logAppender.isSchemaVersionSupported(logSchema.getVersion())){
+                        logAppender.doAppend(message.getLogEventPack(), callback);
+                    }
                 }
             } catch (Exception e) {
                 LOG.debug("Error during execution of appender(s)", e);
@@ -129,7 +131,7 @@ public class ApplicationLogActorMessageProcessor {
     private void addLogAppender(String appenderId) {
         LOG.info("[{}] Adding log appender with id [{}].", applicationId, appenderId);
         if (!logAppenders.containsKey(appenderId)) {
-            LogAppender logAppender = logAppenderService.getApplicationAppender(appenderId, applicationToken);
+            LogAppender logAppender = logAppenderService.getApplicationAppender(appenderId);
             if (logAppender != null) {
                 logAppenders.put(appenderId, logAppender);
             } else {

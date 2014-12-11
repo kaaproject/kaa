@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef KAA_TEST_EXTERNAL_H_
-#define KAA_TEST_EXTERNAL_H_
+package org.kaaproject.kaa.sandbox.web.shared.dto;
 
-#include <stddef.h>
-#include "kaa_external.h"
+import java.io.Serializable;
 
-#ifdef KAA_TEST_USE_SPECIFIC_kaa_read_status_ext
-#define NO_kaa_read_status_ext
-#endif
+public class BuildOutputData implements Serializable {
 
-#ifdef KAA_TEST_USE_SPECIFIC_kaa_store_status_ext
-#define NO_kaa_store_status_ext
-#endif
+    private static final long serialVersionUID = -175133069915874388L;
 
-#ifdef KAA_TEST_USE_SPECIFIC_kaa_get_endpoint_public_key
-#define NO_kaa_get_endpoint_public_key
-#endif
+    private byte[] outputData;
+    
+    public BuildOutputData () {
+    }
 
-#endif /* KAA_TEST_EXTERNAL_H_ */
+    public byte[] getOutputData() {
+        return outputData;
+    }
+
+    public void setOutputData(byte[] outputData) {
+        this.outputData = outputData;
+    }
+    
+}

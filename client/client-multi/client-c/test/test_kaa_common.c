@@ -18,10 +18,16 @@
 #include <string.h>
 
 #include "kaa_test.h"
+#include "kaa_log.h"
 #include "kaa_common.h"
 #include "kaa_error.h"
 
-void test_profile_update() {
+static kaa_logger_t *logger = NULL;
+
+void test_profile_update()
+{
+    KAA_TRACE_IN(logger);
+
     char* pattern = "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3";
 
     kaa_error_t err;
@@ -46,9 +52,18 @@ void test_profile_update() {
     ASSERT_EQUAL(0, memcmp(buf, pattern, SHA_1_DIGEST_LENGTH * 2));
 }
 
-int main(int argc, char **argv)
+int test_init(void)
 {
-    test_profile_update();
-
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     return 0;
 }
+
+int test_deinit(void)
+{
+    kaa_log_destroy(logger);
+    return 0;
+}
+
+KAA_SUITE_MAIN(Common, test_init, test_deinit
+        , KAA_TEST_CASE(calculate_hash, test_profile_update)
+)

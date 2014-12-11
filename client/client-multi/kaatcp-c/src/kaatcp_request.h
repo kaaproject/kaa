@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include "kaatcp_common.h"
@@ -46,5 +43,7 @@ kaatcp_error_t kaatcp_get_request_bootstrap(const kaatcp_bootstrap_request_t *me
 
 kaatcp_error_t kaatcp_get_request_ping(char *buf, uint32_t *buf_size);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAATCP_REQUEST_H_ */

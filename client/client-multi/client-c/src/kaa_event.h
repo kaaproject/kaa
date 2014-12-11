@@ -32,20 +32,20 @@ extern "C" {
 typedef struct kaa_event_manager_t kaa_event_manager_t;
 
 kaa_error_t kaa_create_event_manager(kaa_event_manager_t **);
-void kaa_destroy_event_manager(kaa_event_manager_t *);
+void        kaa_destroy_event_manager(kaa_event_manager_t *);
 
-kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId);
-void kaa_event_handle_sync(void *ctx, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
+kaa_error_t kaa_event_compile_request(void *ctx, kaa_event_sync_request_t** request_p, size_t requestId);
+kaa_error_t kaa_event_handle_sync(void *ctx, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
 
-kaa_trx_id kaa_event_create_transaction(void *context);
-void kaa_event_finish_transaction(void *context, kaa_trx_id trx_id);
-void kaa_event_remove_transaction(void *context, kaa_trx_id trx_id);
-void kaa_add_event_to_transaction(void *context, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
+kaa_error_t kaa_event_create_transaction(void *context, kaa_trx_id *trx_id);
+kaa_error_t kaa_event_finish_transaction(void *context, kaa_trx_id trx_id);
+kaa_error_t kaa_event_remove_transaction(void *context, kaa_trx_id trx_id);
+kaa_error_t kaa_add_event_to_transaction(void *context, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
 
-void kaa_add_event(void *context, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
-void kaa_add_on_event_callback(kaa_event_manager_t *event_manager, const char *fqn, size_t fqn_length, event_callback_t callback);
+kaa_error_t kaa_add_event(void *context, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size);
+kaa_error_t kaa_add_on_event_callback(kaa_event_manager_t *event_manager, const char *fqn, size_t fqn_length, event_callback_t callback);
 
-const char * kaa_find_class_family_name(const char *fqn);
+const char *kaa_find_class_family_name(const char *fqn);
 
 #endif
 

@@ -78,15 +78,22 @@ public:
     std::string getEndpointKeyHash() const;
     void setEndpointKeyHash(const std::string& keyHash);
 
+    virtual bool isConfigurationVersionUpdated() const {
+        return isConfigVersionUpdated;
+    }
+
     void read();
     void save();
 
 private:
     void checkSDKPropertiesForUpdates();
+    void checkConfigVersionForUpdates();
 
 private:
     std::string filename_;
     std::map<ClientParameterT, std::shared_ptr<IPersistentParameter> > parameters_;
+
+    bool isConfigVersionUpdated;
 
     KAA_MUTEX_MUTABLE_DECLARE(sequenceNumberGuard_);
 

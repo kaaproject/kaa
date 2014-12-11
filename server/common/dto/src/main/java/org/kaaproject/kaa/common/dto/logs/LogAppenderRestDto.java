@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.AbstractDetailDto;
 import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 
 public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Serializable {
 
@@ -31,7 +30,8 @@ public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Seri
     private String applicationId;
     private String applicationToken;
     private String tenantId;
-    private SchemaDto schema;
+    private int minLogSchemaVersion;
+    private int maxLogSchemaVersion;
     private LogAppenderStatusDto status;
     private String typeName;
     private String appenderClassName;
@@ -48,7 +48,8 @@ public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Seri
         this.applicationId = logAppenderDto.getApplicationId();
         this.applicationToken = logAppenderDto.getApplicationToken();
         this.tenantId = logAppenderDto.getTenantId();
-        this.schema = logAppenderDto.getSchema();
+        this.minLogSchemaVersion = logAppenderDto.getMinLogSchemaVersion();
+        this.maxLogSchemaVersion = logAppenderDto.getMaxLogSchemaVersion();
         this.status = logAppenderDto.getStatus();
         this.typeName = logAppenderDto.getTypeName();
         this.appenderClassName = logAppenderDto.getAppenderClassName();
@@ -61,7 +62,8 @@ public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Seri
         logAppenderDto.setApplicationId(this.applicationId);
         logAppenderDto.setApplicationToken(this.applicationToken);
         logAppenderDto.setTenantId(this.tenantId);
-        logAppenderDto.setSchema(this.schema);
+        logAppenderDto.setMinLogSchemaVersion(minLogSchemaVersion);
+        logAppenderDto.setMaxLogSchemaVersion(maxLogSchemaVersion);
         logAppenderDto.setStatus(this.status);
         logAppenderDto.setTypeName(this.typeName);
         logAppenderDto.setAppenderClassName(this.appenderClassName);
@@ -103,12 +105,20 @@ public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Seri
         this.tenantId = tenantId;
     }
 
-    public SchemaDto getSchema() {
-        return schema;
+    public int getMinLogSchemaVersion() {
+        return minLogSchemaVersion;
     }
 
-    public void setSchema(SchemaDto schema) {
-        this.schema = schema;
+    public void setMinLogSchemaVersion(int minLogSchemaVersion) {
+        this.minLogSchemaVersion = minLogSchemaVersion;
+    }
+
+    public int getMaxLogSchemaVersion() {
+        return maxLogSchemaVersion;
+    }
+
+    public void setMaxLogSchemaVersion(int maxLogSchemaVersion) {
+        this.maxLogSchemaVersion = maxLogSchemaVersion;
     }
 
     public LogAppenderStatusDto getStatus() {
@@ -151,14 +161,6 @@ public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Seri
         this.headerStructure = headerStructure;
     }
 
-    public String getSchemaVersion() {
-        StringBuilder version = new StringBuilder();
-        if (schema != null) {
-            version.append(schema.getMajorVersion()).append(".").append(schema.getMinorVersion());
-        }
-        return version.toString();
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -177,7 +179,8 @@ public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Seri
         result = prime * result
                 + ((headerStructure == null) ? 0 : headerStructure.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+        result = prime * result + maxLogSchemaVersion;
+        result = prime * result + minLogSchemaVersion;
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result
                 + ((tenantId == null) ? 0 : tenantId.hashCode());
@@ -240,11 +243,10 @@ public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Seri
         } else if (!id.equals(other.id)) {
             return false;
         }
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
+        if (maxLogSchemaVersion != other.maxLogSchemaVersion) {
+            return false;
+        }
+        if (minLogSchemaVersion != other.minLogSchemaVersion) {
             return false;
         }
         if (status != other.status) {
@@ -271,10 +273,12 @@ public class LogAppenderRestDto extends AbstractDetailDto implements HasId, Seri
     public String toString() {
         return "LogAppenderRestDto [id=" + id + ", applicationId="
                 + applicationId + ", applicationToken=" + applicationToken
-                + ", tenantId=" + tenantId + ", schema=" + schema + ", status="
-                + status + ", typeName=" + typeName + ", appenderClassName="
-                + appenderClassName + ", configuration=" + configuration
-                + ", headerStructure=" + headerStructure + "]";
+                + ", tenantId=" + tenantId + ", minLogSchemaVersion="
+                + minLogSchemaVersion + ", maxLogSchemaVersion="
+                + maxLogSchemaVersion + ", status=" + status + ", typeName="
+                + typeName + ", appenderClassName=" + appenderClassName
+                + ", configuration=" + configuration + ", headerStructure="
+                + headerStructure + "]";
     }
 
 }

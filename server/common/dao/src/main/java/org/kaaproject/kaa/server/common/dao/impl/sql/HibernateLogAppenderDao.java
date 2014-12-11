@@ -21,6 +21,8 @@ import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstant
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.LOG_APPENDER_STATUS;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,6 +54,22 @@ public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> i
                     Restrictions.and(
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                             Restrictions.eq(LOG_APPENDER_STATUS, LogAppenderStatusDto.REGISTERED))
+                    );
+        }
+        return appenders;
+    }
+    
+    @Override
+    public List<LogAppender> findByAppIdAndSchemaVersion(String appId,
+            int schemaVersion) {
+        List<LogAppender> appenders = Collections.emptyList();
+        if (isNotBlank(appId)) {
+            appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+                    Restrictions.and(
+                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+                            Restrictions.eq(LOG_APPENDER_STATUS, LogAppenderStatusDto.REGISTERED),
+                            Restrictions.le(LOG_APPENDER_MIN_LOG_SCHEMA_VERSION, schemaVersion),
+                            Restrictions.ge(LOG_APPENDER_MAX_LOG_SCHEMA_VERSION, schemaVersion))
                     );
         }
         return appenders;

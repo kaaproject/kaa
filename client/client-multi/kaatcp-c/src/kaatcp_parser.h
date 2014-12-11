@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include "kaatcp_common.h"
@@ -68,5 +65,7 @@ kaatcp_error_t kaatcp_parser_process_buffer(kaatcp_parser_t *parser, const char 
 void kaatcp_parser_kaasync_destroy(kaatcp_kaasync_t *message);
 void kaatcp_parser_bootstrap_destroy(kaatcp_bootstrap_response_t *message);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAATCP_PARSER_H_ */

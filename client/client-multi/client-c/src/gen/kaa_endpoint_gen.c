@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include "kaa_endpoint_gen.h"
+# include "kaa_endpoint_gen.h"
 
-#include <stdio.h>
-#include <string.h>
+# include <stdio.h>
+# include <string.h>
 
-#include "avro_src/avro/io.h"
-#include "avro_src/encoding.h"
+# include "avro_src/avro/io.h"
+# include "avro_src/encoding.h"
 
-#include "kaa_mem.h"
+# include "kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE
@@ -60,10 +60,9 @@ kaa_event_class_family_version_info_t* kaa_create_event_class_family_version_inf
     kaa_event_class_family_version_info_t* record = KAA_MALLOC(kaa_event_class_family_version_info_t);
     record->serialize = kaa_serialize_event_class_family_version_info;
     record->get_size = kaa_get_size_event_class_family_version_info;
-    record->destruct = kaa_destroy_event_class_family_version_info;
+    record->destroy = kaa_destroy_event_class_family_version_info;
     return record;
 }
-
 
 
 
@@ -125,7 +124,7 @@ static kaa_union_t* kaa_create_array_event_class_family_version_info_null_union(
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_event_class_family_version_info_null_union;
     kaa_union->get_size = kaa_get_size_array_event_class_family_version_info_null_union;
-    kaa_union->destruct = kaa_destroy_array_event_class_family_version_info_null_union;
+    kaa_union->destroy = kaa_destroy_array_event_class_family_version_info_null_union;
 
     return kaa_union; 
 }
@@ -151,7 +150,7 @@ static void kaa_destroy_endpoint_version_info(void* data)
 {
     kaa_endpoint_version_info_t* record = (kaa_endpoint_version_info_t*)data;
 
-    record->event_family_versions->destruct(record->event_family_versions);
+    record->event_family_versions->destroy(record->event_family_versions);
     KAA_FREE(record->event_family_versions);
 }
 static size_t kaa_get_size_endpoint_version_info(void* data)
@@ -186,7 +185,7 @@ kaa_endpoint_version_info_t* kaa_create_endpoint_version_info()
     kaa_endpoint_version_info_t* record = KAA_MALLOC(kaa_endpoint_version_info_t);
     record->serialize = kaa_serialize_endpoint_version_info;
     record->get_size = kaa_get_size_endpoint_version_info;
-    record->destruct = kaa_destroy_endpoint_version_info;
+    record->destroy = kaa_destroy_endpoint_version_info;
     return record;
 }
 
@@ -222,7 +221,7 @@ kaa_topic_state_t* kaa_create_topic_state()
     kaa_topic_state_t* record = KAA_MALLOC(kaa_topic_state_t);
     record->serialize = kaa_serialize_topic_state;
     record->get_size = kaa_get_size_topic_state;
-    record->destruct = kaa_destroy_topic_state;
+    record->destroy = kaa_destroy_topic_state;
     return record;
 }
 
@@ -258,7 +257,7 @@ kaa_subscription_command_t* kaa_create_subscription_command()
     kaa_subscription_command_t* record = KAA_MALLOC(kaa_subscription_command_t);
     record->serialize = kaa_serialize_subscription_command;
     record->get_size = kaa_get_size_subscription_command;
-    record->destruct = kaa_destroy_subscription_command;
+    record->destroy = kaa_destroy_subscription_command;
     return record;
 }
 
@@ -295,7 +294,7 @@ kaa_user_attach_request_t* kaa_create_user_attach_request()
     kaa_user_attach_request_t* record = KAA_MALLOC(kaa_user_attach_request_t);
     record->serialize = kaa_serialize_user_attach_request;
     record->get_size = kaa_get_size_user_attach_request;
-    record->destruct = kaa_destroy_user_attach_request;
+    record->destroy = kaa_destroy_user_attach_request;
     return record;
 }
 
@@ -305,7 +304,7 @@ kaa_user_attach_request_t* kaa_create_user_attach_request()
 kaa_user_attach_response_t* kaa_deserialize_user_attach_response(avro_reader_t reader)
 {
     kaa_user_attach_response_t* record = KAA_MALLOC(kaa_user_attach_response_t);
-    record->destruct = kaa_destroy_null;
+    record->destroy = kaa_destroy_null;
     
     int64_t result_value;
     avro_binary_encoding.read_long(reader, &result_value);
@@ -327,7 +326,7 @@ static void kaa_destroy_user_attach_notification(void* data)
 kaa_user_attach_notification_t* kaa_deserialize_user_attach_notification(avro_reader_t reader)
 {
     kaa_user_attach_notification_t* record = KAA_MALLOC(kaa_user_attach_notification_t);
-    record->destruct = kaa_destroy_user_attach_notification;
+    record->destroy = kaa_destroy_user_attach_notification;
     
         int64_t user_external_id_size;
     avro_binary_encoding.read_string(reader, &record->user_external_id, &user_external_id_size);
@@ -349,7 +348,7 @@ static void kaa_destroy_user_detach_notification(void* data)
 kaa_user_detach_notification_t* kaa_deserialize_user_detach_notification(avro_reader_t reader)
 {
     kaa_user_detach_notification_t* record = KAA_MALLOC(kaa_user_detach_notification_t);
-    record->destruct = kaa_destroy_user_detach_notification;
+    record->destroy = kaa_destroy_user_detach_notification;
     
         int64_t endpoint_access_token_size;
     avro_binary_encoding.read_string(reader, &record->endpoint_access_token, &endpoint_access_token_size);
@@ -390,10 +389,9 @@ kaa_endpoint_attach_request_t* kaa_create_endpoint_attach_request()
     kaa_endpoint_attach_request_t* record = KAA_MALLOC(kaa_endpoint_attach_request_t);
     record->serialize = kaa_serialize_endpoint_attach_request;
     record->get_size = kaa_get_size_endpoint_attach_request;
-    record->destruct = kaa_destroy_endpoint_attach_request;
+    record->destroy = kaa_destroy_endpoint_attach_request;
     return record;
 }
-
 
 
 
@@ -455,7 +453,7 @@ static kaa_union_t* kaa_create_string_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_string_null_union;
     kaa_union->get_size = kaa_get_size_string_null_union;
-    kaa_union->destruct = kaa_destroy_string_null_union;
+    kaa_union->destroy = kaa_destroy_string_null_union;
 
     return kaa_union; 
 }
@@ -504,14 +502,14 @@ static void kaa_destroy_endpoint_attach_response(void* data)
     kaa_endpoint_attach_response_t* record = (kaa_endpoint_attach_response_t*)data;
 
     KAA_FREE(record->request_id);
-    record->endpoint_key_hash->destruct(record->endpoint_key_hash);
+    record->endpoint_key_hash->destroy(record->endpoint_key_hash);
     KAA_FREE(record->endpoint_key_hash);
 }
 
 kaa_endpoint_attach_response_t* kaa_deserialize_endpoint_attach_response(avro_reader_t reader)
 {
     kaa_endpoint_attach_response_t* record = KAA_MALLOC(kaa_endpoint_attach_response_t);
-    record->destruct = kaa_destroy_endpoint_attach_response;
+    record->destroy = kaa_destroy_endpoint_attach_response;
     
         int64_t request_id_size;
     avro_binary_encoding.read_string(reader, &record->request_id, &request_id_size);
@@ -556,7 +554,7 @@ kaa_endpoint_detach_request_t* kaa_create_endpoint_detach_request()
     kaa_endpoint_detach_request_t* record = KAA_MALLOC(kaa_endpoint_detach_request_t);
     record->serialize = kaa_serialize_endpoint_detach_request;
     record->get_size = kaa_get_size_endpoint_detach_request;
-    record->destruct = kaa_destroy_endpoint_detach_request;
+    record->destroy = kaa_destroy_endpoint_detach_request;
     return record;
 }
 
@@ -572,7 +570,7 @@ static void kaa_destroy_endpoint_detach_response(void* data)
 kaa_endpoint_detach_response_t* kaa_deserialize_endpoint_detach_response(avro_reader_t reader)
 {
     kaa_endpoint_detach_response_t* record = KAA_MALLOC(kaa_endpoint_detach_response_t);
-    record->destruct = kaa_destroy_endpoint_detach_response;
+    record->destroy = kaa_destroy_endpoint_detach_response;
     
         int64_t request_id_size;
     avro_binary_encoding.read_string(reader, &record->request_id, &request_id_size);
@@ -592,9 +590,9 @@ static void kaa_destroy_event(void* data)
     KAA_FREE(record->event_class_fqn);
     kaa_destroy_bytes(record->event_data);
     KAA_FREE(record->event_data);
-    record->source->destruct(record->source);
+    record->source->destroy(record->source);
     KAA_FREE(record->source);
-    record->target->destruct(record->target);
+    record->target->destroy(record->target);
     KAA_FREE(record->target);
 }
 static size_t kaa_get_size_event(void* data)
@@ -627,7 +625,7 @@ kaa_event_t* kaa_create_event()
     kaa_event_t* record = KAA_MALLOC(kaa_event_t);
     record->serialize = kaa_serialize_event;
     record->get_size = kaa_get_size_event;
-    record->destruct = kaa_destroy_event;
+    record->destroy = kaa_destroy_event;
     return record;
 }
 
@@ -636,7 +634,7 @@ kaa_event_t* kaa_deserialize_event(avro_reader_t reader)
     kaa_event_t* record = KAA_MALLOC(kaa_event_t);
     record->serialize = kaa_serialize_event;
     record->get_size = kaa_get_size_event;
-    record->destruct = kaa_destroy_event;
+    record->destroy = kaa_destroy_event;
     
     avro_binary_encoding.read_int(reader, &record->seq_num);
         int64_t event_class_fqn_size;
@@ -681,10 +679,9 @@ kaa_event_listeners_request_t* kaa_create_event_listeners_request()
     kaa_event_listeners_request_t* record = KAA_MALLOC(kaa_event_listeners_request_t);
     record->serialize = kaa_serialize_event_listeners_request;
     record->get_size = kaa_get_size_event_listeners_request;
-    record->destruct = kaa_destroy_event_listeners_request;
+    record->destroy = kaa_destroy_event_listeners_request;
     return record;
 }
-
 
 
 
@@ -746,7 +743,7 @@ static kaa_union_t* kaa_create_array_string_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_string_null_union;
     kaa_union->get_size = kaa_get_size_array_string_null_union;
-    kaa_union->destruct = kaa_destroy_array_string_null_union;
+    kaa_union->destroy = kaa_destroy_array_string_null_union;
 
     return kaa_union; 
 }
@@ -776,7 +773,7 @@ kaa_union_t* kaa_deserialize_array_string_null_union(avro_reader_t reader)
     switch (kaa_union->type) {
     case KAA_ARRAY_STRING_NULL_UNION_ARRAY_BRANCH:
     {
-                    kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_string);
+                    kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_string);
             break;
     }
     default:
@@ -794,14 +791,14 @@ static void kaa_destroy_event_listeners_response(void* data)
     kaa_event_listeners_response_t* record = (kaa_event_listeners_response_t*)data;
 
     KAA_FREE(record->request_id);
-    record->listeners->destruct(record->listeners);
+    record->listeners->destroy(record->listeners);
     KAA_FREE(record->listeners);
 }
 
 kaa_event_listeners_response_t* kaa_deserialize_event_listeners_response(avro_reader_t reader)
 {
     kaa_event_listeners_response_t* record = KAA_MALLOC(kaa_event_listeners_response_t);
-    record->destruct = kaa_destroy_event_listeners_response;
+    record->destroy = kaa_destroy_event_listeners_response;
     
         int64_t request_id_size;
     avro_binary_encoding.read_string(reader, &record->request_id, &request_id_size);
@@ -835,7 +832,7 @@ kaa_event_sequence_number_request_t* kaa_create_event_sequence_number_request()
     kaa_event_sequence_number_request_t* record = KAA_MALLOC(kaa_event_sequence_number_request_t);
     record->serialize = kaa_serialize_event_sequence_number_request;
     record->get_size = kaa_get_size_event_sequence_number_request;
-    record->destruct = kaa_destroy_null;
+    record->destroy = kaa_destroy_null;
     return record;
 }
 
@@ -845,13 +842,12 @@ kaa_event_sequence_number_request_t* kaa_create_event_sequence_number_request()
 kaa_event_sequence_number_response_t* kaa_deserialize_event_sequence_number_response(avro_reader_t reader)
 {
     kaa_event_sequence_number_response_t* record = KAA_MALLOC(kaa_event_sequence_number_response_t);
-    record->destruct = kaa_destroy_null;
+    record->destroy = kaa_destroy_null;
     
     avro_binary_encoding.read_int(reader, &record->seq_num);
     
     return record;
 }
-
 
 
 
@@ -913,7 +909,7 @@ static kaa_union_t* kaa_create_int_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_int_null_union;
     kaa_union->get_size = kaa_get_size_int_null_union;
-    kaa_union->destruct = kaa_destroy_int_null_union;
+    kaa_union->destroy = kaa_destroy_int_null_union;
 
     return kaa_union; 
 }
@@ -961,9 +957,9 @@ static void kaa_destroy_notification(void* data)
     kaa_notification_t* record = (kaa_notification_t*)data;
 
     KAA_FREE(record->topic_id);
-    record->uid->destruct(record->uid);
+    record->uid->destroy(record->uid);
     KAA_FREE(record->uid);
-    record->seq_number->destruct(record->seq_number);
+    record->seq_number->destroy(record->seq_number);
     KAA_FREE(record->seq_number);
     kaa_destroy_bytes(record->body);
     KAA_FREE(record->body);
@@ -972,7 +968,7 @@ static void kaa_destroy_notification(void* data)
 kaa_notification_t* kaa_deserialize_notification(avro_reader_t reader)
 {
     kaa_notification_t* record = KAA_MALLOC(kaa_notification_t);
-    record->destruct = kaa_destroy_notification;
+    record->destroy = kaa_destroy_notification;
     
         int64_t topic_id_size;
     avro_binary_encoding.read_string(reader, &record->topic_id, &topic_id_size);
@@ -999,7 +995,7 @@ static void kaa_destroy_topic(void* data)
 kaa_topic_t* kaa_deserialize_topic(avro_reader_t reader)
 {
     kaa_topic_t* record = KAA_MALLOC(kaa_topic_t);
-    record->destruct = kaa_destroy_topic;
+    record->destroy = kaa_destroy_topic;
     
         int64_t id_size;
     avro_binary_encoding.read_string(reader, &record->id, &id_size);
@@ -1043,10 +1039,9 @@ kaa_log_entry_t* kaa_create_log_entry()
     kaa_log_entry_t* record = KAA_MALLOC(kaa_log_entry_t);
     record->serialize = kaa_serialize_log_entry;
     record->get_size = kaa_get_size_log_entry;
-    record->destruct = kaa_destroy_log_entry;
+    record->destroy = kaa_destroy_log_entry;
     return record;
 }
-
 
 
 
@@ -1109,7 +1104,7 @@ static kaa_union_t* kaa_create_bytes_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_bytes_null_union;
     kaa_union->get_size = kaa_get_size_bytes_null_union;
-    kaa_union->destruct = kaa_destroy_bytes_null_union;
+    kaa_union->destroy = kaa_destroy_bytes_null_union;
 
     return kaa_union; 
 }
@@ -1159,7 +1154,7 @@ static void kaa_destroy_sync_request_meta_data(void* data)
     KAA_FREE(record->application_token);
     kaa_destroy_bytes(record->endpoint_public_key_hash);
     KAA_FREE(record->endpoint_public_key_hash);
-    record->profile_hash->destruct(record->profile_hash);
+    record->profile_hash->destroy(record->profile_hash);
     KAA_FREE(record->profile_hash);
 }
 static size_t kaa_get_size_sync_request_meta_data(void* data)
@@ -1190,7 +1185,7 @@ kaa_sync_request_meta_data_t* kaa_create_sync_request_meta_data()
     kaa_sync_request_meta_data_t* record = KAA_MALLOC(kaa_sync_request_meta_data_t);
     record->serialize = kaa_serialize_sync_request_meta_data;
     record->get_size = kaa_get_size_sync_request_meta_data;
-    record->destruct = kaa_destroy_sync_request_meta_data;
+    record->destroy = kaa_destroy_sync_request_meta_data;
     return record;
 }
 
@@ -1200,13 +1195,13 @@ static void kaa_destroy_profile_sync_request(void* data)
 {
     kaa_profile_sync_request_t* record = (kaa_profile_sync_request_t*)data;
 
-    record->endpoint_public_key->destruct(record->endpoint_public_key);
+    record->endpoint_public_key->destroy(record->endpoint_public_key);
     KAA_FREE(record->endpoint_public_key);
     kaa_destroy_bytes(record->profile_body);
     KAA_FREE(record->profile_body);
-    record->version_info->destruct(record->version_info);
+    record->version_info->destroy(record->version_info);
     KAA_FREE(record->version_info);
-    record->endpoint_access_token->destruct(record->endpoint_access_token);
+    record->endpoint_access_token->destroy(record->endpoint_access_token);
     KAA_FREE(record->endpoint_access_token);
 }
 static size_t kaa_get_size_profile_sync_request(void* data)
@@ -1237,7 +1232,7 @@ kaa_profile_sync_request_t* kaa_create_profile_sync_request()
     kaa_profile_sync_request_t* record = KAA_MALLOC(kaa_profile_sync_request_t);
     record->serialize = kaa_serialize_profile_sync_request;
     record->get_size = kaa_get_size_profile_sync_request;
-    record->destruct = kaa_destroy_profile_sync_request;
+    record->destroy = kaa_destroy_profile_sync_request;
     return record;
 }
 
@@ -1247,7 +1242,7 @@ static void kaa_destroy_configuration_sync_request(void* data)
 {
     kaa_configuration_sync_request_t* record = (kaa_configuration_sync_request_t*)data;
 
-    record->configuration_hash->destruct(record->configuration_hash);
+    record->configuration_hash->destroy(record->configuration_hash);
     KAA_FREE(record->configuration_hash);
 }
 static size_t kaa_get_size_configuration_sync_request(void* data)
@@ -1274,10 +1269,9 @@ kaa_configuration_sync_request_t* kaa_create_configuration_sync_request()
     kaa_configuration_sync_request_t* record = KAA_MALLOC(kaa_configuration_sync_request_t);
     record->serialize = kaa_serialize_configuration_sync_request;
     record->get_size = kaa_get_size_configuration_sync_request;
-    record->destruct = kaa_destroy_configuration_sync_request;
+    record->destroy = kaa_destroy_configuration_sync_request;
     return record;
 }
-
 
 
 
@@ -1339,7 +1333,7 @@ static kaa_union_t* kaa_create_array_topic_state_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_topic_state_null_union;
     kaa_union->get_size = kaa_get_size_array_topic_state_null_union;
-    kaa_union->destruct = kaa_destroy_array_topic_state_null_union;
+    kaa_union->destroy = kaa_destroy_array_topic_state_null_union;
 
     return kaa_union; 
 }
@@ -1358,7 +1352,6 @@ kaa_union_t* kaa_create_array_topic_state_null_union_null_branch()
     return kaa_union;
 }
 # endif // KAA_ARRAY_TOPIC_STATE_NULL_UNION_C_
-
 
 
 
@@ -1420,7 +1413,7 @@ static kaa_union_t* kaa_create_array_subscription_command_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_subscription_command_null_union;
     kaa_union->get_size = kaa_get_size_array_subscription_command_null_union;
-    kaa_union->destruct = kaa_destroy_array_subscription_command_null_union;
+    kaa_union->destroy = kaa_destroy_array_subscription_command_null_union;
 
     return kaa_union; 
 }
@@ -1446,13 +1439,13 @@ static void kaa_destroy_notification_sync_request(void* data)
 {
     kaa_notification_sync_request_t* record = (kaa_notification_sync_request_t*)data;
 
-    record->topic_list_hash->destruct(record->topic_list_hash);
+    record->topic_list_hash->destroy(record->topic_list_hash);
     KAA_FREE(record->topic_list_hash);
-    record->topic_states->destruct(record->topic_states);
+    record->topic_states->destroy(record->topic_states);
     KAA_FREE(record->topic_states);
-    record->accepted_unicast_notifications->destruct(record->accepted_unicast_notifications);
+    record->accepted_unicast_notifications->destroy(record->accepted_unicast_notifications);
     KAA_FREE(record->accepted_unicast_notifications);
-    record->subscription_commands->destruct(record->subscription_commands);
+    record->subscription_commands->destroy(record->subscription_commands);
     KAA_FREE(record->subscription_commands);
 }
 static size_t kaa_get_size_notification_sync_request(void* data)
@@ -1485,10 +1478,9 @@ kaa_notification_sync_request_t* kaa_create_notification_sync_request()
     kaa_notification_sync_request_t* record = KAA_MALLOC(kaa_notification_sync_request_t);
     record->serialize = kaa_serialize_notification_sync_request;
     record->get_size = kaa_get_size_notification_sync_request;
-    record->destruct = kaa_destroy_notification_sync_request;
+    record->destroy = kaa_destroy_notification_sync_request;
     return record;
 }
-
 
 
 
@@ -1502,7 +1494,7 @@ static void kaa_destroy_record_user_attach_request_null_union(void *data)
     case KAA_RECORD_USER_ATTACH_REQUEST_NULL_UNION_USER_ATTACH_REQUEST_BRANCH:
     {
         kaa_user_attach_request_t* record = (kaa_user_attach_request_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -1554,7 +1546,7 @@ static kaa_union_t* kaa_create_record_user_attach_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_user_attach_request_null_union;
     kaa_union->get_size = kaa_get_size_record_user_attach_request_null_union;
-    kaa_union->destruct = kaa_destroy_record_user_attach_request_null_union;
+    kaa_union->destroy = kaa_destroy_record_user_attach_request_null_union;
 
     return kaa_union; 
 }
@@ -1573,7 +1565,6 @@ kaa_union_t* kaa_create_record_user_attach_request_null_union_null_branch()
     return kaa_union;
 }
 # endif // KAA_RECORD_USER_ATTACH_REQUEST_NULL_UNION_C_
-
 
 
 
@@ -1635,7 +1626,7 @@ static kaa_union_t* kaa_create_array_endpoint_attach_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_endpoint_attach_request_null_union;
     kaa_union->get_size = kaa_get_size_array_endpoint_attach_request_null_union;
-    kaa_union->destruct = kaa_destroy_array_endpoint_attach_request_null_union;
+    kaa_union->destroy = kaa_destroy_array_endpoint_attach_request_null_union;
 
     return kaa_union; 
 }
@@ -1654,7 +1645,6 @@ kaa_union_t* kaa_create_array_endpoint_attach_request_null_union_null_branch()
     return kaa_union;
 }
 # endif // KAA_ARRAY_ENDPOINT_ATTACH_REQUEST_NULL_UNION_C_
-
 
 
 
@@ -1716,7 +1706,7 @@ static kaa_union_t* kaa_create_array_endpoint_detach_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_endpoint_detach_request_null_union;
     kaa_union->get_size = kaa_get_size_array_endpoint_detach_request_null_union;
-    kaa_union->destruct = kaa_destroy_array_endpoint_detach_request_null_union;
+    kaa_union->destroy = kaa_destroy_array_endpoint_detach_request_null_union;
 
     return kaa_union; 
 }
@@ -1742,11 +1732,11 @@ static void kaa_destroy_user_sync_request(void* data)
 {
     kaa_user_sync_request_t* record = (kaa_user_sync_request_t*)data;
 
-    record->user_attach_request->destruct(record->user_attach_request);
+    record->user_attach_request->destroy(record->user_attach_request);
     KAA_FREE(record->user_attach_request);
-    record->endpoint_attach_requests->destruct(record->endpoint_attach_requests);
+    record->endpoint_attach_requests->destroy(record->endpoint_attach_requests);
     KAA_FREE(record->endpoint_attach_requests);
-    record->endpoint_detach_requests->destruct(record->endpoint_detach_requests);
+    record->endpoint_detach_requests->destroy(record->endpoint_detach_requests);
     KAA_FREE(record->endpoint_detach_requests);
 }
 static size_t kaa_get_size_user_sync_request(void* data)
@@ -1775,10 +1765,9 @@ kaa_user_sync_request_t* kaa_create_user_sync_request()
     kaa_user_sync_request_t* record = KAA_MALLOC(kaa_user_sync_request_t);
     record->serialize = kaa_serialize_user_sync_request;
     record->get_size = kaa_get_size_user_sync_request;
-    record->destruct = kaa_destroy_user_sync_request;
+    record->destroy = kaa_destroy_user_sync_request;
     return record;
 }
-
 
 
 
@@ -1842,7 +1831,7 @@ static kaa_union_t* kaa_create_record_event_sequence_number_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_event_sequence_number_request_null_union;
     kaa_union->get_size = kaa_get_size_record_event_sequence_number_request_null_union;
-    kaa_union->destruct = kaa_destroy_record_event_sequence_number_request_null_union;
+    kaa_union->destroy = kaa_destroy_record_event_sequence_number_request_null_union;
 
     return kaa_union; 
 }
@@ -1861,7 +1850,6 @@ kaa_union_t* kaa_create_record_event_sequence_number_request_null_union_null_bra
     return kaa_union;
 }
 # endif // KAA_RECORD_EVENT_SEQUENCE_NUMBER_REQUEST_NULL_UNION_C_
-
 
 
 
@@ -1923,7 +1911,7 @@ static kaa_union_t* kaa_create_array_event_listeners_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_event_listeners_request_null_union;
     kaa_union->get_size = kaa_get_size_array_event_listeners_request_null_union;
-    kaa_union->destruct = kaa_destroy_array_event_listeners_request_null_union;
+    kaa_union->destroy = kaa_destroy_array_event_listeners_request_null_union;
 
     return kaa_union; 
 }
@@ -1942,7 +1930,6 @@ kaa_union_t* kaa_create_array_event_listeners_request_null_union_null_branch()
     return kaa_union;
 }
 # endif // KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_C_
-
 
 
 
@@ -2004,7 +1991,7 @@ static kaa_union_t* kaa_create_array_event_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_event_null_union;
     kaa_union->get_size = kaa_get_size_array_event_null_union;
-    kaa_union->destruct = kaa_destroy_array_event_null_union;
+    kaa_union->destroy = kaa_destroy_array_event_null_union;
 
     return kaa_union; 
 }
@@ -2034,7 +2021,7 @@ kaa_union_t* kaa_deserialize_array_event_null_union(avro_reader_t reader)
     switch (kaa_union->type) {
     case KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH:
     {
-            kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_event);
+            kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_event);
             break;
     }
     default:
@@ -2051,11 +2038,11 @@ static void kaa_destroy_event_sync_request(void* data)
 {
     kaa_event_sync_request_t* record = (kaa_event_sync_request_t*)data;
 
-    record->event_sequence_number_request->destruct(record->event_sequence_number_request);
+    record->event_sequence_number_request->destroy(record->event_sequence_number_request);
     KAA_FREE(record->event_sequence_number_request);
-    record->event_listeners_requests->destruct(record->event_listeners_requests);
+    record->event_listeners_requests->destroy(record->event_listeners_requests);
     KAA_FREE(record->event_listeners_requests);
-    record->events->destruct(record->events);
+    record->events->destroy(record->events);
     KAA_FREE(record->events);
 }
 static size_t kaa_get_size_event_sync_request(void* data)
@@ -2084,10 +2071,9 @@ kaa_event_sync_request_t* kaa_create_event_sync_request()
     kaa_event_sync_request_t* record = KAA_MALLOC(kaa_event_sync_request_t);
     record->serialize = kaa_serialize_event_sync_request;
     record->get_size = kaa_get_size_event_sync_request;
-    record->destruct = kaa_destroy_event_sync_request;
+    record->destroy = kaa_destroy_event_sync_request;
     return record;
 }
-
 
 
 
@@ -2149,7 +2135,7 @@ static kaa_union_t* kaa_create_array_log_entry_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_array_log_entry_null_union;
     kaa_union->get_size = kaa_get_size_array_log_entry_null_union;
-    kaa_union->destruct = kaa_destroy_array_log_entry_null_union;
+    kaa_union->destroy = kaa_destroy_array_log_entry_null_union;
 
     return kaa_union; 
 }
@@ -2175,9 +2161,9 @@ static void kaa_destroy_log_sync_request(void* data)
 {
     kaa_log_sync_request_t* record = (kaa_log_sync_request_t*)data;
 
-    record->request_id->destruct(record->request_id);
+    record->request_id->destroy(record->request_id);
     KAA_FREE(record->request_id);
-    record->log_entries->destruct(record->log_entries);
+    record->log_entries->destroy(record->log_entries);
     KAA_FREE(record->log_entries);
 }
 static size_t kaa_get_size_log_sync_request(void* data)
@@ -2204,7 +2190,7 @@ kaa_log_sync_request_t* kaa_create_log_sync_request()
     kaa_log_sync_request_t* record = KAA_MALLOC(kaa_log_sync_request_t);
     record->serialize = kaa_serialize_log_sync_request;
     record->get_size = kaa_get_size_log_sync_request;
-    record->destruct = kaa_destroy_log_sync_request;
+    record->destroy = kaa_destroy_log_sync_request;
     return record;
 }
 
@@ -2214,7 +2200,7 @@ kaa_log_sync_request_t* kaa_create_log_sync_request()
 kaa_profile_sync_response_t* kaa_deserialize_profile_sync_response(avro_reader_t reader)
 {
     kaa_profile_sync_response_t* record = KAA_MALLOC(kaa_profile_sync_response_t);
-    record->destruct = kaa_destroy_null;
+    record->destroy = kaa_destroy_null;
     
     int64_t response_status_value;
     avro_binary_encoding.read_long(reader, &response_status_value);
@@ -2229,16 +2215,16 @@ static void kaa_destroy_configuration_sync_response(void* data)
 {
     kaa_configuration_sync_response_t* record = (kaa_configuration_sync_response_t*)data;
 
-    record->conf_schema_body->destruct(record->conf_schema_body);
+    record->conf_schema_body->destroy(record->conf_schema_body);
     KAA_FREE(record->conf_schema_body);
-    record->conf_delta_body->destruct(record->conf_delta_body);
+    record->conf_delta_body->destroy(record->conf_delta_body);
     KAA_FREE(record->conf_delta_body);
 }
 
 kaa_configuration_sync_response_t* kaa_deserialize_configuration_sync_response(avro_reader_t reader)
 {
     kaa_configuration_sync_response_t* record = KAA_MALLOC(kaa_configuration_sync_response_t);
-    record->destruct = kaa_destroy_configuration_sync_response;
+    record->destroy = kaa_destroy_configuration_sync_response;
     
     avro_binary_encoding.read_int(reader, &record->app_state_seq_number);
     int64_t response_status_value;
@@ -2249,7 +2235,6 @@ kaa_configuration_sync_response_t* kaa_deserialize_configuration_sync_response(a
     
     return record;
 }
-
 
 
 
@@ -2275,7 +2260,7 @@ static kaa_union_t* kaa_create_array_notification_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_array_notification_null_union;
+    kaa_union->destroy = kaa_destroy_array_notification_null_union;
 
     return kaa_union; 
 }
@@ -2291,7 +2276,7 @@ kaa_union_t* kaa_deserialize_array_notification_null_union(avro_reader_t reader)
     switch (kaa_union->type) {
     case KAA_ARRAY_NOTIFICATION_NULL_UNION_ARRAY_BRANCH:
     {
-            kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_notification);
+            kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_notification);
             break;
     }
     default:
@@ -2301,7 +2286,6 @@ kaa_union_t* kaa_deserialize_array_notification_null_union(avro_reader_t reader)
     return kaa_union;
 }
 # endif // KAA_ARRAY_NOTIFICATION_NULL_UNION_C_
-
 
 
 
@@ -2327,7 +2311,7 @@ static kaa_union_t* kaa_create_array_topic_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_array_topic_null_union;
+    kaa_union->destroy = kaa_destroy_array_topic_null_union;
 
     return kaa_union; 
 }
@@ -2343,7 +2327,7 @@ kaa_union_t* kaa_deserialize_array_topic_null_union(avro_reader_t reader)
     switch (kaa_union->type) {
     case KAA_ARRAY_TOPIC_NULL_UNION_ARRAY_BRANCH:
     {
-            kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_topic);
+            kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_topic);
             break;
     }
     default:
@@ -2360,16 +2344,16 @@ static void kaa_destroy_notification_sync_response(void* data)
 {
     kaa_notification_sync_response_t* record = (kaa_notification_sync_response_t*)data;
 
-    record->notifications->destruct(record->notifications);
+    record->notifications->destroy(record->notifications);
     KAA_FREE(record->notifications);
-    record->available_topics->destruct(record->available_topics);
+    record->available_topics->destroy(record->available_topics);
     KAA_FREE(record->available_topics);
 }
 
 kaa_notification_sync_response_t* kaa_deserialize_notification_sync_response(avro_reader_t reader)
 {
     kaa_notification_sync_response_t* record = KAA_MALLOC(kaa_notification_sync_response_t);
-    record->destruct = kaa_destroy_notification_sync_response;
+    record->destroy = kaa_destroy_notification_sync_response;
     
     avro_binary_encoding.read_int(reader, &record->app_state_seq_number);
     int64_t response_status_value;
@@ -2380,7 +2364,6 @@ kaa_notification_sync_response_t* kaa_deserialize_notification_sync_response(avr
     
     return record;
 }
-
 
 
 
@@ -2406,7 +2389,7 @@ static kaa_union_t* kaa_create_record_user_attach_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_user_attach_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_user_attach_response_null_union;
 
     return kaa_union; 
 }
@@ -2435,7 +2418,6 @@ kaa_union_t* kaa_deserialize_record_user_attach_response_null_union(avro_reader_
 
 
 
-
 # ifndef KAA_RECORD_USER_ATTACH_NOTIFICATION_NULL_UNION_C_
 # define KAA_RECORD_USER_ATTACH_NOTIFICATION_NULL_UNION_C_
 static void kaa_destroy_record_user_attach_notification_null_union(void *data)
@@ -2446,7 +2428,7 @@ static void kaa_destroy_record_user_attach_notification_null_union(void *data)
     case KAA_RECORD_USER_ATTACH_NOTIFICATION_NULL_UNION_USER_ATTACH_NOTIFICATION_BRANCH:
     {
         kaa_user_attach_notification_t* record = (kaa_user_attach_notification_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -2460,7 +2442,7 @@ static kaa_union_t* kaa_create_record_user_attach_notification_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_user_attach_notification_null_union;
+    kaa_union->destroy = kaa_destroy_record_user_attach_notification_null_union;
 
     return kaa_union; 
 }
@@ -2489,7 +2471,6 @@ kaa_union_t* kaa_deserialize_record_user_attach_notification_null_union(avro_rea
 
 
 
-
 # ifndef KAA_RECORD_USER_DETACH_NOTIFICATION_NULL_UNION_C_
 # define KAA_RECORD_USER_DETACH_NOTIFICATION_NULL_UNION_C_
 static void kaa_destroy_record_user_detach_notification_null_union(void *data)
@@ -2500,7 +2481,7 @@ static void kaa_destroy_record_user_detach_notification_null_union(void *data)
     case KAA_RECORD_USER_DETACH_NOTIFICATION_NULL_UNION_USER_DETACH_NOTIFICATION_BRANCH:
     {
         kaa_user_detach_notification_t* record = (kaa_user_detach_notification_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -2514,7 +2495,7 @@ static kaa_union_t* kaa_create_record_user_detach_notification_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_user_detach_notification_null_union;
+    kaa_union->destroy = kaa_destroy_record_user_detach_notification_null_union;
 
     return kaa_union; 
 }
@@ -2543,7 +2524,6 @@ kaa_union_t* kaa_deserialize_record_user_detach_notification_null_union(avro_rea
 
 
 
-
 # ifndef KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_C_
 # define KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_C_
 static void kaa_destroy_array_endpoint_attach_response_null_union(void *data)
@@ -2566,7 +2546,7 @@ static kaa_union_t* kaa_create_array_endpoint_attach_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_array_endpoint_attach_response_null_union;
+    kaa_union->destroy = kaa_destroy_array_endpoint_attach_response_null_union;
 
     return kaa_union; 
 }
@@ -2582,7 +2562,7 @@ kaa_union_t* kaa_deserialize_array_endpoint_attach_response_null_union(avro_read
     switch (kaa_union->type) {
     case KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_ARRAY_BRANCH:
     {
-            kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_endpoint_attach_response);
+            kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_endpoint_attach_response);
             break;
     }
     default:
@@ -2592,7 +2572,6 @@ kaa_union_t* kaa_deserialize_array_endpoint_attach_response_null_union(avro_read
     return kaa_union;
 }
 # endif // KAA_ARRAY_ENDPOINT_ATTACH_RESPONSE_NULL_UNION_C_
-
 
 
 
@@ -2618,7 +2597,7 @@ static kaa_union_t* kaa_create_array_endpoint_detach_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_array_endpoint_detach_response_null_union;
+    kaa_union->destroy = kaa_destroy_array_endpoint_detach_response_null_union;
 
     return kaa_union; 
 }
@@ -2634,7 +2613,7 @@ kaa_union_t* kaa_deserialize_array_endpoint_detach_response_null_union(avro_read
     switch (kaa_union->type) {
     case KAA_ARRAY_ENDPOINT_DETACH_RESPONSE_NULL_UNION_ARRAY_BRANCH:
     {
-            kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_endpoint_detach_response);
+            kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_endpoint_detach_response);
             break;
     }
     default:
@@ -2651,22 +2630,22 @@ static void kaa_destroy_user_sync_response(void* data)
 {
     kaa_user_sync_response_t* record = (kaa_user_sync_response_t*)data;
 
-    record->user_attach_response->destruct(record->user_attach_response);
+    record->user_attach_response->destroy(record->user_attach_response);
     KAA_FREE(record->user_attach_response);
-    record->user_attach_notification->destruct(record->user_attach_notification);
+    record->user_attach_notification->destroy(record->user_attach_notification);
     KAA_FREE(record->user_attach_notification);
-    record->user_detach_notification->destruct(record->user_detach_notification);
+    record->user_detach_notification->destroy(record->user_detach_notification);
     KAA_FREE(record->user_detach_notification);
-    record->endpoint_attach_responses->destruct(record->endpoint_attach_responses);
+    record->endpoint_attach_responses->destroy(record->endpoint_attach_responses);
     KAA_FREE(record->endpoint_attach_responses);
-    record->endpoint_detach_responses->destruct(record->endpoint_detach_responses);
+    record->endpoint_detach_responses->destroy(record->endpoint_detach_responses);
     KAA_FREE(record->endpoint_detach_responses);
 }
 
 kaa_user_sync_response_t* kaa_deserialize_user_sync_response(avro_reader_t reader)
 {
     kaa_user_sync_response_t* record = KAA_MALLOC(kaa_user_sync_response_t);
-    record->destruct = kaa_destroy_user_sync_response;
+    record->destroy = kaa_destroy_user_sync_response;
     
     record->user_attach_response = kaa_deserialize_record_user_attach_response_null_union(reader);
     record->user_attach_notification = kaa_deserialize_record_user_attach_notification_null_union(reader);
@@ -2676,7 +2655,6 @@ kaa_user_sync_response_t* kaa_deserialize_user_sync_response(avro_reader_t reade
     
     return record;
 }
-
 
 
 
@@ -2702,7 +2680,7 @@ static kaa_union_t* kaa_create_record_event_sequence_number_response_null_union(
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_event_sequence_number_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_event_sequence_number_response_null_union;
 
     return kaa_union; 
 }
@@ -2731,7 +2709,6 @@ kaa_union_t* kaa_deserialize_record_event_sequence_number_response_null_union(av
 
 
 
-
 # ifndef KAA_ARRAY_EVENT_LISTENERS_RESPONSE_NULL_UNION_C_
 # define KAA_ARRAY_EVENT_LISTENERS_RESPONSE_NULL_UNION_C_
 static void kaa_destroy_array_event_listeners_response_null_union(void *data)
@@ -2754,7 +2731,7 @@ static kaa_union_t* kaa_create_array_event_listeners_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_array_event_listeners_response_null_union;
+    kaa_union->destroy = kaa_destroy_array_event_listeners_response_null_union;
 
     return kaa_union; 
 }
@@ -2770,7 +2747,7 @@ kaa_union_t* kaa_deserialize_array_event_listeners_response_null_union(avro_read
     switch (kaa_union->type) {
     case KAA_ARRAY_EVENT_LISTENERS_RESPONSE_NULL_UNION_ARRAY_BRANCH:
     {
-            kaa_union->data = kaa_deserialize_array(reader, (deserialize)kaa_deserialize_event_listeners_response);
+            kaa_union->data = kaa_deserialize_array(reader, (deserialize_fn)kaa_deserialize_event_listeners_response);
             break;
     }
     default:
@@ -2787,18 +2764,18 @@ static void kaa_destroy_event_sync_response(void* data)
 {
     kaa_event_sync_response_t* record = (kaa_event_sync_response_t*)data;
 
-    record->event_sequence_number_response->destruct(record->event_sequence_number_response);
+    record->event_sequence_number_response->destroy(record->event_sequence_number_response);
     KAA_FREE(record->event_sequence_number_response);
-    record->event_listeners_responses->destruct(record->event_listeners_responses);
+    record->event_listeners_responses->destroy(record->event_listeners_responses);
     KAA_FREE(record->event_listeners_responses);
-    record->events->destruct(record->events);
+    record->events->destroy(record->events);
     KAA_FREE(record->events);
 }
 
 kaa_event_sync_response_t* kaa_deserialize_event_sync_response(avro_reader_t reader)
 {
     kaa_event_sync_response_t* record = KAA_MALLOC(kaa_event_sync_response_t);
-    record->destruct = kaa_destroy_event_sync_response;
+    record->destroy = kaa_destroy_event_sync_response;
     
     record->event_sequence_number_response = kaa_deserialize_record_event_sequence_number_response_null_union(reader);
     record->event_listeners_responses = kaa_deserialize_array_event_listeners_response_null_union(reader);
@@ -2819,7 +2796,7 @@ static void kaa_destroy_log_sync_response(void* data)
 kaa_log_sync_response_t* kaa_deserialize_log_sync_response(avro_reader_t reader)
 {
     kaa_log_sync_response_t* record = KAA_MALLOC(kaa_log_sync_response_t);
-    record->destruct = kaa_destroy_log_sync_response;
+    record->destroy = kaa_destroy_log_sync_response;
     
         int64_t request_id_size;
     avro_binary_encoding.read_string(reader, &record->request_id, &request_id_size);
@@ -2842,14 +2819,13 @@ static void kaa_destroy_redirect_sync_response(void* data)
 kaa_redirect_sync_response_t* kaa_deserialize_redirect_sync_response(avro_reader_t reader)
 {
     kaa_redirect_sync_response_t* record = KAA_MALLOC(kaa_redirect_sync_response_t);
-    record->destruct = kaa_destroy_redirect_sync_response;
+    record->destroy = kaa_destroy_redirect_sync_response;
     
         int64_t dns_name_size;
     avro_binary_encoding.read_string(reader, &record->dns_name, &dns_name_size);
         
     return record;
 }
-
 
 
 
@@ -2863,7 +2839,7 @@ static void kaa_destroy_record_sync_request_meta_data_null_union(void *data)
     case KAA_RECORD_SYNC_REQUEST_META_DATA_NULL_UNION_SYNC_REQUEST_META_DATA_BRANCH:
     {
         kaa_sync_request_meta_data_t* record = (kaa_sync_request_meta_data_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -2915,7 +2891,7 @@ static kaa_union_t* kaa_create_record_sync_request_meta_data_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_sync_request_meta_data_null_union;
     kaa_union->get_size = kaa_get_size_record_sync_request_meta_data_null_union;
-    kaa_union->destruct = kaa_destroy_record_sync_request_meta_data_null_union;
+    kaa_union->destroy = kaa_destroy_record_sync_request_meta_data_null_union;
 
     return kaa_union; 
 }
@@ -2937,7 +2913,6 @@ kaa_union_t* kaa_create_record_sync_request_meta_data_null_union_null_branch()
 
 
 
-
 # ifndef KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_C_
 # define KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_C_
 static void kaa_destroy_record_profile_sync_request_null_union(void *data)
@@ -2948,7 +2923,7 @@ static void kaa_destroy_record_profile_sync_request_null_union(void *data)
     case KAA_RECORD_PROFILE_SYNC_REQUEST_NULL_UNION_PROFILE_SYNC_REQUEST_BRANCH:
     {
         kaa_profile_sync_request_t* record = (kaa_profile_sync_request_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3000,7 +2975,7 @@ static kaa_union_t* kaa_create_record_profile_sync_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_profile_sync_request_null_union;
     kaa_union->get_size = kaa_get_size_record_profile_sync_request_null_union;
-    kaa_union->destruct = kaa_destroy_record_profile_sync_request_null_union;
+    kaa_union->destroy = kaa_destroy_record_profile_sync_request_null_union;
 
     return kaa_union; 
 }
@@ -3022,7 +2997,6 @@ kaa_union_t* kaa_create_record_profile_sync_request_null_union_null_branch()
 
 
 
-
 # ifndef KAA_RECORD_CONFIGURATION_SYNC_REQUEST_NULL_UNION_C_
 # define KAA_RECORD_CONFIGURATION_SYNC_REQUEST_NULL_UNION_C_
 static void kaa_destroy_record_configuration_sync_request_null_union(void *data)
@@ -3033,7 +3007,7 @@ static void kaa_destroy_record_configuration_sync_request_null_union(void *data)
     case KAA_RECORD_CONFIGURATION_SYNC_REQUEST_NULL_UNION_CONFIGURATION_SYNC_REQUEST_BRANCH:
     {
         kaa_configuration_sync_request_t* record = (kaa_configuration_sync_request_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3085,7 +3059,7 @@ static kaa_union_t* kaa_create_record_configuration_sync_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_configuration_sync_request_null_union;
     kaa_union->get_size = kaa_get_size_record_configuration_sync_request_null_union;
-    kaa_union->destruct = kaa_destroy_record_configuration_sync_request_null_union;
+    kaa_union->destroy = kaa_destroy_record_configuration_sync_request_null_union;
 
     return kaa_union; 
 }
@@ -3107,7 +3081,6 @@ kaa_union_t* kaa_create_record_configuration_sync_request_null_union_null_branch
 
 
 
-
 # ifndef KAA_RECORD_NOTIFICATION_SYNC_REQUEST_NULL_UNION_C_
 # define KAA_RECORD_NOTIFICATION_SYNC_REQUEST_NULL_UNION_C_
 static void kaa_destroy_record_notification_sync_request_null_union(void *data)
@@ -3118,7 +3091,7 @@ static void kaa_destroy_record_notification_sync_request_null_union(void *data)
     case KAA_RECORD_NOTIFICATION_SYNC_REQUEST_NULL_UNION_NOTIFICATION_SYNC_REQUEST_BRANCH:
     {
         kaa_notification_sync_request_t* record = (kaa_notification_sync_request_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3170,7 +3143,7 @@ static kaa_union_t* kaa_create_record_notification_sync_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_notification_sync_request_null_union;
     kaa_union->get_size = kaa_get_size_record_notification_sync_request_null_union;
-    kaa_union->destruct = kaa_destroy_record_notification_sync_request_null_union;
+    kaa_union->destroy = kaa_destroy_record_notification_sync_request_null_union;
 
     return kaa_union; 
 }
@@ -3192,7 +3165,6 @@ kaa_union_t* kaa_create_record_notification_sync_request_null_union_null_branch(
 
 
 
-
 # ifndef KAA_RECORD_USER_SYNC_REQUEST_NULL_UNION_C_
 # define KAA_RECORD_USER_SYNC_REQUEST_NULL_UNION_C_
 static void kaa_destroy_record_user_sync_request_null_union(void *data)
@@ -3203,7 +3175,7 @@ static void kaa_destroy_record_user_sync_request_null_union(void *data)
     case KAA_RECORD_USER_SYNC_REQUEST_NULL_UNION_USER_SYNC_REQUEST_BRANCH:
     {
         kaa_user_sync_request_t* record = (kaa_user_sync_request_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3255,7 +3227,7 @@ static kaa_union_t* kaa_create_record_user_sync_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_user_sync_request_null_union;
     kaa_union->get_size = kaa_get_size_record_user_sync_request_null_union;
-    kaa_union->destruct = kaa_destroy_record_user_sync_request_null_union;
+    kaa_union->destroy = kaa_destroy_record_user_sync_request_null_union;
 
     return kaa_union; 
 }
@@ -3277,7 +3249,6 @@ kaa_union_t* kaa_create_record_user_sync_request_null_union_null_branch()
 
 
 
-
 # ifndef KAA_RECORD_EVENT_SYNC_REQUEST_NULL_UNION_C_
 # define KAA_RECORD_EVENT_SYNC_REQUEST_NULL_UNION_C_
 static void kaa_destroy_record_event_sync_request_null_union(void *data)
@@ -3288,7 +3259,7 @@ static void kaa_destroy_record_event_sync_request_null_union(void *data)
     case KAA_RECORD_EVENT_SYNC_REQUEST_NULL_UNION_EVENT_SYNC_REQUEST_BRANCH:
     {
         kaa_event_sync_request_t* record = (kaa_event_sync_request_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3340,7 +3311,7 @@ static kaa_union_t* kaa_create_record_event_sync_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_event_sync_request_null_union;
     kaa_union->get_size = kaa_get_size_record_event_sync_request_null_union;
-    kaa_union->destruct = kaa_destroy_record_event_sync_request_null_union;
+    kaa_union->destroy = kaa_destroy_record_event_sync_request_null_union;
 
     return kaa_union; 
 }
@@ -3362,7 +3333,6 @@ kaa_union_t* kaa_create_record_event_sync_request_null_union_null_branch()
 
 
 
-
 # ifndef KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_C_
 # define KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_C_
 static void kaa_destroy_record_log_sync_request_null_union(void *data)
@@ -3373,7 +3343,7 @@ static void kaa_destroy_record_log_sync_request_null_union(void *data)
     case KAA_RECORD_LOG_SYNC_REQUEST_NULL_UNION_LOG_SYNC_REQUEST_BRANCH:
     {
         kaa_log_sync_request_t* record = (kaa_log_sync_request_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3425,7 +3395,7 @@ static kaa_union_t* kaa_create_record_log_sync_request_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = kaa_serialize_record_log_sync_request_null_union;
     kaa_union->get_size = kaa_get_size_record_log_sync_request_null_union;
-    kaa_union->destruct = kaa_destroy_record_log_sync_request_null_union;
+    kaa_union->destroy = kaa_destroy_record_log_sync_request_null_union;
 
     return kaa_union; 
 }
@@ -3451,21 +3421,21 @@ static void kaa_destroy_sync_request(void* data)
 {
     kaa_sync_request_t* record = (kaa_sync_request_t*)data;
 
-    record->request_id->destruct(record->request_id);
+    record->request_id->destroy(record->request_id);
     KAA_FREE(record->request_id);
-    record->sync_request_meta_data->destruct(record->sync_request_meta_data);
+    record->sync_request_meta_data->destroy(record->sync_request_meta_data);
     KAA_FREE(record->sync_request_meta_data);
-    record->profile_sync_request->destruct(record->profile_sync_request);
+    record->profile_sync_request->destroy(record->profile_sync_request);
     KAA_FREE(record->profile_sync_request);
-    record->configuration_sync_request->destruct(record->configuration_sync_request);
+    record->configuration_sync_request->destroy(record->configuration_sync_request);
     KAA_FREE(record->configuration_sync_request);
-    record->notification_sync_request->destruct(record->notification_sync_request);
+    record->notification_sync_request->destroy(record->notification_sync_request);
     KAA_FREE(record->notification_sync_request);
-    record->user_sync_request->destruct(record->user_sync_request);
+    record->user_sync_request->destroy(record->user_sync_request);
     KAA_FREE(record->user_sync_request);
-    record->event_sync_request->destruct(record->event_sync_request);
+    record->event_sync_request->destroy(record->event_sync_request);
     KAA_FREE(record->event_sync_request);
-    record->log_sync_request->destruct(record->log_sync_request);
+    record->log_sync_request->destroy(record->log_sync_request);
     KAA_FREE(record->log_sync_request);
 }
 static size_t kaa_get_size_sync_request(void* data)
@@ -3504,10 +3474,9 @@ kaa_sync_request_t* kaa_create_sync_request()
     kaa_sync_request_t* record = KAA_MALLOC(kaa_sync_request_t);
     record->serialize = kaa_serialize_sync_request;
     record->get_size = kaa_get_size_sync_request;
-    record->destruct = kaa_destroy_sync_request;
+    record->destroy = kaa_destroy_sync_request;
     return record;
 }
-
 
 
 
@@ -3533,7 +3502,7 @@ static kaa_union_t* kaa_create_record_profile_sync_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_profile_sync_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_profile_sync_response_null_union;
 
     return kaa_union; 
 }
@@ -3562,7 +3531,6 @@ kaa_union_t* kaa_deserialize_record_profile_sync_response_null_union(avro_reader
 
 
 
-
 # ifndef KAA_RECORD_CONFIGURATION_SYNC_RESPONSE_NULL_UNION_C_
 # define KAA_RECORD_CONFIGURATION_SYNC_RESPONSE_NULL_UNION_C_
 static void kaa_destroy_record_configuration_sync_response_null_union(void *data)
@@ -3573,7 +3541,7 @@ static void kaa_destroy_record_configuration_sync_response_null_union(void *data
     case KAA_RECORD_CONFIGURATION_SYNC_RESPONSE_NULL_UNION_CONFIGURATION_SYNC_RESPONSE_BRANCH:
     {
         kaa_configuration_sync_response_t* record = (kaa_configuration_sync_response_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3587,7 +3555,7 @@ static kaa_union_t* kaa_create_record_configuration_sync_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_configuration_sync_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_configuration_sync_response_null_union;
 
     return kaa_union; 
 }
@@ -3616,7 +3584,6 @@ kaa_union_t* kaa_deserialize_record_configuration_sync_response_null_union(avro_
 
 
 
-
 # ifndef KAA_RECORD_NOTIFICATION_SYNC_RESPONSE_NULL_UNION_C_
 # define KAA_RECORD_NOTIFICATION_SYNC_RESPONSE_NULL_UNION_C_
 static void kaa_destroy_record_notification_sync_response_null_union(void *data)
@@ -3627,7 +3594,7 @@ static void kaa_destroy_record_notification_sync_response_null_union(void *data)
     case KAA_RECORD_NOTIFICATION_SYNC_RESPONSE_NULL_UNION_NOTIFICATION_SYNC_RESPONSE_BRANCH:
     {
         kaa_notification_sync_response_t* record = (kaa_notification_sync_response_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3641,7 +3608,7 @@ static kaa_union_t* kaa_create_record_notification_sync_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_notification_sync_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_notification_sync_response_null_union;
 
     return kaa_union; 
 }
@@ -3670,7 +3637,6 @@ kaa_union_t* kaa_deserialize_record_notification_sync_response_null_union(avro_r
 
 
 
-
 # ifndef KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_C_
 # define KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_C_
 static void kaa_destroy_record_user_sync_response_null_union(void *data)
@@ -3681,7 +3647,7 @@ static void kaa_destroy_record_user_sync_response_null_union(void *data)
     case KAA_RECORD_USER_SYNC_RESPONSE_NULL_UNION_USER_SYNC_RESPONSE_BRANCH:
     {
         kaa_user_sync_response_t* record = (kaa_user_sync_response_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3695,7 +3661,7 @@ static kaa_union_t* kaa_create_record_user_sync_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_user_sync_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_user_sync_response_null_union;
 
     return kaa_union; 
 }
@@ -3724,7 +3690,6 @@ kaa_union_t* kaa_deserialize_record_user_sync_response_null_union(avro_reader_t 
 
 
 
-
 # ifndef KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_C_
 # define KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_C_
 static void kaa_destroy_record_event_sync_response_null_union(void *data)
@@ -3735,7 +3700,7 @@ static void kaa_destroy_record_event_sync_response_null_union(void *data)
     case KAA_RECORD_EVENT_SYNC_RESPONSE_NULL_UNION_EVENT_SYNC_RESPONSE_BRANCH:
     {
         kaa_event_sync_response_t* record = (kaa_event_sync_response_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3749,7 +3714,7 @@ static kaa_union_t* kaa_create_record_event_sync_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_event_sync_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_event_sync_response_null_union;
 
     return kaa_union; 
 }
@@ -3778,7 +3743,6 @@ kaa_union_t* kaa_deserialize_record_event_sync_response_null_union(avro_reader_t
 
 
 
-
 # ifndef KAA_RECORD_REDIRECT_SYNC_RESPONSE_NULL_UNION_C_
 # define KAA_RECORD_REDIRECT_SYNC_RESPONSE_NULL_UNION_C_
 static void kaa_destroy_record_redirect_sync_response_null_union(void *data)
@@ -3789,7 +3753,7 @@ static void kaa_destroy_record_redirect_sync_response_null_union(void *data)
     case KAA_RECORD_REDIRECT_SYNC_RESPONSE_NULL_UNION_REDIRECT_SYNC_RESPONSE_BRANCH:
     {
         kaa_redirect_sync_response_t* record = (kaa_redirect_sync_response_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3803,7 +3767,7 @@ static kaa_union_t* kaa_create_record_redirect_sync_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_redirect_sync_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_redirect_sync_response_null_union;
 
     return kaa_union; 
 }
@@ -3832,7 +3796,6 @@ kaa_union_t* kaa_deserialize_record_redirect_sync_response_null_union(avro_reade
 
 
 
-
 # ifndef KAA_RECORD_LOG_SYNC_RESPONSE_NULL_UNION_C_
 # define KAA_RECORD_LOG_SYNC_RESPONSE_NULL_UNION_C_
 static void kaa_destroy_record_log_sync_response_null_union(void *data)
@@ -3843,7 +3806,7 @@ static void kaa_destroy_record_log_sync_response_null_union(void *data)
     case KAA_RECORD_LOG_SYNC_RESPONSE_NULL_UNION_LOG_SYNC_RESPONSE_BRANCH:
     {
         kaa_log_sync_response_t* record = (kaa_log_sync_response_t*)kaa_union->data;
-        record->destruct(record);
+        record->destroy(record);
         KAA_FREE(kaa_union->data);
         break;
     }
@@ -3857,7 +3820,7 @@ static kaa_union_t* kaa_create_record_log_sync_response_null_union()
     kaa_union->data = NULL;
     kaa_union->serialize = NULL;
     kaa_union->get_size = NULL;
-    kaa_union->destruct = kaa_destroy_record_log_sync_response_null_union;
+    kaa_union->destroy = kaa_destroy_record_log_sync_response_null_union;
 
     return kaa_union; 
 }
@@ -3890,28 +3853,28 @@ static void kaa_destroy_sync_response(void* data)
 {
     kaa_sync_response_t* record = (kaa_sync_response_t*)data;
 
-    record->request_id->destruct(record->request_id);
+    record->request_id->destroy(record->request_id);
     KAA_FREE(record->request_id);
-    record->profile_sync_response->destruct(record->profile_sync_response);
+    record->profile_sync_response->destroy(record->profile_sync_response);
     KAA_FREE(record->profile_sync_response);
-    record->configuration_sync_response->destruct(record->configuration_sync_response);
+    record->configuration_sync_response->destroy(record->configuration_sync_response);
     KAA_FREE(record->configuration_sync_response);
-    record->notification_sync_response->destruct(record->notification_sync_response);
+    record->notification_sync_response->destroy(record->notification_sync_response);
     KAA_FREE(record->notification_sync_response);
-    record->user_sync_response->destruct(record->user_sync_response);
+    record->user_sync_response->destroy(record->user_sync_response);
     KAA_FREE(record->user_sync_response);
-    record->event_sync_response->destruct(record->event_sync_response);
+    record->event_sync_response->destroy(record->event_sync_response);
     KAA_FREE(record->event_sync_response);
-    record->redirect_sync_response->destruct(record->redirect_sync_response);
+    record->redirect_sync_response->destroy(record->redirect_sync_response);
     KAA_FREE(record->redirect_sync_response);
-    record->log_sync_response->destruct(record->log_sync_response);
+    record->log_sync_response->destroy(record->log_sync_response);
     KAA_FREE(record->log_sync_response);
 }
 
 kaa_sync_response_t* kaa_deserialize_sync_response(avro_reader_t reader)
 {
     kaa_sync_response_t* record = KAA_MALLOC(kaa_sync_response_t);
-    record->destruct = kaa_destroy_sync_response;
+    record->destroy = kaa_destroy_sync_response;
     
     record->request_id = kaa_deserialize_int_null_union(reader);
     int64_t status_value;
@@ -3924,6 +3887,27 @@ kaa_sync_response_t* kaa_deserialize_sync_response(avro_reader_t reader)
     record->event_sync_response = kaa_deserialize_record_event_sync_response_null_union(reader);
     record->redirect_sync_response = kaa_deserialize_record_redirect_sync_response_null_union(reader);
     record->log_sync_response = kaa_deserialize_record_log_sync_response_null_union(reader);
+    
+    return record;
+}
+
+
+
+static void kaa_destroy_topic_subscription_info(void* data)
+{
+    kaa_topic_subscription_info_t* record = (kaa_topic_subscription_info_t*)data;
+
+    record->topic_info->destroy(record->topic_info);
+    KAA_FREE(record->topic_info);
+}
+
+kaa_topic_subscription_info_t* kaa_deserialize_topic_subscription_info(avro_reader_t reader)
+{
+    kaa_topic_subscription_info_t* record = KAA_MALLOC(kaa_topic_subscription_info_t);
+    record->destroy = kaa_destroy_topic_subscription_info;
+    
+    record->topic_info = kaa_deserialize_topic(reader);
+    avro_binary_encoding.read_int(reader, &record->seq_number);
     
     return record;
 }

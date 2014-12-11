@@ -17,6 +17,7 @@
 #include "kaa_list.h"
 #include "kaa_mem.h"
 
+
 struct kaa_list_t {
     void *              data;
     struct kaa_list_t * next;
@@ -42,7 +43,7 @@ void * kaa_list_get_data(kaa_list_t * position)
     return (position ? position->data : NULL);
 }
 
-KAA_BOOL kaa_list_has_next(kaa_list_t * position)
+bool kaa_list_has_next(kaa_list_t * position)
 {
     return (position && (NULL != position->next));
 }
@@ -94,6 +95,15 @@ void kaa_list_destroy(kaa_list_t * head, deallocate_list_data deallocator)
             (*deallocator)(head->data);
         }
         KAA_FREE(head->data);
+        KAA_FREE(head);
+        head = new_head;
+    }
+}
+
+void kaa_list_destroy_no_data_cleanup(kaa_list_t * head)
+{
+    while (head != NULL) {
+        kaa_list_t *new_head = head->next;
         KAA_FREE(head);
         head = new_head;
     }
@@ -171,8 +181,11 @@ kaa_list_t * kaa_list_find_last_occurance(kaa_list_t * from, match_predicate pre
 
 kaa_list_t * kaa_list_split_after(kaa_list_t * head, kaa_list_t * after, kaa_list_t **tail)
 {
-    while (head != NULL && head != after) {
+    while (head != after) {
         head = head->next;
+        if (head == NULL) {
+            return NULL;
+        }
     }
     kaa_list_t *ret_val = head->next;
     head->next = NULL;

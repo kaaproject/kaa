@@ -16,7 +16,6 @@
 
 #set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
-
 #set ($unionName = $TypeConverter.generateUnionName($schema))
 #set ($counter = 0)
 # ifndef ${PREFIX}_${unionName}_H_

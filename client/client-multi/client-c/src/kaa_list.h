@@ -25,6 +25,7 @@ extern "C" {
 #endif
 
 #include "kaa_common.h"
+#include <stdbool.h>
 
 typedef struct kaa_list_t kaa_list_t;
 
@@ -53,7 +54,7 @@ size_t kaa_list_get_size(kaa_list_t * position);
 /**
  * Checks if there is an element after current position.
  */
-KAA_BOOL kaa_list_has_next(kaa_list_t * position);
+bool kaa_list_has_next(kaa_list_t * position);
 
 /**
  * Returns next element.
@@ -78,6 +79,11 @@ kaa_list_t *kaa_list_create(void *data);
 void kaa_list_destroy(kaa_list_t *head, deallocate_list_data deallocator);
 
 /**
+ * Frees data occupied by list, data will not be deallocated.
+ */
+void kaa_list_destroy_no_data_cleanup(kaa_list_t * head);
+
+/**
  * Removes element from list at given position. Position must be valid iterator
  * to the element in the given list. Deallocates released data using given deallocator.
  * Returns iterator pointing to the position before removed element or pointer
@@ -100,7 +106,7 @@ kaa_list_t * kaa_list_insert_after(kaa_list_t * position, void * data);
 /**
  * Return 0 if data doesn't match search criteria
  */
-typedef int (* match_predicate)(void *data);
+typedef bool (* match_predicate)(void *data);
 /**
  * Returns first element in list from given position where ((*pred)(data) != 0).
  * If nothing matched given criteria or list is empty NULL is returned.

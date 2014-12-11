@@ -102,6 +102,7 @@
         <property name="javaMailProperties">
             <props>
                 <prop key="mail.transport.protocol">#{properties[smtp_protocol]}</prop>
+                <prop key="mail.smtp.socketFactory.class">#{properties[smtp_socket_factory_class]}</prop>
                 <prop key="mail.smtp.auth">#{properties[smtp_auth]}</prop>
                 <prop key="mail.debug">true</prop>
             </props>
