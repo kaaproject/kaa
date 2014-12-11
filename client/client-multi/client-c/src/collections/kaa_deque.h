@@ -17,10 +17,7 @@
 #ifndef KAA_COLLECTIONS_KAA_DEQUE_H_
 #define KAA_COLLECTIONS_KAA_DEQUE_H_
 
-#include <stdbool.h>
-#include <stddef.h>
 #include <sys/types.h>
-
 #include "kaa_error.h"
 
 /**
