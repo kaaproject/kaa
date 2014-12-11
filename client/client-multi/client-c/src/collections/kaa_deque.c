@@ -121,10 +121,15 @@ kaa_error_t kaa_deque_pop_front(kaa_deque_t *self, kaa_deque_iterator_t **it_p)
     *it_p = self->first;
     self->first = self->first->next;
 
+    (*it_p)->prev = NULL;
+    (*it_p)->next = NULL;
+
+
     if (!self->first) {
         self->last = NULL;
         self->size = 0;
     } else {
+        self->first->prev = NULL;
         --self->size;
     }
     return KAA_ERR_NONE;
@@ -138,10 +143,14 @@ kaa_error_t kaa_deque_pop_back(kaa_deque_t *self, kaa_deque_iterator_t **it_p)
     *it_p = self->last;
     self->last = self->last->prev;
 
+    (*it_p)->prev = NULL;
+    (*it_p)->next = NULL;
+
     if (!self->last) {
         self->first = NULL;
         self->size  = 0;
     } else {
+        self->last->next = NULL;
         --self->size;
     }
     return KAA_ERR_NONE;
@@ -240,6 +249,9 @@ kaa_deque_t * kaa_deque_merge_move(kaa_deque_t *head, kaa_deque_t *tail)
 
     if (tail) {
         if (head->size > 0) {
+            if (tail->first) {
+                tail->first->prev = head->last;
+            }
             head->last->next = tail->first;
             head->size += tail->size;
         } else {

@@ -143,6 +143,12 @@ add_executable  (test_log
                 )
 target_link_libraries(test_log kaac crypto ${CUNIT_LIB_NAME})
 
+add_executable  (test_deque
+                    test/test_kaa_deque.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_deque kaac crypto ${CUNIT_LIB_NAME})
+
 endif ()
 
 install (TARGETS kaac kaac_s
