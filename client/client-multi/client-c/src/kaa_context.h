@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_context.h
+ * @brief Kaa endpoint context
+ *
+ * Defines general Kaa endpoint context.
+ */
+
 #ifndef KAA_CONTEXT_H_
 #define KAA_CONTEXT_H_
 
@@ -37,6 +44,7 @@ typedef struct kaa_log_collector        kaa_log_collector_t;
 #endif
 
 typedef struct kaa_logger_t             kaa_logger_t;
+
 
 
 typedef struct {
