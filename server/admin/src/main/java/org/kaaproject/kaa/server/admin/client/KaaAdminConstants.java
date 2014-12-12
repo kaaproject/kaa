@@ -427,6 +427,9 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
 
     @DefaultStringValue("Mandatory")
     String mandatory();
+    
+    @DefaultStringValue("Confirm delivery")
+    String confirmDelivery();    
 
     @DefaultStringValue("Remove")
     String remove();

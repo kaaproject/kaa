@@ -1186,7 +1186,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     private LogAppenderDto toLogAppender(LogAppenderRestDto restLogAppender) {
-        LogAppenderDto logAppender = restLogAppender.toLogAppenderDto();
+        LogAppenderDto logAppender = new LogAppenderDto(restLogAppender);
         Schema schema = appenderConfigSchemas.get(restLogAppender.getAppenderClassName());
         byte[] rawConfiguration = GenericAvroConverter.toRawData(restLogAppender.getConfiguration(), schema.toString());
         logAppender.setRawConfiguration(rawConfiguration);
@@ -1200,7 +1200,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             LogAppenderFormWrapper wrapper = new LogAppenderFormWrapper(logAppender);
             Schema schema = appenderConfigSchemas.get(wrapper.getAppenderClassName());
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
-            GenericRecord record = converter.decodeBinary(wrapper.getRawConfiguration());
+            GenericRecord record = converter.decodeBinary(logAppender.getRawConfiguration());
             RecordField formData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
             wrapper.setConfiguration(formData);
             return wrapper;
@@ -1211,9 +1211,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException {
-        LogAppenderDto logAppender = wrapper.getLogAppender();
+    	LogAppenderDto logAppender =  new LogAppenderDto(wrapper);
         try {
-            Schema schema = appenderConfigSchemas.get(logAppender.getAppenderClassName());
+            Schema schema = appenderConfigSchemas.get(wrapper.getAppenderClassName());
             GenericRecord record = FormAvroConverter.createGenericRecordFormRecordField(wrapper.getConfiguration(), schema);
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
             byte[] rawConfiguration = converter.encode(record);

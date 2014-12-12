@@ -16,180 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.shared.logs;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderBaseDto;
 import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
-public class LogAppenderFormWrapper implements HasId, Serializable {
+public class LogAppenderFormWrapper extends LogAppenderBaseDto {
+    
+	private static final long serialVersionUID = 7273552561803139379L;
 
-    private static final long serialVersionUID = 1L;
-    
-    private LogAppenderDto logAppender;
-    
-    private RecordField configuration;
-    
+    private RecordField configuration;	
+	
     public LogAppenderFormWrapper() {
-        this.logAppender = new LogAppenderDto();
-    }
-    
-    public LogAppenderFormWrapper(LogAppenderDto logAppender) {
-        this.logAppender = logAppender;
-    }
-    
-    public LogAppenderDto getLogAppender() {
-        return logAppender;
-    }
+    	super();
+	}	
+	
+    public LogAppenderFormWrapper(LogAppenderBaseDto logAppenderDto) {
+		super(logAppenderDto);
+	}
 
-    public RecordField getConfiguration() {
+	public RecordField getConfiguration() {
         return configuration;
     }
 
     public void setConfiguration(RecordField configuration) {
         this.configuration = configuration;
     }
-
-    public String getName() {
-        return logAppender.getName();
-    }
-
-    public void setName(String name) {
-        logAppender.setName(name);
-    }
-
-    public String getDescription() {
-        return logAppender.getDescription();
-    }
-
-    public void setDescription(String description) {
-        logAppender.setDescription(description);
-    }
-
-    public String getCreatedUsername() {
-        return logAppender.getCreatedUsername();
-    }
-
-    public void setCreatedUsername(String createdUsername) {
-        logAppender.setCreatedUsername(createdUsername);
-    }
-
-    public long getCreatedTime() {
-        return logAppender.getCreatedTime();
-    }
-
-    @Override
-    public String getId() {
-        return logAppender.getId();
-    }
-
-    public void setCreatedTime(long createdTime) {
-        logAppender.setCreatedTime(createdTime);
-    }
-
-    @Override
-    public void setId(String id) {
-        logAppender.setId(id);
-    }
-
-    public String getApplicationId() {
-        return logAppender.getApplicationId();
-    }
-
-    public void setApplicationId(String applicationId) {
-        logAppender.setApplicationId(applicationId);
-    }
-
-    public String getApplicationToken() {
-        return logAppender.getApplicationToken();
-    }
-
-    public void setApplicationToken(String applicationToken) {
-        logAppender.setApplicationToken(applicationToken);
-    }
-
-    public String getTenantId() {
-        return logAppender.getTenantId();
-    }
-
-    public void setTenantId(String tenantId) {
-        logAppender.setTenantId(tenantId);
-    }
-    
-    public int getMinLogSchemaVersion() {
-        return logAppender.getMinLogSchemaVersion();
-    }
-
-    public void setMinLogSchemaVersion(int minLogSchemaVersion) {
-        logAppender.setMinLogSchemaVersion(minLogSchemaVersion);
-    }
-
-    public int getMaxLogSchemaVersion() {
-        return logAppender.getMaxLogSchemaVersion();
-    }
-
-    public void setMaxLogSchemaVersion(int maxLogSchemaVersion) {
-        logAppender.setMaxLogSchemaVersion(maxLogSchemaVersion);
-    }
-
-    public LogAppenderStatusDto getStatus() {
-        return logAppender.getStatus();
-    }
-
-    public void setStatus(LogAppenderStatusDto status) {
-        logAppender.setStatus(status);
-    }
-
-    public List<LogHeaderStructureDto> getHeaderStructure() {
-        return logAppender.getHeaderStructure();
-    }
-
-    public void setHeaderStructure(List<LogHeaderStructureDto> headerStructure) {
-        logAppender.setHeaderStructure(headerStructure);
-    }
-
-    public String getTypeName() {
-        return logAppender.getTypeName();
-    }
-
-    public void setTypeName(String typeName) {
-        logAppender.setTypeName(typeName);
-    }
-
-    public String getAppenderClassName() {
-        return logAppender.getAppenderClassName();
-    }
-
-    public void setAppenderClassName(String appenderClassName) {
-        logAppender.setAppenderClassName(appenderClassName);
-    }
-
-    public byte[] getRawConfiguration() {
-        return logAppender.getRawConfiguration();
-    }
-
-    public void setRawConfiguration(byte[] rawConfiguration) {
-        logAppender.setRawConfiguration(rawConfiguration);
-    }
-
-    @Override
-    public int hashCode() {
-        return logAppender.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return logAppender.equals(obj);
-    }
-
-    @Override
-    public String toString() {
-        return logAppender.toString();
-    }
-    
-    
-
 }

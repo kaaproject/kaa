@@ -49,7 +49,7 @@ import com.watopi.chosen.client.event.ChosenChangeEvent.ChosenChangeHandler;
 import com.watopi.chosen.client.gwt.ChosenListBox;
 
 public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppenderView,                                                                        
-                                                                        ValueChangeHandler<RecordField>, 
+                                                                        ValueChangeHandler<RecordField>,
                                                                         ChosenChangeHandler {
 
     private static final String REQUIRED = "required";
@@ -57,6 +57,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     private SizedTextBox name;
     private IntegerListBox minSchemaVersion;
     private IntegerListBox maxSchemaVersion;
+    private CheckBox confirmDelivery;
     private AppenderInfoListBox appenderInfo;
     private SizedTextArea description;
     private SizedTextBox createdUsername;
@@ -77,8 +78,9 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         Label authorLabel = new Label(Utils.constants.author());
         createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth(FULL_WIDTH);
-        detailsTable.setWidget(0, 0, authorLabel);
-        detailsTable.setWidget(0, 1, createdUsername);
+        int idx = 0;
+        detailsTable.setWidget(idx, 0, authorLabel);
+        detailsTable.setWidget(idx, 1, createdUsername);
 
         authorLabel.setVisible(!create);
         createdUsername.setVisible(!create);
@@ -86,8 +88,10 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
         createdDateTime = new KaaAdminSizedTextBox(-1, false);
         createdDateTime.setWidth(FULL_WIDTH);
-        detailsTable.setWidget(1, 0, dateTimeCreatedLabel);
-        detailsTable.setWidget(1, 1, createdDateTime);
+        
+        idx++;        
+        detailsTable.setWidget(idx, 0, dateTimeCreatedLabel);
+        detailsTable.setWidget(idx, 1, createdDateTime);
 
         dateTimeCreatedLabel.setVisible(!create);
         createdDateTime.setVisible(!create);
@@ -96,8 +100,9 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         name.setWidth(FULL_WIDTH);
         Label nameLabel = new Label(Utils.constants.name());
         nameLabel.addStyleName(REQUIRED);
-        detailsTable.setWidget(2, 0, nameLabel);
-        detailsTable.setWidget(2, 1, name);
+        idx++;
+        detailsTable.setWidget(idx, 0, nameLabel);
+        detailsTable.setWidget(idx, 1, name);
         name.addInputHandler(this);
 
         Label minSchemaVersionLabel = new Label(Utils.constants.minVersion());
@@ -112,9 +117,10 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
                 fireChanged();
             }
         });
-
-        detailsTable.setWidget(3, 0, minSchemaVersionLabel);
-        detailsTable.setWidget(3, 1, minSchemaVersion);
+        
+        idx++;
+        detailsTable.setWidget(idx, 0, minSchemaVersionLabel);
+        detailsTable.setWidget(idx, 1, minSchemaVersion);
 
         Label maxSchemaVersionLabel = new Label(Utils.constants.maxVersion());
         maxSchemaVersionLabel.addStyleName(REQUIRED);
@@ -128,21 +134,36 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
             }
         });
 
-        detailsTable.setWidget(4, 0, maxSchemaVersionLabel);
-        detailsTable.setWidget(4, 1, maxSchemaVersion);
+        idx++;
+        detailsTable.setWidget(idx, 0, maxSchemaVersionLabel);
+        detailsTable.setWidget(idx, 1, maxSchemaVersion);
         
+        confirmDelivery = new CheckBox();
+        confirmDelivery.setWidth("100%");
+        Label confirmDeliveryLabel = new Label(Utils.constants.mandatory());
+        idx++;
+        detailsTable.setWidget(idx, 0, confirmDeliveryLabel);
+        detailsTable.setWidget(idx, 1, confirmDelivery);
+        confirmDelivery.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                fireChanged();
+            }
+        });
+
         Label logMetadata = new Label(Utils.constants.logMetada());
         generateMetadataListBox();
-
-        detailsTable.setWidget(5, 0, logMetadata);
-        detailsTable.setWidget(5, 1, metadatalistBox);
+        idx++;
+        detailsTable.setWidget(idx, 0, logMetadata);
+        detailsTable.setWidget(idx, 1, metadatalistBox);
 
         description = new KaaAdminSizedTextArea(1024);
         description.setWidth(FULL_WIDTH);
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
-        detailsTable.setWidget(6, 0, descriptionLabel);
-        detailsTable.setWidget(6, 1, description);
+        idx++;
+        detailsTable.setWidget(idx, 0, descriptionLabel);
+        detailsTable.setWidget(idx, 1, description);
         detailsTable.getCellFormatter().setVerticalAlignment(6, 0, HasVerticalAlignment.ALIGN_TOP);
         description.addInputHandler(this);
 
@@ -156,8 +177,9 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
             }
         });
 
-        detailsTable.setWidget(7, 0, typeLabel);
-        detailsTable.setWidget(7, 1, appenderInfo);
+        idx++;
+        detailsTable.setWidget(idx, 0, typeLabel);
+        detailsTable.setWidget(idx, 1, appenderInfo);
 
         getFooter().setStyleName("b-app-content-details-table");
         
@@ -182,6 +204,11 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     protected String getSubTitle() {
         return Utils.constants.logAppenderDetails();
     }
+    
+	@Override
+	public HasValue<Boolean> getConfirmDelivery() {
+		return confirmDelivery;
+	}    
 
     @Override
     protected void resetImpl() {
@@ -189,6 +216,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         minSchemaVersion.reset();
         maxSchemaVersion.reset();
         description.setValue("");
+        confirmDelivery.setValue(true);
         createdUsername.setValue("");
         createdDateTime.setValue("");
         if (metadatalistBox != null) {
@@ -343,5 +371,4 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
     public void onValueChange(ValueChangeEvent<RecordField> event) {
         fireChanged();
     }
-
 }

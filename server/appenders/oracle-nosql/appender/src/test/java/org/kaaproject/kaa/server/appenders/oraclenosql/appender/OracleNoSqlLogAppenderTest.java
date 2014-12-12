@@ -51,9 +51,11 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.KvStoreNode;
 import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
@@ -190,57 +192,35 @@ public class OracleNoSqlLogAppenderTest {
         field.set(null, testLogger);
 
         logAppender.close();
-        logAppender.doAppend(new LogEventPack());
-
-        Mockito.verify(testLogger).info(Mockito.anyString(), Mockito.anyString());
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        logAppender.doAppend(new LogEventPack(), callback);
+        Assert.assertTrue(callback.internallError);
     }
     
     @Test
-    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, DurabilityException, OperationExecutionException, FaultException {
+    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, DurabilityException, OperationExecutionException, FaultException, IOException {
+    	GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+    	BasicEndpointProfile theLog = new BasicEndpointProfile("test");
         List<LogEvent> events = new ArrayList<>();
         LogEvent event1 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event1.setLogData(new byte[0]);
         LogEvent event2 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event2.setLogData(converter.encode(theLog));
         LogEvent event3 = new LogEvent();
-        event1.setLogData(LOG_DATA.getBytes(UTF_8));
+        event3.setLogData(converter.encode(theLog));
         events.add(event1);
         events.add(event2);
         events.add(event3);
         
-        LogSchemaDto dto = new LogSchemaDto();
-        dto.setSchema(EMPTY_SCHEMA);
-        dto.setMajorVersion(1);
-        LogSchema schema = new LogSchema(dto);
-        int version = dto.getMajorVersion();
-
+        LogSchemaDto schemaDto = new LogSchemaDto();
+        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        LogSchema schema = new LogSchema(schemaDto);
+        
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
-        logEventPack.setLogSchemaVersion(version);
-
-        Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
-
-        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(dto.getSchema()) {
-
-            @Override
-            public GenericRecord decodeBinary(byte[] bytes) throws IOException {
-                throw new IOException();
-            }
-
-            @Override
-            public String endcodeToJson(GenericRecord record) throws IOException {
-                throw new IOException();
-            }
-        };
-
-        converters.put(dto.getSchema(), converter);
-        ReflectionTestUtils.setField(logAppender, "converters", converters);
-        KVStore kvStore = Mockito.mock(KVStore.class);
-
-        KVStore currentKvStore = (KVStore) ReflectionTestUtils.getField(logAppender, "kvStore");
-        ReflectionTestUtils.setField(logAppender, "kvStore", kvStore);
-        logAppender.doAppend(logEventPack);
-        Mockito.verify(kvStore, Mockito.never()).execute(Mockito.anyList());
-        ReflectionTestUtils.setField(logAppender, "kvStore", currentKvStore);
+        
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        logAppender.doAppend(logEventPack, callback);
+        Assert.assertTrue(callback.internallError);
     }
     
     @Test
@@ -283,7 +263,9 @@ public class OracleNoSqlLogAppenderTest {
         ReflectionTestUtils.setField(logAppender, "converters", converters);
 
         Assert.assertEquals(0, getKeyValuesCount());
-        logAppender.doAppend(logEventPack);
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        logAppender.doAppend(logEventPack, callback);
+        Assert.assertTrue(callback.success);
         Assert.assertEquals(3, getKeyValuesCount());
     }
     
@@ -307,4 +289,32 @@ public class OracleNoSqlLogAppenderTest {
         return KVStoreFactory.getStore(config);
     }
 
+    private static class TestLogDeliveryCallback implements LogDeliveryCallback{
+
+    	private volatile boolean success;
+    	private volatile boolean internallError;
+    	private volatile boolean connectionError;
+    	private volatile boolean remoteError;
+    	
+		@Override
+		public void onSuccess() {
+			success = true;
+		}
+
+		@Override
+		public void onInternalError() {
+			internallError = true;
+		}
+
+		@Override
+		public void onConnectionError() {
+			connectionError = true;
+		}
+
+		@Override
+		public void onRemoteError() {
+			remoteError = true;
+		}
+    	
+    }    
 }

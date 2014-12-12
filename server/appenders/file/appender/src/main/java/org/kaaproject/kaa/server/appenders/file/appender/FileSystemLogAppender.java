@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.appenders.file.appender;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
@@ -49,18 +51,25 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
     }
 
     @Override
-    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
+    public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
-            String path = logsRootPath + "/" + tenantDirName + "/" + applicationDirName;
-            LOG.debug("[{}] appending {} logs to directory", path, logEventPack.getEvents().size());
-            List<String> dtos = eventsToStrings(generateLogEvent(logEventPack, header));
-            LOG.debug("[{}] saving {} objects", path, dtos.size());
-            for(String event : dtos){
-                logger.append(event);
+            try{
+                String path = logsRootPath + "/" + tenantDirName + "/" + applicationDirName;
+                LOG.debug("[{}] appending {} logs to directory", path, logEventPack.getEvents().size());
+                List<String> dtos = eventsToStrings(generateLogEvent(logEventPack, header));
+                LOG.debug("[{}] saving {} objects", path, dtos.size());
+                for(String event : dtos){
+                    logger.append(event);
+                }
+                LOG.debug("[{}] appended {} logs to directory", path, logEventPack.getEvents().size());
+                listener.onSuccess();
+            }catch(Exception e){
+                LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed",  getName()), e);
+                listener.onInternalError();
             }
-            LOG.debug("[{}] appended {} logs to directory", path, logEventPack.getEvents().size());
         } else {
             LOG.info("Attempted to append to closed appender named [{}].", getName());
+            listener.onInternalError();
         }
     }
     

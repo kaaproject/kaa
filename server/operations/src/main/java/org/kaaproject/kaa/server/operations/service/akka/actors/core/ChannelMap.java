@@ -182,9 +182,6 @@ public class ChannelMap {
         public boolean isFirstRequest() {
             return response == null;
         }
-
-
-
     }
 
     public boolean isEmpty() {

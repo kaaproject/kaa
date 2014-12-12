@@ -65,6 +65,12 @@
 },
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "LogDeliveryErrorCode",
+ "symbols" : ["NO_APPENDERS_CONFIGURED", "APPENDER_INTERNAL_ERROR", "REMOTE_CONNECTION_ERROR", "REMOTE_INTERNAL_ERROR"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "direction": "out",
  "name": "SubscriptionCommand",
@@ -374,11 +380,21 @@
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
- "name": "LogSyncResponse",
+ "name": "LogDeliveryStatus",
  "direction": "in",
  "fields": [
      {"name": "requestId", "type": "string"},
-     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "errorCode", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "LogSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "deliveryStatuses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus"}, "null"]}
  ]
 },
 {

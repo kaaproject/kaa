@@ -75,6 +75,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -1157,7 +1158,7 @@ public class DefaultAkkaServiceTest {
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(SyncRequest.class),
                 Mockito.any(EndpointProfileDto.class));
         Mockito.verify(logAppenderService, Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
-        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class));
+        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
         Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
                 Mockito.any(boolean.class));
     }

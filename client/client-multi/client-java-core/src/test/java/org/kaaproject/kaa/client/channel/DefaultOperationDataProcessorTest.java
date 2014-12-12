@@ -19,7 +19,9 @@ package org.kaaproject.kaa.client.channel;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -28,6 +30,7 @@ import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
@@ -173,7 +176,8 @@ public class DefaultOperationDataProcessorTest {
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
         response.setRedirectSyncResponse(new RedirectSyncResponse("abc"));
         response.setUserSyncResponse(new UserSyncResponse());
-        response.setLogSyncResponse(new LogSyncResponse("id", SyncResponseResultType.SUCCESS));
+        LogDeliveryStatus status = new LogDeliveryStatus("id", SyncResponseResultType.SUCCESS, null);
+        response.setLogSyncResponse(new LogSyncResponse(Collections.singletonList(status)));
 
         AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
         operationsDataProcessor.processResponse(converter.toByteArray(response));
@@ -199,7 +203,8 @@ public class DefaultOperationDataProcessorTest {
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
         response.setRedirectSyncResponse(new RedirectSyncResponse("abc"));
         response.setUserSyncResponse(new UserSyncResponse());
-        response.setLogSyncResponse(new LogSyncResponse("id", SyncResponseResultType.SUCCESS));
+        LogDeliveryStatus status = new LogDeliveryStatus("id", SyncResponseResultType.SUCCESS, null);
+        response.setLogSyncResponse(new LogSyncResponse(Collections.singletonList(status)));
 
         AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
         operationsDataProcessor.processResponse(converter.toByteArray(response));

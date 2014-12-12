@@ -20,6 +20,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
@@ -119,6 +120,8 @@ public class EndpointActor extends UntypedActor {
             processEndpointSync((SyncRequestMessage) message);
         } else if (message instanceof EndpointEventReceiveMessage) {
             processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
+        } else if (message instanceof LogDeliveryMessage) {
+            processLogDeliveryMessage((LogDeliveryMessage) message);
         } else if (message instanceof NettyTcpDisconnectMessage) {
             processDisconnectMessage((ChannelAware) message);
         } else if (message instanceof NettyTcpPingMessage) {
@@ -141,6 +144,10 @@ public class EndpointActor extends UntypedActor {
         } else {
             LOG.warn("[{}] Received unknown message {}", actorKey, message);
         }
+    }
+
+    private void processLogDeliveryMessage(LogDeliveryMessage message) {
+        messageProcessor.processLogDeliveryMessage(context(), message);
     }
 
     private void processEndpointSync(SyncRequestMessage message) {

@@ -20,10 +20,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Collections;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.logging.gen.SuperRecord;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
@@ -184,9 +187,8 @@ public class DefaultLogCollectorTest {
                     , request1.getLogEntries().size() == 3);
 
             LogSyncResponse uploadResponse = new LogSyncResponse();
-            uploadResponse.setRequestId(request1.getRequestId());
-            uploadResponse.setResult(SyncResponseResultType.SUCCESS);
-
+            LogDeliveryStatus status = new LogDeliveryStatus(request1.getRequestId(),SyncResponseResultType.SUCCESS, null);
+            uploadResponse.setDeliveryStatuses(Collections.singletonList(status));
             try {
                 logCollector.onLogResponse(uploadResponse);
             } catch (Exception e) {

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.flume.EventDeliveryException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
@@ -31,6 +32,7 @@ import org.kaaproject.kaa.server.appenders.flume.appender.client.FlumeClientMana
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,19 +93,55 @@ public class FlumeLogAppenderTest {
     public void appendWithExceptionTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
         doThrow(new EventDeliveryException()).when(flumeClientManger).sendEventToFlume(null);
-        appender.doAppend(eventPack);
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        appender.doAppend(eventPack, callback);
+        Assert.assertTrue(callback.connectionError);
     }
 
     @Test
     public void appendTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
-        appender.doAppend(eventPack);
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        appender.doAppend(eventPack, callback);
+        Assert.assertTrue(callback.success);
+
     }
 
     @Test
     public void appendWithEmptyClientManagerTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
         ReflectionTestUtils.setField(appender, "flumeClientManger", null);
-        appender.doAppend(eventPack);
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        appender.doAppend(eventPack, callback);
+        Assert.assertTrue(callback.internallError);
+    }
+    
+    private static class TestLogDeliveryCallback implements LogDeliveryCallback{
+
+    	private volatile boolean success;
+    	private volatile boolean internallError;
+    	private volatile boolean connectionError;
+    	private volatile boolean remoteError;
+    	
+		@Override
+		public void onSuccess() {
+			success = true;
+		}
+
+		@Override
+		public void onInternalError() {
+			internallError = true;
+		}
+
+		@Override
+		public void onConnectionError() {
+			connectionError = true;
+		}
+
+		@Override
+		public void onRemoteError() {
+			remoteError = true;
+		}
+    	
     }
 }

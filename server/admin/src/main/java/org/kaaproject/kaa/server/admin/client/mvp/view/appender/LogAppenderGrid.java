@@ -48,6 +48,14 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
 
             }
         }, 80);
+        prefWidth += constructBooleanColumn(table,
+                Utils.constants.confirmDelivery(),
+                new BooleanValueProvider<LogAppenderDto>() {
+                    @Override
+                    public Boolean getValue(LogAppenderDto item) {
+                        return item.isConfirmDelivery();
+                    }
+                }, 40);       
         prefWidth += constructStringColumn(table, Utils.constants.maxVersion(),
                 new StringValueProvider<LogAppenderDto>() {
             @Override

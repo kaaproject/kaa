@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.logging.gen.SuperRecord;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
@@ -122,14 +123,18 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
     }
 
     @Override
-    public void onLogResponse(LogSyncResponse response) throws IOException {
+    public void onLogResponse(LogSyncResponse logSyncResponse) throws IOException {
         isUploading = false;
 
-        if (response.getResult() == SyncResponseResultType.SUCCESS) {
-            storage.removeRecordBlock(response.getRequestId());
-            processUploadDecision(uploadStrategy.isUploadNeeded(configuration, storageStatus));
-        } else {
-            storage.notifyUploadFailed(response.getRequestId());
+        if(logSyncResponse.getDeliveryStatuses() != null){
+            for(LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()){
+                if (response.getResult() == SyncResponseResultType.SUCCESS) {
+                    storage.removeRecordBlock(response.getRequestId());
+                    processUploadDecision(uploadStrategy.isUploadNeeded(configuration, storageStatus));
+                } else {
+                    storage.notifyUploadFailed(response.getRequestId());
+                }
+            }
         }
     }
 

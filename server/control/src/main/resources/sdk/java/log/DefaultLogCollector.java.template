@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.kaaproject.kaa.client.channel.LogTransport;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
@@ -123,21 +124,18 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
     }
 
     @Override
-    public void onLogResponse(LogSyncResponse response) throws IOException {
-        if (response.getResult() == SyncResponseResultType.SUCCESS) {
-            storage.removeRecordBlock(response.getRequestId());
-            if (storageStatus.getConsumedVolume() >= configuration.getBatchVolume()) {
-                if (transport != null) {
-                    transport.sync();
+    public void onLogResponse(LogSyncResponse logSyncResponse) throws IOException {
+        isUploading = false;
+
+        if(logSyncResponse.getDeliveryStatuses() != null){
+            for(LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()){
+                if (response.getResult() == SyncResponseResultType.SUCCESS) {
+                    storage.removeRecordBlock(response.getRequestId());
+                    processUploadDecision(uploadStrategy.isUploadNeeded(configuration, storageStatus));
                 } else {
-                    LOG.warn("Log transport is null");
+                    storage.notifyUploadFailed(response.getRequestId());
                 }
-            } else {
-                isUploading = false;
             }
-        } else {
-            isUploading = false;
-            storage.notifyUploadFailed(response.getRequestId());
         }
     }
 

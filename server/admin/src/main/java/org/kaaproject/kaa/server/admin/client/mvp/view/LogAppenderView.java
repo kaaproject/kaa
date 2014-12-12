@@ -31,6 +31,8 @@ public interface LogAppenderView extends BaseDetailsView {
 
     ValueListBox<Integer> getMaxSchemaVersion();
     
+    HasValue<Boolean> getConfirmDelivery();
+    
     HasValue<String> getName();
 
     ValueListBox<LogAppenderInfoDto> getAppenderInfo();
