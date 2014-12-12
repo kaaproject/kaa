@@ -135,6 +135,7 @@ void test_profile_compile_request()
 
     profile_request->destroy(profile_request);
     KAA_FREE(serialized_profile);
+    profile1->destroy(profile1);
 }
 
 void test_profile_compile_request_when_registered()
@@ -154,6 +155,8 @@ void test_profile_compile_request_when_registered()
 
     profile_request->destroy(profile_request);
     kaa_set_endpoint_registered(status, false);
+
+    profile1->destroy(profile1);
 }
 
 void test_profile_handle_sync()
@@ -175,6 +178,7 @@ void test_profile_handle_sync()
     ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
     ASSERT_TRUE(is_registered);
 
+    profile1->destroy(profile1);
 }
 
 int test_init(void)
