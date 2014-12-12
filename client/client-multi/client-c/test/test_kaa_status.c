@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include "kaa_status.h"
 #include "kaa_test.h"
-#include "kaa_mem.h"
-#include "kaa_log.h"
+#include "kaa_status.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 
 
 #include <string.h>

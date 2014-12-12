@@ -25,7 +25,7 @@ extern "C" {
 
 #include "kaa_logging.h"
 
-#include "kaa_log.h"
+#include "utilities/kaa_log.h"
 void                          set_memory_log_storage_logger(kaa_logger_t *);
 
 

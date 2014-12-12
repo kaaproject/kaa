@@ -18,9 +18,9 @@
 #include <string.h>
 
 #include "kaa_test.h"
-#include "kaa_log.h"
 #include "kaa_common.h"
 #include "kaa_error.h"
+#include "utilities/kaa_log.h"
 
 static kaa_logger_t *logger = NULL;
 

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include "kaa_log.h"
+#include "utilities/kaa_log.h"
 
 #include <time.h>
 #include <stdarg.h>
 #include <string.h>
 
 #include "kaa_common.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_mem.h"
 
 #define KAA_LOG_PREFIX_FORMAT   "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
 

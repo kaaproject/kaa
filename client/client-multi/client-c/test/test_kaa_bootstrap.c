@@ -17,10 +17,10 @@
 #include <string.h>
 
 #include "kaa_test.h"
-#include "kaa_log.h"
-
 #include "kaa_bootstrap.h"
-#include "kaa_mem.h"
+
+#include "utilities/kaa_log.h"
+#include "utilities/kaa_mem.h"
 
 extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_logger_t *logger);
 extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);

@@ -63,16 +63,17 @@ set (KAA_SOURCE_FILES
                        src/kaa_common.c
                        src/kaa_context.c
                        src/kaa_event.c
-                       src/kaa_log.c
                        src/kaa_logging.c
-                       src/kaa_mem.c
                        src/kaa_platform_protocol.c
                        src/kaa_profile.c
                        src/kaa_status.c
                        src/kaa_user.c
-                       src/kaa_uuid_int.c
                        src/kaa.c
                        src/log/kaa_memory_log_storage.c
+                       src/utilities/kaa_log.c
+                       src/utilities/kaa_mem.c
+                       src/utilities/kaa_uuid_int.c
+
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)

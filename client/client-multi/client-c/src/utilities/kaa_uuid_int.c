@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "kaa_uuid.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_uuid.h"
+#include "utilities/kaa_mem.h"
 #include <stdio.h>
 #include <string.h>
 

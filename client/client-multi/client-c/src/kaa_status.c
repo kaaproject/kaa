@@ -16,8 +16,8 @@
 
 #include "kaa_status.h"
 #include "kaa_common.h"
-#include "kaa_mem.h"
 #include "kaa_external.h"
+#include "utilities/kaa_mem.h"
 #include <string.h>
 
 struct kaa_status_t

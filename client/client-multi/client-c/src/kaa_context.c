@@ -15,8 +15,8 @@
  */
 
 #include "kaa_context.h"
-#include "kaa_mem.h"
-#include "kaa_log.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 #include "kaa_common.h"
 
 

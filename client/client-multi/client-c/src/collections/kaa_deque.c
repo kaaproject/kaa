@@ -18,7 +18,7 @@
 
 #include <stddef.h>
 #include "kaa_common.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_mem.h"
 
 struct kaa_deque_iterator_t {
     kaa_deque_iterator_t  *prev;

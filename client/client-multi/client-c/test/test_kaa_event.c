@@ -18,10 +18,10 @@
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 
 #include "kaa_test.h"
-#include "kaa_log.h"
-#include "kaa_context.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_log.h"
+#include "utilities/kaa_mem.h"
 #include "gen/kaa_endpoint_gen.h"
+#include "kaa_context.h"
 #include <string.h>
 
 extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);

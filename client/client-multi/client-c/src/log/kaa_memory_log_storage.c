@@ -20,8 +20,8 @@
 
 #include "collections/kaa_deque.h"
 #include "collections/kaa_list.h"
-#include "kaa_uuid.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_uuid.h"
+#include "utilities/kaa_mem.h"
 #include <stdint.h>
 #include <string.h>
 

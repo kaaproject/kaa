@@ -21,7 +21,7 @@
 #include <stddef.h>
 #include "gen/kaa_endpoint_gen.h"
 #include "gen/kaa_logging_gen.h"
-#include "kaa_uuid.h"
+#include "utilities/kaa_uuid.h"
 
 #ifdef __cplusplus
 extern "C" {

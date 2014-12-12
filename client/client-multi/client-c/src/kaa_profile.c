@@ -21,12 +21,12 @@
 #include "avro_src/avro/io.h"
 
 #include "kaa_common.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 #include "kaa_defaults.h"
 #include "kaa_external.h"
 #include "kaa_channel_manager.h"
 #include "kaa_status.h"
-#include "kaa_log.h"
 
 extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
 

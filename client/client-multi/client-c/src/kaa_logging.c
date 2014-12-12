@@ -20,12 +20,12 @@
 #include <stddef.h>
 #include <string.h>
 #include "collections/kaa_list.h"
-#include "kaa_mem.h"
-#include "kaa_uuid.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_uuid.h"
+#include "utilities/kaa_log.h"
 #include "kaa_common.h"
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
-#include "kaa_log.h"
 
 #include "avro_src/avro/io.h"
 

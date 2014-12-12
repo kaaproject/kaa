@@ -16,8 +16,8 @@
 
 #include "kaa_channel_manager.h"
 #include "collections/kaa_list.h"
-#include "kaa_log.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_log.h"
+#include "utilities/kaa_mem.h"
 
 struct kaa_channel_manager_t {
     kaa_list_t                 *sync_handlers;

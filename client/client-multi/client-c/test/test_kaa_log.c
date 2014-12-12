@@ -20,14 +20,14 @@
 
 #include <stdio.h>
 
+#include "kaa_test.h"
 #include "kaa.h"
 #include "kaa_platform_protocol.h"
 #include "log/kaa_memory_log_storage.h"
-#include "kaa_test.h"
-#include "kaa_mem.h"
-#include "kaa_log.h"
 #include "kaa_channel_manager.h"
 #include "kaa_profile.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 
 extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
 extern kaa_error_t kaa_context_destroy(kaa_context_t * context);

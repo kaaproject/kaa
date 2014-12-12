@@ -20,8 +20,8 @@
 #include <string.h>
 
 #include "collections/kaa_list.h"
-#include "kaa_mem.h"
-#include "kaa_log.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 
 struct kaa_bootstrap_manager_t {
     kaa_list_t     *ops_list[KAA_CHANNEL_TYPE_COUNT];       /*!< Operations servers lists by channel type, sorted by increasing priority */

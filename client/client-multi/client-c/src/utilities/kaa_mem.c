@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "kaa_mem.h"
+#include "utilities/kaa_mem.h"
 
 #ifdef KAA_TRACE_MEMORY_ALLOCATIONS
 

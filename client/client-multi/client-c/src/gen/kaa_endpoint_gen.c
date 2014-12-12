@@ -22,7 +22,7 @@
 # include "avro_src/avro/io.h"
 # include "avro_src/encoding.h"
 
-# include "kaa_mem.h"
+# include "utilities/kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE
@@ -66,7 +66,7 @@ static size_t kaa_event_class_family_version_info_get_size(void* data)
 
 kaa_event_class_family_version_info_t* kaa_event_class_family_version_info_create()
 {
-    kaa_event_class_family_version_info_t* record = 
+    kaa_event_class_family_version_info_t* record =
             (kaa_event_class_family_version_info_t*)KAA_CALLOC(1, sizeof(kaa_event_class_family_version_info_t));
 
     if (record) {
@@ -155,7 +155,7 @@ static kaa_union_t* kaa_union_array_event_class_family_version_info_or_null_crea
         kaa_union->destroy = kaa_union_array_event_class_family_version_info_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_event_class_family_version_info_or_null_branch_0_create()
@@ -225,7 +225,7 @@ static size_t kaa_endpoint_version_info_get_size(void* data)
 
 kaa_endpoint_version_info_t* kaa_endpoint_version_info_create()
 {
-    kaa_endpoint_version_info_t* record = 
+    kaa_endpoint_version_info_t* record =
             (kaa_endpoint_version_info_t*)KAA_CALLOC(1, sizeof(kaa_endpoint_version_info_t));
 
     if (record) {
@@ -275,7 +275,7 @@ static size_t kaa_topic_state_get_size(void* data)
 
 kaa_topic_state_t* kaa_topic_state_create()
 {
-    kaa_topic_state_t* record = 
+    kaa_topic_state_t* record =
             (kaa_topic_state_t*)KAA_CALLOC(1, sizeof(kaa_topic_state_t));
 
     if (record) {
@@ -325,7 +325,7 @@ static size_t kaa_subscription_command_get_size(void* data)
 
 kaa_subscription_command_t* kaa_subscription_command_create()
 {
-    kaa_subscription_command_t* record = 
+    kaa_subscription_command_t* record =
             (kaa_subscription_command_t*)KAA_CALLOC(1, sizeof(kaa_subscription_command_t));
 
     if (record) {
@@ -376,7 +376,7 @@ static size_t kaa_user_attach_request_get_size(void* data)
 
 kaa_user_attach_request_t* kaa_user_attach_request_create()
 {
-    kaa_user_attach_request_t* record = 
+    kaa_user_attach_request_t* record =
             (kaa_user_attach_request_t*)KAA_CALLOC(1, sizeof(kaa_user_attach_request_t));
 
     if (record) {
@@ -393,7 +393,7 @@ kaa_user_attach_request_t* kaa_user_attach_request_create()
 
 kaa_user_attach_response_t* kaa_user_attach_response_deserialize(avro_reader_t reader)
 {
-    kaa_user_attach_response_t* record = 
+    kaa_user_attach_response_t* record =
             (kaa_user_attach_response_t*)KAA_MALLOC(sizeof(kaa_user_attach_response_t));
 
     if (record) {
@@ -422,7 +422,7 @@ static void kaa_user_attach_notification_destroy(void* data)
 
 kaa_user_attach_notification_t* kaa_user_attach_notification_deserialize(avro_reader_t reader)
 {
-    kaa_user_attach_notification_t* record = 
+    kaa_user_attach_notification_t* record =
             (kaa_user_attach_notification_t*)KAA_MALLOC(sizeof(kaa_user_attach_notification_t));
 
     if (record) {
@@ -449,7 +449,7 @@ static void kaa_user_detach_notification_destroy(void* data)
 
 kaa_user_detach_notification_t* kaa_user_detach_notification_deserialize(avro_reader_t reader)
 {
-    kaa_user_detach_notification_t* record = 
+    kaa_user_detach_notification_t* record =
             (kaa_user_detach_notification_t*)KAA_MALLOC(sizeof(kaa_user_detach_notification_t));
 
     if (record) {
@@ -500,7 +500,7 @@ static size_t kaa_endpoint_attach_request_get_size(void* data)
 
 kaa_endpoint_attach_request_t* kaa_endpoint_attach_request_create()
 {
-    kaa_endpoint_attach_request_t* record = 
+    kaa_endpoint_attach_request_t* record =
             (kaa_endpoint_attach_request_t*)KAA_CALLOC(1, sizeof(kaa_endpoint_attach_request_t));
 
     if (record) {
@@ -589,7 +589,7 @@ static kaa_union_t* kaa_union_string_or_null_create()
         kaa_union->destroy = kaa_union_string_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_string_or_null_branch_0_create()
@@ -651,7 +651,7 @@ static void kaa_endpoint_attach_response_destroy(void* data)
 
 kaa_endpoint_attach_response_t* kaa_endpoint_attach_response_deserialize(avro_reader_t reader)
 {
-    kaa_endpoint_attach_response_t* record = 
+    kaa_endpoint_attach_response_t* record =
             (kaa_endpoint_attach_response_t*)KAA_MALLOC(sizeof(kaa_endpoint_attach_response_t));
 
     if (record) {
@@ -706,7 +706,7 @@ static size_t kaa_endpoint_detach_request_get_size(void* data)
 
 kaa_endpoint_detach_request_t* kaa_endpoint_detach_request_create()
 {
-    kaa_endpoint_detach_request_t* record = 
+    kaa_endpoint_detach_request_t* record =
             (kaa_endpoint_detach_request_t*)KAA_CALLOC(1, sizeof(kaa_endpoint_detach_request_t));
 
     if (record) {
@@ -732,7 +732,7 @@ static void kaa_endpoint_detach_response_destroy(void* data)
 
 kaa_endpoint_detach_response_t* kaa_endpoint_detach_response_deserialize(avro_reader_t reader)
 {
-    kaa_endpoint_detach_response_t* record = 
+    kaa_endpoint_detach_response_t* record =
             (kaa_endpoint_detach_response_t*)KAA_MALLOC(sizeof(kaa_endpoint_detach_response_t));
 
     if (record) {
@@ -798,7 +798,7 @@ static size_t kaa_event_get_size(void* data)
 
 kaa_event_t* kaa_event_create()
 {
-    kaa_event_t* record = 
+    kaa_event_t* record =
             (kaa_event_t*)KAA_CALLOC(1, sizeof(kaa_event_t));
 
     if (record) {
@@ -812,7 +812,7 @@ kaa_event_t* kaa_event_create()
 
 kaa_event_t* kaa_event_deserialize(avro_reader_t reader)
 {
-    kaa_event_t* record = 
+    kaa_event_t* record =
             (kaa_event_t*)KAA_MALLOC(sizeof(kaa_event_t));
 
     if (record) {
@@ -860,7 +860,7 @@ static size_t kaa_event_listeners_request_get_size(void* data)
 
         record_size += kaa_string_get_size(record->request_id);
             record_size += kaa_array_get_size(record->event_class_fq_ns, kaa_string_get_size);
-    
+
         return record_size;
     }
 
@@ -869,7 +869,7 @@ static size_t kaa_event_listeners_request_get_size(void* data)
 
 kaa_event_listeners_request_t* kaa_event_listeners_request_create()
 {
-    kaa_event_listeners_request_t* record = 
+    kaa_event_listeners_request_t* record =
             (kaa_event_listeners_request_t*)KAA_CALLOC(1, sizeof(kaa_event_listeners_request_t));
 
     if (record) {
@@ -958,7 +958,7 @@ static kaa_union_t* kaa_union_array_string_or_null_create()
         kaa_union->destroy = kaa_union_array_string_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_string_or_null_branch_0_create()
@@ -1020,7 +1020,7 @@ static void kaa_event_listeners_response_destroy(void* data)
 
 kaa_event_listeners_response_t* kaa_event_listeners_response_deserialize(avro_reader_t reader)
 {
-    kaa_event_listeners_response_t* record = 
+    kaa_event_listeners_response_t* record =
             (kaa_event_listeners_response_t*)KAA_MALLOC(sizeof(kaa_event_listeners_response_t));
 
     if (record) {
@@ -1041,7 +1041,7 @@ kaa_event_listeners_response_t* kaa_event_listeners_response_deserialize(avro_re
 
 kaa_event_sequence_number_request_t* kaa_event_sequence_number_request_create()
 {
-    kaa_event_sequence_number_request_t* record = 
+    kaa_event_sequence_number_request_t* record =
             (kaa_event_sequence_number_request_t*)KAA_CALLOC(1, sizeof(kaa_event_sequence_number_request_t));
 
     if (record) {
@@ -1056,7 +1056,7 @@ kaa_event_sequence_number_request_t* kaa_event_sequence_number_request_create()
 
 kaa_event_sequence_number_response_t* kaa_event_sequence_number_response_deserialize(avro_reader_t reader)
 {
-    kaa_event_sequence_number_response_t* record = 
+    kaa_event_sequence_number_response_t* record =
             (kaa_event_sequence_number_response_t*)KAA_MALLOC(sizeof(kaa_event_sequence_number_response_t));
 
     if (record) {
@@ -1146,7 +1146,7 @@ static kaa_union_t* kaa_union_int_or_null_create()
         kaa_union->destroy = kaa_union_int_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_int_or_null_branch_0_create()
@@ -1212,7 +1212,7 @@ static void kaa_notification_destroy(void* data)
 
 kaa_notification_t* kaa_notification_deserialize(avro_reader_t reader)
 {
-    kaa_notification_t* record = 
+    kaa_notification_t* record =
             (kaa_notification_t*)KAA_MALLOC(sizeof(kaa_notification_t));
 
     if (record) {
@@ -1245,7 +1245,7 @@ static void kaa_topic_destroy(void* data)
 
 kaa_topic_t* kaa_topic_deserialize(avro_reader_t reader)
 {
-    kaa_topic_t* record = 
+    kaa_topic_t* record =
             (kaa_topic_t*)KAA_MALLOC(sizeof(kaa_topic_t));
 
     if (record) {
@@ -1297,7 +1297,7 @@ static size_t kaa_log_entry_get_size(void* data)
 
 kaa_log_entry_t* kaa_log_entry_create()
 {
-    kaa_log_entry_t* record = 
+    kaa_log_entry_t* record =
             (kaa_log_entry_t*)KAA_CALLOC(1, sizeof(kaa_log_entry_t));
 
     if (record) {
@@ -1386,7 +1386,7 @@ static kaa_union_t* kaa_union_bytes_or_null_create()
         kaa_union->destroy = kaa_union_bytes_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_bytes_or_null_branch_0_create()
@@ -1477,7 +1477,7 @@ static size_t kaa_sync_request_meta_data_get_size(void* data)
 
 kaa_sync_request_meta_data_t* kaa_sync_request_meta_data_create()
 {
-    kaa_sync_request_meta_data_t* record = 
+    kaa_sync_request_meta_data_t* record =
             (kaa_sync_request_meta_data_t*)KAA_CALLOC(1, sizeof(kaa_sync_request_meta_data_t));
 
     if (record) {
@@ -1540,7 +1540,7 @@ static size_t kaa_profile_sync_request_get_size(void* data)
 
 kaa_profile_sync_request_t* kaa_profile_sync_request_create()
 {
-    kaa_profile_sync_request_t* record = 
+    kaa_profile_sync_request_t* record =
             (kaa_profile_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_profile_sync_request_t));
 
     if (record) {
@@ -1592,7 +1592,7 @@ static size_t kaa_configuration_sync_request_get_size(void* data)
 
 kaa_configuration_sync_request_t* kaa_configuration_sync_request_create()
 {
-    kaa_configuration_sync_request_t* record = 
+    kaa_configuration_sync_request_t* record =
             (kaa_configuration_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_configuration_sync_request_t));
 
     if (record) {
@@ -1681,7 +1681,7 @@ static kaa_union_t* kaa_union_array_topic_state_or_null_create()
         kaa_union->destroy = kaa_union_array_topic_state_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_topic_state_or_null_branch_0_create()
@@ -1780,7 +1780,7 @@ static kaa_union_t* kaa_union_array_subscription_command_or_null_create()
         kaa_union->destroy = kaa_union_array_subscription_command_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_subscription_command_or_null_branch_0_create()
@@ -1857,7 +1857,7 @@ static size_t kaa_notification_sync_request_get_size(void* data)
 
 kaa_notification_sync_request_t* kaa_notification_sync_request_create()
 {
-    kaa_notification_sync_request_t* record = 
+    kaa_notification_sync_request_t* record =
             (kaa_notification_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_notification_sync_request_t));
 
     if (record) {
@@ -1949,7 +1949,7 @@ static kaa_union_t* kaa_union_user_attach_request_or_null_create()
         kaa_union->destroy = kaa_union_user_attach_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_user_attach_request_or_null_branch_0_create()
@@ -2048,7 +2048,7 @@ static kaa_union_t* kaa_union_array_endpoint_attach_request_or_null_create()
         kaa_union->destroy = kaa_union_array_endpoint_attach_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_endpoint_attach_request_or_null_branch_0_create()
@@ -2147,7 +2147,7 @@ static kaa_union_t* kaa_union_array_endpoint_detach_request_or_null_create()
         kaa_union->destroy = kaa_union_array_endpoint_detach_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_endpoint_detach_request_or_null_branch_0_create()
@@ -2217,7 +2217,7 @@ static size_t kaa_user_sync_request_get_size(void* data)
 
 kaa_user_sync_request_t* kaa_user_sync_request_create()
 {
-    kaa_user_sync_request_t* record = 
+    kaa_user_sync_request_t* record =
             (kaa_user_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_user_sync_request_t));
 
     if (record) {
@@ -2293,7 +2293,7 @@ static kaa_union_t* kaa_union_event_sequence_number_request_or_null_create()
         kaa_union->destroy = kaa_union_event_sequence_number_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_event_sequence_number_request_or_null_branch_0_create()
@@ -2392,7 +2392,7 @@ static kaa_union_t* kaa_union_array_event_listeners_request_or_null_create()
         kaa_union->destroy = kaa_union_array_event_listeners_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_event_listeners_request_or_null_branch_0_create()
@@ -2491,7 +2491,7 @@ static kaa_union_t* kaa_union_array_event_or_null_create()
         kaa_union->destroy = kaa_union_array_event_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_event_or_null_branch_0_create()
@@ -2584,7 +2584,7 @@ static size_t kaa_event_sync_request_get_size(void* data)
 
 kaa_event_sync_request_t* kaa_event_sync_request_create()
 {
-    kaa_event_sync_request_t* record = 
+    kaa_event_sync_request_t* record =
             (kaa_event_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_event_sync_request_t));
 
     if (record) {
@@ -2673,7 +2673,7 @@ static kaa_union_t* kaa_union_array_log_entry_or_null_create()
         kaa_union->destroy = kaa_union_array_log_entry_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_log_entry_or_null_branch_0_create()
@@ -2738,7 +2738,7 @@ static size_t kaa_log_sync_request_get_size(void* data)
 
 kaa_log_sync_request_t* kaa_log_sync_request_create()
 {
-    kaa_log_sync_request_t* record = 
+    kaa_log_sync_request_t* record =
             (kaa_log_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_log_sync_request_t));
 
     if (record) {
@@ -2755,7 +2755,7 @@ kaa_log_sync_request_t* kaa_log_sync_request_create()
 
 kaa_profile_sync_response_t* kaa_profile_sync_response_deserialize(avro_reader_t reader)
 {
-    kaa_profile_sync_response_t* record = 
+    kaa_profile_sync_response_t* record =
             (kaa_profile_sync_response_t*)KAA_MALLOC(sizeof(kaa_profile_sync_response_t));
 
     if (record) {
@@ -2788,7 +2788,7 @@ static void kaa_configuration_sync_response_destroy(void* data)
 
 kaa_configuration_sync_response_t* kaa_configuration_sync_response_deserialize(avro_reader_t reader)
 {
-    kaa_configuration_sync_response_t* record = 
+    kaa_configuration_sync_response_t* record =
             (kaa_configuration_sync_response_t*)KAA_MALLOC(sizeof(kaa_configuration_sync_response_t));
 
     if (record) {
@@ -2836,7 +2836,7 @@ static kaa_union_t* kaa_union_array_notification_or_null_create()
         kaa_union->destroy = kaa_union_array_notification_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_notification_or_null_deserialize(avro_reader_t reader)
@@ -2894,7 +2894,7 @@ static kaa_union_t* kaa_union_array_topic_or_null_create()
         kaa_union->destroy = kaa_union_array_topic_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_topic_or_null_deserialize(avro_reader_t reader)
@@ -2940,7 +2940,7 @@ static void kaa_notification_sync_response_destroy(void* data)
 
 kaa_notification_sync_response_t* kaa_notification_sync_response_deserialize(avro_reader_t reader)
 {
-    kaa_notification_sync_response_t* record = 
+    kaa_notification_sync_response_t* record =
             (kaa_notification_sync_response_t*)KAA_MALLOC(sizeof(kaa_notification_sync_response_t));
 
     if (record) {
@@ -2989,7 +2989,7 @@ static kaa_union_t* kaa_union_user_attach_response_or_null_create()
         kaa_union->destroy = kaa_union_user_attach_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_user_attach_response_or_null_deserialize(avro_reader_t reader)
@@ -3048,7 +3048,7 @@ static kaa_union_t* kaa_union_user_attach_notification_or_null_create()
         kaa_union->destroy = kaa_union_user_attach_notification_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_user_attach_notification_or_null_deserialize(avro_reader_t reader)
@@ -3107,7 +3107,7 @@ static kaa_union_t* kaa_union_user_detach_notification_or_null_create()
         kaa_union->destroy = kaa_union_user_detach_notification_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_user_detach_notification_or_null_deserialize(avro_reader_t reader)
@@ -3165,7 +3165,7 @@ static kaa_union_t* kaa_union_array_endpoint_attach_response_or_null_create()
         kaa_union->destroy = kaa_union_array_endpoint_attach_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_endpoint_attach_response_or_null_deserialize(avro_reader_t reader)
@@ -3223,7 +3223,7 @@ static kaa_union_t* kaa_union_array_endpoint_detach_response_or_null_create()
         kaa_union->destroy = kaa_union_array_endpoint_detach_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_endpoint_detach_response_or_null_deserialize(avro_reader_t reader)
@@ -3278,7 +3278,7 @@ static void kaa_user_sync_response_destroy(void* data)
 
 kaa_user_sync_response_t* kaa_user_sync_response_deserialize(avro_reader_t reader)
 {
-    kaa_user_sync_response_t* record = 
+    kaa_user_sync_response_t* record =
             (kaa_user_sync_response_t*)KAA_MALLOC(sizeof(kaa_user_sync_response_t));
 
     if (record) {
@@ -3326,7 +3326,7 @@ static kaa_union_t* kaa_union_event_sequence_number_response_or_null_create()
         kaa_union->destroy = kaa_union_event_sequence_number_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_event_sequence_number_response_or_null_deserialize(avro_reader_t reader)
@@ -3384,7 +3384,7 @@ static kaa_union_t* kaa_union_array_event_listeners_response_or_null_create()
         kaa_union->destroy = kaa_union_array_event_listeners_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_array_event_listeners_response_or_null_deserialize(avro_reader_t reader)
@@ -3433,7 +3433,7 @@ static void kaa_event_sync_response_destroy(void* data)
 
 kaa_event_sync_response_t* kaa_event_sync_response_deserialize(avro_reader_t reader)
 {
-    kaa_event_sync_response_t* record = 
+    kaa_event_sync_response_t* record =
             (kaa_event_sync_response_t*)KAA_MALLOC(sizeof(kaa_event_sync_response_t));
 
     if (record) {
@@ -3461,7 +3461,7 @@ static void kaa_log_sync_response_destroy(void* data)
 
 kaa_log_sync_response_t* kaa_log_sync_response_deserialize(avro_reader_t reader)
 {
-    kaa_log_sync_response_t* record = 
+    kaa_log_sync_response_t* record =
             (kaa_log_sync_response_t*)KAA_MALLOC(sizeof(kaa_log_sync_response_t));
 
     if (record) {
@@ -3490,7 +3490,7 @@ static void kaa_redirect_sync_response_destroy(void* data)
 
 kaa_redirect_sync_response_t* kaa_redirect_sync_response_deserialize(avro_reader_t reader)
 {
-    kaa_redirect_sync_response_t* record = 
+    kaa_redirect_sync_response_t* record =
             (kaa_redirect_sync_response_t*)KAA_MALLOC(sizeof(kaa_redirect_sync_response_t));
 
     if (record) {
@@ -3582,7 +3582,7 @@ static kaa_union_t* kaa_union_sync_request_meta_data_or_null_create()
         kaa_union->destroy = kaa_union_sync_request_meta_data_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_sync_request_meta_data_or_null_branch_0_create()
@@ -3684,7 +3684,7 @@ static kaa_union_t* kaa_union_profile_sync_request_or_null_create()
         kaa_union->destroy = kaa_union_profile_sync_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_profile_sync_request_or_null_branch_0_create()
@@ -3786,7 +3786,7 @@ static kaa_union_t* kaa_union_configuration_sync_request_or_null_create()
         kaa_union->destroy = kaa_union_configuration_sync_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_configuration_sync_request_or_null_branch_0_create()
@@ -3888,7 +3888,7 @@ static kaa_union_t* kaa_union_notification_sync_request_or_null_create()
         kaa_union->destroy = kaa_union_notification_sync_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_notification_sync_request_or_null_branch_0_create()
@@ -3990,7 +3990,7 @@ static kaa_union_t* kaa_union_user_sync_request_or_null_create()
         kaa_union->destroy = kaa_union_user_sync_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_user_sync_request_or_null_branch_0_create()
@@ -4092,7 +4092,7 @@ static kaa_union_t* kaa_union_event_sync_request_or_null_create()
         kaa_union->destroy = kaa_union_event_sync_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_event_sync_request_or_null_branch_0_create()
@@ -4194,7 +4194,7 @@ static kaa_union_t* kaa_union_log_sync_request_or_null_create()
         kaa_union->destroy = kaa_union_log_sync_request_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_log_sync_request_or_null_branch_0_create()
@@ -4289,7 +4289,7 @@ static size_t kaa_sync_request_get_size(void* data)
 
 kaa_sync_request_t* kaa_sync_request_create()
 {
-    kaa_sync_request_t* record = 
+    kaa_sync_request_t* record =
             (kaa_sync_request_t*)KAA_CALLOC(1, sizeof(kaa_sync_request_t));
 
     if (record) {
@@ -4333,7 +4333,7 @@ static kaa_union_t* kaa_union_profile_sync_response_or_null_create()
         kaa_union->destroy = kaa_union_profile_sync_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_profile_sync_response_or_null_deserialize(avro_reader_t reader)
@@ -4392,7 +4392,7 @@ static kaa_union_t* kaa_union_configuration_sync_response_or_null_create()
         kaa_union->destroy = kaa_union_configuration_sync_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_configuration_sync_response_or_null_deserialize(avro_reader_t reader)
@@ -4451,7 +4451,7 @@ static kaa_union_t* kaa_union_notification_sync_response_or_null_create()
         kaa_union->destroy = kaa_union_notification_sync_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_notification_sync_response_or_null_deserialize(avro_reader_t reader)
@@ -4510,7 +4510,7 @@ static kaa_union_t* kaa_union_user_sync_response_or_null_create()
         kaa_union->destroy = kaa_union_user_sync_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_user_sync_response_or_null_deserialize(avro_reader_t reader)
@@ -4569,7 +4569,7 @@ static kaa_union_t* kaa_union_event_sync_response_or_null_create()
         kaa_union->destroy = kaa_union_event_sync_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_event_sync_response_or_null_deserialize(avro_reader_t reader)
@@ -4628,7 +4628,7 @@ static kaa_union_t* kaa_union_redirect_sync_response_or_null_create()
         kaa_union->destroy = kaa_union_redirect_sync_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_redirect_sync_response_or_null_deserialize(avro_reader_t reader)
@@ -4687,7 +4687,7 @@ static kaa_union_t* kaa_union_log_sync_response_or_null_create()
         kaa_union->destroy = kaa_union_log_sync_response_or_null_destroy;
     }
 
-    return kaa_union; 
+    return kaa_union;
 }
 
 kaa_union_t* kaa_union_log_sync_response_or_null_deserialize(avro_reader_t reader)
@@ -4751,7 +4751,7 @@ static void kaa_sync_response_destroy(void* data)
 
 kaa_sync_response_t* kaa_sync_response_deserialize(avro_reader_t reader)
 {
-    kaa_sync_response_t* record = 
+    kaa_sync_response_t* record =
             (kaa_sync_response_t*)KAA_MALLOC(sizeof(kaa_sync_response_t));
 
     if (record) {
@@ -4789,7 +4789,7 @@ static void kaa_topic_subscription_info_destroy(void* data)
 
 kaa_topic_subscription_info_t* kaa_topic_subscription_info_deserialize(avro_reader_t reader)
 {
-    kaa_topic_subscription_info_t* record = 
+    kaa_topic_subscription_info_t* record =
             (kaa_topic_subscription_info_t*)KAA_MALLOC(sizeof(kaa_topic_subscription_info_t));
 
     if (record) {

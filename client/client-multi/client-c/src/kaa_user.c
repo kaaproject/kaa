@@ -18,9 +18,9 @@
 
 #include <string.h>
 
-#include "kaa_mem.h"
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
+#include "utilities/kaa_mem.h"
 
 extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self
                                                               , kaa_service_t service_type);

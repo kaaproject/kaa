@@ -25,8 +25,8 @@
 #include "collections/kaa_list.h"
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
-#include "kaa_mem.h"
-#include "kaa_log.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 #include "gen/kaa_endpoint_gen.h"
 
 extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self

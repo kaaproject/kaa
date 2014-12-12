@@ -22,7 +22,7 @@
 # include "avro_src/avro/io.h"
 # include "avro_src/encoding.h"
 
-# include "kaa_mem.h"
+# include "utilities/kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE
@@ -64,7 +64,7 @@ static size_t kaa_profile_basic_endpoint_profile_test_get_size(void* data)
 
 kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create()
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = 
+    kaa_profile_basic_endpoint_profile_test_t* record =
             (kaa_profile_basic_endpoint_profile_test_t*)KAA_CALLOC(1, sizeof(kaa_profile_basic_endpoint_profile_test_t));
 
     if (record) {

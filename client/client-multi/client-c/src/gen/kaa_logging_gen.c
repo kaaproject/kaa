@@ -22,7 +22,7 @@
 # include "avro_src/avro/io.h"
 # include "avro_src/encoding.h"
 
-# include "kaa_mem.h"
+# include "utilities/kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE
@@ -64,7 +64,7 @@ static size_t kaa_test_log_record_get_size(void* data)
 
 kaa_test_log_record_t* kaa_test_log_record_create()
 {
-    kaa_test_log_record_t* record = 
+    kaa_test_log_record_t* record =
             (kaa_test_log_record_t*)KAA_CALLOC(1, sizeof(kaa_test_log_record_t));
 
     if (record) {
@@ -78,7 +78,7 @@ kaa_test_log_record_t* kaa_test_log_record_create()
 
 kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader)
 {
-    kaa_test_log_record_t* record = 
+    kaa_test_log_record_t* record =
             (kaa_test_log_record_t*)KAA_MALLOC(sizeof(kaa_test_log_record_t));
 
     if (record) {

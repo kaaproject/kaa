@@ -15,7 +15,7 @@
  */
 
 #include "collections/kaa_list.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_mem.h"
 
 struct kaa_list_t {
     void              *data;
