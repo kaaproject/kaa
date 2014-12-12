@@ -105,5 +105,11 @@ public class DefaultLogAppenderBuilderTest {
 			// TODO Auto-generated method stub
 			return true;
 		}
+
+		@Override
+		public boolean isDeliveryConfirmationRequired() {
+			// TODO Auto-generated method stub
+			return false;
+		}
     }
 }

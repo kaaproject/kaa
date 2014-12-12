@@ -23,6 +23,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_DESCRIPTION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CONFIRM_DELIVERY;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_RAW_CONFIGURATION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_STATUS;
@@ -75,6 +76,9 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     @Column(name = LOG_APPENDER_MAX_LOG_SCHEMA_VERSION)
     private int maxLogSchemaVersion;
     
+    @Column(name = LOG_APPENDER_CONFIRM_DELIVERY)
+    private boolean confirmDelivery;
+    
     @Column(name = LOG_APPENDER_STATUS)
     @Enumerated(EnumType.STRING)
     private LogAppenderStatusDto status;
@@ -114,6 +118,7 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
             this.application = appId != null ? new Application(appId) : null;
             this.minLogSchemaVersion = dto.getMinLogSchemaVersion();
             this.maxLogSchemaVersion = dto.getMaxLogSchemaVersion();
+            this.confirmDelivery = dto.isConfirmDelivery();
             this.name = dto.getName();
             this.status = dto.getStatus();
             this.description = dto.getDescription();
@@ -158,7 +163,15 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         this.maxLogSchemaVersion = maxLogSchemaVersion;
     }
 
-    public LogAppenderStatusDto getStatus() {
+    public boolean isConfirmDelivery() {
+		return confirmDelivery;
+	}
+
+	public void setConfirmDelivery(boolean confirmDelivery) {
+		this.confirmDelivery = confirmDelivery;
+	}
+
+	public LogAppenderStatusDto getStatus() {
         return status;
     }
 
@@ -211,6 +224,7 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         dto.setDescription(description);
         dto.setMinLogSchemaVersion(minLogSchemaVersion);
         dto.setMaxLogSchemaVersion(maxLogSchemaVersion);
+        dto.setConfirmDelivery(confirmDelivery);
         dto.setStatus(status);
         dto.setTypeName(typeName);
         dto.setAppenderClassName(appenderClassName);
@@ -228,7 +242,8 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     public String toString() {
         return "LogAppender [name=" + name + ", application=" + application
                 + ", minLogSchemaVersion=" + minLogSchemaVersion
-                + ", maxLogSchemaVersion=" + maxLogSchemaVersion + ", status="
+                + ", maxLogSchemaVersion=" + maxLogSchemaVersion
+                + ", confirmDelivery=" + confirmDelivery + ", status="
                 + status + ", description=" + description
                 + ", createdUsername=" + createdUsername + ", createdTime="
                 + createdTime + ", typeName=" + typeName

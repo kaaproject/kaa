@@ -84,6 +84,14 @@ public interface LogAppender {
     boolean isSchemaVersionSupported(int version);
 
     /**
+     * Check if appender requires confirmation of data delivery
+     * 
+     * @return true if appender requires confirmation of data delivery, false
+     *         otherwise.
+     */
+    boolean isDeliveryConfirmationRequired();
+
+    /**
      * Release any resources allocated within the appender such as file handles,
      * network connections, etc.
      */

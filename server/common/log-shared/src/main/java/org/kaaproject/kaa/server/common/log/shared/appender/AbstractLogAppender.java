@@ -57,6 +57,8 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     private List<LogHeaderStructureDto> header;
     
     private int minSchemaVersion, maxSchemaVersion;
+    
+    private boolean confirmDelivery;
 
     /** The converters. */
     Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
@@ -89,6 +91,7 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     public void initLogAppender(LogAppenderDto appender) {
     	this.minSchemaVersion = appender.getMinLogSchemaVersion();
     	this.maxSchemaVersion = appender.getMaxLogSchemaVersion();
+    	this.confirmDelivery = appender.isConfirmDelivery();
         byte[] rawConfiguration = appender.getRawConfiguration();
         try {
             AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(configurationClass);
@@ -170,6 +173,11 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     @Override
     public boolean isSchemaVersionSupported(int version){
     	return minSchemaVersion <= version && version <= maxSchemaVersion;
+    }
+    
+    @Override
+    public boolean isDeliveryConfirmationRequired(){
+    	return confirmDelivery;
     }
 
     /**

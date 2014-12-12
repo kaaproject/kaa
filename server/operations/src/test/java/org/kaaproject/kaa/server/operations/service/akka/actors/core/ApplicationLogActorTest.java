@@ -39,6 +39,7 @@ import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.mockito.Mockito;
 
 import akka.actor.ActorContext;
+import akka.actor.ActorRef;
 
 public class ApplicationLogActorTest {
 
@@ -104,6 +105,8 @@ public class ApplicationLogActorTest {
         when(logAppender.isSchemaVersionSupported(1)).thenReturn(Boolean.FALSE);
         when(logEventPackMessage.getLogSchema()).thenReturn(logSchema);
         when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
+        when(logEventPackMessage.getOriginator()).thenReturn(ActorRef.noSender());
+        when(logEventPackMessage.getRequestId()).thenReturn("request id");
 
         applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
         
@@ -156,6 +159,9 @@ public class ApplicationLogActorTest {
         LogEventPackMessage logEventPackMessage = mock(LogEventPackMessage.class);
         when(logEventPackMessage.getLogSchema()).thenReturn(logSchema);
         when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
+        when(logEventPackMessage.getOriginator()).thenReturn(ActorRef.noSender());
+        when(logEventPackMessage.getRequestId()).thenReturn("request id");
+
 
         LogAppender mockAppender = mock(LogAppender.class);
         when(mockAppender.getName()).thenReturn("flume");
