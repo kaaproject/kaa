@@ -56,7 +56,7 @@ import com.mongodb.DB;
 import com.mongodb.ServerAddress;
 
 public class MongoDBLogAppenderTest {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLogAppenderTest.class);
 
     private static final Charset UTF_8 = Charset.forName("UTF-8");
@@ -65,12 +65,8 @@ public class MongoDBLogAppenderTest {
     private static final String TENANT_ID = "tenant_id";
     private static final String NEW_APPENDER_NAME = "new name";
     private static final String ENDPOINT_KEY = "endpoint key";
-    private static final String EMPTY_SCHEMA = "{"+
-                                                  "\"type\": \"record\","+
-                                                  "\"name\": \"Log\","+
-                                                  "\"namespace\": \"org.kaaproject.kaa.schema.base\","+
-                                                  "\"fields\": []"+
-                                               "}";
+    private static final String EMPTY_SCHEMA = "{" + "\"type\": \"record\"," + "\"name\": \"Log\","
+            + "\"namespace\": \"org.kaaproject.kaa.schema.base\"," + "\"fields\": []" + "}";
     private static final String LOG_DATA = "null";
     private static final long DATE_CREATED = System.currentTimeMillis();
 
@@ -98,7 +94,7 @@ public class MongoDBLogAppenderTest {
     @Before
     public void beforeTest() throws IOException {
         logAppender = new MongoDbLogAppender();
-        
+
         LogAppenderDto appenderDto = new LogAppenderDto();
         appenderDto.setApplicationId(APPLICATION_ID);
         appenderDto.setApplicationToken(APPLICATION_TOKEN);
@@ -112,17 +108,15 @@ public class MongoDBLogAppenderTest {
             servers.add(new MongoDbServer(serverAddress.getHost(), serverAddress.getPort()));
         }
         List<MongoDBCredential> credentials = new ArrayList<>();
-        
-        MongoDbConfig mongoDbConfig = MongoDbConfig.newBuilder().
-                                                    setMongoServers(servers).
-                                                    setMongoCredentials(credentials).
-                                                    setDbName(dbName).build();
-        
+
+        MongoDbConfig mongoDbConfig = MongoDbConfig.newBuilder().setMongoServers(servers).setMongoCredentials(credentials)
+                .setDbName(dbName).build();
+
         AvroByteArrayConverter<MongoDbConfig> converter = new AvroByteArrayConverter<>(MongoDbConfig.class);
         byte[] rawConfiguration = converter.toByteArray(mongoDbConfig);
-        
+
         appenderDto.setRawConfiguration(rawConfiguration);
-        
+
         logAppender.init(appenderDto);
     }
 
@@ -153,7 +147,8 @@ public class MongoDBLogAppenderTest {
         Assert.assertEquals(converter1, converter2);
     }
 
-    @Test //Not throws NullPointerException
+    @Test
+    // Not throws NullPointerException
     public void doAppendClosedTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         Logger testLogger = Mockito.mock(Logger.class);
 
@@ -168,7 +163,7 @@ public class MongoDBLogAppenderTest {
         field.set(null, testLogger);
 
         logAppender.close();
-        
+
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         logAppender.doAppend(new LogEventPack(), callback);
 
@@ -176,9 +171,10 @@ public class MongoDBLogAppenderTest {
     }
 
     @Test
-    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, IOException {
-    	GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
-    	BasicEndpointProfile theLog = new BasicEndpointProfile("test");
+    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException,
+            IllegalAccessException, IOException {
+        GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+        BasicEndpointProfile theLog = new BasicEndpointProfile("test");
         List<LogEvent> events = new ArrayList<>();
         LogEvent event1 = new LogEvent();
         event1.setLogData(new byte[0]);
@@ -189,11 +185,11 @@ public class MongoDBLogAppenderTest {
         events.add(event1);
         events.add(event2);
         events.add(event3);
-        
+
         LogSchemaDto schemaDto = new LogSchemaDto();
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         LogSchema schema = new LogSchema(schemaDto);
-        
+
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
 
         LogEventDao logEventDao = Mockito.mock(LogEventDao.class);
@@ -210,8 +206,8 @@ public class MongoDBLogAppenderTest {
 
     @Test
     public void doAppendTest() throws IOException {
-    	GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
-    	BasicEndpointProfile theLog = new BasicEndpointProfile("test");
+        GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+        BasicEndpointProfile theLog = new BasicEndpointProfile("test");
         List<LogEvent> events = new ArrayList<>();
         LogEvent event1 = new LogEvent();
         event1.setLogData(converter.encode(theLog));
@@ -222,13 +218,13 @@ public class MongoDBLogAppenderTest {
         events.add(event1);
         events.add(event2);
         events.add(event3);
-        
+
         LogSchemaDto schemaDto = new LogSchemaDto();
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         LogSchema schema = new LogSchema(schemaDto);
-        
+
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
-        
+
         String collectionName = (String) ReflectionTestUtils.getField(logAppender, "collectionName");
         Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection(collectionName).count());
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
@@ -237,33 +233,33 @@ public class MongoDBLogAppenderTest {
         collectionName = (String) ReflectionTestUtils.getField(logAppender, "collectionName");
         Assert.assertEquals(3, MongoDBTestRunner.getDB().getCollection(collectionName).count());
     }
-    
-    private static class TestLogDeliveryCallback implements LogDeliveryCallback{
 
-    	private volatile boolean success;
-    	private volatile boolean internallError;
-    	private volatile boolean connectionError;
-    	private volatile boolean remoteError;
-    	
-		@Override
-		public void onSuccess() {
-			success = true;
-		}
+    private static class TestLogDeliveryCallback implements LogDeliveryCallback {
 
-		@Override
-		public void onInternalError() {
-			internallError = true;
-		}
+        private volatile boolean success;
+        private volatile boolean internallError;
+        private volatile boolean connectionError;
+        private volatile boolean remoteError;
 
-		@Override
-		public void onConnectionError() {
-			connectionError = true;
-		}
+        @Override
+        public void onSuccess() {
+            success = true;
+        }
 
-		@Override
-		public void onRemoteError() {
-			remoteError = true;
-		}
-    	
+        @Override
+        public void onInternalError() {
+            internallError = true;
+        }
+
+        @Override
+        public void onConnectionError() {
+            connectionError = true;
+        }
+
+        @Override
+        public void onRemoteError() {
+            remoteError = true;
+        }
+
     }
 }

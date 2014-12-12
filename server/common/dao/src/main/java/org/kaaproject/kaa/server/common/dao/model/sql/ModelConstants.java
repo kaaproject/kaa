@@ -15,7 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-
 public final class ModelConstants {
 
     /**
@@ -206,7 +205,7 @@ public final class ModelConstants {
     public static final String EVENT_CLASS_FAMILY_CREATED_USERNAME = CREATED_USERNAME;
     public static final String EVENT_CLASS_FAMILY_CREATED_TIME = CREATED_TIME;
 
-     /**
+    /**
      * Event class constants.
      */
     public static final String EVENT_CLASS_TABLE_NAME = "event_class";
@@ -240,7 +239,7 @@ public final class ModelConstants {
      * Log schema constants.
      */
     public static final String LOG_SCHEMA_TABLE_NAME = "log_schema";
-    
+
     /**
      * Log appender constants.
      */

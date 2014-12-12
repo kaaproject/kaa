@@ -20,20 +20,20 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderBaseDto;
 import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
 public class LogAppenderFormWrapper extends LogAppenderBaseDto {
-    
-	private static final long serialVersionUID = 7273552561803139379L;
 
-    private RecordField configuration;	
-	
+    private static final long serialVersionUID = 7273552561803139379L;
+
+    private RecordField configuration;
+
     public LogAppenderFormWrapper() {
-    	super();
-	}	
-	
-    public LogAppenderFormWrapper(LogAppenderBaseDto logAppenderDto) {
-		super(logAppenderDto);
-	}
+        super();
+    }
 
-	public RecordField getConfiguration() {
+    public LogAppenderFormWrapper(LogAppenderBaseDto logAppenderDto) {
+        super(logAppenderDto);
+    }
+
+    public RecordField getConfiguration() {
         return configuration;
     }
 

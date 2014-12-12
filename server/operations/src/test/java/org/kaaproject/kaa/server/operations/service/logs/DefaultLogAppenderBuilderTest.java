@@ -100,16 +100,16 @@ public class DefaultLogAppenderBuilderTest {
 
         }
 
-		@Override
-		public boolean isSchemaVersionSupported(int version) {
-			// TODO Auto-generated method stub
-			return true;
-		}
+        @Override
+        public boolean isSchemaVersionSupported(int version) {
+            // TODO Auto-generated method stub
+            return true;
+        }
 
-		@Override
-		public boolean isDeliveryConfirmationRequired() {
-			// TODO Auto-generated method stub
-			return false;
-		}
+        @Override
+        public boolean isDeliveryConfirmationRequired() {
+            // TODO Auto-generated method stub
+            return false;
+        }
     }
 }

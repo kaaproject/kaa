@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.common.dto.logs;
 
-public class LogAppenderRestDto extends LogAppenderBaseDto{
+public class LogAppenderRestDto extends LogAppenderBaseDto {
 
     private static final long serialVersionUID = 8035147059935996619L;
 
     private String configuration;
-    
+
     public LogAppenderRestDto() {
         super();
     }
@@ -38,41 +38,40 @@ public class LogAppenderRestDto extends LogAppenderBaseDto{
         this.configuration = configuration;
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ ((configuration == null) ? 0 : configuration.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((configuration == null) ? 0 : configuration.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		LogAppenderRestDto other = (LogAppenderRestDto) obj;
-		if (configuration == null) {
-			if (other.configuration != null)
-				return false;
-		} else if (!configuration.equals(other.configuration))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LogAppenderRestDto other = (LogAppenderRestDto) obj;
+        if (configuration == null) {
+            if (other.configuration != null)
+                return false;
+        } else if (!configuration.equals(other.configuration))
+            return false;
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("LogAppenderRestDto [configuration=");
-		builder.append(configuration);
-		builder.append(", parent=");
-		builder.append(super.toString());
-		builder.append("]");
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("LogAppenderRestDto [configuration=");
+        builder.append(configuration);
+        builder.append(", parent=");
+        builder.append(super.toString());
+        builder.append("]");
+        return builder.toString();
+    }
 
 }

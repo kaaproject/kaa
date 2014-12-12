@@ -61,19 +61,20 @@ public class FileSystemLogAppenderTest {
         logAppenderDto.setApplicationId(APPLICATION_ID);
         logAppenderDto.setName("test");
         logAppenderDto.setTenantId(TENANT_ID);
-        
+
         try {
             appender.init(logAppenderDto);
-            
+
             ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
-            GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+            GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(
+                    BasicEndpointProfile.SCHEMA$);
             BasicEndpointProfile theLog = new BasicEndpointProfile("test");
-    
+
             LogSchemaDto schemaDto = new LogSchemaDto();
             schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
             LogSchema schema = new LogSchema(schemaDto);
             LogEvent logEvent = new LogEvent();
-    
+
             logEvent.setLogData(converter.encode(theLog));
             LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
             TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
@@ -83,7 +84,7 @@ public class FileSystemLogAppenderTest {
             appender.close();
         }
     }
-    
+
     @Test
     public void testAppendWithInternalError() throws IOException {
         FileSystemLogAppender appender = new FileSystemLogAppender();
@@ -97,17 +98,17 @@ public class FileSystemLogAppenderTest {
         logAppenderDto.setApplicationId(APPLICATION_ID);
         logAppenderDto.setName("test");
         logAppenderDto.setTenantId(TENANT_ID);
-        
+
         try {
             appender.init(logAppenderDto);
-            
+
             ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
-    
+
             LogSchemaDto schemaDto = new LogSchemaDto();
             schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
             LogSchema schema = new LogSchema(schemaDto);
             LogEvent logEvent = new LogEvent();
-    
+
             logEvent.setLogData(new byte[0]);
             LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
             TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
@@ -117,7 +118,6 @@ public class FileSystemLogAppenderTest {
             appender.close();
         }
     }
-    
 
     @Test
     public void initTest() throws IOException {
@@ -142,50 +142,46 @@ public class FileSystemLogAppenderTest {
             appender.close();
         }
     }
-    
+
     private LogAppenderDto prepareConfig() throws IOException {
         LogAppenderDto logAppenderDto = new LogAppenderDto();
         logAppenderDto.setApplicationId(APPLICATION_ID);
         logAppenderDto.setName("test");
         logAppenderDto.setTenantId(TENANT_ID);
-        
-        FileConfig fileConfig = FileConfig.newBuilder().
-                setLogsRootPath(System.getProperty("java.io.tmpdir") + File.separator + "tmp_logs_"+System.currentTimeMillis()).build();
-        
+
+        FileConfig fileConfig = FileConfig.newBuilder()
+                .setLogsRootPath(System.getProperty("java.io.tmpdir") + File.separator + "tmp_logs_" + System.currentTimeMillis()).build();
+
         AvroByteArrayConverter<FileConfig> converter = new AvroByteArrayConverter<>(FileConfig.class);
         byte[] rawConfiguration = converter.toByteArray(fileConfig);
-        
+
         logAppenderDto.setRawConfiguration(rawConfiguration);
 
         return logAppenderDto;
     }
 
-    private static class TestLogDeliveryCallback implements LogDeliveryCallback{
+    private static class TestLogDeliveryCallback implements LogDeliveryCallback {
 
-    	private volatile boolean success;
-    	private volatile boolean internallError;
-    	private volatile boolean connectionError;
-    	private volatile boolean remoteError;
-    	
-		@Override
-		public void onSuccess() {
-			success = true;
-		}
+        private volatile boolean success;
+        private volatile boolean internallError;
 
-		@Override
-		public void onInternalError() {
-			internallError = true;
-		}
+        @Override
+        public void onSuccess() {
+            success = true;
+        }
 
-		@Override
-		public void onConnectionError() {
-			connectionError = true;
-		}
+        @Override
+        public void onInternalError() {
+            internallError = true;
+        }
 
-		@Override
-		public void onRemoteError() {
-			remoteError = true;
-		}
-    	
+        @Override
+        public void onConnectionError() {
+        }
+
+        @Override
+        public void onRemoteError() {
+        }
+
     }
 }

@@ -41,7 +41,7 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
     private LogStorage             storage;
     private LogStorageStatus       storageStatus;
     private LogUploadStrategy      uploadStrategy;
-    private final LogTransport    transport;
+    private final LogTransport     transport;
 
     boolean isUploading;
 

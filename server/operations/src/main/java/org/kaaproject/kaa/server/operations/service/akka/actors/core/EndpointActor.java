@@ -95,7 +95,7 @@ public class EndpointActor extends UntypedActor {
 
         /*
          * (non-Javadoc)
-         *
+         * 
          * @see akka.japi.Creator#create()
          */
         @Override
@@ -106,14 +106,14 @@ public class EndpointActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
      */
     @Override
     public void onReceive(Object message) throws Exception {
-        if(LOG.isTraceEnabled()){
+        if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Received: {}", actorKey, message);
-        }else{
+        } else {
             LOG.debug("[{}] Received: {}", actorKey, message.getClass().getName());
         }
         if (message instanceof SyncRequestMessage) {
@@ -192,7 +192,7 @@ public class EndpointActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#preStart()
      */
     @Override
@@ -202,7 +202,7 @@ public class EndpointActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#postStop()
      */
     @Override

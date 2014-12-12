@@ -84,8 +84,7 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
     public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
             if (kvStore != null) {
-                LOG.debug("[{}] appending {} logs to Oracle NoSQL kvStore", this.getApplicationToken(), logEventPack
-                        .getEvents().size());
+                LOG.debug("[{}] appending {} logs to Oracle NoSQL kvStore", this.getApplicationToken(), logEventPack.getEvents().size());
                 try {
                     doAppendGenericAvro(logEventPack, header);
                     listener.onSuccess();
@@ -151,8 +150,7 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
 
     private void initialize(LogEventPack logEventPack) throws Exception {
         try {
-            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logEventPack
-                    .getLogSchema().getSchema());
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logEventPack.getLogSchema().getSchema());
             checkSchemaUploaded(recordWrapperSchema);
             AvroCatalog avroCatalog = kvStore.getAvroCatalog();
             binding = avroCatalog.getGenericBinding(recordWrapperSchema);
@@ -184,8 +182,8 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
         }
 
         if (!uploaded) {
-            AvroSchemaMetadata metadata = new AvroSchemaMetadata(AvroSchemaStatus.ACTIVE, System.currentTimeMillis(),
-                    username, getHostName());
+            AvroSchemaMetadata metadata = new AvroSchemaMetadata(AvroSchemaStatus.ACTIVE, System.currentTimeMillis(), username,
+                    getHostName());
 
             AddSchemaOptions options = new AddSchemaOptions(evolve, true);
 
@@ -264,15 +262,13 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
             securityProperties.put(KVSecurityConstants.SSL_PROTOCOLS_PROPERTY, configuration.getSslProtocols());
         }
         if (configuration.getSslHostnameVerifier() != null) {
-            securityProperties.put(KVSecurityConstants.SSL_HOSTNAME_VERIFIER_PROPERTY,
-                    configuration.getSslHostnameVerifier());
+            securityProperties.put(KVSecurityConstants.SSL_HOSTNAME_VERIFIER_PROPERTY, configuration.getSslHostnameVerifier());
         }
         if (configuration.getSslTrustStore() != null) {
             securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY, configuration.getSslTrustStore());
         }
         if (configuration.getSslTrustStoreType() != null) {
-            securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_TYPE_PROPERTY,
-                    configuration.getSslTrustStoreType());
+            securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_TYPE_PROPERTY, configuration.getSslTrustStoreType());
         }
         config.setSecurityProperties(securityProperties);
 

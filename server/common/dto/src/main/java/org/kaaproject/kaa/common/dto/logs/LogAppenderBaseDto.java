@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.common.dto.logs;
 
 import java.io.Serializable;
@@ -8,9 +23,9 @@ import org.kaaproject.kaa.common.dto.AbstractDetailDto;
 import org.kaaproject.kaa.common.dto.HasId;
 
 public abstract class LogAppenderBaseDto extends AbstractDetailDto implements HasId, Serializable {
-	
-	private static final long serialVersionUID = 8035147059931231619L;
-	
+
+    private static final long serialVersionUID = 8035147059931231619L;
+
     private String id;
     private String applicationId;
     private String applicationToken;
@@ -26,7 +41,7 @@ public abstract class LogAppenderBaseDto extends AbstractDetailDto implements Ha
     public LogAppenderBaseDto() {
         super();
     }
-    
+
     public LogAppenderBaseDto(LogAppenderBaseDto logAppenderDto) {
         super(logAppenderDto);
         this.id = logAppenderDto.getId();
@@ -75,7 +90,7 @@ public abstract class LogAppenderBaseDto extends AbstractDetailDto implements Ha
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
     }
-    
+
     public int getMinLogSchemaVersion() {
         return minLogSchemaVersion;
     }
@@ -115,7 +130,7 @@ public abstract class LogAppenderBaseDto extends AbstractDetailDto implements Ha
     public void setAppenderClassName(String appenderClassName) {
         this.appenderClassName = appenderClassName;
     }
-    
+
     public List<LogHeaderStructureDto> getHeaderStructure() {
         return headerStructure;
     }
@@ -125,36 +140,27 @@ public abstract class LogAppenderBaseDto extends AbstractDetailDto implements Ha
     }
 
     public boolean isConfirmDelivery() {
-		return confirmDelivery;
-	}
+        return confirmDelivery;
+    }
 
-	public void setConfirmDelivery(boolean confirmDelivery) {
-		this.confirmDelivery = confirmDelivery;
-	}
+    public void setConfirmDelivery(boolean confirmDelivery) {
+        this.confirmDelivery = confirmDelivery;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime
-                * result
-                + ((appenderClassName == null) ? 0 : appenderClassName
-                        .hashCode());
-        result = prime * result
-                + ((applicationId == null) ? 0 : applicationId.hashCode());
-        result = prime
-                * result
-                + ((applicationToken == null) ? 0 : applicationToken.hashCode());
-        result = prime * result
-                + ((headerStructure == null) ? 0 : headerStructure.hashCode());
+        result = prime * result + ((appenderClassName == null) ? 0 : appenderClassName.hashCode());
+        result = prime * result + ((applicationId == null) ? 0 : applicationId.hashCode());
+        result = prime * result + ((applicationToken == null) ? 0 : applicationToken.hashCode());
+        result = prime * result + ((headerStructure == null) ? 0 : headerStructure.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + maxLogSchemaVersion;
         result = prime * result + minLogSchemaVersion;
         result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result
-                + ((tenantId == null) ? 0 : tenantId.hashCode());
-        result = prime * result
-                + ((typeName == null) ? 0 : typeName.hashCode());
+        result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
+        result = prime * result + ((typeName == null) ? 0 : typeName.hashCode());
         return result;
     }
 
@@ -234,32 +240,32 @@ public abstract class LogAppenderBaseDto extends AbstractDetailDto implements Ha
         return true;
     }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("LogAppenderDto [id=");
-		builder.append(id);
-		builder.append(", applicationId=");
-		builder.append(applicationId);
-		builder.append(", applicationToken=");
-		builder.append(applicationToken);
-		builder.append(", tenantId=");
-		builder.append(tenantId);
-		builder.append(", minLogSchemaVersion=");
-		builder.append(minLogSchemaVersion);
-		builder.append(", maxLogSchemaVersion=");
-		builder.append(maxLogSchemaVersion);
-		builder.append(", confirmDelivery=");
-		builder.append(confirmDelivery);
-		builder.append(", status=");
-		builder.append(status);
-		builder.append(", typeName=");
-		builder.append(typeName);
-		builder.append(", appenderClassName=");
-		builder.append(appenderClassName);
-		builder.append(", headerStructure=");
-		builder.append(headerStructure);
-		builder.append("]");
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("LogAppenderDto [id=");
+        builder.append(id);
+        builder.append(", applicationId=");
+        builder.append(applicationId);
+        builder.append(", applicationToken=");
+        builder.append(applicationToken);
+        builder.append(", tenantId=");
+        builder.append(tenantId);
+        builder.append(", minLogSchemaVersion=");
+        builder.append(minLogSchemaVersion);
+        builder.append(", maxLogSchemaVersion=");
+        builder.append(maxLogSchemaVersion);
+        builder.append(", confirmDelivery=");
+        builder.append(confirmDelivery);
+        builder.append(", status=");
+        builder.append(status);
+        builder.append(", typeName=");
+        builder.append(typeName);
+        builder.append(", appenderClassName=");
+        builder.append(appenderClassName);
+        builder.append(", headerStructure=");
+        builder.append(headerStructure);
+        builder.append("]");
+        return builder.toString();
+    }
 }

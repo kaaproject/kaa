@@ -46,9 +46,9 @@ public interface LogAppenderView extends BaseDetailsView {
     void setMetadataListBox(List<LogHeaderStructureDto> header);
 
     List<LogHeaderStructureDto> getHeader();
-    
+
     HasValue<RecordField> getConfiguration();
-    
+
     void setSchemaVersions(List<Integer> schemaVersions);
-    
+
 }

@@ -205,10 +205,10 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         return Utils.constants.logAppenderDetails();
     }
     
-	@Override
-	public HasValue<Boolean> getConfirmDelivery() {
-		return confirmDelivery;
-	}    
+    @Override
+    public HasValue<Boolean> getConfirmDelivery() {
+        return confirmDelivery;
+    }
 
     @Override
     protected void resetImpl() {

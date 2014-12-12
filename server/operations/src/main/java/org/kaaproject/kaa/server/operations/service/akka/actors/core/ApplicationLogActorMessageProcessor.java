@@ -44,7 +44,7 @@ public class ApplicationLogActorMessageProcessor {
     private final LogAppenderService logAppenderService;
 
     private final Map<String, LogAppender> logAppenders;
-    
+
     private final Map<LogAppenderFilterKey, List<LogAppender>> logAppendersCache;
 
     private final String applicationId;
@@ -52,11 +52,11 @@ public class ApplicationLogActorMessageProcessor {
     private final String applicationToken;
 
     private final Map<Integer, LogSchema> logSchemas;
-    
+
     private final VoidCallback voidCallback;
 
-    public ApplicationLogActorMessageProcessor(LogAppenderService logAppenderService,
-            ApplicationService applicationService, String applicationToken) {
+    public ApplicationLogActorMessageProcessor(LogAppenderService logAppenderService, ApplicationService applicationService,
+            String applicationToken) {
         super();
         this.logAppenderService = logAppenderService;
         this.applicationToken = applicationToken;
@@ -76,10 +76,10 @@ public class ApplicationLogActorMessageProcessor {
         List<LogAppender> required = filterAppenders(logSchema.getVersion(), true);
         List<LogAppender> optional = filterAppenders(logSchema.getVersion(), false);
         if (required.size() > 0 || optional.size() > 0) {
-        	for(LogAppender logAppender : optional){
-        		 logAppender.doAppend(message.getLogEventPack(), voidCallback);
-        	}
-        	
+            for (LogAppender logAppender : optional) {
+                logAppender.doAppend(message.getLogEventPack(), voidCallback);
+            }
+
             LogDeliveryCallback callback;
             if (required.size() > 1) {
                 callback = new MultiLogDeliveryCallback(message.getOriginator(), message.getRequestId(), required.size());
@@ -98,23 +98,23 @@ public class ApplicationLogActorMessageProcessor {
             sendErrorMessageToEndpoint(message, LogDeliveryErrorCode.NO_APPENDERS_CONFIGURED);
         }
     }
-    
-    public List<LogAppender> filterAppenders(int schemaVersion, boolean confirmDelivery){
-    	LogAppenderFilterKey key = new LogAppenderFilterKey(schemaVersion, confirmDelivery);
-    	List<LogAppender> result = logAppendersCache.get(key);
-    	if(result == null){
-    		result = new ArrayList<LogAppender>();
-    		for(LogAppender appender : logAppenders.values()){
-    			if(appender.isSchemaVersionSupported(schemaVersion) && appender.isDeliveryConfirmationRequired() == confirmDelivery){
-    				result.add(appender);
-    			}
-    		}
-    	}
-    	return result;
+
+    public List<LogAppender> filterAppenders(int schemaVersion, boolean confirmDelivery) {
+        LogAppenderFilterKey key = new LogAppenderFilterKey(schemaVersion, confirmDelivery);
+        List<LogAppender> result = logAppendersCache.get(key);
+        if (result == null) {
+            result = new ArrayList<LogAppender>();
+            for (LogAppender appender : logAppenders.values()) {
+                if (appender.isSchemaVersionSupported(schemaVersion) && appender.isDeliveryConfirmationRequired() == confirmDelivery) {
+                    result.add(appender);
+                }
+            }
+        }
+        return result;
     }
 
-	private LogSchema fetchLogSchema(LogEventPackMessage message) {
-		LogSchema logSchema = message.getLogSchema();
+    private LogSchema fetchLogSchema(LogEventPackMessage message) {
+        LogSchema logSchema = message.getLogSchema();
         if (logSchema == null) {
             logSchema = logSchemas.get(message.getLogSchemaVersion());
             if (logSchema == null) {
@@ -123,16 +123,15 @@ public class ApplicationLogActorMessageProcessor {
             }
             message.setLogSchema(logSchema);
         }
-		return logSchema;
-	}
+        return logSchema;
+    }
 
     private void sendErrorMessageToEndpoint(LogEventPackMessage message, LogDeliveryErrorCode errorCode) {
-    	if(message.getOriginator() != null){
-    		message.getOriginator().tell(new LogDeliveryMessage(message.getRequestId(), false, errorCode),
-                ActorRef.noSender());
-    	}else{
-    		LOG.warn("[{}] Can't send error message to unknown originator.", applicationToken);
-    	}
+        if (message.getOriginator() != null) {
+            message.getOriginator().tell(new LogDeliveryMessage(message.getRequestId(), false, errorCode), ActorRef.noSender());
+        } else {
+            LOG.warn("[{}] Can't send error message to unknown originator.", applicationToken);
+        }
     }
 
     protected void processLogAppenderNotification(Notification notification) {
@@ -156,8 +155,7 @@ public class ApplicationLogActorMessageProcessor {
 
     protected void stop() {
         for (LogAppender logAppender : logAppenders.values()) {
-            LOG.info("[{}] Closing appender [{}] with name {}", applicationToken, logAppender.getAppenderId(),
-                    logAppender.getName());
+            LOG.info("[{}] Closing appender [{}] with name {}", applicationToken, logAppender.getAppenderId(), logAppender.getName());
             logAppender.close();
         }
     }
@@ -185,67 +183,67 @@ public class ApplicationLogActorMessageProcessor {
         }
     }
 
-	private LogAppender removeAppender(String appenderId) {
-		logAppendersCache.clear();
-		return logAppenders.remove(appenderId);
-	}
-    
-	private void addAppender(String appenderId, LogAppender logAppender) {
-		logAppendersCache.clear();
-		logAppenders.put(appenderId, logAppender);
-	}
-	
+    private LogAppender removeAppender(String appenderId) {
+        logAppendersCache.clear();
+        return logAppenders.remove(appenderId);
+    }
+
+    private void addAppender(String appenderId, LogAppender logAppender) {
+        logAppendersCache.clear();
+        logAppenders.put(appenderId, logAppender);
+    }
+
     private static final class VoidCallback implements LogDeliveryCallback {
-		@Override
-		public void onSuccess() {
-		}
+        @Override
+        public void onSuccess() {
+        }
 
-		@Override
-		public void onRemoteError() {
-		}
+        @Override
+        public void onRemoteError() {
+        }
 
-		@Override
-		public void onInternalError() {
-		}
+        @Override
+        public void onInternalError() {
+        }
 
-		@Override
-		public void onConnectionError() {
-		}
-	}
+        @Override
+        public void onConnectionError() {
+        }
+    }
 
-	private static final class LogAppenderFilterKey{
-    	private int schemaVersion;
-    	private boolean confirmDelivery;
-		
-    	private LogAppenderFilterKey(int schemaVersion, boolean confirmDelivery) {
-			super();
-			this.schemaVersion = schemaVersion;
-			this.confirmDelivery = confirmDelivery;
-		}
+    private static final class LogAppenderFilterKey {
+        private int schemaVersion;
+        private boolean confirmDelivery;
 
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (confirmDelivery ? 1231 : 1237);
-			result = prime * result + schemaVersion;
-			return result;
-		}
+        private LogAppenderFilterKey(int schemaVersion, boolean confirmDelivery) {
+            super();
+            this.schemaVersion = schemaVersion;
+            this.confirmDelivery = confirmDelivery;
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			LogAppenderFilterKey other = (LogAppenderFilterKey) obj;
-			if (confirmDelivery != other.confirmDelivery)
-				return false;
-			if (schemaVersion != other.schemaVersion)
-				return false;
-			return true;
-		}
-    }	
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (confirmDelivery ? 1231 : 1237);
+            result = prime * result + schemaVersion;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            LogAppenderFilterKey other = (LogAppenderFilterKey) obj;
+            if (confirmDelivery != other.confirmDelivery)
+                return false;
+            if (schemaVersion != other.schemaVersion)
+                return false;
+            return true;
+        }
+    }
 }

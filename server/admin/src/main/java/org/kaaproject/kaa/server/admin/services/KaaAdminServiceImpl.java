@@ -1211,7 +1211,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException {
-    	LogAppenderDto logAppender =  new LogAppenderDto(wrapper);
+        LogAppenderDto logAppender = new LogAppenderDto(wrapper);
         try {
             Schema schema = appenderConfigSchemas.get(wrapper.getAppenderClassName());
             GenericRecord record = FormAvroConverter.createGenericRecordFormRecordField(wrapper.getConfiguration(), schema);

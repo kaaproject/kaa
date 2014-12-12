@@ -29,49 +29,49 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import akka.actor.ActorRef;
 
 public class LogEventPackMessageTest {
-    
+
     private static final String ENDPOINT_KEY = "endpointKey";
     private static final long DATE_CREATED = System.currentTimeMillis();
     private static final int LOG_SCHEMA_VERSION = 3;
     private static final LogSchema LOG_SCHEMA = new LogSchema(null);
     private static final List<LogEvent> EVENTS = new ArrayList<>();
-    
+
     @Test
     public void nullLogEventPackTest() {
         LogEventPackMessage logEvent = new LogEventPackMessage("request1", ActorRef.noSender(), null);
-        
+
         Assert.assertNull(logEvent.getLogEventPack());
     }
-    
+
     @Test
     public void logEventPackTest() {
         LogEventPack logEventPack1 = new LogEventPack();
-        
+
         LogEventPack logEventPack2 = new LogEventPack();
-        
+
         LogEventPackMessage logEvent = new LogEventPackMessage("request1", ActorRef.noSender(), logEventPack1);
-        
+
         Assert.assertEquals(logEventPack1, logEvent.getLogEventPack());
         Assert.assertNotEquals(logEventPack2, logEvent.getLogEventPack());
     }
-    
+
     @Test
     public void logEventPackDataTest() {
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, LOG_SCHEMA, EVENTS);
         logEventPack.setLogSchemaVersion(LOG_SCHEMA_VERSION);
-        
+
         LogEventPackMessage logEvent = new LogEventPackMessage("request1", ActorRef.noSender(), logEventPack);
-        
+
         Assert.assertEquals(ENDPOINT_KEY, logEvent.getEndpointKey());
         Assert.assertEquals(DATE_CREATED, logEvent.getDateCreated());
         Assert.assertEquals(LOG_SCHEMA_VERSION, logEvent.getLogSchemaVersion());
         Assert.assertEquals(LOG_SCHEMA, logEvent.getLogSchema());
         Assert.assertEquals(EVENTS, logEvent.getEvents());
-        
+
         LogSchema logSchema = new LogSchema(new LogSchemaDto());
-        
+
         logEvent.setLogSchema(logSchema);
-        
+
         Assert.assertEquals(logSchema, logEvent.getLogSchema());
         Assert.assertNotEquals(LOG_SCHEMA, logEvent.getLogSchema());
     }

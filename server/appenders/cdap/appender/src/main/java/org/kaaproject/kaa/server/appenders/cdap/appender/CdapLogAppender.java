@@ -70,20 +70,18 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
     public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
             if (streamWriter != null) {
-                final String appToken = this.getApplicationToken();
-                LOG.debug("[{}] appending {} logs to cdap stream", this.getApplicationToken(), logEventPack.getEvents()
-                        .size());
-                try{
-	                for (LogEventDto dto : generateLogEvent(logEventPack, header)) {
-	                    StringBuilder sb = new StringBuilder();
-	                    sb.append("{\"header\":").append(dto.getHeader()).append(",");
-	                    sb.append("\"event\":").append(dto.getEvent()).append("}");
-	                    ListenableFuture<Void> result = streamWriter.write(sb.toString(), UTF8);
-	                    Futures.addCallback(result, new Callback(listener), callbackExecutor);
-	                }
-                }catch(IOException e){
-                	LOG.debug("[{}] Failed to generate log event.", getName());
-                	listener.onInternalError();
+                LOG.debug("[{}] appending {} logs to cdap stream", this.getApplicationToken(), logEventPack.getEvents().size());
+                try {
+                    for (LogEventDto dto : generateLogEvent(logEventPack, header)) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("{\"header\":").append(dto.getHeader()).append(",");
+                        sb.append("\"event\":").append(dto.getEvent()).append("}");
+                        ListenableFuture<Void> result = streamWriter.write(sb.toString(), UTF8);
+                        Futures.addCallback(result, new Callback(listener), callbackExecutor);
+                    }
+                } catch (IOException e) {
+                    LOG.debug("[{}] Failed to generate log event.", getName());
+                    listener.onInternalError();
                 }
             } else {
                 LOG.info("[{}] Attempted to append to empty streamWriter.", getName());
@@ -105,7 +103,7 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
             }
             callbackPoolSize = Math.min(callbackPoolSize, MAX_CALLBACK_THREAD_POOL_SIZE);
             callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
-            
+
             if (configuration.getStream() != null) {
                 streamWriter = streamClient.createWriter(configuration.getStream());
             } else {
@@ -147,8 +145,8 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
             builder.verifySSLCert(configuration.getVerifySslCert().booleanValue());
         }
         if (configuration.getAuthClient() != null) {
-            AuthenticationClient authClient = (AuthenticationClient) Class.forName(configuration.getAuthClient())
-                    .getConstructor().newInstance();
+            AuthenticationClient authClient = (AuthenticationClient) Class.forName(configuration.getAuthClient()).getConstructor()
+                    .newInstance();
             authClient.setConnectionInfo(host, port, ssl);
             if (authClient.isAuthEnabled()) {
                 Properties properties = new Properties();
@@ -167,7 +165,6 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
         }
         return builder.build();
     }
-    
 
     private static final class Callback implements FutureCallback<Void> {
         private final LogDeliveryCallback callback;
@@ -183,11 +180,11 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
 
         @Override
         public void onFailure(Throwable t) {
-            if(t instanceof HttpFailureException){
+            if (t instanceof HttpFailureException) {
                 callback.onRemoteError();
-            }else if (t instanceof IOException){
+            } else if (t instanceof IOException) {
                 callback.onConnectionError();
-            }else{
+            } else {
                 callback.onInternalError();
             }
         }

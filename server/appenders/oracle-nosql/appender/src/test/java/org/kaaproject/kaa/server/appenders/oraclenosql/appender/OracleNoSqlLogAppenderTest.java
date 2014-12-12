@@ -65,24 +65,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class OracleNoSqlLogAppenderTest {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(OracleNoSqlLogAppenderTest.class);
-    
+
     private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final String APPLICATION_ID = "application_id";
     private static final String APPLICATION_TOKEN = "application_token";
     private static final String TENANT_ID = "tenant_id";
     private static final String ENDPOINT_KEY = "endpoint key";
 
-    private static final String EMPTY_SCHEMA = "{"+
-            "\"type\": \"record\","+
-            "\"name\": \"Log\","+
-            "\"namespace\": \"org.kaaproject.kaa.schema.base\","+
-            "\"fields\": []"+
-         "}";
+    private static final String EMPTY_SCHEMA = "{" + "\"type\": \"record\"," + "\"name\": \"Log\","
+            + "\"namespace\": \"org.kaaproject.kaa.schema.base\"," + "\"fields\": []" + "}";
     private static final String LOG_DATA = "null";
     private static final long DATE_CREATED = System.currentTimeMillis();
-
 
     private static final String STORE_NAME = "kvstore";
     private static final String STORE_HOST = "127.0.0.1";
@@ -90,9 +85,9 @@ public class OracleNoSqlLogAppenderTest {
 
     private static KVLite kvLite;
     private static File storeRootDir;
-    
+
     private LogAppender logAppender;
-    
+
     @BeforeClass
     public static void init() throws Exception {
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
@@ -101,20 +96,12 @@ public class OracleNoSqlLogAppenderTest {
             FileUtils.deleteQuietly(storeRootDir);
         }
         storeRootDir.mkdirs();
-        kvLite = new KVLite(storeRootDir.getAbsolutePath(),
-                            STORE_NAME,
-                            STORE_PORT,
-                            0,
-                            STORE_HOST,
-                            null,
-                            null,
-                            KVLite.DEFAULT_NUM_PARTITIONS,
-                            null,
-                            true);
-                            
-        kvLite.start();        
+        kvLite = new KVLite(storeRootDir.getAbsolutePath(), STORE_NAME, STORE_PORT, 0, STORE_HOST, null, null,
+                KVLite.DEFAULT_NUM_PARTITIONS, null, true);
+
+        kvLite.start();
     }
-    
+
     @AfterClass
     public static void afterClass() throws Exception {
         if (kvLite != null) {
@@ -127,14 +114,13 @@ public class OracleNoSqlLogAppenderTest {
             storeRootDir = null;
         }
     }
-    
+
     @After
     public void after() throws Exception {
         LOG.info("Deleting data from Oracle No SQL database");
         KVStore kvStore = connectToStore();
         if (kvStore != null) {
-            Iterator<Key> it = kvStore.storeKeysIterator(Direction.UNORDERED,
-                    100, null, null, null);
+            Iterator<Key> it = kvStore.storeKeysIterator(Direction.UNORDERED, 100, null, null, null);
             int numdeleted = 0;
             while (it.hasNext()) {
                 if (kvStore.delete(it.next())) {
@@ -145,11 +131,11 @@ public class OracleNoSqlLogAppenderTest {
         }
         kvStore.close();
     }
-    
+
     @Before
     public void beforeTest() throws IOException {
         logAppender = new OracleNoSqlLogAppender();
-        
+
         LogAppenderDto appenderDto = new LogAppenderDto();
         appenderDto.setApplicationId(APPLICATION_ID);
         appenderDto.setApplicationToken(APPLICATION_TOKEN);
@@ -160,23 +146,23 @@ public class OracleNoSqlLogAppenderTest {
         OracleNoSqlConfig oracleConfig = new OracleNoSqlConfig();
         oracleConfig.setKvStoreNodes(nodes);
         oracleConfig.setStoreName(STORE_NAME);
-        
+
         AvroByteArrayConverter<OracleNoSqlConfig> converter = new AvroByteArrayConverter<>(OracleNoSqlConfig.class);
         byte[] rawConfiguration = converter.toByteArray(oracleConfig);
-        
+
         appenderDto.setRawConfiguration(rawConfiguration);
-        
+
         logAppender.setApplicationToken(appenderDto.getApplicationToken());
         logAppender.init(appenderDto);
     }
-    
+
     @Test
     public void closeAppenderTest() {
         Assert.assertFalse((boolean) ReflectionTestUtils.getField(logAppender, "closed"));
         logAppender.close();
         Assert.assertTrue((boolean) ReflectionTestUtils.getField(logAppender, "closed"));
     }
-    
+
     @Test
     public void doAppendClosedTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         Logger testLogger = Mockito.mock(Logger.class);
@@ -196,11 +182,12 @@ public class OracleNoSqlLogAppenderTest {
         logAppender.doAppend(new LogEventPack(), callback);
         Assert.assertTrue(callback.internallError);
     }
-    
+
     @Test
-    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, DurabilityException, OperationExecutionException, FaultException, IOException {
-    	GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
-    	BasicEndpointProfile theLog = new BasicEndpointProfile("test");
+    public void doAppendWithCatchIOExceptionTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException,
+            IllegalAccessException, DurabilityException, OperationExecutionException, FaultException, IOException {
+        GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+        BasicEndpointProfile theLog = new BasicEndpointProfile("test");
         List<LogEvent> events = new ArrayList<>();
         LogEvent event1 = new LogEvent();
         event1.setLogData(new byte[0]);
@@ -211,18 +198,18 @@ public class OracleNoSqlLogAppenderTest {
         events.add(event1);
         events.add(event2);
         events.add(event3);
-        
+
         LogSchemaDto schemaDto = new LogSchemaDto();
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         LogSchema schema = new LogSchema(schemaDto);
-        
+
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
-        
+
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         logAppender.doAppend(logEventPack, callback);
         Assert.assertTrue(callback.internallError);
     }
-    
+
     @Test
     public void doAppendTest() throws Exception {
         List<LogEvent> events = new ArrayList<>();
@@ -235,13 +222,13 @@ public class OracleNoSqlLogAppenderTest {
         events.add(event1);
         events.add(event2);
         events.add(event3);
-        
+
         LogSchemaDto dto = new LogSchemaDto();
         dto.setSchema(EMPTY_SCHEMA);
         dto.setMajorVersion(1);
         LogSchema schema = new LogSchema(dto);
         int version = dto.getMajorVersion();
-        
+
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
         logEventPack.setLogSchemaVersion(version);
 
@@ -268,53 +255,52 @@ public class OracleNoSqlLogAppenderTest {
         Assert.assertTrue(callback.success);
         Assert.assertEquals(3, getKeyValuesCount());
     }
-    
+
     public int getKeyValuesCount() throws Exception {
         int numvalues = 0;
         KVStore kvStore = connectToStore();
         if (kvStore != null) {
-            Iterator<Key> it = kvStore.storeKeysIterator(Direction.UNORDERED,
-                    100, null, null, null);
+            Iterator<Key> it = kvStore.storeKeysIterator(Direction.UNORDERED, 100, null, null, null);
             while (it.hasNext()) {
-                    it.next();
-                    numvalues++;
+                it.next();
+                numvalues++;
             }
         }
         kvStore.close();
         return numvalues;
     }
-    
+
     private static KVStore connectToStore() {
         KVStoreConfig config = new KVStoreConfig(STORE_NAME, STORE_HOST + ":" + STORE_PORT);
         return KVStoreFactory.getStore(config);
     }
 
-    private static class TestLogDeliveryCallback implements LogDeliveryCallback{
+    private static class TestLogDeliveryCallback implements LogDeliveryCallback {
 
-    	private volatile boolean success;
-    	private volatile boolean internallError;
-    	private volatile boolean connectionError;
-    	private volatile boolean remoteError;
-    	
-		@Override
-		public void onSuccess() {
-			success = true;
-		}
+        private volatile boolean success;
+        private volatile boolean internallError;
+        private volatile boolean connectionError;
+        private volatile boolean remoteError;
 
-		@Override
-		public void onInternalError() {
-			internallError = true;
-		}
+        @Override
+        public void onSuccess() {
+            success = true;
+        }
 
-		@Override
-		public void onConnectionError() {
-			connectionError = true;
-		}
+        @Override
+        public void onInternalError() {
+            internallError = true;
+        }
 
-		@Override
-		public void onRemoteError() {
-			remoteError = true;
-		}
-    	
-    }    
+        @Override
+        public void onConnectionError() {
+            connectionError = true;
+        }
+
+        @Override
+        public void onRemoteError() {
+            remoteError = true;
+        }
+
+    }
 }

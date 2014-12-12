@@ -22,21 +22,23 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode
  * Message about status of log delivery for particular log upload request.
  */
 public class LogDeliveryMessage {
-    
+
     /** The request id. */
     private final String requestId;
-    
+
     /** The success. */
     private final boolean success;
-    
+
     /** The error code. */
     private final LogDeliveryErrorCode errorCode;
 
     /**
      * Instantiates a new log event delivery message.
      *
-     * @param requestId the request id
-     * @param success the success
+     * @param requestId
+     *            the request id
+     * @param success
+     *            the success
      */
     public LogDeliveryMessage(String requestId, boolean success) {
         this(requestId, success, null);
@@ -45,9 +47,12 @@ public class LogDeliveryMessage {
     /**
      * Instantiates a new log event delivery message.
      *
-     * @param requestId the request id
-     * @param success the success
-     * @param errorCode the error code
+     * @param requestId
+     *            the request id
+     * @param success
+     *            the success
+     * @param errorCode
+     *            the error code
      */
     public LogDeliveryMessage(String requestId, boolean success, LogDeliveryErrorCode errorCode) {
         this.requestId = requestId;

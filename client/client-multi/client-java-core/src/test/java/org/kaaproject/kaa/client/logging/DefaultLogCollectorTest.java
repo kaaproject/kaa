@@ -187,7 +187,7 @@ public class DefaultLogCollectorTest {
                     , request1.getLogEntries().size() == 3);
 
             LogSyncResponse uploadResponse = new LogSyncResponse();
-            LogDeliveryStatus status = new LogDeliveryStatus(request1.getRequestId(),SyncResponseResultType.SUCCESS, null);
+            LogDeliveryStatus status = new LogDeliveryStatus(request1.getRequestId(), SyncResponseResultType.SUCCESS, null);
             uploadResponse.setDeliveryStatuses(Collections.singletonList(status));
             try {
                 logCollector.onLogResponse(uploadResponse);

@@ -55,9 +55,9 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
 
     /** The header. */
     private List<LogHeaderStructureDto> header;
-    
+
     private int minSchemaVersion, maxSchemaVersion;
-    
+
     private boolean confirmDelivery;
 
     /** The converters. */
@@ -89,9 +89,9 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     protected abstract void initFromConfiguration(LogAppenderDto appender, T configuration);
 
     public void initLogAppender(LogAppenderDto appender) {
-    	this.minSchemaVersion = appender.getMinLogSchemaVersion();
-    	this.maxSchemaVersion = appender.getMaxLogSchemaVersion();
-    	this.confirmDelivery = appender.isConfirmDelivery();
+        this.minSchemaVersion = appender.getMinLogSchemaVersion();
+        this.maxSchemaVersion = appender.getMaxLogSchemaVersion();
+        this.confirmDelivery = appender.isConfirmDelivery();
         byte[] rawConfiguration = appender.getRawConfiguration();
         try {
             AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(configurationClass);
@@ -169,15 +169,15 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
             LOG.warn("Can't append log events. LogEventPack object is null.");
         }
     }
-    
+
     @Override
-    public boolean isSchemaVersionSupported(int version){
-    	return minSchemaVersion <= version && version <= maxSchemaVersion;
+    public boolean isSchemaVersionSupported(int version) {
+        return minSchemaVersion <= version && version <= maxSchemaVersion;
     }
-    
+
     @Override
-    public boolean isDeliveryConfirmationRequired(){
-    	return confirmDelivery;
+    public boolean isDeliveryConfirmationRequired() {
+        return confirmDelivery;
     }
 
     /**
@@ -189,7 +189,7 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
      *            the header
      * @return the list
      */
-    protected List<LogEventDto> generateLogEvent(LogEventPack logEventPack, RecordHeader header) throws IOException{
+    protected List<LogEventDto> generateLogEvent(LogEventPack logEventPack, RecordHeader header) throws IOException {
         LOG.debug("Generate LogEventDto objects from LogEventPack [{}] and header [{}]", logEventPack, header);
         List<LogEventDto> events = new ArrayList<>(logEventPack.getEvents().size());
         GenericAvroConverter<GenericRecord> eventConverter = getConverter(logEventPack.getLogSchema().getSchema());

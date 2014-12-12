@@ -75,10 +75,10 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
 
     @Column(name = LOG_APPENDER_MAX_LOG_SCHEMA_VERSION)
     private int maxLogSchemaVersion;
-    
+
     @Column(name = LOG_APPENDER_CONFIRM_DELIVERY)
     private boolean confirmDelivery;
-    
+
     @Column(name = LOG_APPENDER_STATUS)
     @Enumerated(EnumType.STRING)
     private LogAppenderStatusDto status;
@@ -94,7 +94,7 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
 
     @Column(name = LOG_APPENDER_TYPE_NAME)
     private String typeName;
-    
+
     @Column(name = LOG_APPENDER_APPENDER_CLASS_NAME)
     private String appenderClassName;
 
@@ -164,14 +164,14 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     }
 
     public boolean isConfirmDelivery() {
-		return confirmDelivery;
-	}
+        return confirmDelivery;
+    }
 
-	public void setConfirmDelivery(boolean confirmDelivery) {
-		this.confirmDelivery = confirmDelivery;
-	}
+    public void setConfirmDelivery(boolean confirmDelivery) {
+        this.confirmDelivery = confirmDelivery;
+    }
 
-	public LogAppenderStatusDto getStatus() {
+    public LogAppenderStatusDto getStatus() {
         return status;
     }
 
@@ -240,15 +240,10 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
 
     @Override
     public String toString() {
-        return "LogAppender [name=" + name + ", application=" + application
-                + ", minLogSchemaVersion=" + minLogSchemaVersion
-                + ", maxLogSchemaVersion=" + maxLogSchemaVersion
-                + ", confirmDelivery=" + confirmDelivery + ", status="
-                + status + ", description=" + description
-                + ", createdUsername=" + createdUsername + ", createdTime="
-                + createdTime + ", typeName=" + typeName
-                + ", appenderClassName=" + appenderClassName
-                + ", rawConfiguration=" + Arrays.toString(rawConfiguration)
+        return "LogAppender [name=" + name + ", application=" + application + ", minLogSchemaVersion=" + minLogSchemaVersion
+                + ", maxLogSchemaVersion=" + maxLogSchemaVersion + ", confirmDelivery=" + confirmDelivery + ", status=" + status
+                + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", typeName="
+                + typeName + ", appenderClassName=" + appenderClassName + ", rawConfiguration=" + Arrays.toString(rawConfiguration)
                 + ", headerStructure=" + headerStructure + "]";
     }
 

@@ -34,10 +34,11 @@ public class ApplicationLogActor extends UntypedActor {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationLogActor.class);
-    
+
     private final String applicationToken;
-    
+
     private final ApplicationLogActorMessageProcessor messageProcessor;
+
     /**
      * Instantiates a new application log actor.
      *
@@ -81,7 +82,7 @@ public class ApplicationLogActor extends UntypedActor {
 
         /*
          * (non-Javadoc)
-         *
+         * 
          * @see akka.japi.Creator#create()
          */
         @Override
@@ -92,15 +93,15 @@ public class ApplicationLogActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
      */
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("[{}] Received: {}", applicationToken, message);
         if (message instanceof LogEventPackMessage) {
-            messageProcessor.processLogEventPack(getContext(), (LogEventPackMessage)message);
-        } else if(message instanceof ThriftNotificationMessage) {
+            messageProcessor.processLogEventPack(getContext(), (LogEventPackMessage) message);
+        } else if (message instanceof ThriftNotificationMessage) {
             LOG.debug("[{}] Received thrift notification message: {}", applicationToken, message);
             Notification notification = ((ThriftNotificationMessage) message).getNotification();
             messageProcessor.processLogAppenderNotification(notification);
@@ -109,7 +110,7 @@ public class ApplicationLogActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#preStart()
      */
     @Override
@@ -119,7 +120,7 @@ public class ApplicationLogActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#postStop()
      */
     @Override

@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import akka.actor.ActorRef;
 
-public class MultiLogDeliveryCallback extends AbstractActorCallback{
+public class MultiLogDeliveryCallback extends AbstractActorCallback {
 
     private final AtomicInteger appendersCount;
 
@@ -47,7 +47,7 @@ public class MultiLogDeliveryCallback extends AbstractActorCallback{
      */
     @Override
     public void onSuccess() {
-        if(appendersCount.decrementAndGet() == 0){
+        if (appendersCount.decrementAndGet() == 0) {
             sendSuccessToEndpoint();
         }
     }

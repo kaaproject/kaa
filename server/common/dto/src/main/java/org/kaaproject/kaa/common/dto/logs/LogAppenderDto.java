@@ -20,61 +20,61 @@ import java.util.Arrays;
 
 public class LogAppenderDto extends LogAppenderBaseDto {
 
-	private static final long serialVersionUID = 8035147059935996619L;
+    private static final long serialVersionUID = 8035147059935996619L;
 
-	private byte[] rawConfiguration;
+    private byte[] rawConfiguration;
 
-	public LogAppenderDto() {
-		super();
-	}
+    public LogAppenderDto() {
+        super();
+    }
 
-	public LogAppenderDto(LogAppenderBaseDto detailsDto) {
-		super(detailsDto);
-	}
+    public LogAppenderDto(LogAppenderBaseDto detailsDto) {
+        super(detailsDto);
+    }
 
-	public LogAppenderDto(LogAppenderDto detailsDto) {
-		super(detailsDto);
-		this.rawConfiguration = detailsDto.rawConfiguration;
-	}
+    public LogAppenderDto(LogAppenderDto detailsDto) {
+        super(detailsDto);
+        this.rawConfiguration = detailsDto.rawConfiguration;
+    }
 
-	public byte[] getRawConfiguration() {
-		return rawConfiguration;
-	}
+    public byte[] getRawConfiguration() {
+        return rawConfiguration;
+    }
 
-	public void setRawConfiguration(byte[] rawConfiguration) {
-		this.rawConfiguration = rawConfiguration;
-	}
+    public void setRawConfiguration(byte[] rawConfiguration) {
+        this.rawConfiguration = rawConfiguration;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Arrays.hashCode(rawConfiguration);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Arrays.hashCode(rawConfiguration);
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		LogAppenderDto other = (LogAppenderDto) obj;
-		if (!Arrays.equals(rawConfiguration, other.rawConfiguration))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LogAppenderDto other = (LogAppenderDto) obj;
+        if (!Arrays.equals(rawConfiguration, other.rawConfiguration))
+            return false;
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("LogAppenderDto [rawConfiguration=");
-		builder.append(Arrays.toString(rawConfiguration));
-		builder.append(", parent=");
-		builder.append(super.toString());
-		builder.append("]");
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("LogAppenderDto [rawConfiguration=");
+        builder.append(Arrays.toString(rawConfiguration));
+        builder.append(", parent=");
+        builder.append(super.toString());
+        builder.append("]");
+        return builder.toString();
+    }
 }
