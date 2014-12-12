@@ -17,15 +17,12 @@
 # ifndef KAA_ENDPOINT_GEN_H_
 # define KAA_ENDPOINT_GEN_H_
 
-# ifdef __cplusplus
-    extern "C" {
-    # define CLOSE_EXTERN }
-# else
-    # define CLOSE_EXTERN
-# endif
-
 # include "kaa_common_schema.h"
 # include "collections/kaa_list.h"
+
+# ifdef __cplusplus
+extern "C" {
+# endif
 
 
 typedef struct {
@@ -1006,6 +1003,7 @@ typedef struct {
 
 kaa_topic_subscription_info_t* kaa_topic_subscription_info_deserialize(avro_reader_t reader);
 
-
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif
