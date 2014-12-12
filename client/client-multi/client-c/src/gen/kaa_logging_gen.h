@@ -17,16 +17,12 @@
 # ifndef KAA_LOGGING_GEN_H_
 # define KAA_LOGGING_GEN_H_
 
-# ifdef __cplusplus
-    extern "C" {
-    # define CLOSE_EXTERN }
-# else
-    # define CLOSE_EXTERN
-# endif
-
 # include "kaa_common_schema.h"
 # include "collections/kaa_list.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     kaa_string_t* data;
@@ -40,5 +36,7 @@ kaa_test_log_record_t* kaa_test_log_record_create();
 kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader);
 
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif

@@ -17,16 +17,12 @@
 # ifndef KAA_PROFILE_GEN_H_
 # define KAA_PROFILE_GEN_H_
 
-# ifdef __cplusplus
-    extern "C" {
-    # define CLOSE_EXTERN }
-# else
-    # define CLOSE_EXTERN
-# endif
-
 # include "kaa_common_schema.h"
 # include "collections/kaa_list.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     kaa_string_t* profile_body;
@@ -38,6 +34,7 @@ typedef struct {
 
 kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create();
 
-
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif
