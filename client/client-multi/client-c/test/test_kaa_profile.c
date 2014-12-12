@@ -22,6 +22,8 @@
 #include "utilities/kaa_log.h"
 #include "kaa_context.h"
 #include "kaa_profile.h"
+#include "kaa_defaults.h"
+#include "kaa_external.h"
 #include "gen/kaa_profile_gen.h"
 
 
@@ -38,6 +40,8 @@ extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
 
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
 
+extern kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile_sync_request_t **result);
+extern kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_sync_response_t *response);
 
 
 static kaa_logger_t *logger = NULL;
@@ -82,7 +86,96 @@ void test_profile_update()
     profile2->destroy(profile2);
 }
 
+void test_profile_compile_request()
+{
+    KAA_TRACE_IN(logger);
 
+    kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
+    profile1->profile_body = kaa_string_copy_create("dummy2", kaa_data_destroy);
+
+    size_t serialized_profile_size = profile1->get_size(profile1);
+    char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
+    avro_writer_t writer = avro_writer_memory(serialized_profile, serialized_profile_size);
+    profile1->serialize(writer, profile1);
+    avro_writer_free(writer);
+
+    ASSERT_EQUAL(kaa_status_set_endpoint_access_token(status, "token1"), KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_profile_update_profile(profile_manager, profile1), KAA_ERR_NONE);
+
+    kaa_profile_sync_request_t *profile_request = NULL;
+    ASSERT_EQUAL(kaa_profile_compile_request(profile_manager, &profile_request), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(profile_manager);
+
+    ASSERT_EQUAL(profile_request->version_info->config_version, CONFIG_SCHEMA_VERSION);
+    ASSERT_EQUAL(profile_request->version_info->log_schema_version, LOG_SCHEMA_VERSION);
+    ASSERT_EQUAL(profile_request->version_info->profile_version, PROFILE_SCHEMA_VERSION);
+    ASSERT_EQUAL(profile_request->version_info->system_nf_version, SYSTEM_NF_SCHEMA_VERSION);
+    ASSERT_EQUAL(profile_request->version_info->user_nf_version, USER_NF_SCHEMA_VERSION);
+
+#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
+    kaa_list_t *event_versions = (kaa_list_t *) profile_request->version_info->event_family_versions->data;
+    kaa_event_class_family_version_info_t *ecfv1 = (kaa_event_class_family_version_info_t *) kaa_list_get_data(event_versions);
+    ASSERT_EQUAL(strcmp(ecfv1->name->data, KAA_EVENT_SCHEMA_VERSIONS[0].name), 0);
+    ASSERT_EQUAL(ecfv1->version, KAA_EVENT_SCHEMA_VERSIONS[0].version);
+#endif
+    ASSERT_EQUAL(memcmp(profile_request->profile_body->buffer, serialized_profile, profile_request->profile_body->size), 0);
+    kaa_string_t *token = (kaa_string_t *)profile_request->endpoint_access_token->data;
+    ASSERT_EQUAL(strcmp(token->data, "token1"), 0);
+
+    char *pub_key_buffer = NULL;
+    size_t buf_size = 0;
+    bool pub_key_dealloc = false;
+    kaa_get_endpoint_public_key(&pub_key_buffer, &buf_size, &pub_key_dealloc);
+
+    kaa_bytes_t *pub_key_bytes = (kaa_bytes_t *) profile_request->endpoint_public_key->data;
+    ASSERT_EQUAL(memcmp(pub_key_bytes->buffer, pub_key_buffer, buf_size), 0);
+    if (pub_key_dealloc)
+        KAA_FREE(pub_key_buffer);
+
+
+    profile_request->destroy(profile_request);
+    KAA_FREE(serialized_profile);
+}
+
+void test_profile_compile_request_when_registered()
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_set_endpoint_registered(status, true);
+    kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
+    profile1->profile_body = kaa_string_copy_create("dummy3", kaa_data_destroy);
+
+    ASSERT_EQUAL(kaa_profile_update_profile(profile_manager, profile1), KAA_ERR_NONE);
+
+    kaa_profile_sync_request_t *profile_request = NULL;
+    ASSERT_EQUAL(kaa_profile_compile_request(profile_manager, &profile_request), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(profile_manager);
+    ASSERT_NULL(profile_request->endpoint_public_key->data);
+
+    profile_request->destroy(profile_request);
+    kaa_set_endpoint_registered(status, false);
+}
+
+void test_profile_handle_sync()
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
+    profile1->profile_body = kaa_string_copy_create("dummy4", kaa_data_destroy);
+
+    ASSERT_EQUAL(kaa_profile_update_profile(profile_manager, profile1), KAA_ERR_NONE);
+
+    bool is_registered = false;
+    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
+    ASSERT_FALSE(is_registered);
+
+    kaa_profile_sync_response_t response;
+    response.response_status = ENUM_SYNC_RESPONSE_STATUS_NO_DELTA;
+    kaa_profile_handle_sync(profile_manager, &response);
+    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
+    ASSERT_TRUE(is_registered);
+
+}
 
 int test_init(void)
 {
@@ -120,4 +213,7 @@ int test_deinit(void)
 
 KAA_SUITE_MAIN(Profile, test_init, test_deinit,
         KAA_TEST_CASE(profile_update, test_profile_update)
+        KAA_TEST_CASE(profile_request, test_profile_compile_request)
+        KAA_TEST_CASE(profile_request_when_registered, test_profile_compile_request_when_registered)
+        KAA_TEST_CASE(profile_handle_sync, test_profile_handle_sync)
 )
