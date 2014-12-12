@@ -156,8 +156,8 @@ do
 
 case "$cmd" in
     build)
-        prepare_build
-        build
+        prepare_build &&
+        build &&
         execute_tests
     ;;
 
@@ -166,9 +166,9 @@ case "$cmd" in
     ;;
 
     test)
-        prepare_build
-        build
-        execute_tests
+        prepare_build &&
+        build &&
+        execute_tests &&
         run_analysis
     ;;
 

@@ -418,6 +418,7 @@ void test_kaa_deque_iterator_api()
     ASSERT_NOT_NULL(kaa_deque_iterator_get_data(it));
     ASSERT_NOT_NULL(kaa_deque_iterator_previous(it));
     ASSERT_NULL(kaa_deque_iterator_next(it));
+    kaa_deque_destroy(deque, NULL);
 }
 
 KAA_SUITE_MAIN(Deque, NULL, NULL

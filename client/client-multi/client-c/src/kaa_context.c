@@ -85,9 +85,6 @@ kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *logger)
         error = kaa_user_manager_create(&((*context_p)->user_manager), (*context_p)->status, (*context_p)->channel_manager);
 
     if (!error)
-        error = kaa_user_manager_create(&((*context_p)->user_manager), (*context_p)->status, (*context_p)->channel_manager);
-
-    if (!error)
         error = kaa_platform_protocol_create(&((*context_p)->platfrom_protocol), *context_p, (*context_p)->logger);
 
     if (error) {
