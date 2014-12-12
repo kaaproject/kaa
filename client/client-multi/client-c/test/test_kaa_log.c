@@ -29,13 +29,26 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 
-extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
-extern kaa_error_t kaa_context_destroy(kaa_context_t * context);
 
-extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self
-                                         , kaa_log_sync_response_t *response);
+
+extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
+extern void        kaa_status_destroy(kaa_status_t *self);
+
+extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
+extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
+
+extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
+        , kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
+extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
+
+extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_response_t *response);
+
+
 
 static kaa_logger_t *logger = NULL;
+static kaa_status_t *status = NULL;
+static kaa_channel_manager_t *channel_manager = NULL;
+static kaa_log_collector_t *log_collector = NULL;
 
 #define NUM_OF_SERVICES 4
 static const kaa_service_t services[NUM_OF_SERVICES] = {
@@ -46,6 +59,7 @@ static const kaa_service_t services[NUM_OF_SERVICES] = {
 };
 
 
+
 static const char* allocate_buffer(void* context, size_t buffer_size)
 {
     KAA_LOG_DEBUG(logger, KAA_ERR_NONE, "In allocate_buffer(), requested size: %u", buffer_size);
@@ -53,6 +67,8 @@ static const char* allocate_buffer(void* context, size_t buffer_size)
     *buffer_to_alloc_p = KAA_MALLOC(buffer_size * sizeof(char));
     return *buffer_to_alloc_p;
 }
+
+
 
 void test_create_request()
 {
@@ -74,6 +90,8 @@ void test_create_request()
     kaa_deinit(kaa_context);
 }
 
+
+
 static kaa_uuid_t test_uuid;
 static uint32_t stub_upload_uuid_check_call_count = 0;
 void stub_upload_uuid_check(kaa_uuid_t uuid)
@@ -81,6 +99,8 @@ void stub_upload_uuid_check(kaa_uuid_t uuid)
     stub_upload_uuid_check_call_count++;
     ASSERT_EQUAL(kaa_uuid_compare(&uuid, &test_uuid), 0);
 }
+
+
 
 void test_response()
 {
@@ -90,9 +110,6 @@ void test_response()
     log_sync_response.request_id = kaa_string_move_create("42", NULL);
     kaa_uuid_fill(&test_uuid, 42);
 
-    kaa_context_t *ctx = NULL;
-    kaa_context_create(&ctx, logger);
-
     kaa_log_storage_t *ls = get_memory_log_storage();
     ls->upload_failed = &stub_upload_uuid_check;
     ls->upload_succeeded = &stub_upload_uuid_check;
@@ -100,14 +117,15 @@ void test_response()
     kaa_storage_status_t *ss = get_memory_log_storage_status();
     kaa_log_upload_properties_t *lp = get_memory_log_upload_properties();
 
-    kaa_logging_init(ctx->log_collector, ls, lp, ss, &memory_log_storage_is_upload_needed);
+    kaa_logging_init(log_collector, ls, lp, ss, &memory_log_storage_is_upload_needed);
 
-    kaa_logging_handle_sync(ctx->log_collector, &log_sync_response);
+    kaa_logging_handle_sync(log_collector, &log_sync_response);
     ASSERT_EQUAL(stub_upload_uuid_check_call_count,1);
 
-    kaa_context_destroy(ctx);
     kaa_string_destroy(log_sync_response.request_id);
 }
+
+
 
 #define DEFAULT_LOG_RECORD 0
 #if DEFAULT_LOG_RECORD
@@ -155,19 +173,46 @@ void test_add_log()
 
 #endif
 
+
 int test_init(void)
 {
-    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
+    kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
+    ASSERT_EQUAL(error, KAA_ERR_NONE);
+    ASSERT_NOT_NULL(logger);
     set_memory_log_storage_logger(logger);
+
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    error = kaa_status_create(&status);
+    ASSERT_EQUAL(error, KAA_ERR_NONE);
+    ASSERT_NOT_NULL(status);
+
+    error = kaa_channel_manager_create(&channel_manager, logger);
+    ASSERT_EQUAL(error, KAA_ERR_NONE);
+    ASSERT_NOT_NULL(channel_manager);
+
+    error = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
+    ASSERT_EQUAL(error, KAA_ERR_NONE);
+    ASSERT_NOT_NULL(log_collector);
+#endif
     return 0;
 }
 
+
+
 int test_deinit(void)
 {
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    kaa_log_collector_destroy(log_collector);
+    kaa_channel_manager_destroy(channel_manager);
+    kaa_status_destroy(status);
+#endif
     kaa_log_destroy(logger);
     set_memory_log_storage_logger(NULL);
     return 0;
 }
+
+
 
 KAA_SUITE_MAIN(Log, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_LOGGING

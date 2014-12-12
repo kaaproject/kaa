@@ -15,12 +15,11 @@
  */
 
 #include "kaa_test.h"
-#include "kaa_context.h"
-
 #include "utilities/kaa_log.h"
 
-extern kaa_error_t kaa_context_create(kaa_context_t **context, kaa_logger_t *logger);
-extern kaa_error_t kaa_context_destroy(kaa_context_t * context);
+/* All right, we are testing static functions here */
+#include "kaa.c"
+
 
 static kaa_logger_t *logger = NULL;
 

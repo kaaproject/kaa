@@ -202,7 +202,8 @@ kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_prot
 
 void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self)
 {
-    KAA_FREE(self);
+    if (self)
+        KAA_FREE(self);
 }
 
 
