@@ -31,7 +31,7 @@ public class LogRecord {
     /**
      * Thread-local converter of log records to bytes.
      */
-    private static final ThreadLocal<AvroByteArrayConverter<${log_record_class}>> converter = new ThreadLocal<AvroByteArrayConverter<${log_record_class}>>(){
+    private static final ThreadLocal<AvroByteArrayConverter<${log_record_class}>> CONVERTER = new ThreadLocal<AvroByteArrayConverter<${log_record_class}>>(){
         @Override
         protected AvroByteArrayConverter<${log_record_class}> initialValue() {
             return new AvroByteArrayConverter<>(${log_record_class}.class);
@@ -44,7 +44,7 @@ public class LogRecord {
     private final byte [] encodedRecord;
     
     public LogRecord(${log_record_class} record) throws IOException {
-        encodedRecord = converter.get().toByteArray(record);
+        encodedRecord = CONVERTER.get().toByteArray(record);
     }
 
     byte [] getData() {
