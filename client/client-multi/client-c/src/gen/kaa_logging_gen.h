@@ -20,9 +20,10 @@
 # include "kaa_common_schema.h"
 # include "collections/kaa_list.h"
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 extern "C" {
-#endif
+# endif
+
 
 typedef struct {
     kaa_string_t* data;
@@ -34,7 +35,6 @@ typedef struct {
 
 kaa_test_log_record_t* kaa_test_log_record_create();
 kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader);
-
 
 #ifdef __cplusplus
 }      /* extern "C" */

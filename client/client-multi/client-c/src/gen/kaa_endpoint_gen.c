@@ -570,7 +570,7 @@ static void kaa_union_string_or_null_serialize(avro_writer_t writer, void *data)
         case KAA_UNION_STRING_OR_NULL_BRANCH_0:
         {
             if (kaa_union->data) {
-                avro_binary_encoding.write_string(writer, (char *)kaa_union->data);
+                kaa_string_serialize(writer, kaa_union->data);
             }
             break;
         }

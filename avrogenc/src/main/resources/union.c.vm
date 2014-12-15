@@ -171,7 +171,7 @@ static void ${union_name}_serialize(avro_writer_t writer, void *data)
 #elseif ($TypeConverter.isAvroBytes($branch_schema) || $TypeConverter.isAvroFixed($branch_schema))
                 kaa_bytes_serialize(writer, kaa_union->data);
 #elseif ($TypeConverter.isAvroString($branch_schema))
-                avro_binary_encoding.write_string(writer, (char *)kaa_union->data);
+                kaa_string_serialize(writer, kaa_union->data);
 #elseif ($TypeConverter.isAvroPrimitive($branch_schema))
 #set ($primitive_type = $branch_schema.getType().toString().toLowerCase())
     #if ($TypeConverter.isAvroEnum($branch_schema))
