@@ -24,8 +24,8 @@
 #ifndef KAA_USER_H_
 #define KAA_USER_H_
 
+#include <stdbool.h>
 #include "kaa_error.h"
-#include "gen/kaa_endpoint_gen.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,6 +35,8 @@ extern "C" {
  * @brief Kaa user manager structure.
  */
 typedef struct kaa_user_manager_t kaa_user_manager_t;
+
+
 
 /**
  * @brief Attaches the endpoint to a user entity.
@@ -49,6 +51,8 @@ typedef struct kaa_user_manager_t kaa_user_manager_t;
  * @return      Error code.
  */
 kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self, const char *user_external_id, const char *access_token);
+
+
 
 /**
  * @brief Structure of user attachment status events listeners.
@@ -74,6 +78,7 @@ typedef struct {
     void (*on_detached_callback)(const char *endpoint_access_token);
     void (*on_response_callback)(bool is_attached);
 } kaa_attachment_status_listeners_t;
+
 
 
 /**
