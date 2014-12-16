@@ -110,6 +110,15 @@ kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *self);
 kaa_error_t kaa_set_max_log_level(kaa_logger_t *self, kaa_log_level_t max_log_level);
 
 /**
+ * @brief Sets user sink for log output.
+ *
+ * @param[in]   self            Pointer to a logger.
+ * @param[in]   sink            Pointer to FILE structure where logs will be written to.
+ * @return                      Error code.
+ */
+kaa_error_t kaa_log_set_sink(kaa_logger_t *self, FILE *sink);
+
+/**
  * @brief Compiles a log message and puts it into the sink.
  *
  * The message format is as follows:

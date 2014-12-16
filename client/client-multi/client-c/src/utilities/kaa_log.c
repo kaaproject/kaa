@@ -50,7 +50,6 @@ struct kaa_logger_t {
     size_t          buffer_size;
 };
 
-
 kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink)
 {
     if (!logger_p || (buffer_size < KAA_MINIMAL_BUFFER_SIZE) || (max_log_level > KAA_MAX_LOG_LEVEL))
@@ -99,6 +98,15 @@ kaa_error_t kaa_set_max_log_level(kaa_logger_t *self, kaa_log_level_t max_log_le
         return KAA_ERR_BADPARAM;
     }
     self->max_log_level = max_log_level;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_log_set_sink(kaa_logger_t *self, FILE *sink)
+{
+    KAA_RETURN_IF_NIL2(self, sink, KAA_ERR_BADPARAM);
+
+    self->sink = sink;
+
     return KAA_ERR_NONE;
 }
 
