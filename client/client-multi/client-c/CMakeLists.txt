@@ -30,7 +30,11 @@ endif()
 
 if (CMAKE_COMPILER_IS_GNUCC)
 # TODO: add switch for Debug/Release versions
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+if (KAA_COLLECT_COVERAGE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+endif ()
+
 #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
 endif ()
 

@@ -126,51 +126,6 @@ void test_response()
 }
 
 
-
-#define DEFAULT_LOG_RECORD 0
-#if DEFAULT_LOG_RECORD
-static kaa_context_t *kaa_context_ = NULL;
-static kaa_log_upload_decision_t decision(kaa_storage_status_t *status)
-{
-    if ((* status->get_records_count)() == 1000) {
-        return UPLOAD;
-    }
-    return NOOP;
-}
-
-static void handler(const kaa_service_t services[], size_t service_count)
-{
-    ASSERT_EQUAL(1, service_count);
-    ASSERT_EQUAL(services[0], KAA_SERVICE_LOGGING);
-
-    kaa_sync_request_t *request = NULL;
-    size_t request_size = 0;
-    kaa_compile_request(kaa_context_, &request, &request_size, service_count, services);
-    ASSERT_NOT_NULL(request);
-    ASSERT_NOT_NULL(request->log_sync_request);
-
-    request->destroy(request);
-
-}
-void test_add_log()
-{
-    ASSERT_TRUE(1);
-    kaa_init(&kaa_context_);
-
-    kaa_channel_manager_add_sync_handler(kaa_context_->channel_manager, &handler, services, 4);
-    set_memory_log_storage_logger(kaa_context_->logger);
-    kaa_logging_init(kaa_context_->log_collector, get_memory_log_storage(), get_memory_log_upload_properties(), get_memory_log_storage_status(), &decision);
-
-    kaa_user_log_record_t *record = kaa_test_log_record_create();
-    record->data = kaa_string_move_create("Super Log Record", NULL);
-    for (int i = 1000000; i--; ) {
-        kaa_logging_add_record(kaa_context_->log_collector, record);
-    }
-    record->destroy(record);
-    kaa_deinit(kaa_context_);
-}
-#endif
-
 #endif
 
 
@@ -219,8 +174,5 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
        ,
        KAA_TEST_CASE(create_request, test_create_request)
        KAA_TEST_CASE(process_response, test_response)
-#if DEFAULT_LOG_RECORD
-       KAA_TEST_CASE(add_log_record, test_add_log)
-#endif
 #endif
         )
