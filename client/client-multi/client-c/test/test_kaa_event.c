@@ -104,7 +104,7 @@ void test_kaa_event_compile_request()
     ASSERT_EQUAL(sync_request1->events->type, KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_1);
     sync_request1->destroy(sync_request1);
 
-    kaa_add_event(event_manager, "fqn", "data", 4, "target", 6);
+    kaa_event_manager_send_event(event_manager, "fqn", "data", 4, "target");
     kaa_event_sync_request_t* sync_request2 = NULL;
     err_code = kaa_event_compile_request(event_manager, &sync_request2, 100501);
     ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
@@ -114,7 +114,7 @@ void test_kaa_event_compile_request()
     ASSERT_EQUAL(kaa_list_get_size(sync_request2->events->data), 1);
     sync_request2->destroy(sync_request2);
 
-    kaa_add_event(event_manager, "fqn", "data", 4, "target", 6);
+    kaa_event_manager_send_event(event_manager, "fqn", "data", 4, "target");
     kaa_event_sync_request_t* sync_request3 = NULL;
     err_code = kaa_event_compile_request(event_manager, &sync_request3, 100502);
     ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
@@ -156,8 +156,8 @@ void test_kaa_add_on_event_callback()
 {
     KAA_TRACE_IN(logger);
 
-    kaa_add_on_event_callback(event_manager, "fqn", specific_event_cb);
-    kaa_add_on_event_callback(event_manager, NULL, global_event_cb);
+    kaa_event_manager_add_on_event_callback(event_manager, "fqn", specific_event_cb);
+    kaa_event_manager_add_on_event_callback(event_manager, NULL, global_event_cb);
 
     ASSERT_EQUAL(global_events_counter, 0);
     ASSERT_EQUAL(specific_events_counter, 0);
