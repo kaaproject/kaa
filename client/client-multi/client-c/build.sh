@@ -113,7 +113,9 @@ function run_valgrind {
 
 function run_cppcheck {
     echo "Starting Cppcheck..."
-    cppcheck --enable=all --std=c99 --xml src/ test/ 2>build/cppcheck.xml > build/cppcheck.log
+    cppcheck --enable=all --std=c99 --xml src/ test/ 2>build/cppcheck_.xml > build/cppcheck.log
+    sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build/cppcheck_.xml > build/cppcheck.xml
+    rm build/cppcheck_.xml
     echo "Cppcheck analysis finished."
 }
 
