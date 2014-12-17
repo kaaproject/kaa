@@ -235,7 +235,8 @@ LogSyncRequest LogCollector::getLogUploadRequest()
         request = it->second;
         requests_.erase(it);
         KAA_LOG_INFO(boost::format("Added log upload request id %1%") % request.requestId.get_string());
-        timeoutsMap_.insert(std::make_pair(request.requestId.get_string(), clock_t::now()));
+        timeoutsMap_.insert(std::make_pair(request.requestId.get_string(),
+                clock_t::now() + std::chrono::seconds(configuration_->getLogUploadTimeout())));
     }
     return request;
 }

@@ -24,7 +24,6 @@
 
 #include "headers/channel/MockDataChannel.hpp"
 #include "headers/channel/MockChannelManager.hpp"
-#include "headers/channel/server/MockServerInfo.hpp"
 
 namespace kaa
 {
