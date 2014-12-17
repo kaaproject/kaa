@@ -30,8 +30,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraDaoUtil.convertDtoToModelList;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraDaoUtil.convertECFVersionDtoToModelList;
+import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.convertDtoToModelList;
+import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.convertECFVersionDtoToModelList;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_ACCESS_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_APPLICATION_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_COLUMN_FAMILY_NAME;
@@ -43,7 +43,7 @@ import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraMode
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_ENDPOINT_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_ENDPOINT_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_ENDPOINT_KEY_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_ENDPOINT_USER_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_USER_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_LOG_SCHEMA_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_NOTIFICATION_GROUP_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_NOTIFICATION_HASH_PROPERTY;
@@ -74,7 +74,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private byte[] endpointKey;
     @Column(name = ENDPOINT_PROFILE_APPLICATION_ID_PROPERTY)
     private String applicationId;
-    @Column(name = ENDPOINT_PROFILE_ENDPOINT_USER_ID_PROPERTY)
+    @Column(name = ENDPOINT_PROFILE_USER_ID_PROPERTY)
     private String endpointUserId;
     @Column(name = ENDPOINT_PROFILE_ACCESS_TOKEN_PROPERTY)
     private String accessToken;

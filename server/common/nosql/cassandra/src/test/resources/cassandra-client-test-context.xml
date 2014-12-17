@@ -36,8 +36,12 @@
 
     <util:properties id="properties" location="classpath:cassandra-client-test.properties" />
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao.cassandra" />
+    <context:annotation-config />
 
     <bean id="endpointNotificationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointNotificationCassandraDao" />
-    <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointConfigurationCassandraDao" />
+    <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointConfigurationCassandraDao"/>
+    <bean id="endpointProfileDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointProfileCassandraDao"/>
+    <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointUserCassandraDao"/>
+    <bean id="notificationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.NotificationCassandraDao"/>
 
 </beans>

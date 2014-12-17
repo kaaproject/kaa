@@ -1,7 +1,3 @@
-DROP KEYSPACE kaa;
-
-CREATE KEYSPACE kaa WITH replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
-
 CREATE TABLE kaa . ep_nfs (
     ep_key_hash blob,
     nf_id varchar,
@@ -83,6 +79,12 @@ CREATE TABLE kaa . ep_profile (
     log_schema_ver int,
     ecf_ver_state list < frozen < ecf_ver_state > >,
     server_hash text
+);
+
+CREATE TABLE kaa . app_eps (
+    app_id varchar,
+    ep_key_hash blob,
+    PRIMARY KEY (app_id, ep_key_hash)
 );
 
 CREATE TABLE app_nfs (

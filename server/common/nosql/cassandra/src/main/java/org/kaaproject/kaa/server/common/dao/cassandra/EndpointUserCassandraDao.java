@@ -3,7 +3,9 @@ package org.kaaproject.kaa.server.common.dao.cassandra;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
+import org.springframework.stereotype.Repository;
 
+@Repository("endpointUserDao")
 public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndpointUser> implements EndpointUserDao<CassandraEndpointUser> {
 
     @Override

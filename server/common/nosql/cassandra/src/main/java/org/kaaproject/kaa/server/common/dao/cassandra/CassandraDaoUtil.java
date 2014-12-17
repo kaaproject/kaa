@@ -1,8 +1,11 @@
-package org.kaaproject.kaa.server.common.dao.cassandra.model;
+package org.kaaproject.kaa.server.common.dao.cassandra;
 
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
+import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointGroupState;
+import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEventClassFamilyVersionState;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,5 +61,21 @@ public class CassandraDaoUtil {
 
     public static UUID getUuidId(String id) {
         return id != null ? UUID.fromString(id) : null;
+    }
+
+    public static ByteBuffer getByteBuffer(byte[] array) {
+        ByteBuffer bb = null;
+        if(array != null) {
+            bb = ByteBuffer.wrap(array);
+        }
+        return bb;
+    }
+
+    public static byte[] getBytes(ByteBuffer byteBuffer) {
+        byte[] array = null;
+        if(byteBuffer != null) {
+            array = byteBuffer.array();
+        }
+        return array;
     }
 }

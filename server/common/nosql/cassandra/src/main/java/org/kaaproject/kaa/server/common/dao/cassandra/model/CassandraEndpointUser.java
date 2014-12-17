@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraDaoUtil.getStringId;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraDaoUtil.getUuidId;
+import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getStringId;
+import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getUuidId;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_ACCESS_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_ENDPOINT_IDS_PROPERTY;

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractCassandraDao<T> implements Dao<T> {
 
@@ -101,6 +102,11 @@ public abstract class AbstractCassandraDao<T> implements Dao<T> {
         LOG.info("Executed batch {}", resultSet);
     }
 
+    protected ResultSet execute(Statement statement) {
+        LOG.info("Execute cassandra batch {}", statement);
+        return getSession().execute(statement);
+    }
+
     @Override
     public T persist(T dto) {
         return save(dto);
@@ -116,7 +122,8 @@ public abstract class AbstractCassandraDao<T> implements Dao<T> {
 
     @Override
     public List<T> find() {
-        return Collections.emptyList();
+        LOG.debug("Get all entities from column family {}", getColumnFamilyName());
+        return findListByStatement(QueryBuilder.select().all().from(getColumnFamilyName()));
     }
 
     @Override
@@ -139,5 +146,9 @@ public abstract class AbstractCassandraDao<T> implements Dao<T> {
     @Override
     public void removeById(String id) {
         getMapper().delete(id);
+    }
+
+    protected String getStringId() {
+        return UUID.randomUUID().toString();
     }
 }

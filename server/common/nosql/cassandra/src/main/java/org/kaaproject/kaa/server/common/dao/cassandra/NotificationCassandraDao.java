@@ -4,15 +4,17 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraNotification;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 
+@Repository("notificationDao")
 public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNotification> implements NotificationDao<CassandraNotification> {
 
     @Override
-    protected Class<?> getColumnFamilyClass() {
-        return null;
+    protected Class<CassandraNotification> getColumnFamilyClass() {
+        return CassandraNotification.class;
     }
 
     @Override

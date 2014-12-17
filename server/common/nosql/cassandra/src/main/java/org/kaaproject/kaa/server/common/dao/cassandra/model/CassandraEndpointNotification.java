@@ -17,6 +17,8 @@
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.*;
+
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
@@ -34,8 +36,9 @@ public final class CassandraEndpointNotification implements EndpointNotification
     private static final long serialVersionUID = -6770166693195322360L;
 
     @PartitionKey
-    @Column(name = ENDPOINT_KEY_HASH_PROPERTY)
+    @Column(name = ENDPOINT_NOTIFICATION_ENDPOINT_KEY_HASH_PROPERTY)
     private ByteBuffer endpointKeyHash;
+    @ClusteringColumn
     @Column(name = ENDPOINT_NOTIFICATION_ID_PROPERTY)
     private String id;
     @Transient

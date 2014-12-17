@@ -17,29 +17,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-4.0.xsd
-            http://www.springframework.org/schema/tx
-            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
-            http://www.springframework.org/schema/aop
-            http://www.springframework.org/schema/aop/spring-aop.xsd
-            http://www.springframework.org/schema/data/mongo
-            http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
             http://www.springframework.org/schema/util
             http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <import resource="classpath:cassandra-client-context.xml"/>
     <util:properties id="properties" location="classpath:cassandra-client.properties"/>
-
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao.cassandra" />
 
     <bean id="endpointNotificationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointNotificationCassandraDao" />
     <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointConfigurationCassandraDao"/>
+    <bean id="endpointProfileDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointProfileCassandraDao"/>
+    <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointUserCassandraDao"/>
+    <bean id="notificationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.NotificationCassandraDao"/>
 
 </beans>

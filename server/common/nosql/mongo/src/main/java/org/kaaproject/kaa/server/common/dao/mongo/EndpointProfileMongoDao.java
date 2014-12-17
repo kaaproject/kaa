@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
