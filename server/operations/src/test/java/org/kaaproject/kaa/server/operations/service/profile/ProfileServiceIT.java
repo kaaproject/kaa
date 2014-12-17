@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
+import org.kaaproject.kaa.common.endpoint.protocol.EndpointVersionInfo;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.schema.base.Profile;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;

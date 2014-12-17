@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
@@ -98,7 +98,7 @@ public class ChannelMap {
             this.response = response;
         }
 
-        public SyncRequest mergeRequest(SyncRequestMessage syncRequest){
+        public ClientSync mergeRequest(SyncRequestMessage syncRequest){
             return this.request.merge(syncRequest);
         }
 

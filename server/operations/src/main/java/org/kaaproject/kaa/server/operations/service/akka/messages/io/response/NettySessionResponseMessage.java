@@ -20,7 +20,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.UUID;
 
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ResponseBuilder;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
@@ -32,18 +32,18 @@ import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 public class NettySessionResponseMessage implements SessionResponse{
 
     private final NettySessionInfo sessionInfo;
-    private final SyncResponse syncResponse;
+    private final ServerSync syncResponse;
     private final ResponseBuilder responseConverter;
     private final ErrorBuilder errorConverter;
 
-    public NettySessionResponseMessage(NettySessionInfo sessionInfo, SyncResponse syncResponse, ResponseBuilder responseConverter, ErrorBuilder errorConverter){
+    public NettySessionResponseMessage(NettySessionInfo sessionInfo, ServerSync syncResponse, ResponseBuilder responseConverter, ErrorBuilder errorConverter){
         this.sessionInfo = sessionInfo;
         this.syncResponse = syncResponse;
         this.responseConverter = responseConverter;
         this.errorConverter = errorConverter;
     }
 
-    public SyncResponse getSyncResponse() {
+    public ServerSync getSyncResponse() {
         return syncResponse;
     }
 
@@ -68,7 +68,7 @@ public class NettySessionResponseMessage implements SessionResponse{
     }
 
     @Override
-    public SyncResponse getResponse() {
+    public ServerSync getResponse() {
         return syncResponse;
     }
 

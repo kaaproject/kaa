@@ -21,12 +21,13 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PublicKey;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
+import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.RedirectServerSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
+import org.kaaproject.kaa.common.endpoint.protocol.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -52,6 +53,8 @@ import akka.actor.ActorRef;
 
 public class EncDecActorMessageProcessor {
 
+    private static final String AVRO_ENC_DEC_ID = "Avro";
+
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(EncDecActorMessageProcessor.class);
 
@@ -59,10 +62,8 @@ public class EncDecActorMessageProcessor {
 
     private final MessageEncoderDecoder crypt;
 
-    private final AvroByteArrayConverter<SyncRequest> requestConverter;
-
-    private final AvroByteArrayConverter<SyncResponse> responseConverter;
-
+    private final Map<String, PlatformEncDec> platformEncDecMap;
+    
     private final Boolean supportUnencryptedConnection;
 
     /** The eps actor. */
@@ -80,8 +81,9 @@ public class EncDecActorMessageProcessor {
         this.cacheService = cacheService;
         this.supportUnencryptedConnection = supportUnencryptedConnection;
         this.crypt = new MessageEncoderDecoder(serverKeys.getPrivate(), serverKeys.getPublic());
-        this.requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
-        this.responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        this.platformEncDecMap = new HashMap<>();
+        //TODO: add feature of auto-discovery of platform enc-dec.
+        platformEncDecMap.put(AVRO_ENC_DEC_ID, new AvroEncDec());
         this.sessionInitMeter = metricsService.createMeter("sessionInitMeter", Thread.currentThread().getName());
         this.sessionRequestMeter = metricsService.createMeter("sessionRequestMeter", Thread.currentThread().getName());
         this.sessionResponseMeter = metricsService.createMeter("sessionResponseMeter", Thread.currentThread().getName());
@@ -124,8 +126,8 @@ public class EncDecActorMessageProcessor {
     void redirect(RedirectionRule redirection, SessionInitRequest message) {
         try {
             redirectMeter.mark();
-            SyncRequest request = decodeRequest(message);
-            SyncResponse response = buildRedirectionResponse(redirection, request);
+            ClientSync request = decodeRequest(message);
+            ServerSync response = buildRedirectionResponse(redirection, request);
 
             EndpointObjectHash key = getEndpointObjectHash(request);
             String appToken = getAppToken(request);
@@ -142,8 +144,8 @@ public class EncDecActorMessageProcessor {
     void redirect(RedirectionRule redirection, SessionAwareRequest message) {
         try {
             redirectMeter.mark();
-            SyncRequest request = decodeRequest(message);
-            SyncResponse response = buildRedirectionResponse(redirection, request);
+            ClientSync request = decodeRequest(message);
+            ServerSync response = buildRedirectionResponse(redirection, request);
 
             NettySessionInfo sessionInfo = message.getSessionInfo();
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getResponseBuilder(), message.getErrorBuilder());
@@ -154,9 +156,9 @@ public class EncDecActorMessageProcessor {
         }
     }
 
-    private SyncResponse buildRedirectionResponse(RedirectionRule redirection, SyncRequest request) {
-        RedirectSyncResponse redirectSyncResponse = new RedirectSyncResponse(redirection.getDnsName());
-        SyncResponse response = new SyncResponse();
+    private ServerSync buildRedirectionResponse(RedirectionRule redirection, ClientSync request) {
+        RedirectServerSync redirectSyncResponse = new RedirectServerSync(redirection.getDnsName());
+        ServerSync response = new ServerSync();
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.REDIRECT);
         response.setRedirectSyncResponse(redirectSyncResponse);
@@ -165,7 +167,7 @@ public class EncDecActorMessageProcessor {
 
     private void processSignedRequest(ActorContext context, SessionInitRequest message) throws GeneralSecurityException,
             IOException {
-        SyncRequest request = decodeRequest(message);
+        ClientSync request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
         NettySessionInfo session = new NettySessionInfo(message.getChannelUuid(), message.getChannelContext(), message.getChannelType(), crypt.getSessionCipherPair(),
                 key, request.getSyncRequestMetaData().getApplicationToken(), message.getKeepAlive(), message.isEncrypted());
@@ -175,11 +177,11 @@ public class EncDecActorMessageProcessor {
 
     private void processSessionRequest(ActorContext context, SessionAwareRequest message) throws GeneralSecurityException,
             IOException {
-        SyncRequest request = decodeRequest(message);
+        ClientSync request = decodeRequest(message);
         forwardToOpsActor(context, message.getSessionInfo(), request, message);
     }
 
-    private void forwardToOpsActor(ActorContext context, NettySessionInfo session, SyncRequest request, Request requestMessage) {
+    private void forwardToOpsActor(ActorContext context, NettySessionInfo session, ClientSync request, Request requestMessage) {
         SyncRequestMessage message = new SyncRequestMessage(session, request, requestMessage, context.self());
         this.opsActor.tell(message, context.self());
     }
@@ -187,7 +189,7 @@ public class EncDecActorMessageProcessor {
     private void processSessionResponse(SessionResponse message) throws GeneralSecurityException, IOException {
         NettySessionInfo session = message.getSessionInfo();
 
-        byte[] responseData = responseConverter.toByteArray(message.getResponse());
+        byte[] responseData = platformEncDecMap.get(AVRO_ENC_DEC_ID).encode(message.getResponse());
         LOG.trace("Response data serialized");
         if (session.isEncrypted()) {
             crypt.setSessionCipherPair(session.getCipherPair());
@@ -205,8 +207,8 @@ public class EncDecActorMessageProcessor {
         }
     }
 
-    private SyncRequest decodeRequest(SessionInitRequest message) throws GeneralSecurityException, IOException {
-        SyncRequest syncRequest = null;
+    private ClientSync decodeRequest(SessionInitRequest message) throws GeneralSecurityException, IOException {
+        ClientSync syncRequest = null;
         if (message.isEncrypted()) {
             syncRequest = decodeEncryptedRequest(message);
         } else if (supportUnencryptedConnection) {
@@ -218,10 +220,10 @@ public class EncDecActorMessageProcessor {
         return syncRequest;
     }
 
-    private SyncRequest decodeEncryptedRequest(SessionInitRequest message) throws GeneralSecurityException, IOException {
+    private ClientSync decodeEncryptedRequest(SessionInitRequest message) throws GeneralSecurityException, IOException {
         byte[] requestRaw = crypt.decodeData(message.getEncodedRequestData(), message.getEncodedSessionKey());
         LOG.trace("Request data decrypted");
-        SyncRequest request = requestConverter.fromByteArray(requestRaw);
+        ClientSync request = platformEncDecMap.get(AVRO_ENC_DEC_ID).decode(requestRaw);
         LOG.trace("Request data deserialized");
         PublicKey endpointKey = getPublicKey(request);
         if (endpointKey == null) {
@@ -240,10 +242,10 @@ public class EncDecActorMessageProcessor {
         return request;
     }
 
-    private SyncRequest decodeUnencryptedRequest(SessionInitRequest message) throws GeneralSecurityException, IOException {
+    private ClientSync decodeUnencryptedRequest(SessionInitRequest message) throws GeneralSecurityException, IOException {
         byte[] requestRaw = message.getEncodedRequestData();
         LOG.trace("Try to convert raw data to SynRequest object");
-        SyncRequest request = requestConverter.fromByteArray(requestRaw);
+        ClientSync request = platformEncDecMap.get(AVRO_ENC_DEC_ID).decode(requestRaw);
         LOG.trace("Request data deserialized");
         PublicKey endpointKey = getPublicKey(request);
         if (endpointKey == null) {
@@ -255,25 +257,25 @@ public class EncDecActorMessageProcessor {
         return request;
     }
 
-    private SyncRequest decodeEncryptedRequest(SessionAwareRequest message) throws GeneralSecurityException, IOException {
+    private ClientSync decodeEncryptedRequest(SessionAwareRequest message) throws GeneralSecurityException, IOException {
         NettySessionInfo session = message.getSessionInfo();
         crypt.setSessionCipherPair(session.getCipherPair());
         byte[] requestRaw = crypt.decodeData(message.getEncodedRequestData());
         LOG.trace("Request data decrypted");
-        SyncRequest request = requestConverter.fromByteArray(requestRaw);
+        ClientSync request = platformEncDecMap.get(AVRO_ENC_DEC_ID).decode(requestRaw);
         LOG.trace("Request data deserialized");
         return request;
     }
 
-    private SyncRequest decodeUnencryptedRequest(SessionAwareRequest message) throws IOException {
+    private ClientSync decodeUnencryptedRequest(SessionAwareRequest message) throws IOException {
         byte[] requestRaw = message.getEncodedRequestData();
-        SyncRequest request = requestConverter.fromByteArray(requestRaw);
+        ClientSync request = platformEncDecMap.get(AVRO_ENC_DEC_ID).decode(requestRaw);
         LOG.trace("Request data deserialized");
         return request;
     }
 
-    private SyncRequest decodeRequest(SessionAwareRequest message) throws GeneralSecurityException, IOException {
-        SyncRequest syncRequest = null;
+    private ClientSync decodeRequest(SessionAwareRequest message) throws GeneralSecurityException, IOException {
+        ClientSync syncRequest = null;
         if (message.isEncrypted()) {
             syncRequest = decodeEncryptedRequest(message);
         } else if (supportUnencryptedConnection) {
@@ -285,7 +287,7 @@ public class EncDecActorMessageProcessor {
         return syncRequest;
     }
 
-    private PublicKey getPublicKey(SyncRequest request) throws GeneralSecurityException {
+    private PublicKey getPublicKey(ClientSync request) throws GeneralSecurityException {
         PublicKey endpointKey = null;
         if (request.getProfileSyncRequest() != null && request.getProfileSyncRequest().getEndpointPublicKey() != null) {
             byte[] publicKeySrc = request.getProfileSyncRequest().getEndpointPublicKey().array();
@@ -311,11 +313,11 @@ public class EncDecActorMessageProcessor {
         }
     }
 
-    private String getAppToken(SyncRequest request) {
+    private String getAppToken(ClientSync request) {
         return request.getSyncRequestMetaData().getApplicationToken();
     }
 
-    protected EndpointObjectHash getEndpointObjectHash(SyncRequest request) {
+    protected EndpointObjectHash getEndpointObjectHash(ClientSync request) {
         return EndpointObjectHash.fromBytes(request.getSyncRequestMetaData().getEndpointPublicKeyHash().array());
     }
 }

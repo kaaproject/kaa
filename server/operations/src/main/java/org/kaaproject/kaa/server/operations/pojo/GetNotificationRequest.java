@@ -19,8 +19,8 @@ package org.kaaproject.kaa.server.operations.pojo;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
-import org.kaaproject.kaa.common.endpoint.gen.TopicState;
+import org.kaaproject.kaa.common.endpoint.protocol.SubscriptionCommand;
+import org.kaaproject.kaa.common.endpoint.protocol.TopicState;
 
 
 /**

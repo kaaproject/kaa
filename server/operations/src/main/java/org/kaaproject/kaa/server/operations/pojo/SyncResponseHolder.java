@@ -20,14 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
+import org.kaaproject.kaa.common.endpoint.protocol.ConfigurationServerSync;
+import org.kaaproject.kaa.common.endpoint.protocol.EventServerSync;
+import org.kaaproject.kaa.common.endpoint.protocol.NotificationServerSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ProfileServerSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
+import org.kaaproject.kaa.common.endpoint.protocol.SyncResponseResultType;
+import org.kaaproject.kaa.common.endpoint.protocol.SyncResponseStatus;
+import org.kaaproject.kaa.common.endpoint.protocol.UserServerSync;
 
 
 /**
@@ -36,7 +36,7 @@ import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 public class SyncResponseHolder {
 
     /** The response. */
-    private final SyncResponse response;
+    private final ServerSync response;
 
     private EndpointProfileDto endpointProfile;
 
@@ -50,7 +50,7 @@ public class SyncResponseHolder {
     private int userNfVersion;
 
     public static SyncResponseHolder failure(Integer requestId){
-        SyncResponse response = new SyncResponse();
+        ServerSync response = new ServerSync();
         response.setRequestId(requestId);
         response.setStatus(SyncResponseResultType.FAILURE);
         return new SyncResponseHolder(response);
@@ -61,7 +61,7 @@ public class SyncResponseHolder {
      *
      * @param response the response
      */
-    public SyncResponseHolder(SyncResponse response){
+    public SyncResponseHolder(ServerSync response){
         super();
         this.response = response;
         this.subscriptionStates = new HashMap<>();
@@ -82,7 +82,7 @@ public class SyncResponseHolder {
      *
      * @return the response
      */
-    public SyncResponse getResponse() {
+    public ServerSync getResponse() {
         return response;
     }
 
@@ -125,23 +125,23 @@ public class SyncResponseHolder {
         this.response.setStatus(status);
     }
 
-    public void setUserSyncResponse(UserSyncResponse response) {
+    public void setUserSyncResponse(UserServerSync response) {
         this.response.setUserSyncResponse(response);
     }
 
-    public void setEventSyncResponse(EventSyncResponse response) {
+    public void setEventSyncResponse(EventServerSync response) {
         this.response.setEventSyncResponse(response);
     }
 
-    public void setConfigurationSyncResponse(ConfigurationSyncResponse response) {
+    public void setConfigurationSyncResponse(ConfigurationServerSync response) {
         this.response.setConfigurationSyncResponse(response);
     }
 
-    public void setNotificationSyncResponse(NotificationSyncResponse response) {
+    public void setNotificationSyncResponse(NotificationServerSync response) {
         this.response.setNotificationSyncResponse(response);
     }
 
-    public void setProfileSyncResponse(ProfileSyncResponse response) {
+    public void setProfileSyncResponse(ProfileServerSync response) {
         this.response.setProfileSyncResponse(response);
     }
 
@@ -171,7 +171,7 @@ public class SyncResponseHolder {
      * @return true, if successful
      */
     public boolean requireImmediateReply() {
-        SyncResponse response = getResponse();
+        ServerSync response = getResponse();
         if (response.getProfileSyncResponse() != null && response.getProfileSyncResponse().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
             return true;
         }
@@ -193,7 +193,7 @@ public class SyncResponseHolder {
             }
         }
         if (response.getUserSyncResponse() != null) {
-            UserSyncResponse userResponse = response.getUserSyncResponse();
+            UserServerSync userResponse = response.getUserSyncResponse();
             if (userResponse.getEndpointAttachResponses() != null && !userResponse.getEndpointAttachResponses().isEmpty()) {
                 return true;
             }

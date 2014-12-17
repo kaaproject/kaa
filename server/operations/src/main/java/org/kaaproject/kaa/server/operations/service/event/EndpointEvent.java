@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.operations.service.event;
 
 import java.util.UUID;
 
-import org.kaaproject.kaa.common.endpoint.gen.Event;
+import org.kaaproject.kaa.common.endpoint.protocol.Event;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 public final class EndpointEvent {

@@ -22,8 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
 import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
@@ -153,55 +153,6 @@ public class TestAkkaService extends Thread implements AkkaService {
      */
     @Override
     public void process(SessionInitRequest command) {
-//        TODO: FIX THIS
-//        try {
-//            SpecificRecordBase request = command.getCommand().decode();
-//
-//            command.getCommand().process();
-//
-//
-//            command.getCommand().encode(getResponse(request, command.getCommand()));
-//
-//            command.getChannelContext().writeAndFlush(command.getCommand());
-//
-//        } catch (BadRequestException | GeneralSecurityException | IOException | GetDeltaException e) {
-//            command.getChannelContext().fireExceptionCaught(e);
-//        }
-
-    }
-
-    /**
-     * Generate response
-     * @param request SpecificRecordBase
-     * @param command AbstractEndpointCommand
-     * @return SpecificRecordBase
-     * @throws BadRequestException
-     * @throws GeneralSecurityException
-     * @throws IOException
-     * @throws GetDeltaException
-     */
-    private SpecificRecordBase getResponse(SpecificRecordBase request, AbstractHttpSyncCommand command)
-            throws BadRequestException, GeneralSecurityException, IOException, GetDeltaException {
-
-        if (request == null || command == null) {
-            throw new BadRequestException("Error processing");
-        }
-
-        SpecificRecordBase response = null;
-
-        if (request instanceof SyncRequest) {
-            OperationsHttpServerIT.SyncTestSetRequestReceived(((SyncRequest) request).getConfigurationSyncRequest().getAppStateSeqNumber().intValue(),
-                        (SyncRequest) request);
-
-            response = endpointService.sync((SyncRequest) request).getResponse();
-
-            OperationsHttpServerIT.SyncTestSetResponseSent(((SyncRequest) request).getConfigurationSyncRequest().getAppStateSeqNumber().intValue(),
-                        (SyncResponse) response);
-        } else {
-            throw new BadRequestException("invalid instance of request");
-        }
-
-        return response;
     }
 
     @Override

@@ -39,7 +39,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
+import org.kaaproject.kaa.common.endpoint.protocol.SubscriptionType;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
 import org.kaaproject.kaa.server.control.TestCluster;

@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.messages.io.response;
 
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ResponseBuilder;
@@ -23,7 +23,7 @@ import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 
 public interface SessionResponse extends ChannelAware{
 
-    SyncResponse getResponse();
+    ServerSync getResponse();
     NettySessionInfo getSessionInfo();
     ResponseBuilder getResponseConverter();
     ErrorBuilder getErrorConverter();

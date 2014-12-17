@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.endpoint.gen.Event;
+import org.kaaproject.kaa.common.endpoint.protocol.Event;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.event.EndpointEvent;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableAddress;

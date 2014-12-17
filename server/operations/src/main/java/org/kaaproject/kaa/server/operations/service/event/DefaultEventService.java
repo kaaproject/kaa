@@ -38,6 +38,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.EventRouteUpdateTy
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RouteAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserRouteInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
+import org.kaaproject.kaa.server.operations.service.akka.actors.io.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,7 +148,8 @@ public class DefaultEventService implements EventService {
                 serverId);
         ByteBuffer eventData;
         try {
-            eventData = ByteBuffer.wrap(eventConverter.get().toByteArray(remoteEndpointEvent.getEvent().getEvent()));
+            org.kaaproject.kaa.common.endpoint.protocol.Event eventSource = remoteEndpointEvent.getEvent().getEvent();
+            eventData = ByteBuffer.wrap(eventConverter.get().toByteArray(AvroEncDec.convert(eventSource)));
             org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointEvent endpointEvent
                 = new org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointEvent(
                     remoteEndpointEvent.getEvent().getId().toString(),
@@ -493,9 +495,9 @@ public class DefaultEventService implements EventService {
         LOG.debug("onEvent .... event in {} listeners", listeners.size());
         LOG.debug("Event: {}",event.toString());
         for(EventServiceListener listener : listeners) {
-            org.kaaproject.kaa.common.endpoint.gen.Event localEvent;
+            org.kaaproject.kaa.common.endpoint.protocol.Event localEvent;
             try {
-                localEvent = eventConverter.get().fromByteArray(event.getEndpointEvent().getEventData());
+                localEvent = AvroEncDec.convert(eventConverter.get().fromByteArray(event.getEndpointEvent().getEventData()));
                 EndpointEvent endpointEvent = new EndpointEvent(
                         EndpointObjectHash.fromBytes(event.getEndpointEvent().getSender()),
                         localEvent ,

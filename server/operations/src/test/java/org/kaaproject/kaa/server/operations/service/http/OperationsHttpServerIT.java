@@ -46,6 +46,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
 import org.kaaproject.kaa.server.common.server.SessionTrackable;
 import org.kaaproject.kaa.server.common.server.Track;

@@ -21,14 +21,14 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ClientSyncMetaData;
+import org.kaaproject.kaa.common.endpoint.protocol.ConfigurationClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.EventClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.LogClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.NotificationClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ProfileClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.UserClientSync;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 
@@ -39,43 +39,43 @@ public class SyncRequestMessageTest {
 
         NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), null, ChannelType.HTTP, null, null, "applicationToken", 0, true);
 
-        SyncRequest request = new SyncRequest();
-        request.setSyncRequestMetaData(new SyncRequestMetaData());
+        ClientSync request = new ClientSync();
+        request.setSyncRequestMetaData(new ClientSyncMetaData());
         SyncRequestMessage message = new SyncRequestMessage(session, request, null, null);
 
-        SyncRequest other = new SyncRequest();
-        other.setSyncRequestMetaData(new SyncRequestMetaData());
+        ClientSync other = new ClientSync();
+        other.setSyncRequestMetaData(new ClientSyncMetaData());
         SyncRequestMessage otherMessage = new SyncRequestMessage(session, other, null, null);
 
         Assert.assertFalse(message.isValid(TransportType.BOOTSTRAP));
 
         Assert.assertFalse(message.isValid(TransportType.PROFILE));
-        other.setProfileSyncRequest(new ProfileSyncRequest());
+        other.setProfileSyncRequest(new ProfileClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.PROFILE));
 
         Assert.assertFalse(message.isValid(TransportType.CONFIGURATION));
-        other.setConfigurationSyncRequest(new ConfigurationSyncRequest(10, ByteBuffer.wrap("String".getBytes())));
+        other.setConfigurationSyncRequest(new ConfigurationClientSync(10, ByteBuffer.wrap("String".getBytes())));
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.CONFIGURATION));
 
         Assert.assertFalse(message.isValid(TransportType.NOTIFICATION));
-        other.setNotificationSyncRequest(new NotificationSyncRequest());
+        other.setNotificationSyncRequest(new NotificationClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.NOTIFICATION));
 
         Assert.assertFalse(message.isValid(TransportType.USER));
-        other.setUserSyncRequest(new UserSyncRequest());
+        other.setUserSyncRequest(new UserClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.USER));
 
         Assert.assertFalse(message.isValid(TransportType.LOGGING));
-        other.setLogSyncRequest(new LogSyncRequest());
+        other.setLogSyncRequest(new LogClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.LOGGING));
 
         Assert.assertFalse(message.isValid(TransportType.EVENT));
-        other.setEventSyncRequest(new EventSyncRequest());
+        other.setEventSyncRequest(new EventClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.EVENT));
 

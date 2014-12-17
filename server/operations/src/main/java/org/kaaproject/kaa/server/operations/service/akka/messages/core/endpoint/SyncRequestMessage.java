@@ -22,12 +22,12 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ConfigurationClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.EventClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.NotificationClientSync;
+import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
+import org.kaaproject.kaa.common.endpoint.protocol.UserClientSync;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
@@ -48,7 +48,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     private final Request command;
 
     /** The request. */
-    private final SyncRequest request;
+    private final ClientSync request;
 
     /** The session. */
     private final NettySessionInfo session;
@@ -65,7 +65,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
      * @param originator
      *            the originator
      */
-    public SyncRequestMessage(NettySessionInfo session, SyncRequest request, Request requestMessage, ActorRef originator) {
+    public SyncRequestMessage(NettySessionInfo session, ClientSync request, Request requestMessage, ActorRef originator) {
         super(session.getApplicationToken(), session.getKey(), originator);
         this.command = requestMessage;
         this.request = request;
@@ -77,7 +77,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
      * 
      * @return the request
      */
-    public SyncRequest getRequest() {
+    public ClientSync getRequest() {
         return request;
     }
 
@@ -104,17 +104,17 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         return command;
     }
 
-    public void updateRequest(SyncResponse response) {
+    public void updateRequest(ServerSync response) {
         UUID channelUuid = getChannelUuid();
         LOG.debug("[{}] Cleanup profile request", channelUuid);
         request.setProfileSyncRequest(null);
         if (request.getUserSyncRequest() != null) {
             LOG.debug("[{}] Cleanup user request", channelUuid);
-            request.setUserSyncRequest(new UserSyncRequest());
+            request.setUserSyncRequest(new UserClientSync());
         }
         if (request.getEventSyncRequest() != null) {
             LOG.debug("[{}] Cleanup event request", channelUuid);
-            request.setEventSyncRequest(new EventSyncRequest());
+            request.setEventSyncRequest(new EventClientSync());
         }
         if (request.getLogSyncRequest() != null) {
             LOG.debug("[{}] Cleanup log request", channelUuid);
@@ -138,14 +138,14 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         }
     }
 
-    public SyncRequest merge(SyncRequestMessage syncRequest) {
+    public ClientSync merge(SyncRequestMessage syncRequest) {
         UUID channelUuid = getChannelUuid();
-        SyncRequest other = syncRequest.getRequest();
+        ClientSync other = syncRequest.getRequest();
         LOG.trace("[{}] Merging original request {} with new request {}", channelUuid, request, other);
         request.setRequestId(other.getRequestId());
         request.getSyncRequestMetaData().setProfileHash(other.getSyncRequestMetaData().getProfileHash());
         LOG.debug("[{}] Updated request id and profile hash", channelUuid);
-        SyncRequest diff = new SyncRequest();
+        ClientSync diff = new ClientSync();
         diff.setRequestId(other.getRequestId());
         diff.setSyncRequestMetaData(other.getSyncRequestMetaData());
         if (other.getConfigurationSyncRequest() != null) {
@@ -183,7 +183,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         return diff;
     }
 
-    private NotificationSyncRequest diff(NotificationSyncRequest oldRequest, NotificationSyncRequest newRequest) {
+    private NotificationClientSync diff(NotificationClientSync oldRequest, NotificationClientSync newRequest) {
         if (oldRequest == null) {
             return newRequest;
         } else {
@@ -200,7 +200,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         }
     }
 
-    private ConfigurationSyncRequest diff(ConfigurationSyncRequest oldRequest, ConfigurationSyncRequest newRequest) {
+    private ConfigurationClientSync diff(ConfigurationClientSync oldRequest, ConfigurationClientSync newRequest) {
         if (oldRequest == null) {
             return newRequest;
         } else {
