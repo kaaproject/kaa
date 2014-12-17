@@ -45,7 +45,7 @@ public class TypeConverterTest {
         Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.create(Type.INT)));
         Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.create(Type.LONG)));
         Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.createEnum("name", "doc", "namespace", Arrays.asList("node"))));
-        Assert.assertTrue(TypeConverter.isAvroPrimitive(Schema.create(Type.STRING)));
+        Assert.assertFalse(TypeConverter.isAvroPrimitive(Schema.create(Type.STRING)));
         Assert.assertFalse(TypeConverter.isAvroPrimitive(Schema.create(Type.BYTES)));
 
         Assert.assertTrue(TypeConverter.isAvroUnion(Schema.createUnion(
