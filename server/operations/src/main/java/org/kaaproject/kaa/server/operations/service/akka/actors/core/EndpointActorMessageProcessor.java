@@ -338,8 +338,10 @@ public class EndpointActorMessageProcessor {
         }
         if (!userRegistrationRequestSent) {
             userId = endpointProfile.getEndpointUserId();
-            sendConnectToNewUser(context, endpointProfile);
-            userRegistrationRequestSent = true;
+            if (userId != null) {
+                sendConnectToNewUser(context, endpointProfile);
+                userRegistrationRequestSent = true;
+            }
         } else {
             LOG.trace("[{}][{}] User registration request is already sent.", endpointKey, actorKey);
         }
