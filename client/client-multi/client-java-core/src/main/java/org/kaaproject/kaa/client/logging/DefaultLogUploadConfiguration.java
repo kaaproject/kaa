@@ -22,23 +22,12 @@ package org.kaaproject.kaa.client.logging;
 public class DefaultLogUploadConfiguration implements LogUploadConfiguration {
     public static final long MAX_BATCH_VOLUME = 32 * 1024; // Framework limitation
 
-    private final long batchVolume;
-    private final long maximumAllowedVolume;
-    private final long volumeThreshold;
+    private long batchVolume = 0;
+    private long maximumAllowedVolume = 0;
+    private long volumeThreshold = 0;
+    private long logUploadTimeout = 0;
 
-    public DefaultLogUploadConfiguration(long batchVolume, long volumeThreshold, long maximumAllowedVolume) {
-        if (batchVolume > MAX_BATCH_VOLUME) {
-            throw new IllegalArgumentException("Log batch should be less than " + MAX_BATCH_VOLUME + " KB");
-        }
-
-        if (volumeThreshold > maximumAllowedVolume) {
-            throw new IllegalArgumentException("Maximum allowed volume should be greater than volume threshold");
-        }
-
-        this.batchVolume = batchVolume;
-        this.maximumAllowedVolume = maximumAllowedVolume;
-        this.volumeThreshold = volumeThreshold;
-    }
+    private DefaultLogUploadConfiguration() {}
 
     @Override
     public long getBatchVolume() {
@@ -53,5 +42,50 @@ public class DefaultLogUploadConfiguration implements LogUploadConfiguration {
     @Override
     public long getVolumeThreshold() {
         return volumeThreshold;
+    }
+
+    @Override
+    public long getLogUploadTimeout() {
+        return logUploadTimeout;
+    }
+
+    public static class Builder {
+        DefaultLogUploadConfiguration config = new DefaultLogUploadConfiguration();
+
+        public Builder setBatchVolume(long volume) {
+            config.batchVolume = volume;
+            return this;
+        }
+
+        public Builder setMaximumAllowedVolume(long volume) {
+            config.maximumAllowedVolume = volume;
+            return this;
+        }
+
+        public Builder setVolumeThreshold(long volume) {
+            config.volumeThreshold = volume;
+            return this;
+        }
+
+        public Builder setLogUploadTimeout(long timeout) {
+            config.logUploadTimeout = timeout;
+            return this;
+        }
+
+        public DefaultLogUploadConfiguration build() {
+            if (config.batchVolume > MAX_BATCH_VOLUME) {
+                throw new IllegalArgumentException("Log batch should be less than " + MAX_BATCH_VOLUME + " KB");
+            }
+
+            if (config.volumeThreshold > config.maximumAllowedVolume) {
+                throw new IllegalArgumentException("Maximum allowed volume should be greater than volume threshold");
+            }
+
+            if (config.logUploadTimeout <= 0) {
+                throw new IllegalArgumentException("To small log upload timeout: " + config.logUploadTimeout);
+            }
+
+            return config;
+        }
     }
 }

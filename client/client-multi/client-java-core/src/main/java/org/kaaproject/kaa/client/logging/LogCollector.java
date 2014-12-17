@@ -67,6 +67,13 @@ public interface LogCollector {
     void setUploadStrategy(LogUploadStrategy strategy);
 
     /**
+     * Set user implementation of a upload failover strategy.
+     *
+     * @param strategy User-defined upload failover strategy object.
+     */
+    void setFailoverStrategy(LogUploadFailoverStrategy strategy);
+
+    /**
      * Set user implementation of a log upload configuration.
      *
      * @param configuration User-defined log upload configuration object.

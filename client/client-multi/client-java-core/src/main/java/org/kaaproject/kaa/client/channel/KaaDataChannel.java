@@ -108,6 +108,15 @@ public interface KaaDataChannel {
     void setServer(ServerInfo server);
 
     /**
+     * Retrieves info about current used server
+     *
+     * @return Server info
+     * @see ServerInfo
+     *
+     */
+    ServerInfo getServer();
+
+    /**
      * Sets connectivity checker to the current channel.
      *
      * @param checker platform-dependent connectivity checker.

@@ -315,6 +315,11 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
+    public ServerInfo getServer() {
+        return currentServer;
+    }
+
+    @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {}
 
     @Override

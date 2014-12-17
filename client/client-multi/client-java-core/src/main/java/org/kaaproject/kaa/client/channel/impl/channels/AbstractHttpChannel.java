@@ -151,6 +151,11 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     }
 
     @Override
+    public ServerInfo getServer() {
+        return currentServer;
+    }
+
+    @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {}
 
     @Override
