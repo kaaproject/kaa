@@ -14,19 +14,16 @@
 # limitations under the License.
 #
 
-sonar.projectKey=kaa_c_sdk
-sonar.projectName="Kaa C Endpoint SDK"
-sonar.projectVersion=0.6.2
-sonar.sources=src
+sonar.sources=client/client-multi/client-c/src
 sonar.language=c++
 sonar.projectBaseDir=@CMAKE_CURRENT_SOURCE_DIR@
 sonar.cxx.defines=__cplusplus 1
 sonar.cxx.suffixes.sources=.c
 sonar.cxx.suffixes.headers=.h
-sonar.cxx.valgrind.reportPath=build/valgrindReports/*.memreport.xml
-sonar.cxx.includeDirectories=src,/usr/include/,/usr/include/linux/,/usr/lib/gcc/x86_64-linux-gnu/4.9/include/
-sonar.cxx.coverage.reportPath=build/gcovr-report.xml
-sonar.cxx.other.reportPath=build/*-Results.xml
-sonar.cxx.xunit.xsltURL=cunit-to-junit.xsl
-sonar.cxx.cppcheck.reportPath=build/cppcheck.xml
-sonar.cxx.rats.reportPath=build/rats-report.xml
+sonar.cxx.valgrind.reportPath=client/client-multi/client-c/build/valgrindReports/*.memreport.xml
+sonar.cxx.includeDirectories=client/client-multi/client-c/src,/usr/include/,/usr/include/linux/,/usr/lib/gcc/x86_64-linux-gnu/4.9/include/
+sonar.cxx.coverage.reportPath=client/client-multi/client-c/build/gcovr-report.xml
+sonar.cxx.other.reportPath=client/client-multi/client-c/build/*-Results.xml
+sonar.cxx.xunit.xsltURL=client/client-multi/client-c/cunit-to-junit.xsl
+sonar.cxx.cppcheck.reportPath=client/client-multi/client-c/build/cppcheck.xml
+sonar.cxx.rats.reportPath=client/client-multi/client-c/build/rats-report.xml
