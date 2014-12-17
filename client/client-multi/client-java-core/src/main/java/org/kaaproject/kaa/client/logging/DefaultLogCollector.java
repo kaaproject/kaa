@@ -139,7 +139,8 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
                 request.setRequestId(group.getBlockId());
                 request.setLogEntries(logs);
 
-                timeoutMap.put(group.getBlockId(), System.currentTimeMillis());
+                timeoutMap.put(group.getBlockId(), System.currentTimeMillis() +
+                                        configuration.getLogUploadTimeout() * 1000);
             }
         } else {
             LOG.warn("Log group is null: storage is empty or log group size is too small");
@@ -183,11 +184,10 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
 
     private boolean isDeliveryTimeout() {
         boolean isTimeout = false;
-        long uploadTimeout = configuration.getLogUploadTimeout() * 1000;
         long currentTime = System.currentTimeMillis();
 
         for (Map.Entry<String, Long> logRequest : timeoutMap.entrySet()) {
-            if ((currentTime - logRequest.getValue()) >= uploadTimeout) {
+            if (currentTime >= logRequest.getValue()) {
                 isTimeout = true;
                 break;
             }
