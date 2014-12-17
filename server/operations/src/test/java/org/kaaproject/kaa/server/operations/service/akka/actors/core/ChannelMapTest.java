@@ -22,8 +22,8 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
-import org.kaaproject.kaa.common.endpoint.protocol.ClientSyncMetaData;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
@@ -48,7 +48,7 @@ public class ChannelMapTest {
     @Test
     public void testChannelMetaData(){
         ClientSync request = new ClientSync();
-        request.setSyncRequestMetaData(new ClientSyncMetaData());
+        request.setClientSyncMetaData(new ClientSyncMetaData());
         UUID sameUid = UUID.randomUUID();
         ChannelHandlerContext ctxMock = Mockito.mock(ChannelHandlerContext.class);
         NettySessionInfo session = new NettySessionInfo(sameUid, ctxMock, ChannelType.HTTP, null, null, "applicationToken", 0, true);
@@ -58,7 +58,7 @@ public class ChannelMapTest {
         ChannelMetaData md2 = new ChannelMetaData(message2);
         Assert.assertEquals(md1, md2);
         ClientSync newRequest = new ClientSync();
-        newRequest.setSyncRequestMetaData(new ClientSyncMetaData());
+        newRequest.setClientSyncMetaData(new ClientSyncMetaData());
         md2.mergeRequest(new SyncRequestMessage(session, request, null, null));
         Assert.assertEquals(md1, md2);
     }

@@ -24,19 +24,19 @@ import java.util.Vector;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
-import org.kaaproject.kaa.common.endpoint.protocol.ConfigurationServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.Notification;
-import org.kaaproject.kaa.common.endpoint.protocol.NotificationServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.NotificationType;
-import org.kaaproject.kaa.common.endpoint.protocol.RedirectServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.SubscriptionType;
-import org.kaaproject.kaa.common.endpoint.protocol.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.protocol.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.protocol.Topic;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.Notification;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationType;
+import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.Topic;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 
 /**
@@ -134,7 +134,7 @@ public class TestOperationsService implements OperationsService {
         response.setStatus(SyncResponseResultType.REDIRECT);
         RedirectServerSync redirectResponse = new RedirectServerSync();
         redirectResponse.setDnsName(MultipartObjects.getRandomString(30));
-        response.setRedirectSyncResponse(redirectResponse);
+        response.setRedirectSync(redirectResponse);
         return response;
     }
 
@@ -149,7 +149,7 @@ public class TestOperationsService implements OperationsService {
         confSyncResponse.setResponseStatus(SyncResponseStatus.RESYNC);
         confSyncResponse.setConfDeltaBody(ByteBuffer.wrap(HttpTestSyncClient.getRandomBytes(4096)));
         confSyncResponse.setConfSchemaBody(ByteBuffer.wrap(HttpTestSyncClient.getRandomBytes(4096)));
-        response.setConfigurationSyncResponse(confSyncResponse);
+        response.setConfigurationSync(confSyncResponse);
         return response;
     }
 
@@ -228,7 +228,7 @@ public class TestOperationsService implements OperationsService {
             notifications.add(notif);
         }
         notificationSyncResponse.setNotifications(notifications);
-        response.setNotificationSyncResponse(notificationSyncResponse);
+        response.setNotificationSync(notificationSyncResponse);
         return response;
     }
 

@@ -40,7 +40,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.common.endpoint.protocol.Event;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
@@ -54,6 +53,7 @@ import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
+import org.kaaproject.kaa.server.operations.pojo.sync.Event;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
 

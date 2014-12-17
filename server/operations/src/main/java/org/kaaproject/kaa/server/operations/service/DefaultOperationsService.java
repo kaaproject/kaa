@@ -29,32 +29,6 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.endpoint.protocol.ClientSync;
-import org.kaaproject.kaa.common.endpoint.protocol.ClientSyncMetaData;
-import org.kaaproject.kaa.common.endpoint.protocol.ConfigurationClientSync;
-import org.kaaproject.kaa.common.endpoint.protocol.ConfigurationServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.EndpointAttachRequest;
-import org.kaaproject.kaa.common.endpoint.protocol.EndpointAttachResponse;
-import org.kaaproject.kaa.common.endpoint.protocol.EndpointDetachRequest;
-import org.kaaproject.kaa.common.endpoint.protocol.EndpointDetachResponse;
-import org.kaaproject.kaa.common.endpoint.protocol.EventClientSync;
-import org.kaaproject.kaa.common.endpoint.protocol.EventListenersRequest;
-import org.kaaproject.kaa.common.endpoint.protocol.EventListenersResponse;
-import org.kaaproject.kaa.common.endpoint.protocol.EventServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.Notification;
-import org.kaaproject.kaa.common.endpoint.protocol.NotificationClientSync;
-import org.kaaproject.kaa.common.endpoint.protocol.NotificationServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.NotificationType;
-import org.kaaproject.kaa.common.endpoint.protocol.ProfileClientSync;
-import org.kaaproject.kaa.common.endpoint.protocol.ProfileServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.ServerSync;
-import org.kaaproject.kaa.common.endpoint.protocol.SubscriptionType;
-import org.kaaproject.kaa.common.endpoint.protocol.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.protocol.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.protocol.Topic;
-import org.kaaproject.kaa.common.endpoint.protocol.UserAttachResponse;
-import org.kaaproject.kaa.common.endpoint.protocol.UserClientSync;
-import org.kaaproject.kaa.common.endpoint.protocol.UserServerSync;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
@@ -66,6 +40,32 @@ import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.Notification;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationType;
+import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.Topic;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
@@ -146,7 +146,7 @@ public class DefaultOperationsService implements OperationsService {
      *             the get delta exception
      */
     private SyncResponseHolder processSync(ClientSync request, EndpointProfileDto profile) throws GetDeltaException {
-        ClientSyncMetaData metaData = request.getSyncRequestMetaData();
+        ClientSyncMetaData metaData = request.getClientSyncMetaData();
         String endpointId = Base64Util.encode(metaData.getEndpointPublicKeyHash().array());
         int requestHash = request.hashCode();
         LOG.trace("[{}][{}] processing sync. request: {}", endpointId, requestHash, request);
@@ -159,7 +159,7 @@ public class DefaultOperationsService implements OperationsService {
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.SUCCESS);
 
-        ProfileClientSync profileSyncRequest = request.getProfileSyncRequest();
+        ProfileClientSync profileSyncRequest = request.getProfileSync();
         if (profileSyncRequest != null) {
             ProfileServerSync profileSyncResponse;
             if (profileSyncRequest.getEndpointPublicKey() != null) {
@@ -192,22 +192,22 @@ public class DefaultOperationsService implements OperationsService {
             return buildProfileResyncResponse(request);
         }
 
-        if (request.getUserSyncRequest() != null) {
-            LOG.trace("[{}][{}] procesing user sync request {}.", endpointId, requestHash, request.getUserSyncRequest());
-            UserServerSync userSyncResponse = processUserSyncRequest(endpointId, requestHash, metaData, request.getUserSyncRequest(), profile);
+        if (request.getUserSync() != null) {
+            LOG.trace("[{}][{}] procesing user sync request {}.", endpointId, requestHash, request.getUserSync());
+            UserServerSync userSyncResponse = processUserSyncRequest(endpointId, requestHash, metaData, request.getUserSync(), profile);
             response.setUserSyncResponse(userSyncResponse);
         }
 
-        if (request.getEventSyncRequest() != null) {
-            LOG.trace("[{}][{}] procesing event sync request {}.", endpointId, requestHash, request.getEventSyncRequest());
-            EventServerSync eventSyncResponse = processEventSyncResponse(endpointId, requestHash, appSeqNumber, request.getEventSyncRequest(), profile);
+        if (request.getEventSync() != null) {
+            LOG.trace("[{}][{}] procesing event sync request {}.", endpointId, requestHash, request.getEventSync());
+            EventServerSync eventSyncResponse = processEventSyncResponse(endpointId, requestHash, appSeqNumber, request.getEventSync(), profile);
             response.setEventSyncResponse(eventSyncResponse);
         }
 
         boolean updateProfileRequired = false;
 
-        if (request.getConfigurationSyncRequest() != null) {
-            ConfigurationClientSync confSyncRequest = request.getConfigurationSyncRequest();
+        if (request.getConfigurationSync() != null) {
+            ConfigurationClientSync confSyncRequest = request.getConfigurationSync();
             LOG.trace("[{}][{}] procesing configuration sync request {}.", endpointId, requestHash, confSyncRequest);
             LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", endpointId, requestHash, confSyncRequest.getAppStateSeqNumber(), curAppSeqNumber);
             int startSeqNumber = Math.min(confSyncRequest.getAppStateSeqNumber(), profile.getCfSequenceNumber());
@@ -228,8 +228,8 @@ public class DefaultOperationsService implements OperationsService {
             }
         }
 
-        if (request.getNotificationSyncRequest() != null) {
-            NotificationClientSync nfSyncRequest = request.getNotificationSyncRequest();
+        if (request.getNotificationSync() != null) {
+            NotificationClientSync nfSyncRequest = request.getNotificationSync();
             LOG.trace("[{}][{}] procesing notification sync request {}.", endpointId, requestHash, nfSyncRequest);
             LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", endpointId, requestHash, nfSyncRequest.getAppStateSeqNumber(), curAppSeqNumber);
             int startSeqNumber = Math.min(nfSyncRequest.getAppStateSeqNumber(), profile.getNfSequenceNumber());
@@ -329,11 +329,11 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     private boolean validate(String endpointId, ClientSync request) {
-        ClientSyncMetaData md = request.getSyncRequestMetaData();
+        ClientSyncMetaData md = request.getClientSyncMetaData();
         // TODO: validate if public key hash matches hash of public key during
         // profile registration command.
         if (md.getProfileHash() == null) {
-            ProfileClientSync profileRequest = request.getProfileSyncRequest();
+            ProfileClientSync profileRequest = request.getProfileSync();
             if (profileRequest != null && profileRequest.getEndpointPublicKey() != null) {
                 return true;
             } else {
@@ -618,10 +618,10 @@ public class DefaultOperationsService implements OperationsService {
     public ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notificationDtos, String unicastNotificationId) {
         LOG.debug("Updating sync response {}", response);
         boolean modified = false;
-        NotificationServerSync notificationResponse = response.getNotificationSyncResponse();
+        NotificationServerSync notificationResponse = response.getNotificationSync();
         if (notificationResponse == null) {
             notificationResponse = new NotificationServerSync();
-            response.setNotificationSyncResponse(notificationResponse);
+            response.setNotificationSync(notificationResponse);
         }
 
         List<Notification> notifications = notificationResponse.getNotifications();

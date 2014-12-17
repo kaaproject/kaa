@@ -49,7 +49,6 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
-import org.kaaproject.kaa.common.endpoint.protocol.ClientSyncMetaData;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
