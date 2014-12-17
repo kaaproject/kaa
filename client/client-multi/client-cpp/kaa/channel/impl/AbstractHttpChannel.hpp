@@ -57,6 +57,10 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(IServerInfoPtr server);
 
+    virtual IServerInfoPtr getServer() {
+        return currentServer_;
+    }
+
     virtual ChannelType getChannelType() const  { return Type; }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}

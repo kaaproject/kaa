@@ -712,14 +712,47 @@ public:
 
     static std::string LogSyncResponseToString(const SyncResponse::logSyncResponse_t& logSyncResponse) {
         if (!logSyncResponse.is_null()) {
-            std::ostringstream stream;
-            std::string requestId = logSyncResponse.get_LogSyncResponse().requestId;
-            std::string result = RequestResultTypeToString(logSyncResponse.get_LogSyncResponse().result);
-            stream << "{ requestId: " << requestId << ", result: " << result << "}";
-            return stream.str();
+            const auto& syncResponse = logSyncResponse.get_LogSyncResponse();
+            if (!syncResponse.deliveryStatuses.is_null()) {
+                const auto& deliveryStatuses = syncResponse.deliveryStatuses.get_array();
+                std::ostringstream stream;
+                for (size_t i = 0; i < deliveryStatuses.size(); ++i) {
+                    if (i > 0) {
+                        stream << ",";
+                    }
+
+                    stream << "{ requestId: " << deliveryStatuses[i].requestId
+                           << ", result: " << RequestResultTypeToString(deliveryStatuses[i].result)
+                           << ", code: " << (deliveryStatuses[i].errorCode.is_null() ? "" :
+                           LogDeliveryErrorCodeToString(deliveryStatuses[i].errorCode.get_LogDeliveryErrorCode())) << "}";
+                }
+                return stream.str();
+            }
         }
         static std::string null("null");
         return null;
+    }
+
+    static std::string LogDeliveryErrorCodeToString(LogDeliveryErrorCode code) {
+        std::string result;
+        switch (code) {
+            case LogDeliveryErrorCode::NO_APPENDERS_CONFIGURED:
+                result = "NO_APPENDERS_CONFIGURED";
+                break;
+            case LogDeliveryErrorCode::APPENDER_INTERNAL_ERROR:
+                result = "APPENDER_INTERNAL_ERROR";
+                break;
+            case LogDeliveryErrorCode::REMOTE_CONNECTION_ERROR:
+                result = "REMOTE_CONNECTION_ERROR";
+                break;
+            case LogDeliveryErrorCode::REMOTE_INTERNAL_ERROR:
+                result = "REMOTE_INTERNAL_ERROR";
+                break;
+            default:
+                result = "UNKNOWN";
+                break;
+        }
+        return result;
     }
 
 private:
