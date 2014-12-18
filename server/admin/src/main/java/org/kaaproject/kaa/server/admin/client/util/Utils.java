@@ -24,11 +24,15 @@ import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdminConstants;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
 import org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages;
+import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.UnauthorizedSessionDialog;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.StatusCodeException;
 
 public class Utils {
 
@@ -46,38 +50,63 @@ public class Utils {
 
     private static final int INCORRECT_IDX = -1;
 
+    private static UnauthorizedSessionDialog unauthorizedSessionDialog;
 
-    public static String getErrorMessage(Throwable throwable) {
-        if (throwable instanceof KaaAdminServiceException) {
-            ServiceErrorCode errorCode = ((KaaAdminServiceException)throwable).getErrorCode();
+    public static void handleException(Throwable caught, HasErrorMessage hasErrorMessage) {
+        handleException(caught, hasErrorMessage, null);
+    }
+
+    public static void handleException(Throwable caught, HasErrorMessage hasErrorMessage, ErrorMessageCustomizer errorMessageCustomizer) {
+        boolean handled = false;
+        if (caught instanceof StatusCodeException) {
+            StatusCodeException sce = (StatusCodeException)caught;
+            if (sce.getStatusCode()==Response.SC_UNAUTHORIZED) {
+                onUnauthorized();
+                handled = true;
+            }
+        }
+        if (!handled) {
+            String message = parseErrorMessage(caught, errorMessageCustomizer);
+            hasErrorMessage.setErrorMessage(message);
+        }
+    }
+    
+    public static String parseErrorMessage(Throwable caught) {
+        return parseErrorMessage(caught, null);
+    }
+    
+    private static String parseErrorMessage(Throwable caught, ErrorMessageCustomizer errorMessageCustomizer) {
+        if (caught instanceof KaaAdminServiceException) {
+            ServiceErrorCode errorCode = ((KaaAdminServiceException)caught).getErrorCode();
             String message =  constants.getString(errorCode.getResKey());
             if (errorCode.showErrorMessage()) {
-                message += throwable.getMessage();
+                message += caught.getMessage();
             }
             return message;
-        }
-        else {
-            return throwable.getMessage();
+        } else if (errorMessageCustomizer != null) {
+            return errorMessageCustomizer.customizeErrorMessage(caught);
+        } else {
+            return caught.getMessage();
         }
     }
-
-    public static String customizeErrorMessage(Throwable throwable) {
-        String message = throwable.getMessage();
-        if(message != null) {
-            if(message.contains("[") && message.contains("]")) {
-                StringBuilder builder = new StringBuilder();
-                builder.append("Incorrect schema: ");
-                builder.append(message.substring(0, message.indexOf("[")));
-                String[] array =  message.substring(message.indexOf("["), message.indexOf("]")).split(";");
-                if(array != null && array.length == 2) {
-                    builder.append(array[1]);
-                    message = builder.toString();
+    
+    private static void onUnauthorized() {
+        if (unauthorizedSessionDialog == null || !unauthorizedSessionDialog.isShowing()) {
+            unauthorizedSessionDialog = new UnauthorizedSessionDialog(new UnauthorizedSessionDialog.Listener() {
+                @Override
+                public void onLogin() {
+                    Window.open(Window.Location.getPath(),"_blank","");
                 }
-            }
+                
+                @Override
+                public void onIgnore() {
+                    // do nothing
+                }
+            });
+            unauthorizedSessionDialog.center();
+            unauthorizedSessionDialog.show();
         }
-        return message;
     }
-
 
     public static String millisecondsToDateString(long millis) {
         return simpleDateFormat.format(new Date(millis));

@@ -88,8 +88,8 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
     }
 
     @Override
-    protected String customizeErrorMessage(Throwable caught) {
-        return Utils.getErrorMessage(caught);
+    public String customizeErrorMessage(Throwable caught) {
+        return Utils.parseErrorMessage(caught);
     }
 
 }

@@ -62,7 +62,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         listView = getView();
-        this.dataProvider = getDataProvider(listView.getSelectionModel(), new DataLoadCallback(listView));
+        this.dataProvider = getDataProvider(listView.getSelectionModel());
         listView.setPresenter(this);
         bind(eventBus);
         containerWidget.setWidget(listView.asWidget());
@@ -71,8 +71,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
 
     protected abstract BaseListView<T> getView();
 
-    protected abstract AbstractDataProvider<T> getDataProvider(MultiSelectionModel<T> selectionModel,
-                                                                AsyncCallback<List<T>> asyncCallback);
+    protected abstract AbstractDataProvider<T> getDataProvider(MultiSelectionModel<T> selectionModel);
 
     protected abstract Place newEntityPlace();
 
@@ -124,7 +123,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
                         deleteEntity(id, new AsyncCallback<Void>() {
                             @Override
                             public void onFailure(Throwable caught) {
-                                listView.setErrorMessage(Utils.getErrorMessage(caught));
+                                Utils.handleException(caught, listView);
                             }
 
                             @Override
@@ -158,25 +157,5 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
 
       protected void onCustomRowAction(RowActionEvent<String> event) {}
       protected void onCustomDataChangedEvent(DataEvent event) {}
-
-    class DataLoadCallback implements
-            AsyncCallback<List<T>> {
-
-        private BaseListView<T> view;
-
-        DataLoadCallback(BaseListView<T> view) {
-            this.view = view;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            view.setErrorMessage(Utils.getErrorMessage(caught));
-        }
-
-        @Override
-        public void onSuccess(List<T> result) {
-            view.clearError();
-        }
-    }
 
 }

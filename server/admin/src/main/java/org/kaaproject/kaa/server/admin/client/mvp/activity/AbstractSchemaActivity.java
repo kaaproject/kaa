@@ -20,7 +20,7 @@ import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
-import org.kaaproject.kaa.server.admin.client.util.ErrorMessageBuilder;
+import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.shared.EventBus;
@@ -29,8 +29,12 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 
 public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V extends BaseSchemaView, P extends AbstractSchemaPlace> extends
-    AbstractDetailsActivity<T, V, P> {
+    AbstractDetailsActivity<T, V, P> implements ErrorMessageCustomizer {
 
+    private static final String  LEFT_SQUARE_BRACKET = "[";
+    private static final String  RIGHT_SQUARE_BRACKET = "]";
+    private static final String  SEMICOLON = ";";
+    
     protected String applicationId;
     protected String fileItemName;
 
@@ -71,7 +75,7 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
 
                             @Override
                             public void onFailure(Throwable caught) {
-                                detailsView.setErrorMessage(ErrorMessageBuilder.buildErrorMessage(caught));
+                                Utils.handleException(caught, detailsView, AbstractSchemaActivity.this);
                             }
                     });
                 }
@@ -117,10 +121,27 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
 
                         @Override
                         public void onFailure(Throwable caught) {
-                            detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                            Utils.handleException(caught, detailsView);
                         }
             });
         }
+    }
+    
+    @Override
+    public String customizeErrorMessage(Throwable caught) {
+        String errorMessage = caught.getMessage();
+        if (errorMessage.contains(LEFT_SQUARE_BRACKET) && errorMessage.contains(RIGHT_SQUARE_BRACKET)) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Incorrect json schema: Please check your schema at");
+            String[] array = errorMessage.substring(errorMessage.indexOf(LEFT_SQUARE_BRACKET), errorMessage.indexOf(RIGHT_SQUARE_BRACKET)).split(SEMICOLON);
+            if (array != null && array.length == 2) {
+                builder.append(array[1]);
+                errorMessage = builder.toString();
+            }
+        } else {
+            return "Incorrect schema: Please validate your schema.";
+        }
+        return errorMessage;
     }
 
 }

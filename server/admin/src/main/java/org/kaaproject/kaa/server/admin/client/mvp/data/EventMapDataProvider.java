@@ -27,6 +27,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
@@ -38,8 +39,8 @@ public class EventMapDataProvider extends AbstractDataProvider<ApplicationEventM
     private List<ApplicationEventMapDto> eventMaps;
     
     public EventMapDataProvider(MultiSelectionModel<ApplicationEventMapDto> selectionModel,
-                                    AsyncCallback<List<ApplicationEventMapDto>> asyncCallback) {
-        super(selectionModel, asyncCallback);
+                                    HasErrorMessage hasErrorMessage) {
+        super(selectionModel, hasErrorMessage);
     }
     
     public void setEcf(EcfInfoDto ecf) {

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -46,9 +44,8 @@ public class AefMapsActivity extends AbstractListActivity<ApplicationEventFamily
 
     @Override
     protected AbstractDataProvider<ApplicationEventFamilyMapDto> getDataProvider(
-            MultiSelectionModel<ApplicationEventFamilyMapDto> selectionModel,
-            AsyncCallback<List<ApplicationEventFamilyMapDto>> asyncCallback) {
-        return new AefMapsDataProvider(selectionModel, asyncCallback, applicationId);
+            MultiSelectionModel<ApplicationEventFamilyMapDto> selectionModel) {
+        return new AefMapsDataProvider(selectionModel, listView, applicationId);
     }
 
     @Override

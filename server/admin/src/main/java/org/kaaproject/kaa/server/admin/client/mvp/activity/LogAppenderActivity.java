@@ -78,14 +78,14 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
             }
             @Override
             public void onFailure(Throwable caught) {
-                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                Utils.handleException(caught, detailsView);
             }
         });
     
         KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new AsyncCallback<List<SchemaDto>>() {
             @Override
             public void onFailure(Throwable caught) {
-                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                Utils.handleException(caught, detailsView);
             }
             @Override
             public void onSuccess(List<SchemaDto> result) {

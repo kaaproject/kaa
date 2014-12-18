@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -46,9 +44,8 @@ public class ProfileSchemasActivity extends AbstractListActivity<ProfileSchemaDt
 
     @Override
     protected AbstractDataProvider<ProfileSchemaDto> getDataProvider(
-            MultiSelectionModel<ProfileSchemaDto> selectionModel,
-            AsyncCallback<List<ProfileSchemaDto>> asyncCallback) {
-        return new ProfileSchemasDataProvider(selectionModel, asyncCallback, applicationId);
+            MultiSelectionModel<ProfileSchemaDto> selectionModel) {
+        return new ProfileSchemasDataProvider(selectionModel, listView, applicationId);
     }
 
     @Override
