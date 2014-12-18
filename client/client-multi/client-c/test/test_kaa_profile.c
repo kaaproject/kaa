@@ -184,20 +184,24 @@ void test_profile_handle_sync()
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(logger);
+    if (error || !logger) {
+        return error;
+    }
 
     error = kaa_status_create(&status);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(status);
+    if (error || !status) {
+        return error;
+    }
 
     error = kaa_channel_manager_create(&channel_manager, logger);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(channel_manager);
+    if (error || !channel_manager) {
+        return error;
+    }
 
     error = kaa_profile_manager_create(&profile_manager, status, channel_manager, logger);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(profile_manager);
+    if (error || !profile_manager) {
+        return error;
+    }
 
     return 0;
 }

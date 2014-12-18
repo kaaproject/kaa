@@ -198,21 +198,25 @@ void test_kaa_add_on_event_callback()
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(logger);
+    if (error || !logger) {
+        return error;
+    }
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     error = kaa_status_create(&status);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(status);
+    if (error || !status) {
+        return error;
+    }
 
     error = kaa_channel_manager_create(&channel_manager, logger);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(channel_manager);
+    if (error || !channel_manager) {
+        return error;
+    }
 
     error = kaa_event_manager_create(&event_manager, status, channel_manager, logger);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(event_manager);
+    if (error || !event_manager) {
+        return error;
+    }
 #endif
     return 0;
 }
