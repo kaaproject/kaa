@@ -159,6 +159,10 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
+       <dependency>
+            <groupId>org.logback-extensions</groupId>
+            <artifactId>logback-ext-spring</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift</artifactId>
@@ -303,7 +307,7 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>admin-log4j.xml</exclude>
+                    <exclude>admin-logback.xml</exclude>
                     <exclude>admin-server.properties</exclude>
                     <exclude>jetty/**</exclude>
                 </excludes>
@@ -444,7 +448,7 @@
                                 <resource>
                                     <directory>src/main/resources</directory>
                                     <includes>
-                                        <include>admin-log4j.xml</include>
+                                        <include>admin-logback.xml</include>
                                         <include>admin-server.properties</include>
                                     </includes>
                                 </resource>
