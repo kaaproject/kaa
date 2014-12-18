@@ -29,9 +29,10 @@ then
 fi
 
 COLLECT_COVERAGE=0
+MAX_LOG_LEVEL=6
 
 function prepare_build {
-    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=1 -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE ..; cd ..
+    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=1 -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL ..; cd ..
 }
 
 function build {
@@ -162,7 +163,8 @@ case "$cmd" in
     build)
         COLLECT_COVERAGE=0
         prepare_build &&
-        build
+        build &&
+        execute_tests
     ;;
 
     install)

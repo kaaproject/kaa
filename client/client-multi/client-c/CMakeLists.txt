@@ -48,7 +48,11 @@ endif()
 
 # set max log level
 # TODO: add switch for Debug/Release versions
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
+if(DEFINED KAA_MAX_LOG_LEVEL)
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
+else()
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
+endif()
 
 find_package (OpenSSL REQUIRED)
 
