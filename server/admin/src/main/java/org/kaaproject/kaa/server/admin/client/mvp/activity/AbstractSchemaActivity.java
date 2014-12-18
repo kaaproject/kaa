@@ -45,7 +45,6 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
     }
 
     protected abstract T newSchema();
-//    protected abstract String customizeErrorMessage(Throwable caught);
 
     @Override
     protected String getEntityId(P place) {
@@ -129,11 +128,16 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
     
     @Override
     public String customizeErrorMessage(Throwable caught) {
-        String errorMessage = caught.getMessage();
-        if (errorMessage.contains(LEFT_SQUARE_BRACKET) && errorMessage.contains(RIGHT_SQUARE_BRACKET)) {
+        String errorMessage = caught.getMessage();        
+        int leftSquareBracketIndex = errorMessage.indexOf(LEFT_SQUARE_BRACKET);
+        int rightSquareBracketIndex = -1;
+        if (leftSquareBracketIndex != -1) {
+            rightSquareBracketIndex = errorMessage.indexOf(RIGHT_SQUARE_BRACKET, leftSquareBracketIndex);
+        }        
+        if (rightSquareBracketIndex != -1) {
             StringBuilder builder = new StringBuilder();
             builder.append("Incorrect json schema: Please check your schema at");
-            String[] array = errorMessage.substring(errorMessage.indexOf(LEFT_SQUARE_BRACKET), errorMessage.indexOf(RIGHT_SQUARE_BRACKET)).split(SEMICOLON);
+            String[] array = errorMessage.substring(leftSquareBracketIndex, rightSquareBracketIndex).split(SEMICOLON);
             if (array != null && array.length == 2) {
                 builder.append(array[1]);
                 errorMessage = builder.toString();

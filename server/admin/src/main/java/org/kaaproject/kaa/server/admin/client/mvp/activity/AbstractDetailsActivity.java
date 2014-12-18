@@ -169,8 +169,7 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
     public String mayStop() {
         if (detailsView.hasChanged() && !canceled) {
             return Utils.messages.detailsMayStopMessage();
-        }
-        else {
+        } else {
             return super.mayStop();
         }
     }
