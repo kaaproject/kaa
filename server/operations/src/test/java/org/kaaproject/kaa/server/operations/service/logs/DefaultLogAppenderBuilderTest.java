@@ -55,60 +55,45 @@ public class DefaultLogAppenderBuilderTest {
 
         @Override
         public void setName(String name) {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public String getName() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public void setAppenderId(String appenderId) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public String getAppenderId() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public void setApplicationToken(String applicationToken) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void init(LogAppenderDto appender) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void doAppend(LogEventPack logEventPack, LogDeliveryCallback callback) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void close() {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public boolean isSchemaVersionSupported(int version) {
-            // TODO Auto-generated method stub
             return true;
         }
 
         @Override
         public boolean isDeliveryConfirmationRequired() {
-            // TODO Auto-generated method stub
             return false;
         }
     }

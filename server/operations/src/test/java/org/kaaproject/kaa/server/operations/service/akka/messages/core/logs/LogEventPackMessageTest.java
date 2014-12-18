@@ -30,6 +30,7 @@ import akka.actor.ActorRef;
 
 public class LogEventPackMessageTest {
 
+    private static final String REQUEST_ID = "request1";
     private static final String ENDPOINT_KEY = "endpointKey";
     private static final long DATE_CREATED = System.currentTimeMillis();
     private static final int LOG_SCHEMA_VERSION = 3;
@@ -38,7 +39,7 @@ public class LogEventPackMessageTest {
 
     @Test
     public void nullLogEventPackTest() {
-        LogEventPackMessage logEvent = new LogEventPackMessage("request1", ActorRef.noSender(), null);
+        LogEventPackMessage logEvent = new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), null);
 
         Assert.assertNull(logEvent.getLogEventPack());
     }
@@ -49,7 +50,7 @@ public class LogEventPackMessageTest {
 
         LogEventPack logEventPack2 = new LogEventPack();
 
-        LogEventPackMessage logEvent = new LogEventPackMessage("request1", ActorRef.noSender(), logEventPack1);
+        LogEventPackMessage logEvent = new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), logEventPack1);
 
         Assert.assertEquals(logEventPack1, logEvent.getLogEventPack());
         Assert.assertNotEquals(logEventPack2, logEvent.getLogEventPack());
@@ -60,7 +61,7 @@ public class LogEventPackMessageTest {
         LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, LOG_SCHEMA, EVENTS);
         logEventPack.setLogSchemaVersion(LOG_SCHEMA_VERSION);
 
-        LogEventPackMessage logEvent = new LogEventPackMessage("request1", ActorRef.noSender(), logEventPack);
+        LogEventPackMessage logEvent = new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), logEventPack);
 
         Assert.assertEquals(ENDPOINT_KEY, logEvent.getEndpointKey());
         Assert.assertEquals(DATE_CREATED, logEvent.getDateCreated());
