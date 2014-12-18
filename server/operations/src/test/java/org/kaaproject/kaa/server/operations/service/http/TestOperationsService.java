@@ -34,7 +34,7 @@ import org.kaaproject.kaa.server.operations.pojo.sync.NotificationType;
 import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionType;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.Topic;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -131,7 +131,7 @@ public class TestOperationsService implements OperationsService {
      */
     private ServerSync generateRedirectionResponse() {
         ServerSync response = new ServerSync();
-        response.setStatus(SyncResponseResultType.REDIRECT);
+        response.setStatus(SyncStatus.REDIRECT);
         RedirectServerSync redirectResponse = new RedirectServerSync();
         redirectResponse.setDnsName(MultipartObjects.getRandomString(30));
         response.setRedirectSync(redirectResponse);
@@ -144,7 +144,7 @@ public class TestOperationsService implements OperationsService {
      */
     private ServerSync generateConfResyncResponse() {
         ServerSync response = new ServerSync();
-        response.setStatus(SyncResponseResultType.SUCCESS);
+        response.setStatus(SyncStatus.SUCCESS);
         ConfigurationServerSync confSyncResponse = new ConfigurationServerSync();
         confSyncResponse.setResponseStatus(SyncResponseStatus.RESYNC);
         confSyncResponse.setConfDeltaBody(ByteBuffer.wrap(HttpTestSyncClient.getRandomBytes(4096)));
@@ -159,7 +159,7 @@ public class TestOperationsService implements OperationsService {
      */
     private ServerSync generateProfResyncResponse() {
         ServerSync response = new ServerSync();
-        response.setStatus(SyncResponseResultType.PROFILE_RESYNC);
+        response.setStatus(SyncStatus.PROFILE_RESYNC);
         return response;
     }
 
@@ -169,7 +169,7 @@ public class TestOperationsService implements OperationsService {
      */
     private ServerSync generateDeltaResponse() {
         ServerSync response = new ServerSync();
-        response.setStatus(SyncResponseResultType.SUCCESS);
+        response.setStatus(SyncStatus.SUCCESS);
         if (rnd.nextBoolean()) {
             response = generateNotificationSyncResponse(response, SyncResponseStatus.DELTA);
         }
@@ -182,7 +182,7 @@ public class TestOperationsService implements OperationsService {
      */
     private ServerSync generateNoDeltaResponse() {
         ServerSync response = new ServerSync();
-        response.setStatus(SyncResponseResultType.SUCCESS);
+        response.setStatus(SyncStatus.SUCCESS);
         if (rnd.nextBoolean()) {
             response = generateNotificationSyncResponse(response, SyncResponseStatus.NO_DELTA);
         }

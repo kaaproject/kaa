@@ -15,6 +15,6 @@
  */
 package org.kaaproject.kaa.server.operations.pojo.sync;  
 
-public enum SubscriptionCommandType { 
-  ADD, REMOVE;
+public enum SyncStatus { 
+  SUCCESS, FAILURE, PROFILE_RESYNC, REDIRECT  ;
 }

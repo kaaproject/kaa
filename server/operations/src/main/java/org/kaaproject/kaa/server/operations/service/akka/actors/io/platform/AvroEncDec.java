@@ -193,7 +193,7 @@ public class AvroEncDec implements PlatformEncDec {
         return new Event(event.getSeqNum(), event.getEventClassFQN(), event.getEventData(), event.getSource(), event.getTarget());
     }    
 
-    private static SyncResponseResultType convert(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType status) {
+    private static SyncResponseResultType convert(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus status) {
         if (status == null) {
             return null;
         }

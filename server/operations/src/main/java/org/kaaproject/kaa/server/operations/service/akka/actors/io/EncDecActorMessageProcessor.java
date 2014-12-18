@@ -30,7 +30,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.PlatformEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.PlatformEncDecException;
@@ -165,7 +165,7 @@ public class EncDecActorMessageProcessor {
         RedirectServerSync redirectSyncResponse = new RedirectServerSync(redirection.getDnsName());
         ServerSync response = new ServerSync();
         response.setRequestId(request.getRequestId());
-        response.setStatus(SyncResponseResultType.REDIRECT);
+        response.setStatus(SyncStatus.REDIRECT);
         response.setRedirectSync(redirectSyncResponse);
         return response;
     }

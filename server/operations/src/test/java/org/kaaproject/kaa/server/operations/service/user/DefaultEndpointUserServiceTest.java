@@ -41,7 +41,7 @@ import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
 import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachRequest;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
@@ -117,7 +117,7 @@ public class DefaultEndpointUserServiceTest {
 
         UserAttachResponse response = endpointUserService.attachUser(profileMock, request);
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.SUCCESS, response.getResult());
+        assertEquals(SyncStatus.SUCCESS, response.getResult());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class DefaultEndpointUserServiceTest {
 
         UserAttachResponse response = endpointUserService.attachUser(profileMock, request);
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.FAILURE, response.getResult());
+        assertEquals(SyncStatus.FAILURE, response.getResult());
     }
 
     @Test
@@ -151,7 +151,7 @@ public class DefaultEndpointUserServiceTest {
 
         EndpointAttachResponse response = endpointUserService.attachEndpoint(profileMock, request);
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.SUCCESS, response.getResult());
+        assertEquals(SyncStatus.SUCCESS, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -164,7 +164,7 @@ public class DefaultEndpointUserServiceTest {
 
         EndpointAttachResponse response = endpointUserService.attachEndpoint(profileMock, request);
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.FAILURE, response.getResult());
+        assertEquals(SyncStatus.FAILURE, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -178,7 +178,7 @@ public class DefaultEndpointUserServiceTest {
 
         EndpointAttachResponse response = endpointUserService.attachEndpoint(profileMock, request);
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.FAILURE, response.getResult());
+        assertEquals(SyncStatus.FAILURE, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -196,7 +196,7 @@ public class DefaultEndpointUserServiceTest {
         Mockito.verify(endpointService).detachEndpointFromUser(profileMock);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.SUCCESS, response.getResult());
+        assertEquals(SyncStatus.SUCCESS, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -216,7 +216,7 @@ public class DefaultEndpointUserServiceTest {
         Mockito.verify(endpointService).detachEndpointFromUser(detachMock);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.SUCCESS, response.getResult());
+        assertEquals(SyncStatus.SUCCESS, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -229,7 +229,7 @@ public class DefaultEndpointUserServiceTest {
         EndpointDetachResponse response = endpointUserService.detachEndpoint(profileMock, request);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.FAILURE, response.getResult());
+        assertEquals(SyncStatus.FAILURE, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -242,7 +242,7 @@ public class DefaultEndpointUserServiceTest {
         EndpointDetachResponse response = endpointUserService.detachEndpoint(profileMock, request);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.FAILURE, response.getResult());
+        assertEquals(SyncStatus.FAILURE, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -262,7 +262,7 @@ public class DefaultEndpointUserServiceTest {
         Mockito.verify(endpointService, Mockito.never()).detachEndpointFromUser(detachMock);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.FAILURE, response.getResult());
+        assertEquals(SyncStatus.FAILURE, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -281,7 +281,7 @@ public class DefaultEndpointUserServiceTest {
         EndpointDetachResponse response = endpointUserService.detachEndpoint(profileMock, request);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.FAILURE, response.getResult());
+        assertEquals(SyncStatus.FAILURE, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -348,7 +348,7 @@ public class DefaultEndpointUserServiceTest {
                                             new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.SUCCESS, response.getResult());
+        assertEquals(SyncStatus.SUCCESS, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
         assertEquals(2, response.getListeners().size());
         assertTrue(response.getListeners().contains(Base64Util.encode(ENDPOINT_KEY_HASH1)));
@@ -372,7 +372,7 @@ public class DefaultEndpointUserServiceTest {
                                             new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.FAILURE, response.getResult());
+        assertEquals(SyncStatus.FAILURE, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
     }
 
@@ -400,7 +400,7 @@ public class DefaultEndpointUserServiceTest {
                                             new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
 
         assertNotNull(response);
-        assertEquals(SyncResponseResultType.SUCCESS, response.getResult());
+        assertEquals(SyncStatus.SUCCESS, response.getResult());
         assertEquals(REQUEST_ID, response.getRequestId());
         assertEquals(0, response.getListeners().size());
     }

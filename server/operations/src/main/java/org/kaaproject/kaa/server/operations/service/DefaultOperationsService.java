@@ -60,7 +60,7 @@ import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionType;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.Topic;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
@@ -157,7 +157,7 @@ public class DefaultOperationsService implements OperationsService {
 
         SyncResponseHolder response = new SyncResponseHolder(new ServerSync());
         response.setRequestId(request.getRequestId());
-        response.setStatus(SyncResponseResultType.SUCCESS);
+        response.setStatus(SyncStatus.SUCCESS);
 
         ProfileClientSync profileSyncRequest = request.getProfileSync();
         if (profileSyncRequest != null) {
@@ -592,7 +592,7 @@ public class DefaultOperationsService implements OperationsService {
     public static SyncResponseHolder buildProfileResyncResponse(ClientSync request) {
         ServerSync response = new ServerSync();
         response.setRequestId(request.getRequestId());
-        response.setStatus(SyncResponseResultType.PROFILE_RESYNC);
+        response.setStatus(SyncStatus.PROFILE_RESYNC);
         return new SyncResponseHolder(response);
     }
 

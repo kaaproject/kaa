@@ -97,7 +97,7 @@ import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand;
 import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachRequest;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
@@ -355,7 +355,7 @@ public class OperationsServiceIT extends AbstractTest {
         currentConfigurationHash = holder.getEndpointProfile().getConfigurationHash();
         ServerSync response = holder.getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
         Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
@@ -385,7 +385,7 @@ public class OperationsServiceIT extends AbstractTest {
         ServerSync response = operationsService.sync(request).getResponse();
 
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
         Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
@@ -395,7 +395,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
         Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
@@ -430,7 +430,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
         Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
@@ -460,7 +460,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.PROFILE_RESYNC, response.getStatus());
+        Assert.assertEquals(SyncStatus.PROFILE_RESYNC, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
     }
@@ -486,7 +486,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
         Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getConfigurationSync().getAppStateSeqNumber());
@@ -516,7 +516,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getNotificationSync());
         Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSync().getResponseStatus());
         Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSync().getAppStateSeqNumber());
@@ -546,7 +546,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getNotificationSync());
         Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSync().getResponseStatus());
         Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSync().getAppStateSeqNumber());
@@ -575,12 +575,12 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
         Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
     }
 
     @Test
@@ -602,12 +602,12 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
         Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.FAILURE, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getUserAttachResponse().getResult());
     }
 
     private void createSecondEndpoint() throws GetDeltaException, IOException {
@@ -630,7 +630,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
     }
 
     @Test
@@ -657,15 +657,15 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
         Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
         Assert.assertNotNull(response.getUserSync().getEndpointAttachResponses());
         Assert.assertEquals(1, response.getUserSync().getEndpointAttachResponses().size());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSync().getEndpointAttachResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getEndpointAttachResponses().get(0).getResult());
     }
 
     @Test
@@ -692,15 +692,15 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
         Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
         Assert.assertNotNull(response.getUserSync().getEndpointAttachResponses());
         Assert.assertEquals(1, response.getUserSync().getEndpointAttachResponses().size());
-        Assert.assertEquals(SyncResponseResultType.FAILURE, response.getUserSync().getEndpointAttachResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getEndpointAttachResponses().get(0).getResult());
     }
 
     @Test
@@ -724,15 +724,15 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
         Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
         Assert.assertNotNull(response.getUserSync().getEndpointDetachResponses());
         Assert.assertEquals(1, response.getUserSync().getEndpointDetachResponses().size());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSync().getEndpointDetachResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getEndpointDetachResponses().get(0).getResult());
     }
 
     @Test
@@ -759,15 +759,15 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
         Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
         Assert.assertNotNull(response.getUserSync().getEndpointDetachResponses());
         Assert.assertEquals(1, response.getUserSync().getEndpointDetachResponses().size());
-        Assert.assertEquals(SyncResponseResultType.FAILURE, response.getUserSync().getEndpointDetachResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getEndpointDetachResponses().get(0).getResult());
     }
 
     @Test
@@ -792,13 +792,13 @@ public class OperationsServiceIT extends AbstractTest {
 
         ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getEventSync());
         Assert.assertNotNull(response.getEventSync().getEventListenersResponses());
         Assert.assertEquals(1, response.getEventSync().getEventListenersResponses().size());
-        Assert.assertEquals(SyncResponseResultType.FAILURE, response.getEventSync().getEventListenersResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.FAILURE, response.getEventSync().getEventListenersResponses().get(0).getResult());
     }
 
 

@@ -51,7 +51,7 @@ import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachNotification;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserDetachNotification;
@@ -421,7 +421,7 @@ public class EndpointActorMessageProcessor {
             if (attachResponses != null && !attachResponses.isEmpty()) {
                 resetEventSeqNumber();
                 for (EndpointAttachResponse response : attachResponses) {
-                    if (response.getResult() != SyncResponseResultType.SUCCESS) {
+                    if (response.getResult() != SyncStatus.SUCCESS) {
                         LOG.debug("[{}][{}] Skipped unsuccessful attach response [{}]", endpointKey, actorKey,
                                 response.getRequestId());
                         continue;
@@ -443,7 +443,7 @@ public class EndpointActorMessageProcessor {
                     for (EndpointDetachResponse detachResponse : responseHolder.getResponse().getUserSync()
                             .getEndpointDetachResponses()) {
                         if (detachRequest.getRequestId().equals(detachResponse.getRequestId())) {
-                            if (detachResponse.getResult() != SyncResponseResultType.SUCCESS) {
+                            if (detachResponse.getResult() != SyncStatus.SUCCESS) {
                                 LOG.debug("[{}][{}] Skipped unsuccessful detach response [{}]", endpointKey, actorKey,
                                         detachResponse.getRequestId());
                                 continue;
@@ -480,7 +480,7 @@ public class EndpointActorMessageProcessor {
         logPack.setEvents(logEvents);
         logPack.setLogSchemaVersion(profile.getLogSchemaVersion());
         context.parent().tell(new LogEventPackMessage(logPack), context.self());
-        return new LogServerSync(logUploadRequest.getRequestId(), SyncResponseResultType.SUCCESS);
+        return new LogServerSync(logUploadRequest.getRequestId(), SyncStatus.SUCCESS);
     }
 
     private boolean requireLogUpload(ClientSync request) {

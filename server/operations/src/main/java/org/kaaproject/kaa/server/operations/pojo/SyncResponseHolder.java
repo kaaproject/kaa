@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
 
@@ -52,7 +52,7 @@ public class SyncResponseHolder {
     public static SyncResponseHolder failure(Integer requestId){
         ServerSync response = new ServerSync();
         response.setRequestId(requestId);
-        response.setStatus(SyncResponseResultType.FAILURE);
+        response.setStatus(SyncStatus.FAILURE);
         return new SyncResponseHolder(response);
     }
 
@@ -117,11 +117,11 @@ public class SyncResponseHolder {
         return endpointProfile;
     }
 
-    public SyncResponseResultType getStatus() {
+    public SyncStatus getStatus() {
         return response.getStatus();
     }
 
-    public void setStatus(SyncResponseResultType status) {
+    public void setStatus(SyncStatus status) {
         this.response.setStatus(status);
     }
 

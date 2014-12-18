@@ -208,7 +208,7 @@ public class DefaultAkkaServiceTest {
 
         ServerSync response = new ServerSync();
         response.setRequestId(REQUEST_ID);
-        response.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        response.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         ConfigurationServerSync confSyncResponse = new ConfigurationServerSync();
         confSyncResponse.setResponseStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus.NO_DELTA);
         response.setConfigurationSync(confSyncResponse);
@@ -225,7 +225,7 @@ public class DefaultAkkaServiceTest {
         noDeltaResponseWithTopicState.setEndpointProfile(epDto);
 
         response = new ServerSync();
-        response.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        response.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         confSyncResponse = new ConfigurationServerSync();
         confSyncResponse.setResponseStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus.DELTA);
         response.setConfigurationSync(confSyncResponse);
@@ -233,7 +233,7 @@ public class DefaultAkkaServiceTest {
 
         response = new ServerSync();
         response.setRequestId(REQUEST_ID);
-        response.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        response.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         simpleResponse = new SyncResponseHolder(response);
 
         topicNotification = new NotificationDto();
@@ -846,7 +846,7 @@ public class DefaultAkkaServiceTest {
         sourceRequest.setEventSyncRequest(eventRequest);
 
         ServerSync sourceResponse = new ServerSync();
-        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
         sourceResponseHolder.setEndpointProfile(sourceProfileMock);
 
@@ -860,7 +860,7 @@ public class DefaultAkkaServiceTest {
         targetRequest.setEventSyncRequest(new EventSyncRequest());
 
         ServerSync targetResponse = new ServerSync();
-        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         SyncResponseHolder targetResponseHolder = new SyncResponseHolder(targetResponse);
         targetResponseHolder.setEndpointProfile(targetProfileMock);
 
@@ -940,7 +940,7 @@ public class DefaultAkkaServiceTest {
         sourceRequest.setEventSyncRequest(eventRequest);
 
         ServerSync sourceResponse = new ServerSync();
-        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
         sourceResponseHolder.setEndpointProfile(sourceProfileMock);
 
@@ -1005,7 +1005,7 @@ public class DefaultAkkaServiceTest {
 
         ServerSync targetResponse = new ServerSync();
 
-        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         SyncResponseHolder targetResponseHolder = new SyncResponseHolder(targetResponse);
         targetResponseHolder.setEndpointProfile(targetProfileMock);
 
@@ -1044,7 +1044,7 @@ public class DefaultAkkaServiceTest {
         event = new org.kaaproject.kaa.server.operations.pojo.sync.Event(0, FQN1, ByteBuffer.wrap(new byte[0]), null, Base64Util.encode(targetPublicKeyHash.array()));
 
         ServerSync eventResponse = new ServerSync();
-        eventResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        eventResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         eventResponse.setEventSync(new EventServerSync());
         eventResponse.getEventSync().setEvents(Arrays.asList(event));
 
@@ -1079,7 +1079,7 @@ public class DefaultAkkaServiceTest {
         sourceRequest.setEventSyncRequest(eventRequest);
 
         ServerSync sourceResponse = new ServerSync();
-        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
         sourceResponseHolder.setEndpointProfile(sourceProfileMock);
 
@@ -1186,7 +1186,7 @@ public class DefaultAkkaServiceTest {
         targetRequest.setEventSyncRequest(new EventSyncRequest());
 
         ServerSync targetResponse = new ServerSync();
-        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         SyncResponseHolder targetResponseHolder = new SyncResponseHolder(targetResponse);
         targetResponseHolder.setEndpointProfile(targetProfileMock);
 
@@ -1242,7 +1242,7 @@ public class DefaultAkkaServiceTest {
         targetRequest.setSyncRequestMetaData(md);
 
         targetResponse = new ServerSync();
-        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         targetResponseHolder = new SyncResponseHolder(targetResponse);
         targetResponseHolder.setEndpointProfile(targetProfileMock);
 
@@ -1281,7 +1281,7 @@ public class DefaultAkkaServiceTest {
         targetRequest.setEventSyncRequest(new EventSyncRequest());
 
         ServerSync targetResponse = new ServerSync();
-        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         targetResponse.setUserSync(new UserServerSync());
         SyncResponseHolder targetResponseHolder = new SyncResponseHolder(targetResponse);
         targetResponseHolder.setEndpointProfile(targetProfileMock);
@@ -1329,10 +1329,10 @@ public class DefaultAkkaServiceTest {
         sourceRequest.setUserSyncRequest(userSyncRequest);
 
         ServerSync sourceResponse = new ServerSync();
-        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         UserServerSync userSyncResponse = new UserServerSync();
         userSyncResponse.setEndpointAttachResponses(Collections.singletonList(new org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse("request1",
-                Base64Util.encode(targetPublicKeyHash.array()), org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS)));
+                Base64Util.encode(targetPublicKeyHash.array()), org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS)));
         sourceResponse.setUserSync(userSyncResponse);
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
         sourceResponseHolder.setEndpointProfile(sourceProfileMock);
@@ -1385,7 +1385,7 @@ public class DefaultAkkaServiceTest {
         targetRequest.setEventSyncRequest(new EventSyncRequest());
 
         ServerSync targetResponse = new ServerSync();
-        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        targetResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         targetResponse.setUserSync(new UserServerSync());
         SyncResponseHolder targetResponseHolder = new SyncResponseHolder(targetResponse);
         targetResponseHolder.setEndpointProfile(targetProfileMock);
@@ -1433,10 +1433,10 @@ public class DefaultAkkaServiceTest {
         sourceRequest.setUserSyncRequest(userSyncRequest);
 
         ServerSync sourceResponse = new ServerSync();
-        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS);
+        sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         UserServerSync userSyncResponse = new UserServerSync();
         userSyncResponse.setEndpointDetachResponses(Collections.singletonList(new org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse("request1",
-                org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseResultType.SUCCESS)));
+                org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS)));
         sourceResponse.setUserSync(userSyncResponse);
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
         sourceResponseHolder.setEndpointProfile(sourceProfileMock);
