@@ -598,5 +598,14 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     
     @DefaultStringValue("Infinite")
     String infinite();
+    
+    @DefaultStringValue("Session Expired")
+    String sessionExpired();
+    
+    @DefaultStringValue("Log in again")
+    String logInAgain();
+
+    @DefaultStringValue("Ignore")
+    String ignore();
 
 }

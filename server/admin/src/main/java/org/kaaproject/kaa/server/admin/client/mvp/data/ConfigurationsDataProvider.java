@@ -22,6 +22,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
@@ -33,9 +34,9 @@ public class ConfigurationsDataProvider extends AbstractDataProvider<StructureRe
     private boolean includeDeprecated = false;
 
     public ConfigurationsDataProvider(MultiSelectionModel<StructureRecordDto<ConfigurationDto>> selectionModel,
-                                    AsyncCallback<List<StructureRecordDto<ConfigurationDto>>> asyncCallback,
-                                    String endpointGroupId) {
-        super(selectionModel, asyncCallback);
+                                      HasErrorMessage hasErrorMessage,
+                                      String endpointGroupId) {
+        super(selectionModel, hasErrorMessage);
         this.endpointGroupId = endpointGroupId;
     }
 

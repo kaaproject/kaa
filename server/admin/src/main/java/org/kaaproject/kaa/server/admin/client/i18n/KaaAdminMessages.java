@@ -68,4 +68,10 @@ public interface KaaAdminMessages extends Messages {
     @DefaultMessage("Remove log appender")
     String removeLogAppenderTitle();
 
+    @DefaultMessage("It looks like your session has timed out, or you have been logged out of site. You will need to log back in to continue.")
+    String sessionExpiredMessage();
+    
+    @DefaultMessage("You have unsaved changes on this form. If you navigate away from this page without first saving, all changes will be lost.")
+    String detailsMayStopMessage();
+
 }

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -55,9 +53,7 @@ public class EcfActivity
         super.start(containerWidget, eventBus);
         if (!create) {
             AbstractGrid<EventSchemaVersionDto, Integer> ecfSchemasGrid = detailsView.getEcfSchemasGrid();
-            ecfSchemasDataProvider = new EcfSchemasDataProvider(ecfSchemasGrid.getSelectionModel(),
-                            new DataLoadCallback<EventSchemaVersionDto>(detailsView));
-
+            ecfSchemasDataProvider = new EcfSchemasDataProvider(ecfSchemasGrid.getSelectionModel(), detailsView);
             ecfSchemasDataProvider.addDataDisplay(ecfSchemasGrid.getDisplay());
         }
     }
@@ -142,7 +138,7 @@ public class EcfActivity
                 }
 
                 public void onFailure(Throwable caught) {
-                    detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                    Utils.handleException(caught, detailsView);
                 }
             });
     }
@@ -158,25 +154,6 @@ public class EcfActivity
         KaaAdmin.getDataSource().editEcf(entity, callback);
     }
 
-    class DataLoadCallback<T> implements AsyncCallback<List<T>> {
-
-        private EcfView view;
-
-        DataLoadCallback(EcfView view) {
-            this.view = view;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            view.setErrorMessage(Utils.getErrorMessage(caught));
-        }
-
-        @Override
-        public void onSuccess(List<T> result) {
-            view.clearError();
-        }
-    }
-    
     private void addEcfSchema() {
         AddEcfSchemaDialog.showAddEcfSchemaDialog(entityId, new AddEcfSchemaDialog.Listener() {
             

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -46,9 +44,8 @@ public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, L
     }
 
     @Override
-    protected AbstractDataProvider<LogAppenderDto> getDataProvider(MultiSelectionModel<LogAppenderDto> selectionModel,
-            AsyncCallback<List<LogAppenderDto>> asyncCallback) {
-        return new AppendersDataProvider(selectionModel, asyncCallback, applicationId);
+    protected AbstractDataProvider<LogAppenderDto> getDataProvider(MultiSelectionModel<LogAppenderDto> selectionModel) {
+        return new AppendersDataProvider(selectionModel, listView, applicationId);
     }
 
     @Override

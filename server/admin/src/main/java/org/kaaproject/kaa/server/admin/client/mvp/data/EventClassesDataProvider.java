@@ -21,6 +21,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
@@ -32,9 +33,9 @@ public class EventClassesDataProvider extends AbstractDataProvider<EventClassDto
     private int version;
     
     public EventClassesDataProvider(MultiSelectionModel<EventClassDto> selectionModel,
-                                    AsyncCallback<List<EventClassDto>> asyncCallback,
+                                    HasErrorMessage hasErrorMessage,
                                     String ecfId, int version) {
-        super(selectionModel, asyncCallback);
+        super(selectionModel, hasErrorMessage);
         this.ecfId = ecfId;
         this.version = version;
     }

@@ -49,13 +49,9 @@ public class AefMapActivity
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         super.start(containerWidget, eventBus);
-        
         AbstractGrid<ApplicationEventMapDto, String> eventMapGrid = detailsView.getEventMapGrid();
-        eventMapDataProvider = new EventMapDataProvider(eventMapGrid.getSelectionModel(),
-                        new DataLoadCallback<ApplicationEventMapDto>(detailsView));
-       
+        eventMapDataProvider = new EventMapDataProvider(eventMapGrid.getSelectionModel(), detailsView);
         eventMapDataProvider.addDataDisplay(eventMapGrid.getDisplay());
-        
     }
 
     protected void bind(final EventBus eventBus) {
@@ -99,7 +95,7 @@ public class AefMapActivity
             KaaAdmin.getDataSource().getVacantEventClassFamilies(place.getApplicationId(), new AsyncCallback<List<EcfInfoDto>> () {
                 @Override
                 public void onFailure(Throwable caught) {
-                    detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                    Utils.handleException(caught, detailsView);
                 }
 
                 @Override
@@ -137,24 +133,5 @@ public class AefMapActivity
             AsyncCallback<ApplicationEventFamilyMapDto> callback) {
         KaaAdmin.getDataSource().editApplicationEventFamilyMap(entity, callback);
     }
-
-    class DataLoadCallback<T> implements AsyncCallback<List<T>> {
-
-        private AefMapView view;
-
-        DataLoadCallback(AefMapView view) {
-            this.view = view;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            view.setErrorMessage(Utils.getErrorMessage(caught));
-        }
-
-        @Override
-        public void onSuccess(List<T> result) {
-            view.clearError();
-        }
-    }
-
+ 
 }

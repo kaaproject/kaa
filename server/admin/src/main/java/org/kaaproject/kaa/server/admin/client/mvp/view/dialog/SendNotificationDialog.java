@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FileUploadForm;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -44,7 +45,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-public class SendNotificationDialog extends KaaDialog implements ChangeHandler, ValueChangeHandler<SchemaDto> {
+public class SendNotificationDialog extends KaaDialog implements ChangeHandler, ValueChangeHandler<SchemaDto>, HasErrorMessage {
 
     private AlertPanel errorPanel;
 
@@ -187,7 +188,7 @@ public class SendNotificationDialog extends KaaDialog implements ChangeHandler, 
                 new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        setError(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, SendNotificationDialog.this);
                     }
 
                     @Override
@@ -203,15 +204,16 @@ public class SendNotificationDialog extends KaaDialog implements ChangeHandler, 
         return result;
     }
 
-    private void setError(String error) {
-        if (error!= null) {
-            errorPanel.setText(error);
-            errorPanel.setVisible(true);
-        }
-        else {
-            errorPanel.setText("");
-            errorPanel.setVisible(false);
-        }
+    @Override
+    public void clearError() {
+        errorPanel.setText("");
+        errorPanel.setVisible(false);
+    }
+
+    @Override
+    public void setErrorMessage(String message) {
+        errorPanel.setText(message);
+        errorPanel.setVisible(true);
     }
 
 }

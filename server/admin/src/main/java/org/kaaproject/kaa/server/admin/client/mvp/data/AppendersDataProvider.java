@@ -22,6 +22,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
@@ -31,9 +32,9 @@ public class AppendersDataProvider  extends AbstractDataProvider<LogAppenderDto>
     private String applicationId;
 
     public AppendersDataProvider(MultiSelectionModel<LogAppenderDto> selectionModel,
-                                    AsyncCallback<List<LogAppenderDto>> asyncCallback,
-                                    String applicationId) {
-        super(selectionModel, asyncCallback);
+                                 HasErrorMessage hasErrorMessage,
+                                 String applicationId) {
+        super(selectionModel, hasErrorMessage);
         this.applicationId = applicationId;
     }
 
