@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avro.Schema;
+import org.apache.avro.Schema.Type;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -78,8 +79,6 @@ public class CEventSourcesGenerator {
         velocityEngine.getTemplate(EVENT_C_PATTERN).merge(context, commonWriter);
 
         for (EventFamilyMetadata eventFamily : eventFamilies) {
-
-
             context.put("StyleUtils", StyleUtils.class);
             String name = StyleUtils.toLowerUnderScore(eventFamily.getEcfClassName());
             String NAME = StyleUtils.toUpperUnderScore(eventFamily.getEcfClassName());
@@ -87,6 +86,17 @@ public class CEventSourcesGenerator {
             context.put("EVENT_FAMILY_NAME", NAME);
             context.put("namespacePrefix", NAME_PREFIX_TEMPLATE.replace("{name}", name));
             Schema eventFamilySchema = new Schema.Parser().parse(eventFamily.getEcfSchema());
+
+            List<Schema> schemas = eventFamilySchema.getTypes();
+            List<String> emptyRecords = new ArrayList<>();
+            if (schemas != null) {
+                for (Schema recordS : schemas) {
+                    if (recordS.getType() == Type.RECORD && recordS.getFields() != null && recordS.getFields().size() == 0) {
+                        emptyRecords.add(recordS.getFullName());
+                    }
+                }
+            }
+            context.put("emptyRecords", emptyRecords);
 
             List<String> incomingEventFqns = new ArrayList<>();
             List<String> outgoingEventFqns = new ArrayList<>();

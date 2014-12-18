@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 # endif
 
 #define BUILD_VERSION                   "0.6.1-SNAPSHOT"
@@ -93,5 +90,7 @@ static kaa_bootstrap_server_info_t KAA_BOOTSTRAP_SERVERS[KAA_BOOTSTRAP_SERVER_CO
                                            }
 }};
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 # endif /* KAA_DEFAULTS_H_ */

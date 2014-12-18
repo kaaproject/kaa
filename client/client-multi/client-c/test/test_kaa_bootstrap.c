@@ -17,10 +17,13 @@
 #include <string.h>
 
 #include "kaa_test.h"
-#include "kaa_log.h"
-
 #include "kaa_bootstrap.h"
-#include "kaa_mem.h"
+
+#include "utilities/kaa_log.h"
+#include "utilities/kaa_mem.h"
+
+extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_logger_t *logger);
+extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
 
 static kaa_logger_t *logger = NULL;
 
@@ -29,11 +32,11 @@ void test_create_bootstrap_manager()
     KAA_TRACE_IN(logger);
 
     kaa_bootstrap_manager_t* manager = NULL;
-    kaa_create_bootstrap_manager(&manager);
+    kaa_bootstrap_manager_create(&manager, logger);
 
     ASSERT_NOT_NULL(manager);
 
-    kaa_destroy_bootstrap_manager(manager);
+    kaa_bootstrap_manager_destroy(manager);
 }
 
 void test_null_operation_server()
@@ -43,28 +46,28 @@ void test_null_operation_server()
     kaa_ops_t* server = NULL;
     kaa_bootstrap_manager_t* manager = NULL;
 
-    server = kaa_get_current_operation_server(manager, HTTP);
+    server = kaa_bootstrap_manager_get_current_operations_server(manager, HTTP);
     ASSERT_NULL(server);
-    server = kaa_get_next_operation_server(manager, HTTP);
-    ASSERT_NULL(server);
-
-    kaa_create_bootstrap_manager(&manager);
-
-    server = kaa_get_current_operation_server(manager, HTTP);
-    ASSERT_NULL(server);
-    server = kaa_get_current_operation_server(manager, HTTP_LP);
-    ASSERT_NULL(server);
-    server = kaa_get_current_operation_server(manager, KAATCP);
+    server = kaa_bootstrap_manager_get_next_operations_server(manager, HTTP);
     ASSERT_NULL(server);
 
-    server = kaa_get_next_operation_server(manager, HTTP);
+    kaa_bootstrap_manager_create(&manager, logger);
+
+    server = kaa_bootstrap_manager_get_current_operations_server(manager, HTTP);
+    ASSERT_NULL(server);
+    server = kaa_bootstrap_manager_get_current_operations_server(manager, HTTP_LP);
+    ASSERT_NULL(server);
+    server = kaa_bootstrap_manager_get_current_operations_server(manager, KAATCP);
+    ASSERT_NULL(server);
+
+    server = kaa_bootstrap_manager_get_next_operations_server(manager, HTTP);
     ASSERT_NULL(server);
 
     int unexpected_channel_type = 30;
-    server = kaa_get_current_operation_server(manager, unexpected_channel_type);
+    server = kaa_bootstrap_manager_get_current_operations_server(manager, unexpected_channel_type);
     ASSERT_NULL(server);
 
-    kaa_destroy_bootstrap_manager(manager);
+    kaa_bootstrap_manager_destroy(manager);
 }
 
 void test_add_get_operation_server()
@@ -72,7 +75,7 @@ void test_add_get_operation_server()
     KAA_TRACE_IN(logger);
 
     kaa_bootstrap_manager_t* manager = NULL;
-    kaa_create_bootstrap_manager(&manager);
+    kaa_bootstrap_manager_create(&manager, logger);
 
     char* encoded_public_key = "a2V5";
     uint16_t key_size = strlen(encoded_public_key);
@@ -80,7 +83,7 @@ void test_add_get_operation_server()
     char* const host = "test.com";
     uint8_t host_len = strlen(host);
 
-    kaa_ops_ip_t* ops1 = KAA_MALLOC(kaa_ops_ip_t);
+    kaa_ops_ip_t* ops1 = (kaa_ops_ip_t *) KAA_MALLOC(sizeof(kaa_ops_ip_t));
 
     ops1->channel_type = HTTP;
     ops1->priority = 5;
@@ -90,7 +93,7 @@ void test_add_get_operation_server()
     ops1->public_key = encoded_public_key;
     ops1->public_key_length = key_size;
 
-    kaa_ops_ip_t* ops2 = KAA_MALLOC(kaa_ops_ip_t);
+    kaa_ops_ip_t* ops2 = (kaa_ops_ip_t *) KAA_MALLOC(sizeof(kaa_ops_ip_t));
 
     ops2->channel_type = HTTP;
     ops2->priority = 0;
@@ -100,7 +103,7 @@ void test_add_get_operation_server()
     ops2->public_key = encoded_public_key;
     ops2->public_key_length = key_size;
 
-    kaa_ops_ip_t* ops3 = KAA_MALLOC(kaa_ops_ip_t);
+    kaa_ops_ip_t* ops3 = (kaa_ops_ip_t *) KAA_MALLOC(sizeof(kaa_ops_ip_t));
 
     ops3->channel_type = HTTP;
     ops3->priority = 3;
@@ -110,30 +113,30 @@ void test_add_get_operation_server()
     ops3->public_key = encoded_public_key;
     ops3->public_key_length = key_size;
 
-    kaa_add_operation_server(manager, (kaa_ops_t*)ops1);
-    kaa_add_operation_server(manager, (kaa_ops_t*)ops3);
-    kaa_add_operation_server(manager, (kaa_ops_t*)ops2);
+    kaa_bootstrap_manager_add_operations_server(manager, (kaa_ops_t*)ops1);
+    kaa_bootstrap_manager_add_operations_server(manager, (kaa_ops_t*)ops3);
+    kaa_bootstrap_manager_add_operations_server(manager, (kaa_ops_t*)ops2);
 
-    kaa_ops_ip_t* cur_http_ops = (kaa_ops_ip_t*)kaa_get_current_operation_server(manager, HTTP);
+    kaa_ops_ip_t* cur_http_ops = (kaa_ops_ip_t*)kaa_bootstrap_manager_get_current_operations_server(manager, HTTP);
     ASSERT_NOT_NULL(cur_http_ops);
     ASSERT_EQUAL(cur_http_ops->port, 443);
 
-    cur_http_ops = (kaa_ops_ip_t*)kaa_get_next_operation_server(manager, HTTP);
+    cur_http_ops = (kaa_ops_ip_t*)kaa_bootstrap_manager_get_next_operations_server(manager, HTTP);
     ASSERT_NOT_NULL(cur_http_ops);
     ASSERT_EQUAL(cur_http_ops->port, 43);
 
-    cur_http_ops = (kaa_ops_ip_t*)kaa_get_next_operation_server(manager, HTTP);
+    cur_http_ops = (kaa_ops_ip_t*)kaa_bootstrap_manager_get_next_operations_server(manager, HTTP);
     ASSERT_NOT_NULL(cur_http_ops);
     ASSERT_EQUAL(cur_http_ops->port, 80);
 
-    cur_http_ops = (kaa_ops_ip_t*)kaa_get_next_operation_server(manager, HTTP);
+    cur_http_ops = (kaa_ops_ip_t*)kaa_bootstrap_manager_get_next_operations_server(manager, HTTP);
     ASSERT_NULL(cur_http_ops);
 
     KAA_FREE(ops1);
     KAA_FREE(ops2);
     KAA_FREE(ops3);
 
-    kaa_destroy_bootstrap_manager(manager);
+    kaa_bootstrap_manager_destroy(manager);
 }
 
 int test_init(void)

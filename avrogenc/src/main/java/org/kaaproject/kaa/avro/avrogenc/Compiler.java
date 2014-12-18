@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.avro.avrogenc;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -275,7 +274,7 @@ public class Compiler {
     }
 
     private void compeleteGeneration() {
-        headerWriter.write("\nCLOSE_EXTERN\n#endif");
+        headerWriter.write("#ifdef __cplusplus\n}      /* extern \"C\" */\n#endif\n#endif");
     }
 
     public void setNamespacePrefix(String namespacePrefix) {

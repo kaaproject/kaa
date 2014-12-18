@@ -19,9 +19,6 @@
 #define AVRO_PLATFORM_H
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 /* Use this header file to include platform specific definitions */
@@ -41,5 +38,7 @@ extern "C" {
   #define PRIsz "zu"
 #endif
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif

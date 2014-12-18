@@ -18,13 +18,10 @@
 # ifndef ${headerGuard}_H_
 # define ${headerGuard}_H_
 
-# ifdef __cplusplus
-    extern "C" {
-    # define CLOSE_EXTERN }
-# else
-    # define CLOSE_EXTERN
-# endif
-
 # include "kaa_common_schema.h"
-# include "kaa_list.h"
+# include "collections/kaa_list.h"
+
+# ifdef __cplusplus
+extern "C" {
+# endif
 

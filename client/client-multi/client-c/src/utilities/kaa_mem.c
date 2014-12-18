@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "kaa_mem.h"
+#include "utilities/kaa_mem.h"
 
 #ifdef KAA_TRACE_MEMORY_ALLOCATIONS
 
@@ -28,7 +28,7 @@ void *kaa_trace_memory_allocs_malloc(size_t s, const char *file, int line) {
 #if KAA_LOG_LEVEL_TRACE_ENABLED
     void *ptr = malloc(s);
     if (logger_)
-        kaa_log_write(logger_, file, line, KAA_LOG_TRACE, KAA_ERR_NONE, "Allocated (using malloc) %zu bytes at {%p}", s, ptr);
+        kaa_log_write(logger_, file, line, KAA_LOG_LEVEL_TRACE, KAA_ERR_NONE, "Allocated (using malloc) %zu bytes at {%p}", s, ptr);
     return ptr;
 #else
     return malloc(s);
@@ -39,7 +39,7 @@ void *kaa_trace_memory_allocs_calloc(size_t n, size_t s, const char *file, int l
 #if KAA_LOG_LEVEL_TRACE_ENABLED
     void *ptr = calloc(n, s);
     if (logger_)
-        kaa_log_write(logger_, file, line, KAA_LOG_TRACE, KAA_ERR_NONE, "Allocated (using calloc) %zu blocks of %zu bytes (total %zu) at {%p}", n, s, n*s, ptr);
+        kaa_log_write(logger_, file, line, KAA_LOG_LEVEL_TRACE, KAA_ERR_NONE, "Allocated (using calloc) %zu blocks of %zu bytes (total %zu) at {%p}", n, s, n*s, ptr);
     return ptr;
 #else
     return calloc(n, s);
@@ -50,7 +50,7 @@ void kaa_trace_memory_allocs_free(void * p, const char *file, int line)
 {
 #if KAA_LOG_LEVEL_TRACE_ENABLED
     if (logger_)
-        kaa_log_write(logger_, file, line, KAA_LOG_TRACE, KAA_ERR_NONE, "Going to deallocate memory at {%p}", p);
+        kaa_log_write(logger_, file, line, KAA_LOG_LEVEL_TRACE, KAA_ERR_NONE, "Going to deallocate memory at {%p}", p);
 #endif
     free(p);
 }

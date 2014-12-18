@@ -58,14 +58,14 @@ typedef void (*kaa_sync_all_handler_fn)();
  * @b NOTE: Channel manager does not check if the handler was already registered. Calling this functions more than once
  * with the same @c handler will lead to several instances registered in the channel manager.
  *
- * @param[in]   this                Valid pointer to the channel manager instance.
+ * @param[in]   self                Valid pointer to the channel manager instance.
  * @param[in]   handler             Pointer to a sync handler function.
  * @param[in]   supported_services  Array of services to use sync handler for.
  * @param[in]   services_count      Size of the @c supported_services array.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *this
+kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *self
         , kaa_sync_handler_fn handler, const kaa_service_t *supported_services, size_t services_count);
 
 
@@ -74,12 +74,12 @@ kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *this
  *
  * @b NOTE: If the @c handler was registered more than once, only the @b last registered instance will be removed.
  *
- * @param[in]   this                Valid pointer to the channel manager instance.
+ * @param[in]   self                Valid pointer to the channel manager instance.
  * @param[in]   handler             Pointer to a sync handler function.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *this, kaa_sync_handler_fn handler);
+kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *self, kaa_sync_handler_fn handler);
 
 
 /**
@@ -88,22 +88,22 @@ kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *this,
  * Only one general sync request handler is allowed at the time. Second invocation of this function will override
  * the previously set handler.
  *
- * @param[in]   this                Valid pointer to the channel manager instance.
+ * @param[in]   self                Valid pointer to the channel manager instance.
  * @param[in]   handler             Pointer to a sync handler function.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_channel_manager_set_sync_all_handler(kaa_channel_manager_t *this, kaa_sync_all_handler_fn handler);
+kaa_error_t kaa_channel_manager_set_sync_all_handler(kaa_channel_manager_t *self, kaa_sync_all_handler_fn handler);
 
 
 /**
  * @brief Returns general sync request handler for all services.
  *
- * @param[in]   this                Valid pointer to the channel manager instance.
+ * @param[in]   self                Valid pointer to the channel manager instance.
  *
  * @return      Pointer to the general sync request handler. @c NULL if @c this is @c NULL.
  */
-kaa_sync_all_handler_fn kaa_channel_manager_get_sync_all_handler(kaa_channel_manager_t *this);
+kaa_sync_all_handler_fn kaa_channel_manager_get_sync_all_handler(kaa_channel_manager_t *self);
 
 #ifdef __cplusplus
 }      /* extern "C" */

@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.avro.avrogenc;
 
+import java.util.List;
+
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
@@ -24,14 +26,14 @@ public class TypeConverter {
     private static final String DIRECTION_FIELD = "direction";
 
     public static String convertToCType(Schema schema) {
-        return convertToCType(schema, "kaa");
+        return convertToCType("kaa", schema);
     }
 
-    public static String convertToCType(Schema schema, String namespace) {
+    public static String convertToCType(String namespace, Schema schema) {
         String cType = new String();
         switch (schema.getType()) {
         case BOOLEAN:
-            cType = "KAA_BOOL";
+            cType = "bool";
             break;
         case INT:
             cType = "int32_t";
@@ -40,9 +42,10 @@ public class TypeConverter {
             cType = "int64_t";
             break;
         case STRING:
-            cType = "char*";
+            cType = "kaa_string_t*";
             break;
         case BYTES:
+        case FIXED:
             cType = "kaa_bytes_t*";
             break;
         case ARRAY:
@@ -66,43 +69,46 @@ public class TypeConverter {
     }
 
     public static String generateUnionName(Schema schema) {
-        return generateUnionName(schema, "");
+        return generateUnionName("", schema);
     }
 
-    public static String generateUnionName(Schema schema, String parentName) {
-        String result = new String(parentName);
+    public static String generateUnionName(String prefix, Schema schema) {
+        StringBuilder builder = new StringBuilder(prefix + "_UNION_");
+        List<Schema> branches = schema.getTypes();
+        int branchCounter = branches.size();
 
-        for (Schema branchSchema : schema.getTypes()) {
-            result += branchSchema.getType();
+        for (Schema branchSchema : branches) {
             switch (branchSchema.getType()) {
             case RECORD:
-                result += "_";
-                result += StyleUtils.toUpperUnderScore(branchSchema.getName());
+                builder.append(StyleUtils.toUpperUnderScore(branchSchema.getName()));
                 break;
             case ARRAY:
-                result += "_";
-                result += StyleUtils.toUpperUnderScore(branchSchema.getElementType().getName());
+                builder.append(branchSchema.getType().toString());
+                builder.append('_');
+                builder.append(StyleUtils.toUpperUnderScore(branchSchema.getElementType().getName()));
                 break;
             case ENUM:
-                result += "_";
-                result += StyleUtils.toUpperUnderScore(branchSchema.getName());
+                builder.append(StyleUtils.toUpperUnderScore(branchSchema.getName()));
                 break;
             default:
+                builder.append(branchSchema.getType().toString());
                 break;
             }
-            result += "_";
+
+            if (--branchCounter > 0) {
+                builder.append("_OR_");
+            }
         }
-        result += "UNION";
-        return result;
+
+        return builder.toString();
     }
 
     public static boolean isRecordNeedDeallocator(Schema schema) {
         if (schema.getType() == Type.RECORD) {
             for (Field f : schema.getFields()) {
                 Type type = f.schema().getType();
-                if (type == Type.ARRAY || type == Type.BYTES || type == Type.STRING
-                        || (type == Type.RECORD && isRecordNeedDeallocator(f.schema()))
-                        || type == Type.UNION)
+                if (type == Type.ARRAY || type == Type.BYTES || type == Type.STRING ||
+                    type == Type.FIXED || type == Type.RECORD || type == Type.UNION)
                 {
                     return true;
                 }
@@ -111,45 +117,41 @@ public class TypeConverter {
         return false;
     }
 
-    public static boolean isNullType(Schema schema) {
+    public static boolean isAvroPrimitive(Schema schema) {
+        Type type = schema.getType();
+        return (type == Type.BOOLEAN || type == Type.INT ||
+                type == Type.LONG || type == Type.ENUM);
+    }
+
+    public static boolean isAvroNull(Schema schema) {
         return (schema.getType() == Type.NULL);
     }
 
-    public static boolean isPrimitiveType(Schema schema) {
-        Type type = schema.getType();
-        return (type == Type.BOOLEAN || type == Type.INT || type == Type.LONG ||
-                type == Type.ENUM || type == Type.STRING);
+    public static boolean isAvroFixed(Schema schema) {
+        return (schema.getType() == Type.FIXED);
     }
 
-    public static boolean isBytesOrString(Schema schema) {
-        return (schema.getType() == Type.BYTES || schema.getType() == Type.STRING);
-    }
-
-    public static boolean isRecordOrUnion(Schema schema) {
-        return (schema.getType() == Type.UNION || schema.getType() == Type.RECORD);
-    }
-
-    public static boolean isRecordType(Schema schema) {
+    public static boolean isAvroRecord(Schema schema) {
         return (schema.getType() == Type.RECORD);
     }
 
-    public static boolean isUnionType(Schema schema) {
+    public static boolean isAvroUnion(Schema schema) {
         return (schema.getType() == Type.UNION);
     }
 
-    public static boolean isArrayType(Schema schema) {
+    public static boolean isAvroArray(Schema schema) {
         return (schema.getType() == Type.ARRAY);
     }
 
-    public static boolean isEnumType(Schema schema) {
+    public static boolean isAvroEnum(Schema schema) {
         return (schema.getType() == Type.ENUM);
     }
 
-    public static boolean isStringType(Schema schema) {
+    public static boolean isAvroString(Schema schema) {
         return (schema.getType() == Type.STRING);
     }
 
-    public static boolean isBytes(Schema schema) {
+    public static boolean isAvroBytes(Schema schema) {
         return (schema.getType() == Type.BYTES);
     }
 
