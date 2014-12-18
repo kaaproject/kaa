@@ -80,6 +80,7 @@ set (KAA_SOURCE_FILES
                        src/utilities/kaa_log.c
                        src/utilities/kaa_mem.c
                        src/utilities/kaa_uuid_int.c
+                       src/kaa_platform_utils.c
 
 )
 

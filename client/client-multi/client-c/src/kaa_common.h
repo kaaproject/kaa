@@ -27,6 +27,9 @@
 extern "C" {
 #endif
 
+#define KAA_RETURN_IF_ERR(E) \
+    { if (!E) return E; }
+
 #define KAA_RETURN_IF_NIL(p, E) \
     { if (!(p)) return E; }
 

@@ -15,6 +15,9 @@
  */
 
 #include "kaa_platform_protocol.h"
+
+#include <string.h>
+
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_context.h"
@@ -26,7 +29,20 @@
 #include "kaa_logging.h"
 #include "kaa_user.h"
 
+#include "kaa_platform_utils.h"
 #include "gen/kaa_endpoint_gen.h"
+
+#define KAA_EXTENSION_HEADER_SIZE   8 // in bytes
+
+#define KAA_META_DATA_EXTENSION_TYPE   1
+#define KAA_PROFILE_EXTENSION_TYPE     2
+
+typedef enum {
+    TIMEOUT_VALUE         = 0x1,
+    PUBLIC_KEY_HASH_VALUE = 0x2,
+    PROFILE_HASH_VALUE    = 0x4,
+    APP_TOKEN_VALUE       = 0x8
+} kaa_meta_data_extension_options_t;
 
 /** External user manager API */
 extern kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *self
@@ -41,6 +57,7 @@ extern kaa_error_t kaa_event_handle_sync(kaa_event_manager_t *self, size_t reque
 extern kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *kaa_context, kaa_profile_sync_request_t **result);
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
 extern kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *kaa_context, kaa_profile_sync_response_t *profile);
+extern size_t kaa_profile_request_get_size(kaa_profile_manager_t *kaa_context);
 
 /** External logging API */
 extern kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_request_t **result);
@@ -53,6 +70,49 @@ struct kaa_platform_protocol_t
     uint32_t       request_id;
     kaa_logger_t  *logger;
 };
+
+
+
+static kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
+{
+    KAA_RETURN_IF_NIL(expected_size, KAA_ERR_BADPARAM);
+
+    bool is_timeout_needed = true; // FIXME: replace with valid check
+    bool is_public_key_hash_needed = true; // FIXME: replace with valid check
+    bool is_profile_hash_needed = true; // FIXME: replace with valid check
+    bool is_token_needed = true; // FIXME: replace with valid check
+
+    *expected_size = sizeof(uint32_t); // request id
+
+    if (is_timeout_needed) {
+        *expected_size += sizeof(uint32_t); // timeout value
+    }
+
+    if (is_public_key_hash_needed) {
+        *expected_size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // public key hash length
+    }
+
+    if (is_profile_hash_needed) {
+        *expected_size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // profile hash length
+    }
+
+    if (is_token_needed) {
+        *expected_size += sizeof(uint32_t); // token length
+        *expected_size += kaa_aligned_size_get(strlen(APPLICATION_TOKEN));
+    }
+
+    return KAA_ERR_NONE;
+}
+
+
+
+static kaa_error_t kaa_meta_data_request_serialize(char *buffer, size_t buf_size, size_t *used_size)
+{
+    KAA_RETURN_IF_NIL3(buffer, buf_size, used_size, KAA_ERR_BADPARAM);
+
+    return KAA_ERR_NONE;
+}
+
 
 
 static kaa_sync_request_meta_data_t* create_sync_request_meta_data(kaa_context_t *context)
@@ -176,7 +236,10 @@ static kaa_error_t kaa_compile_request(kaa_platform_protocol_t *self, kaa_sync_r
 }
 
 
-static kaa_error_t kaa_serialize_request(kaa_sync_request_t *request, const char *buffer, size_t request_size)
+
+static kaa_error_t kaa_serialize_request(kaa_sync_request_t *request
+                                       , const char *buffer
+                                       , size_t request_size)
 {
     KAA_RETURN_IF_NIL2(request, buffer, KAA_ERR_BADPARAM);
     avro_writer_t writer = avro_writer_memory(buffer, request_size);
@@ -186,15 +249,18 @@ static kaa_error_t kaa_serialize_request(kaa_sync_request_t *request, const char
 }
 
 
-kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p, kaa_context_t *context, kaa_logger_t *logger)
+kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
+                                       , kaa_context_t *context
+                                       , kaa_logger_t *logger)
 {
-    KAA_RETURN_IF_NIL2(platform_protocol_p, context, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(platform_protocol_p, context, logger, KAA_ERR_BADPARAM);
 
     *platform_protocol_p = KAA_MALLOC(sizeof(kaa_platform_protocol_t));
     KAA_RETURN_IF_NIL(*platform_protocol_p, KAA_ERR_NOMEM);
 
     (*platform_protocol_p)->request_id = 0;
     (*platform_protocol_p)->kaa_context = context;
+    (*platform_protocol_p)->logger = logger;
     return KAA_ERR_NONE;
 }
 
@@ -204,6 +270,32 @@ void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self)
 {
     if (self)
         KAA_FREE(self);
+}
+
+
+#define KAA_ADD_ASSIGN_IF_NOT_ERROR(err_code, lval, rval) \
+            if (!(err_code)) { \
+                lval += (rval); \
+            } else { \
+                return (err_code); \
+            }
+
+static kaa_error_t kaa_client_sync_get_size(kaa_context_t *context, size_t *expected_size)
+{
+    KAA_RETURN_IF_NIL2(context, expected_size, KAA_ERR_BADPARAM)
+
+    kaa_error_t err_code = KAA_ERR_NONE;
+    size_t extension_size = 0;
+
+    *expected_size = 0;
+
+    err_code = kaa_meta_data_request_get_size(&extension_size);
+    KAA_ADD_ASSIGN_IF_NOT_ERROR(err_code, *expected_size, extension_size);
+
+    err_code = kaa_profile_request_get_size(context->profile_manager);
+    KAA_ADD_ASSIGN_IF_NOT_ERROR(err_code, *expected_size, extension_size);
+
+    return err_code;
 }
 
 

@@ -27,6 +27,8 @@
 #include "kaa_external.h"
 #include "kaa_channel_manager.h"
 #include "kaa_status.h"
+#include "kaa_platform_utils.h"
+#include "gen/kaa_endpoint_gen.h"
 
 extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
 
@@ -132,6 +134,71 @@ kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *r
     *result = self->need_resync;
     return KAA_ERR_NONE;
 }
+
+
+
+kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size)
+{
+    KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
+
+    bool is_versions_needed = true; // FIXME: replace with valid check
+    bool is_public_key_needed = true; // FIXME: replace with valid check
+    bool is_access_token_needed = true; // FIXME: replace with valid check
+
+    *expected_size = sizeof(uint32_t); // profile body size
+    *expected_size += kaa_aligned_size_get(self->profile_body.size); // profile data
+
+    if (is_versions_needed) {
+        *expected_size += sizeof(uint32_t); // config schema version
+        *expected_size += sizeof(uint32_t); // profile schema version
+        *expected_size += sizeof(uint32_t); // system notification schema version
+        *expected_size += sizeof(uint32_t); // user notification schema version
+        *expected_size += sizeof(uint32_t); // log schema version
+
+        if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
+            *expected_size += kaa_aligned_size_get(KAA_EVENT_SCHEMA_VERSIONS_SIZE);
+
+            size_t i = 0;
+            for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
+                *expected_size += sizeof(uint16_t); // event family version
+                *expected_size += sizeof(uint16_t); // event family name length
+                *expected_size += kaa_aligned_size_get(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name)); // event family name
+            }
+        }
+    }
+
+    if (is_public_key_needed) {
+        kaa_bytes_t pub_key;
+        bool need_deallocation = false;
+
+        kaa_get_endpoint_public_key((char **)&pub_key.buffer, (size_t *)&pub_key.size, &need_deallocation);
+        if (pub_key.buffer && pub_key.size > 0) {
+            *expected_size += sizeof(uint32_t); // public key size
+            *expected_size += kaa_aligned_size_get(pub_key.size); // public key
+
+            if (need_deallocation) {
+                KAA_FREE(pub_key.buffer);
+            }
+        } else {
+            return KAA_ERR_BADDATA;
+        }
+    }
+
+    if (is_access_token_needed) {
+        const char * ep_acc_token = NULL;
+        kaa_error_t err_code = kaa_status_get_endpoint_access_token(self->status, &ep_acc_token);
+        if (!err_code && ep_acc_token) {
+            *expected_size += sizeof(uint32_t); // access token length
+            *expected_size += kaa_aligned_size_get(strlen(ep_acc_token)); // access token
+        } else {
+            return err_code;
+        }
+    }
+
+    return KAA_ERR_NONE;
+}
+
+
 
 kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile_sync_request_t **result)
 {
