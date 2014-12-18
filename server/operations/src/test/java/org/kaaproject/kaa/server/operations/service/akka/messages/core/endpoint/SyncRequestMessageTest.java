@@ -29,15 +29,17 @@ import org.kaaproject.kaa.server.operations.pojo.sync.LogClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
+import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 
 public class SyncRequestMessageTest {
 
     @Test
-    public void testIsValid(){
+    public void testIsValid() {
 
-        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), null, ChannelType.HTTP, null, null, "applicationToken", 0, true);
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), AvroEncDec.AVRO_ENC_DEC_ID, null, ChannelType.HTTP, null, null,
+                "applicationToken", 0, true);
 
         ClientSync request = new ClientSync();
         request.setClientSyncMetaData(new ClientSyncMetaData());

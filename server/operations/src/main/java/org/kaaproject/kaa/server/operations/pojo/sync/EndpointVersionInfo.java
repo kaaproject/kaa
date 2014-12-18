@@ -25,11 +25,6 @@ public class EndpointVersionInfo {
     private List<EventClassFamilyVersionInfo> eventFamilyVersions;
     private int logSchemaVersion;
 
-    /**
-     * Default constructor. Note that this does not initialize fields to their
-     * default values from the schema. If that is desired then one should use
-     * {@link \#newBuilder()}.
-     */
     public EndpointVersionInfo() {
     }
 

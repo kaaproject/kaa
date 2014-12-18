@@ -13,106 +13,115 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
+
+import java.nio.ByteBuffer;
 
 public class Notification {
-   private java.lang.String topicId;
-   private org.kaaproject.kaa.server.operations.pojo.sync.NotificationType type;
-   private java.lang.String uid;
-   private java.lang.Integer seqNumber;
-   private java.nio.ByteBuffer body;
+    private String topicId;
+    private org.kaaproject.kaa.server.operations.pojo.sync.NotificationType type;
+    private String uid;
+    private Integer seqNumber;
+    private ByteBuffer body;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public Notification() {}
+    public Notification() {
+    }
 
-  /**
-   * All-args constructor.
-   */
-  public Notification(java.lang.String topicId, org.kaaproject.kaa.server.operations.pojo.sync.NotificationType type, java.lang.String uid, java.lang.Integer seqNumber, java.nio.ByteBuffer body) {
-    this.topicId = topicId;
-    this.type = type;
-    this.uid = uid;
-    this.seqNumber = seqNumber;
-    this.body = body;
-  }
+    /**
+     * All-args constructor.
+     */
+    public Notification(String topicId, org.kaaproject.kaa.server.operations.pojo.sync.NotificationType type, String uid,
+            Integer seqNumber, ByteBuffer body) {
+        this.topicId = topicId;
+        this.type = type;
+        this.uid = uid;
+        this.seqNumber = seqNumber;
+        this.body = body;
+    }
 
-  /**
-   * Gets the value of the 'topicId' field.
-   */
-  public java.lang.String getTopicId() {
-    return topicId;
-  }
+    /**
+     * Gets the value of the 'topicId' field.
+     */
+    public String getTopicId() {
+        return topicId;
+    }
 
-  /**
-   * Sets the value of the 'topicId' field.
-   * @param value the value to set.
-   */
-  public void setTopicId(java.lang.String value) {
-    this.topicId = value;
-  }
+    /**
+     * Sets the value of the 'topicId' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setTopicId(String value) {
+        this.topicId = value;
+    }
 
-  /**
-   * Gets the value of the 'type' field.
-   */
-  public org.kaaproject.kaa.server.operations.pojo.sync.NotificationType getType() {
-    return type;
-  }
+    /**
+     * Gets the value of the 'type' field.
+     */
+    public org.kaaproject.kaa.server.operations.pojo.sync.NotificationType getType() {
+        return type;
+    }
 
-  /**
-   * Sets the value of the 'type' field.
-   * @param value the value to set.
-   */
-  public void setType(org.kaaproject.kaa.server.operations.pojo.sync.NotificationType value) {
-    this.type = value;
-  }
+    /**
+     * Sets the value of the 'type' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setType(org.kaaproject.kaa.server.operations.pojo.sync.NotificationType value) {
+        this.type = value;
+    }
 
-  /**
-   * Gets the value of the 'uid' field.
-   */
-  public java.lang.String getUid() {
-    return uid;
-  }
+    /**
+     * Gets the value of the 'uid' field.
+     */
+    public String getUid() {
+        return uid;
+    }
 
-  /**
-   * Sets the value of the 'uid' field.
-   * @param value the value to set.
-   */
-  public void setUid(java.lang.String value) {
-    this.uid = value;
-  }
+    /**
+     * Sets the value of the 'uid' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setUid(String value) {
+        this.uid = value;
+    }
 
-  /**
-   * Gets the value of the 'seqNumber' field.
-   */
-  public java.lang.Integer getSeqNumber() {
-    return seqNumber;
-  }
+    /**
+     * Gets the value of the 'seqNumber' field.
+     */
+    public Integer getSeqNumber() {
+        return seqNumber;
+    }
 
-  /**
-   * Sets the value of the 'seqNumber' field.
-   * @param value the value to set.
-   */
-  public void setSeqNumber(java.lang.Integer value) {
-    this.seqNumber = value;
-  }
+    /**
+     * Sets the value of the 'seqNumber' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setSeqNumber(Integer value) {
+        this.seqNumber = value;
+    }
 
-  /**
-   * Gets the value of the 'body' field.
-   */
-  public java.nio.ByteBuffer getBody() {
-    return body;
-  }
+    /**
+     * Gets the value of the 'body' field.
+     */
+    public ByteBuffer getBody() {
+        return body;
+    }
 
-  /**
-   * Sets the value of the 'body' field.
-   * @param value the value to set.
-   */
-  public void setBody(java.nio.ByteBuffer value) {
-    this.body = value;
-  }
+    /**
+     * Sets the value of the 'body' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setBody(ByteBuffer value) {
+        this.body = value;
+    }
 
 }

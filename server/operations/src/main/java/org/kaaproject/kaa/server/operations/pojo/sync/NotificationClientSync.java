@@ -15,28 +15,26 @@
  */
 package org.kaaproject.kaa.server.operations.pojo.sync;
 
+import java.nio.ByteBuffer;
+import java.util.List;
+
 public class NotificationClientSync {
     private int appStateSeqNumber;
-    private java.nio.ByteBuffer topicListHash;
-    private java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.TopicState> topicStates;
-    private java.util.List<java.lang.String> acceptedUnicastNotifications;
-    private java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand> subscriptionCommands;
+    private ByteBuffer topicListHash;
+    private List<TopicState> topicStates;
+    private List<java.lang.String> acceptedUnicastNotifications;
+    private List<SubscriptionCommand> subscriptionCommands;
 
-    /**
-     * Default constructor. Note that this does not initialize fields to their
-     * default values from the schema. If that is desired then one should use
-     * {@link \#newBuilder()}.
-     */
     public NotificationClientSync() {
     }
 
     /**
      * All-args constructor.
      */
-    public NotificationClientSync(java.lang.Integer appStateSeqNumber, java.nio.ByteBuffer topicListHash,
-            java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.TopicState> topicStates,
-            java.util.List<java.lang.String> acceptedUnicastNotifications,
-            java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand> subscriptionCommands) {
+    public NotificationClientSync(java.lang.Integer appStateSeqNumber, ByteBuffer topicListHash,
+            List<TopicState> topicStates,
+            List<java.lang.String> acceptedUnicastNotifications,
+            List<SubscriptionCommand> subscriptionCommands) {
         this.appStateSeqNumber = appStateSeqNumber;
         this.topicListHash = topicListHash;
         this.topicStates = topicStates;
@@ -64,7 +62,7 @@ public class NotificationClientSync {
     /**
      * Gets the value of the 'topicListHash' field.
      */
-    public java.nio.ByteBuffer getTopicListHash() {
+    public ByteBuffer getTopicListHash() {
         return topicListHash;
     }
 
@@ -74,14 +72,14 @@ public class NotificationClientSync {
      * @param value
      *            the value to set.
      */
-    public void setTopicListHash(java.nio.ByteBuffer value) {
+    public void setTopicListHash(ByteBuffer value) {
         this.topicListHash = value;
     }
 
     /**
      * Gets the value of the 'topicStates' field.
      */
-    public java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.TopicState> getTopicStates() {
+    public List<TopicState> getTopicStates() {
         return topicStates;
     }
 
@@ -91,14 +89,14 @@ public class NotificationClientSync {
      * @param value
      *            the value to set.
      */
-    public void setTopicStates(java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.TopicState> value) {
+    public void setTopicStates(List<TopicState> value) {
         this.topicStates = value;
     }
 
     /**
      * Gets the value of the 'acceptedUnicastNotifications' field.
      */
-    public java.util.List<java.lang.String> getAcceptedUnicastNotifications() {
+    public List<java.lang.String> getAcceptedUnicastNotifications() {
         return acceptedUnicastNotifications;
     }
 
@@ -108,18 +106,18 @@ public class NotificationClientSync {
      * @param value
      *            the value to set.
      */
-    public void setAcceptedUnicastNotifications(java.util.List<java.lang.String> value) {
+    public void setAcceptedUnicastNotifications(List<java.lang.String> value) {
         this.acceptedUnicastNotifications = value;
     }
 
     /**
      * Gets the value of the 'subscriptionCommands' field.
      */
-    public java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand> getSubscriptionCommands() {
+    public List<SubscriptionCommand> getSubscriptionCommands() {
         return subscriptionCommands;
     }
 
-    public void setSubscriptionCommands(java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand> subscriptionCommands) {
+    public void setSubscriptionCommands(List<SubscriptionCommand> subscriptionCommands) {
         this.subscriptionCommands = subscriptionCommands;
     }
 

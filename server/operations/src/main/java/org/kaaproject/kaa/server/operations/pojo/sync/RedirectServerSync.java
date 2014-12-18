@@ -13,38 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class RedirectServerSync {
-   private java.lang.String dnsName;
+    private String dnsName;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public RedirectServerSync() {}
+    public RedirectServerSync() {
+    }
 
-  /**
-   * All-args constructor.
-   */
-  public RedirectServerSync(java.lang.String dnsName) {
-    this.dnsName = dnsName;
-  }
+    /**
+     * All-args constructor.
+     */
+    public RedirectServerSync(String dnsName) {
+        this.dnsName = dnsName;
+    }
 
-  /**
-   * Gets the value of the 'dnsName' field.
-   */
-  public java.lang.String getDnsName() {
-    return dnsName;
-  }
+    /**
+     * Gets the value of the 'dnsName' field.
+     */
+    public String getDnsName() {
+        return dnsName;
+    }
 
-  /**
-   * Sets the value of the 'dnsName' field.
-   * @param value the value to set.
-   */
-  public void setDnsName(java.lang.String value) {
-    this.dnsName = value;
-  }
+    /**
+     * Sets the value of the 'dnsName' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setDnsName(String value) {
+        this.dnsName = value;
+    }
 
 }

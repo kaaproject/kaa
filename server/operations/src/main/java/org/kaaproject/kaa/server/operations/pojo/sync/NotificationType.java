@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
-public enum NotificationType { 
-  SYSTEM, CUSTOM  ;
+public enum NotificationType {
+    SYSTEM, CUSTOM;
 }

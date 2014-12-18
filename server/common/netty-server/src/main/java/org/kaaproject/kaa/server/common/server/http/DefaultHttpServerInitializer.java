@@ -131,7 +131,7 @@ public class DefaultHttpServerInitializer extends ChannelInitializer<SocketChann
         });
     }
 
-    protected SimpleChannelInboundHandler<CommandProcessor> getMainHandler(UUID uuid){
+    protected SimpleChannelInboundHandler<AbstractCommand> getMainHandler(UUID uuid){
         return new DefaultHandler(executor);
     }
 }

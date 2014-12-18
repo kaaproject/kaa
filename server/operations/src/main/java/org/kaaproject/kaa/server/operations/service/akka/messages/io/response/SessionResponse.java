@@ -17,12 +17,14 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.io.response;
 
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.PlatformAware;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ResponseBuilder;
 import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 
-public interface SessionResponse extends ChannelAware{
+public interface SessionResponse extends ChannelAware, PlatformAware{
 
+    String getPlatformId();
     ServerSync getResponse();
     NettySessionInfo getSessionInfo();
     ResponseBuilder getResponseConverter();

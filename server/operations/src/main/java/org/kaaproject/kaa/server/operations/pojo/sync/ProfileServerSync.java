@@ -13,37 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class ProfileServerSync {
-   private org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus responseStatus;
+    private SyncResponseStatus responseStatus;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public ProfileServerSync() {}
+    public ProfileServerSync() {
+    }
 
-  /**
-   * All-args constructor.
-   */
-  public ProfileServerSync(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus responseStatus) {
-    this.responseStatus = responseStatus;
-  }
+    /**
+     * All-args constructor.
+     */
+    public ProfileServerSync(SyncResponseStatus responseStatus) {
+        this.responseStatus = responseStatus;
+    }
 
-  /**
-   * Gets the value of the 'responseStatus' field.
-   */
-  public org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus getResponseStatus() {
-    return responseStatus;
-  }
+    /**
+     * Gets the value of the 'responseStatus' field.
+     */
+    public SyncResponseStatus getResponseStatus() {
+        return responseStatus;
+    }
 
-  /**
-   * Sets the value of the 'responseStatus' field.
-   * @param value the value to set.
-   */
-  public void setResponseStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus value) {
-    this.responseStatus = value;
-  }
+    /**
+     * Sets the value of the 'responseStatus' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setResponseStatus(SyncResponseStatus value) {
+        this.responseStatus = value;
+    }
 }

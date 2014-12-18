@@ -13,37 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class UserDetachNotification {
-   private java.lang.String endpointAccessToken;
+    private String endpointAccessToken;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public UserDetachNotification() {}
+    public UserDetachNotification() {
+    }
 
-  /**
-   * All-args constructor.
-   */
-  public UserDetachNotification(java.lang.String endpointAccessToken) {
-    this.endpointAccessToken = endpointAccessToken;
-  }
+    /**
+     * All-args constructor.
+     */
+    public UserDetachNotification(String endpointAccessToken) {
+        this.endpointAccessToken = endpointAccessToken;
+    }
 
-  /**
-   * Gets the value of the 'endpointAccessToken' field.
-   */
-  public java.lang.String getEndpointAccessToken() {
-    return endpointAccessToken;
-  }
+    /**
+     * Gets the value of the 'endpointAccessToken' field.
+     */
+    public String getEndpointAccessToken() {
+        return endpointAccessToken;
+    }
 
-  /**
-   * Sets the value of the 'endpointAccessToken' field.
-   * @param value the value to set.
-   */
-  public void setEndpointAccessToken(java.lang.String value) {
-    this.endpointAccessToken = value;
-  }
+    /**
+     * Sets the value of the 'endpointAccessToken' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setEndpointAccessToken(String value) {
+        this.endpointAccessToken = value;
+    }
 }

@@ -13,88 +13,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class SubscriptionCommand {
-   private java.lang.String topicId;
-   private org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType command;
+    private String topicId;
+    private SubscriptionCommandType command;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public SubscriptionCommand() {}
-
-  /**
-   * All-args constructor.
-   */
-  public SubscriptionCommand(java.lang.String topicId, org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType command) {
-    this.topicId = topicId;
-    this.command = command;
-  }
-
-  /**
-   * Gets the value of the 'topicId' field.
-   */
-  public java.lang.String getTopicId() {
-    return topicId;
-  }
-
-  /**
-   * Sets the value of the 'topicId' field.
-   * @param value the value to set.
-   */
-  public void setTopicId(java.lang.String value) {
-    this.topicId = value;
-  }
-
-  /**
-   * Gets the value of the 'command' field.
-   */
-  public org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType getCommand() {
-    return command;
-  }
-
-  /**
-   * Sets the value of the 'command' field.
-   * @param value the value to set.
-   */
-  public void setCommand(org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType value) {
-    this.command = value;
-  }
-
-@Override
-public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((command == null) ? 0 : command.hashCode());
-    result = prime * result + ((topicId == null) ? 0 : topicId.hashCode());
-    return result;
-}
-
-@Override
-public boolean equals(Object obj) {
-    if (this == obj) {
-        return true;
+    public SubscriptionCommand() {
     }
-    if (obj == null) {
-        return false;
+
+    /**
+     * All-args constructor.
+     */
+    public SubscriptionCommand(String topicId, SubscriptionCommandType command) {
+        this.topicId = topicId;
+        this.command = command;
     }
-    if (getClass() != obj.getClass()) {
-        return false;
+
+    /**
+     * Gets the value of the 'topicId' field.
+     */
+    public String getTopicId() {
+        return topicId;
     }
-    SubscriptionCommand other = (SubscriptionCommand) obj;
-    if (command != other.command) {
-        return false;
+
+    /**
+     * Sets the value of the 'topicId' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setTopicId(String value) {
+        this.topicId = value;
     }
-    if (topicId == null) {
-        if (other.topicId != null) {
+
+    /**
+     * Gets the value of the 'command' field.
+     */
+    public SubscriptionCommandType getCommand() {
+        return command;
+    }
+
+    /**
+     * Sets the value of the 'command' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setCommand(SubscriptionCommandType value) {
+        this.command = value;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((command == null) ? 0 : command.hashCode());
+        result = prime * result + ((topicId == null) ? 0 : topicId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-    } else if (!topicId.equals(other.topicId)) {
-        return false;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SubscriptionCommand other = (SubscriptionCommand) obj;
+        if (command != other.command) {
+            return false;
+        }
+        if (topicId == null) {
+            if (other.topicId != null) {
+                return false;
+            }
+        } else if (!topicId.equals(other.topicId)) {
+            return false;
+        }
+        return true;
     }
-    return true;
-}
 }

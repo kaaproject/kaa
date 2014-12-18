@@ -15,11 +15,13 @@
  */
 package org.kaaproject.kaa.server.operations.pojo.sync;  
 
+import java.util.List;
+
 public class NotificationServerSync {
    private int appStateSeqNumber;
-   private org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus responseStatus;
-   private java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Notification> notifications;
-   private java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Topic> availableTopics;
+   private SyncResponseStatus responseStatus;
+   private List<Notification> notifications;
+   private List<Topic> availableTopics;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -31,7 +33,7 @@ public class NotificationServerSync {
   /**
    * All-args constructor.
    */
-  public NotificationServerSync(java.lang.Integer appStateSeqNumber, org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus responseStatus, java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Notification> notifications, java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Topic> availableTopics) {
+  public NotificationServerSync(java.lang.Integer appStateSeqNumber, SyncResponseStatus responseStatus, List<Notification> notifications, List<Topic> availableTopics) {
     this.appStateSeqNumber = appStateSeqNumber;
     this.responseStatus = responseStatus;
     this.notifications = notifications;
@@ -56,7 +58,7 @@ public class NotificationServerSync {
   /**
    * Gets the value of the 'responseStatus' field.
    */
-  public org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus getResponseStatus() {
+  public SyncResponseStatus getResponseStatus() {
     return responseStatus;
   }
 
@@ -64,14 +66,14 @@ public class NotificationServerSync {
    * Sets the value of the 'responseStatus' field.
    * @param value the value to set.
    */
-  public void setResponseStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus value) {
+  public void setResponseStatus(SyncResponseStatus value) {
     this.responseStatus = value;
   }
 
   /**
    * Gets the value of the 'notifications' field.
    */
-  public java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Notification> getNotifications() {
+  public List<Notification> getNotifications() {
     return notifications;
   }
 
@@ -79,14 +81,14 @@ public class NotificationServerSync {
    * Sets the value of the 'notifications' field.
    * @param value the value to set.
    */
-  public void setNotifications(java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Notification> value) {
+  public void setNotifications(List<Notification> value) {
     this.notifications = value;
   }
 
   /**
    * Gets the value of the 'availableTopics' field.
    */
-  public java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Topic> getAvailableTopics() {
+  public List<Topic> getAvailableTopics() {
     return availableTopics;
   }
 
@@ -94,7 +96,7 @@ public class NotificationServerSync {
    * Sets the value of the 'availableTopics' field.
    * @param value the value to set.
    */
-  public void setAvailableTopics(java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Topic> value) {
+  public void setAvailableTopics(List<Topic> value) {
     this.availableTopics = value;
   }
 }

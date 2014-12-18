@@ -13,38 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class UserAttachResponse {
-   private org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus result;
+    private SyncStatus result;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public UserAttachResponse() {}
+    public UserAttachResponse() {
+    }
 
-  /**
-   * All-args constructor.
-   */
-  public UserAttachResponse(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus result) {
-    this.result = result;
-  }
+    /**
+     * All-args constructor.
+     */
+    public UserAttachResponse(SyncStatus result) {
+        this.result = result;
+    }
 
-  /**
-   * Gets the value of the 'result' field.
-   */
-  public org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus getResult() {
-    return result;
-  }
+    /**
+     * Gets the value of the 'result' field.
+     */
+    public SyncStatus getResult() {
+        return result;
+    }
 
-  /**
-   * Sets the value of the 'result' field.
-   * @param value the value to set.
-   */
-  public void setResult(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus value) {
-    this.result = value;
-  }
+    /**
+     * Sets the value of the 'result' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setResult(SyncStatus value) {
+        this.result = value;
+    }
 
 }

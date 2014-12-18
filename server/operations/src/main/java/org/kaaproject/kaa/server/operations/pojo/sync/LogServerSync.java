@@ -13,54 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class LogServerSync {
-   private java.lang.String requestId;
-   private org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus result;
+    private String requestId;
+    private SyncStatus result;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public LogServerSync() {}
+    public LogServerSync() {
+    }
 
-  /**
-   * All-args constructor.
-   */
-  public LogServerSync(java.lang.String requestId, org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus result) {
-    this.requestId = requestId;
-    this.result = result;
-  }
+    /**
+     * All-args constructor.
+     */
+    public LogServerSync(String requestId, SyncStatus result) {
+        this.requestId = requestId;
+        this.result = result;
+    }
 
-  /**
-   * Gets the value of the 'requestId' field.
-   */
-  public java.lang.String getRequestId() {
-    return requestId;
-  }
+    /**
+     * Gets the value of the 'requestId' field.
+     */
+    public String getRequestId() {
+        return requestId;
+    }
 
-  /**
-   * Sets the value of the 'requestId' field.
-   * @param value the value to set.
-   */
-  public void setRequestId(java.lang.String value) {
-    this.requestId = value;
-  }
+    /**
+     * Sets the value of the 'requestId' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setRequestId(String value) {
+        this.requestId = value;
+    }
 
-  /**
-   * Gets the value of the 'result' field.
-   */
-  public org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus getResult() {
-    return result;
-  }
+    /**
+     * Gets the value of the 'result' field.
+     */
+    public SyncStatus getResult() {
+        return result;
+    }
 
-  /**
-   * Sets the value of the 'result' field.
-   * @param value the value to set.
-   */
-  public void setResult(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus value) {
-    this.result = value;
-  }
+    /**
+     * Sets the value of the 'result' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setResult(SyncStatus value) {
+        this.result = value;
+    }
 }

@@ -13,71 +13,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
-public class EventListenersResponse  {
-   private java.lang.String requestId;
-   private java.util.List<java.lang.String> listeners;
-   private org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus result;
+import java.util.List;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public EventListenersResponse() {}
+public class EventListenersResponse {
+    private String requestId;
+    private List<String> listeners;
+    private SyncStatus result;
 
-  /**
-   * All-args constructor.
-   */
-  public EventListenersResponse(java.lang.String requestId, java.util.List<java.lang.String> listeners, org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus result) {
-    this.requestId = requestId;
-    this.listeners = listeners;
-    this.result = result;
-  }
+    public EventListenersResponse() {
+    }
 
-  /**
-   * Gets the value of the 'requestId' field.
-   */
-  public java.lang.String getRequestId() {
-    return requestId;
-  }
+    /**
+     * All-args constructor.
+     */
+    public EventListenersResponse(String requestId, List<String> listeners,
+            SyncStatus result) {
+        this.requestId = requestId;
+        this.listeners = listeners;
+        this.result = result;
+    }
 
-  /**
-   * Sets the value of the 'requestId' field.
-   * @param value the value to set.
-   */
-  public void setRequestId(java.lang.String value) {
-    this.requestId = value;
-  }
+    /**
+     * Gets the value of the 'requestId' field.
+     */
+    public String getRequestId() {
+        return requestId;
+    }
 
-  /**
-   * Gets the value of the 'listeners' field.
-   */
-  public java.util.List<java.lang.String> getListeners() {
-    return listeners;
-  }
+    /**
+     * Sets the value of the 'requestId' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setRequestId(String value) {
+        this.requestId = value;
+    }
 
-  /**
-   * Sets the value of the 'listeners' field.
-   * @param value the value to set.
-   */
-  public void setListeners(java.util.List<java.lang.String> value) {
-    this.listeners = value;
-  }
+    /**
+     * Gets the value of the 'listeners' field.
+     */
+    public List<String> getListeners() {
+        return listeners;
+    }
 
-  /**
-   * Gets the value of the 'result' field.
-   */
-  public org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus getResult() {
-    return result;
-  }
+    /**
+     * Sets the value of the 'listeners' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setListeners(List<String> value) {
+        this.listeners = value;
+    }
 
-  /**
-   * Sets the value of the 'result' field.
-   * @param value the value to set.
-   */
-  public void setResult(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus value) {
-    this.result = value;
-  }
+    /**
+     * Gets the value of the 'result' field.
+     */
+    public SyncStatus getResult() {
+        return result;
+    }
+
+    /**
+     * Sets the value of the 'result' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setResult(SyncStatus value) {
+        this.result = value;
+    }
 }

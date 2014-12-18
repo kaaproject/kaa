@@ -13,71 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
+
+import java.util.List;
 
 public class EventServerSync {
-   private org.kaaproject.kaa.server.operations.pojo.sync.EventSequenceNumberResponse eventSequenceNumberResponse;
-   private java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse> eventListenersResponses;
-   private java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Event> events;
+    private EventSequenceNumberResponse eventSequenceNumberResponse;
+    private List<EventListenersResponse> eventListenersResponses;
+    private List<Event> events;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public EventServerSync() {}
+    public EventServerSync() {
+    }
 
-  /**
-   * All-args constructor.
-   */
-  public EventServerSync(org.kaaproject.kaa.server.operations.pojo.sync.EventSequenceNumberResponse eventSequenceNumberResponse, java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse> eventListenersResponses, java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Event> events) {
-    this.eventSequenceNumberResponse = eventSequenceNumberResponse;
-    this.eventListenersResponses = eventListenersResponses;
-    this.events = events;
-  }
+    /**
+     * All-args constructor.
+     */
+    public EventServerSync(EventSequenceNumberResponse eventSequenceNumberResponse,
+            List<EventListenersResponse> eventListenersResponses,
+            List<Event> events) {
+        this.eventSequenceNumberResponse = eventSequenceNumberResponse;
+        this.eventListenersResponses = eventListenersResponses;
+        this.events = events;
+    }
 
-  /**
-   * Gets the value of the 'eventSequenceNumberResponse' field.
-   */
-  public org.kaaproject.kaa.server.operations.pojo.sync.EventSequenceNumberResponse getEventSequenceNumberResponse() {
-    return eventSequenceNumberResponse;
-  }
+    /**
+     * Gets the value of the 'eventSequenceNumberResponse' field.
+     */
+    public EventSequenceNumberResponse getEventSequenceNumberResponse() {
+        return eventSequenceNumberResponse;
+    }
 
-  /**
-   * Sets the value of the 'eventSequenceNumberResponse' field.
-   * @param value the value to set.
-   */
-  public void setEventSequenceNumberResponse(org.kaaproject.kaa.server.operations.pojo.sync.EventSequenceNumberResponse value) {
-    this.eventSequenceNumberResponse = value;
-  }
+    /**
+     * Sets the value of the 'eventSequenceNumberResponse' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setEventSequenceNumberResponse(EventSequenceNumberResponse value) {
+        this.eventSequenceNumberResponse = value;
+    }
 
-  /**
-   * Gets the value of the 'eventListenersResponses' field.
-   */
-  public java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse> getEventListenersResponses() {
-    return eventListenersResponses;
-  }
+    /**
+     * Gets the value of the 'eventListenersResponses' field.
+     */
+    public List<EventListenersResponse> getEventListenersResponses() {
+        return eventListenersResponses;
+    }
 
-  /**
-   * Sets the value of the 'eventListenersResponses' field.
-   * @param value the value to set.
-   */
-  public void setEventListenersResponses(java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse> value) {
-    this.eventListenersResponses = value;
-  }
+    /**
+     * Sets the value of the 'eventListenersResponses' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setEventListenersResponses(List<EventListenersResponse> value) {
+        this.eventListenersResponses = value;
+    }
 
-  /**
-   * Gets the value of the 'events' field.
-   */
-  public java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Event> getEvents() {
-    return events;
-  }
+    /**
+     * Gets the value of the 'events' field.
+     */
+    public List<Event> getEvents() {
+        return events;
+    }
 
-  /**
-   * Sets the value of the 'events' field.
-   * @param value the value to set.
-   */
-  public void setEvents(java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.Event> value) {
-    this.events = value;
-  }
+    /**
+     * Sets the value of the 'events' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setEvents(List<Event> value) {
+        this.events = value;
+    }
 }

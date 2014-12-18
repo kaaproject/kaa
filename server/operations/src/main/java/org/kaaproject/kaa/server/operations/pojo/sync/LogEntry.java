@@ -15,28 +15,25 @@
  */
 package org.kaaproject.kaa.server.operations.pojo.sync;
 
-public class LogEntry {
-    private java.nio.ByteBuffer data;
+import java.nio.ByteBuffer;
 
-    /**
-     * Default constructor. Note that this does not initialize fields to their
-     * default values from the schema. If that is desired then one should use
-     * {@link \#newBuilder()}.
-     */
+public class LogEntry {
+    private ByteBuffer data;
+
     public LogEntry() {
     }
 
     /**
      * All-args constructor.
      */
-    public LogEntry(java.nio.ByteBuffer data) {
+    public LogEntry(ByteBuffer data) {
         this.data = data;
     }
 
     /**
      * Gets the value of the 'data' field.
      */
-    public java.nio.ByteBuffer getData() {
+    public ByteBuffer getData() {
         return data;
     }
 
@@ -46,7 +43,7 @@ public class LogEntry {
      * @param value
      *            the value to set.
      */
-    public void setData(java.nio.ByteBuffer value) {
+    public void setData(ByteBuffer value) {
         this.data = value;
     }
 

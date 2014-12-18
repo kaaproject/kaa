@@ -13,38 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.pojo.sync;  
+package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class EventSequenceNumberResponse {
-   private int seqNum;
+    private int seqNum;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public EventSequenceNumberResponse() {}
+    public EventSequenceNumberResponse() {
+    }
 
-  /**
-   * All-args constructor.
-   */
-  public EventSequenceNumberResponse(java.lang.Integer seqNum) {
-    this.seqNum = seqNum;
-  }
+    /**
+     * All-args constructor.
+     */
+    public EventSequenceNumberResponse(java.lang.Integer seqNum) {
+        this.seqNum = seqNum;
+    }
 
-  /**
-   * Gets the value of the 'seqNum' field.
-   */
-  public java.lang.Integer getSeqNum() {
-    return seqNum;
-  }
+    /**
+     * Gets the value of the 'seqNum' field.
+     */
+    public java.lang.Integer getSeqNum() {
+        return seqNum;
+    }
 
-  /**
-   * Sets the value of the 'seqNum' field.
-   * @param value the value to set.
-   */
-  public void setSeqNum(java.lang.Integer value) {
-    this.seqNum = value;
-  }
+    /**
+     * Sets the value of the 'seqNum' field.
+     * 
+     * @param value
+     *            the value to set.
+     */
+    public void setSeqNum(java.lang.Integer value) {
+        this.seqNum = value;
+    }
 
 }

@@ -333,6 +333,11 @@ public class DefaultAkkaServiceTest {
             public boolean isEncrypted() {
                 return true;
             }
+
+            @Override
+            public String getPlatformId() {
+                return AvroEncDec.AVRO_ENC_DEC_ID;
+            }
         };
     }
 
@@ -359,7 +364,7 @@ public class DefaultAkkaServiceTest {
     public void testDecodeSessionException() throws Exception {
         SessionAwareRequest message = Mockito.mock(SessionAwareRequest.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-        NettySessionInfo sessionInfo = new NettySessionInfo(UUID.randomUUID(),
+        NettySessionInfo sessionInfo = new NettySessionInfo(UUID.randomUUID(), AvroEncDec.AVRO_ENC_DEC_ID,
                 Mockito.mock(ChannelHandlerContext.class), ChannelType.TCP, Mockito.mock(CipherPair.class),
                 EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
         Mockito.when(message.getChannelContext()).thenReturn(Mockito.mock(ChannelHandlerContext.class));
@@ -766,7 +771,7 @@ public class DefaultAkkaServiceTest {
         AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
         org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest kaaSync = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest(
                 crypt.encodeData(requestConverter.toByteArray(request)), false, true);
-        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), channelContextMock, ChannelType.TCP,
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), AvroEncDec.AVRO_ENC_DEC_ID, channelContextMock, ChannelType.TCP,
                 crypt.getSessionCipherPair(), EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN, 100, true);
 
         SessionAwareRequest message = new NettyTcpSyncMessage(kaaSync, session, responseBuilder, errorBuilder, null);

@@ -38,6 +38,7 @@ import org.kaaproject.kaa.server.common.server.kaatcp.AbstractKaaTcpCommandProce
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
+import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpDisconnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpSyncMessage;
@@ -207,7 +208,7 @@ public class AkkaKaaTcpHandlerTest {
     }
 
     protected NettySessionInfo buildSessionInfo(UUID uuid) {
-        return new NettySessionInfo(uuid, Mockito.mock(ChannelHandlerContext.class), ChannelType.TCP, Mockito.mock(CipherPair.class),
+        return new NettySessionInfo(uuid, AvroEncDec.AVRO_ENC_DEC_ID, Mockito.mock(ChannelHandlerContext.class), ChannelType.TCP, Mockito.mock(CipherPair.class),
                 EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
     }
 }

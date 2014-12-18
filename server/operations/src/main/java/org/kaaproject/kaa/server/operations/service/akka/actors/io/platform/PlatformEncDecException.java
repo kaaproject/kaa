@@ -26,5 +26,9 @@ public class PlatformEncDecException extends Exception {
     public PlatformEncDecException(Throwable cause) {
         super(cause);
     }
+    
+    public PlatformEncDecException(String cause) {
+        super(cause);
+    }    
 
 }

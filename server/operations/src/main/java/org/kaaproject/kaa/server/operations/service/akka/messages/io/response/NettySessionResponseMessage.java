@@ -81,4 +81,9 @@ public class NettySessionResponseMessage implements SessionResponse{
     public NettySessionInfo getSessionInfo() {
         return sessionInfo;
     }
+
+    @Override
+    public String getPlatformId() {
+        return sessionInfo.getPlatformId();
+    }
 }

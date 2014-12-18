@@ -15,22 +15,19 @@
  */
 package org.kaaproject.kaa.server.operations.pojo.sync;
 
-public class LogClientSync {
-    private java.lang.String requestId;
-    private java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.LogEntry> logEntries;
+import java.util.List;
 
-    /**
-     * Default constructor. Note that this does not initialize fields to their
-     * default values from the schema. If that is desired then one should use
-     * {@link \#newBuilder()}.
-     */
+public class LogClientSync {
+    private String requestId;
+    private List<LogEntry> logEntries;
+
     public LogClientSync() {
     }
 
     /**
      * All-args constructor.
      */
-    public LogClientSync(java.lang.String requestId, java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.LogEntry> logEntries) {
+    public LogClientSync(String requestId, List<LogEntry> logEntries) {
         this.requestId = requestId;
         this.logEntries = logEntries;
     }
@@ -38,7 +35,7 @@ public class LogClientSync {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public java.lang.String getRequestId() {
+    public String getRequestId() {
         return requestId;
     }
 
@@ -48,14 +45,14 @@ public class LogClientSync {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(java.lang.String value) {
+    public void setRequestId(String value) {
         this.requestId = value;
     }
 
     /**
      * Gets the value of the 'logEntries' field.
      */
-    public java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.LogEntry> getLogEntries() {
+    public List<LogEntry> getLogEntries() {
         return logEntries;
     }
 
@@ -65,7 +62,7 @@ public class LogClientSync {
      * @param value
      *            the value to set.
      */
-    public void setLogEntries(java.util.List<org.kaaproject.kaa.server.operations.pojo.sync.LogEntry> value) {
+    public void setLogEntries(List<LogEntry> value) {
         this.logEntries = value;
     }
 

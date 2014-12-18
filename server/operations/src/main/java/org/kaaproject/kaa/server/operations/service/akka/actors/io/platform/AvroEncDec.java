@@ -83,6 +83,8 @@ import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
  */
 public class AvroEncDec implements PlatformEncDec {
 
+    public static final String AVRO_ENC_DEC_ID = "avro";
+    
     private final AvroByteArrayConverter<SyncRequest> clientSyncConverter;
     private final AvroByteArrayConverter<SyncResponse> serverSyncConverter;
 
