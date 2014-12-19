@@ -42,6 +42,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
@@ -70,6 +71,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.notification.Notification
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemasViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.settings.GeneralPropertiesViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.settings.MailPropertiesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.tenant.TenantViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.tenant.TenantsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicViewImpl;
@@ -92,6 +95,10 @@ public class ClientFactoryImpl implements ClientFactory {
     private final NavigationView navigationView = new NavigationViewImpl();
 
     private final UserProfileView userProfileView = new UserProfileViewImpl();
+    
+    private final BasePropertiesView generalPropertiesView = new GeneralPropertiesViewImpl();
+    
+    private final BasePropertiesView mailPropertiesView = new MailPropertiesViewImpl();
 
     private final BaseListView<TenantUserDto> tenantsView = new TenantsViewImpl();
     private final TenantView createTenantView = new TenantViewImpl(true);
@@ -174,6 +181,16 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public UserProfileView getUserProfileView() {
         return userProfileView;
+    }
+    
+    @Override
+    public BasePropertiesView getGeneralPropertiesView() {
+        return generalPropertiesView;
+    }
+    
+    @Override
+    public BasePropertiesView getMailPropertiesView() {
+        return mailPropertiesView;
     }
 
     @Override

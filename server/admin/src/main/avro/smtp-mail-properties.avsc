@@ -1,0 +1,25 @@
+{
+    "namespace": "org.kaaproject.kaa.server.admin.services.entity.gen",
+    "type": "record",
+    "name": "SmtpMailProperties",
+    "fields": [
+            {"name": "mailFrom", "displayName": "From address", "maxLength": 1000, "default": "Kaa <admin@kaaproject.org>", "type": "string"},
+            {"name": "smtpProtocol",
+             "displayName": "SMTP protocol",
+             "default": "SMTP",
+             "displayNames" : ["SMTP", "SMTPS"],
+             "type": {
+                      "namespace": "org.kaaproject.kaa.server.admin.services.entity.gen",
+                      "type": "enum",
+                      "name": "SmtpProtocol",
+                      "symbols" : ["SMTP", "SMTPS"]
+                     }
+            },  
+            {"name": "smtpHost", "displayName": "SMTP Host", "default": "localhost", "type": "string"},
+            {"name": "smtpPort", "displayName": "SMTP Port", "default": 25, "type": "int"},
+            {"name": "timeout", "displayName": "Timeout", "optional": true, "default": 10000, "type": ["int", "null"]},
+            {"name": "enableTls", "displayName": "TLS", "optional": true, "default": false, "type": ["boolean", "null"]},
+            {"name": "username", "displayName": "Username", "optional": true, "default": "", "type": ["string", "null"]},
+            {"name": "password", "displayName": "Password", "optional": true, "default": "", "inputType": "password", "type": ["string", "null"]}
+    ]
+}

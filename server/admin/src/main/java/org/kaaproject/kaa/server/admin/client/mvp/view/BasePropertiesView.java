@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.place;
+package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import com.google.gwt.place.shared.PlaceHistoryMapper;
-import com.google.gwt.place.shared.WithTokenizers;
+import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
-@WithTokenizers({UserProfilePlace.Tokenizer.class,
-    GeneralPropertiesPlace.Tokenizer.class,
-    MailPropertiesPlace.Tokenizer.class,
-    TenantsPlace.Tokenizer.class,
-    TenantPlace.Tokenizer.class})
-public interface KaaAdminPlaceHistoryMapper extends PlaceHistoryMapper
-{
+import com.google.gwt.user.client.ui.HasValue;
+
+public interface BasePropertiesView extends BaseDetailsView {
+
+    HasValue<RecordField> getConfiguration();
+
 }
+

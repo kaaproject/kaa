@@ -29,6 +29,7 @@ import org.kaaproject.kaa.server.common.avro.ui.shared.BooleanField;
 import org.kaaproject.kaa.server.common.avro.ui.shared.EnumField;
 import org.kaaproject.kaa.server.common.avro.ui.shared.FormEnum;
 import org.kaaproject.kaa.server.common.avro.ui.shared.FormField;
+import org.kaaproject.kaa.server.common.avro.ui.shared.InputType;
 import org.kaaproject.kaa.server.common.avro.ui.shared.IntegerField;
 import org.kaaproject.kaa.server.common.avro.ui.shared.LongField;
 import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
@@ -39,21 +40,31 @@ public class FormAvroConverterTest {
     
     @Test
     public void testSingleFieldsRecord() throws IOException {
+        int fieldNum = 0;
         Schema schema = TestAvroSchemas.getSingleFieldsSchema();
         RecordField field = FormAvroConverter.createRecordFieldFromSchema(schema);
         Assert.assertNotNull(field);
         Assert.assertNotNull(field.getValue());
-        Assert.assertEquals(5, field.getValue().size());
-        FormField formField = field.getValue().get(0);
+        Assert.assertEquals(6, field.getValue().size());
+        FormField formField = field.getValue().get(fieldNum++);
         Assert.assertTrue(formField instanceof StringField);
         Assert.assertEquals(1000, ((StringField)formField).getMaxLength());
         Assert.assertEquals("testString", formField.getFieldName());
         Assert.assertEquals("Test string field", formField.getDisplayName());
         Assert.assertEquals("default string", ((StringField)formField).getDefaultValue());
+        Assert.assertEquals(InputType.PLAIN, ((StringField)formField).getInputType());
         
         ((StringField)formField).setValue("new string");
         
-        formField = field.getValue().get(1);
+        formField = field.getValue().get(fieldNum++);
+        Assert.assertTrue(formField instanceof StringField);
+        Assert.assertEquals(1000, ((StringField)formField).getMaxLength());
+        Assert.assertEquals("testPasswordString", formField.getFieldName());
+        Assert.assertEquals("Test password string field", formField.getDisplayName());
+        Assert.assertEquals("default password", ((StringField)formField).getDefaultValue());
+        Assert.assertEquals(InputType.PASSWORD, ((StringField)formField).getInputType());
+        
+        formField = field.getValue().get(fieldNum++);
         Assert.assertTrue(formField instanceof IntegerField);
         Assert.assertEquals(1000, ((IntegerField)formField).getMaxLength());
         Assert.assertEquals("testInteger", formField.getFieldName());
@@ -62,7 +73,7 @@ public class FormAvroConverterTest {
         
         ((IntegerField)formField).setValue(25);
         
-        formField = field.getValue().get(2);
+        formField = field.getValue().get(fieldNum++);
         Assert.assertTrue(formField instanceof LongField);
         Assert.assertEquals(1000, ((LongField)formField).getMaxLength());
         Assert.assertEquals("testLong", formField.getFieldName());
@@ -71,7 +82,7 @@ public class FormAvroConverterTest {
         
         ((LongField)formField).setValue(35l);
         
-        formField = field.getValue().get(3);
+        formField = field.getValue().get(fieldNum++);
         Assert.assertTrue(formField instanceof BooleanField);
         Assert.assertEquals("testBoolean", formField.getFieldName());
         Assert.assertEquals("Test boolean field", formField.getDisplayName());
@@ -79,7 +90,7 @@ public class FormAvroConverterTest {
         
         ((BooleanField)formField).setValue(false);
         
-        formField = field.getValue().get(4);
+        formField = field.getValue().get(fieldNum++);
         Assert.assertTrue(formField instanceof EnumField);
         Assert.assertEquals("testEnum", formField.getFieldName());
         Assert.assertEquals("Test enum field", formField.getDisplayName());

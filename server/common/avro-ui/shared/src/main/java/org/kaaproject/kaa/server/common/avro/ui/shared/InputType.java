@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.place;
+package org.kaaproject.kaa.server.common.avro.ui.shared;
 
-import com.google.gwt.place.shared.PlaceHistoryMapper;
-import com.google.gwt.place.shared.WithTokenizers;
+public enum InputType {
 
-@WithTokenizers({UserProfilePlace.Tokenizer.class,
-    GeneralPropertiesPlace.Tokenizer.class,
-    MailPropertiesPlace.Tokenizer.class,
-    TenantsPlace.Tokenizer.class,
-    TenantPlace.Tokenizer.class})
-public interface KaaAdminPlaceHistoryMapper extends PlaceHistoryMapper
-{
+    PLAIN,
+    PASSWORD
+    
 }

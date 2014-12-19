@@ -69,16 +69,20 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
+import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
+import org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties;
+import org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties;
 import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
+import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
@@ -104,13 +108,16 @@ import org.springframework.stereotype.Service;
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
 
     @Autowired
     private ControlThriftClientProvider clientProvider;
 
     @Autowired
     private UserFacade userFacade;
+    
+    @Autowired
+    private PropertiesFacade propertiesFacade;
 
     @Autowired
     private MessagingService messagingService;
@@ -285,6 +292,54 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    @Override
+    public PropertiesDto getMailProperties() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            return propertiesFacade.getPropertiesDto(SmtpMailProperties.class);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public PropertiesDto editMailProperties(PropertiesDto mailPropertiesDto)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            PropertiesDto storedPropertiesDto = propertiesFacade.editPropertiesDto(mailPropertiesDto, 
+                    SmtpMailProperties.class);
+            messagingService.configureMailSender();
+            return storedPropertiesDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public PropertiesDto getGeneralProperties() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            return propertiesFacade.getPropertiesDto(GeneralProperties.class);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public PropertiesDto editGeneralProperties(PropertiesDto generalPropertiesDto)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            PropertiesDto storedPropertiesDto = propertiesFacade.editPropertiesDto(generalPropertiesDto, 
+                    GeneralProperties.class);
+            messagingService.configureMailSender();
+            return storedPropertiesDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUser(
             org.kaaproject.kaa.common.dto.admin.UserDto user)
@@ -1495,7 +1550,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     private TenantUserDto toTenantUser(TenantAdminDto tenantAdmin) {
         User user = userFacade.findById(Long.valueOf(tenantAdmin.getExternalUid()));
-        logger.debug("Convert tenant admin to tenant user {}.", user);
+        LOG.debug("Convert tenant admin to tenant user {}.", user);
         TenantUserDto tenantUser = null;
         if (user != null) {
             tenantUser = new TenantUserDto(user.getId().toString(),
@@ -1508,7 +1563,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             tenantUser.setTenantId(tenantAdmin.getTenant().getId());
             tenantUser.setTenantName(tenantAdmin.getTenant().getName());
         } else {
-            logger.debug("Can't find tenant user by external id {}.", tenantAdmin.getExternalUid());
+            LOG.debug("Can't find tenant user by external id {}.", tenantAdmin.getExternalUid());
         }
         return tenantUser;
     }
@@ -1639,5 +1694,4 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw new KaaAdminServiceException(ServiceErrorCode.NOT_AUTHORIZED);
         }
     }
-
 }

@@ -22,6 +22,7 @@ import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.HasInputEventHa
 import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
 import org.kaaproject.kaa.server.common.avro.ui.gwt.client.util.Utils;
+import org.kaaproject.kaa.server.common.avro.ui.shared.InputType;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -38,6 +39,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -62,7 +64,7 @@ public class SizedTextBox extends VerticalPanel implements HasValue<String>, Has
     
     private static Resources DEFAULT_RESOURCES;
     
-    private ExtendedTextBox text;
+    private TextBox text;
     private HTML textLabel;
     private Label charactersLabel;
     private final int maxChars;
@@ -77,27 +79,27 @@ public class SizedTextBox extends VerticalPanel implements HasValue<String>, Has
         return DEFAULT_RESOURCES.sizedTextStyle();
     }
     
-    public SizedTextBox(int maxChars) {
-        this(getDefaultStyle(), maxChars);
+    public SizedTextBox(int maxChars, InputType inputType) {
+        this(getDefaultStyle(), inputType, maxChars);
     }
 
-    public SizedTextBox(int maxChars, boolean editable) {
-        this(getDefaultStyle(), maxChars, editable, true);
+    public SizedTextBox(int maxChars, InputType inputType, boolean editable) {
+        this(getDefaultStyle(), inputType,  maxChars, editable, true);
     }
     
-    public SizedTextBox(int maxChars, boolean editable, boolean addNotes) {
-        this(getDefaultStyle(), maxChars, editable, addNotes);
+    public SizedTextBox(int maxChars, InputType inputType, boolean editable, boolean addNotes) {
+        this(getDefaultStyle(), inputType, maxChars, editable, addNotes);
     }
 
-    public SizedTextBox(Style style, int maxChars) {
-        this(style, maxChars, true, true);
+    public SizedTextBox(Style style, InputType inputType, int maxChars) {
+        this(style, inputType, maxChars, true, true);
     }
     
-    public SizedTextBox(Style style, int maxChars, boolean editable) {
-        this(style, maxChars, editable, true);
+    public SizedTextBox(Style style, InputType inputType, int maxChars, boolean editable) {
+        this(style, inputType, maxChars, editable, true);
     }
 
-    public SizedTextBox(Style style, int maxChars, boolean editable, boolean addNotes) {
+    public SizedTextBox(Style style, InputType inputType, int maxChars, boolean editable, boolean addNotes) {
         
         // Inject the stylesheet.
         this.style = style;
@@ -106,7 +108,11 @@ public class SizedTextBox extends VerticalPanel implements HasValue<String>, Has
         this.maxChars = maxChars;
         this.editable = editable;
         if (editable) {
-            text = new ExtendedTextBox();
+            if (inputType == InputType.PASSWORD) {
+                text = new ExtendedPasswordTextBox();
+            } else {
+                text = new ExtendedTextBox();
+            }
             add(text);
         }
         else {
@@ -256,6 +262,30 @@ public class SizedTextBox extends VerticalPanel implements HasValue<String>, Has
                         @Override
                         public void execute() {
                             ValueChangeEvent.fire(ExtendedTextBox.this, getText());
+                        }
+                    });
+                    break;
+            }
+        }
+    }
+    
+    private class ExtendedPasswordTextBox extends PasswordTextBox {
+
+        public ExtendedPasswordTextBox() {
+            super();
+            sinkEvents(Event.ONPASTE);
+        }
+
+        @Override
+        public void onBrowserEvent(Event event) {
+            super.onBrowserEvent(event);
+            switch (DOM.eventGetType(event)) {
+                case Event.ONPASTE:
+                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                        @Override
+                        public void execute() {
+                            ValueChangeEvent.fire(ExtendedPasswordTextBox.this, getText());
                         }
                     });
                     break;

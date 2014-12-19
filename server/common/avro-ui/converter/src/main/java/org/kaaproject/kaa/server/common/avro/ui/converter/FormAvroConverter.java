@@ -33,6 +33,7 @@ import org.kaaproject.kaa.server.common.avro.ui.shared.EnumField;
 import org.kaaproject.kaa.server.common.avro.ui.shared.FieldType;
 import org.kaaproject.kaa.server.common.avro.ui.shared.FormEnum;
 import org.kaaproject.kaa.server.common.avro.ui.shared.FormField;
+import org.kaaproject.kaa.server.common.avro.ui.shared.InputType;
 import org.kaaproject.kaa.server.common.avro.ui.shared.IntegerField;
 import org.kaaproject.kaa.server.common.avro.ui.shared.LongField;
 import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
@@ -62,6 +63,9 @@ public class FormAvroConverter {
     
     /** The Constant OPTIONAL. */
     private static final String OPTIONAL = "optional";
+    
+    /** The Constant INPUT_TYPE. */
+    private static final String INPUT_TYPE = "inputType";
 
     /**
      * Creates the record field from schema.
@@ -176,6 +180,11 @@ public class FormAvroConverter {
                         String defaultValue = convertJsonValue(fieldType, defaultValueVal);
                         ((StringField)sizedField).setDefaultValue(defaultValue);
                         ((StringField)sizedField).setValue(defaultValue);
+                        JsonNode inputTypeNode = field.getJsonProp(INPUT_TYPE);
+                        if (inputTypeNode != null && inputTypeNode.isTextual()) {
+                            InputType inputType = InputType.valueOf(inputTypeNode.asText().toUpperCase());
+                            ((StringField)sizedField).setInputType(inputType);
+                        }
                     }
                     else if (fieldType == FieldType.INTEGER) {
                         Integer defaultValue = convertJsonValue(fieldType, defaultValueVal);

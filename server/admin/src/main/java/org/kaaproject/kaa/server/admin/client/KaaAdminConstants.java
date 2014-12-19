@@ -608,4 +608,19 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Ignore")
     String ignore();
 
+    @DefaultStringValue("General Settings")
+    String generalSettings();
+    
+    @DefaultStringValue("General Settings Details")
+    String generalSettingsDetails();
+
+    @DefaultStringValue("Outgoing Mail")
+    String outgoingMail();
+    
+    @DefaultStringValue("Outgoing Mail Settings")
+    String outgoingMailSettings();
+
+    @DefaultStringValue("SMTP Mail Server Details")
+    String smtpMailServerDetails();
+    
 }
