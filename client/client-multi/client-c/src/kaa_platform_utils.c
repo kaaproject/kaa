@@ -209,6 +209,20 @@ kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_read
     return KAA_ERR_READ_FAILED;
 }
 
+bool kaa_platform_message_is_buffer_large_enough(kaa_platform_message_reader_t *reader
+                                               , size_t size)
+{
+    if (!reader) {
+        return false;
+    }
+
+    if (!size) {
+        return true;
+    }
+
+    return (reader->read + size <= reader->total);
+}
+
 kaa_error_t kaa_platform_message_skip(kaa_platform_message_reader_t *reader, size_t size)
 {
     KAA_RETURN_IF_NIL2(reader, size, KAA_ERR_BADPARAM);
