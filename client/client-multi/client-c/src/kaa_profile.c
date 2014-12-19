@@ -27,6 +27,7 @@
 #include "kaa_external.h"
 #include "kaa_channel_manager.h"
 #include "kaa_status.h"
+#include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
 #include "gen/kaa_endpoint_gen.h"
 
@@ -145,7 +146,8 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
     bool is_public_key_needed = true; // FIXME: replace with valid check
     bool is_access_token_needed = true; // FIXME: replace with valid check
 
-    *expected_size = sizeof(uint32_t); // profile body size
+    *expected_size = KAA_EXTENSION_HEADER_SIZE;
+    *expected_size += sizeof(uint32_t); // profile body size
     *expected_size += kaa_aligned_size_get(self->profile_body.size); // profile data
 
     if (is_versions_needed) {
@@ -198,12 +200,16 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_profile_request_serialize(kaa_platform_message_writer_t* writer)
+{
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
+    return KAA_ERR_NONE;
+}
 
 kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile_sync_request_t **result)
 {
     KAA_RETURN_IF_NIL2(self, result, KAA_ERR_NOMEM);
-
 
     kaa_profile_sync_request_t *request = kaa_profile_sync_request_create();
     KAA_RETURN_IF_NIL(request, KAA_ERR_NOMEM);

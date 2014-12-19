@@ -19,16 +19,44 @@
 #define KAA_PLATFORM_UTILS_H_
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "kaa_error.h"
+#include "kaa_platform_common.h"
 
-#define KAA_ALIGN_RATIO   4
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-kaa_error_t kaa_write_buffer(char* buffer, size_t buf_size, void *data, size_t data_size);
+
+
+typedef struct kaa_platform_message_writer_t_ kaa_platform_message_writer_t;
+
+
+
+kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
+                                             , const char *buf
+                                             , size_t len);
+
+void kaa_platform_message_writer_destroy(kaa_platform_message_writer_t* writer);
+
+kaa_error_t kaa_platform_message_write(kaa_platform_message_writer_t* writer
+                                     , const void *data
+                                     , size_t data_size);
+
+const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer);
+
+
 
 static inline size_t kaa_aligned_size_get(size_t size)
 {
-    return (size + (KAA_ALIGN_RATIO - (size % KAA_ALIGN_RATIO)));
+    return (size + (KAA_ALIGNMENT - (size % KAA_ALIGNMENT)));
 }
+
+
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 
 #endif /* KAA_PLATFORM_UTILS_H_ */

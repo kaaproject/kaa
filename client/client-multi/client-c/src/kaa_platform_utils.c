@@ -19,15 +19,67 @@
 #include <string.h>
 
 #include "kaa_common.h"
+#include "utilities/kaa_mem.h"
 
-kaa_error_t kaa_write_buffer(char* buffer, size_t buf_size, void *data, size_t data_size)
+
+
+struct kaa_platform_message_writer_t_
 {
-    KAA_RETURN_IF_NIL4(buffer, buf_size, data, data_size, KAA_ERR_BADPARAM);
+    const char *buffer;
+    int64_t     total;
+    int64_t     used;
+};
 
-    if (buf_size >= data_size) {
-        memcpy(buffer, data, data_size);
+
+
+kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
+                                             , const char *buf
+                                             , size_t len)
+{
+    KAA_RETURN_IF_NIL3(writer_p, buf, len, KAA_ERR_BADPARAM);
+
+    *writer_p = (kaa_platform_message_writer_t*)KAA_MALLOC(sizeof(kaa_platform_message_writer_t));
+    KAA_RETURN_IF_NIL(*writer_p, KAA_ERR_NOMEM);
+
+    (*writer_p)->buffer = buf;
+    (*writer_p)->total = len;
+    (*writer_p)->used = 0;
+
+    return KAA_ERR_NONE;
+}
+
+
+
+void kaa_platform_message_writer_destroy(kaa_platform_message_writer_t* writer)
+{
+    if (writer) {
+        KAA_FREE(writer);
+    }
+}
+
+
+
+kaa_error_t kaa_platform_message_write(kaa_platform_message_writer_t* writer
+                                     , const void *data
+                                     , size_t data_size)
+{
+    KAA_RETURN_IF_NIL3(writer, data, data_size, KAA_ERR_BADPARAM);
+
+    if ((writer->total - writer->used) >= data_size) {
+        memcpy((void *)(writer->buffer + writer->used), data, data_size);
+        writer->used += data_size;
         return KAA_ERR_NONE;
     }
 
     return KAA_ERR_WRITE_FAILED;
+}
+
+
+
+const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer)
+{
+    if (writer && writer->buffer) {
+        return writer->buffer;
+    }
+    return NULL;
 }

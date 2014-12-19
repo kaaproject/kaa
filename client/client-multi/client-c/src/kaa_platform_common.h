@@ -21,10 +21,10 @@
 extern "C" {
 #endif
 
-#define KAA_ALIGNMENT               4
+#define KAA_ALIGNMENT                        4
 
-#define KAA_MESSAGE_HEADER_SIZE     8 // in bytes
-#define KAA_EXTENSION_HEADER_SIZE   8 // in bytes
+#define KAA_PROTOCOL_MESSAGE_HEADER_SIZE     8 // in bytes
+#define KAA_EXTENSION_HEADER_SIZE            8 // in bytes
 
 /**
  * Extension ID description
@@ -40,6 +40,13 @@ extern "C" {
 #define KAA_CONFIGURATION_EXTENSION_TYPE   5
 #define KAA_NOTIFICATION_EXTENSION_TYPE    6
 #define KAA_REDIRECT_EXTENSION_TYPE        8
+
+typedef enum {
+    TIMEOUT_VALUE         = 0x1,
+    PUBLIC_KEY_HASH_VALUE = 0x2,
+    PROFILE_HASH_VALUE    = 0x4,
+    APP_TOKEN_VALUE       = 0x8
+} kaa_meta_data_extension_options_t;
 
 #ifdef __cplusplus
 }      /* extern "C" */
