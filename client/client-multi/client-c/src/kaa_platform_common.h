@@ -21,6 +21,9 @@
 extern "C" {
 #endif
 
+#define KAA_ALIGNMENT               4
+
+#define KAA_MESSAGE_HEADER_SIZE     8 // in bytes
 #define KAA_EXTENSION_HEADER_SIZE   8 // in bytes
 
 /**
