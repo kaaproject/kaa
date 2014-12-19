@@ -23,15 +23,6 @@
 
 
 
-struct kaa_platform_message_writer_t_
-{
-    const char *buffer;
-    int64_t     total;
-    int64_t     used;
-};
-
-
-
 kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
                                              , const char *buf
                                              , size_t len)
@@ -122,8 +113,6 @@ kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_wri
     return KAA_ERR_WRITE_FAILED;
 }
 
-
-
 const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer)
 {
     if (writer && writer->buffer) {
@@ -131,14 +120,6 @@ const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t
     }
     return NULL;
 }
-
-
-
-struct kaa_platform_message_reader_t_ {
-    const char *begin;
-    size_t read;
-    size_t total;
-};
 
 kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
                                                 , const char *buffer

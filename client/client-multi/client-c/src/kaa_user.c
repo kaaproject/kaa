@@ -223,13 +223,11 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
     user_server_sync_field_t field = 0;
 
     while (remaining_length > 0) {
+        field_header = KAA_NTOHL(*((uint32_t *)(reader->begin + reader->read)));
+        reader->read += sizeof(uint32_t);
         remaining_length -= sizeof(uint32_t);
-        if (kaa_platform_message_read(reader, &field_header, sizeof(uint32_t)))
-            return KAA_ERR_READ_FAILED;
 
-        field_header = KAA_NTOHL(field_header);
         field = (field_header >> 24) & 0xFF;
-
         switch (field) {
             case USER_ATTACH_RESPONSE_FIELD: {
                 user_sync_result_t result = ((uint16_t)(field_header & 0xFF00)) >> 8;

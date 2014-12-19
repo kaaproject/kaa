@@ -39,8 +39,19 @@ extern "C" {
 
 
 
-typedef struct kaa_platform_message_writer_t_ kaa_platform_message_writer_t;
+typedef struct
+{
+    const char *buffer;
+    int64_t     total;
+    int64_t     used;
+} kaa_platform_message_writer_t;
 
+
+typedef struct {
+    const char *begin;
+    size_t read;
+    size_t total;
+} kaa_platform_message_reader_t;
 
 
 kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
@@ -65,8 +76,6 @@ kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_wri
 const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer);
 
 
-
-typedef struct kaa_platform_message_reader_t_ kaa_platform_message_reader_t;
 
 kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
                                              , const char *buffer
