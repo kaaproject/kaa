@@ -33,8 +33,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 public class User {
 
-    private static final long serialVersionUID = -89829838179537039L;
-
     @Id
     @GeneratedValue
     private Long id;

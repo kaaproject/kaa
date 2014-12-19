@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.services.messaging;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -30,6 +31,10 @@ import java.util.concurrent.TimeoutException;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
+import org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties;
+import org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties;
+import org.kaaproject.kaa.server.admin.shared.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +48,15 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 @Repository("messagingService")
 public class MessagingService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MessagingService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MessagingService.class);
 
     @Autowired
-    private JavaMailSenderImpl kaaMessagingMailSender;
+    private PropertiesFacade propertiesFacade;
 
     @Autowired
     private MessageSource messages;
+
+    private JavaMailSenderImpl kaaMessagingMailSender;
 
     private ExecutorService sendPool;
 
@@ -71,23 +78,12 @@ public class MessagingService {
         this.sendTimeout = sendTimeout;
     }
 
-    public void setAppBaseUrl(String appBaseUrl) {
-        this.appBaseUrl = appBaseUrl;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public void setMailFrom(String mailFrom) {
-        this.mailFrom = mailFrom;
-    }
-
     public MessagingService() {}
 
     public void init() {
         String sendName = "send-message-call-runner-%d";
         sendPool = Executors.newFixedThreadPool(sendPoolSize, new ThreadFactoryBuilder().setNameFormat(sendName).build());
+        configureMailSender();
     }
 
     public void destroy() {
@@ -98,9 +94,38 @@ public class MessagingService {
                     sendPool.awaitTermination(sendTimeout, TimeUnit.SECONDS);
                 }
             } catch (InterruptedException ex) {
-                logger.warn("shutdown interrupted on {}", sendPool, ex);
+                LOG.warn("shutdown interrupted on {}", sendPool, ex);
             }
         }
+    }
+    
+    public void configureMailSender() {
+        SmtpMailProperties smtpMailProperties = propertiesFacade.getSpecificProperties(SmtpMailProperties.class);
+        Properties javaMailProperties = toJavaMailProperties(smtpMailProperties);
+        kaaMessagingMailSender = new JavaMailSenderImpl();
+        kaaMessagingMailSender.setHost(smtpMailProperties.getSmtpHost());
+        kaaMessagingMailSender.setPort(smtpMailProperties.getSmtpPort());
+        kaaMessagingMailSender.setUsername(smtpMailProperties.getUsername());
+        kaaMessagingMailSender.setPassword(smtpMailProperties.getPassword());
+        kaaMessagingMailSender.setJavaMailProperties(javaMailProperties);
+        mailFrom = smtpMailProperties.getMailFrom();
+        
+        GeneralProperties generalProperties = propertiesFacade.getSpecificProperties(GeneralProperties.class);
+        appBaseUrl = generalProperties.getBaseUrl();
+        appName = generalProperties.getAppTitle();
+    }
+    
+    private Properties toJavaMailProperties(SmtpMailProperties smtpMailProperties) {
+        Properties javaMailProperties = new Properties();
+        String protocol = smtpMailProperties.getSmtpProtocol().toString().toLowerCase();
+        javaMailProperties.put("mail.transport.protocol", protocol);
+        javaMailProperties.put("mail." + protocol + ".host", smtpMailProperties.getSmtpHost());
+        javaMailProperties.put("mail." + protocol + ".port", String.valueOf(smtpMailProperties.getSmtpPort()));
+        javaMailProperties.put("mail." + protocol + ".timeout", String.valueOf(smtpMailProperties.getTimeout()));
+        javaMailProperties.put("mail." + protocol + ".auth", String.valueOf(!Utils.isEmpty(smtpMailProperties.getUsername())));
+        javaMailProperties.put("mail." + protocol + ".starttls.enable", String.valueOf(smtpMailProperties.getEnableTls()));
+        javaMailProperties.put("mail.debug", "true");
+        return javaMailProperties;
     }
 
     public void sendTempPassword(final String username, final String password, final String email) {
@@ -119,13 +144,13 @@ public class MessagingService {
                         helper.setText(text, true);
                         kaaMessagingMailSender.send(helper.getMimeMessage());
                     } catch (MessagingException e) {
-                        logger.error("Unexpected error while sendTempPasswordMail", e);
+                        LOG.error("Unexpected error while sendTempPasswordMail", e);
                     }
                     return null;
                 }
             });
         } catch (Exception e) {
-            logger.error("Unexpected error while sendTempPasswordMail", e);
+            LOG.error("Unexpected error while sendTempPasswordMail", e);
         }
     }
 
@@ -145,13 +170,13 @@ public class MessagingService {
                         helper.setText(text, true);
                         kaaMessagingMailSender.send(helper.getMimeMessage());
                     } catch (MessagingException e) {
-                        logger.error("Unexpected error while sendPasswordAfterResetMail", e);
+                        LOG.error("Unexpected error while sendPasswordAfterResetMail", e);
                     }
                     return null;
                 }
             });
         } catch (Exception e) {
-            logger.error("Unexpected error while sendPasswordAfterResetMail", e);
+            LOG.error("Unexpected error while sendPasswordAfterResetMail", e);
         }
     }
 
@@ -172,13 +197,13 @@ public class MessagingService {
                         helper.setText(text, true);
                         kaaMessagingMailSender.send(helper.getMimeMessage());
                     } catch (MessagingException e) {
-                        logger.error("Unexpected error while sendPasswordResetLinkMail", e);
+                        LOG.error("Unexpected error while sendPasswordResetLinkMail", e);
                     }
                     return null;
                 }
             });
         } catch (Exception e) {
-            logger.error("Unexpected error while sendPasswordResetLinkMail", e);
+            LOG.error("Unexpected error while sendPasswordResetLinkMail", e);
         }
     }
 
@@ -216,7 +241,7 @@ public class MessagingService {
             throw new InterruptedException(
                     "Blocked callable interrupted by rotation event");
         } catch (InterruptedException ex) {
-            logger.warn("Unexpected Exception {}", ex.getMessage(), ex);
+            LOG.warn("Unexpected Exception {}", ex.getMessage(), ex);
             throw ex;
         }
     }

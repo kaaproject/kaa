@@ -47,6 +47,7 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
+import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -88,6 +89,46 @@ public class DataSource {
                 new DataCallback<UserDto>(callback) {
                     @Override
                     protected void onResult(UserDto result) {
+                    }
+                });
+    }
+    
+    public void getMailProperties(
+            final AsyncCallback<PropertiesDto> callback) {
+        rpcService.getMailProperties(
+                new DataCallback<PropertiesDto>(callback) {
+                    @Override
+                    protected void onResult(PropertiesDto result) {
+                    }
+                });
+    }
+
+    public void editMailProperties(PropertiesDto mailProperties,
+            final AsyncCallback<PropertiesDto> callback) {
+        rpcService.editMailProperties(mailProperties,
+                new DataCallback<PropertiesDto>(callback) {
+                    @Override
+                    protected void onResult(PropertiesDto result) {
+                    }
+                });
+    }
+    
+    public void getGeneralProperties(
+            final AsyncCallback<PropertiesDto> callback) {
+        rpcService.getGeneralProperties(
+                new DataCallback<PropertiesDto>(callback) {
+                    @Override
+                    protected void onResult(PropertiesDto result) {
+                    }
+                });
+    }
+
+    public void editGeneralProperties(PropertiesDto mailProperties,
+            final AsyncCallback<PropertiesDto> callback) {
+        rpcService.editGeneralProperties(mailProperties,
+                new DataCallback<PropertiesDto>(callback) {
+                    @Override
+                    protected void onResult(PropertiesDto result) {
                     }
                 });
     }

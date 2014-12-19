@@ -47,7 +47,7 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.shared.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
-import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
+import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -74,7 +74,15 @@ public interface KaaAdminService extends RemoteService {
     public UserDto getUserProfile() throws KaaAdminServiceException;
 
     public UserDto editUserProfile(UserDto userDto) throws KaaAdminServiceException;
+    
+    public PropertiesDto getMailProperties() throws KaaAdminServiceException;
 
+    public PropertiesDto editMailProperties(PropertiesDto mailPropertiesDto) throws KaaAdminServiceException;
+
+    public PropertiesDto getGeneralProperties() throws KaaAdminServiceException;
+
+    public PropertiesDto editGeneralProperties(PropertiesDto generalPropertiesDto) throws KaaAdminServiceException;
+    
     public List<UserDto> getUsers() throws KaaAdminServiceException;
 
     public UserDto getUser(String userId) throws KaaAdminServiceException;
