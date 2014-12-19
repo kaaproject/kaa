@@ -65,6 +65,29 @@ const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t
 
 
 
+typedef struct kaa_platform_message_reader_t_ kaa_platform_message_reader_t;
+
+kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
+                                             , const char *buffer
+                                             , size_t len);
+
+void kaa_platform_message_reader_destroy(kaa_platform_message_reader_t *reader);
+
+kaa_error_t kaa_platform_message_read(kaa_platform_message_reader_t *reader
+                                    , void *buffer
+                                    , size_t expected_size);
+
+kaa_error_t kaa_platform_message_read_aligned(kaa_platform_message_reader_t *reader
+                                            , void *buffer
+                                            , size_t expected_size);
+
+kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_reader_t *reader
+                                                     , uint8_t *extension_type
+                                                     , uint32_t *extension_options
+                                                     , uint32_t *extension_payload_length);
+
+kaa_error_t kaa_platform_message_skip(kaa_platform_message_reader_t *reader, size_t size);
+
 static inline size_t kaa_aligned_size_get(size_t size)
 {
     return (size + (KAA_ALIGNMENT - (size % KAA_ALIGNMENT)));
