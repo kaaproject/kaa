@@ -224,7 +224,9 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
 
     while (remaining_length > 0) {
         remaining_length -= sizeof(uint32_t);
-        kaa_platform_message_read(reader, &field_header, sizeof(uint32_t));
+        if (kaa_platform_message_read(reader, &field_header, sizeof(uint32_t)))
+            return KAA_ERR_READ_FAILED;
+
         field_header = KAA_NTOHL(field_header);
         field = (field_header >> 24) & 0xFF;
 
@@ -245,9 +247,21 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
             case USER_ATTACH_NOTIFICAITON_FIELD: {
                 uint8_t external_id_length = (field_header >> 16) & 0xFF;
                 uint16_t access_token_length = (field_header) & 0xFFFF;
-                char *external_id = NULL; // FIXME: how to allocate
-                char *access_token = NULL; // FIXME: how to allocate
-                // TODO: fill buffers
+                if (external_id_length + access_token_length > remaining_length)
+                    return KAA_ERR_INVALID_BUFFER_SIZE;
+
+                char external_id[external_id_length + 1];
+                char access_token[access_token_length + 1];
+
+                if (kaa_platform_message_read_aligned(reader, external_id, external_id_length))
+                    return KAA_ERR_READ_FAILED;
+                external_id[external_id_length] = '\0';
+                remaining_length -= kaa_aligned_size_get(external_id_length);
+
+                if (kaa_platform_message_read_aligned(reader, access_token, access_token_length))
+                    return KAA_ERR_READ_FAILED;
+                access_token[access_token_length] = '\0';
+                remaining_length -= kaa_aligned_size_get(access_token_length);
 
                 if (kaa_set_endpoint_attached_to_user(self->status, true))
                     return KAA_ERR_BAD_STATE;
@@ -257,8 +271,14 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
             }
             case USER_DETACH_NOTIFICATION_FIELD: {
                 uint16_t access_token_length = (field_header) & 0xFFFF;
-                char *access_token = NULL; // FIXME: how to allocate
-                // TODO: fill buffer
+                if (access_token_length > remaining_length)
+                    return KAA_ERR_INVALID_BUFFER_SIZE;
+
+                char access_token[access_token_length + 1];
+                if (kaa_platform_message_read_aligned(reader, access_token, access_token_length))
+                    return KAA_ERR_READ_FAILED;
+                access_token[access_token_length] = '\0';
+                remaining_length -= kaa_aligned_size_get(access_token_length);
 
                 if (kaa_set_endpoint_attached_to_user(self->status, false))
                     return KAA_ERR_BAD_STATE;
