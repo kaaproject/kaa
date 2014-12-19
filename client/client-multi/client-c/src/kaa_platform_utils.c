@@ -77,8 +77,8 @@ kaa_error_t kaa_platform_message_write(kaa_platform_message_writer_t* writer
 
 
 kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* writer
-                                     , const void *data
-                                     , size_t data_size)
+                                             , const void *data
+                                             , size_t data_size)
 {
     KAA_RETURN_IF_NIL3(writer, data, data_size, KAA_ERR_BADPARAM);
 
@@ -89,6 +89,28 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
         memcpy((void *)(writer->buffer + writer->used), data, data_size);
         memset((void *)(writer->buffer + writer->used + data_size), 0, alignment_length);
         writer->used += aligned_size;
+        return KAA_ERR_NONE;
+    }
+
+    return KAA_ERR_WRITE_FAILED;
+}
+
+
+
+kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_writer_t* writer
+                                                      , uint32_t extension_type
+                                                      , uint32_t options
+                                                      , uint32_t payload_size)
+{
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
+
+    if ((writer->total - writer->used) >= KAA_EXTENSION_HEADER_SIZE) {
+        memcpy((void *)(writer->buffer + writer->used), &extension_type, KAA_EXTENSION_TYPE_SIZE);
+        writer->used += KAA_EXTENSION_TYPE_SIZE;
+        memcpy((void *)(writer->buffer + writer->used), &options, KAA_EXTENSION_OPTIONS_SIZE);
+        writer->used += KAA_EXTENSION_OPTIONS_SIZE;
+        memcpy((void *)(writer->buffer + writer->used), &payload_size, KAA_EXTENSION_PAYLOAD_LENGTH_SIZE);
+        writer->used += KAA_EXTENSION_PAYLOAD_LENGTH_SIZE;
         return KAA_ERR_NONE;
     }
 

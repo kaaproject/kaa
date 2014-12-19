@@ -23,8 +23,15 @@ extern "C" {
 
 #define KAA_ALIGNMENT                        4
 
-#define KAA_PROTOCOL_MESSAGE_HEADER_SIZE     8 // in bytes
-#define KAA_EXTENSION_HEADER_SIZE            8 // in bytes
+/**
+ * All definitions related to a field size specify in bytes.
+ */
+#define KAA_PROTOCOL_MESSAGE_HEADER_SIZE    8
+
+#define KAA_EXTENSION_TYPE_SIZE             1
+#define KAA_EXTENSION_OPTIONS_SIZE          3
+#define KAA_EXTENSION_PAYLOAD_LENGTH_SIZE   5
+#define KAA_EXTENSION_HEADER_SIZE           (KAA_EXTENSION_TYPE_SIZE + KAA_EXTENSION_OPTIONS_SIZE + KAA_EXTENSION_PAYLOAD_LENGTH_SIZE)
 
 /**
  * Extension ID description
@@ -41,6 +48,9 @@ extern "C" {
 #define KAA_NOTIFICATION_EXTENSION_TYPE    6
 #define KAA_REDIRECT_EXTENSION_TYPE        8
 
+/**
+ * Constants used for a meta data extension.
+ */
 typedef enum {
     TIMEOUT_VALUE         = 0x1,
     PUBLIC_KEY_HASH_VALUE = 0x2,

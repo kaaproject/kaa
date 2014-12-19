@@ -36,7 +36,7 @@
 
 // TODO: Unsupported yet.
 // static const uint8_t KAA_EVENT_FIELD_EVENT_LISTENERS_LIST       = 0;
-static const uint8_t KAA_EVENT_FIELD_EVENT_LIST                 = 1;
+static const uint8_t KAA_EVENT_FIELD_ID_EVENT_LIST                 = 1;
 
 #define KAA_EVENT_OPTION_TARGET_ID_PRESENT              0x1
 
@@ -417,35 +417,30 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
-    /*write extension header*/
-    uint32_t extension_head = (KAA_EVENT_EXTENSION_TYPE << 24) & 0xFF000000;
+    /* write extension header */
+    uint32_t extension_options = 0;
     if (self->sequence_number_status != KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
-        extension_head |= KAA_EVENT_EXTENSION_FLAG_SEQUENCE_NUMBER_SYNC;
+        extension_options |= KAA_EVENT_EXTENSION_FLAG_SEQUENCE_NUMBER_SYNC;
     } else {
-        extension_head |= KAA_EVENT_EXTENSION_FLAG_RECEIVE_EVENTS;
+        extension_options |= KAA_EVENT_EXTENSION_FLAG_RECEIVE_EVENTS;
     }
 
-    kaa_error_t error_code = kaa_platform_message_write(writer, &extension_head, sizeof(uint32_t));
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to write event extension header");
-        return error_code;
-    }
-
-    size_t payload_size = 0;
-    error_code = kaa_event_request_get_size_no_header(self, &payload_size);
+    uint32_t payload_size = 0;
+    kaa_error_t error_code = kaa_event_request_get_size_no_header(self, &payload_size);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to calculate event extension length");
         return error_code;
     }
 
-    error_code = kaa_platform_message_write(writer, &payload_size, sizeof(uint32_t));
+    error_code = kaa_platform_message_extension_header_write(writer, KAA_EVENT_EXTENSION_TYPE, extension_options, payload_size);
     if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to write event extension payload size");
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to write event extension header (ext type %u, options %X, payload size %u)"
+                                        , KAA_EVENT_EXTENSION_TYPE, extension_options, payload_size);
         return error_code;
     }
 
+    /* write events */
     if (payload_size) {
-        /*write events*/
         size_t events_count = 0;
         kaa_list_t *pending_events = self->pending_events;
         kaa_list_t *resending_events = self->events_awaiting_response.sent_events;
@@ -457,7 +452,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
         events_count +=  sent_events_count > 0 ? sent_events_count : 0;
 
         if (events_count) {
-            uint32_t events_list_field_header = (KAA_EVENT_FIELD_EVENT_LIST << 24);
+            uint32_t events_list_field_header = (KAA_EVENT_FIELD_ID_EVENT_LIST << 24);
             events_list_field_header |= (events_count & 0xFFFF);
 
             error_code = kaa_platform_message_write(writer, &events_list_field_header, sizeof(uint32_t));
