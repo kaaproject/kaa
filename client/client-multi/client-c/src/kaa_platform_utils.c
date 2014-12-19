@@ -200,8 +200,7 @@ kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_read
         uint32_t ext_l1 = KAA_NTOHL(*((const uint32_t *) (reader->begin + reader->read)));
         *extension_type = (ext_l1 >> 24) & 0xff;
         *extension_options = ext_l1 & 0xffffff;
-
-        memcpy(&extension_payload_length, (reader->begin + reader->read + sizeof(uint32_t)), sizeof(uint32_t));
+        *extension_payload_length = KAA_NTOHL(*((const uint32_t *) (reader->begin + reader->read + sizeof(uint32_t))));
 
         reader->read += KAA_EXTENSION_HEADER_SIZE;
     }
