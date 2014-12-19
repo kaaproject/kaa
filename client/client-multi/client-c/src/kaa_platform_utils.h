@@ -18,6 +18,7 @@
 #ifndef KAA_PLATFORM_UTILS_H_
 #define KAA_PLATFORM_UTILS_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -85,6 +86,9 @@ kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_read
                                                      , uint8_t *extension_type
                                                      , uint32_t *extension_options
                                                      , uint32_t *extension_payload_length);
+
+bool kaa_platform_message_is_buffer_large_enough(kaa_platform_message_reader_t *reader
+                                         , size_t size);
 
 kaa_error_t kaa_platform_message_skip(kaa_platform_message_reader_t *reader, size_t size);
 

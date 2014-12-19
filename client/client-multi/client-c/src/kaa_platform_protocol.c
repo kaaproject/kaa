@@ -39,11 +39,10 @@ extern kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *self
 extern kaa_error_t kaa_user_compile_request(kaa_user_manager_t *self, kaa_user_sync_request_t** request_p, size_t requestId);
 
 /** External event manager API */
-extern kaa_error_t kaa_event_handle_sync(kaa_event_manager_t *self, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
-
 /* Platform protocol support */
-extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer)
+extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
 extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
+extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length, size_t request_id);
 
 /** External profile API */
 extern kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *kaa_context, kaa_profile_sync_request_t **result);
@@ -441,25 +440,25 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     avro_reader_free(reader);
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    uint32_t responseId =
-            response->request_id != NULL && response->request_id->type == KAA_UNION_INT_OR_NULL_BRANCH_0
-                    ? *((uint32_t*)response->request_id->data)
-                    : 0;
-    kaa_list_t * received_events = NULL;
-    kaa_event_sequence_number_response_t * event_sn_response = NULL;
-    if (response->event_sync_response != NULL) {
-        if (response->event_sync_response->type == KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
-            kaa_event_sync_response_t * ev_response = response->event_sync_response->data;
-            if (ev_response != NULL && ev_response->events != NULL && ev_response->events->type == KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0) {
-                received_events = (kaa_list_t *)ev_response->events->data;
-            }
-            if (ev_response->event_sequence_number_response != NULL
-                    && ev_response->event_sequence_number_response->type == KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_0) {
-                event_sn_response = (kaa_event_sequence_number_response_t *) ev_response->event_sequence_number_response->data;
-            }
-        }
-    }
-    kaa_event_handle_sync(self->kaa_context->event_manager, responseId, event_sn_response, received_events);
+//    uint32_t responseId =
+//            response->request_id != NULL && response->request_id->type == KAA_UNION_INT_OR_NULL_BRANCH_0
+//                    ? *((uint32_t*)response->request_id->data)
+//                    : 0;
+//    kaa_list_t * received_events = NULL;
+//    kaa_event_sequence_number_response_t * event_sn_response = NULL;
+//    if (response->event_sync_response != NULL) {
+//        if (response->event_sync_response->type == KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
+//            kaa_event_sync_response_t * ev_response = response->event_sync_response->data;
+//            if (ev_response != NULL && ev_response->events != NULL && ev_response->events->type == KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0) {
+//                received_events = (kaa_list_t *)ev_response->events->data;
+//            }
+//            if (ev_response->event_sequence_number_response != NULL
+//                    && ev_response->event_sequence_number_response->type == KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_0) {
+//                event_sn_response = (kaa_event_sequence_number_response_t *) ev_response->event_sequence_number_response->data;
+//            }
+//        }
+//    }
+//    kaa_event_handle_sync(self->kaa_context->event_manager, responseId, event_sn_response, received_events);
 #endif
     if (response->user_sync_response != NULL) {
         if (response->user_sync_response->type == KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
