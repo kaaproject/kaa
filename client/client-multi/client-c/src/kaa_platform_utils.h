@@ -24,9 +24,17 @@
 #include "kaa_error.h"
 #include "kaa_platform_common.h"
 
+#include <arpa/inet.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define KAA_HTONS(hostshort)    htons((hostshort));
+#define KAA_HTONL(hostlong)     htonl((hostlong));
+
+#define KAA_NTOHS(netshort)     ntohs((netshort));
+#define KAA_NTOHL(netlong)      ntohl((netlong));
 
 
 
@@ -49,7 +57,7 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
                                              , size_t data_size);
 
 kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_writer_t* writer
-                                                      , uint32_t extension_type
+                                                      , uint8_t extension_type
                                                       , uint32_t options
                                                       , uint32_t payload_size);
 

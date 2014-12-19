@@ -35,6 +35,12 @@ extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_mana
 
 static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
 
+typedef struct {
+    size_t extension_size;
+    kaa_bytes_t public_key;
+    kaa_bytes_t access_token;
+} kaa_profile_extension_data_t;
+
 struct kaa_profile_manager_t {
     bool need_resync;
     kaa_bytes_t profile_body;
@@ -42,6 +48,7 @@ struct kaa_profile_manager_t {
     kaa_channel_manager_t *channel_manager;
     kaa_status_t *status;
     kaa_logger_t *logger;
+    kaa_profile_extension_data_t extension_data;
 };
 
 static kaa_endpoint_version_info_t * create_versions_info()
@@ -169,17 +176,19 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
         }
     }
 
-    if (is_public_key_needed) {
-        kaa_bytes_t pub_key;
+    if (is_public_key_needed && !self->extension_data.public_key.buffer) {
         bool need_deallocation = false;
 
-        kaa_get_endpoint_public_key((char **)&pub_key.buffer, (size_t *)&pub_key.size, &need_deallocation);
-        if (pub_key.buffer && pub_key.size > 0) {
+        kaa_get_endpoint_public_key((char **)&self->extension_data.public_key.buffer
+                                  , (size_t *)&self->extension_data.public_key.size
+                                  , &need_deallocation);
+
+        if (self->extension_data.public_key.buffer && self->extension_data.public_key.size > 0) {
             *expected_size += sizeof(uint32_t); // public key size
-            *expected_size += kaa_aligned_size_get(pub_key.size); // public key
+            *expected_size += kaa_aligned_size_get(self->extension_data.public_key.size); // public key
 
             if (need_deallocation) {
-                KAA_FREE(pub_key.buffer);
+                self->extension_data.public_key.destroy = kaa_data_destroy;
             }
         } else {
             return KAA_ERR_BADDATA;
@@ -187,15 +196,18 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
     }
 
     if (is_access_token_needed) {
-        const char * ep_acc_token = NULL;
-        kaa_error_t err_code = kaa_status_get_endpoint_access_token(self->status, &ep_acc_token);
-        if (!err_code && ep_acc_token) {
+        kaa_error_t err_code = kaa_status_get_endpoint_access_token(
+                                    self->status, &self->extension_data.access_token.buffer);
+        if (!err_code) {
+            self->extension_data.access_token.size = strlen(self->extension_data.access_token.buffer);
             *expected_size += sizeof(uint32_t); // access token length
-            *expected_size += kaa_aligned_size_get(strlen(ep_acc_token)); // access token
+            *expected_size += kaa_aligned_size_get(self->extension_data.access_token.size); // access token
         } else {
             return err_code;
         }
     }
+
+    self->extension_data.extension_size = *expected_size;
 
     return KAA_ERR_NONE;
 }
@@ -203,6 +215,8 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 kaa_error_t kaa_profile_request_serialize(kaa_platform_message_writer_t* writer)
 {
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
+
+
 
     return KAA_ERR_NONE;
 }

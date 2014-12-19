@@ -98,9 +98,9 @@ static kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
 
 
 
-static kaa_error_t kaa_meta_data_request_serialize(kaa_platform_message_writer_t* writer)
+static kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_platform_message_writer_t* writer)
 {
-    KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(context, writer, KAA_ERR_BADPARAM);
 
     bool is_timeout_needed = true; // FIXME: replace with valid check
     bool is_public_key_hash_needed = true; // FIXME: replace with valid check
@@ -122,7 +122,42 @@ static kaa_error_t kaa_meta_data_request_serialize(kaa_platform_message_writer_t
     payload_length += (is_token_needed ? sizeof(uint32_t) : 0);
     payload_length += (is_token_needed ? kaa_aligned_size_get(token_len) : 0);
 
-    return KAA_ERR_NONE;
+    kaa_error_t err_code = kaa_platform_message_extension_header_write(
+                                writer, KAA_META_DATA_EXTENSION_TYPE, options, payload_length);
+    KAA_RETURN_IF_ERR(err_code);
+
+    if (is_timeout_needed) {
+        uint32_t timeout = KAA_SYNC_TIMEOUT;
+        err_code = kaa_platform_message_write(writer, &timeout, sizeof(timeout));
+        KAA_RETURN_IF_ERR(err_code);
+    }
+
+    if (is_public_key_hash_needed) {
+        kaa_digest_p pub_key_hash = NULL;
+        err_code = kaa_status_get_endpoint_public_key_hash(context->status, &pub_key_hash);
+        KAA_RETURN_IF_ERR(err_code);
+        KAA_RETURN_IF_NIL(pub_key_hash, err_code);
+        err_code = kaa_platform_message_write_aligned(writer, pub_key_hash, SHA_1_DIGEST_LENGTH);
+        KAA_RETURN_IF_ERR(err_code);
+    }
+
+    if (is_profile_hash_needed) {
+        kaa_digest_p profile_hash = NULL;
+        err_code = kaa_status_get_profile_hash(context->status, &profile_hash);
+        KAA_RETURN_IF_ERR(err_code);
+        KAA_RETURN_IF_NIL(profile_hash, err_code);
+        err_code = kaa_platform_message_write_aligned(writer, profile_hash, SHA_1_DIGEST_LENGTH);
+        KAA_RETURN_IF_ERR(err_code);
+    }
+
+    if (is_token_needed) {
+        err_code = kaa_platform_message_write(writer, &token_len, sizeof(uint32_t));
+        KAA_RETURN_IF_ERR(err_code);
+        err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, token_len);
+        KAA_RETURN_IF_ERR(err_code);
+    }
+
+    return err_code;
 }
 
 
@@ -332,7 +367,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     kaa_error_t err_code = kaa_platform_message_writer_create(&writer, buffer, size);
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_meta_data_request_serialize(writer);
+    err_code = kaa_meta_data_request_serialize(self->kaa_context, writer);
 
     for (;!err_code && services_count--;) {
         switch (services[services_count]) {

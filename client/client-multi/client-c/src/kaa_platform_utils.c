@@ -98,19 +98,24 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
 
 
 kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_writer_t* writer
-                                                      , uint32_t extension_type
+                                                      , uint8_t extension_type
                                                       , uint32_t options
                                                       , uint32_t payload_size)
 {
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
     if ((writer->total - writer->used) >= KAA_EXTENSION_HEADER_SIZE) {
+        extension_type = KAA_HTONS(extension_type);
+        options = KAA_HTONL(options);
+        payload_size = KAA_HTONL(payload_size);
+
         memcpy((void *)(writer->buffer + writer->used), &extension_type, KAA_EXTENSION_TYPE_SIZE);
         writer->used += KAA_EXTENSION_TYPE_SIZE;
         memcpy((void *)(writer->buffer + writer->used), &options, KAA_EXTENSION_OPTIONS_SIZE);
         writer->used += KAA_EXTENSION_OPTIONS_SIZE;
         memcpy((void *)(writer->buffer + writer->used), &payload_size, KAA_EXTENSION_PAYLOAD_LENGTH_SIZE);
         writer->used += KAA_EXTENSION_PAYLOAD_LENGTH_SIZE;
+
         return KAA_ERR_NONE;
     }
 
