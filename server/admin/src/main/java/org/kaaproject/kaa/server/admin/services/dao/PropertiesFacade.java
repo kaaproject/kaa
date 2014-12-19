@@ -43,7 +43,9 @@ import org.springframework.stereotype.Repository;
 public class PropertiesFacade {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesFacade.class);
-    
+
+    private static final String SCHEMA = "SCHEMA$";
+
     @PersistenceContext(unitName = "kaaSec")
     private EntityManager em;
 
@@ -72,7 +74,7 @@ public class PropertiesFacade {
     
     public <S extends SpecificRecordBase> PropertiesDto editPropertiesDto(PropertiesDto propertiesDto, Class<S> propertiesClass) throws Exception {
         Properties entity = findOrCreateByClass(propertiesClass);
-        Schema schema = (Schema)propertiesClass.getField("SCHEMA$").get(null);
+        Schema schema = (Schema)propertiesClass.getField(SCHEMA).get(null);
         GenericRecord record = FormAvroConverter.createGenericRecordFormRecordField(propertiesDto.getConfiguration(), schema);
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
         byte[] rawConfiguration = converter.encode(record);
@@ -131,7 +133,7 @@ public class PropertiesFacade {
     private <S extends SpecificRecordBase> PropertiesDto toDto(Properties entity, Class<S> propertiesClass) throws Exception {
         PropertiesDto propertiesDto = new PropertiesDto();
         propertiesDto.setId(String.valueOf(entity.getId()));
-        Schema schema = (Schema)propertiesClass.getField("SCHEMA$").get(null);
+        Schema schema = (Schema)propertiesClass.getField(SCHEMA).get(null);
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
         GenericRecord record = converter.decodeBinary(entity.getRawConfiguration());
         RecordField configuration = FormAvroConverter.createRecordFieldFromGenericRecord(record);
