@@ -197,13 +197,11 @@ kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_read
 
     if (reader->read + KAA_EXTENSION_HEADER_SIZE <= reader->total) {
 
-        uint32_t ext_l1 = 0;
-        // TODO: byte order...
-        memcpy(&ext_l1, (reader->begin + reader->read), sizeof(uint32_t));
+        uint32_t ext_l1 = KAA_NTOHL(*((const uint32_t *) (reader->begin + reader->read)));
         *extension_type = (ext_l1 >> 24) & 0xff;
         *extension_options = ext_l1 & 0xffffff;
 
-        memcpy(&extension_payload_length, (reader->begin + reader->read + 4), sizeof(uint32_t));
+        memcpy(&extension_payload_length, (reader->begin + reader->read + sizeof(uint32_t)), sizeof(uint32_t));
 
         reader->read += KAA_EXTENSION_HEADER_SIZE;
     }
