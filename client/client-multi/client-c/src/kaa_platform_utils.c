@@ -76,6 +76,27 @@ kaa_error_t kaa_platform_message_write(kaa_platform_message_writer_t* writer
 
 
 
+kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* writer
+                                     , const void *data
+                                     , size_t data_size)
+{
+    KAA_RETURN_IF_NIL3(writer, data, data_size, KAA_ERR_BADPARAM);
+
+    size_t aligned_size = kaa_aligned_size_get(data_size);
+    size_t alignment_length = aligned_size - data_size;
+
+    if ((writer->total - writer->used) >= aligned_size) {
+        memcpy((void *)(writer->buffer + writer->used), data, data_size);
+        memset((void *)(writer->buffer + writer->used + data_size), 0, alignment_length);
+        writer->used += aligned_size;
+        return KAA_ERR_NONE;
+    }
+
+    return KAA_ERR_WRITE_FAILED;
+}
+
+
+
 const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer)
 {
     if (writer && writer->buffer) {
