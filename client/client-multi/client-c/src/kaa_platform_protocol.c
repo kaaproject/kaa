@@ -39,8 +39,11 @@ extern kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *self
 extern kaa_error_t kaa_user_compile_request(kaa_user_manager_t *self, kaa_user_sync_request_t** request_p, size_t requestId);
 
 /** External event manager API */
-extern kaa_error_t kaa_event_compile_request(kaa_event_manager_t *self, kaa_event_sync_request_t** request_p, size_t requestId);
 extern kaa_error_t kaa_event_handle_sync(kaa_event_manager_t *self, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
+
+/* Platform protocol support */
+extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer)
+extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
 
 /** External profile API */
 extern kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *kaa_context, kaa_profile_sync_request_t **result);
@@ -181,14 +184,15 @@ static kaa_error_t kaa_compile_request(kaa_platform_protocol_t *self, kaa_sync_r
     for (;service_count--;) {
         switch (services[service_count]) {
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-        case KAA_SERVICE_EVENT: {
-            request->event_sync_request->destroy(request->event_sync_request);
-            request->event_sync_request = kaa_union_event_sync_request_or_null_branch_0_create();
-            kaa_event_compile_request(self->kaa_context->event_manager
-                                    , (kaa_event_sync_request_t**)&request->event_sync_request->data
-                                    , self->request_id);
-            break;
-        }
+        // TODO: remove
+//        case KAA_SERVICE_EVENT: {
+//            request->event_sync_request->destroy(request->event_sync_request);
+//            request->event_sync_request = kaa_union_event_sync_request_or_null_branch_0_create();
+//            kaa_event_compile_request(self->kaa_context->event_manager
+//                                    , (kaa_event_sync_request_t**)&request->event_sync_request->data
+//                                    , self->request_id);
+//            break;
+//        }
 #endif
         case KAA_SERVICE_PROFILE: {
             bool need_resync = false;
@@ -304,6 +308,7 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
             break;
         }
         case KAA_SERVICE_EVENT: {
+            err_code = kaa_event_request_get_size(self->kaa_context->event_manager, &extension_size);
             break;
         }
         case KAA_SERVICE_LOGGING: {
@@ -342,6 +347,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
             break;
         }
         case KAA_SERVICE_EVENT: {
+            err_code = kaa_event_request_serialize(self->kaa_context->event_manager, self->request_id, writer);
             break;
         }
         case KAA_SERVICE_LOGGING: {
