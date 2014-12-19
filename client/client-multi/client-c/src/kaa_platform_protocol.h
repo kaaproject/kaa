@@ -60,8 +60,10 @@ typedef const char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
  * @return Error code.
  */
 kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-        , const kaa_service_t services[], size_t services_count
-        , kaa_buffer_alloc_fn allocator, void *allocator_context);
+                                                      , const kaa_service_t services[]
+                                                      , size_t services_count
+                                                      , kaa_buffer_alloc_fn allocator
+                                                      , void *allocator_context);
 
 /**
  * @brief Processes downstream data received from Operations server.

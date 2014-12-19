@@ -107,13 +107,20 @@ static kaa_error_t kaa_meta_data_request_serialize(kaa_platform_message_writer_t
     bool is_profile_hash_needed = true; // FIXME: replace with valid check
     bool is_token_needed = true; // FIXME: replace with valid check
 
-//    char *header_buffer = buffer;
-//    buffer += KAA_EXTENSION_HEADER_SIZE;
-//    buf_size -= buf_size;
-//
-//    uint8_t byte = KAA_META_DATA_EXTENSION_TYPE;
-//    KAA_RETURN_IF_ERR(kaa_platform_message_write(buffer, buf_size, &byte, sizeof(byte)));
-//    buf_size -= sizeof(byte);
+    uint32_t token_len = (is_token_needed ? strlen(APPLICATION_TOKEN) : 0);
+
+    uint32_t options = 0;
+    options |= (is_timeout_needed ? TIMEOUT_VALUE : 0);
+    options |= (is_public_key_hash_needed ? PUBLIC_KEY_HASH_VALUE : 0);
+    options |= (is_profile_hash_needed ? PROFILE_HASH_VALUE : 0);
+    options |= (is_token_needed ? APP_TOKEN_VALUE : 0);
+
+    uint32_t payload_length = 0;
+    payload_length += (is_timeout_needed ? sizeof(uint32_t) : 0);
+    payload_length += (is_public_key_hash_needed ? kaa_aligned_size_get(SHA_1_DIGEST_LENGTH) : 0);
+    payload_length += (is_profile_hash_needed ? kaa_aligned_size_get(SHA_1_DIGEST_LENGTH) : 0);
+    payload_length += (is_token_needed ? sizeof(uint32_t) : 0);
+    payload_length += (is_token_needed ? kaa_aligned_size_get(token_len) : 0);
 
     return KAA_ERR_NONE;
 }
@@ -242,18 +249,6 @@ static kaa_error_t kaa_compile_request(kaa_platform_protocol_t *self, kaa_sync_r
 
 
 
-static kaa_error_t kaa_serialize_request(kaa_sync_request_t *request
-                                       , const char *buffer
-                                       , size_t request_size)
-{
-    KAA_RETURN_IF_NIL2(request, buffer, KAA_ERR_BADPARAM);
-    avro_writer_t writer = avro_writer_memory(buffer, request_size);
-    request->serialize(writer, request);
-    avro_writer_free(writer);
-    return KAA_ERR_NONE;
-}
-
-
 kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
                                        , kaa_context_t *context
                                        , kaa_logger_t *logger)
@@ -273,8 +268,9 @@ kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_prot
 
 void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self)
 {
-    if (self)
+    if (self) {
         KAA_FREE(self);
+    }
 }
 
 
@@ -303,12 +299,16 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
         case KAA_SERVICE_USER: {
             break;
         }
+#ifndef KAA_DISABLE_FEATURE_EVENTS
         case KAA_SERVICE_EVENT: {
             break;
         }
+#endif
+#ifndef KAA_DISABLE_FEATURE_LOGGING
         case KAA_SERVICE_LOGGING: {
             break;
         }
+#endif
         default:
             extension_size = 0;
             break;
@@ -317,6 +317,8 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
 
     return err_code;
 }
+
+
 
 static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
                                            , const kaa_service_t services[]
@@ -341,12 +343,16 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
         case KAA_SERVICE_USER: {
             break;
         }
+#ifndef KAA_DISABLE_FEATURE_EVENTS
         case KAA_SERVICE_EVENT: {
             break;
         }
+#endif
+#ifndef KAA_DISABLE_FEATURE_LOGGING
         case KAA_SERVICE_LOGGING: {
             break;
         }
+#endif
         default:
             break;
         }
@@ -357,24 +363,26 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     return err_code;
 }
 
+
+
 kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-        , const kaa_service_t services[], size_t services_count
-        , kaa_buffer_alloc_fn allocator, void *allocator_context)
+                                                      , const kaa_service_t services[]
+                                                      , size_t services_count
+                                                      , kaa_buffer_alloc_fn allocator
+                                                      , void *allocator_context)
 {
     KAA_RETURN_IF_NIL4(self, services, services_count, allocator, KAA_ERR_BADPARAM);
 
-    kaa_sync_request_t *sync_request = NULL;
-    self->request_id++;
-
     size_t buffer_size = 0;
     kaa_error_t error = kaa_client_sync_get_size(self, services, services_count, &buffer_size);
-    if (!error) {
-        const char *buffer = allocator(allocator_context, buffer_size);
-        if (buffer) {
-            error = kaa_client_sync_serialize(self, services, services_count, buffer, buffer_size);
-        } else {
-            error = KAA_ERR_WRITE_FAILED;
-        }
+    KAA_RETURN_IF_ERR(error)
+
+    const char *buffer = allocator(allocator_context, buffer_size);
+    if (buffer) {
+        self->request_id++;
+        error = kaa_client_sync_serialize(self, services, services_count, buffer, buffer_size);
+    } else {
+        error = KAA_ERR_WRITE_FAILED;
     }
 
     return error;
