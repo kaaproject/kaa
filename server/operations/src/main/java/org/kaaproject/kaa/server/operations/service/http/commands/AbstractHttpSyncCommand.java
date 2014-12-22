@@ -103,7 +103,7 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand implements
                     LOG.trace("Multipart1 name " + data.getName() + " type " + data.getHttpDataType().name());
                     if (data.getHttpDataType() == HttpDataType.Attribute) {
                         Attribute attribute = (Attribute) data;
-                        if (data.getName().equals(CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME)) {
+                        if (CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME.equals(data.getName())) {
                             requestSignature = attribute.get();
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " Signature set. size: "
@@ -111,21 +111,21 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand implements
                                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestSignature));
                             }
 
-                        } else if (data.getName().equals(CommonEPConstans.REQUEST_KEY_ATTR_NAME)) {
+                        } else if (CommonEPConstans.REQUEST_KEY_ATTR_NAME.equals(data.getName())) {
                             requestKey = attribute.get();
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " requestKey set. size: "
                                         + requestKey.length);
                                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestKey));
                             }
-                        } else if (data.getName().equals(CommonEPConstans.REQUEST_DATA_ATTR_NAME)) {
+                        } else if (CommonEPConstans.REQUEST_DATA_ATTR_NAME.equals(data.getName())) {
                             requestData = attribute.get();
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " requestData set. size: "
                                         + requestData.length);
                                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestData));
                             }
-                        } else if (data.getName().equals(CommonEPConstans.NEXT_PROTOCOL_ATTR_NAME)) {
+                        } else if (CommonEPConstans.NEXT_PROTOCOL_ATTR_NAME.equals(data.getName())) {
                             nextProtocol = attribute.getString();
                             LOG.trace("[{}] next protocol is {}", getSessionUuid(), nextProtocol);
                         }

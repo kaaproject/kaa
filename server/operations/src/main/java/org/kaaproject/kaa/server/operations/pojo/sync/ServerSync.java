@@ -33,7 +33,7 @@ public class ServerSync {
     /**
      * All-args constructor.
      */
-    public ServerSync(java.lang.Integer requestId, SyncStatus status, ProfileServerSync profileSync,
+    public ServerSync(Integer requestId, SyncStatus status, ProfileServerSync profileSync,
             ConfigurationServerSync configurationSync, NotificationServerSync notificationSync, UserServerSync userSync,
             EventServerSync eventSync, RedirectServerSync redirectSync, LogServerSync logSync) {
         this.requestId = requestId;
@@ -50,7 +50,7 @@ public class ServerSync {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public java.lang.Integer getRequestId() {
+    public Integer getRequestId() {
         return requestId;
     }
 
@@ -60,7 +60,7 @@ public class ServerSync {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(java.lang.Integer value) {
+    public void setRequestId(Integer value) {
         this.requestId = value;
     }
 

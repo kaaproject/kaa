@@ -24,14 +24,14 @@ public class EventSequenceNumberResponse {
     /**
      * All-args constructor.
      */
-    public EventSequenceNumberResponse(java.lang.Integer seqNum) {
+    public EventSequenceNumberResponse(Integer seqNum) {
         this.seqNum = seqNum;
-    }
+    }   
 
     /**
      * Gets the value of the 'seqNum' field.
      */
-    public java.lang.Integer getSeqNum() {
+    public Integer getSeqNum() {
         return seqNum;
     }
 
@@ -41,7 +41,7 @@ public class EventSequenceNumberResponse {
      * @param value
      *            the value to set.
      */
-    public void setSeqNum(java.lang.Integer value) {
+    public void setSeqNum(Integer value) {
         this.seqNum = value;
     }
 

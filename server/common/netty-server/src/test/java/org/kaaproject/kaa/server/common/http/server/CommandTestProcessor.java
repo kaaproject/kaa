@@ -44,6 +44,7 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData;
  */
 public class CommandTestProcessor extends AbstractCommand {
 
+    private static final String UNKNOWN = "unknown";
     protected static String TEST_COMMAND_NAME = "testCommand";
     public static String COMMAND_NAME = TEST_COMMAND_NAME;
 
@@ -125,6 +126,6 @@ public class CommandTestProcessor extends AbstractCommand {
 
     @Override
     public String getNextProtocol() {
-        return "unknown";
+        return UNKNOWN;
     }
 }

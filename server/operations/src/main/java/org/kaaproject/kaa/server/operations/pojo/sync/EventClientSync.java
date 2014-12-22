@@ -18,83 +18,26 @@ package org.kaaproject.kaa.server.operations.pojo.sync;
 import java.util.List;
 
 public class EventClientSync {
-    private EventSequenceNumberRequest eventSequenceNumberRequest;
+    private boolean seqNumberRequest;
     private List<EventListenersRequest> eventListenersRequests;
     private List<Event> events;
 
     public EventClientSync() {
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((eventListenersRequests == null) ? 0 : eventListenersRequests.hashCode());
-        result = prime * result + ((events == null) ? 0 : events.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EventClientSync other = (EventClientSync) obj;
-        if (eventListenersRequests == null) {
-            if (other.eventListenersRequests != null) {
-                return false;
-            }
-        } else if (!eventListenersRequests.equals(other.eventListenersRequests)) {
-            return false;
-        }
-        if (eventSequenceNumberRequest == null) {
-            if (other.eventSequenceNumberRequest != null) {
-                return false;
-            }
-        } else if (!eventSequenceNumberRequest.equals(other.eventSequenceNumberRequest)) {
-            return false;
-        }
-        if (events == null) {
-            if (other.events != null) {
-                return false;
-            }
-        } else if (!events.equals(other.events)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * All-args constructor.
-     */
-    public EventClientSync(EventSequenceNumberRequest eventSequenceNumberRequest,
-            List<EventListenersRequest> eventListenersRequests, List<Event> events) {
-        this.eventSequenceNumberRequest = eventSequenceNumberRequest;
+    public EventClientSync(boolean seqNumberRequest, List<EventListenersRequest> eventListenersRequests, List<Event> events) {
+        super();
+        this.seqNumberRequest = seqNumberRequest;
         this.eventListenersRequests = eventListenersRequests;
         this.events = events;
     }
 
-    /**
-     * Gets the value of the 'eventSequenceNumberRequest' field.
-     */
-    public EventSequenceNumberRequest getEventSequenceNumberRequest() {
-        return eventSequenceNumberRequest;
+    public boolean isSeqNumberRequest() {
+        return seqNumberRequest;
     }
 
-    /**
-     * Sets the value of the 'eventSequenceNumberRequest' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setEventSequenceNumberRequest(EventSequenceNumberRequest value) {
-        this.eventSequenceNumberRequest = value;
+    public void setSeqNumberRequest(boolean seqNumberRequest) {
+        this.seqNumberRequest = seqNumberRequest;
     }
 
     /**
@@ -130,4 +73,40 @@ public class EventClientSync {
     public void setEvents(List<Event> value) {
         this.events = value;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((eventListenersRequests == null) ? 0 : eventListenersRequests.hashCode());
+        result = prime * result + ((events == null) ? 0 : events.hashCode());
+        result = prime * result + (seqNumberRequest ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EventClientSync other = (EventClientSync) obj;
+        if (eventListenersRequests == null) {
+            if (other.eventListenersRequests != null)
+                return false;
+        } else if (!eventListenersRequests.equals(other.eventListenersRequests))
+            return false;
+        if (events == null) {
+            if (other.events != null)
+                return false;
+        } else if (!events.equals(other.events))
+            return false;
+        if (seqNumberRequest != other.seqNumberRequest)
+            return false;
+        return true;
+    }
+    
+    
 }

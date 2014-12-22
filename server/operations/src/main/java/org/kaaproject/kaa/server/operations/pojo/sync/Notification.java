@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 
 public class Notification {
     private String topicId;
-    private org.kaaproject.kaa.server.operations.pojo.sync.NotificationType type;
+    private NotificationType type;
     private String uid;
     private Integer seqNumber;
     private ByteBuffer body;
@@ -30,7 +30,7 @@ public class Notification {
     /**
      * All-args constructor.
      */
-    public Notification(String topicId, org.kaaproject.kaa.server.operations.pojo.sync.NotificationType type, String uid,
+    public Notification(String topicId, NotificationType type, String uid,
             Integer seqNumber, ByteBuffer body) {
         this.topicId = topicId;
         this.type = type;
@@ -59,7 +59,7 @@ public class Notification {
     /**
      * Gets the value of the 'type' field.
      */
-    public org.kaaproject.kaa.server.operations.pojo.sync.NotificationType getType() {
+    public NotificationType getType() {
         return type;
     }
 
@@ -69,7 +69,7 @@ public class Notification {
      * @param value
      *            the value to set.
      */
-    public void setType(org.kaaproject.kaa.server.operations.pojo.sync.NotificationType value) {
+    public void setType(NotificationType value) {
         this.type = value;
     }
 
@@ -123,5 +123,4 @@ public class Notification {
     public void setBody(ByteBuffer value) {
         this.body = value;
     }
-
 }

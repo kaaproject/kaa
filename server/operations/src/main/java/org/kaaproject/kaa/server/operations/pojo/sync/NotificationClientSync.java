@@ -22,7 +22,7 @@ public class NotificationClientSync {
     private int appStateSeqNumber;
     private ByteBuffer topicListHash;
     private List<TopicState> topicStates;
-    private List<java.lang.String> acceptedUnicastNotifications;
+    private List<String> acceptedUnicastNotifications;
     private List<SubscriptionCommand> subscriptionCommands;
 
     public NotificationClientSync() {
@@ -31,9 +31,9 @@ public class NotificationClientSync {
     /**
      * All-args constructor.
      */
-    public NotificationClientSync(java.lang.Integer appStateSeqNumber, ByteBuffer topicListHash,
+    public NotificationClientSync(Integer appStateSeqNumber, ByteBuffer topicListHash,
             List<TopicState> topicStates,
-            List<java.lang.String> acceptedUnicastNotifications,
+            List<String> acceptedUnicastNotifications,
             List<SubscriptionCommand> subscriptionCommands) {
         this.appStateSeqNumber = appStateSeqNumber;
         this.topicListHash = topicListHash;
@@ -45,7 +45,7 @@ public class NotificationClientSync {
     /**
      * Gets the value of the 'appStateSeqNumber' field.
      */
-    public java.lang.Integer getAppStateSeqNumber() {
+    public Integer getAppStateSeqNumber() {
         return appStateSeqNumber;
     }
 
@@ -55,7 +55,7 @@ public class NotificationClientSync {
      * @param value
      *            the value to set.
      */
-    public void setAppStateSeqNumber(java.lang.Integer value) {
+    public void setAppStateSeqNumber(Integer value) {
         this.appStateSeqNumber = value;
     }
 
@@ -96,7 +96,7 @@ public class NotificationClientSync {
     /**
      * Gets the value of the 'acceptedUnicastNotifications' field.
      */
-    public List<java.lang.String> getAcceptedUnicastNotifications() {
+    public List<String> getAcceptedUnicastNotifications() {
         return acceptedUnicastNotifications;
     }
 
@@ -106,7 +106,7 @@ public class NotificationClientSync {
      * @param value
      *            the value to set.
      */
-    public void setAcceptedUnicastNotifications(List<java.lang.String> value) {
+    public void setAcceptedUnicastNotifications(List<String> value) {
         this.acceptedUnicastNotifications = value;
     }
 

@@ -321,7 +321,7 @@ public class EndpointActorMessageProcessor {
     }
 
     private void processSeqNumber(EventClientSync request, SyncResponseHolder responseHolder) {
-        if (request.getEventSequenceNumberRequest() != null) {
+        if (request.isSeqNumberRequest()) {
             EventServerSync response = responseHolder.getResponse().getEventSync();
             if(response == null){
                 response = new EventServerSync();
