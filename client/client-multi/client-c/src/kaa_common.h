@@ -39,7 +39,6 @@ extern "C" {
 #define KAA_RETURN_IF_NIL4(p1, p2, p3, p4, E) \
     { if (!(p1) || !(p2) || !(p3) || !(p4)) return E; }
 
-// TODO: move to kaa_event.h
 
 
 typedef enum {
@@ -49,6 +48,8 @@ typedef enum {
     KAA_SERVICE_EVENT = 3,
     KAA_SERVICE_LOGGING = 4,
 } kaa_service_t;
+
+
 
 /**
  * SHA1 hash
