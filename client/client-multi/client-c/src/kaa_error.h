@@ -35,6 +35,7 @@ typedef enum {
     KAA_ERR_BAD_STATE           = -8,
     KAA_ERR_INVALID_PUB_KEY     = -9,
     KAA_ERR_INVALID_BUFFER_SIZE = -10,
+    KAA_ERR_UNSUPPORTED         = -11,
 
     KAA_ERR_EVENT_NOT_ATTACHED  = -41,
     KAA_ERR_EVENT_BAD_FQN       = -42,

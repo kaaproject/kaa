@@ -26,7 +26,10 @@ extern "C" {
 /**
  * All definitions related to a field size specify in bytes.
  */
-#define KAA_PROTOCOL_MESSAGE_HEADER_SIZE     8
+#define KAA_PROTOCOL_ID_SIZE                 4
+#define KAA_PROTOCOL_VERSION_SIZE            2
+#define KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE   2
+#define KAA_PROTOCOL_MESSAGE_HEADER_SIZE     (KAA_PROTOCOL_ID_SIZE + KAA_PROTOCOL_VERSION_SIZE + KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE)
 
 #define KAA_EXTENSION_TYPE_SIZE              1
 #define KAA_EXTENSION_OPTIONS_SIZE           3
@@ -64,13 +67,14 @@ typedef enum {
  * Constants used for a profile extension.
  */
 typedef enum {
-    CONFIG_SCHEMA_VERSION_VALUE  = 0x1,
-    PROFILE_SCHEMA_VERSION_VALUE = 0x2,
-    SYS_NF_VERSION_VALUE         = 0x3,
-    USER_NF_VERSION_VALUE        = 0x4,
-    LOG_SCHEMA_VERSION_VALUE     = 0x5,
-    PUB_KEY_VALUE                = 0x6,
-    ACCESS_TOKEN_VALUE           = 0x7
+    CONFIG_SCHEMA_VERSION_VALUE       = 0x0,
+    PROFILE_SCHEMA_VERSION_VALUE      = 0x1,
+    SYS_NF_VERSION_VALUE              = 0x2,
+    USER_NF_VERSION_VALUE             = 0x3,
+    LOG_SCHEMA_VERSION_VALUE          = 0x4,
+    EVENT_FAMILY_VERSIONS_COUNT_VALUE = 0x5,
+    PUB_KEY_VALUE                     = 0x6,
+    ACCESS_TOKEN_VALUE                = 0x7
 } kaa_profile_extension_options_t;
 
 
