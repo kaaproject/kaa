@@ -366,7 +366,7 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
     kaa_error_t error_code = KAA_ERR_NONE;
     while (event) {
         if (event->seq_num == -1) {
-            event->seq_num = ++self->event_sequence_number;
+            event->seq_num = KAA_HTONL(++self->event_sequence_number);
         }
 
         error_code = kaa_platform_message_write(writer, &event->seq_num, sizeof(uint32_t));
@@ -374,40 +374,45 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
             KAA_LOG_ERROR(self->logger, error_code, "Failed to write event sequence number");
             return error_code;
         }
-        uint32_t event_options = (event->target->data == NULL ? 0 : (KAA_EVENT_OPTION_TARGET_ID_PRESENT << 16) & 0xffff0000);
 
-        // TODO: store event class fqn length in a separate field to avoid calling strlen(...) too often
-        size_t event_class_fqn_size = strlen(event->event_class_fqn->data);
-        event_options |= event_class_fqn_size & 0xffff;
-
-        error_code = kaa_platform_message_write(writer, &event_options, sizeof(uint32_t));
+        uint16_t event_options = (event->target->data == NULL ? 0 : KAA_EVENT_OPTION_TARGET_ID_PRESENT);
+        event_options = KAA_HTONS(event_options);
+        error_code = kaa_platform_message_write(writer, &event_options, sizeof(uint16_t));
         if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event options and event class fqn length");
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event options");
             return error_code;
         }
 
-        error_code = kaa_platform_message_write(writer, &event->event_data->size, sizeof(uint32_t));
+        uint16_t event_class_fqn_size = KAA_HTONS(strlen(event->event_class_fqn->data));
+        error_code = kaa_platform_message_write(writer, &event_class_fqn_size, sizeof(uint16_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event class fqn length");
+            return error_code;
+        }
+
+        uint32_t event_data_size = KAA_HTONL(event->event_data->size);
+        error_code = kaa_platform_message_write(writer, &event_data_size, sizeof(uint32_t));
         if (error_code) {
             KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data size");
             return error_code;
         }
 
         if (event->target->data != NULL) {
-            error_code = kaa_platform_message_write(writer, ((kaa_string_t *)event->target->data)->data, KAA_ENDPOINT_ID_LENGTH * sizeof(uint8_t));
+            error_code = kaa_platform_message_write(writer, ((kaa_string_t *)event->target->data)->data, KAA_ENDPOINT_ID_LENGTH);
             if (error_code) {
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to write event target id");
                 return error_code;
             }
         }
 
-        size_t real_len = event_class_fqn_size * sizeof(uint8_t);
+        size_t real_len = KAA_NTOHL(event_class_fqn_size);
         error_code = kaa_platform_message_write_aligned(writer, event->event_class_fqn->data, real_len);
         if (error_code) {
             KAA_LOG_ERROR(self->logger, error_code, "Failed to write event class fqn aligned");
             return error_code;
         }
 
-        real_len = ((size_t)event->event_data->size) * sizeof(uint8_t);
+        real_len = (size_t)event->event_data->size;
         error_code = kaa_platform_message_write_aligned(writer, event->event_data->buffer, real_len);
         if (error_code) {
             KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data aligned");
@@ -450,7 +455,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
 
     /* write events */
     if (payload_size) {
-        size_t events_count = 0;
+        uint16_t events_count = 0;
         kaa_list_t *pending_events = self->pending_events;
         kaa_list_t *resending_events = self->events_awaiting_response.sent_events;
 
@@ -462,7 +467,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
 
         if (events_count) {
             uint32_t events_list_field_header = (KAA_EVENT_FIELD_ID_EVENT_LIST << 24);
-            events_list_field_header |= (events_count & 0xFFFF);
+            events_list_field_header |= KAA_HTONS(events_count);
 
             error_code = kaa_platform_message_write(writer, &events_list_field_header, sizeof(uint32_t));
             if (error_code) {
@@ -502,6 +507,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event sequence number field");
         return error_code;
     }
+    event_sequence_number = KAA_NTOHS(event_sequence_number);
 
     uint16_t event_options = 0;
     error_code = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
@@ -509,6 +515,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event options field");
         return error_code;
     }
+    event_options = KAA_NTOHS(event_options);
 
     uint16_t event_class_fqn_length = 0;
     error_code = kaa_platform_message_read(reader, &event_class_fqn_length, sizeof(uint16_t));
@@ -516,6 +523,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event class fqn length field");
         return error_code;
     }
+    event_class_fqn_length = KAA_NTOHS(event_class_fqn_length);
 
     uint32_t event_data_size = 0;
     error_code = kaa_platform_message_read(reader, &event_data_size, sizeof(uint32_t));
@@ -523,9 +531,10 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data size field");
         return error_code;
     }
+    event_data_size = KAA_NTOHL(event_data_size);
 
     char event_source[KAA_ENDPOINT_ID_LENGTH];
-    error_code = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH * sizeof(uint8_t));
+    error_code = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event source endpoint id field");
         return error_code;
@@ -537,7 +546,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         return KAA_ERR_READ_FAILED;
     }
     char event_fqn[event_class_fqn_length + 1];
-    error_code = kaa_platform_message_read_aligned(reader, event_fqn, event_class_fqn_length * sizeof(uint8_t));
+    error_code = kaa_platform_message_read_aligned(reader, event_fqn, event_class_fqn_length);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event class fqn field");
         return error_code;
@@ -577,6 +586,8 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform
             KAA_LOG_ERROR(self->logger, error_code, "Failed to read event_sequence number field");
             return error_code;
         }
+
+        event_sequence_number = KAA_HTONL(event_sequence_number);
         extension_length -= sizeof(uint32_t);
 
         bool have_pending_events = kaa_list_get_size(self->pending_events) > 0;
@@ -628,6 +639,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform
             return error_code;
         }
 
+        events_count = KAA_NTOHS(events_count);
         for (;events_count--;) {
             error_code = kaa_event_read_event(self, reader);
             if (error_code) {
