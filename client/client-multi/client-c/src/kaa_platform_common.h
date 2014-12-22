@@ -26,7 +26,10 @@ extern "C" {
 /**
  * All definitions related to a field size specify in bytes.
  */
-#define KAA_PROTOCOL_MESSAGE_HEADER_SIZE     8
+#define KAA_PROTOCOL_ID_SIZE                 4
+#define KAA_PROTOCOL_VERSION_SIZE            2
+#define KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE   2
+#define KAA_PROTOCOL_MESSAGE_HEADER_SIZE     (KAA_PROTOCOL_ID_SIZE + KAA_PROTOCOL_VERSION_SIZE + KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE)
 
 #define KAA_EXTENSION_TYPE_SIZE              1
 #define KAA_EXTENSION_OPTIONS_SIZE           3

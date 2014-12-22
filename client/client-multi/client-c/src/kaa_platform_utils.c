@@ -88,6 +88,33 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
 
 
 
+kaa_error_t kaa_platform_message_header_write(kaa_platform_message_writer_t* writer
+                                            , uint32_t protocol_id
+                                            , uint16_t protocol_version
+                                            , uint16_t extension_count)
+{
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
+
+    if ((writer->total - writer->used) >= KAA_PROTOCOL_MESSAGE_HEADER_SIZE) {
+        protocol_id = KAA_HTONL(protocol_id);
+        protocol_version = KAA_HTONS(protocol_version);
+        extension_count = KAA_HTONS(extension_count);
+
+        memcpy((void *)(writer->buffer + writer->used), &protocol_id, KAA_PROTOCOL_ID_SIZE);
+        writer->used += KAA_PROTOCOL_ID_SIZE;
+        memcpy((void *)(writer->buffer + writer->used), &protocol_version, KAA_PROTOCOL_VERSION_SIZE);
+        writer->used += KAA_PROTOCOL_VERSION_SIZE;
+        memcpy((void *)(writer->buffer + writer->used), &extension_count, KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE);
+        writer->used += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
+
+        return KAA_ERR_NONE;
+    }
+
+    return KAA_ERR_WRITE_FAILED;
+}
+
+
+
 kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_writer_t* writer
                                                       , uint8_t extension_type
                                                       , uint32_t options
@@ -168,6 +195,29 @@ kaa_error_t kaa_platform_message_read_aligned(kaa_platform_message_reader_t *rea
     }
     return KAA_ERR_READ_FAILED;
 }
+
+
+
+kaa_error_t kaa_platform_message_header_read(kaa_platform_message_reader_t* reader
+                                           , uint32_t *protocol_id
+                                           , uint16_t *protocol_version
+                                           , uint16_t *extension_count)
+{
+    KAA_RETURN_IF_NIL4(reader, protocol_id, protocol_version, extension_count, KAA_ERR_BADPARAM);
+
+    if (reader->read + KAA_PROTOCOL_MESSAGE_HEADER_SIZE <= reader->total) {
+        *protocol_id = KAA_NTOHL(*((const uint32_t *) (reader->begin + reader->read)));
+        reader->read += sizeof(uint32_t);
+        *protocol_version = KAA_NTOHS(*((const uint16_t *) (reader->begin + reader->read)));
+        reader->read += sizeof(uint16_t);
+        *extension_count = KAA_NTOHS(*((const uint16_t *) (reader->begin + reader->read)));
+        reader->read += sizeof(uint16_t);
+    }
+
+    return KAA_ERR_READ_FAILED;
+}
+
+
 
 kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_reader_t *reader
                                                      , uint8_t *extension_type

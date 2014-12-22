@@ -278,6 +278,7 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
                                                            , EVENT_FAMILY_VERSIONS_COUNT_VALUE
 #endif
                                                            };
+
         uint16_t field_number_with_reserved = 0;
         uint16_t network_order_schema_version = 0;
 
@@ -437,12 +438,18 @@ kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *self, kaa_profile
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_sync_response_t *response)
+
+
+#define KAA_PROFILE_RESYNC_OPTION 0x1
+
+
+
+kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length)
 {
-    KAA_RETURN_IF_NIL2(self, response, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
     self->need_resync = false;
-    if (response->response_status == ENUM_SYNC_RESPONSE_STATUS_RESYNC) {
+    if (extension_options & KAA_PROFILE_RESYNC_OPTION) {
         self->need_resync = true;
         kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
                                       self->channel_manager, profile_sync_services[0]);
@@ -454,6 +461,7 @@ kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *self, kaa_profile_syn
         return KAA_ERR_BAD_STATE;
     if (!is_registered && kaa_set_endpoint_registered(self->status, true))
         return KAA_ERR_BAD_STATE;
+
     return KAA_ERR_NONE;
 }
 
