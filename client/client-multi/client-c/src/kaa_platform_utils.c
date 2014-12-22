@@ -23,15 +23,6 @@
 
 
 
-struct kaa_platform_message_writer_t_
-{
-    const char *buffer;
-    int64_t     total;
-    int64_t     used;
-};
-
-
-
 kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
                                              , const char *buf
                                              , size_t len)
@@ -122,12 +113,104 @@ kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_wri
     return KAA_ERR_WRITE_FAILED;
 }
 
-
-
 const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer)
 {
     if (writer && writer->buffer) {
         return writer->buffer;
     }
     return NULL;
+}
+
+kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
+                                                , const char *buffer
+                                                , size_t len)
+{
+    KAA_RETURN_IF_NIL3(reader_p, buffer, len, KAA_ERR_BADPARAM);
+
+    *reader_p = (kaa_platform_message_reader_t *) KAA_MALLOC(sizeof(kaa_platform_message_reader_t));
+    KAA_RETURN_IF_NIL(*reader_p, KAA_ERR_NOMEM);
+
+    (*reader_p)->begin = buffer;
+    (*reader_p)->read = 0;
+    (*reader_p)->total = len;
+
+    return KAA_ERR_NONE;
+}
+
+void kaa_platform_message_reader_destroy(kaa_platform_message_reader_t *reader)
+{
+    if (reader) {
+        KAA_FREE(reader);
+    }
+}
+
+kaa_error_t kaa_platform_message_read(kaa_platform_message_reader_t *reader, void *buffer, size_t expected_size)
+{
+    KAA_RETURN_IF_NIL3(reader, buffer, expected_size, KAA_ERR_BADPARAM);
+    if (reader->read + expected_size <= reader->total) {
+        memcpy(buffer, (reader->begin + reader->read), expected_size);
+        reader->read += expected_size;
+        return KAA_ERR_NONE;
+    }
+    return KAA_ERR_READ_FAILED;
+}
+
+kaa_error_t kaa_platform_message_read_aligned(kaa_platform_message_reader_t *reader
+                                            , void *buffer
+                                            , size_t expected_size)
+{
+    KAA_RETURN_IF_NIL3(reader, buffer, expected_size, KAA_ERR_BADPARAM);
+    size_t aligned_size = kaa_aligned_size_get(expected_size);
+    if (reader->read + aligned_size <= reader->total) {
+        memcpy(buffer, (reader->begin + reader->read), expected_size);
+        reader->read += aligned_size;
+        return KAA_ERR_NONE;
+    }
+    return KAA_ERR_READ_FAILED;
+}
+
+kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_reader_t *reader
+                                                     , uint8_t *extension_type
+                                                     , uint32_t *extension_options
+                                                     , uint32_t *extension_payload_length)
+{
+    KAA_RETURN_IF_NIL4(reader, extension_type, extension_options, extension_payload_length, KAA_ERR_BADPARAM);
+
+    if (reader->read + KAA_EXTENSION_HEADER_SIZE <= reader->total) {
+
+        uint32_t ext_l1 = KAA_NTOHL(*((const uint32_t *) (reader->begin + reader->read)));
+        *extension_type = (ext_l1 >> 24) & 0xff;
+        *extension_options = ext_l1 & 0xffffff;
+        *extension_payload_length = KAA_NTOHL(*((const uint32_t *) (reader->begin + reader->read + sizeof(uint32_t))));
+
+        reader->read += KAA_EXTENSION_HEADER_SIZE;
+    }
+
+    return KAA_ERR_READ_FAILED;
+}
+
+bool kaa_platform_message_is_buffer_large_enough(kaa_platform_message_reader_t *reader
+                                               , size_t size)
+{
+    if (!reader) {
+        return false;
+    }
+
+    if (!size) {
+        return true;
+    }
+
+    return (reader->read + size <= reader->total);
+}
+
+kaa_error_t kaa_platform_message_skip(kaa_platform_message_reader_t *reader, size_t size)
+{
+    KAA_RETURN_IF_NIL2(reader, size, KAA_ERR_BADPARAM);
+
+    if (reader->read + size <= reader->total) {
+        reader->read += size;
+        return KAA_ERR_NONE;
+    }
+
+    return KAA_ERR_READ_FAILED;
 }
