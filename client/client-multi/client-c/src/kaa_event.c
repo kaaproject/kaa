@@ -343,7 +343,6 @@ static kaa_error_t kaa_event_request_get_size_no_header(kaa_event_manager_t *sel
 }
 
 
-
 kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size)
 {
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
@@ -446,7 +445,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
         return error_code;
     }
 
-    error_code = kaa_platform_message_extension_header_write(writer, KAA_EVENT_EXTENSION_TYPE, extension_options, payload_size);
+    error_code = kaa_platform_message_write_extension_header(writer, KAA_EVENT_EXTENSION_TYPE, extension_options, payload_size);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to write event extension header (ext type %u, options %X, payload size %u)"
                                         , KAA_EVENT_EXTENSION_TYPE, extension_options, payload_size);

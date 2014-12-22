@@ -31,7 +31,6 @@
 
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
-#include "gen/kaa_endpoint_gen.h"
 
 /** External user manager API */
 extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
@@ -50,8 +49,8 @@ extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, ka
 extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
 
 /** External logging API */
-extern kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_request_t **result);
-extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_response_t *response);
+//extern kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_request_t **result);
+//extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_response_t *response);
 
 
 
@@ -122,7 +121,7 @@ static kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_p
     payload_length += (is_token_needed ? sizeof(uint32_t) : 0);
     payload_length += (is_token_needed ? kaa_aligned_size_get(token_len) : 0);
 
-    kaa_error_t err_code = kaa_platform_message_extension_header_write(
+    kaa_error_t err_code = kaa_platform_message_write_extension_header(
                                 writer, KAA_META_DATA_EXTENSION_TYPE, options, payload_length);
     KAA_RETURN_IF_ERR(err_code);
 
@@ -163,7 +162,7 @@ static kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_p
 
 
 
-static kaa_sync_request_meta_data_t* create_sync_request_meta_data(kaa_context_t *context)
+/* static kaa_sync_request_meta_data_t* create_sync_request_meta_data(kaa_context_t *context)
 {
     kaa_sync_request_meta_data_t *request = kaa_sync_request_meta_data_create();
     request->application_token = kaa_string_move_create(APPLICATION_TOKEN, NULL);
@@ -194,7 +193,95 @@ static kaa_sync_request_meta_data_t* create_sync_request_meta_data(kaa_context_t
     }
 
     return request;
-}
+} */
+
+
+/* static kaa_error_t kaa_compile_request(kaa_platform_protocol_t *self, kaa_sync_request_t **request_p
+        , size_t *result_size, size_t service_count, const kaa_service_t services[])
+{
+    kaa_sync_request_t *request = kaa_sync_request_create();
+    KAA_RETURN_IF_NIL(request, KAA_ERR_NOMEM);
+
+    request->request_id = kaa_union_int_or_null_branch_0_create();
+    request->request_id->data = (uint32_t *) KAA_MALLOC(sizeof(uint32_t));
+    *((uint32_t *)request->request_id->data) = self->request_id;
+
+    request->sync_request_meta_data = kaa_union_sync_request_meta_data_or_null_branch_0_create();
+    request->sync_request_meta_data->data = create_sync_request_meta_data(self->kaa_context);
+
+    request->user_sync_request = kaa_union_user_sync_request_or_null_branch_0_create();
+    kaa_user_compile_request(self->kaa_context->user_manager
+                           , (kaa_user_sync_request_t **)&request->user_sync_request->data
+                           , self->request_id);
+
+    request->event_sync_request = kaa_union_event_sync_request_or_null_branch_1_create();
+    request->log_sync_request = kaa_union_log_sync_request_or_null_branch_1_create();
+    request->notification_sync_request = kaa_union_notification_sync_request_or_null_branch_1_create();
+    request->configuration_sync_request = kaa_union_configuration_sync_request_or_null_branch_1_create();
+    request->profile_sync_request = kaa_union_profile_sync_request_or_null_branch_1_create();
+
+    for (;service_count--;) {
+        switch (services[service_count]) {
+#ifndef KAA_DISABLE_FEATURE_EVENTS
+        // TODO: remove
+//        case KAA_SERVICE_EVENT: {
+//            request->event_sync_request->destroy(request->event_sync_request);
+//            request->event_sync_request = kaa_union_event_sync_request_or_null_branch_0_create();
+//            kaa_event_compile_request(self->kaa_context->event_manager
+//                                    , (kaa_event_sync_request_t**)&request->event_sync_request->data
+//                                    , self->request_id);
+//            break;
+//        }
+#endif
+        case KAA_SERVICE_PROFILE: {
+            bool need_resync = false;
+            kaa_error_t error = kaa_profile_need_profile_resync(self->kaa_context->profile_manager, &need_resync);
+            if (error) {
+                request->destroy(request);
+                return error;
+            }
+
+            if (need_resync) {
+                request->profile_sync_request->destroy(request->profile_sync_request);
+                request->profile_sync_request = kaa_union_profile_sync_request_or_null_branch_0_create();
+
+                if (!request->profile_sync_request) {
+                    request->destroy(request);
+                    return KAA_ERR_NOMEM;
+                }
+
+                error = kaa_profile_compile_request(self->kaa_context->profile_manager
+                        , (kaa_profile_sync_request_t **)&request->profile_sync_request->data);
+
+                if (error) {
+                    request->destroy(request);
+                    return error;
+                }
+            }
+            break;
+        }
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+        case KAA_SERVICE_LOGGING: {
+            kaa_log_sync_request_t *log_request = NULL;
+            kaa_logging_compile_request(self->kaa_context->log_collector, &log_request);
+            if (log_request) {
+                request->log_sync_request->destroy(request->log_sync_request);
+                request->log_sync_request =
+                        kaa_union_log_sync_request_or_null_branch_0_create();
+                request->log_sync_request->data = log_request;
+            }
+            break;
+        }
+#endif
+        default:
+            break;
+        }
+    }
+
+    *request_p = request;
+    *result_size = request->get_size(request);
+    return KAA_ERR_NONE;
+} */
 
 
 
@@ -291,7 +378,7 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
 static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
                                            , const kaa_service_t services[]
                                            , size_t services_count
-                                           , const char* buffer
+                                           , char* buffer
                                            , size_t size)
 {
     KAA_RETURN_IF_NIL5(self, services, services_count, buffer, size, KAA_ERR_BADPARAM);
@@ -353,7 +440,7 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     kaa_error_t error = kaa_client_sync_get_size(self, services, services_count, &buffer_size);
     KAA_RETURN_IF_ERR(error)
 
-    const char *buffer = allocator(allocator_context, buffer_size);
+    char *buffer = allocator(allocator_context, buffer_size);
     if (buffer) {
         self->request_id++;
         error = kaa_client_sync_serialize(self, services, services_count, buffer, buffer_size);
@@ -371,7 +458,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 
 
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
-        , const char *buffer, size_t buffer_size)
+                                                    , const char *buffer
+                                                    , size_t buffer_size)
 {
     KAA_RETURN_IF_NIL3(self, buffer, buffer_size, KAA_ERR_BADPARAM);
 
@@ -447,7 +535,6 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
         KAA_LOG_ERROR(self->logger, error_code,
                 "Server sync is corrupted. Failed to read extension with type %u", extension_type);
     }
-
 
     return error_code;
 }
