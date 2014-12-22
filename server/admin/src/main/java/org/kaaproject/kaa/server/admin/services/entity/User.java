@@ -44,7 +44,8 @@ public class User {
     private String lastName;
     private String mail;
     private boolean tempPassword;
-
+    private String passwordResetHash;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @Fetch(FetchMode.JOIN)
     private Collection<Authority> authorities;
@@ -113,6 +114,13 @@ public class User {
         this.tempPassword = tempPassword;
     }
 
+    public String getPasswordResetHash() {
+        return passwordResetHash;
+    }
+
+    public void setPasswordResetHash(String passwordResetHash) {
+        this.passwordResetHash = passwordResetHash;
+    }
 
     @XmlTransient
     public Collection<Authority> getAuthorities() {

@@ -129,6 +129,28 @@ public class UserFacade {
         else
             return null;
     }
+    
+    public User findByUsernameOrMail(String usernameOrMail) {
+        TypedQuery<User> query = 
+                em.createQuery("SELECT u FROM User u WHERE u.username = :usernameOrMail"
+                        + " OR u.mail = :usernameOrMail", User.class);
+        query.setParameter("usernameOrMail", usernameOrMail);
+        List<User> resultList = query.getResultList();
+        if (!resultList.isEmpty())
+            return resultList.get(0);
+        else
+            return null;
+    }
+    
+    public User findByPasswordResetHash(String passwordResetHash) {
+        TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.passwordResetHash = :passwordResetHash", User.class);
+        query.setParameter("passwordResetHash", passwordResetHash);
+        List<User> resultList = query.getResultList();
+        if (!resultList.isEmpty())
+            return resultList.get(0);
+        else
+            return null;
+    }
 
     public void deleteUser(Long id) {
         User user = findById(id);

@@ -21,6 +21,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto.Result;
@@ -29,6 +30,7 @@ import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.Authority;
 import org.kaaproject.kaa.server.admin.services.entity.User;
+import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
@@ -47,6 +49,9 @@ public class KaaAuthServiceImpl implements KaaAuthService {
 
     @Autowired
     private UserFacade userFacade;
+    
+    @Autowired
+    private MessagingService messagingService;
 
     private PasswordEncoder passwordEncoder;
 
@@ -59,27 +64,16 @@ public class KaaAuthServiceImpl implements KaaAuthService {
 
         AuthResultDto result = new AuthResultDto();
 
-        //HttpServletRequest request = SpringGwtRemoteServiceServlet.getRequest();
-        //HttpSession session = request.getSession();
-
-//        Object authException = session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-//        if (authException != null && authException instanceof AuthenticationException) {
-//            throw new Exception(((AuthenticationException)authException).getMessage());
-//        }
-
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
         if (!isLoggedIn(authentication)){
-            System.out.println("Not logged in");
             if (userFacade.isAuthorityExists(KaaAuthorityDto.KAA_ADMIN.name())) {
                 result.setAuthResult(Result.NOT_LOGGED_IN);
-            }
-            else {
+            } else {
                 result.setAuthResult(Result.KAA_ADMIN_NOT_EXISTS);
             }
-        }
-        else {
+        } else {
             AuthUserDto authUser = (AuthUserDto)authentication.getPrincipal();
             result.setAuthResult(Result.OK);
             result.setAuthority(authUser.getAuthority());
@@ -101,17 +95,14 @@ public class KaaAuthServiceImpl implements KaaAuthService {
                 String userName;
                 if (principal instanceof AuthUserDto) {
                     userName = ((AuthUserDto) principal).getUsername();
-                }
-                else {
+                } else {
                     return false;
                 }
                 return !userName.equals(ANONYMOUS_USER);
-            }
-            else {
+            } else {
                 return false;
             }
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -119,7 +110,6 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
     public void createKaaAdmin(String username, String password)
             throws KaaAdminServiceException {
-
 
         org.kaaproject.kaa.server.admin.services.entity.User userEntity =
                 new org.kaaproject.kaa.server.admin.services.entity.User();
@@ -171,8 +161,7 @@ public class KaaAuthServiceImpl implements KaaAuthService {
         User userEntity = userFacade.checkUserNameOccupied(username, userId);
         if (userEntity == null) {
             return ResultCode.OK;
-        }
-        else {
+        } else {
             return ResultCode.USERNAME_EXISTS;
         }
     }
@@ -182,11 +171,56 @@ public class KaaAuthServiceImpl implements KaaAuthService {
         User userEntity = userFacade.checkEmailOccupied(email, userId);
         if (userEntity == null) {
             return ResultCode.OK;
-        }
-        else {
+        } else {
             return ResultCode.EMAIL_EXISTS;
         }
     }
 
+    @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
+    public ResultCode checkUsernameOrEmailExists(String usernameOrEmail)
+            throws Exception {
+        User userEntity = userFacade.findByUsernameOrMail(usernameOrEmail);
+        if (userEntity == null) {
+            return ResultCode.USER_OR_EMAIL_NOT_FOUND;
+        } else if (isEmpty(userEntity.getMail())) {
+            return ResultCode.USER_EMAIL_NOT_DEFINED;
+        } else {
+            return ResultCode.OK;
+        }
+    }
+
+    @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
+    public ResultCode sendPasswordResetLinkByEmail(String usernameOrEmail)
+            throws Exception {
+        User userEntity = userFacade.findByUsernameOrMail(usernameOrEmail);
+        if (userEntity == null) {
+            return ResultCode.USER_OR_EMAIL_NOT_FOUND;
+        } else if (isEmpty(userEntity.getMail())) {
+            return ResultCode.USER_EMAIL_NOT_DEFINED;
+        }
+        String passwordResetHash = RandomStringUtils.randomAlphanumeric(128);
+        userEntity.setPasswordResetHash(passwordResetHash);
+        userFacade.save(userEntity);
+        messagingService.sendPasswordResetLink(passwordResetHash, userEntity.getUsername(), userEntity.getMail());
+        return ResultCode.OK;
+    }
+
+    @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
+    public ResultCode resetPasswordByResetHash(String passwordResetHash)
+            throws Exception {
+        User userEntity = userFacade.findByPasswordResetHash(passwordResetHash);
+        if (userEntity == null) {
+            return ResultCode.USER_NOT_FOUND;
+        } else if (isEmpty(userEntity.getMail())) {
+            return ResultCode.USER_EMAIL_NOT_DEFINED;
+        }
+        userEntity.setPasswordResetHash(null);
+        String generatedPassword = RandomStringUtils.randomAlphanumeric(12);
+        userEntity.setPassword(passwordEncoder.encodePassword(generatedPassword, null));
+        userEntity.setTempPassword(true);
+        userFacade.save(userEntity);
+        messagingService.sendPasswordAfterReset(userEntity.getUsername(), generatedPassword, userEntity.getMail());
+        return ResultCode.OK;
+    }
 
 }

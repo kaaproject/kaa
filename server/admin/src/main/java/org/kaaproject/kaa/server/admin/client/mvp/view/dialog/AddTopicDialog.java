@@ -162,13 +162,13 @@ public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List
 
     @Override
     public void clearError() {
-        errorPanel.setText("");
+        errorPanel.setMessage("");
         errorPanel.setVisible(false);
     }
 
     @Override
     public void setErrorMessage(String message) {
-        errorPanel.setText(message);
+        errorPanel.setMessage(message);
         errorPanel.setVisible(true);
     }
 
