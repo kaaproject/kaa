@@ -42,7 +42,7 @@ extern kaa_error_t kaa_user_compile_request(kaa_user_manager_t *self, kaa_user_s
 extern kaa_error_t kaa_event_handle_sync(kaa_event_manager_t *self, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events);
 
 /* Platform protocol support */
-extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer)
+extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
 extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
 
 /** External profile API */
@@ -50,7 +50,7 @@ extern kaa_error_t kaa_profile_compile_request(kaa_profile_manager_t *kaa_contex
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
 extern kaa_error_t kaa_profile_handle_sync(kaa_profile_manager_t *kaa_context, kaa_profile_sync_response_t *profile);
 extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_profile_request_serialize(kaa_platform_message_writer_t* writer);
+extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
 
 /** External logging API */
 extern kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_request_t **result);
@@ -130,7 +130,7 @@ static kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_p
     KAA_RETURN_IF_ERR(err_code);
 
     if (is_timeout_needed) {
-        uint32_t timeout = KAA_SYNC_TIMEOUT;
+        uint32_t timeout = KAA_HTONL(KAA_SYNC_TIMEOUT);
         err_code = kaa_platform_message_write(writer, &timeout, sizeof(timeout));
         KAA_RETURN_IF_ERR(err_code);
     }
@@ -154,7 +154,8 @@ static kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_p
     }
 
     if (is_token_needed) {
-        err_code = kaa_platform_message_write(writer, &token_len, sizeof(uint32_t));
+        uint32_t net_order_token_len = KAA_HTONL(token_len);
+        err_code = kaa_platform_message_write(writer, &net_order_token_len, sizeof(uint32_t));
         KAA_RETURN_IF_ERR(err_code);
         err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, token_len);
         KAA_RETURN_IF_ERR(err_code);
@@ -377,7 +378,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     for (;!err_code && services_count--;) {
         switch (services[services_count]) {
         case KAA_SERVICE_PROFILE: {
-            err_code = kaa_profile_request_serialize(writer);
+            err_code = kaa_profile_request_serialize(self->kaa_context->profile_manager, writer);
             break;
         }
         case KAA_SERVICE_USER: {

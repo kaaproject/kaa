@@ -47,7 +47,7 @@ extern "C" {
 
 typedef struct kaa_events_schema_version_ {
     const char *    name;
-    int32_t         version;
+    uint16_t         version;
 } kaa_events_schema_version;
 
 # define KAA_EVENT_SCHEMA_VERSIONS_SIZE    2

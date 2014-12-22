@@ -30,11 +30,11 @@
 extern "C" {
 #endif
 
-#define KAA_HTONS(hostshort)    htons((hostshort));
-#define KAA_HTONL(hostlong)     htonl((hostlong));
+#define KAA_HTONS(hostshort)    htons((hostshort))
+#define KAA_HTONL(hostlong)     htonl((hostlong))
 
-#define KAA_NTOHS(netshort)     ntohs((netshort));
-#define KAA_NTOHL(netlong)      ntohl((netlong));
+#define KAA_NTOHS(netshort)     ntohs((netshort))
+#define KAA_NTOHL(netlong)      ntohl((netlong))
 
 
 

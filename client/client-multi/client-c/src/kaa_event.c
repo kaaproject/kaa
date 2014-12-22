@@ -318,7 +318,7 @@ static size_t kaa_event_list_get_request_size(kaa_list_t *events)
 
 static kaa_error_t kaa_event_request_get_size_no_header(kaa_event_manager_t *self, size_t *expected_size)
 {
-    RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
 
     *expected_size = 0;
     if (self->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
@@ -338,7 +338,7 @@ static kaa_error_t kaa_event_request_get_size_no_header(kaa_event_manager_t *sel
 
 kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size)
 {
-    RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
 
     kaa_error_t error_code = kaa_event_request_get_size_no_header(self, expected_size);
     if (error_code) {
