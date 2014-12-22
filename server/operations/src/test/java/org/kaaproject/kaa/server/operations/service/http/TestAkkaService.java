@@ -16,23 +16,15 @@
 
 package org.kaaproject.kaa.server.operations.service.http;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.avro.specific.SpecificRecordBase;
-import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
-import org.kaaproject.kaa.server.operations.service.http.commands.AbstractHttpSyncCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +41,6 @@ public class TestAkkaService extends Thread implements AkkaService {
     private static final Logger logger = LoggerFactory
             .getLogger(TestAkkaService.class);
 
-    /** Endpoint Service */
-    private final OperationsService endpointService;
-
     /** Boolean operate */
     private boolean operate = true;
 
@@ -64,7 +53,6 @@ public class TestAkkaService extends Thread implements AkkaService {
      */
     public TestAkkaService(OperationsService endpointService) {
         commands = new LinkedList<>();
-        this.endpointService = endpointService;
     }
 
     /* (non-Javadoc)

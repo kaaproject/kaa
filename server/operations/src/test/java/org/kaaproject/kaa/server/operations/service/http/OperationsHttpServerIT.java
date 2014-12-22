@@ -50,12 +50,8 @@ import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
 import org.kaaproject.kaa.server.common.server.SessionTrackable;
 import org.kaaproject.kaa.server.common.server.Track;
 import org.kaaproject.kaa.server.common.server.http.NettyHttpServer;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.service.bootstrap.DefaultOperationsBootstrapService;
 import org.kaaproject.kaa.server.operations.service.config.HttpChannelConfig;
-import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
-import org.kaaproject.kaa.server.operations.service.config.ServiceChannelConfig;
 import org.kaaproject.kaa.server.operations.service.http.commands.LongSyncCommand;
 import org.kaaproject.kaa.server.operations.service.http.commands.SyncCommand;
 import org.kaaproject.kaa.server.operations.service.http.commands.TestLongSyncCommandFactory;
@@ -108,8 +104,6 @@ public class OperationsHttpServerIT {
     private NettyHttpServer netty;
 
     private static HttpChannelConfig httpChannelConfig;
-
-    private static OperationsServerConfig config;
 
     private static DefaultOperationsBootstrapService bootstrapServiceMock;
 
@@ -217,7 +211,6 @@ public class OperationsHttpServerIT {
     @BeforeClass
     public static void init() throws Exception {
         executor = Executors.newCachedThreadPool();
-        config = new OperationsServerConfig();
         httpChannelConfig = new HttpChannelConfig();
 
         httpChannelConfig.setBindInterface("localhost");

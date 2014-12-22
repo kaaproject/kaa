@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
@@ -32,6 +31,7 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
 import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
@@ -60,7 +60,6 @@ import org.kaaproject.kaa.server.operations.pojo.sync.Event;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventSequenceNumberRequest;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.LogClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.LogEntry;
@@ -464,9 +463,7 @@ public class AvroEncDec implements PlatformEncDec {
             return null;
         }
         EventClientSync sync = new EventClientSync();
-        if (source.getEventSequenceNumberRequest() != null) {
-            sync.setEventSequenceNumberRequest(new EventSequenceNumberRequest());
-        }
+        sync.setSeqNumberRequest(source.getEventSequenceNumberRequest() != null);
         if (source.getEvents() != null) {
             List<Event> events = new ArrayList<Event>(source.getEvents().size());
             for (org.kaaproject.kaa.common.endpoint.gen.Event event : source.getEvents()) {
