@@ -102,9 +102,13 @@ static kaa_log_entry_t memory_log_storage_get_record(uint16_t id, size_t remaini
     KAA_LOG_DEBUG(logger, error_code, "Received record (iterator {%p}, pointing to {%p})"
             , single_log_record
             , kaa_deque_iterator_get_data(single_log_record));
-    if (error_code) {
+    if (error_code)
         return empty_entry;
-    }
+
+    kaa_log_entry_t *entry = (kaa_log_entry_t *) kaa_deque_iterator_get_data(single_log_record);
+    if (entry->record_size > remaining_size) // remaining size is not enough for the record
+        return empty_entry;
+
     kaa_memory_log_block_t *block = NULL;
 
     kaa_memory_log_block_t * top_log_block = (kaa_memory_log_block_t * ) kaa_list_get_data(log_storage->uploading_blocks);
@@ -136,7 +140,7 @@ static kaa_log_entry_t memory_log_storage_get_record(uint16_t id, size_t remaini
     }
 
     kaa_deque_push_back_iterator(block->logs, single_log_record);  // FIXME: handle error if any;
-    return *((kaa_log_entry_t *)kaa_deque_iterator_get_data(single_log_record));
+    return *entry;
 }
 
 

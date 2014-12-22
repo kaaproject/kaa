@@ -31,10 +31,10 @@ extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_mana
                                                               , kaa_service_t service_type);
 
 typedef struct {
-    char   *user_external_id;
     size_t  user_external_id_len;
-    char   *user_access_token;
     size_t  user_access_token_len;
+    char   *user_external_id;
+    char   *user_access_token;
 } user_info_t;
 
 struct kaa_user_manager_t {
@@ -222,14 +222,14 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
     user_server_sync_field_t field = 0;
 
     while (remaining_length > 0) {
-        field_header = KAA_NTOHL(*((uint32_t *)reader->current));
+        field_header = *((uint32_t *) reader->current);
         reader->current += sizeof(uint32_t);
         remaining_length -= sizeof(uint32_t);
 
         field = (field_header >> 24) & 0xFF;
         switch (field) {
             case USER_ATTACH_RESPONSE_FIELD: {
-                user_sync_result_t result = ((uint16_t)(field_header & 0xFF00)) >> 8;
+                user_sync_result_t result = (uint8_t) (field_header & 0xFF00) >> 8;
                 destroy_user_info(self->user_info);
                 self->user_info = NULL;
                 self->is_waiting_user_attach_response = false;
@@ -243,7 +243,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
             }
             case USER_ATTACH_NOTIFICAITON_FIELD: {
                 uint8_t external_id_length = (field_header >> 16) & 0xFF;
-                uint16_t access_token_length = (field_header) & 0xFFFF;
+                uint16_t access_token_length = KAA_NTOHS((field_header) & 0xFFFF);
                 if (external_id_length + access_token_length > remaining_length)
                     return KAA_ERR_INVALID_BUFFER_SIZE;
 
@@ -267,7 +267,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
                 break;
             }
             case USER_DETACH_NOTIFICATION_FIELD: {
-                uint16_t access_token_length = (field_header) & 0xFFFF;
+                uint16_t access_token_length = KAA_NTOHS((field_header) & 0xFFFF);
                 if (access_token_length > remaining_length)
                     return KAA_ERR_INVALID_BUFFER_SIZE;
 

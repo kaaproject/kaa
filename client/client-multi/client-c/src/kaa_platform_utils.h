@@ -41,14 +41,14 @@ extern "C" {
 
 typedef struct
 {
-    char       *start;
+    char       *begin;
     char       *current;
     char       *end;
 } kaa_platform_message_writer_t;
 
 
 typedef struct {
-    const char *start;
+    const char *begin;
     const char *current;
     const char *end;
 } kaa_platform_message_reader_t;

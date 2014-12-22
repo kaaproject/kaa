@@ -32,7 +32,7 @@ kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** w
     *writer_p = (kaa_platform_message_writer_t*)KAA_MALLOC(sizeof(kaa_platform_message_writer_t));
     KAA_RETURN_IF_NIL(*writer_p, KAA_ERR_NOMEM);
 
-    (*writer_p)->start = buf;
+    (*writer_p)->begin = buf;
     (*writer_p)->end = buf + len;
     (*writer_p)->current = buf;
 
@@ -115,8 +115,8 @@ kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_wri
 
 const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer)
 {
-    if (writer && writer->start) {
-        return writer->start;
+    if (writer && writer->begin) {
+        return writer->begin;
     }
     return NULL;
 }
@@ -130,7 +130,7 @@ kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **r
     *reader_p = (kaa_platform_message_reader_t *) KAA_MALLOC(sizeof(kaa_platform_message_reader_t));
     KAA_RETURN_IF_NIL(*reader_p, KAA_ERR_NOMEM);
 
-    (*reader_p)->start = buffer;
+    (*reader_p)->begin = buffer;
     (*reader_p)->current = buffer;
     (*reader_p)->end = buffer + len;
 
