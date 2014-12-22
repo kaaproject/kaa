@@ -21,61 +21,63 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.LogClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
+import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 
 public class SyncRequestMessageTest {
 
     @Test
-    public void testIsValid(){
+    public void testIsValid() {
 
-        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), null, ChannelType.HTTP, null, null, "applicationToken", 0, true);
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), AvroEncDec.AVRO_ENC_DEC_ID, null, ChannelType.HTTP, null, null,
+                "applicationToken", 0, true);
 
-        SyncRequest request = new SyncRequest();
-        request.setSyncRequestMetaData(new SyncRequestMetaData());
+        ClientSync request = new ClientSync();
+        request.setClientSyncMetaData(new ClientSyncMetaData());
         SyncRequestMessage message = new SyncRequestMessage(session, request, null, null);
 
-        SyncRequest other = new SyncRequest();
-        other.setSyncRequestMetaData(new SyncRequestMetaData());
+        ClientSync other = new ClientSync();
+        other.setClientSyncMetaData(new ClientSyncMetaData());
         SyncRequestMessage otherMessage = new SyncRequestMessage(session, other, null, null);
 
         Assert.assertFalse(message.isValid(TransportType.BOOTSTRAP));
 
         Assert.assertFalse(message.isValid(TransportType.PROFILE));
-        other.setProfileSyncRequest(new ProfileSyncRequest());
+        other.setProfileSync(new ProfileClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.PROFILE));
 
         Assert.assertFalse(message.isValid(TransportType.CONFIGURATION));
-        other.setConfigurationSyncRequest(new ConfigurationSyncRequest(10, ByteBuffer.wrap("String".getBytes())));
+        other.setConfigurationSync(new ConfigurationClientSync(10, ByteBuffer.wrap("String".getBytes())));
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.CONFIGURATION));
 
         Assert.assertFalse(message.isValid(TransportType.NOTIFICATION));
-        other.setNotificationSyncRequest(new NotificationSyncRequest());
+        other.setNotificationSync(new NotificationClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.NOTIFICATION));
 
         Assert.assertFalse(message.isValid(TransportType.USER));
-        other.setUserSyncRequest(new UserSyncRequest());
+        other.setUserSync(new UserClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.USER));
 
         Assert.assertFalse(message.isValid(TransportType.LOGGING));
-        other.setLogSyncRequest(new LogSyncRequest());
+        other.setLogSync(new LogClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.LOGGING));
 
         Assert.assertFalse(message.isValid(TransportType.EVENT));
-        other.setEventSyncRequest(new EventSyncRequest());
+        other.setEventSync(new EventClientSync());
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.EVENT));
 

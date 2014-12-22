@@ -26,20 +26,20 @@ import java.util.Set;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest;
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
@@ -78,10 +78,10 @@ public class DefaultEndpointUserService implements EndpointUserService {
             LOG.debug("[{}] received valid attachUserRequest. Assigning endpoint to user.", userAttachRequest.getUserExternalId());
             endpointService.attachEndpointToUser(userAttachRequest.getUserExternalId(), appDto.getTenantId(), userAttachRequest.getUserAccessToken(),
                     profile);
-            return new UserAttachResponse(SyncResponseResultType.SUCCESS);
+            return new UserAttachResponse(SyncStatus.SUCCESS);
         } else {
             LOG.warn("[{}] received invalid attachUserRequest.", userAttachRequest.getUserExternalId());
-            return new UserAttachResponse(SyncResponseResultType.FAILURE);
+            return new UserAttachResponse(SyncStatus.FAILURE);
         }
     }
 
@@ -89,14 +89,14 @@ public class DefaultEndpointUserService implements EndpointUserService {
     public EndpointAttachResponse attachEndpoint(EndpointProfileDto profile, EndpointAttachRequest endpointAttachRequest) {
         EndpointAttachResponse response = new EndpointAttachResponse();
         response.setRequestId(endpointAttachRequest.getRequestId());
-        response.setResult(SyncResponseResultType.FAILURE);
+        response.setResult(SyncStatus.FAILURE);
 
         String endpointUserId = profile.getEndpointUserId();
         if (isNotEmpty(endpointUserId)) {
             try {
                 EndpointProfileDto attachedEndpoint = endpointService.attachEndpointToUser(endpointUserId,
                         endpointAttachRequest.getEndpointAccessToken());
-                response.setResult(SyncResponseResultType.SUCCESS);
+                response.setResult(SyncStatus.SUCCESS);
                 response.setEndpointKeyHash(Base64Util.encode(attachedEndpoint.getEndpointKeyHash()));
             } catch (DatabaseProcessingException e) {
                 LOG.warn("[{}] failed to attach endpoint with access token {} and user {}", Base64Util.encode(profile.getEndpointKeyHash()),
@@ -113,20 +113,20 @@ public class DefaultEndpointUserService implements EndpointUserService {
     public EndpointDetachResponse detachEndpoint(EndpointProfileDto profile, EndpointDetachRequest endpointDetachRequest) {
         EndpointDetachResponse response = new EndpointDetachResponse();
         response.setRequestId(endpointDetachRequest.getRequestId());
-        response.setResult(SyncResponseResultType.FAILURE);
+        response.setResult(SyncStatus.FAILURE);
 
         if (isValid(endpointDetachRequest) && isNotEmpty(profile.getEndpointUserId())) {
             try {
                 byte[] endpointKeyHash = Base64Util.decode(endpointDetachRequest.getEndpointKeyHash());
                 if (Arrays.equals(profile.getEndpointKeyHash(), endpointKeyHash)) {
                     endpointService.detachEndpointFromUser(profile);
-                    response.setResult(SyncResponseResultType.SUCCESS);
+                    response.setResult(SyncStatus.SUCCESS);
                 } else {
                     EndpointProfileDto detachEndpoint = endpointService.findEndpointProfileByKeyHash(endpointKeyHash);
                     if(detachEndpoint != null){
                         if (detachEndpoint.getEndpointUserId() != null && detachEndpoint.getEndpointUserId().equals(profile.getEndpointUserId())) {
                             endpointService.detachEndpointFromUser(detachEndpoint);
-                            response.setResult(SyncResponseResultType.SUCCESS);
+                            response.setResult(SyncStatus.SUCCESS);
                         } else {
                             LOG.warn("[{}] received detach endpoint request, but requested {} and current {} user mismatch.",
                                     Base64Util.encode(profile.getEndpointKeyHash()), profile.getEndpointUserId(), detachEndpoint.getEndpointUserId());
@@ -158,14 +158,14 @@ public class DefaultEndpointUserService implements EndpointUserService {
     public EventListenersResponse findListeners(EndpointProfileDto profile, AppSeqNumber appSeqNumber, EventListenersRequest request) {
         if(profile.getEndpointUserId() == null || profile.getEndpointUserId().isEmpty()){
             LOG.info("Can't find listeners for unassigned endpoint!");
-            return new EventListenersResponse(request.getRequestId(), null, SyncResponseResultType.FAILURE);
+            return new EventListenersResponse(request.getRequestId(), null, SyncStatus.FAILURE);
         }
 
         List<EndpointProfileDto> endpointProfiles = endpointService.findEndpointProfilesByUserId(profile.getEndpointUserId());
         if(endpointProfiles.size() <= 1){
             LOG.info("There is only one endpoint(current) assigned to this user!");
             List<String> emptyList = Collections.emptyList();
-            return new EventListenersResponse(request.getRequestId(), emptyList, SyncResponseResultType.SUCCESS);
+            return new EventListenersResponse(request.getRequestId(), emptyList, SyncStatus.SUCCESS);
         }
 
         String tenantId = cacheService.getTenantIdByAppToken(appSeqNumber.getAppToken());
@@ -217,7 +217,7 @@ public class DefaultEndpointUserService implements EndpointUserService {
         for(EndpointObjectHash eoHash : eventClassIntersectionSet){
             result.add(Base64Util.encode(eoHash.getData()));
         }
-        return new EventListenersResponse(request.getRequestId(), result, SyncResponseResultType.SUCCESS);
+        return new EventListenersResponse(request.getRequestId(), result, SyncStatus.SUCCESS);
     }
 
 }

@@ -29,9 +29,10 @@ public class NettyTcpConnectMessage extends AbstractRequestMessage implements Se
     private final Connect command;
     private final SessionCreateListener sessionAware;
 
-    public NettyTcpConnectMessage(UUID uuid, ChannelHandlerContext channelContext, Connect command, ChannelType channelType, SessionCreateListener sessionAware,
-            ResponseBuilder responseConverter, ErrorBuilder errorConverter, SyncStatistics syncStatistics) {
-        super(uuid, channelContext, channelType, responseConverter, errorConverter, syncStatistics);
+    public NettyTcpConnectMessage(UUID uuid, String platformId, ChannelHandlerContext channelContext, Connect command,
+            ChannelType channelType, SessionCreateListener sessionAware, ResponseBuilder responseConverter, ErrorBuilder errorConverter,
+            SyncStatistics syncStatistics) {
+        super(uuid, platformId, channelContext, channelType, responseConverter, errorConverter, syncStatistics);
         this.command = command;
         this.sessionAware = sessionAware;
     }

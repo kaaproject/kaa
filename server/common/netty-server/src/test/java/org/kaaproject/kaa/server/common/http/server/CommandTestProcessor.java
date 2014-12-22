@@ -26,7 +26,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import org.kaaproject.kaa.server.common.server.BadRequestException;
-import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
+import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -42,8 +42,9 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 /**
  * @author Andrey Panasenko
  */
-public class CommandTestProcessor extends CommandProcessor {
+public class CommandTestProcessor extends AbstractCommand {
 
+    private static final String UNKNOWN = "unknown";
     protected static String TEST_COMMAND_NAME = "testCommand";
     public static String COMMAND_NAME = TEST_COMMAND_NAME;
 
@@ -121,5 +122,10 @@ public class CommandTestProcessor extends CommandProcessor {
 
     public static String getCommandName() {
         return  TEST_COMMAND_NAME;
+    }
+
+    @Override
+    public String getNextProtocol() {
+        return UNKNOWN;
     }
 }

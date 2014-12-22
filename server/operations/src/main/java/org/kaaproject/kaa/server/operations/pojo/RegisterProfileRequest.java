@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.operations.pojo;
 
 import java.util.Arrays;
 
-import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointVersionInfo;
 
 
 /**

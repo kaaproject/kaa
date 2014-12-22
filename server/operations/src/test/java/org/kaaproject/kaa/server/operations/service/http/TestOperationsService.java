@@ -24,19 +24,19 @@ import java.util.Vector;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.Notification;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
-import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.Notification;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationType;
+import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.Topic;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 
 /**
@@ -66,7 +66,7 @@ public class TestOperationsService implements OperationsService {
      * @see org.kaaproject.kaa.server.operations.service.EndpointService#sync(org.kaaproject.kaa.common.endpoint.gen.SyncRequest)
      */
     @Override
-    public SyncResponseHolder sync(SyncRequest request)
+    public SyncResponseHolder sync(ClientSync request)
             throws GetDeltaException {
 
         return sync(request, null);
@@ -76,10 +76,10 @@ public class TestOperationsService implements OperationsService {
      * @see org.kaaproject.kaa.server.operations.service.EndpointService#sync(org.kaaproject.kaa.common.endpoint.gen.SyncRequest)
      */
     @Override
-    public SyncResponseHolder sync(SyncRequest request, EndpointProfileDto profile)
+    public SyncResponseHolder sync(ClientSync request, EndpointProfileDto profile)
             throws GetDeltaException {
 
-        SyncResponse response = generateSyncResponse();
+        ServerSync response = generateSyncResponse();
         SyncResponseHolder holder = new SyncResponseHolder(response);
 
         return holder;
@@ -89,7 +89,7 @@ public class TestOperationsService implements OperationsService {
      * @see org.kaaproject.kaa.server.operations.service.EndpointService#updateSyncResponse(org.kaaproject.kaa.common.endpoint.gen.SyncResponse, java.util.List, java.lang.String)
      */
     @Override
-    public SyncResponse updateSyncResponse(SyncResponse response,
+    public ServerSync updateSyncResponse(ServerSync response,
             List<NotificationDto> notifications, String unicastNotificationId) {
         return null;
     }
@@ -98,8 +98,8 @@ public class TestOperationsService implements OperationsService {
      * Generate SyncResponse with random type
      * @return SyncResponse
      */
-    private SyncResponse generateSyncResponse() {
-        SyncResponse response = null;
+    private ServerSync generateSyncResponse() {
+        ServerSync response = null;
 
         int t = rnd.nextInt(5);
         switch (t) {
@@ -129,12 +129,12 @@ public class TestOperationsService implements OperationsService {
      * Generate redirection response with random DNS name with size 30 chars.
      * @return SyncResponse
      */
-    private SyncResponse generateRedirectionResponse() {
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.REDIRECT);
-        RedirectSyncResponse redirectResponse = new RedirectSyncResponse();
+    private ServerSync generateRedirectionResponse() {
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.REDIRECT);
+        RedirectServerSync redirectResponse = new RedirectServerSync();
         redirectResponse.setDnsName(MultipartObjects.getRandomString(30));
-        response.setRedirectSyncResponse(redirectResponse);
+        response.setRedirectSync(redirectResponse);
         return response;
     }
 
@@ -142,14 +142,14 @@ public class TestOperationsService implements OperationsService {
      * generate ConfResync type response with random Conf delta body size 4096 and Schema body with size 4096
      * @return SyncResponse
      */
-    private SyncResponse generateConfResyncResponse() {
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.SUCCESS);
-        ConfigurationSyncResponse confSyncResponse = new ConfigurationSyncResponse();
+    private ServerSync generateConfResyncResponse() {
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.SUCCESS);
+        ConfigurationServerSync confSyncResponse = new ConfigurationServerSync();
         confSyncResponse.setResponseStatus(SyncResponseStatus.RESYNC);
         confSyncResponse.setConfDeltaBody(ByteBuffer.wrap(HttpTestSyncClient.getRandomBytes(4096)));
         confSyncResponse.setConfSchemaBody(ByteBuffer.wrap(HttpTestSyncClient.getRandomBytes(4096)));
-        response.setConfigurationSyncResponse(confSyncResponse);
+        response.setConfigurationSync(confSyncResponse);
         return response;
     }
 
@@ -157,9 +157,9 @@ public class TestOperationsService implements OperationsService {
      * Generate Profile resync
      * @return SyncResponse
      */
-    private SyncResponse generateProfResyncResponse() {
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.PROFILE_RESYNC);
+    private ServerSync generateProfResyncResponse() {
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.PROFILE_RESYNC);
         return response;
     }
 
@@ -167,9 +167,9 @@ public class TestOperationsService implements OperationsService {
      * generate Delta response with possible Notification
      * @return SyncResponse
      */
-    private SyncResponse generateDeltaResponse() {
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.SUCCESS);
+    private ServerSync generateDeltaResponse() {
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.SUCCESS);
         if (rnd.nextBoolean()) {
             response = generateNotificationSyncResponse(response, SyncResponseStatus.DELTA);
         }
@@ -180,9 +180,9 @@ public class TestOperationsService implements OperationsService {
      * Generate No Delta response with possible Notification
      * @return SyncResponse
      */
-    private SyncResponse generateNoDeltaResponse() {
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.SUCCESS);
+    private ServerSync generateNoDeltaResponse() {
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.SUCCESS);
         if (rnd.nextBoolean()) {
             response = generateNotificationSyncResponse(response, SyncResponseStatus.NO_DELTA);
         }
@@ -194,8 +194,8 @@ public class TestOperationsService implements OperationsService {
      * @param response
      * @return SyncResponse
      */
-    private SyncResponse generateNotificationSyncResponse(SyncResponse response, SyncResponseStatus status) {
-        NotificationSyncResponse notificationSyncResponse = new NotificationSyncResponse();
+    private ServerSync generateNotificationSyncResponse(ServerSync response, SyncResponseStatus status) {
+        NotificationServerSync notificationSyncResponse = new NotificationServerSync();
         notificationSyncResponse.setResponseStatus(status);
         int topicListSize = rnd.nextInt(MAX_TOPIC_LIST_SIZE);
         List<Topic> topics = new Vector<>(topicListSize);
@@ -228,7 +228,7 @@ public class TestOperationsService implements OperationsService {
             notifications.add(notif);
         }
         notificationSyncResponse.setNotifications(notifications);
-        response.setNotificationSyncResponse(notificationSyncResponse);
+        response.setNotificationSync(notificationSyncResponse);
         return response;
     }
 
