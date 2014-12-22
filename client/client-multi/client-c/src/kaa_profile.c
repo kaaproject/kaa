@@ -197,9 +197,9 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 
     if (is_access_token_needed) {
         kaa_error_t err_code = kaa_status_get_endpoint_access_token(
-                                    self->status, &self->extension_data.access_token.buffer);
+                                    self->status, (const char **)&self->extension_data.access_token.buffer);
         if (!err_code) {
-            self->extension_data.access_token.size = strlen(self->extension_data.access_token.buffer);
+            self->extension_data.access_token.size = strlen((const char *) self->extension_data.access_token.buffer);
             *expected_size += sizeof(uint32_t); // access token length
             *expected_size += kaa_aligned_size_get(self->extension_data.access_token.size); // access token
         } else {

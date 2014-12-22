@@ -27,7 +27,6 @@
 #include "kaa_error.h"
 #include "kaa_context.h"
 #include "kaa_common.h"
-#include "gen/kaa_endpoint_gen.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +40,7 @@ typedef struct kaa_platform_protocol_t kaa_platform_protocol_t;
 /**
  * Buffer allocation callback
  */
-typedef const char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
+typedef char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
 
 /**
  * @brief Constructs a sync request for the specified list of services based on the current state of Kaa context and

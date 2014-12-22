@@ -196,9 +196,8 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
             return KAA_ERR_WRITE_FAILED;
 
 
-        uint16_t access_token_len_net = KAA_HTONS((uint16_t) self->user_info->user_access_token_len);
-        if (kaa_platform_message_write(writer, &access_token_len_net, sizeof(uint16_t)))
-            return KAA_ERR_WRITE_FAILED;
+        *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) self->user_info->user_access_token_len);
+        writer->current += sizeof(uint16_t);
 
         if (self->user_info->user_external_id_len) {
             if (kaa_platform_message_write_aligned(writer, self->user_info->user_external_id, self->user_info->user_external_id_len))
@@ -223,8 +222,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
     user_server_sync_field_t field = 0;
 
     while (remaining_length > 0) {
-        field_header = KAA_NTOHL(*((uint32_t *)(reader->begin + reader->read)));
-        reader->read += sizeof(uint32_t);
+        field_header = KAA_NTOHL(*((uint32_t *)reader->current));
+        reader->current += sizeof(uint32_t);
         remaining_length -= sizeof(uint32_t);
 
         field = (field_header >> 24) & 0xFF;

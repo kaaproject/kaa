@@ -41,21 +41,21 @@ extern "C" {
 
 typedef struct
 {
-    const char *buffer;
-    int64_t     total;
-    int64_t     used;
+    char       *start;
+    char       *current;
+    char       *end;
 } kaa_platform_message_writer_t;
 
 
 typedef struct {
-    const char *begin;
-    size_t read;
-    size_t total;
+    const char *start;
+    const char *current;
+    const char *end;
 } kaa_platform_message_reader_t;
 
 
 kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
-                                             , const char *buf
+                                             , char *buf
                                              , size_t len);
 
 void kaa_platform_message_writer_destroy(kaa_platform_message_writer_t* writer);
