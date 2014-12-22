@@ -159,13 +159,13 @@ public class AddEcfSchemaDialog extends KaaDialog implements ChangeHandler, HasE
 
     @Override
     public void clearError() {
-        errorPanel.setText("");
+        errorPanel.setMessage("");
         errorPanel.setVisible(false);
     }
 
     @Override
     public void setErrorMessage(String message) {
-        errorPanel.setText(message);
+        errorPanel.setMessage(message);
         errorPanel.setVisible(true);
     }
 

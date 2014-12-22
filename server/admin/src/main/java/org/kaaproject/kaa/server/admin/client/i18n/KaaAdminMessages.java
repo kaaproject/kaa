@@ -73,5 +73,16 @@ public interface KaaAdminMessages extends Messages {
     
     @DefaultMessage("You have unsaved changes on this form. If you navigate away from this page without first saving, all changes will be lost.")
     String detailsMayStopMessage();
+    
+    @DefaultMessage("Please enter existing username or email in order to reset password.")
+    String resetPasswordMessage();
+    
+    @DefaultMessage("Email has been sent with further instruction to reset your password.")
+    String resetPasswordLinkWasSent();
+
+    @DefaultMessage("Your password has been reset. You should receive mail with new temporary password.")
+    String passwordWasReset();
+
+
 
 }

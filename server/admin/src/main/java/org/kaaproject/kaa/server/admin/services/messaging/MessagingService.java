@@ -17,7 +17,9 @@
 package org.kaaproject.kaa.server.admin.services.messaging;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -34,6 +36,7 @@ import javax.mail.internet.MimeMessage;
 import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
 import org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties;
 import org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties;
+import org.kaaproject.kaa.server.admin.shared.util.UrlParams;
 import org.kaaproject.kaa.server.admin.shared.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,40 +157,16 @@ public class MessagingService {
         }
     }
 
-    public void sendPasswordAfterReset(final String username, final String password, final String email) {
+    public void sendPasswordResetLink(final String passwordResetHash, final String username, final String email) {
         try {
             callAsync(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    String subject =  messages.getMessage("tempPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
-                    String text = messages.getMessage("resetPasswordMailMessageBody", new Object[]{username, appBaseUrl, appName, password}, Locale.ENGLISH);
-                    MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
-                    MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
-                    try {
-                        helper.setFrom(mailFrom);
-                        helper.setTo(email);
-                        helper.setSubject(subject);
-                        helper.setText(text, true);
-                        kaaMessagingMailSender.send(helper.getMimeMessage());
-                    } catch (MessagingException e) {
-                        LOG.error("Unexpected error while sendPasswordAfterResetMail", e);
-                    }
-                    return null;
-                }
-            });
-        } catch (Exception e) {
-            LOG.error("Unexpected error while sendPasswordAfterResetMail", e);
-        }
-    }
-
-    public void sendPasswordResetLink(final String passwordReminderHash, final String username, final String email) {
-        try {
-            callAsync(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    String params = "#resetPassword=" + passwordReminderHash;
-                    String subject =  messages.getMessage("recoveryPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
-                    String text = messages.getMessage("recoveryPasswordMailMessageBody", new Object[]{username, appName, appBaseUrl+params}, Locale.ENGLISH);
+                    Map<String,String> paramsMap = new HashMap<>();
+                    paramsMap.put(UrlParams.RESET_PASSWORD, passwordResetHash);
+                    String params = "#" + UrlParams.generateParamsUrl(paramsMap);
+                    String subject =  messages.getMessage("resetPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
+                    String text = messages.getMessage("resetPasswordMailMessageBody", new Object[]{username, appName, appBaseUrl+params}, Locale.ENGLISH);
                     MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
                     MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
                     try {
@@ -204,6 +183,32 @@ public class MessagingService {
             });
         } catch (Exception e) {
             LOG.error("Unexpected error while sendPasswordResetLinkMail", e);
+        }
+    }
+
+    public void sendPasswordAfterReset(final String username, final String password, final String email) {
+        try {
+            callAsync(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    String subject =  messages.getMessage("passwordWasResetMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
+                    String text = messages.getMessage("passwordWasResetMailMessageBody", new Object[]{username, appBaseUrl, appName, password}, Locale.ENGLISH);
+                    MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
+                    MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
+                    try {
+                        helper.setFrom(mailFrom);
+                        helper.setTo(email);
+                        helper.setSubject(subject);
+                        helper.setText(text, true);
+                        kaaMessagingMailSender.send(helper.getMimeMessage());
+                    } catch (MessagingException e) {
+                        LOG.error("Unexpected error while sendPasswordAfterResetMail", e);
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            LOG.error("Unexpected error while sendPasswordAfterResetMail", e);
         }
     }
 
