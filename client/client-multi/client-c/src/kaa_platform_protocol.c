@@ -121,7 +121,7 @@ static kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_p
     payload_length += (is_token_needed ? sizeof(uint32_t) : 0);
     payload_length += (is_token_needed ? kaa_aligned_size_get(token_len) : 0);
 
-    kaa_error_t err_code = kaa_platform_message_extension_header_write(
+    kaa_error_t err_code = kaa_platform_message_write_extension_header(
                                 writer, KAA_META_DATA_EXTENSION_TYPE, options, payload_length);
     KAA_RETURN_IF_ERR(err_code);
 

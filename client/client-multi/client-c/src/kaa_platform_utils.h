@@ -68,7 +68,7 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
                                              , const void *data
                                              , size_t data_size);
 
-kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_writer_t* writer
+kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_writer_t* writer
                                                       , uint8_t extension_type
                                                       , uint32_t options
                                                       , uint32_t payload_size);

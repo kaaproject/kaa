@@ -168,7 +168,7 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     return KAA_ERR_BAD_STATE;
 }
 
-kaa_error_t kaa_profile_request_get_size(kaa_log_collector_t *self, size_t *expected_size)
+kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size)
 {
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL2(self->log_storage_status, self->log_properties, KAA_ERR_NOT_INITIALIZED);
@@ -195,7 +195,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     uint32_t total_size = sizeof(uint32_t);
     char *extension_header_size_p = writer->current + sizeof(uint32_t); // pointer for the extension size. Will be filled later.
-    if (kaa_platform_message_extension_header_write(writer, KAA_LOGGING_EXTENSION_TYPE, KAA_LOGGING_RECEIVE_UPDATES_FLAG, 0))
+    if (kaa_platform_message_write_extension_header(writer, KAA_LOGGING_EXTENSION_TYPE, KAA_LOGGING_RECEIVE_UPDATES_FLAG, 0))
         return KAA_ERR_WRITE_FAILED;
 
     if (!self->log_bucket_id && kaa_status_get_log_bucket_id(self->status, &self->log_bucket_id))

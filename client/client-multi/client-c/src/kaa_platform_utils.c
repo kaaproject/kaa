@@ -88,7 +88,7 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
 
 
 
-kaa_error_t kaa_platform_message_extension_header_write(kaa_platform_message_writer_t* writer
+kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_writer_t* writer
                                                       , uint8_t extension_type
                                                       , uint32_t options
                                                       , uint32_t payload_size)
