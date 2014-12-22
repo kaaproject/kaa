@@ -119,8 +119,7 @@ public class ResetPasswordDialog extends KaaDialog implements HasErrorMessage {
     }
 
     private boolean validate() {
-        boolean result = !isEmpty(usernameOrEmail.getValue());
-        return result;
+        return !isEmpty(usernameOrEmail.getValue());
     }
 
     private void validateUsernameOrEmail() {

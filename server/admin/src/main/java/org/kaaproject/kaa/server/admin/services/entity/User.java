@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 public class User {
+    
+    public static final int TEMPORARY_PASSWORD_LENGTH = 12;
 
     @Id
     @GeneratedValue

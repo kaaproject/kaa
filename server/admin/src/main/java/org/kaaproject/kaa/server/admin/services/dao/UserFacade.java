@@ -47,19 +47,20 @@ public class UserFacade {
         return user.getId();
     }
 
-    public CreateUserResult saveUserDto(UserDto userDto, PasswordEncoder passwordEncoder)
-            throws Exception {
+    public CreateUserResult saveUserDto(UserDto userDto,
+            PasswordEncoder passwordEncoder) throws Exception {
 
         User user = null;
         String generatedPassword = null;
-        if (userDto.getExternalUid() == null || userDto.getExternalUid().isEmpty()) {
+        if (userDto.getExternalUid() == null
+                || userDto.getExternalUid().isEmpty()) {
             user = new User();
-            generatedPassword = RandomStringUtils.randomAlphanumeric(12);
-            user.setPassword(passwordEncoder.encodePassword(generatedPassword, null));
+            generatedPassword = RandomStringUtils.randomAlphanumeric(User.TEMPORARY_PASSWORD_LENGTH);
+            user.setPassword(passwordEncoder.encodePassword(generatedPassword,
+                    null));
             user.setTempPassword(true);
             user.setEnabled(true);
-        }
-        else {
+        } else {
             user = findById(Long.valueOf(userDto.getExternalUid()));
         }
         Utils.checkNotNull(user);
@@ -70,10 +71,11 @@ public class UserFacade {
         user.setMail(userDto.getMail());
 
         if (authorityChanged(user.getAuthorities(), userDto.getAuthority())) {
-            if (user.getAuthorities() != null && user.getAuthorities().size()==1) {
-                user.getAuthorities().iterator().next().setAuthority(userDto.getAuthority().name());
-            }
-            else {
+            if (user.getAuthorities() != null
+                    && user.getAuthorities().size() == 1) {
+                user.getAuthorities().iterator().next()
+                        .setAuthority(userDto.getAuthority().name());
+            } else {
                 Authority authority = new Authority();
                 authority.setAuthority(userDto.getAuthority().name());
                 authority.setUser(user);
@@ -88,68 +90,83 @@ public class UserFacade {
         return result;
     }
 
-    private boolean authorityChanged(Collection<Authority> authorities, KaaAuthorityDto authority) {
-        if (authorities != null &&
-                authorities.size()==1 &&
-                authorities.iterator().next().getAuthority().equals(authority.name())) {
+    private boolean authorityChanged(Collection<Authority> authorities,
+            KaaAuthorityDto authority) {
+        if (authorities != null
+                && authorities.size() == 1
+                && authorities.iterator().next().getAuthority()
+                        .equals(authority.name())) {
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
 
     public List<User> getAll() {
-        return em.createQuery("SELECT u FROM User u", User.class).getResultList();
+        return em.createQuery("SELECT u FROM User u", User.class)
+                .getResultList();
     }
 
     public boolean isAuthorityExists(String authority) {
-        TypedQuery<Authority> query = em.createQuery("SELECT a FROM Authority a WHERE a.authority = :authority", Authority.class);
+        TypedQuery<Authority> query = em.createQuery(
+                "SELECT a FROM Authority a WHERE a.authority = :authority",
+                Authority.class);
         query.setParameter("authority", authority);
         List<Authority> resultList = query.getResultList();
         return !resultList.isEmpty();
     }
 
     public User findByUserName(String userName) {
-        TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
+        TypedQuery<User> query = em
+                .createQuery(
+                        "SELECT u FROM User u WHERE u.username = :username",
+                        User.class);
         query.setParameter("username", userName);
         List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty())
+        if (!resultList.isEmpty()) {
             return resultList.get(0);
-        else
+        } else {
             return null;
+        }
     }
 
     public User findById(Long id) {
-        TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class);
+        TypedQuery<User> query = em.createQuery(
+                "SELECT u FROM User u WHERE u.id = :id", User.class);
         query.setParameter("id", id);
         List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty())
+        if (!resultList.isEmpty()) {
             return resultList.get(0);
-        else
+        } else {
             return null;
+        }
     }
-    
+
     public User findByUsernameOrMail(String usernameOrMail) {
-        TypedQuery<User> query = 
-                em.createQuery("SELECT u FROM User u WHERE u.username = :usernameOrMail"
+        TypedQuery<User> query = em.createQuery(
+                "SELECT u FROM User u WHERE u.username = :usernameOrMail"
                         + " OR u.mail = :usernameOrMail", User.class);
         query.setParameter("usernameOrMail", usernameOrMail);
         List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty())
+        if (!resultList.isEmpty()) {
             return resultList.get(0);
-        else
+        } else {
             return null;
+        }
     }
-    
+
     public User findByPasswordResetHash(String passwordResetHash) {
-        TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.passwordResetHash = :passwordResetHash", User.class);
+        TypedQuery<User> query = em
+                .createQuery(
+                        "SELECT u FROM User u WHERE u.passwordResetHash = :passwordResetHash",
+                        User.class);
         query.setParameter("passwordResetHash", passwordResetHash);
         List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty())
+        if (!resultList.isEmpty()) {
             return resultList.get(0);
-        else
+        } else {
             return null;
+        }
     }
 
     public void deleteUser(Long id) {
@@ -162,35 +179,44 @@ public class UserFacade {
     public User checkUserNameOccupied(String userName, Long userId) {
         TypedQuery<User> query;
         if (userId != null) {
-            query = em.createQuery("SELECT u FROM User u WHERE u.username = :username AND u.id != :userId", User.class);
+            query = em
+                    .createQuery(
+                            "SELECT u FROM User u WHERE u.username = :username AND u.id != :userId",
+                            User.class);
             query.setParameter("userId", userId);
-        }
-        else {
-            query = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
+        } else {
+            query = em.createQuery(
+                    "SELECT u FROM User u WHERE u.username = :username",
+                    User.class);
         }
         query.setParameter("username", userName);
         List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty())
+        if (!resultList.isEmpty()) {
             return resultList.get(0);
-        else
+        } else {
             return null;
+        }
     }
 
     public User checkEmailOccupied(String mail, Long userId) {
         TypedQuery<User> query;
         if (userId != null) {
-            query = em.createQuery("SELECT u FROM User u WHERE u.mail = :mail AND u.id != :userId", User.class);
+            query = em
+                    .createQuery(
+                            "SELECT u FROM User u WHERE u.mail = :mail AND u.id != :userId",
+                            User.class);
             query.setParameter("userId", userId);
-        }
-        else {
-            query = em.createQuery("SELECT u FROM User u WHERE u.mail = :mail", User.class);
+        } else {
+            query = em.createQuery("SELECT u FROM User u WHERE u.mail = :mail",
+                    User.class);
         }
         query.setParameter("mail", mail);
         List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty())
+        if (!resultList.isEmpty()) {
             return resultList.get(0);
-        else
+        } else {
             return null;
+        }
     }
 
 }

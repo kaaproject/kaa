@@ -266,53 +266,54 @@ public class Login implements EntryPoint {
                 }
             });
         } catch (RequestException e) {
-            e.printStackTrace();
+            view.setErrorMessage(Utils.constants.general_error() + e.getMessage());
         }
     }
     
     private void checkPasswordReset(AsyncCallback<Void> callback) {
         if (historyParams.containsKey(UrlParams.RESET_PASSWORD)) {
-            String passwordResetHash = historyParams.get(UrlParams.RESET_PASSWORD);
+            String passwordResetHash = historyParams
+                    .get(UrlParams.RESET_PASSWORD);
             resetCurrentHistory();
-            if (!Utils.isBlank(passwordResetHash) && passwordResetHash.length()==128) {
+            if (!Utils.isBlank(passwordResetHash)
+                    && passwordResetHash.length() == UrlParams.PASSWORD_RESET_HASH_LENGTH) {
                 resetPassword(passwordResetHash, callback);
-            }
-            else {
+            } else {
                 callback.onSuccess(null);
             }
-        }
-        else {
+        } else {
             callback.onSuccess(null);
         }
     }
     
-    private void resetPassword(String passwordResetHash, final AsyncCallback<Void> callback) {
-        authService.resetPasswordByResetHash(passwordResetHash, new AsyncCallback<ResultCode>() {
+    private void resetPassword(String passwordResetHash,
+            final AsyncCallback<Void> callback) {
+        authService.resetPasswordByResetHash(passwordResetHash,
+                new AsyncCallback<ResultCode>() {
 
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onSuccess(null);
-            }
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        callback.onSuccess(null);
+                    }
 
-            @Override
-            public void onSuccess(ResultCode result) {
-                if (result == ResultCode.OK) {
-                    MessageDialog dialog = new MessageDialog(new MessageDialog.Listener() {
-                        @Override
-                        public void onOk() {
+                    @Override
+                    public void onSuccess(ResultCode result) {
+                        if (result == ResultCode.OK) {
+                            MessageDialog dialog = new MessageDialog(
+                                    new MessageDialog.Listener() {
+                                        @Override
+                                        public void onOk() {
+                                            callback.onSuccess(null);
+                                        }
+                                    }, Utils.constants.passwordWasReset(),
+                                    Utils.messages.passwordWasReset());
+                            dialog.show();
+                            dialog.center();
+                        } else {
                             callback.onSuccess(null);
                         }
-                    },
-                    Utils.constants.passwordWasReset(),
-                    Utils.messages.passwordWasReset());
-                    dialog.show();
-                    dialog.center();
-                }
-                else {
-                    callback.onSuccess(null);
-                }
-            }
-        });
+                    }
+                });
     }
     
 

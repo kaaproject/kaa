@@ -34,6 +34,7 @@ import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.admin.shared.util.UrlParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -179,7 +180,24 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
     public ResultCode checkUsernameOrEmailExists(String usernameOrEmail)
             throws Exception {
+        return checkUserAndEmailExists(userFacade.findByUsernameOrMail(usernameOrEmail));
+    }
+
+    @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
+    public ResultCode sendPasswordResetLinkByEmail(String usernameOrEmail)
+            throws Exception {
         User userEntity = userFacade.findByUsernameOrMail(usernameOrEmail);
+        ResultCode result = checkUserAndEmailExists(userEntity);
+        if (result == ResultCode.OK) {
+            String passwordResetHash = RandomStringUtils.randomAlphanumeric(UrlParams.PASSWORD_RESET_HASH_LENGTH);
+            userEntity.setPasswordResetHash(passwordResetHash);
+            userFacade.save(userEntity);
+            messagingService.sendPasswordResetLink(passwordResetHash, userEntity.getUsername(), userEntity.getMail());
+        }
+        return result;
+    }
+    
+    private ResultCode checkUserAndEmailExists(User userEntity) {
         if (userEntity == null) {
             return ResultCode.USER_OR_EMAIL_NOT_FOUND;
         } else if (isEmpty(userEntity.getMail())) {
@@ -187,22 +205,6 @@ public class KaaAuthServiceImpl implements KaaAuthService {
         } else {
             return ResultCode.OK;
         }
-    }
-
-    @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
-    public ResultCode sendPasswordResetLinkByEmail(String usernameOrEmail)
-            throws Exception {
-        User userEntity = userFacade.findByUsernameOrMail(usernameOrEmail);
-        if (userEntity == null) {
-            return ResultCode.USER_OR_EMAIL_NOT_FOUND;
-        } else if (isEmpty(userEntity.getMail())) {
-            return ResultCode.USER_EMAIL_NOT_DEFINED;
-        }
-        String passwordResetHash = RandomStringUtils.randomAlphanumeric(128);
-        userEntity.setPasswordResetHash(passwordResetHash);
-        userFacade.save(userEntity);
-        messagingService.sendPasswordResetLink(passwordResetHash, userEntity.getUsername(), userEntity.getMail());
-        return ResultCode.OK;
     }
 
     @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
@@ -215,7 +217,7 @@ public class KaaAuthServiceImpl implements KaaAuthService {
             return ResultCode.USER_EMAIL_NOT_DEFINED;
         }
         userEntity.setPasswordResetHash(null);
-        String generatedPassword = RandomStringUtils.randomAlphanumeric(12);
+        String generatedPassword = RandomStringUtils.randomAlphanumeric(User.TEMPORARY_PASSWORD_LENGTH);
         userEntity.setPassword(passwordEncoder.encodePassword(generatedPassword, null));
         userEntity.setTempPassword(true);
         userFacade.save(userEntity);
