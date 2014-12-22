@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -51,9 +49,8 @@ public class TopicsActivity extends AbstractListActivity<TopicDto, TopicsPlace> 
 
     @Override
     protected AbstractDataProvider<TopicDto> getDataProvider(
-            MultiSelectionModel<TopicDto> selectionModel,
-            AsyncCallback<List<TopicDto>> asyncCallback) {
-        return new TopicsDataProvider(selectionModel, asyncCallback, applicationId, null);
+            MultiSelectionModel<TopicDto> selectionModel) {
+        return new TopicsDataProvider(selectionModel, listView, applicationId, null);
     }
 
     @Override
@@ -85,7 +82,7 @@ public class TopicsActivity extends AbstractListActivity<TopicDto, TopicsPlace> 
                 new AsyncCallback<SendNotificationDialog>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        listView.setErrorMessage(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, listView);
                     }
 
                     @Override

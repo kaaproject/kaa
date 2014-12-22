@@ -222,7 +222,7 @@ public abstract class AbstractFieldWidget<T extends FormField> extends SimplePan
     }
     
     private Widget constructStringWidget(final StringField field, List<HandlerRegistration> handlerRegistrations) {
-        final SizedTextBox textBox = new SizedTextBox(sizedTextStyle, field.getMaxLength());
+        final SizedTextBox textBox = new SizedTextBox(sizedTextStyle, field.getInputType(), field.getMaxLength());
         textBox.setValue(field.getValue());
         handlerRegistrations.add(textBox.addInputHandler(new InputEventHandler() {
             @Override
@@ -275,8 +275,13 @@ public abstract class AbstractFieldWidget<T extends FormField> extends SimplePan
     
     private Widget constructEnumWidget(final EnumField field, List<HandlerRegistration> handlerRegistrations) {
         final FormEnumListBox enumBox = new FormEnumListBox();
+        if (!field.isOptional()) {
+            enumBox.setValue(field.getValue());
+        }        
         enumBox.setAcceptableValues(field.getEnumValues());
-        enumBox.setValue(field.getValue());
+        if (field.isOptional()) {
+            enumBox.setValue(field.getValue());
+        }
         handlerRegistrations.add(enumBox.addValueChangeHandler(new ValueChangeHandler<FormEnum>() {
             @Override
             public void onValueChange(ValueChangeEvent<FormEnum> event) {

@@ -106,7 +106,7 @@ public class TopicActivity
                 new AsyncCallback<SendNotificationDialog>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, detailsView);
                     }
 
                     @Override

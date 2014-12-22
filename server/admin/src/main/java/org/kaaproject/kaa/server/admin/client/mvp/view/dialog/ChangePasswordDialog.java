@@ -75,15 +75,15 @@ public class ChangePasswordDialog extends KaaDialog {
         dialogContents.setSpacing(4);
         setWidget(dialogContents);
 
+        errorPanel = new AlertPanel(AlertPanel.Type.ERROR);
+        errorPanel.setVisible(false);
+        dialogContents.add(errorPanel);
+
         if (message != null) {
             AlertPanel warningPanel = new AlertPanel(AlertPanel.Type.WARNING);
             warningPanel.setMessage(message);
             dialogContents.add(warningPanel);
         }
-
-        errorPanel = new AlertPanel(AlertPanel.Type.ERROR);
-        errorPanel.setVisible(false);
-        dialogContents.add(errorPanel);
 
         FlexTable table  = new FlexTable();
         table.setCellSpacing(6);
@@ -182,11 +182,11 @@ public class ChangePasswordDialog extends KaaDialog {
 
     private void setError(String error) {
         if (error!= null) {
-            errorPanel.setText(error);
+            errorPanel.setMessage(error);
             errorPanel.setVisible(true);
         }
         else {
-            errorPanel.setText("");
+            errorPanel.setMessage("");
             errorPanel.setVisible(false);
         }
     }

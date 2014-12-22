@@ -22,6 +22,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
@@ -33,9 +34,9 @@ public class ProfileFiltersDataProvider extends AbstractDataProvider<StructureRe
     private boolean includeDeprecated = false;
 
     public ProfileFiltersDataProvider(MultiSelectionModel<StructureRecordDto<ProfileFilterDto>> selectionModel,
-                                    AsyncCallback<List<StructureRecordDto<ProfileFilterDto>>> asyncCallback,
-                                    String endpointGroupId) {
-        super(selectionModel, asyncCallback);
+                                      HasErrorMessage hasErrorMessage,
+                                      String endpointGroupId) {
+        super(selectionModel, hasErrorMessage);
         this.endpointGroupId = endpointGroupId;
     }
 

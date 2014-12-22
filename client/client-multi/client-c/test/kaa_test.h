@@ -44,10 +44,13 @@
         CU_automated_run_tests(); \
 
 #define KAA_END_TEST_SUITE \
+        unsigned int failed_tests = CU_get_number_of_failure_records(); \
         CU_cleanup_registry(); \
-        return 0; \
+        return failed_tests; \
     }
 #else
+
+#warning "Unit tests will not generate xml reports. Install CUnit library (apt-get install libcunit or install from sources http://cunit.sourceforge.net/index.html)."
 
 #include <assert.h>
 #define __ASSERT(EXPRESSION)      assert(EXPRESSION)
@@ -70,22 +73,25 @@ typedef int (*cleanup_fn)(void);
 #define KAA_BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN)  \
     int main(int argc, char ** argv) \
     { \
+        int init_ret_code = 0; \
+        int cleanup_ret_code = 0; \
         init_fn init = INIT_FN; \
         cleanup_fn cleanup = CLEANUP_FN; \
         if (init != NULL) { \
-            init(); \
-        } \
+            init_ret_code = init(); \
+        }
 
 #define KAA_TEST_CASE(TEST_NAME, TEST_FN) \
-        TEST_FN();
+        if (!init_ret_code)  \
+            TEST_FN();
 
 #define KAA_RUN_TESTS
 
 #define KAA_END_TEST_SUITE \
         if (cleanup != NULL) { \
-            cleanup(); \
+            cleanup_ret_code = cleanup(); \
         } \
-        return 0; \
+        return (init_ret_code || cleanup_ret_code) ? -1 : 0; \
     }
 
 #endif

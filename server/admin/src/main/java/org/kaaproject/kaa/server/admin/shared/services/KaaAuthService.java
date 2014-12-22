@@ -34,5 +34,11 @@ public interface KaaAuthService extends RemoteService {
     ResultCode checkUserNameOccupied(String username, Long userId) throws Exception;
 
     ResultCode checkEmailOccupied(String email, Long userId) throws Exception;
+    
+    ResultCode checkUsernameOrEmailExists(String usernameOrEmail) throws Exception;
+    
+    ResultCode sendPasswordResetLinkByEmail(String usernameOrEmail) throws Exception;
+    
+    ResultCode resetPasswordByResetHash(String passwordResetHash) throws Exception;
 
 }

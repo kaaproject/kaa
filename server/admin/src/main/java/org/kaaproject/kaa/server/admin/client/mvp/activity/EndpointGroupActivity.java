@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
@@ -72,21 +70,21 @@ public class EndpointGroupActivity
         if (!create) {
             AbstractGrid<StructureRecordDto<ProfileFilterDto>, StructureRecordKey> profileFiltersGrid = detailsView.getProfileFiltersGrid();
             profileFiltersDataProvider = new ProfileFiltersDataProvider(profileFiltersGrid.getSelectionModel(),
-                            new DataLoadCallback<StructureRecordDto<ProfileFilterDto>>(detailsView), entityId);
+                    detailsView, entityId);
             profileFiltersDataProvider.setIncludeDeprecated(place.isIncludeDeprecatedProfileFilters());
 
             profileFiltersDataProvider.addDataDisplay(profileFiltersGrid.getDisplay());
 
             AbstractGrid<StructureRecordDto<ConfigurationDto>, StructureRecordKey> configurationsGrid = detailsView.getConfigurationsGrid();
             configurationsDataProvider = new ConfigurationsDataProvider(configurationsGrid.getSelectionModel(),
-                            new DataLoadCallback<StructureRecordDto<ConfigurationDto>>(detailsView), entityId);
+                    detailsView, entityId);
             configurationsDataProvider.setIncludeDeprecated(place.isIncludeDeprecatedConfigurations());
 
             configurationsDataProvider.addDataDisplay(configurationsGrid.getDisplay());
 
             AbstractGrid<TopicDto, String> topicsGrid = detailsView.getTopicsGrid();
             topicsDataProvider = new TopicsDataProvider(topicsGrid.getSelectionModel(),
-                    new DataLoadCallback<TopicDto>(detailsView), null, entityId);
+                    detailsView, null, entityId);
             topicsDataProvider.addDataDisplay(topicsGrid.getDisplay());
         }
     }
@@ -116,7 +114,7 @@ public class EndpointGroupActivity
                                 new AsyncCallback<Void>() {
                                       @Override
                                       public void onFailure(Throwable caught) {
-                                          detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                                          Utils.handleException(caught, detailsView);
                                       }
 
                                       @Override
@@ -159,7 +157,7 @@ public class EndpointGroupActivity
                                 new AsyncCallback<Void>() {
                                       @Override
                                       public void onFailure(Throwable caught) {
-                                          detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                                          Utils.handleException(caught, detailsView);
                                       }
 
                                       @Override
@@ -198,7 +196,7 @@ public class EndpointGroupActivity
                                  new AsyncCallback<Void>() {
                                        @Override
                                        public void onFailure(Throwable caught) {
-                                           detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                                           Utils.handleException(caught, detailsView);
                                        }
 
                                        @Override
@@ -285,7 +283,7 @@ public class EndpointGroupActivity
                 }
 
                 public void onFailure(Throwable caught) {
-                    detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                    Utils.handleException(caught, detailsView);
                 }
             });
     }
@@ -301,31 +299,12 @@ public class EndpointGroupActivity
         KaaAdmin.getDataSource().editEndpointGroup(entity, callback);
     }
 
-    class DataLoadCallback<T> implements AsyncCallback<List<T>> {
-
-        private EndpointGroupView view;
-
-        DataLoadCallback(EndpointGroupView view) {
-            this.view = view;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            view.setErrorMessage(Utils.getErrorMessage(caught));
-        }
-
-        @Override
-        public void onSuccess(List<T> result) {
-            view.clearError();
-        }
-    }
-
     private void addTopic() {
         AddTopicDialog.showAddTopicDialog(entityId,
                 new AsyncCallback<AddTopicDialog>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, detailsView);
                     }
 
                     @Override

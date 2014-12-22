@@ -34,11 +34,16 @@
             <outputDirectory>src</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/Modules</directory>
+            <outputDirectory>Modules</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>build.sh</include>
                 <include>CMakeLists.txt</include>
+                <include>sonar-project.properties.in</include>
             </includes>
         </fileSet>
     </fileSets>

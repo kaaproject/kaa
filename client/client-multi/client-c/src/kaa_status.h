@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include "kaa_error.h"
@@ -29,31 +26,30 @@ extern "C" {
 
 typedef struct kaa_status_t kaa_status_t;
 
-kaa_error_t kaa_create_status(kaa_status_t **);
-void        kaa_destroy_status(kaa_status_t *);
+kaa_error_t kaa_is_endpoint_registered(kaa_status_t *self, bool *result);
+kaa_error_t kaa_set_endpoint_registered(kaa_status_t *self, bool is_registered);
 
-bool        kaa_is_endpoint_registered(kaa_status_t *);
-kaa_error_t kaa_set_endpoint_registered(kaa_status_t *, bool);
+kaa_error_t kaa_is_endpoint_attached_to_user(kaa_status_t *self, bool *result);
+kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *self, bool is_attached);
 
-bool        kaa_is_endpoint_attached_to_user(kaa_status_t *);
-kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *, bool);
+kaa_error_t kaa_status_get_endpoint_access_token(kaa_status_t *self, const char **result);
+kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
-char *      kaa_status_get_endpoint_access_token(kaa_status_t *);
-kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *, const char *);
+kaa_error_t kaa_status_get_endpoint_public_key_hash(kaa_status_t *self, kaa_digest_p *result);
+kaa_error_t kaa_status_set_endpoint_public_key_hash(kaa_status_t *self, const kaa_digest hash);
 
-kaa_digest* kaa_status_get_endpoint_public_key_hash(kaa_status_t *);
-kaa_error_t kaa_status_set_endpoint_public_key_hash(kaa_status_t *, const kaa_digest);
+kaa_error_t kaa_status_get_profile_hash(kaa_status_t *self, kaa_digest_p *result);
+kaa_error_t kaa_status_set_profile_hash(kaa_status_t *self, const kaa_digest hash);
 
-kaa_digest* kaa_status_get_profile_hash(kaa_status_t *);
-kaa_error_t kaa_status_set_profile_hash(kaa_status_t *, const kaa_digest);
+kaa_error_t kaa_status_get_event_sequence_number(kaa_status_t *self, uint32_t *result);
+kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t *self, uint32_t seq_n);
 
-uint32_t    kaa_status_get_event_sequence_number(kaa_status_t*);
-kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t*, uint32_t);
+kaa_error_t kaa_status_get_log_bucket_id(kaa_status_t *self, uint32_t *result);
+kaa_error_t kaa_status_set_log_bucket_id(kaa_status_t *self, uint32_t id);
 
-uint32_t    kaa_status_get_log_bucket_id(kaa_status_t*);
-kaa_error_t kaa_status_set_log_bucket_id(kaa_status_t*, uint32_t);
+kaa_error_t kaa_status_save(kaa_status_t *self);
 
-kaa_error_t kaa_status_save(kaa_status_t *);
-
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* KAA_STATUS_H_ */

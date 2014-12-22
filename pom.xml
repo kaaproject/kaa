@@ -74,6 +74,7 @@ Copyright 2014 CyberVision, Inc.
 
         <slf4j.version>1.7.7</slf4j.version>
         <logback.version>1.1.2</logback.version>
+        <logback-ext-spring.version>0.1.2</logback-ext-spring.version>
 
         <metrics.version>3.1.0</metrics.version>
 
@@ -781,6 +782,11 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.logback-extensions</groupId>
+                <artifactId>logback-ext-spring</artifactId>
+                <version>${logback-ext-spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>

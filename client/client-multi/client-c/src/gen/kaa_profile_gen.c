@@ -14,62 +14,65 @@
  * limitations under the License.
  */
 
-#include "kaa_profile_gen.h"
+# include "kaa_profile_gen.h"
 
-#include <stdio.h>
-#include <string.h>
+# include <stdio.h>
+# include <string.h>
 
-#include "avro_src/avro/io.h"
-#include "avro_src/encoding.h"
+# include "avro_src/avro/io.h"
+# include "avro_src/encoding.h"
 
-#include "kaa_mem.h"
+# include "utilities/kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE
  */
 
-static void kaa_destroy_basic_endpoint_profile_test(void* data)
+
+static void kaa_profile_basic_endpoint_profile_test_destroy(void* data)
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
+    if (data) {
+        kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
 
-    KAA_FREE(record->profile_body);
-}
-static size_t kaa_get_size_basic_endpoint_profile_test(void* data)
-{
-    size_t record_size = 0;
-    kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
-
-    record_size += kaa_get_size_string(record->profile_body);
-
-    return record_size;
+        kaa_string_destroy(record->profile_body);
+        kaa_data_destroy(record);
+    }
 }
 
-static void kaa_serialize_basic_endpoint_profile_test(avro_writer_t writer, void* data)
+static void kaa_profile_basic_endpoint_profile_test_serialize(avro_writer_t writer, void* data)
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
+    if (data) {
+        kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
 
-    avro_binary_encoding.write_string(writer, record->profile_body);
+        kaa_string_serialize(writer, record->profile_body);
+    }
 }
 
-kaa_profile_basic_endpoint_profile_test_t* kaa_profile_create_basic_endpoint_profile_test()
+static size_t kaa_profile_basic_endpoint_profile_test_get_size(void* data)
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = KAA_MALLOC(kaa_profile_basic_endpoint_profile_test_t);
-    record->serialize = kaa_serialize_basic_endpoint_profile_test;
-    record->get_size = kaa_get_size_basic_endpoint_profile_test;
-    record->destroy = kaa_destroy_basic_endpoint_profile_test;
-    return record;
+    if (data) {
+        size_t record_size = 0;
+        kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
+
+        record_size += kaa_string_get_size(record->profile_body);
+
+        return record_size;
+    }
+
+    return 0;
 }
 
-kaa_profile_basic_endpoint_profile_test_t* kaa_deserialize_basic_endpoint_profile_test(avro_reader_t reader)
+kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create()
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = KAA_MALLOC(kaa_profile_basic_endpoint_profile_test_t);
-    record->serialize = kaa_serialize_basic_endpoint_profile_test;
-    record->get_size = kaa_get_size_basic_endpoint_profile_test;
-    record->destroy = kaa_destroy_basic_endpoint_profile_test;
-    
-    int64_t profile_body_size;
-    avro_binary_encoding.read_string(reader, &record->profile_body, &profile_body_size);
-        
+    kaa_profile_basic_endpoint_profile_test_t* record =
+            (kaa_profile_basic_endpoint_profile_test_t*)KAA_CALLOC(1, sizeof(kaa_profile_basic_endpoint_profile_test_t));
+
+    if (record) {
+        record->serialize = kaa_profile_basic_endpoint_profile_test_serialize;
+        record->get_size = kaa_profile_basic_endpoint_profile_test_get_size;
+        record->destroy = kaa_profile_basic_endpoint_profile_test_destroy;
+    }
+
     return record;
 }
 

@@ -18,8 +18,10 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity.grid;
 
 import java.util.List;
 
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -34,10 +36,10 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T>{
 
     private MultiSelectionModel<T> selectionModel;
 
-    public AbstractDataProvider(MultiSelectionModel<T> selectionModel, AsyncCallback<List<T>> asyncCallback)
+    public AbstractDataProvider(MultiSelectionModel<T> selectionModel, HasErrorMessage hasErrorMessage)
     {
         this.selectionModel = selectionModel;
-        callback = new LoadCallback(asyncCallback);
+        callback = new LoadCallback(hasErrorMessage);
     }
 
     public void addRow(T row) {
@@ -87,15 +89,15 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T>{
 
     public class LoadCallback {
 
-        private final AsyncCallback<List<T>> asyncCallback;
+        private HasErrorMessage hasErrorMessage;
 
-        public LoadCallback(AsyncCallback<List<T>> asyncCallback) {
-            this.asyncCallback = asyncCallback;
+        public LoadCallback(HasErrorMessage hasErrorMessage) {
+            this.hasErrorMessage = hasErrorMessage;
         }
 
         public void onFailure(Throwable caught) {
             GWT.log("AbstractDataProvider.LoadCallback.onFailure(caught):", caught);
-            asyncCallback.onFailure(caught);
+            Utils.handleException(caught, hasErrorMessage);
         }
 
         public void onSuccess(List<T> result, final HasData<T> display) {
@@ -103,7 +105,7 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T>{
             updateRowCount(data.size(), true);
             updateData(display);
             loaded = true;
-            asyncCallback.onSuccess(result);
+            hasErrorMessage.clearError();
         }
     }
 }

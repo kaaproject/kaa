@@ -257,6 +257,7 @@
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
+                            <includeScope>runtime</includeScope>
                         </configuration>
                     </execution>
                     <execution>
@@ -317,6 +318,9 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
+                    <excludes>
+                        <exclude>**/logback.xml</exclude>
+                    </excludes>	
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>

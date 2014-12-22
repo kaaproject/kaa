@@ -24,6 +24,8 @@ public class StringField extends SizedField {
 
     private String value;
     
+    private InputType inputType = InputType.PLAIN;
+    
     public StringField() {
         super();
     }
@@ -49,6 +51,14 @@ public class StringField extends SizedField {
     public void setValue(String value) {
         this.value = value;
     }
+    
+    public void setInputType(InputType inputType) {
+        this.inputType = inputType;
+    }
+    
+    public InputType getInputType() {
+        return inputType;
+    }
 
     @Override
     public FieldType getFieldType() {
@@ -71,6 +81,7 @@ public class StringField extends SizedField {
         StringField clonedStringField = (StringField)cloned;
         clonedStringField.defaultValue = defaultValue;
         clonedStringField.value = value;
+        clonedStringField.inputType = inputType;
     }
 
     @Override

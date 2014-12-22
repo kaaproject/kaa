@@ -16,22 +16,24 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
 import com.google.gwt.core.client.GWT;
+
 import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.kaa.server.common.avro.ui.shared.InputType;
 
 public class KaaAdminSizedTextBox extends SizedTextBox {
 
     private static KaaAdminSizedTextResources sizedTextResources = GWT.create(KaaAdminSizedTextResources.class);
 
     public KaaAdminSizedTextBox(int maxChars) {
-        super(sizedTextResources.sizedTextStyle(), maxChars);
+        super(sizedTextResources.sizedTextStyle(), InputType.PLAIN, maxChars);
     }
 
     public KaaAdminSizedTextBox(int maxChars, boolean editable, boolean addNotes) {
-        super(sizedTextResources.sizedTextStyle(), maxChars, editable, addNotes);
+        super(sizedTextResources.sizedTextStyle(), InputType.PLAIN, maxChars, editable, addNotes);
     }
 
     public KaaAdminSizedTextBox(int maxChars, boolean editable) {
-        super(sizedTextResources.sizedTextStyle(), maxChars, editable);
+        super(sizedTextResources.sizedTextStyle(), InputType.PLAIN, maxChars, editable);
     }
     
 }

@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "kaa_error.h"
-#define KAA_MAX_LOG_MESSAGE_LENGTH  256
+#define KAA_MAX_LOG_MESSAGE_LENGTH  512
 
 #ifdef __cplusplus
 extern "C" {
@@ -95,19 +95,28 @@ kaa_error_t kaa_log_destroy(kaa_logger_t *logger);
 /**
  * @brief Retrieves the current log level.
  *
- * @param[in]   this    Pointer to a logger.
+ * @param[in]   self    Pointer to a logger.
  * @return              Log level. Returns @link KAA_LOG_NONE @endlink if this is NULL.
  */
-kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *this);
+kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *self);
 
 /**
  * @brief Sets the maximum log level.
  *
- * @param[in]   this            Pointer to a logger.
+ * @param[in]   self            Pointer to a logger.
  * @param[in]   max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
  * @return                      Error code.
  */
-kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_level);
+kaa_error_t kaa_set_max_log_level(kaa_logger_t *self, kaa_log_level_t max_log_level);
+
+/**
+ * @brief Sets user sink for log output.
+ *
+ * @param[in]   self            Pointer to a logger.
+ * @param[in]   sink            Pointer to FILE structure where logs will be written to.
+ * @return                      Error code.
+ */
+kaa_error_t kaa_log_set_sink(kaa_logger_t *self, FILE *sink);
 
 /**
  * @brief Compiles a log message and puts it into the sink.
@@ -122,14 +131,14 @@ kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_le
  *
  * The log message gets truncated if it is longer than @c buffer_size specified to @link kaa_log_create @endlink.
  *
- * @param[in] this          Pointer to a logger.
+ * @param[in] self          Pointer to a logger.
  * @param[in] source_file   The source file that the message is logged from.
  * @param[in] lineno        The line number in the source file that the message is logged from.
  * @param[in] log_level     The message log level to log with.
  * @param[in] error_code    The message error code.
  * @param[in] format        The format of the message to log.
  */
-void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_log_level_t log_level
+void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_log_level_t log_level
         , kaa_error_t error_code, const char* format, ...);
 
 /*

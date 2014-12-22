@@ -93,30 +93,10 @@
         </property>
     </bean>
 	
-	
-	<bean id="kaaMessagingMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="#{properties[smtp_host]}"/>
-        <property name="port" value="#{properties[smtp_port]}"/>
-        <property name="username" value="#{properties[smtp_username]}"/>
-        <property name="password" value="#{properties[smtp_password]}"/>
-        <property name="javaMailProperties">
-            <props>
-                <prop key="mail.transport.protocol">#{properties[smtp_protocol]}</prop>
-                <prop key="mail.smtp.socketFactory.class">#{properties[smtp_socket_factory_class]}</prop>
-                <prop key="mail.smtp.auth">#{properties[smtp_auth]}</prop>
-                <prop key="mail.debug">true</prop>
-            </props>
-        </property>
-    </bean>
-	
     <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingService" init-method="init" destroy-method="destroy">
             <property name="sendPoolSize" value="10"/>
             <property name="sendTimeout" value="20"/>
-            <property name="appBaseUrl" value="#{properties[app_base_url]}"/>
-            <property name="appName" value="#{properties[app_name]}"/>
-            <property name="mailFrom" value="#{properties[mail_from]}"></property>
     </bean>
-		
 	
 	<bean id="kaaAuthService" class="org.kaaproject.kaa.server.admin.services.KaaAuthServiceImpl">
             <property name="passwordEncoder" ref="encoder"/>

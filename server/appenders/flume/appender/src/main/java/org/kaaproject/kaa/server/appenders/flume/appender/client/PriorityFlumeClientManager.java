@@ -98,6 +98,12 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
     public void sendEventToFlume(Event event) throws EventDeliveryException {
         sendEventToFlume(event, 1);
     }
+    
+    @Override
+    public void sendEventsToFlume(List<Event> events)
+            throws EventDeliveryException {
+        sendEventsToFlume(events, 1);
+    }
 
     private void sendEventToFlume(Event event, int retryCount) throws EventDeliveryException {
         try {
@@ -112,6 +118,24 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
                 sendEventToFlume(event, ++retryCount);
             } else {
                 LOG.warn("Flume event wasn't sent. Got exception {}", e);
+                throw e;
+            }
+        }
+    }
+    
+    private void sendEventsToFlume(List<Event> events, int retryCount) throws EventDeliveryException {
+        try {
+            LOG.debug("Sending flume events to flume agent {}", events);
+            currentClient.appendBatch(events);
+        } catch (EventDeliveryException e) {
+            LOG.warn("Can't send flume events. Got exception {}", e);
+            currentClient.close();
+            currentClient = getNextClient(false);
+            if (retryCount <= MAX_RETRY_COUNT) {
+                LOG.debug("Retry send flume events. Count {}", retryCount);
+                sendEventsToFlume(events, ++retryCount);
+            } else {
+                LOG.warn("Flume events wasn't sent. Got exception {}", e);
                 throw e;
             }
         }

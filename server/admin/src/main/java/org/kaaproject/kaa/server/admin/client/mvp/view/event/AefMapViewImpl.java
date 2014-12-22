@@ -130,7 +130,7 @@ public class AefMapViewImpl extends BaseDetailsViewImpl implements AefMapView {
         });
         
         Label ecfNameLabel = new Label(Utils.constants.ecfName());
-        ecfName = new SizedTextBox(-1, false);
+        ecfName = new KaaAdminSizedTextBox(-1, false);
         ecfName.setWidth("100%");
         detailsTable.setWidget(3, 0, ecfNameLabel);
         detailsTable.setWidget(3, 1, ecfName);
@@ -139,7 +139,7 @@ public class AefMapViewImpl extends BaseDetailsViewImpl implements AefMapView {
         ecfName.setVisible(!create);
 
         Label ecfVersionLabel = new Label(Utils.constants.ecfVersion());
-        ecfVersion = new SizedTextBox(-1, false);
+        ecfVersion = new KaaAdminSizedTextBox(-1, false);
         ecfVersion.setWidth("100%");
         detailsTable.setWidget(4, 0, ecfVersionLabel);
         detailsTable.setWidget(4, 1, ecfVersion);
