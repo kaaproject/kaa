@@ -28,9 +28,11 @@ extern "C" {
 #endif
 
 
-
+/*
+ * Standard error handling macros
+ */
 #define KAA_RETURN_IF_ERR(E) \
-    { if (!E) return E; }
+    { if (E) return E; }
 
 #define KAA_RETURN_IF_NIL(p, E) \
     { if (!(p)) return E; }
@@ -44,12 +46,13 @@ extern "C" {
 #define KAA_RETURN_IF_NIL4(p1, p2, p3, p4, E) \
     { if (!(p1) || !(p2) || !(p3) || !(p4)) return E; }
 
-
 #define KAA_RETURN_IF_NIL5(p1, p2, p3, p4, p5,E) \
     { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; }
 
 
-
+/**
+ * Types of Kaa platform services
+ */
 typedef enum {
     KAA_SERVICE_BOOTSTRAP = 0,
     KAA_SERVICE_PROFILE = 1,
@@ -60,12 +63,13 @@ typedef enum {
 
 
 
-/**
+/*
  * SHA1 hash
  */
 #define SHA_1_DIGEST_LENGTH 20
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
 typedef const unsigned char* kaa_digest_p;
+
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
 
