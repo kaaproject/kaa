@@ -38,9 +38,11 @@ extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_plat
 extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
 
 /** External event manager API */
+#ifndef KAA_DISABLE_FEATURE_EVENTS
 extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
 extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length, size_t request_id);
+#endif
 
 /** External profile API */
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
@@ -49,9 +51,11 @@ extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, ka
 extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
 
 /** External logging API */
-//extern kaa_error_t kaa_logging_compile_request(kaa_log_collector_t *self, kaa_log_sync_request_t **result);
-//extern kaa_error_t kaa_logging_handle_sync(kaa_log_collector_t *self, kaa_log_sync_response_t *response);
-
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
+extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
+extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
+#endif
 
 
 struct kaa_platform_protocol_t
@@ -355,7 +359,8 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
         case KAA_SERVICE_LOGGING: {
-            // TODO
+            err_code = kaa_logging_request_get_size(self->kaa_context->log_collector
+                                                , &extension_size);
             break;
         }
 #endif
@@ -413,6 +418,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
         case KAA_SERVICE_LOGGING: {
+            err_code = kaa_logging_request_serialize(self->kaa_context->log_collector, writer);
             break;
         }
 #endif
@@ -506,7 +512,10 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
         }
 #ifndef KAA_DISABLE_FEATURE_LOGGING
         case KAA_LOGGING_EXTENSION_TYPE: {
-            // TODO
+            error_code = kaa_logging_handle_server_sync(self->kaa_context->log_collector
+                                                    , reader
+                                                    , extension_options
+                                                    , extension_length);
             break;
         }
 #endif

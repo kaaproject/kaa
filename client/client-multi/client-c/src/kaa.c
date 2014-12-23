@@ -45,13 +45,17 @@ extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
 extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
+#ifndef KAA_DISABLE_FEATURE_EVENTS
 extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status
         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void        kaa_event_manager_destroy(kaa_event_manager_t *self);
+#endif
 
+#ifndef KAA_DISABLE_FEATURE_LOGGING
 extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa_status_t *status
         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
+#endif
 
 extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_logger_t *logger);
 extern void        kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
