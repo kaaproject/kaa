@@ -39,8 +39,7 @@ extern "C" {
 
 
 
-typedef struct
-{
+typedef struct {
     char       *begin;
     char       *current;
     char       *end;
@@ -52,6 +51,7 @@ typedef struct {
     const char *current;
     const char *end;
 } kaa_platform_message_reader_t;
+
 
 
 kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
@@ -77,8 +77,6 @@ kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_wri
                                                       , uint8_t extension_type
                                                       , uint32_t options
                                                       , uint32_t payload_size);
-
-const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer);
 
 
 
@@ -113,7 +111,7 @@ kaa_error_t kaa_platform_message_skip(kaa_platform_message_reader_t *reader, siz
 
 static inline size_t kaa_aligned_size_get(size_t size)
 {
-    return (size + (KAA_ALIGNMENT - (size % KAA_ALIGNMENT)));
+    return (size + (KAA_ALIGNMENT - (size % KAA_ALIGNMENT)) % KAA_ALIGNMENT);
 }
 
 

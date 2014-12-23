@@ -56,7 +56,7 @@ kaa_error_t kaa_platform_message_write(kaa_platform_message_writer_t* writer
 {
     KAA_RETURN_IF_NIL3(writer, data, data_size, KAA_ERR_BADPARAM);
 
-    if ((writer->current + data_size) < writer->end) {
+    if ((writer->current + data_size) <= writer->end) {
         memcpy((void *)writer->current, data, data_size);
         writer->current += data_size;
         return KAA_ERR_NONE;
@@ -74,11 +74,10 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
     KAA_RETURN_IF_NIL3(writer, data, data_size, KAA_ERR_BADPARAM);
 
     size_t aligned_size = kaa_aligned_size_get(data_size);
-    size_t alignment_length = aligned_size - data_size;
 
-    if ((writer->current + aligned_size) < writer->end) {
+    if ((writer->current + aligned_size) <= writer->end) {
         memcpy((void *)writer->current, data, data_size);
-        memset((void *)(writer->current + data_size), 0, alignment_length);
+        memset((void *)(writer->current + data_size), 0, (aligned_size - data_size));
         writer->current += aligned_size;
         return KAA_ERR_NONE;
     }
@@ -95,7 +94,7 @@ kaa_error_t kaa_platform_message_header_write(kaa_platform_message_writer_t* wri
 {
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
-    if ((writer->current + KAA_PROTOCOL_MESSAGE_HEADER_SIZE) < writer->end) {
+    if ((writer->current + KAA_PROTOCOL_MESSAGE_HEADER_SIZE) <= writer->end) {
         protocol_id = KAA_HTONL(protocol_id);
         protocol_version = KAA_HTONS(protocol_version);
         extension_count = KAA_HTONS(extension_count);
@@ -122,9 +121,8 @@ kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_wri
 {
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
-    if ((writer->current + KAA_EXTENSION_HEADER_SIZE) < writer->end) {
-        extension_type = KAA_HTONS(extension_type);
-        options = KAA_HTONL(options);
+    if ((writer->current + KAA_EXTENSION_HEADER_SIZE) <= writer->end) {
+        options = KAA_HTONL(options) >> 8;
         payload_size = KAA_HTONL(payload_size);
 
         memcpy((void *)writer->current, &extension_type, KAA_EXTENSION_TYPE_SIZE);
@@ -138,14 +136,6 @@ kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_wri
     }
 
     return KAA_ERR_WRITE_FAILED;
-}
-
-const char* kaa_platform_message_writer_get_buffer(kaa_platform_message_writer_t* writer)
-{
-    if (writer && writer->begin) {
-        return writer->begin;
-    }
-    return NULL;
 }
 
 kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
@@ -174,7 +164,7 @@ void kaa_platform_message_reader_destroy(kaa_platform_message_reader_t *reader)
 kaa_error_t kaa_platform_message_read(kaa_platform_message_reader_t *reader, void *buffer, size_t expected_size)
 {
     KAA_RETURN_IF_NIL3(reader, buffer, expected_size, KAA_ERR_BADPARAM);
-    if (reader->current + expected_size < reader->end) {
+    if (reader->current + expected_size <= reader->end) {
         memcpy(buffer, reader->current, expected_size);
         reader->current += expected_size;
         return KAA_ERR_NONE;
@@ -188,7 +178,7 @@ kaa_error_t kaa_platform_message_read_aligned(kaa_platform_message_reader_t *rea
 {
     KAA_RETURN_IF_NIL3(reader, buffer, expected_size, KAA_ERR_BADPARAM);
     size_t aligned_size = kaa_aligned_size_get(expected_size);
-    if (reader->current + aligned_size < reader->end) {
+    if (reader->current + aligned_size <= reader->end) {
         memcpy(buffer, reader->current, expected_size);
         reader->current += aligned_size;
         return KAA_ERR_NONE;
@@ -212,6 +202,7 @@ kaa_error_t kaa_platform_message_header_read(kaa_platform_message_reader_t* read
         reader->current += sizeof(uint16_t);
         *extension_count = KAA_NTOHS(*((const uint16_t *)reader->current));
         reader->current += sizeof(uint16_t);
+        return KAA_ERR_NONE;
     }
 
     return KAA_ERR_READ_FAILED;
@@ -226,14 +217,15 @@ kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_read
 {
     KAA_RETURN_IF_NIL4(reader, extension_type, extension_options, extension_payload_length, KAA_ERR_BADPARAM);
 
-    if (reader->current + KAA_EXTENSION_HEADER_SIZE < reader->end) {
-
-        uint32_t ext_l1 = KAA_NTOHL(*((const uint32_t *) reader->current));
-        *extension_type = (ext_l1 >> 24) & 0xff;
-        *extension_options = ext_l1 & 0xffffff;
-        *extension_payload_length = KAA_NTOHL(*((const uint32_t *) (reader->current + sizeof(uint32_t))));
-
-        reader->current += KAA_EXTENSION_HEADER_SIZE;
+    if (reader->current + KAA_EXTENSION_HEADER_SIZE <= reader->end) {
+        *extension_type = *((const uint8_t *) reader->current);
+        reader->current += KAA_EXTENSION_TYPE_SIZE;
+        memcpy(extension_options, reader->current, KAA_EXTENSION_OPTIONS_SIZE);
+        *extension_options = KAA_NTOHL(*extension_options) >> 8;
+        reader->current += KAA_EXTENSION_OPTIONS_SIZE;
+        *extension_payload_length = KAA_NTOHL(*((const uint32_t *)reader->current));
+        reader->current += KAA_EXTENSION_PAYLOAD_LENGTH_SIZE;
+        return KAA_ERR_NONE;
     }
 
     return KAA_ERR_READ_FAILED;
@@ -257,7 +249,7 @@ kaa_error_t kaa_platform_message_skip(kaa_platform_message_reader_t *reader, siz
 {
     KAA_RETURN_IF_NIL2(reader, size, KAA_ERR_BADPARAM);
 
-    if (reader->current + size < reader->end) {
+    if (reader->current + size <= reader->end) {
         reader->current += size;
         return KAA_ERR_NONE;
     }

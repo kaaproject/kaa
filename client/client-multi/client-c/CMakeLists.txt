@@ -109,6 +109,12 @@ configure_file (
                     "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties"
 )
 
+add_executable  (test_platform_utils
+                    test/test_platform_utils.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_platform_utils kaac crypto ${CUNIT_LIB_NAME})
+
 add_executable  (test_context
                     test/test_kaa_context.c
                     test/kaa_test_external.c
