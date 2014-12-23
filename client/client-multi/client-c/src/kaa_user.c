@@ -23,7 +23,6 @@
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
-#include "gen/kaa_endpoint_gen.h"
 
 #define KAA_USER_RECEIVE_UPDATES_FLAG   0x01
 
