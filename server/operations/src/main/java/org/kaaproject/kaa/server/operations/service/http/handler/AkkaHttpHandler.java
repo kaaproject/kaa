@@ -21,7 +21,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.util.UUID;
 
-import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
+import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 import org.kaaproject.kaa.server.common.server.http.DefaultHandler;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
@@ -72,9 +72,9 @@ public class AkkaHttpHandler extends DefaultHandler implements ResponseBuilder, 
      * org.kaaproject.kaa.server.common.http.server.CommandProcessor)
      */
     @Override
-    protected void channelRead0(final ChannelHandlerContext ctx, final CommandProcessor msg) throws Exception {
+    protected void channelRead0(final ChannelHandlerContext ctx, final AbstractCommand msg) throws Exception {
         this.command = (AbstractHttpSyncCommand) msg;
-        NettyHttpSyncMessage message = new NettyHttpSyncMessage(uuid, ctx, command.getChannelType(), command , this, this, command);
+        NettyHttpSyncMessage message = new NettyHttpSyncMessage(uuid, msg.getNextProtocol(), ctx, command.getChannelType(), command , this, this, command);
         LOG.trace("Forwarding {} to akka", message);
         akkaService.process(message);
     }

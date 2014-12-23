@@ -26,9 +26,9 @@ public class NettySessionInfoTest {
     public void equalsHashCode(){
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
-        NettySessionInfo info1 = new NettySessionInfo(uuid1, null, null, null, null, null, 0, false);
-        NettySessionInfo info2 = new NettySessionInfo(uuid1, null, null, null, null, null, 0, false);
-        NettySessionInfo info3 = new NettySessionInfo(uuid2, null, null, null, null, null, 0, false);
+        NettySessionInfo info1 = new NettySessionInfo(uuid1, null, null, null, null, null, null, 0, false);
+        NettySessionInfo info2 = new NettySessionInfo(uuid1, null, null, null, null, null, null, 0, false);
+        NettySessionInfo info3 = new NettySessionInfo(uuid2, null, null, null, null, null, null, 0, false);
         Assert.assertEquals(info1, info2);
         Assert.assertEquals(info1.hashCode(), info2.hashCode());
         Assert.assertNotEquals(info1, info3);

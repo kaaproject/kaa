@@ -22,11 +22,12 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
@@ -44,13 +45,14 @@ import akka.actor.Scheduler;
 public class EndpointActorMessageProcessorTest {
 
     @Test
-    public void noChannelsForEventsTest(){
+    public void noChannelsForEventsTest() {
         OperationsService osMock = Mockito.mock(OperationsService.class);
         ActorContext ctxMock = Mockito.mock(ActorContext.class);
         ActorRef appActorMock = Mockito.mock(ActorRef.class);
         Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash.fromSHA1("key"), "actorKey"));
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+                .fromSHA1("key"), "actorKey"));
         EndpointEventReceiveMessage msg = Mockito.mock(EndpointEventReceiveMessage.class);
 
         Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
@@ -59,13 +61,14 @@ public class EndpointActorMessageProcessorTest {
     }
 
     @Test
-    public void actorTimeoutTest(){
+    public void actorTimeoutTest() {
         OperationsService osMock = Mockito.mock(OperationsService.class);
         ActorContext ctxMock = Mockito.mock(ActorContext.class);
         ActorRef appActorMock = Mockito.mock(ActorRef.class);
         Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash.fromSHA1("key"), "actorKey"));
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+                .fromSHA1("key"), "actorKey"));
         ActorTimeoutMessage msg = new ActorTimeoutMessage(System.currentTimeMillis());
 
         Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
@@ -74,13 +77,14 @@ public class EndpointActorMessageProcessorTest {
     }
 
     @Test
-    public void actorTimeoutNegativeTest(){
+    public void actorTimeoutNegativeTest() {
         OperationsService osMock = Mockito.mock(OperationsService.class);
         ActorContext ctxMock = Mockito.mock(ActorContext.class);
         ActorRef appActorMock = Mockito.mock(ActorRef.class);
         Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash.fromSHA1("key"), "actorKey"));
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+                .fromSHA1("key"), "actorKey"));
         ActorTimeoutMessage msg = new ActorTimeoutMessage(-1);
 
         Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
@@ -89,20 +93,21 @@ public class EndpointActorMessageProcessorTest {
     }
 
     @Test
-    public void processDisconnectMessageTest(){
+    public void processDisconnectMessageTest() {
         OperationsService osMock = Mockito.mock(OperationsService.class);
         ActorContext ctxMock = Mockito.mock(ActorContext.class);
         ActorRef appActorMock = Mockito.mock(ActorRef.class);
         Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash.fromSHA1("key"), "actorKey"));
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+                .fromSHA1("key"), "actorKey"));
         ChannelAware msg = Mockito.mock(ChannelAware.class);
 
         Assert.assertFalse(processor.processDisconnectMessage(ctxMock, msg));
     }
 
     @Test
-    public void processDisconnectMessageExistingChannelTest() throws GetDeltaException{
+    public void processDisconnectMessageExistingChannelTest() throws GetDeltaException {
         OperationsService osMock = Mockito.mock(OperationsService.class);
         ActorContext ctxMock = Mockito.mock(ActorContext.class);
         ActorSystem systemMock = Mockito.mock(ActorSystem.class);
@@ -112,7 +117,7 @@ public class EndpointActorMessageProcessorTest {
         Mockito.when(systemMock.scheduler()).thenReturn(schedulerMock);
 
         SyncResponseHolder responseHolder = Mockito.mock(SyncResponseHolder.class);
-        Mockito.when(osMock.sync(Mockito.any(SyncRequest.class), Mockito.any(EndpointProfileDto.class))).thenReturn(responseHolder);
+        Mockito.when(osMock.sync(Mockito.any(ClientSync.class), Mockito.any(EndpointProfileDto.class))).thenReturn(responseHolder);
 
         final UUID channelId = UUID.randomUUID();
         SyncRequestMessage message = Mockito.mock(SyncRequestMessage.class);
@@ -120,13 +125,17 @@ public class EndpointActorMessageProcessorTest {
         Mockito.when(message.getChannelType()).thenReturn(ChannelType.TCP);
         Mockito.when(message.getChannelUuid()).thenReturn(channelId);
         Mockito.when(message.getChannelContext()).thenReturn(channelCtx);
-        Mockito.when(message.getSession()).thenReturn(new NettySessionInfo(channelId, channelCtx, ChannelType.TCP, null, EndpointObjectHash.fromSHA1("key"), "APP_TOKEN", 1000, true));
+        Mockito.when(message.getSession()).thenReturn(
+                new NettySessionInfo(channelId, AvroEncDec.AVRO_ENC_DEC_ID, channelCtx, ChannelType.TCP, null, EndpointObjectHash
+                        .fromSHA1("key"), "APP_TOKEN", 1000, true));
         Mockito.when(message.getCommand()).thenReturn(Mockito.mock(Request.class));
         Mockito.when(message.getOriginator()).thenReturn(Mockito.mock(ActorRef.class));
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash.fromSHA1("key"), "actorKey"));
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+                .fromSHA1("key"), "actorKey"));
 
-        Mockito.doNothing().when(processor).tellActor(Mockito.any(ActorContext.class), Mockito.any(ActorRef.class), Mockito.any(Object.class));
+        Mockito.doNothing().when(processor)
+                .tellActor(Mockito.any(ActorContext.class), Mockito.any(ActorRef.class), Mockito.any(Object.class));
 
         processor.processEndpointSync(ctxMock, message);
 

@@ -40,7 +40,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
 import org.kaaproject.kaa.server.common.server.BadRequestException;
-import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
+import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 
 /**
  * ResolveCommand Class.
@@ -64,7 +64,9 @@ import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
  * @author Andrey Panasenko
  *
  */
-public class ResolveCommand extends CommandProcessor implements CommonBSConstants {
+public class ResolveCommand extends AbstractCommand implements CommonBSConstants {
+
+    private static final String UNKNOWN = "unknown";
 
     static {
         COMMAND_NAME = BOOTSTRAP_RESOLVE_COMMAND;
@@ -172,5 +174,10 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
      */
     public static String getCommandName() {
         return COMMAND_NAME;
+    }
+
+    @Override
+    public String getNextProtocol() {
+        return UNKNOWN;
     }
 }

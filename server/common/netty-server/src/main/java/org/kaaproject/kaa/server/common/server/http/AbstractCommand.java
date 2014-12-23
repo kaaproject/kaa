@@ -27,9 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CommandProcessor abstract Class.
+ * AbstractCommand abstract Class.
  * Implements some base setters and getters and define abstract processing flow.
- * CommandProcessor implements callable interface and used from DefaultHandler to
+ * AbstractCommand implements callable interface and used from DefaultHandler to
  * decode HTTP request, process command in Executor and encode HTTP response.
  * Following flow is applied:
  * parse() - decode HTTP request in Netty inbound pipeline flow
@@ -38,10 +38,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Andrey Panasenko
  */
-public abstract class CommandProcessor implements Callable<CommandProcessor>, KaaCommandProcessor<HttpRequest, HttpResponse> {
+public abstract class AbstractCommand implements Callable<AbstractCommand>, KaaCommandProcessor<HttpRequest, HttpResponse> {
 
     protected static final Logger LOG = LoggerFactory //NOSONAR
-            .getLogger(CommandProcessor.class);
+            .getLogger(AbstractCommand.class);
 
     protected static String COMMAND_NAME = "";
 
@@ -111,7 +111,7 @@ public abstract class CommandProcessor implements Callable<CommandProcessor>, Ka
     /**
      * Default CommandProcessor Class constructor.
      */
-    public CommandProcessor() {
+    public AbstractCommand() {
 
     }
 
@@ -148,7 +148,7 @@ public abstract class CommandProcessor implements Callable<CommandProcessor>, Ka
     public abstract boolean isNeedConnectionClose();
 
     @Override
-    public CommandProcessor call() throws Exception {
+    public AbstractCommand call() throws Exception {
         LOG.trace("{} : Process start", getCommandName());
         process();
         LOG.trace("{}: Process finish", getCommandName());
@@ -184,5 +184,7 @@ public abstract class CommandProcessor implements Callable<CommandProcessor>, Ka
     public void setSyncTime(long syncTime) {
         this.syncTime = syncTime;
     }
+    
+    public abstract String getNextProtocol();
 
 }

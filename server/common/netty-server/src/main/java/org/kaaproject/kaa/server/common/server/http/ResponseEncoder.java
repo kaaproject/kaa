@@ -48,7 +48,7 @@ public class ResponseEncoder extends ChannelOutboundHandlerAdapter {
             ChannelPromise promise) throws Exception {
         Attribute<UUID> sessionUuidAttr = ctx.channel().attr(NettyHttpServer.UUID_KEY);
 
-        if (!(msg instanceof CommandProcessor)) {
+        if (!(msg instanceof AbstractCommand)) {
             LOG.warn("Session [{}] got invalid HTTP response: {}", sessionUuidAttr, msg);
             super.write(ctx, msg, promise);
             return;
@@ -56,7 +56,7 @@ public class ResponseEncoder extends ChannelOutboundHandlerAdapter {
             LOG.trace("Session [{}] got valid HTTP response: {}", sessionUuidAttr, msg);
         }
 
-        CommandProcessor cp = (CommandProcessor) msg;
+        AbstractCommand cp = (AbstractCommand) msg;
 
         Attribute<Track> sessionTrackAttr = ctx.channel().attr(NettyHttpServer.TRACK_KEY);
 

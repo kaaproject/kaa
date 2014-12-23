@@ -21,112 +21,112 @@ import static org.junit.Assert.assertFalse;
 import java.util.ArrayList;
 
 import org.junit.Test;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
-import org.kaaproject.kaa.common.endpoint.gen.Event;
-import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.Event;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.LogServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
 
 public class SyncResponseHolderTest {
 
 
     @Test
     public void requireReplyTestForProfile(){
-        SyncResponse response = new SyncResponse();
-        response.setProfileSyncResponse(new ProfileSyncResponse());
-        response.getProfileSyncResponse().setResponseStatus(SyncResponseStatus.NO_DELTA);
+        ServerSync response = new ServerSync();
+        response.setProfileSync(new ProfileServerSync());
+        response.getProfileSync().setResponseStatus(SyncResponseStatus.NO_DELTA);
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getProfileSyncResponse().setResponseStatus(SyncResponseStatus.DELTA);
+        response.getProfileSync().setResponseStatus(SyncResponseStatus.DELTA);
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForConfig(){
-        SyncResponse response = new SyncResponse();
-        response.setConfigurationSyncResponse(new ConfigurationSyncResponse());
-        response.getConfigurationSyncResponse().setResponseStatus(SyncResponseStatus.NO_DELTA);
+        ServerSync response = new ServerSync();
+        response.setConfigurationSync(new ConfigurationServerSync());
+        response.getConfigurationSync().setResponseStatus(SyncResponseStatus.NO_DELTA);
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getConfigurationSyncResponse().setResponseStatus(SyncResponseStatus.DELTA);
+        response.getConfigurationSync().setResponseStatus(SyncResponseStatus.DELTA);
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForNotification(){
-        SyncResponse response = new SyncResponse();
-        response.setNotificationSyncResponse(new NotificationSyncResponse());
-        response.getNotificationSyncResponse().setResponseStatus(SyncResponseStatus.NO_DELTA);
+        ServerSync response = new ServerSync();
+        response.setNotificationSync(new NotificationServerSync());
+        response.getNotificationSync().setResponseStatus(SyncResponseStatus.NO_DELTA);
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getNotificationSyncResponse().setResponseStatus(SyncResponseStatus.DELTA);
+        response.getNotificationSync().setResponseStatus(SyncResponseStatus.DELTA);
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForEvents(){
-        SyncResponse response = new SyncResponse();
-        response.setEventSyncResponse(new EventSyncResponse());
+        ServerSync response = new ServerSync();
+        response.setEventSync(new EventServerSync());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getEventSyncResponse().setEvents(new ArrayList<Event>());
+        response.getEventSync().setEvents(new ArrayList<Event>());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getEventSyncResponse().getEvents().add(new Event());
+        response.getEventSync().getEvents().add(new Event());
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 
 
     @Test
     public void requireReplyTestForEventListeners(){
-        SyncResponse response = new SyncResponse();
-        response.setEventSyncResponse(new EventSyncResponse());
+        ServerSync response = new ServerSync();
+        response.setEventSync(new EventServerSync());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getEventSyncResponse().setEventListenersResponses(new ArrayList<EventListenersResponse>());
+        response.getEventSync().setEventListenersResponses(new ArrayList<EventListenersResponse>());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getEventSyncResponse().getEventListenersResponses().add(new EventListenersResponse());
+        response.getEventSync().getEventListenersResponses().add(new EventListenersResponse());
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForUserAttach(){
-        SyncResponse response = new SyncResponse();
-        response.setUserSyncResponse(new UserSyncResponse());
+        ServerSync response = new ServerSync();
+        response.setUserSync(new UserServerSync());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getUserSyncResponse().setUserAttachResponse(new UserAttachResponse());
+        response.getUserSync().setUserAttachResponse(new UserAttachResponse());
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForEndpointAttach(){
-        SyncResponse response = new SyncResponse();
-        response.setUserSyncResponse(new UserSyncResponse());
+        ServerSync response = new ServerSync();
+        response.setUserSync(new UserServerSync());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getUserSyncResponse().setEndpointAttachResponses(new ArrayList<EndpointAttachResponse>());
+        response.getUserSync().setEndpointAttachResponses(new ArrayList<EndpointAttachResponse>());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getUserSyncResponse().getEndpointAttachResponses().add(new EndpointAttachResponse());
+        response.getUserSync().getEndpointAttachResponses().add(new EndpointAttachResponse());
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForEndpointDetach(){
-        SyncResponse response = new SyncResponse();
-        response.setUserSyncResponse(new UserSyncResponse());
+        ServerSync response = new ServerSync();
+        response.setUserSync(new UserServerSync());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getUserSyncResponse().setEndpointDetachResponses(new ArrayList<EndpointDetachResponse>());
+        response.getUserSync().setEndpointDetachResponses(new ArrayList<EndpointDetachResponse>());
         assertFalse(new SyncResponseHolder(response).requireImmediateReply());
-        response.getUserSyncResponse().getEndpointDetachResponses().add(new EndpointDetachResponse());
+        response.getUserSync().getEndpointDetachResponses().add(new EndpointDetachResponse());
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForLogs(){
-        SyncResponse response = new SyncResponse();
-        response.setLogSyncResponse(new LogSyncResponse());
+        ServerSync response = new ServerSync();
+        response.setLogSync(new LogServerSync());
         assertTrue(new SyncResponseHolder(response).requireImmediateReply());
     }
 }
