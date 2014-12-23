@@ -44,6 +44,7 @@ extern "C" {
 #define KAA_RETURN_IF_NIL4(p1, p2, p3, p4, E) \
     { if (!(p1) || !(p2) || !(p3) || !(p4)) return E; }
 
+
 #define KAA_RETURN_IF_NIL5(p1, p2, p3, p4, p5,E) \
     { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; }
 
