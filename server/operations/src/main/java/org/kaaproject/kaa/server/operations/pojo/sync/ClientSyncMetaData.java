@@ -90,7 +90,7 @@ public class ClientSyncMetaData {
     /**
      * Gets the value of the 'timeout' field.
      */
-    public Long getTimeout() {
+    public long getTimeout() {
         return timeout;
     }
 

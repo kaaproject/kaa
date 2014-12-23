@@ -489,7 +489,7 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getConfigurationSync().getAppStateSeqNumber());
+        Assert.assertEquals(APPLICATION_SEQ_NUMBER, response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());

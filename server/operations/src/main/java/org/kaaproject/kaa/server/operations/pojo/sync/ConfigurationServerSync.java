@@ -30,7 +30,7 @@ public class ConfigurationServerSync {
     /**
      * All-args constructor.
      */
-    public ConfigurationServerSync(Integer appStateSeqNumber, SyncResponseStatus responseStatus, ByteBuffer confSchemaBody,
+    public ConfigurationServerSync(int appStateSeqNumber, SyncResponseStatus responseStatus, ByteBuffer confSchemaBody,
             ByteBuffer confDeltaBody) {
         this.appStateSeqNumber = appStateSeqNumber;
         this.responseStatus = responseStatus;
@@ -41,7 +41,7 @@ public class ConfigurationServerSync {
     /**
      * Gets the value of the 'appStateSeqNumber' field.
      */
-    public Integer getAppStateSeqNumber() {
+    public int getAppStateSeqNumber() {
         return appStateSeqNumber;
     }
 
@@ -51,7 +51,7 @@ public class ConfigurationServerSync {
      * @param value
      *            the value to set.
      */
-    public void setAppStateSeqNumber(Integer value) {
+    public void setAppStateSeqNumber(int value) {
         this.appStateSeqNumber = value;
     }
 
