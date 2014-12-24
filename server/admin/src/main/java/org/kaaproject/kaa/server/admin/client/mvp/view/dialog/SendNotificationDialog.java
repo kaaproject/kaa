@@ -47,6 +47,8 @@ import com.google.gwt.user.datepicker.client.DateBox;
 
 public class SendNotificationDialog extends KaaDialog implements ChangeHandler, ValueChangeHandler<SchemaDto>, HasErrorMessage {
 
+    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+
     private AlertPanel errorPanel;
 
     private SchemaListBox notificationSchema;
@@ -100,7 +102,7 @@ public class SendNotificationDialog extends KaaDialog implements ChangeHandler, 
         int row=0;
 
         Widget label = new Label(Utils.constants.notificationSchema());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         notificationSchema = new SchemaListBox();
         notificationSchema.setWidth("80px");
         notificationSchema.setAcceptableValues(notificationSchemas);
@@ -122,7 +124,7 @@ public class SendNotificationDialog extends KaaDialog implements ChangeHandler, 
 
 
         label = new Label(Utils.constants.selectNotificationFile());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         notificationFileUpload = new FileUploadForm();
         notificationFileUpload.setWidth("200px");
 

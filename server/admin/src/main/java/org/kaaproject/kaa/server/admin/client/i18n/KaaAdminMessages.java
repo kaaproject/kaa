@@ -50,8 +50,8 @@ public interface KaaAdminMessages extends Messages {
     @DefaultMessage("Unassign notification topic")
     String removeTopicFromEndpointGroupTitle();
 
-    @DefaultMessage("Fields marked with <span class=\"required\"></span> needs to be filled before saving.")
-    String requiredFieldsNote();
+    @DefaultMessage("Fields marked with <span class=\"{0}\"></span> needs to be filled before saving.")
+    String requiredFieldsNote(String requiredFieldClass);
 
     @DefaultMessage("<h1 title=\"Please login\">Please login</h1>")
     String loginTitle();

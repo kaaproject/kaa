@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.navigation;
 
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
@@ -33,7 +35,8 @@ public class NavigationViewImpl extends Composite implements NavigationView {
     interface NavigationViewImplUiBinder extends UiBinder<Widget, NavigationViewImpl> { }
     private static NavigationViewImplUiBinder uiBinder = GWT.create(NavigationViewImplUiBinder.class);
 
-    @UiField(provided = true) CellTree menuTree;
+    @UiField(provided = true) final CellTree menuTree;
+    @UiField(provided = true) final KaaAdminStyle kaaAdminStyle;
 
     private Presenter presenter;
 
@@ -42,6 +45,7 @@ public class NavigationViewImpl extends Composite implements NavigationView {
     public NavigationViewImpl() {
         treeModel = new NavigationTreeViewModel();
         menuTree = new CellTree(treeModel, null);
+        kaaAdminStyle = Utils.kaaAdminStyle;
 
         initWidget(uiBinder.createAndBindUi(this));
     }

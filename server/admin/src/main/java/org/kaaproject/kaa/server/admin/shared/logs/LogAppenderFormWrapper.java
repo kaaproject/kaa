@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
+import org.kaaproject.avro.ui.shared.RecordField;
 
 public class LogAppenderFormWrapper implements HasId, Serializable {
 

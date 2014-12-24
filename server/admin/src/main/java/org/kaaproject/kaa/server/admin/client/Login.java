@@ -106,8 +106,7 @@ public class Login implements EntryPoint {
 
     public void showLogin(){
         injectThemeStyleSheet();
-        resources.css().ensureInjected();
-        
+        Utils.injectKaaStyles();
         checkPasswordReset(new AsyncCallback<Void>() {
             @Override
             public void onSuccess(Void result) {

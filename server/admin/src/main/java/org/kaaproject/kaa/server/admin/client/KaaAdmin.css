@@ -204,11 +204,6 @@ button::-moz-focus-inner
     padding-left: 30px;
 }
 
-.b-app-buttons-panel {
-    padding-left: 20px;
-    border-spacing: 15px;
-}
-
 .b-app-content-title {
     font-family: Arial;
     font-size: 18px;
@@ -229,12 +224,6 @@ button::-moz-focus-inner
     font-size: 13px;
     color: #666666;
     padding-left: 35px;
-}
-
-.b-app-field-notes {
-    font-family: Arial;
-    font-size: 13px;
-    color: #666666;
 }
 
 .b-app-content-details-table {
@@ -262,47 +251,6 @@ button::-moz-focus-inner
 
 .b-app-content-details-table .secondary {
     font-weight: normal;
-}
-
-.required:after {
-    content: " *";
-    font-size: 16px;
-    color: #CC0000;
-    font-weight: bold;
-}
-
-.b-app-content-details-table input, textarea {
-  display: inline-block;
-  height: 18px;
-  padding: 4px;
-  margin-bottom: 4px;
-  font-size: 13px;
-  line-height: 18px;
-  color: #000000;
-    background-color: #ffffff;
-  border: 1px solid #cccccc;
-  -webkit-border-radius: 3px;
-     -moz-border-radius: 3px;
-          border-radius: 3px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
-     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
-      -ms-transition: border linear 0.2s, box-shadow linear 0.2s;
-       -o-transition: border linear 0.2s, box-shadow linear 0.2s;
-          transition: border linear 0.2s, box-shadow linear 0.2s;
-}
-
-.b-app-content-details-table input:focus, textarea:focus {
-    border-color: rgba(82, 168, 236, 0.8);
-    outline: 0;
-    outline: thin dotted \9;
-    /* IE6-9 */
-
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
 .LinkCell {
@@ -531,7 +479,7 @@ button::-moz-focus-inner
 }
 
 .gwt-Label {
-                                          color: #666666;
+    color: #666666;
 }
 
 .gwt-DisclosurePanel .header td {
@@ -644,27 +592,6 @@ button::-moz-focus-inner
     height: 0;
   }
 }
-
-
-/* .gwt-DialogBox .dialogBottomLeft { */
-/*     background: url("img/circles.png") repeat-y scroll -28px 0 transparent; */
-/*     -background: url("img/circles_ie6.png") repeat-y scroll -28px 0 transparent; */
-/*     -webkit-transform: rotate(180deg); */
-/*     -moz-transform: rotate(180deg); */
-/*     -ms-transform: rotate(180deg); */
-/*     -o-transform: rotate(180deg); */
-/*     transform: rotate(180deg); */
-/* } */
-
-/* .gwt-DialogBox .dialogBottomRight { */
-/*     background: url("img/circles.png") no-repeat scroll -18px 0 transparent; */
-/*     -background: url("img/circles_ie6.png") no-repeat scroll -18px 0 transparent; */
-/*     -webkit-transform: rotate(180deg); */
-/*     -moz-transform: rotate(180deg); */
-/*     -ms-transform: rotate(180deg); */
-/*     -o-transform: rotate(180deg); */
-/*     transform: rotate(180deg); */
-/* } */
 
 .gwt-DialogBox .dialogBottomCenter {
     background: none;

@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
@@ -23,7 +24,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -55,7 +55,7 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto> extends
         detailsTable.setWidget(0, 0, schemaLabel);
 
         if (create) {
-            schemaLabel.addStyleName("required");
+            schemaLabel.addStyleName(Utils.fieldWidgetStyle.requiredField());
             schema = new SchemaListBox();
             schema.setWidth("80px");
             VerticalPanel panel = new VerticalPanel();

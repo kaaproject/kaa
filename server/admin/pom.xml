@@ -122,7 +122,6 @@
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
         </dependency>
         <dependency>
             <groupId>net.iharder</groupId>
@@ -166,7 +165,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -176,7 +174,6 @@
         <dependency>
             <groupId>com.twitter.common</groupId>
             <artifactId>thrift</artifactId>
-            <version>0.0.64</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -192,32 +189,28 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dto</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>gwt-client</artifactId>
-            <version>${project.version}</version>
+            <version>${avro-ui.version}</version>
         </dependency>        
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>converter</artifactId>
-            <version>${project.version}</version>
+            <version>${avro-ui.version}</version>
         </dependency>           
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.versly</groupId>
@@ -314,12 +307,6 @@
             </resource>
         </resources>
         <plugins>
-<!-- 		      <plugin> -->
-<!-- 		        <artifactId>maven-war-plugin</artifactId> -->
-<!-- 		        <configuration> -->
-<!-- 		          <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@-@{version}@.@{extension}@</outputFileNameMapping> -->
-<!-- 		        </configuration> -->
-<!-- 		      </plugin> -->
             <!-- REST documentation parse -->
             <plugin>
                 <groupId>org.apache.avro</groupId>
@@ -425,7 +412,7 @@
                 </executions>
                 <configuration>
                     <compileSourcesArtifacts>
-                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>  <!-- groupId:artifactId -->
+                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>
                     </compileSourcesArtifacts>
                     <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
                     <runTarget>KaaAdmin.html</runTarget>
@@ -714,7 +701,7 @@
                         </executions>
                         <configuration>
                             <compileSourcesArtifacts>
-                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>  <!-- groupId:artifactId -->
+                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>
                             </compileSourcesArtifacts>
                             <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
                             <runTarget>KaaAdmin.html</runTarget>

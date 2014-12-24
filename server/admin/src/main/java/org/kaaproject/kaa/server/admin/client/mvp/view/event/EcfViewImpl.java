@@ -16,15 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
@@ -35,6 +34,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
+    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    
     private SizedTextBox name;
     private SizedTextBox namespace;
     private SizedTextBox className;
@@ -125,7 +126,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         createdDateTime.setVisible(!create);
         
         Label nameLabel = new Label(Utils.constants.name());
-        nameLabel.addStyleName("required");
+        nameLabel.addStyleName(REQUIRED);
         name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         name.setWidth("100%");
         detailsTable.setWidget(2, 0, nameLabel);
@@ -135,8 +136,8 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         Label namespaceLabel = new Label(Utils.constants.namespace());
         Label classNameLabel = new Label(Utils.constants.className());
         if (create) {  
-            namespaceLabel.addStyleName("required");
-            classNameLabel.addStyleName("required");
+            namespaceLabel.addStyleName(REQUIRED);
+            classNameLabel.addStyleName(REQUIRED);
             namespace = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
             namespace.addInputHandler(this);
             className = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
@@ -155,7 +156,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         detailsTable.setWidget(4, 0, classNameLabel);
         detailsTable.setWidget(4, 1, className);
 
-        description = new KaaAdminSizedTextArea(1024);
+        description = new SizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
@@ -168,10 +169,10 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         ecfSchemasGrid = new EcfSchemasGrid();
         ecfSchemasGrid.setSize("700px", "200px");
         Label ecfSchemasLabel = new Label(Utils.constants.schemas());
-        ecfSchemasLabel.addStyleName("b-app-content-title-label");
+        ecfSchemasLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
 
         addEcfSchemaButton = new Button(Utils.constants.addSchema());
-        addEcfSchemaButton.addStyleName("b-app-button-small");
+        addEcfSchemaButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
         detailsTable.setWidget(6, 0, ecfSchemasLabel);
         ecfSchemasLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);

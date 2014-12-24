@@ -22,24 +22,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AppenderInfoListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.IntegerListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminRecordFieldWidget;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.RecordFieldWidget;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -52,7 +49,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
                                                                         ValueChangeHandler<RecordField>, 
                                                                         ChosenChangeHandler {
 
-    private static final String REQUIRED = "required";
+    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
 
     private SizedTextBox name;
     private IntegerListBox minSchemaVersion;
@@ -137,7 +134,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         detailsTable.setWidget(5, 0, logMetadata);
         detailsTable.setWidget(5, 1, metadatalistBox);
 
-        description = new KaaAdminSizedTextArea(1024);
+        description = new SizedTextArea(1024);
         description.setWidth(FULL_WIDTH);
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
@@ -159,9 +156,9 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         detailsTable.setWidget(7, 0, typeLabel);
         detailsTable.setWidget(7, 1, appenderInfo);
 
-        getFooter().setStyleName("b-app-content-details-table");
+        getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
         
-        configuration = new KaaAdminRecordFieldWidget();
+        configuration = new RecordFieldWidget();
         configuration.addValueChangeHandler(this);
         getFooter().add(configuration);
         

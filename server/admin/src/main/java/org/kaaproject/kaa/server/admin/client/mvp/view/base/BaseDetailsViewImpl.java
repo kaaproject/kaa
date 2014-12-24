@@ -16,12 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.base;
 
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseDetailsView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel.Type;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.avro.ui.gwt.client.widget.AbstractFieldWidget.Style;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -56,8 +58,10 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
     @UiField public Button saveButton;
     @UiField public Button cancelButton;
     @UiField public HTMLPanel requiredFieldsNoteLabel;
-    @UiField (provided=true) public AlertPanel errorPanel;
+    @UiField (provided=true) public final AlertPanel errorPanel;
     @UiField public FlowPanel footer;
+    @UiField(provided = true) public final KaaAdminStyle kaaAdminStyle;
+    @UiField(provided = true) public final Style fieldWidgetStyle;
 
     protected final boolean create;
 
@@ -75,18 +79,22 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
         this.create = create;
         this.editable = editable;
         errorPanel = new AlertPanel(Type.ERROR);
+        kaaAdminStyle = Utils.kaaAdminStyle;
+        fieldWidgetStyle = Utils.fieldWidgetStyle;
         initWidget(uiBinder.createAndBindUi(this));
 
         titleLabel.setText(Utils.constants.title());
         saveButton.setText(Utils.constants.save());
         cancelButton.setText(Utils.constants.cancel());
-        requiredFieldsNoteLabel.getElement().setInnerSafeHtml(SafeHtmlUtils.fromSafeConstant(Utils.messages.requiredFieldsNote()));
+        requiredFieldsNoteLabel.getElement().setInnerSafeHtml(
+                SafeHtmlUtils.fromSafeConstant(Utils.messages
+                        .requiredFieldsNote(Utils.fieldWidgetStyle
+                                .requiredField())));
 
         if (create) {
             titleLabel.setText(getCreateTitle());
             cancelButton.setVisible(true);
-        }
-        else {
+        } else {
             titleLabel.setText(getViewTitle());
             backButtonPanel.setVisible(true);
         }

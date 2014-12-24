@@ -16,7 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.base;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AbstractFieldWidget.Style;
 import org.kaaproject.kaa.common.dto.HasId;
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.mvp.event.grid.HasRowActionEventHandlers;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
@@ -47,8 +49,10 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
     @UiField public HorizontalPanel backButtonPanel;
     @UiField public Button backButton;
     @UiField public Label titleLabel;
-    @UiField (provided=true) public ImageTextButton addButton;
-    @UiField (provided=true) public AlertPanel errorPanel;
+    @UiField (provided=true) public final ImageTextButton addButton;
+    @UiField (provided=true) public final AlertPanel errorPanel;
+    @UiField (provided=true) public final KaaAdminStyle kaaAdminStyle;
+    @UiField (provided=true) public final Style fieldWidgetStyle;
 
     protected AbstractGrid<T, String> grid;
 
@@ -60,6 +64,8 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
         this.editable = editable;
         addButton = new ImageTextButton(Utils.resources.plus(), addButtonString());
         errorPanel = new AlertPanel(Type.ERROR);
+        kaaAdminStyle = Utils.kaaAdminStyle;
+        fieldWidgetStyle = Utils.fieldWidgetStyle;
 
         initWidget(uiBinder.createAndBindUi(this));
 
