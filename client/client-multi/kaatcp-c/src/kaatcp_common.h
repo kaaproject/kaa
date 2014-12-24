@@ -43,7 +43,7 @@ extern "C" {
 #define KAA_BOOTSTRAP_CHANNEL_KAATCP    0x03
 
 #define KAA_CONNECT_FLAGS          0x02
-#define KAA_CONNECT_HEADER_LENGTH  14
+#define KAA_CONNECT_HEADER_LENGTH  18
 
 #define KAA_CONNECT_KEY_AES_RSA    0x11
 #define KAA_CONNECT_SIGNATURE_SHA1 0x01
@@ -70,6 +70,9 @@ typedef struct kaatcp_connect_t
     uint8_t protocol_version;
 
     uint8_t connect_flags;
+
+    uint32_t next_ptorocol_id;
+
     uint8_t session_key_flags;
     uint8_t signature_flags;
 

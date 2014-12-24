@@ -23,7 +23,7 @@ extern "C" {
 
 #include "kaatcp_common.h"
 
-kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive,
+kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_protocol_id,
         char *sync_request, uint32_t sync_request_size,
         char *session_key, uint32_t session_key_size,
         char *signature, uint32_t signature_size,

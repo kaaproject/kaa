@@ -63,7 +63,7 @@ public class Connect extends MqttFrame {
     public static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(Connect.class);
 
-    public static final int CONNECT_VERIABLE_HEADER_LENGTH_V1 = 14;
+    public static final int CONNECT_VERIABLE_HEADER_LENGTH_V1 = 18;
     public static final int CONNECT_AES_SESSION_KEY_LENGTH = 256;
     public static final int CONNECT_SIGNATURE_LENGTH = 256;
     public static final byte CONNECT_VERSION = 0x01;
@@ -76,6 +76,9 @@ public class Connect extends MqttFrame {
 
     /** kaatcp keep alive interval, default 200 seconds. */
     private int keepAlive = 200;
+
+    /** The next protocol identifier. */
+    private int nextProtocolId;
 
     /** AES session key */
     private byte[] aesSessionKey;
@@ -97,9 +100,10 @@ public class Connect extends MqttFrame {
      * @param syncRequest - byte[] of Avro SyncRequest object
      * @param signature - byte[] of Signature of aesSessionKey and endpointPublicKeyHash, length 32 byte.
      */
-    public Connect(int keepAlive, byte[] aesSessionKey, byte[] syncRequest, byte[] signature) {
+    public Connect(int keepAlive, int nextProtocolId, byte[] aesSessionKey, byte[] syncRequest, byte[] signature) {
         setMessageType(MessageType.CONNECT);
         this.setKeepAlive(keepAlive);
+        this.setNextProtocolId(nextProtocolId);
         this.setAesSessionKey(aesSessionKey);
         this.setSyncRequest(syncRequest);
         this.setSignature(signature);
@@ -154,6 +158,7 @@ public class Connect extends MqttFrame {
      */
     private void packVeriableHeader() {
         buffer.put(FIXED_HEADER_CONST);
+        buffer.putInt(nextProtocolId);
         if (getAesSessionKey() != null) {
             buffer.put(CONNECT_SESSION_KEY_FLAGS);
         } else {
@@ -164,10 +169,7 @@ public class Connect extends MqttFrame {
         } else {
             buffer.put((byte) 0);
         }
-        byte ka1 = (byte) ((keepAlive >> 8) & 0x000000FF);
-        buffer.put(ka1);
-        byte ka2 = (byte) (keepAlive & 0x000000FF);
-        buffer.put(ka2);
+        buffer.putChar((char) keepAlive);
     }
 
     /**
@@ -184,6 +186,22 @@ public class Connect extends MqttFrame {
      */
     public void setKeepAlive(int keepAlive) {
         this.keepAlive = keepAlive;
+    }
+
+    /**
+     * Next protocol ID getter.
+     * @return Next protocol ID int
+     */
+    public int getNextProtocolId() {
+        return nextProtocolId;
+    }
+
+    /**
+     * Next protocol ID setter.
+     * @param Next protocol ID int
+     */
+    public void setNextProtocolId(int nextProtocolId) {
+        this.nextProtocolId = nextProtocolId;
     }
 
     /**
@@ -249,6 +267,7 @@ public class Connect extends MqttFrame {
     @Override
     protected void decode() throws KaaTcpProtocolException {
         decodeVariableHeader();
+        nextProtocolId = buffer.getInt();
         hasAesSessionKey = buffer.get() != 0;
         hasSignature = buffer.get() != 0;
         decodeKeepAlive();

@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
@@ -53,7 +54,7 @@ public class NettyTcpMessageTest {
         NettySessionInfo session = new NettySessionInfo(channelId, AvroEncDec.AVRO_ENC_DEC_ID, ctx, channelType, sessionKey, key,
                 applicationToken, keepAlive, true);
 
-        Connect command = new Connect(keepAlive, "aesSessionKey".getBytes(), "syncRequest".getBytes(), "signature".getBytes());
+        Connect command = new Connect(keepAlive, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, "aesSessionKey".getBytes(), "syncRequest".getBytes(), "signature".getBytes());
         SessionCreateListener listener = Mockito.mock(SessionCreateListener.class);
         ResponseBuilder responseBuilder = Mockito.mock(ResponseBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);

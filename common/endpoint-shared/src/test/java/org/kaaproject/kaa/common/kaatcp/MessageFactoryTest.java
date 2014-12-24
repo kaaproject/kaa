@@ -154,9 +154,9 @@ public class MessageFactoryTest {
         final byte [] sessionKey = crypt.getEncodedSessionKey();
         final byte [] signature = crypt.sign(sessionKey);
 
-        final byte connectHeader[] = new byte [] { 0x10, (byte)0xBE, 0x04, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x11, 0x01, 0x00, (byte) 0xC8 };
+        final byte connectHeader[] = new byte [] { 0x10, (byte)0xC2, 0x04, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, (byte) 0xf2, (byte) 0x91, (byte) 0xf2, (byte) 0xd4, 0x11, 0x01, 0x00, (byte) 0xC8 };
 
-        ByteBuffer connectBuffer = ByteBuffer.allocate(sessionKey.length + signature.length + payload.length + 17);
+        ByteBuffer connectBuffer = ByteBuffer.allocate(sessionKey.length + signature.length + payload.length + 21);
         connectBuffer.put(connectHeader);
         connectBuffer.put(sessionKey);
         connectBuffer.put(signature);
@@ -173,6 +173,7 @@ public class MessageFactoryTest {
                 Assert.assertArrayEquals(signature, message.getSignature());
                 Assert.assertArrayEquals(sessionKey, message.getAesSessionKey());
                 Assert.assertArrayEquals(payload, message.getSyncRequest());
+                Assert.assertEquals(0xf291f2d4, message.getNextProtocolId());
             }
         });
         factory.registerMessageListener(listener);
@@ -194,9 +195,9 @@ public class MessageFactoryTest {
 
         final byte[] rawData = requestConverter.toByteArray(request);
 
-        final byte connectHeader[] = new byte [] { 0x10, 0x37, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x00, 0x00, 0x00, (byte) 0xC8 };
+        final byte connectHeader[] = new byte [] { 0x10, 0x3B, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, (byte) 0xf2, (byte) 0x91, (byte) 0xf2, (byte) 0xd4, 0x00, 0x00, 0x00, (byte) 0xC8 };
 
-        ByteBuffer connectBuffer = ByteBuffer.allocate(rawData.length + 16);
+        ByteBuffer connectBuffer = ByteBuffer.allocate(rawData.length + 20);
         connectBuffer.put(connectHeader);
         connectBuffer.put(rawData);
         connectBuffer.position(0);
@@ -209,6 +210,7 @@ public class MessageFactoryTest {
             public void onMessage(Connect message) {
                 Assert.assertEquals(200, message.getKeepAlive());
                 Assert.assertArrayEquals(rawData, message.getSyncRequest());
+                Assert.assertEquals(0xf291f2d4, message.getNextProtocolId());
             }
         });
         factory.registerMessageListener(listener);
@@ -223,7 +225,7 @@ public class MessageFactoryTest {
         final byte syncResponse[] = new byte[] {(byte) 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x14, (byte) 0xFF };
         MessageFactory factory = new MessageFactory();
         SyncResponseListener listener = Mockito.spy(new SyncResponseListener() {
-            
+
             @Override
             public void onMessage(SyncResponse message) {
                 Assert.assertEquals(1, message.getAvroObject().length);
@@ -238,13 +240,13 @@ public class MessageFactoryTest {
         factory.getFramer().pushBytes(syncResponse);
         Mockito.verify(listener, Mockito.times(1)).onMessage(Mockito.any(SyncResponse.class));
     }
-    
+
     @Test
     public void testSyncRequest() throws KaaTcpProtocolException {
         final byte syncRequest[] = new byte[] { (byte) 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x15, (byte) 0xFF };
         MessageFactory factory = new MessageFactory();
         SyncRequestListener listener = Mockito.spy(new SyncRequestListener() {
-            
+
             @Override
             public void onMessage(SyncRequest message) {
                 Assert.assertEquals(1, message.getAvroObject().length);
@@ -259,13 +261,13 @@ public class MessageFactoryTest {
         factory.getFramer().pushBytes(syncRequest);
         Mockito.verify(listener, Mockito.times(1)).onMessage(Mockito.any(SyncRequest.class));
     }
-    
+
     @Test
     public void testBootstrapResolve() throws KaaTcpProtocolException {
         final byte bootstrapResolve[] = new byte[] { (byte) 0xF0, 0x18, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x21, 'a','p','p','l','i','c','a','t','i','o','n','1' };
         MessageFactory factory = new MessageFactory();
         BootstrapResolveListener listener = Mockito.spy(new BootstrapResolveListener() {
-            
+
             @Override
             public void onMessage(BootstrapResolve message) {
                 Assert.assertEquals("application1", message.getApplicationToken());
@@ -279,24 +281,24 @@ public class MessageFactoryTest {
         factory.getFramer().pushBytes(bootstrapResolve);
         Mockito.verify(listener, Mockito.times(1)).onMessage(Mockito.any(BootstrapResolve.class));
     }
-    
+
     @Test
     public void testBootstrapResponse() throws KaaTcpProtocolException {
         final byte bootstrapResponse[] = new byte[] {(byte)-16, -88, 2, 0, 6, 75, 97, 97, 116, 99, 112, 1, 0, 5, 32, 0, 0, 0, 2, 0, 0, 0, -120, 0, 0, 0, 7, 115, 101, 114, 118, 101, 114, 49, 0, 0, 0, 0, 10, 1, 0, 0, 16, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 3, 21, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, -120, 0, 0, 0, 8, 115, 101, 114, 118, 101, 114, 50, 50, 0, 0, 0, 20, 1, 0, 0, 16, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 26, 3, 22, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 50, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0};
         MessageFactory factory = new MessageFactory();
         BootstrapResponseListener listener = Mockito.spy(new BootstrapResponseListener() {
-            
+
             @Override
             public void onMessage(BootstrapResponse message) {
                 checkBootstrapResponse(message);
-                
+
             }
         });
         factory.registerMessageListener(listener);
         factory.getFramer().pushBytes(bootstrapResponse);
         Mockito.verify(listener, Mockito.times(1)).onMessage(Mockito.any(BootstrapResponse.class));
     }
-    
+
     @Test
     public void testPingRequest() throws KaaTcpProtocolException {
         final byte [] pingRequest = new byte[] { (byte) 0xC0, 0x00 };
@@ -338,8 +340,8 @@ public class MessageFactoryTest {
         factory.getFramer().pushBytes(disconnect);
         Mockito.verify(listener, Mockito.times(1)).onMessage(Mockito.any(Disconnect.class));
     }
-    
-    
+
+
     @Test
     public void testBytesPartialPush() throws KaaTcpProtocolException {
         final byte syncRequest[] = new byte[] { (byte) 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x15, (byte) 0xFF };
@@ -347,33 +349,33 @@ public class MessageFactoryTest {
         final byte bootstrapResponse[] = new byte[] {(byte)-16, -88, 2, 0, 6, 75, 97, 97, 116, 99, 112, 1, 0, 5, 32, 0, 0, 0, 2, 0, 0, 0, -120, 0, 0, 0, 7, 115, 101, 114, 118, 101, 114, 49, 0, 0, 0, 0, 10, 1, 0, 0, 16, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 3, 21, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, -120, 0, 0, 0, 8, 115, 101, 114, 118, 101, 114, 50, 50, 0, 0, 0, 20, 1, 0, 0, 16, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 26, 3, 22, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 50, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0};
 
         int totalLength = syncRequest.length + bootstrapResolve.length + bootstrapResponse.length;
-        
+
         ByteBuffer totalBuffer = ByteBuffer.allocate(totalLength);
         totalBuffer.put(syncRequest);
         totalBuffer.put(bootstrapResolve);
         totalBuffer.put(bootstrapResponse);
         totalBuffer.position(0);
-        
+
         byte[] firstBuffer = new byte[syncRequest.length - 2];
         totalBuffer.get(firstBuffer);
         byte[] secondBuffer = new byte[bootstrapResolve.length + 4];
         totalBuffer.get(secondBuffer);
         byte[] thirdBuffer = new byte[bootstrapResponse.length -2];
         totalBuffer.get(thirdBuffer);
-        
+
         MessageFactory factory = new MessageFactory();
         BootstrapResponseListener bootstrapResponseListener = Mockito.spy(new BootstrapResponseListener() {
-            
+
             @Override
             public void onMessage(BootstrapResponse message) {
                 checkBootstrapResponse(message);
-                
+
             }
         });
         factory.registerMessageListener(bootstrapResponseListener);
-        
+
         SyncRequestListener syncRequestListener = Mockito.spy(new SyncRequestListener() {
-            
+
             @Override
             public void onMessage(SyncRequest message) {
                 Assert.assertEquals(1, message.getAvroObject().length);
@@ -385,9 +387,9 @@ public class MessageFactoryTest {
             }
         });
         factory.registerMessageListener(syncRequestListener);
-        
+
         BootstrapResolveListener bootstrapResolveListener = Mockito.spy(new BootstrapResolveListener() {
-            
+
             @Override
             public void onMessage(BootstrapResolve message) {
                 Assert.assertEquals("application1", message.getApplicationToken());
@@ -398,16 +400,16 @@ public class MessageFactoryTest {
             }
         });
         factory.registerMessageListener(bootstrapResolveListener);
-        
-        
-        
+
+
+
         int i = factory.getFramer().pushBytes(firstBuffer);
         Assert.assertEquals(firstBuffer.length, i);
         i = factory.getFramer().pushBytes(secondBuffer);
         Assert.assertEquals(secondBuffer.length, i);
         i = factory.getFramer().pushBytes(thirdBuffer);
         Assert.assertEquals(thirdBuffer.length, i);
-        
+
         Mockito.verify(bootstrapResolveListener, Mockito.times(1)).onMessage(Mockito.any(BootstrapResolve.class));
         Mockito.verify(bootstrapResponseListener, Mockito.times(1)).onMessage(Mockito.any(BootstrapResponse.class));
         Mockito.verify(syncRequestListener, Mockito.times(1)).onMessage(Mockito.any(SyncRequest.class));
@@ -430,53 +432,53 @@ public class MessageFactoryTest {
         Assert.assertEquals("server1", records.get("server1").name);
         Assert.assertEquals(BootstrapResponse.PublicKeyType.RSA_PKSC8, records.get("server1").publicKeyType);
         Assert.assertNotNull(records.get("server1").publicKey);
-        
+
         final byte[]  operationServer1PublicKey = new byte [] { (byte)  0x00, 0x01, 0x02, 0x03,
                 0x00, 0x01, 0x02, 0x03,
                 0x00, 0x01, 0x02, 0x03,
                 0x00, 0x01, 0x02, 0x03,};
         Assert.assertArrayEquals(operationServer1PublicKey, records.get("server1").publicKey);
         Assert.assertEquals(10, records.get("server1").priority);
-        
+
         Assert.assertEquals(3,records.get("server1").supportedChannelsList.size());
         Assert.assertNotNull(records.get("server1").supportedChannelsList.get(0).hostName);
         Assert.assertEquals("hostname1.example.com",records.get("server1").supportedChannelsList.get(0).hostName);
         Assert.assertEquals("hostname1.example.com",records.get("server1").supportedChannelsList.get(1).hostName);
         Assert.assertEquals("hostname1.example.com",records.get("server1").supportedChannelsList.get(2).hostName);
-        
+
         Assert.assertEquals(BootstrapResponse.SupportedChannelType.HTTP, records.get("server1").supportedChannelsList.get(0).supportedChannelType);
         Assert.assertEquals(BootstrapResponse.SupportedChannelType.HTTPLP, records.get("server1").supportedChannelsList.get(1).supportedChannelType);
         Assert.assertEquals(BootstrapResponse.SupportedChannelType.KAATCP, records.get("server1").supportedChannelsList.get(2).supportedChannelType);
-        
+
         Assert.assertEquals(1212, records.get("server1").supportedChannelsList.get(0).port);
         Assert.assertEquals(1213, records.get("server1").supportedChannelsList.get(1).port);
         Assert.assertEquals(1214, records.get("server1").supportedChannelsList.get(2).port);
-        
+
         Assert.assertNotNull(records.get("server22"));
-        
+
         Assert.assertNotNull(records.get("server22").supportedChannelsList);
         Assert.assertNotNull(records.get("server22").name);
         Assert.assertEquals("server22", records.get("server22").name);
         Assert.assertEquals(BootstrapResponse.PublicKeyType.RSA_PKSC8, records.get("server22").publicKeyType);
         Assert.assertNotNull(records.get("server22").publicKey);
-        
+
         final byte[]  operationServer2PublicKey = new byte [] { (byte)  0x10, 0x11, 0x12, 0x13,
                 0x10, 0x11, 0x12, 0x13,
-                0x10, 0x11, 0x12, 0x13, 
+                0x10, 0x11, 0x12, 0x13,
                 0x10, 0x11, 0x12, 0x13,};
         Assert.assertArrayEquals(operationServer2PublicKey, records.get("server22").publicKey);
         Assert.assertEquals(20, records.get("server22").priority);
-        
+
         Assert.assertEquals(3,records.get("server22").supportedChannelsList.size());
         Assert.assertNotNull(records.get("server22").supportedChannelsList.get(0).hostName);
         Assert.assertEquals("hostname2.example.com",records.get("server22").supportedChannelsList.get(0).hostName);
         Assert.assertEquals("hostname2.example.com",records.get("server22").supportedChannelsList.get(1).hostName);
         Assert.assertEquals("hostname22.example.com",records.get("server22").supportedChannelsList.get(2).hostName);
-        
+
         Assert.assertEquals(BootstrapResponse.SupportedChannelType.HTTP, records.get("server22").supportedChannelsList.get(0).supportedChannelType);
         Assert.assertEquals(BootstrapResponse.SupportedChannelType.HTTPLP, records.get("server22").supportedChannelsList.get(1).supportedChannelType);
         Assert.assertEquals(BootstrapResponse.SupportedChannelType.KAATCP, records.get("server22").supportedChannelsList.get(2).supportedChannelType);
-        
+
         Assert.assertEquals(1212, records.get("server22").supportedChannelsList.get(0).port);
         Assert.assertEquals(1213, records.get("server22").supportedChannelsList.get(1).port);
         Assert.assertEquals(1214, records.get("server22").supportedChannelsList.get(2).port);
