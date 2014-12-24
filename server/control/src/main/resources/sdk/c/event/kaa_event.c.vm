@@ -34,13 +34,13 @@
 
 
 
-# define KAA_ENDPOINT_ID_LENGTH      20
-
 # define KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_RECEIVE_EVENTS         0x1
 # define KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_SYNC   0x2
 
 # define KAA_EVENT_SERVER_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_PRESENT   0x1
-# define KAA_EVENT_OPTION_TARGET_ID_PRESENT                             0x1
+
+# define KAA_EVENT_OPTION_TARGET_ID_PRESENT    0x1
+# define KAA_EVENT_OPTION_EVENT_HAS_DATA       0x2
 
 
 
@@ -246,19 +246,11 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
                                                 , event_data_size
                                                 , &kaa_data_destroy);
         KAA_RETURN_IF_NIL(event->event_data, KAA_ERR_NOMEM);
-    } else {
-        /**
-         * Empty event body
-         */
-        event_data = NULL;
-        event_data_size = 0;
     }
 
     if (target) {
         event->target = kaa_string_copy_create(target, &kaa_data_destroy);
         KAA_RETURN_IF_NIL(event->target, KAA_ERR_NOMEM);
-    } else {
-        event->target = NULL;
     }
 
     return KAA_ERR_NONE;
@@ -334,7 +326,10 @@ static size_t kaa_event_list_get_request_size(kaa_list_t *events)
         }
 
         expected_size += kaa_aligned_size_get(event->event_class_fqn->size); /*Event class FQN + padding */
-        expected_size += kaa_aligned_size_get(event->event_data->size);/*Event data + padding*/
+
+        if (event->event_data) {
+            expected_size += kaa_aligned_size_get(event->event_data->size);/*Event data + padding*/
+        }
 
         events = kaa_list_next(events);
         event = (kaa_event_t *) kaa_list_get_data(events);
@@ -399,7 +394,13 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
             return error_code;
         }
 
-        temp_network_order_16 = KAA_HTONS((!event->target ? 0 : KAA_EVENT_OPTION_TARGET_ID_PRESENT));
+        /**
+         * Event options
+         */
+        temp_network_order_16 = (!event->target ? 0 : KAA_EVENT_OPTION_TARGET_ID_PRESENT);
+        temp_network_order_16 |= (event->event_data ? KAA_EVENT_OPTION_EVENT_HAS_DATA : 0);
+        temp_network_order_16 = KAA_HTONS(temp_network_order_16);
+
         error_code = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
         if (error_code) {
             KAA_LOG_ERROR(self->logger, error_code, "Failed to write event options");
@@ -413,11 +414,13 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
             return error_code;
         }
 
-        temp_network_order_32 = KAA_HTONL(event->event_data->size);
-        error_code = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data size");
-            return error_code;
+        if (event->event_data) {
+            temp_network_order_32 = KAA_HTONL(event->event_data->size);
+            error_code = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data size");
+                return error_code;
+            }
         }
 
         if (event->target) {
@@ -438,12 +441,14 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
             return error_code;
         }
 
-        error_code = kaa_platform_message_write_aligned(writer
-                                                      , event->event_data->buffer
-                                                      , event->event_data->size);
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data aligned");
-            return error_code;
+        if (event->event_data) {
+            error_code = kaa_platform_message_write_aligned(writer
+                                                          , event->event_data->buffer
+                                                          , event->event_data->size);
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data aligned");
+                return error_code;
+            }
         }
 
         events = kaa_list_next(events);
@@ -521,16 +526,8 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-    uint32_t event_sequence_number = 0;
-    kaa_error_t error_code = kaa_platform_message_read(reader, &event_sequence_number, sizeof(uint32_t));
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event sequence number field");
-        return error_code;
-    }
-    event_sequence_number = KAA_NTOHL(event_sequence_number);
-
     uint16_t event_options = 0;
-    error_code = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
+    kaa_error_t error_code = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event options field");
         return error_code;
@@ -546,12 +543,14 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
     event_class_fqn_length = KAA_NTOHS(event_class_fqn_length);
 
     uint32_t event_data_size = 0;
-    error_code = kaa_platform_message_read(reader, &event_data_size, sizeof(uint32_t));
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data size field");
-        return error_code;
+    if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
+        error_code = kaa_platform_message_read(reader, &event_data_size, sizeof(uint32_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data size field");
+            return error_code;
+        }
+        event_data_size = KAA_NTOHL(event_data_size);
     }
-    event_data_size = KAA_NTOHL(event_data_size);
 
     char event_source[KAA_ENDPOINT_ID_LENGTH];
     error_code = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH);
@@ -573,16 +572,21 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
     }
     event_fqn[event_class_fqn_length] = '\0';
 
-    is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_data_size));
-    if (!is_enough) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event data size value");
-        return KAA_ERR_READ_FAILED;
-    }
-    char event_data[event_data_size];
-    error_code = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data field");
-        return error_code;
+    char *event_data = NULL;
+    if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
+        is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_data_size));
+        if (!is_enough) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event data size value");
+            return KAA_ERR_READ_FAILED;
+        }
+
+        char buffer[event_data_size];
+        event_data = buffer;
+        error_code = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data field");
+            return error_code;
+        }
     }
 
     kaa_event_callback_t cb = find_event_callback(self->event_callbacks, event_fqn);

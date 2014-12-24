@@ -41,6 +41,7 @@ extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
 
 
+
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;

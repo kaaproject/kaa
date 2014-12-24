@@ -139,8 +139,8 @@ kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_wri
 }
 
 kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
-                                                , const char *buffer
-                                                , size_t len)
+                                             , const char *buffer
+                                             , size_t len)
 {
     KAA_RETURN_IF_NIL3(reader_p, buffer, len, KAA_ERR_BADPARAM);
 

@@ -33,7 +33,7 @@ extern "C" {
 # define BUILD_VERSION                   "0.6.1-SNAPSHOT"
 # define BUILD_COMMIT_HASH               "N/A"
 
-# define APPLICATION_TOKEN               "token"
+# define APPLICATION_TOKEN               "ApplicationToken"
 
 # define CONFIG_SCHEMA_VERSION           6
 # define PROFILE_SCHEMA_VERSION          7
