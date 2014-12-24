@@ -112,9 +112,8 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
             schemaFileUpload = new FileUploadForm();
             schemaFileUpload.setWidth("500px");
             detailsTable.setWidget(6, 1, schemaFileUpload);
-        }
-        else {
-            schema = new SizedTextArea(524288);
+        } else {
+            schema = new SizedTextArea(-1);
             schema.setWidth("500px");
             schema.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 300);
             schema.getTextArea().setReadOnly(true);

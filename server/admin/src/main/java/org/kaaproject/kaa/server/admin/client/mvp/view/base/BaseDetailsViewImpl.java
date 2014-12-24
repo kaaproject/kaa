@@ -216,8 +216,7 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
     private void updateSaveButton(boolean enabled, boolean invalid) {
         if (create || invalid) {
             saveButton.setText(create ? Utils.constants.add() : Utils.constants.save());
-        }
-        else {
+        } else {
             saveButton.setText(enabled ? Utils.constants.save() : Utils.constants.saved());
         }
         saveButton.setEnabled(enabled);

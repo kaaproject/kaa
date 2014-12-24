@@ -159,7 +159,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
         bodyLabel = new Label(Utils.constants.body());
         detailsTable.setWidget(1, 0, bodyLabel);
-        body = new SizedTextArea(524288);
+        body = new SizedTextArea(-1);
         body.setWidth("500px");
         body.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 200);
         detailsTable.setWidget(1, 1, body);
@@ -277,8 +277,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
             if (struct.getStatus()==UpdateStatus.ACTIVE) {
                 deactivateButton.setVisible(true);
             }
-        }
-        else {
+        } else {
             description.getTextArea().setReadOnly(false);
             body.getTextArea().setReadOnly(false);
             bodyLabel.addStyleName(REQUIRED);
@@ -287,8 +286,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
             saveButton.setVisible(true);
             if (isEmpty(struct.getId())) {
                 saveButton.setText(Utils.constants.save());
-            }
-            else {
+            } else {
                 activateButton.setVisible(true);
             }
         }
@@ -337,8 +335,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     private void updateSaveButton(boolean enabled, boolean invalid) {
         if (invalid) {
             saveButton.setText(Utils.constants.save());
-        }
-        else {
+        } else {
             saveButton.setText(enabled ? Utils.constants.save() : Utils.constants.saved());
         }
         saveButton.setEnabled(enabled);
