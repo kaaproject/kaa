@@ -88,7 +88,7 @@ public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List
         int row=0;
 
         Widget label = new Label(Utils.constants.selectNotificationTopics());
-        label.addStyleName("required");
+        label.addStyleName(Utils.fieldWidgetStyle.requiredField());
         topic = new TopicListBox();
         topic.setWidth("200px");
         topic.setAcceptableValues(topics);

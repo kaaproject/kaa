@@ -20,9 +20,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AbstractFieldWidget;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdminConstants;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.UnauthorizedSessionDialog;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -44,15 +46,30 @@ public class Utils {
 
     public static final KaaAdminMessages messages = GWT
             .create(KaaAdminMessages.class);
-
+    
+    public static final AbstractFieldWidget.Resources fieldWidgetResources = 
+            GWT.create(AbstractFieldWidget.Resources.class);
+    
+    public static final KaaAdminStyle kaaAdminStyle = 
+            resources.kaaAdminStyle();
+    
+    public static final AbstractFieldWidget.Style fieldWidgetStyle =
+            fieldWidgetResources.fieldWidgetStyle();
+    
     private static final DateTimeFormat simpleDateFormat = DateTimeFormat
             .getFormat("MM/dd/yyyy");
+    
     private static final DateTimeFormat simpleDateTimeFormat = DateTimeFormat
             .getFormat("MM/dd/yyyy h:mm a");
 
     private static final int INCORRECT_IDX = -1;
 
     private static UnauthorizedSessionDialog unauthorizedSessionDialog;
+    
+    public static void injectKaaStyles() {
+        kaaAdminStyle.ensureInjected();
+        fieldWidgetStyle.ensureInjected();
+    }
 
     public static void handleException(Throwable caught,
             HasErrorMessage hasErrorMessage) {

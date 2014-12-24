@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.header;
 
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsLabel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -38,12 +39,14 @@ public class HeaderViewImpl extends Composite implements HeaderView {
 
     @UiField Label usernameLabel;
     @UiField Label signoutLabel;
-    @UiField(provided=true) ActionsLabel settingsLabel;
+    @UiField(provided=true) final ActionsLabel settingsLabel;
     @UiField Label title;
+    @UiField(provided=true) final KaaAdminStyle kaaAdminStyle;
 
     public HeaderViewImpl() {
         settingsLabel = new ActionsLabel(Utils.constants.settings());
-        settingsLabel.setStyleName("b-app-header-menu");
+        kaaAdminStyle = Utils.kaaAdminStyle;
+        settingsLabel.setStyleName(kaaAdminStyle.bAppHeaderMenu());
         initWidget(uiBinder.createAndBindUi(this));
         signoutLabel.setText(Utils.constants.signOut());
         title.addClickHandler(new ClickHandler() {

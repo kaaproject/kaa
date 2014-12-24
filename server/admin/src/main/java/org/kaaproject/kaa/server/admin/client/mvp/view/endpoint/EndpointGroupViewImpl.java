@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
@@ -26,11 +28,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseStructGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
@@ -46,6 +45,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements EndpointGroupView {
 
+    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    
     private Label nameLabel;
     private SizedTextBox name;
     private Label weightLabel;
@@ -128,7 +129,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         detailsTable.setWidget(4, 1, weight);
         weight.addChangeHandler(this);
 
-        description = new KaaAdminSizedTextArea(1024);
+        description = new SizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         description.getTextArea().getElement().getStyle().setPropertyPx("maxWidth", 487);
@@ -142,12 +143,12 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         profileFiltersGrid = new BaseStructGrid<ProfileFilterDto>();
         profileFiltersGrid.setSize("700px", "200px");
         Label profileFiltersLabel = new Label(Utils.constants.profileFilters());
-        profileFiltersLabel.addStyleName("b-app-content-title-label");
+        profileFiltersLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
         includeDeprecatedProfileFilters = new CheckBox(Utils.constants.includeDeprecated());
         setCheckBoxStyle(includeDeprecatedProfileFilters);
 
         addProfileFilterButton = new Button(Utils.constants.addProfileFilter());
-        addProfileFilterButton.addStyleName("b-app-button-small");
+        addProfileFilterButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
         detailsTable.setWidget(6, 0, profileFiltersLabel);
         profileFiltersLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
@@ -169,12 +170,12 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         configurationsGrid = new BaseStructGrid<ConfigurationDto>();
         configurationsGrid.setSize("700px", "200px");
         Label configurationsLabel = new Label(Utils.constants.configurations());
-        configurationsLabel.addStyleName("b-app-content-title-label");
+        configurationsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
         includeDeprecatedConfigurations = new CheckBox(Utils.constants.includeDeprecated());
         setCheckBoxStyle(includeDeprecatedConfigurations);
 
         addConfigurationButton = new Button(Utils.constants.addConfiguration());
-        addConfigurationButton.addStyleName("b-app-button-small");
+        addConfigurationButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
         detailsTable.setWidget(9, 0, configurationsLabel);
         configurationsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
@@ -195,10 +196,10 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         topicsGrid = new TopicGrid(true);
         topicsGrid.setSize("700px", "200px");
         Label topicsLabel = new Label(Utils.constants.notificationTopics());
-        topicsLabel.addStyleName("b-app-content-title-label");
+        topicsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
 
         addTopicButton = new Button(Utils.constants.addNotificationTopic());
-        addTopicButton.addStyleName("b-app-button-small");
+        addTopicButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
         detailsTable.setWidget(12, 0, topicsLabel);
         topicsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
@@ -229,10 +230,10 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     protected void resetImpl() {
         name.setValue("");
         name.setEnabled(true);
-        nameLabel.addStyleName("required");
+        nameLabel.addStyleName(REQUIRED);
         weight.setValue(null);
         weight.setEnabled(true);
-        weightLabel.addStyleName("required");
+        weightLabel.addStyleName(REQUIRED);
         description.setValue("");
         createdUsername.setValue("");
         createdDateTime.setValue("");
@@ -258,9 +259,9 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     @Override
     public void setReadOnly() {
         name.setEnabled(false);
-        nameLabel.removeStyleName("required");
+        nameLabel.removeStyleName(REQUIRED);
         weight.setEnabled(false);
-        weightLabel.removeStyleName("required");
+        weightLabel.removeStyleName(REQUIRED);
         addProfileFilterButton.setVisible(false);
         addConfigurationButton.setVisible(false);
         includeDeprecatedProfileFilters.setVisible(false);

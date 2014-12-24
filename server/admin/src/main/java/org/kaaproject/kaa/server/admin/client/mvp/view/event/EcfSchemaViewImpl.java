@@ -16,15 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.HasValue;
@@ -107,7 +106,7 @@ public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaV
         Label schemaLabel = new Label(Utils.constants.schema());
         detailsTable.setWidget(3, 0, schemaLabel);
         
-        schema = new KaaAdminSizedTextArea(524288);
+        schema = new SizedTextArea(524288);
         schema.setWidth("500px");
         schema.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 150);
         schema.getTextArea().setReadOnly(true);
@@ -117,7 +116,7 @@ public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaV
         eventClassesGrid = new EventClassesGrid(Unit.PX);
         eventClassesGrid.setSize("700px", "300px");
         Label eventClassesLabel = new Label(Utils.constants.eventClasses());
-        eventClassesLabel.addStyleName("b-app-content-title-label");
+        eventClassesLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
 
         detailsTable.setWidget(4, 0, eventClassesLabel);
         eventClassesLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);

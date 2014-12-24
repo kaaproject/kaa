@@ -24,13 +24,12 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -46,6 +45,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public class BaseStructView<T extends AbstractStructureDto> extends FlexTable implements InputEventHandler {
 
+    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    
     private Label dateTimeCreatedLabel;
     private SizedTextBox createdDateTime;
     private Label authorLabel;
@@ -147,7 +148,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         detailsTable.getColumnFormatter().setWidth(1, "300px");
 
 
-        description = new KaaAdminSizedTextArea(1024);
+        description = new SizedTextArea(1024);
         description.setWidth("500px");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
@@ -158,7 +159,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
         bodyLabel = new Label(Utils.constants.body());
         detailsTable.setWidget(1, 0, bodyLabel);
-        body = new KaaAdminSizedTextArea(524288);
+        body = new SizedTextArea(-1);
         body.setWidth("500px");
         body.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 200);
         detailsTable.setWidget(1, 1, body);
@@ -210,7 +211,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         saveButton.setVisible(false);
         activateButton.setVisible(false);
         deactivateButton.setVisible(false);
-        bodyLabel.removeStyleName("required");
+        bodyLabel.removeStyleName(REQUIRED);
         description.getTextArea().setReadOnly(true);
         body.getTextArea().setReadOnly(true);
 
@@ -276,18 +277,16 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
             if (struct.getStatus()==UpdateStatus.ACTIVE) {
                 deactivateButton.setVisible(true);
             }
-        }
-        else {
+        } else {
             description.getTextArea().setReadOnly(false);
             body.getTextArea().setReadOnly(false);
-            bodyLabel.addStyleName("required");
+            bodyLabel.addStyleName(REQUIRED);
             registrations.add(description.addInputHandler(this));
             registrations.add(body.addInputHandler(this));
             saveButton.setVisible(true);
             if (isEmpty(struct.getId())) {
                 saveButton.setText(Utils.constants.save());
-            }
-            else {
+            } else {
                 activateButton.setVisible(true);
             }
         }
@@ -336,8 +335,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     private void updateSaveButton(boolean enabled, boolean invalid) {
         if (invalid) {
             saveButton.setText(Utils.constants.save());
-        }
-        else {
+        } else {
             saveButton.setText(enabled ? Utils.constants.save() : Utils.constants.saved());
         }
         saveButton.setEnabled(enabled);

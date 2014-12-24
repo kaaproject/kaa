@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
+import org.kaaproject.avro.ui.shared.RecordField;
 
 import com.google.gwt.user.client.ui.HasValue;
 

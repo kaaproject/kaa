@@ -57,6 +57,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
 
+    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+
     private AlertPanel errorPanel;
 
     private SchemaListBox configurationSchemaVersion;
@@ -136,7 +138,7 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
         };
 
         Widget label = new Label(Utils.constants.configurationSchemaVersion());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         configurationSchemaVersion = new SchemaListBox();
         configurationSchemaVersion.setWidth("80px");
         List<SchemaDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
@@ -150,7 +152,7 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
         row++;
 
         label = new Label(Utils.constants.profileSchemaVersion());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         profileSchemaVersion = new SchemaListBox();
         profileSchemaVersion.setWidth("80px");
         List<SchemaDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
@@ -164,7 +166,7 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
         row++;
 
         label = new Label(Utils.constants.notificationSchemaVersion());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         notificationSchemaVersion = new SchemaListBox();
         notificationSchemaVersion.setWidth("80px");
         List<SchemaDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
@@ -178,7 +180,7 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
         row++;
 
         label = new Label(Utils.constants.logSchemaVersion());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         logSchemaVersion = new SchemaListBox();
         logSchemaVersion.setWidth("80px");
         List<SchemaDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
@@ -192,7 +194,7 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
         row++;
 
         label = new Label(Utils.constants.targetPlatform());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
 
         Renderer<SdkPlatform> targetPlatformRenderer = new Renderer<SdkPlatform>() {
             @Override
@@ -268,8 +270,8 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
 
         availableAefMaps.setAcceptableValues(aefMaps);
 
-        addAefMapButton.addStyleName("b-app-button-small");
-        removeAefMapButton.addStyleName("b-app-button-small");
+        addAefMapButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
+        removeAefMapButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
         addAefMapButton.setEnabled(false);
         removeAefMapButton.setEnabled(false);

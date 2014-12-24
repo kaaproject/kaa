@@ -39,7 +39,7 @@
   <inherits name="com.watopi.chosen.Chosen"/>
 
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
-  <inherits name="org.kaaproject.kaa.server.common.avro.ui.gwt.client.AvroUIClient"/>
+  <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
 
   <!--  inherits name='com.google.gwt.visualization.Visualization'/-->
 

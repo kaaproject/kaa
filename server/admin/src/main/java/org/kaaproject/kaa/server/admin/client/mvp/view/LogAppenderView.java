@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
+import org.kaaproject.avro.ui.shared.RecordField;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;

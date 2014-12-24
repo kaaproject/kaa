@@ -23,7 +23,7 @@
   <inherits name="com.google.gwt.user.theme.clean.CleanResources"/>
 
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
-  <inherits name="org.kaaproject.kaa.server.common.avro.ui.gwt.client.AvroUIClient"/>
+  <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
   
   <!--  Need for SuperDev mode-->
   <add-linker name="xsiframe"/>

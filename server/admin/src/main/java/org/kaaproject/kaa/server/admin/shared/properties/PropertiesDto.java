@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.shared.properties;
 import java.io.Serializable;
 
 import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
+import org.kaaproject.avro.ui.shared.RecordField;
 
 public class PropertiesDto implements HasId, Serializable {
 

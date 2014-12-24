@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -27,7 +29,7 @@ public class LinkCell extends ClickableTextCell {
     public LinkCell()
     {
         super();
-        style = "LinkCell";
+        style = Utils.kaaAdminStyle.linkCell();
     }
 
 

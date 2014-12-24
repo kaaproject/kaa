@@ -126,8 +126,8 @@ public class KaaAdmin implements EntryPoint {
 
     private void init() {
         injectThemeStyleSheet();
-        Utils.resources.css().ensureInjected();
-
+        Utils.injectKaaStyles();
+        
         KaaAdminServiceAsync rpcService = GWT.create(KaaAdminService.class);
         ClientFactory clientFactory = GWT.create(ClientFactory.class);
         EventBus eventBus = clientFactory.getEventBus();
