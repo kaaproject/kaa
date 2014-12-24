@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class ServerSync {
 
-    private Integer requestId;
+    private int requestId;
     private SyncStatus status;
     private ProfileServerSync profileSync;
     private ConfigurationServerSync configurationSync;
@@ -33,7 +33,7 @@ public class ServerSync {
     /**
      * All-args constructor.
      */
-    public ServerSync(Integer requestId, SyncStatus status, ProfileServerSync profileSync,
+    public ServerSync(int requestId, SyncStatus status, ProfileServerSync profileSync,
             ConfigurationServerSync configurationSync, NotificationServerSync notificationSync, UserServerSync userSync,
             EventServerSync eventSync, RedirectServerSync redirectSync, LogServerSync logSync) {
         this.requestId = requestId;
@@ -50,7 +50,7 @@ public class ServerSync {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public Integer getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -60,7 +60,7 @@ public class ServerSync {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(Integer value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 

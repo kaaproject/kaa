@@ -10,78 +10,126 @@ import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
 import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse;
 import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
 import org.kaaproject.kaa.server.operations.pojo.sync.EndpointVersionInfo;
 import org.kaaproject.kaa.server.operations.pojo.sync.Event;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.LogClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.LogEntry;
+import org.kaaproject.kaa.server.operations.pojo.sync.LogServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.Notification;
 import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationType;
 import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand;
 import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.Topic;
 import org.kaaproject.kaa.server.operations.pojo.sync.TopicState;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachNotification;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachRequest;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserDetachNotification;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BinaryEncDec implements PlatformEncDec {
 
+    public static final int PROTOCOL_ID = 0x3553c66f;
+    public static final short PROTOCOL_VERSION = 1;
+    public static final int MIN_SUPPORTED_VERSION = 1;
+    public static final int MAX_SUPPORTED_VERSION = 1;
+    
     // General constants
     private static final Logger LOG = LoggerFactory.getLogger(BinaryEncDec.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final int PADDING_SIZE = 4;
+    private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.wrap(new byte[0]);
+    private static final int SIZE_OF_INT = 4;
+    private static final int EXTENSIONS_COUNT_POSITION = 6;
+    static final int PADDING_SIZE = 4;
     private static final int MIN_SIZE_OF_MESSAGE_HEADER = 8;
     private static final int MIN_SIZE_OF_EXTENSION_HEADER = 8;
-    
-    public static final int PROTOCOL_ID = 0x3553C66F; // TODO: update value of constant
-    public static final int MIN_SUPPORTED_VERSION = 1;
-    public static final int MAX_SUPPORTED_VERSION = 1;
+    private static final byte SUCCESS = 0x00;
+    static final byte FAILURE = 0x01;
+    static final byte NOTHING = 0x00;
+
+    // Notification types
+    static final byte SYSTEM = 0x00;
+    static final byte CUSTOM = 0x01;
+    // Subscription types
+    static final byte MANDATORY = 0x00;
+    static final byte OPTIONAL = 0x01;
 
     // Extension constants
-    static final int META_DATA_EXTENSION_ID = 1;
-    static final int PROFILE_EXTENSION_ID = 2;
-    static final int USER_EXTENSION_ID = 3;
-    static final int LOGGING_EXTENSION_ID = 4;
-    static final int CONFIGURATION_EXTENSION_ID = 5;
-    static final int NOTIFICATION_EXTENSION_ID = 6;
-    static final int EVENT_EXTENSION_ID = 7;
+    static final byte META_DATA_EXTENSION_ID = 1;
+    static final byte PROFILE_EXTENSION_ID = 2;
+    static final byte USER_EXTENSION_ID = 3;
+    static final byte LOGGING_EXTENSION_ID = 4;
+    static final byte CONFIGURATION_EXTENSION_ID = 5;
+    static final byte NOTIFICATION_EXTENSION_ID = 6;
+    static final byte EVENT_EXTENSION_ID = 7;
 
     // Meta data constants
+    private static final int APP_TOKEN_SIZE = 20;
     private static final int PUBLIC_KEY_HASH_SIZE = 20;
     private static final int PROFILE_HASH_SIZE = 20;
     private static final int CONFIGURATION_HASH_SIZE = 20;
     private static final int TOPIC_LIST_HASH_SIZE = 20;
 
     // Profile client sync fields
-    private static final int CONF_SCHEMA_VERSION_FIELD_ID = 0;
-    private static final int PROFILE_SCHEMA_VERSION_FIELD_ID = 1;
-    private static final int SYSTEM_NOTIFICATION_SCHEMA_VERSION_FIELD_ID = 2;
-    private static final int USER_NOTIFICATION_SCHEMA_VERSION_FIELD_ID = 3;
-    private static final int LOG_SCHEMA_VERSION_FIELD_ID = 4;
-    private static final int EVENT_FAMILY_VERSIONS_COUNT_FIELD_ID = 5;
-    private static final int PUBLIC_KEY_FIELD_ID = 6;
-    private static final int ACCESS_TOKEN_FIELD_ID = 7;
+    private static final byte CONF_SCHEMA_VERSION_FIELD_ID = 0;
+    private static final byte PROFILE_SCHEMA_VERSION_FIELD_ID = 1;
+    private static final byte SYSTEM_NOTIFICATION_SCHEMA_VERSION_FIELD_ID = 2;
+    private static final byte USER_NOTIFICATION_SCHEMA_VERSION_FIELD_ID = 3;
+    private static final byte LOG_SCHEMA_VERSION_FIELD_ID = 4;
+    private static final byte EVENT_FAMILY_VERSIONS_COUNT_FIELD_ID = 5;
+    private static final byte PUBLIC_KEY_FIELD_ID = 6;
+    private static final byte ACCESS_TOKEN_FIELD_ID = 7;
 
     // User client sync fields
-    private static final int USER_ATTACH_FIELD_ID = 0;
-    private static final int ENDPOINT_ATTACH_FIELD_ID = 1;
-    private static final int ENDPOINT_DETACH_FIELD_ID = 2;
+    private static final byte USER_ATTACH_FIELD_ID = 0;
+    private static final byte ENDPOINT_ATTACH_FIELD_ID = 1;
+    private static final byte ENDPOINT_DETACH_FIELD_ID = 2;
+
+    // User server sync fields
+    private static final byte USER_ATTACH_RESPONSE_FIELD_ID = 0;
+    private static final byte USER_ATTACH_NOTIFICATION_FIELD_ID = 1;
+    private static final byte USER_DETACH_NOTIFICATION_FIELD_ID = 2;
+    private static final byte ENDPOINT_ATTACH_RESPONSE_FIELD_ID = 3;
+    private static final byte ENDPOINT_DETACH_RESPONSE_FIELD_ID = 4;
 
     // Event client sync fields
-    private static final int EVENT_LISTENERS_FIELD_ID = 0;
-    private static final int EVENT_LIST_FIELD_ID = 1;
+    private static final byte EVENT_LISTENERS_FIELD_ID = 0;
+    private static final byte EVENT_LIST_FIELD_ID = 1;
+
+    // Event server sync fields
+    private static final byte EVENT_LISTENERS_RESPONSE_FIELD_ID = 0;
+    private static final byte EVENT_LIST_RESPONSE_FIELD_ID = 1;
 
     // Notification client sync fields
-    private static final int NF_TOPIC_STATES_FIELD_ID = 0;
-    private static final int NF_UNICAST_LIST_FIELD_ID = 1;
-    private static final int NF_SUBSCRIPTION_ADD_FIELD_ID = 2;
-    private static final int NF_SUBSCRIPTION_REMOVE_FIELD_ID = 3;
+    private static final byte NF_TOPIC_STATES_FIELD_ID = 0;
+    private static final byte NF_UNICAST_LIST_FIELD_ID = 1;
+    private static final byte NF_SUBSCRIPTION_ADD_FIELD_ID = 2;
+    private static final byte NF_SUBSCRIPTION_REMOVE_FIELD_ID = 3;
+
+    // Notification server sync fields
+    private static final byte NF_NOTIFICATIONS_FIELD_ID = 0;
+    private static final byte NF_TOPICS_FIELD_ID = 1;
 
     @Override
     public ClientSync decode(byte[] data) throws PlatformEncDecException {
@@ -106,7 +154,262 @@ public class BinaryEncDec implements PlatformEncDec {
                 extensionsCount);
         return parseExtensions(buf, protocolVersion, extensionsCount);
     }
+
+    @Override
+    public byte[] encode(ServerSync sync) throws PlatformEncDecException {
+        GrowingByteBuffer buf = new GrowingByteBuffer(2048);
+        buf.putInt(PROTOCOL_ID);
+        buf.putShort(PROTOCOL_VERSION);
+        buf.putShort(NOTHING); // will be updated later
+        encodeMetaData(buf, sync);
+        short extensionCount = 1;
+
+        if (sync.getProfileSync() != null) {
+            encode(buf, sync.getProfileSync());
+            extensionCount++;
+        }
+        if (sync.getUserSync() != null) {
+            encode(buf, sync.getUserSync());
+            extensionCount++;
+        }
+        if (sync.getLogSync() != null) {
+            encode(buf, sync.getLogSync());
+            extensionCount++;
+        }
+        if (sync.getConfigurationSync() != null) {
+            encode(buf, sync.getConfigurationSync());
+            extensionCount++;
+        }
+        if (sync.getNotificationSync() != null) {
+            encode(buf, sync.getNotificationSync());
+            extensionCount++;
+        }
+        if (sync.getEventSync() != null) {
+            encode(buf, sync.getEventSync());
+            extensionCount++;
+        }
+        
+        if (sync.getRedirectSync() != null) {
+            encode(buf, sync.getRedirectSync());
+            extensionCount++;
+        }
+
+
+        buf.putShort(EXTENSIONS_COUNT_POSITION, extensionCount);
+        return buf.toByteArray();
+    }
+
+    private void buildExtensionHeader(GrowingByteBuffer buf, byte extensionId, byte optionA, byte optionB, byte optionC, int length) {
+        buf.put(extensionId);
+        buf.put(optionA);
+        buf.put(optionB);
+        buf.put(optionC);
+        buf.putInt(length);
+    }
+
+    private void encodeMetaData(GrowingByteBuffer buf, ServerSync sync) {
+        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+        buf.putInt(sync.getRequestId());
+    }
+
+    private void encode(GrowingByteBuffer buf, ProfileServerSync profileSync) {
+        buildExtensionHeader(buf, PROFILE_EXTENSION_ID, NOTHING, NOTHING,
+                (profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? (byte) 0x01 : (byte) 0x00), 0);
+    }
+
+    private void encode(GrowingByteBuffer buf, UserServerSync userSync) {
+        buildExtensionHeader(buf, USER_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
+        int extPosition = buf.position();
+        if (userSync.getUserAttachResponse() != null) {
+            buf.put(USER_ATTACH_RESPONSE_FIELD_ID);
+            buf.put(NOTHING);
+            buf.put(userSync.getUserAttachResponse().getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+            buf.put(NOTHING);
+        }
+        if (userSync.getUserAttachNotification() != null) {
+            UserAttachNotification nf = userSync.getUserAttachNotification();
+            buf.put(USER_ATTACH_NOTIFICATION_FIELD_ID);
+            buf.put((byte) nf.getUserExternalId().length());
+            buf.putShort((short) nf.getEndpointAccessToken().length());
+            putUTF(buf, nf.getUserExternalId());
+            putUTF(buf, nf.getEndpointAccessToken());
+        }
+        if (userSync.getEndpointDetachResponses() != null) {
+            UserDetachNotification nf = userSync.getUserDetachNotification();
+            buf.put(USER_DETACH_NOTIFICATION_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) nf.getEndpointAccessToken().length());
+        }
+        if (userSync.getEndpointAttachResponses() != null) {
+            buf.put(ENDPOINT_ATTACH_RESPONSE_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) userSync.getEndpointAttachResponses().size());
+            for (EndpointAttachResponse response : userSync.getEndpointAttachResponses()) {
+                buf.put(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+                if (response.getEndpointKeyHash() != null) {
+                    buf.put((byte) 0x01);
+                } else {
+                    buf.put(NOTHING);
+                }
+                buf.putShort((short) Integer.valueOf(response.getRequestId()).intValue());
+                if (response.getEndpointKeyHash() != null) {
+                    putUTF(buf, response.getEndpointKeyHash());
+                }
+            }
+        }
+        if (userSync.getEndpointDetachResponses() != null) {
+            buf.put(ENDPOINT_DETACH_RESPONSE_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) userSync.getEndpointDetachResponses().size());
+            for (EndpointDetachResponse response : userSync.getEndpointDetachResponses()) {
+                buf.put(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+                buf.put(NOTHING);
+                buf.putShort((short) Integer.valueOf(response.getRequestId()).intValue());
+            }
+        }
+        buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
+    }
+
+    private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
+        buildExtensionHeader(buf, USER_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+        buf.putShort((short) Integer.valueOf(logSync.getRequestId()).intValue());
+        buf.put(logSync.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+        buf.put(NOTHING);
+    }
+
+    private void encode(GrowingByteBuffer buf, ConfigurationServerSync configurationSync) {
+        int option = 0;
+        if (configurationSync.getConfSchemaBody() != null) {
+            option &= 0x01;
+        }
+        if (configurationSync.getConfDeltaBody() != null) {
+            option &= 0x02;
+        }
+        buildExtensionHeader(buf, CONFIGURATION_EXTENSION_ID, NOTHING, NOTHING, (byte) option, 0);
+        int extPosition = buf.position();
+
+        buf.putInt(configurationSync.getAppStateSeqNumber());
+        if (configurationSync.getConfSchemaBody() != null) {
+            buf.putInt(configurationSync.getConfSchemaBody().array().length);
+        }
+        if (configurationSync.getConfDeltaBody() != null) {
+            buf.putInt(configurationSync.getConfDeltaBody().array().length);
+        }
+        buf.put(configurationSync.getConfSchemaBody().array());
+        buf.put(configurationSync.getConfDeltaBody().array());
+
+        buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
+    }
+
+    private void encode(GrowingByteBuffer buf, NotificationServerSync notificationSync) {
+        buildExtensionHeader(buf, NOTIFICATION_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
+        int extPosition = buf.position();
+
+        buf.putInt(notificationSync.getAppStateSeqNumber());
+        if (notificationSync.getNotifications() != null) {
+            buf.put(NF_NOTIFICATIONS_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) notificationSync.getNotifications().size());
+            for (Notification nf : notificationSync.getNotifications()) {
+                buf.putInt(nf.getSeqNumber());
+                buf.put(nf.getType() == NotificationType.SYSTEM ? SYSTEM : CUSTOM);
+                buf.put(NOTHING);
+                buf.putShort(nf.getUid() != null ? (short) nf.getUid().length() : (short) 0);
+                buf.putInt(nf.getBody().array().length);
+                long topicId = nf.getTopicId() != null ? Long.valueOf(nf.getTopicId()) : 0l;
+                buf.putLong(topicId);
+                putUTF(buf, nf.getUid());
+                put(buf, nf.getBody().array());
+            }
+        }
+        if (notificationSync.getAvailableTopics() != null) {
+            buf.put(NF_TOPICS_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) notificationSync.getAvailableTopics().size());
+            for (Topic t : notificationSync.getAvailableTopics()) {
+                buf.putLong(Long.parseLong(t.getId()));
+                buf.putShort(t.getSubscriptionType() == SubscriptionType.MANDATORY ? MANDATORY : OPTIONAL);
+                buf.put(NOTHING);
+                buf.put((byte) t.getName().getBytes(UTF8).length);
+                putUTF(buf, t.getName());
+            }
+        }
+
+        buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
+    }
+
+    private void encode(GrowingByteBuffer buf, EventServerSync eventSync) {
+        byte option = 0;
+        if (eventSync.getEventSequenceNumberResponse() != null) {
+            option = 1;
+        }
+        buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, NOTHING, option, 0);
+        int extPosition = buf.position();
+
+        if (eventSync.getEventSequenceNumberResponse() != null) {
+            buf.putInt(eventSync.getEventSequenceNumberResponse().getSeqNum());
+        }
+
+        if (eventSync.getEventListenersResponses() != null) {
+            buf.put(EVENT_LISTENERS_RESPONSE_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) eventSync.getEventListenersResponses().size());
+            for (EventListenersResponse response : eventSync.getEventListenersResponses()) {
+                buf.putShort((short) Integer.parseInt(response.getRequestId()));
+                buf.putShort(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+                if (response.getListeners() != null) {
+                    buf.putInt(response.getListeners().size());
+                    for (String listner : response.getListeners()) {
+                        buf.put(Base64Util.decode(listner));
+                    }
+                } else {
+                    buf.putInt(0);
+                }
+            }
+        }
+        if (eventSync.getEvents() != null) {
+            buf.put(EVENT_LIST_RESPONSE_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) eventSync.getEvents().size());
+            for (Event event : eventSync.getEvents()) {
+                boolean eventDataIsEmpty = event.getEventData() == null || event.getEventData().array().length == 0;
+                if (!eventDataIsEmpty) {
+                    buf.putShort((short) 0x02);
+                } else {
+                    buf.putShort(NOTHING);
+                }
+                buf.putShort((short) event.getEventClassFQN().length());
+                buf.put(Base64Util.decode(event.getSource()));
+                putUTF(buf, event.getEventClassFQN());
+                if (!eventDataIsEmpty) {
+                    put(buf, event.getEventData().array());
+                }
+            }
+        }
+
+        buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
+    }
     
+    private void encode(GrowingByteBuffer buf, RedirectServerSync redirectSync) {
+        buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+        buf.putInt(redirectSync.getDnsName().hashCode());
+    }
+
+    public void putUTF(GrowingByteBuffer buf, String str) {
+        put(buf, str.getBytes(UTF8));
+    }
+
+    private void put(GrowingByteBuffer buf, byte[] data) {
+        buf.put(data);
+        int padding = data.length % BinaryEncDec.PADDING_SIZE;
+        if (padding > 0) {
+            padding = PADDING_SIZE - padding;
+            for (int i = 0; i < padding; i++) {
+                buf.put(NOTHING);
+            }
+        }
+    }
+
     private ClientSync parseExtensions(ByteBuffer buf, int protocolVersion, int extensionsCount) throws PlatformEncDecException {
         ClientSync sync = new ClientSync();
         for (short extPos = 0; extPos < extensionsCount; extPos++) {
@@ -115,7 +418,7 @@ public class BinaryEncDec implements PlatformEncDec {
                         "Extension header is to small. Available {0}, current possition is {1}!", buf.remaining(), buf.position()));
             }
             int extMetaData = buf.getInt();
-            int type = (extMetaData & 0xFF000000) >> 24;
+            byte type = (byte) ((extMetaData & 0xFF000000) >> 24);
             int options = extMetaData & 0x00FFFFFF;
             int payloadLength = buf.getInt();
             if (buf.remaining() < payloadLength) {
@@ -165,7 +468,7 @@ public class BinaryEncDec implements PlatformEncDec {
             md.setProfileHash(getNewByteBuffer(buf, PROFILE_HASH_SIZE));
         }
         if (hasOption(options, 0x08)) {
-            md.setApplicationToken(getUTF8String(buf, buf.getInt()));
+            md.setApplicationToken(getUTF8String(buf, APP_TOKEN_SIZE));
         }
         sync.setClientSyncMetaData(md);
     }
@@ -176,7 +479,7 @@ public class BinaryEncDec implements PlatformEncDec {
         profileSync.setProfileBody(getNewByteBuffer(buf, buf.getInt()));
         profileSync.setVersionInfo(new EndpointVersionInfo());
         while (buf.position() < payloadLimitPosition) {
-            int fieldId = buf.get();
+            byte fieldId = buf.get();
             // reading unused reserved field
             buf.get();
             switch (fieldId) {
@@ -212,7 +515,7 @@ public class BinaryEncDec implements PlatformEncDec {
         int payloadLimitPosition = buf.position() + payloadLength;
         UserClientSync userSync = new UserClientSync();
         while (buf.position() < payloadLimitPosition) {
-            int fieldId = buf.get();
+            byte fieldId = buf.get();
             switch (fieldId) {
             case USER_ATTACH_FIELD_ID:
                 userSync.setUserAttachRequest(parseUserAttachRequest(buf));
@@ -256,7 +559,7 @@ public class BinaryEncDec implements PlatformEncDec {
         }
         int payloadLimitPosition = buf.position() + payloadLength;
         while (buf.position() < payloadLimitPosition) {
-            int fieldId = buf.get();
+            byte fieldId = buf.get();
             // reading unused reserved field
             buf.get();
             switch (fieldId) {
@@ -278,7 +581,7 @@ public class BinaryEncDec implements PlatformEncDec {
         NotificationClientSync nfSync = new NotificationClientSync();
         nfSync.setAppStateSeqNumber(buf.getInt());
         while (buf.position() < payloadLimitPosition) {
-            int fieldId = buf.get();
+            byte fieldId = buf.get();
             // reading unused reserved field
             buf.get();
             switch (fieldId) {
@@ -361,12 +664,19 @@ public class BinaryEncDec implements PlatformEncDec {
             event.setSeqNum(buf.getInt());
             int eventOptions = getIntFromUnsignedShort(buf);
             int fqnLength = getIntFromUnsignedShort(buf);
-            int dataSize = buf.getInt();
+            int dataSize = 0;
+            if (hasOption(eventOptions, 0x02)) {
+                dataSize = buf.getInt();
+            }
             if (hasOption(eventOptions, 0x01)) {
                 event.setTarget(Base64Util.encode(getNewByteArray(buf, PUBLIC_KEY_HASH_SIZE)));
             }
             event.setEventClassFQN(getUTF8String(buf, fqnLength));
-            event.setEventData(getNewByteBuffer(buf, dataSize));
+            if(dataSize > 0){
+                event.setEventData(getNewByteBuffer(buf, dataSize));
+            }else{
+                event.setEventData(EMPTY_BUFFER);
+            }
             events.add(event);
         }
         return events;
@@ -444,7 +754,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private static void handlePadding(ByteBuffer buf, int size) {
         int padding = size % PADDING_SIZE;
-        if(padding > 0){
+        if (padding > 0) {
             buf.position(buf.position() + (PADDING_SIZE - padding));
         }
     }
@@ -467,11 +777,4 @@ public class BinaryEncDec implements PlatformEncDec {
         }
         return sync;
     }
-
-    @Override
-    public byte[] encode(ServerSync sync) throws PlatformEncDecException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

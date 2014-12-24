@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,22 +13,34 @@ import org.junit.Test;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.Event;
 import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventSequenceNumberResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.LogClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.LogServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachNotification;
 import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.BinaryEncDec;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.PlatformEncDecException;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BinaryEncDecTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BinaryEncDecTest.class);
+    
     private static final int SHA_1_LENGTH = 20;
     private static final int MAGIC_NUMBER = 42;
     private static final int MAGIC_INDEX = 3;
     private static final short BIG_MAGIC_NUMBER = (short) (MAGIC_NUMBER * MAGIC_NUMBER);
-    BinaryEncDec encDec;
+    private BinaryEncDec encDec;
 
     @Before
     public void before() {
@@ -94,8 +108,101 @@ public class BinaryEncDecTest {
         Assert.assertEquals(MAGIC_NUMBER + 1, sync.getClientSyncMetaData().getProfileHash().get(MAGIC_INDEX));
     }
 
+    @Test
+    public void testEncodeBasicServerSync() throws PlatformEncDecException {
+        ServerSync sync = new ServerSync();
+        sync.setRequestId(MAGIC_NUMBER);
+
+        ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
+        int size = 8 // header
+        + 8 + 4 // metadata
+        ;
+        Assert.assertEquals(size, buf.array().length);
+        buf.position(buf.capacity() - 4);
+        Assert.assertEquals(MAGIC_NUMBER, buf.getInt());
+        LOG.trace(Arrays.toString(buf.array()));
+    }
+
+    @Test
+    public void testEncodeProfileServerSync() throws PlatformEncDecException {
+        ServerSync sync = new ServerSync();
+        sync.setRequestId(MAGIC_NUMBER);
+        ProfileServerSync pSync = new ProfileServerSync(SyncResponseStatus.RESYNC);
+        sync.setProfileSync(pSync);
+
+        ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
+        int size = 8 // header
+        + 8 + 4 // metadata
+        + 8 // profile sync
+        ;
+        Assert.assertEquals(size, buf.array().length);
+        buf.position(buf.capacity() - 12);
+        Assert.assertEquals(MAGIC_NUMBER, buf.getInt());
+        LOG.trace(Arrays.toString(buf.array()));
+    }
+
+    @Test
+    public void testEncodeLogServerSync() throws PlatformEncDecException {
+        ServerSync sync = new ServerSync();
+        sync.setRequestId(MAGIC_NUMBER);
+        LogServerSync lSync = new LogServerSync("" + MAGIC_NUMBER, SyncStatus.FAILURE);
+        sync.setLogSync(lSync);
+
+        ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
+        int size = 8 // header
+                + 8 + 4 // metadata
+                + 8 + 4// log sync
+        ;
+        Assert.assertEquals(size, buf.array().length);
+        buf.position(buf.capacity() - 4);
+        Assert.assertEquals(MAGIC_NUMBER, buf.getShort());
+        buf.position(buf.capacity() - 2);
+        Assert.assertEquals(BinaryEncDec.FAILURE, buf.get());
+        LOG.trace(Arrays.toString(buf.array()));
+    }
+
+    @Test
+    public void testEncodeUserServerSync() throws PlatformEncDecException {
+        ServerSync sync = new ServerSync();
+        sync.setRequestId(MAGIC_NUMBER);
+        UserServerSync uSync = new UserServerSync();
+        uSync.setUserAttachNotification(new UserAttachNotification("id", "token"));
+        sync.setUserSync(uSync);
+
+        ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
+        int size = 8 // header
+                + 8 + 4 // metadata
+                + 8 + 4 + 4 + 8// user sync
+        ;
+        Assert.assertEquals(size, buf.array().length);
+        LOG.trace(Arrays.toString(buf.array()));
+    }
+    
+    @Test
+    public void testEncodeEventServerSync() throws PlatformEncDecException {
+        ServerSync sync = new ServerSync();
+        sync.setRequestId(MAGIC_NUMBER);
+        EventServerSync eSync = new EventServerSync();
+        eSync.setEventSequenceNumberResponse(new EventSequenceNumberResponse(MAGIC_NUMBER));
+        Event event = new Event();
+        event.setEventClassFQN("fqn");
+        event.setSource(Base64Util.encode(new byte[SHA_1_LENGTH]));
+        eSync.setEvents(Collections.singletonList(event));
+        sync.setEventSync(eSync);
+
+        ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
+        int size = 8 // header
+                + 8 + 4 // metadata
+                + 8 + 4 // event header + seq number 
+                + 4 + 4 + SHA_1_LENGTH + 4// event sync
+        ;
+        System.out.println(Arrays.toString(buf.array()));
+        Assert.assertEquals(size, buf.array().length);
+        
+    }
+
     private byte[] getValidMetaData() {
-        ByteBuffer buf = ByteBuffer.wrap(new byte[8 + SHA_1_LENGTH + SHA_1_LENGTH + 4 + 5 + 3]);
+        ByteBuffer buf = ByteBuffer.wrap(new byte[8 + SHA_1_LENGTH + SHA_1_LENGTH + 20]);
         buf.putInt(1);
         buf.putInt(60);
         byte[] keyHash = new byte[SHA_1_LENGTH];
@@ -104,12 +211,8 @@ public class BinaryEncDecTest {
         byte[] profileHash = new byte[SHA_1_LENGTH];
         profileHash[MAGIC_INDEX] = MAGIC_NUMBER + 1;
         buf.put(profileHash);
-        buf.putInt("token".getBytes(Charset.forName("UTF-8")).length);
-        buf.put("token".getBytes(Charset.forName("UTF-8")));
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        return concat(buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 0x0F, buf.array().length), buf.array());
+        buf.put("12345678900987654321".getBytes(Charset.forName("UTF-8")));
+        return concat(buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 0x0F, buf.array().length), buf.array());        
     }
 
     @Test
@@ -395,9 +498,9 @@ public class BinaryEncDecTest {
         buf.put((byte) 0);
         buf.put((byte) 0);
         buf.put((byte) 1);
-        //event
+        // event
         buf.putInt(MAGIC_NUMBER);
-        buf.putShort((short) 0x01);
+        buf.putShort((short) 0x03);
         buf.putShort((short) 4);
         buf.putInt(100);
         byte[] hash = new byte[SHA_1_LENGTH];
@@ -405,7 +508,7 @@ public class BinaryEncDecTest {
         buf.put(hash);
 
         buf.put("name".getBytes(Charset.forName("UTF-8")));
-        
+
         byte[] data = new byte[100];
         data[MAGIC_INDEX] = MAGIC_NUMBER;
         buf.put(data);
