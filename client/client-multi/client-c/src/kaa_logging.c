@@ -15,19 +15,20 @@
  */
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
+
 #include "kaa_logging.h"
 
 #include <stddef.h>
 #include <string.h>
+
 #include "collections/kaa_list.h"
-#include "utilities/kaa_mem.h"
-#include "utilities/kaa_uuid.h"
-#include "utilities/kaa_log.h"
 #include "kaa_common.h"
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
 #include "kaa_platform_utils.h"
 #include "kaa_platform_common.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 
 #include "avro_src/avro/io.h"
 
@@ -35,14 +36,17 @@
 #define KAA_MAX_PADDING_LENGTH             3
 #define MAX_RECORD_SIZE(remaining_size)    ((remaining_size) - sizeof(uint32_t) - KAA_MAX_PADDING_LENGTH)
 
+
+
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
+
+
+
 typedef enum {
     LOGGING_RESULT_SUCCESS = 0x00,
     LOGGING_RESULT_FAILURE = 0x01
 } logging_sync_result_t;
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
-
-static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
 struct kaa_log_collector {
     uint16_t                        log_bucket_id;
     kaa_log_storage_t           *   log_storage;
@@ -54,7 +58,16 @@ struct kaa_log_collector {
     kaa_logger_t                *   logger;
 };
 
-kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
+
+
+static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
+
+
+
+kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
+                                   , kaa_status_t *status
+                                   , kaa_channel_manager_t *channel_manager
+                                   , kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL(log_collector_p, KAA_ERR_BADPARAM);
     kaa_log_collector_t * collector = (kaa_log_collector_t *) KAA_MALLOC(sizeof(kaa_log_collector_t));
@@ -81,13 +94,11 @@ void kaa_log_collector_destroy(kaa_log_collector_t *self)
     }
 }
 
-kaa_error_t kaa_logging_init(
-                              kaa_log_collector_t *collector
-                            , kaa_log_storage_t * storage
-                            , kaa_log_upload_properties_t *properties
-                            , kaa_storage_status_t * status
-                            , log_upload_decision_fn need_upl
-                           )
+kaa_error_t kaa_logging_init(kaa_log_collector_t *collector
+                           , kaa_log_storage_t * storage
+                           , kaa_log_upload_properties_t *properties
+                           , kaa_storage_status_t * status
+                           , log_upload_decision_fn need_upl)
 {
     KAA_RETURN_IF_NIL(collector, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL4(storage, status, need_upl, properties, KAA_ERR_BADPARAM);
@@ -237,7 +248,10 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length)
+kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
+                                         , kaa_platform_message_reader_t *reader
+                                         , uint32_t extension_options
+                                         , size_t extension_length)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage, KAA_ERR_NOT_INITIALIZED);

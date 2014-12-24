@@ -62,10 +62,10 @@ kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self
     char *buffer = (char *)KAA_MALLOC((event_size) * sizeof(char));
     KAA_RETURN_IF_NIL(buffer, KAA_ERR_NOMEM);
     avro_writer_t writer = avro_writer_memory(buffer, event_size);
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_NOMEM);
     event->serialize(writer, event);
     kaa_error_t result = kaa_event_manager_send_event(self, "${event}", writer->buf, writer->written, target);
     avro_writer_free(writer);
-    KAA_FREE(buffer);
     return result;
 #else
     return kaa_event_manager_send_event(self, "${event}", NULL, 0, target);
@@ -84,10 +84,10 @@ kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_m
     char *buffer = (char *)KAA_MALLOC((event_size) * sizeof(char));
     KAA_RETURN_IF_NIL(buffer, KAA_ERR_NOMEM);
     avro_writer_t writer = avro_writer_memory(buffer, event_size);
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_NOMEM);
     event->serialize(writer, event);
     kaa_error_t result = kaa_event_manager_add_event_to_transaction(self, trx_id, "${event}", writer->buf, writer->written, target);
     avro_writer_free(writer);
-    KAA_FREE(buffer);
     return result;
 #else
     return kaa_event_manager_add_event_to_transaction(self, trx_id, "${event}", NULL, 0, target);

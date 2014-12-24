@@ -64,7 +64,6 @@ set (KAA_SOURCE_FILES
                        src/avro_src/encoding_binary.c
                        src/collections/kaa_deque.c
                        src/collections/kaa_list.c
-                       src/gen/kaa_endpoint_gen.c
                        src/kaa_bootstrap.c
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
@@ -79,7 +78,6 @@ set (KAA_SOURCE_FILES
                        src/log/kaa_memory_log_storage.c
                        src/utilities/kaa_log.c
                        src/utilities/kaa_mem.c
-                       src/utilities/kaa_uuid_int.c
                        src/kaa_platform_utils.c
 
 )

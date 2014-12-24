@@ -22,6 +22,7 @@ extern "C" {
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
+
 #include <stddef.h>
 #include "kaa_error.h"
 
