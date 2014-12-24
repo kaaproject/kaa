@@ -93,7 +93,7 @@ typedef enum kaa_log_upload_decision_t {
     CLEANUP     = 2  // Need to cleanup log storage to fit available space.
 } kaa_log_upload_decision_t;
 
-typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_t *);
+typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(const kaa_storage_status_t *);
 
 /**
  * @brief Provide log storage to Kaa.
@@ -111,9 +111,9 @@ typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_
  */
 kaa_error_t                 kaa_logging_init(
                                                     kaa_log_collector_t *
-                                                  , kaa_log_storage_t *
-                                                  , kaa_log_upload_properties_t *
-                                                  , kaa_storage_status_t *
+                                                  , const kaa_log_storage_t *
+                                                  , const kaa_log_upload_properties_t *
+                                                  , const kaa_storage_status_t *
                                                   , log_upload_decision_fn
                                                   );
 

@@ -19,6 +19,7 @@
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
 #include <stdio.h>
+#include <string.h>
 
 #include "kaa_test.h"
 #include "kaa.h"
@@ -26,6 +27,7 @@
 #include "log/kaa_memory_log_storage.h"
 #include "kaa_channel_manager.h"
 #include "kaa_profile.h"
+#include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 
@@ -41,6 +43,12 @@ extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector
         , kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
 
+extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
+extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
+                                                , kaa_platform_message_reader_t *reader
+                                                , uint32_t extension_options
+                                                , size_t extension_length);
+extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
 
 
 static kaa_logger_t *logger = NULL;
@@ -49,68 +57,132 @@ static kaa_channel_manager_t *channel_manager = NULL;
 static kaa_log_collector_t *log_collector = NULL;
 
 #define NUM_OF_SERVICES 4
-static const kaa_service_t services[NUM_OF_SERVICES] = {
-        KAA_SERVICE_PROFILE
-        , KAA_SERVICE_USER
-        , KAA_SERVICE_EVENT
-        , KAA_SERVICE_LOGGING
-};
 
+#define TEST_LOG_BUFFER  "log_record"
 
+static const uint16_t request_id = 0x01;
+static kaa_user_log_record_t *test_log_record;
+static kaa_log_entry_t test_log_entry = { NULL, 0 };
+static bool is_add_record_invoked = false;
+static bool is_get_record_invoked = false;
+static bool is_upload_succeeded_invoked = false;
 
-static char* allocate_buffer(void* context, size_t buffer_size)
+static kaa_log_upload_decision_t upload_decision(const kaa_storage_status_t *status)
 {
-    KAA_LOG_DEBUG(logger, KAA_ERR_NONE, "In allocate_buffer(), requested size: %u", buffer_size);
-    char **buffer_to_alloc_p = (char**) context;
-    *buffer_to_alloc_p = KAA_MALLOC(buffer_size * sizeof(char));
-    return *buffer_to_alloc_p;
+    return UPLOAD;
 }
 
+static size_t get_total_size()
+{
+    return test_log_entry.record_size;
+}
 
+static uint16_t get_records_count()
+{
+    return 1;
+}
+
+static void add_log_record(kaa_log_entry_t record)
+{
+    KAA_LOG_DEBUG(logger, KAA_ERR_NONE, "Adding test record");
+    size_t test_log_record_size = test_log_record->get_size(test_log_record);
+    char record_buf[test_log_record_size];
+    avro_writer_t writer = avro_writer_memory(record_buf, record.record_size);
+    test_log_record->serialize(writer, test_log_record);
+    avro_writer_free(writer);
+
+    ASSERT_EQUAL(record.record_size, test_log_record_size);
+    ASSERT_EQUAL(memcmp(record.record_data, record_buf, record.record_size), 0);
+
+    if (test_log_entry.record_data)
+        KAA_FREE(test_log_entry.record_data);
+    test_log_entry = record;
+    is_add_record_invoked = true;
+    KAA_LOG_DEBUG(logger, KAA_ERR_NONE, "Test record successfully added");
+}
+
+static kaa_log_entry_t get_record(uint16_t id, size_t remaining_size)
+{
+    static kaa_log_entry_t empty = { NULL, 0 };
+    if (!is_get_record_invoked) {
+        is_get_record_invoked = true;
+        return test_log_entry;
+    }
+    return empty;
+}
+
+static void upload_succeeded(uint16_t id)
+{
+    ASSERT_EQUAL(request_id, id);
+    is_upload_succeeded_invoked = true;
+}
+
+static void upload_failed(uint16_t id)
+{
+
+}
+
+static void shrink_to_size(size_t size)
+{
+
+}
+
+static void destroy()
+{
+
+}
 
 void test_create_request()
 {
-    kaa_context_t *kaa_context = NULL;
-    kaa_error_t error = kaa_init(&kaa_context);
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_logging_add_record(log_collector, test_log_record), KAA_ERR_NONE);
+    ASSERT_TRUE(is_add_record_invoked);
 
-    kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
-    profile->profile_body = kaa_string_move_create("body", NULL);
-    kaa_profile_update_profile(kaa_context->profile_manager, profile);
+    size_t expected_size = 0;
+    ASSERT_EQUAL(kaa_logging_request_get_size(log_collector, &expected_size), KAA_ERR_NONE);
 
-    char *buffer = NULL;
-    error = kaa_platform_protocol_serialize_client_sync(kaa_context->platfrom_protocol, services, NUM_OF_SERVICES, allocate_buffer, &buffer);
+    char buffer[expected_size];
+    kaa_platform_message_writer_t *writer = NULL;
+    ASSERT_EQUAL(kaa_platform_message_writer_create(&writer, buffer, expected_size), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(writer);
 
-    ASSERT_EQUAL(error, KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_logging_request_serialize(log_collector, writer), KAA_ERR_NONE);
+    ASSERT_TRUE(is_get_record_invoked);
 
-    KAA_FREE(buffer);
-    profile->destroy(profile);
-    kaa_deinit(kaa_context);
+    char *buf_cursor = buffer;
+    ASSERT_EQUAL(KAA_LOGGING_EXTENSION_TYPE, *buf_cursor);
+    ++buf_cursor;
+
+    char options[] = { 0x00, 0x00, 0x01 };
+    ASSERT_EQUAL(memcmp(buf_cursor, options, 3), 0);
+    buf_cursor += 3;
+
+    ASSERT_EQUAL(*(uint32_t *) buf_cursor, KAA_HTONL(20));
+    buf_cursor += sizeof(uint32_t);
+
+    char request_id_records_count[]  = { 0x00, 0x01, 0x00, 0x01 };
+    ASSERT_EQUAL(memcmp(buf_cursor, request_id_records_count, 4), 0);
+    buf_cursor += 4;
+
+    ASSERT_EQUAL(*(uint32_t *) buf_cursor, KAA_HTONL(test_log_entry.record_size));
+    buf_cursor += sizeof(uint32_t);
+
+    ASSERT_EQUAL(memcmp(buf_cursor, test_log_entry.record_data, test_log_entry.record_size), 0);
+
+    kaa_platform_message_writer_destroy(writer);
 }
-
-
 
 void test_response()
 {
-//    kaa_log_sync_response_t log_sync_response;
-//    log_sync_response.result = ENUM_SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
-//
-//    log_sync_response.request_id = kaa_string_move_create("42", NULL);
-//    kaa_uuid_fill(&test_uuid, 42);
-//
-//    kaa_log_storage_t *ls = get_memory_log_storage();
-//    ls->upload_failed = &stub_upload_uuid_check;
-//    ls->upload_succeeded = &stub_upload_uuid_check;
-//
-//    kaa_storage_status_t *ss = get_memory_log_storage_status();
-//    kaa_log_upload_properties_t *lp = get_memory_log_upload_properties();
-//
-//    kaa_logging_init(log_collector, ls, lp, ss, &memory_log_storage_is_upload_needed);
-//
-//    kaa_logging_handle_sync(log_collector, &log_sync_response);
-//    ASSERT_EQUAL(stub_upload_uuid_check_call_count,1);
-//
-//    kaa_string_destroy(log_sync_response.request_id);
+    char response[] = { 0x00, 0x01, 0x00, 0x00 };
+    kaa_platform_message_reader_t *reader = NULL;
+    ASSERT_EQUAL(kaa_platform_message_reader_create(&reader, response, 4), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(reader);
+
+    ASSERT_EQUAL(kaa_logging_handle_server_sync(log_collector, reader, 0, 4), KAA_ERR_NONE);
+    ASSERT_TRUE(is_upload_succeeded_invoked);
+
+    kaa_platform_message_reader_destroy(reader);
+
 }
 
 
@@ -141,6 +213,18 @@ int test_init(void)
     if (error || !log_collector) {
         return error;
     }
+
+    kaa_log_storage_t storage = { &add_log_record, &get_record, &upload_succeeded, &upload_failed, &shrink_to_size, &destroy };
+    kaa_log_upload_properties_t props = { 1024, 1024, 2048 };
+    kaa_storage_status_t status = { &get_total_size, &get_records_count };
+
+    error = kaa_logging_init(log_collector, &storage, &props, &status, &upload_decision);
+    if (error) {
+        return error;
+    }
+
+    test_log_record = kaa_test_log_record_create();
+    test_log_record->data = kaa_string_move_create(TEST_LOG_BUFFER, NULL);
 #endif
     return 0;
 }
@@ -153,9 +237,12 @@ int test_deinit(void)
     kaa_log_collector_destroy(log_collector);
     kaa_channel_manager_destroy(channel_manager);
     kaa_status_destroy(status);
+    if (test_log_entry.record_data)
+        KAA_FREE(test_log_entry.record_data);
 #endif
     kaa_log_destroy(logger);
     set_memory_log_storage_logger(NULL);
+
     return 0;
 }
 
