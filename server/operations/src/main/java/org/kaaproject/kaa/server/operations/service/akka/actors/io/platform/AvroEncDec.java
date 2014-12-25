@@ -82,13 +82,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Class AvroEncDec is an implementation of {@link PlatformEncDec} that uses Apache Avro for data representation.
+ * This class is an implementation of {@link PlatformEncDec} that uses Apache Avro for data serialization.
  */
 @KaaPlatformProtocol
 public class AvroEncDec implements PlatformEncDec {
 
-    public static final String AVRO_ENC_DEC_ID = "avro";
-    
     private static final Logger LOG = LoggerFactory.getLogger(AvroEncDec.class);
 
     private final AvroByteArrayConverter<SyncRequest> clientSyncConverter;

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.server.operations.service.akka.actors.io.platform;
 
 import java.nio.ByteBuffer;
@@ -51,14 +66,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Class BinaryEncDec is an implementation of {@link PlatformEncDec} that
- * uses internal binary protocol for data representation.
+ * This class is an implementation of {@link PlatformEncDec} that
+ * uses internal binary protocol for data serialization.
+ * 
+ * @author Andrew Shvayka
+ * 
  */
 @KaaPlatformProtocol
 public class BinaryEncDec implements PlatformEncDec {
 
-    private static final int DEFAULT_BUFFER_SIZE = 128;
-    public static final int PROTOCOL_ID = 0x3553c66f;
     public static final short PROTOCOL_VERSION = 1;
     public static final int MIN_SUPPORTED_VERSION = 1;
     public static final int MAX_SUPPORTED_VERSION = 1;
@@ -67,12 +83,14 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final Logger LOG = LoggerFactory.getLogger(BinaryEncDec.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.wrap(new byte[0]);
+    private static final int DEFAULT_BUFFER_SIZE = 128;
     private static final int SIZE_OF_INT = 4;
     private static final int EXTENSIONS_COUNT_POSITION = 6;
-    static final int PADDING_SIZE = 4;
     private static final int MIN_SIZE_OF_MESSAGE_HEADER = 8;
     private static final int MIN_SIZE_OF_EXTENSION_HEADER = 8;
     private static final byte SUCCESS = 0x00;
+    
+    static final int PADDING_SIZE = 4;
     static final byte FAILURE = 0x01;
     static final byte NOTHING = 0x00;
 
@@ -163,7 +181,7 @@ public class BinaryEncDec implements PlatformEncDec {
         }
 
         int protocolId = buf.getInt();
-        if (protocolId != PROTOCOL_ID) {
+        if (protocolId != Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID) {
             throw new PlatformEncDecException(MessageFormat.format("Unknown protocol id {0}!", protocolId));
         }
 
@@ -184,7 +202,7 @@ public class BinaryEncDec implements PlatformEncDec {
     public byte[] encode(ServerSync sync) throws PlatformEncDecException {
         LOG.trace("Encoding server sync {}", sync);
         GrowingByteBuffer buf = new GrowingByteBuffer(DEFAULT_BUFFER_SIZE);
-        buf.putInt(PROTOCOL_ID);
+        buf.putInt(Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID);
         buf.putShort(PROTOCOL_VERSION);
         buf.putShort(NOTHING); // will be updated later
         encodeMetaData(buf, sync);
