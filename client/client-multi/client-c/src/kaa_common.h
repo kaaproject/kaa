@@ -27,22 +27,32 @@
 extern "C" {
 #endif
 
+
+/*
+ * Standard error handling macros
+ */
+#define KAA_RETURN_IF_ERR(E) \
+    { if (E) return E; }
+
 #define KAA_RETURN_IF_NIL(p, E) \
-    { if (!(p)) return (E); }
+    { if (!(p)) return E; }
 
 #define KAA_RETURN_IF_NIL2(p1, p2, E) \
-    { if (!(p1) || !(p2)) return (E); }
+    { if (!(p1) || !(p2)) return E; }
 
 #define KAA_RETURN_IF_NIL3(p1, p2, p3, E) \
-    { if (!(p1) || !(p2) || !(p3)) return (E); }
+    { if (!(p1) || !(p2) || !(p3)) return E; }
 
 #define KAA_RETURN_IF_NIL4(p1, p2, p3, p4, E) \
-    { if (!(p1) || !(p2) || !(p3) || !(p4)) return (E); }
+    { if (!(p1) || !(p2) || !(p3) || !(p4)) return E; }
 
-// TODO: move to kaa_event.h
-typedef void (*event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size);
-typedef size_t kaa_trx_id;
+#define KAA_RETURN_IF_NIL5(p1, p2, p3, p4, p5,E) \
+    { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; }
 
+
+/**
+ * Types of Kaa platform services
+ */
 typedef enum {
     KAA_SERVICE_BOOTSTRAP = 0,
     KAA_SERVICE_PROFILE = 1,
@@ -51,20 +61,28 @@ typedef enum {
     KAA_SERVICE_LOGGING = 4,
 } kaa_service_t;
 
-/**
+
+
+/*
  * SHA1 hash
  */
 #define SHA_1_DIGEST_LENGTH 20
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
+typedef const unsigned char* kaa_digest_p;
+
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
-// TODO: move to kaa_channel_manager.h and do something about the kaa_defaults.h
+
+
+// TODO: Channel types must be represented as a list managed in runtime by the channel_manager
 #define KAA_CHANNEL_TYPE_COUNT 3
 typedef enum {
     HTTP,
     HTTP_LP,
     KAATCP
 } kaa_channel_type_t;
+
+
 
 #ifdef __cplusplus
 }      /* extern "C" */

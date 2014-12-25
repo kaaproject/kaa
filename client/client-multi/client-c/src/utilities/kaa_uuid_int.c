@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include "kaa_uuid.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_uuid.h"
+#include "utilities/kaa_mem.h"
 #include <stdio.h>
 #include <string.h>
 
-#define KAA_UUID_FORMAT     "%10u"
+#define KAA_UUID_FORMAT     "%u"
 
 void kaa_uuid_fill(kaa_uuid_t *dst, KAA_UUID_VALUE_T src)
 {
@@ -35,7 +35,7 @@ void kaa_uuid_to_string(char **dst, kaa_uuid_t *uuid)
 {
     char buf[11];
     size_t len = sprintf(buf, KAA_UUID_FORMAT, *uuid);
-    *dst = KAA_CALLOC(len + 1, sizeof(char));
+    *dst = (char *) KAA_MALLOC((len + 1) * sizeof(char));
     strcpy(*dst, buf);
 }
 

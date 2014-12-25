@@ -35,4 +35,14 @@ public interface Constants { //NOSONAR
      */
     public static final String SIGNATURE_HEADER_NAME = "X-SIGNATURE"; //NOSONAR
 
+    /**
+     * The identifier for the Avro platform protocol
+     */
+    public static final int KAA_PLATFORM_PROTOCOL_AVRO_ID = 0xf291f2d4;
+
+    /**
+     * The identifier for the Binary platform protocol
+     */
+    public static final int KAA_PLATFORM_PROTOCOL_BINARY_ID = 0x3553c66f;
+
 }

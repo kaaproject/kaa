@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include "kaa_log.h"
+#include "utilities/kaa_log.h"
 
 #include <time.h>
 #include <stdarg.h>
 #include <string.h>
 
 #include "kaa_common.h"
-#include "kaa_mem.h"
+#include "utilities/kaa_mem.h"
 
 #define KAA_LOG_PREFIX_FORMAT   "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
 
@@ -50,17 +50,16 @@ struct kaa_logger_t {
     size_t          buffer_size;
 };
 
-
 kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink)
 {
     if (!logger_p || (buffer_size < KAA_MINIMAL_BUFFER_SIZE) || (max_log_level > KAA_MAX_LOG_LEVEL))
         return KAA_ERR_BADPARAM;
 
-    *logger_p = KAA_MALLOC(kaa_logger_t);
+    *logger_p = (kaa_logger_t *) KAA_MALLOC(sizeof(kaa_logger_t));
     if (!*logger_p)
         return KAA_ERR_NOMEM;
 
-    (*logger_p)->log_buffer = KAA_CALLOC(buffer_size, sizeof(char));
+    (*logger_p)->log_buffer = (char *) KAA_MALLOC(buffer_size * sizeof(char));
     if (!(*logger_p)->log_buffer) {
         KAA_FREE(*logger_p);
         *logger_p = NULL;
@@ -87,25 +86,34 @@ kaa_error_t kaa_log_destroy(kaa_logger_t *logger)
     return KAA_ERR_NONE;
 }
 
-kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *this)
+kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *self)
 {
-    return this ? this->max_log_level : KAA_LOG_LEVEL_NONE;
+    return self ? self->max_log_level : KAA_LOG_LEVEL_NONE;
 }
 
-kaa_error_t kaa_set_max_log_level(kaa_logger_t *this, kaa_log_level_t max_log_level)
+kaa_error_t kaa_set_max_log_level(kaa_logger_t *self, kaa_log_level_t max_log_level)
 {
-    KAA_RETURN_IF_NIL(this, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
     if (max_log_level > KAA_MAX_LOG_LEVEL) {
         return KAA_ERR_BADPARAM;
     }
-    this->max_log_level = max_log_level;
+    self->max_log_level = max_log_level;
     return KAA_ERR_NONE;
 }
 
-void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_log_level_t log_level
+kaa_error_t kaa_log_set_sink(kaa_logger_t *self, FILE *sink)
+{
+    KAA_RETURN_IF_NIL2(self, sink, KAA_ERR_BADPARAM);
+
+    self->sink = sink;
+
+    return KAA_ERR_NONE;
+}
+
+void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_log_level_t log_level
         , kaa_error_t error_code, const char* format, ...)
 {
-    if (!this || (log_level > this->max_log_level))
+    if (!self || (log_level > self->max_log_level))
         return;
 
     // Truncate the file name
@@ -121,7 +129,7 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
 
     size_t consumed_len = 0;
     // Print log message prefix
-    int res_len = snprintf(this->log_buffer, this->buffer_size, KAA_LOG_PREFIX_FORMAT
+    int res_len = snprintf(self->log_buffer, self->buffer_size, KAA_LOG_PREFIX_FORMAT
             , 1900 + tp->tm_year, tp->tm_mon + 1, tp->tm_mday
             , tp->tm_hour, tp->tm_min, tp->tm_sec
             , kaa_log_level_name[log_level], truncated_name, lineno, error_code);
@@ -130,15 +138,15 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
         return;
     consumed_len += res_len;
 
-    if (consumed_len > this->buffer_size - 1) {
+    if (consumed_len > self->buffer_size - 1) {
         // Ran out of buffer space already (greedy log buffer:). Reserve space for '\n' at the end.
-        consumed_len = this->buffer_size - 1;
+        consumed_len = self->buffer_size - 1;
     } else {
         // There's buffer space remaining: print log message body
         va_list args;
         va_start(args, format);
-        res_len = vsnprintf(this->log_buffer + consumed_len
-                , this->buffer_size - consumed_len
+        res_len = vsnprintf(self->log_buffer + consumed_len
+                , self->buffer_size - consumed_len
                 , format
                 , args);
         va_end(args);
@@ -146,15 +154,15 @@ void kaa_log_write(kaa_logger_t *this, const char* source_file, int lineno, kaa_
         if (res_len <= 0)   // Something terrible happened
             return;
         consumed_len += res_len;
-        if (consumed_len > this->buffer_size - 1) {
+        if (consumed_len > self->buffer_size - 1) {
             // Ran out of buffer space
-            consumed_len = this->buffer_size - 1;
+            consumed_len = self->buffer_size - 1;
         }
     }
 
     // Terminate buffer with '\n'. Null-termination is not important because the buffer length is specified in fwrite() below
-    this->log_buffer[consumed_len++] = '\n';
+    self->log_buffer[consumed_len++] = '\n';
 
-    fwrite(this->log_buffer, sizeof(char), consumed_len, this->sink);
-    fflush(this->sink);
+    fwrite(self->log_buffer, sizeof(char), consumed_len, self->sink);
+    fflush(self->sink);
 }

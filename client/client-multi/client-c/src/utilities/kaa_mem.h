@@ -19,7 +19,7 @@
 
 #ifdef KAA_TRACE_MEMORY_ALLOCATIONS
 
-#include "kaa_log.h"
+#include "utilities/kaa_log.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,7 +30,7 @@ void *  kaa_trace_memory_allocs_calloc(size_t n, size_t s, const char *file, int
 void    kaa_trace_memory_allocs_free(void * p, const char *file, int line);
 void    kaa_trace_memory_allocs_set_logger(kaa_logger_t *logger);
 
-#define KAA_MALLOC(T)           (T*)kaa_trace_memory_allocs_malloc(sizeof(T), __FILE__, __LINE__)
+#define KAA_MALLOC(S)           kaa_trace_memory_allocs_malloc(S, __FILE__, __LINE__)
 #define KAA_CALLOC(N,S)         kaa_trace_memory_allocs_calloc((N), (S), __FILE__, __LINE__)
 #define KAA_FREE(P)             kaa_trace_memory_allocs_free((P), __FILE__, __LINE__)
 
@@ -42,9 +42,17 @@ void    kaa_trace_memory_allocs_set_logger(kaa_logger_t *logger);
 
 #include <stdlib.h>
 
-#define KAA_MALLOC(T)           (T*)malloc(sizeof(T))
+#ifndef KAA_MALLOC
+#define KAA_MALLOC(S)           malloc(S)
+#endif
+
+#ifndef KAA_CALLOC
 #define KAA_CALLOC(N,S)         calloc(N, S)
+#endif
+
+#ifndef KAA_FREE
 #define KAA_FREE(P)             free(P)
+#endif
 
 #endif // defined KAA_TRACE_MEMORY_ALLOCATIONS
 

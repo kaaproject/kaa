@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include <stddef.h>
@@ -32,27 +29,39 @@ extern "C" {
  */
 
 /**
- * Called on Kaa library startup to restore persisted state.<br>
- * <br>
- * Fetch persisted state to buffer and provide a valid size of it in buffer_size.<br>
- * <br>
+ * @brief Called on Kaa library startup to restore persisted state.
  *
- * If *buffer == NULL or *buffer_size == 0 Kaa library will use default values.<br>
- * <br>
+ * Fetch persisted state to buffer and provide a valid size of it in buffer_size.
+ * If *buffer == NULL or *buffer_size == 0 Kaa library will use default values.
  * Set *needs_deallocation = true if buffer should be free'd, false otherwise.
+ *
+ * @param[out]  buffer              Pointer to buffer which should be filled with Kaa status data.
+ * @param[out]  buffer_size         Pointer to buffer's size.
+ * @param[out]  needs_deallocation  Indicates if the Kaa library should deallocate buffer by itself.
+ *
  */
 void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation);
 
 /**
- * Called when Kaa library is ready to persist its state.<br>
- * <br>
+ * @brief Called when Kaa library is ready to persist its state.
+ *
+ * @param[in]   buffer          Valid pointer to buffer which contains the current Kaa status data.
+ * @param[in]   buffer_size     The buffer's size.
+ *
  */
 void    kaa_store_status_ext(const char *buffer, size_t buffer_size);
 
 /**
- * Called to get endpoint public key.<br>
+ * @brief Called to get the endpoint public key.
+ *
+ * @param[out]  buffer              Pointer to buffer which should be filled with public key.
+ * @param[out]  buffer_size         Pointer to buffer's size.
+ * @param[out]  needs_deallocation  Indicates if the Kaa library should deallocate buffer by itself.
+ *
  */
 void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* KAA_EXTERNAL_H_ */

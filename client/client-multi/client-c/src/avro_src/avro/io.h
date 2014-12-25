@@ -19,9 +19,6 @@
 #define AVRO_IO_H
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include <stdio.h>
@@ -53,5 +50,7 @@ int avro_write(avro_writer_t writer, void *buf, int64_t len);
 void avro_reader_free(avro_reader_t reader);
 void avro_writer_free(avro_writer_t writer);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif

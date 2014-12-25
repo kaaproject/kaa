@@ -46,7 +46,7 @@ public class KaaTcpMessageTest {
         byte[] actual = message.getFrame().array();
         Assert.assertArrayEquals(kaaSync, actual);
     }
-    
+
     @Test
     public void testSyncRequestMessage() {
         final byte kaaSync[] = new byte [] { (byte) 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x15, (byte) 0xFF };
@@ -55,7 +55,7 @@ public class KaaTcpMessageTest {
         byte[] actual = message.getFrame().array();
         Assert.assertArrayEquals(kaaSync, actual);
     }
-    
+
     @Test
     public void testBootstrapResolveMessage() {
         final byte bootstrapResolve[] = new byte [] { (byte) 0xF0, 0x18, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x21, 'a','p','p','l','i','c','a','t','i','o','n','1' };
@@ -65,7 +65,7 @@ public class KaaTcpMessageTest {
         byte[] actual = message.getFrame().array();
         Assert.assertArrayEquals(bootstrapResolve, actual);
     }
-    
+
     @Test
     public void testBootstrapResponseMessage() {
         final byte bootstrapResponse[] = new byte [] {(byte)-16, -88, 2, 0, 6, 75, 97, 97, 116, 99, 112, 1, 0, 5, 32, 0, 0, 0, 2, 0, 0, 0, -120, 0, 0, 0, 7, 115, 101, 114, 118, 101, 114, 49, 0, 0, 0, 0, 10, 1, 0, 0, 16, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 3, 21, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, -120, 0, 0, 0, 8, 115, 101, 114, 118, 101, 114, 50, 50, 0, 0, 0, 20, 1, 0, 0, 16, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 26, 3, 22, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 50, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0};
@@ -76,19 +76,19 @@ public class KaaTcpMessageTest {
                                                                         0x00, 0x01, 0x02, 0x03,
                                                                         0x00, 0x01, 0x02, 0x03,
                                                                         0x00, 0x01, 0x02, 0x03,};
-        
+
         final String operationServer2Name = "server22";
         final int operationServer2Priority = 20;
         final byte[]  operationServer2PublicKey = new byte [] { (byte)  0x10, 0x11, 0x12, 0x13,
                                                                         0x10, 0x11, 0x12, 0x13,
-                                                                        0x10, 0x11, 0x12, 0x13, 
+                                                                        0x10, 0x11, 0x12, 0x13,
                                                                         0x10, 0x11, 0x12, 0x13,};
-        
+
         message.addOperationsServer(operationServer1Name,
                 operationServer1Priority,
                 PublicKeyType.RSA_PKSC8,
                 operationServer1PublicKey);
-        
+
         try {
             message.addSupportedChannel(operationServer1Name, SupportedChannelType.HTTP, "hostname1.example.com", 1212);
             message.addSupportedChannel(operationServer1Name, SupportedChannelType.HTTPLP, "hostname1.example.com", 1213);
@@ -96,12 +96,12 @@ public class KaaTcpMessageTest {
         } catch (UnknownOperationsServerExceptions e) {
             fail(e.toString());
         }
-        
+
         message.addOperationsServer(operationServer2Name,
                 operationServer2Priority,
                 PublicKeyType.RSA_PKSC8,
                 operationServer2PublicKey);
-        
+
         try {
             message.addSupportedChannel(operationServer2Name, SupportedChannelType.HTTP, "hostname2.example.com", 1212);
             message.addSupportedChannel(operationServer2Name, SupportedChannelType.HTTPLP, "hostname2.example.com", 1213);
@@ -109,9 +109,9 @@ public class KaaTcpMessageTest {
         } catch (UnknownOperationsServerExceptions e) {
             fail(e.toString());
         }
-        
+
         message.setMessageId(5);
-        
+
         byte[] actual = message.getFrame().array();
         Assert.assertArrayEquals(bootstrapResponse, actual);
     }
@@ -120,12 +120,12 @@ public class KaaTcpMessageTest {
     public void testConnectMessage() {
         final byte [] payload = new byte[] { (byte) 0xFF, 0x01, 0x02, 0x03 };
 
-        final byte connectHeader[] = new byte [] { 0x10, 0x12, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x00, 0x00, 0x00, (byte) 0xC8 };
+        final byte connectHeader[] = new byte [] { 0x10, 0x16, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, (byte) 0xf2, (byte) 0x91, (byte) 0xf2, (byte) 0xd4, 0x00, 0x00, 0x00, (byte) 0xC8 };
 
-        Connect message = new Connect(200, null, payload, null);
+        Connect message = new Connect(200, 0xf291f2d4, null, payload, null);
         ByteBuffer frame = message.getFrame();
 
-        byte [] headerCheck = new byte [16];
+        byte [] headerCheck = new byte [20];
         frame.get(headerCheck);
         Assert.assertArrayEquals(connectHeader, headerCheck);
 

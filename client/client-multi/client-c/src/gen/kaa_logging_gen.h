@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-#ifndef KAA_LOG_GEN_H_
-#define KAA_LOG_GEN_H_
+# ifndef KAA_LOGGING_GEN_H_
+# define KAA_LOGGING_GEN_H_
 
-#ifdef __cplusplus
+# include "kaa_common_schema.h"
+# include "collections/kaa_list.h"
+
+# ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
+# endif
 
-#include "kaa_common_schema.h"
-#include "kaa_list.h"
 
-typedef struct kaa_test_log_record_t_ {
-    char* data; 
+typedef struct {
+    kaa_string_t* data;
 
     serialize_fn serialize;
     get_size_fn  get_size;
     destroy_fn   destroy;
 } kaa_test_log_record_t;
 
-kaa_test_log_record_t* kaa_create_test_log_record();
-kaa_test_log_record_t* kaa_deserialize_test_log_record(avro_reader_t reader);
+kaa_test_log_record_t* kaa_test_log_record_create();
+kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader);
 
-
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif
