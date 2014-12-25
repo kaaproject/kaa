@@ -23,6 +23,7 @@ import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
@@ -32,7 +33,6 @@ import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.PlatformEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
@@ -63,7 +63,7 @@ public class EncDecActorMessageProcessor {
 
     private final MessageEncoderDecoder crypt;
 
-    private final Map<String, PlatformEncDec> platformEncDecMap;
+    private final Map<Integer, PlatformEncDec> platformEncDecMap;
 
     private final Boolean supportUnencryptedConnection;
 
@@ -77,20 +77,33 @@ public class EncDecActorMessageProcessor {
     private final MeterClient errorMeter;
 
     protected EncDecActorMessageProcessor(ActorRef epsActor, MetricsService metricsService, CacheService cacheService, KeyPair serverKeys,
-            Boolean supportUnencryptedConnection) {
+            Set<String> platformProtocols, Boolean supportUnencryptedConnection) {
         super();
         this.opsActor = epsActor;
         this.cacheService = cacheService;
         this.supportUnencryptedConnection = supportUnencryptedConnection;
         this.crypt = new MessageEncoderDecoder(serverKeys.getPrivate(), serverKeys.getPublic());
-        this.platformEncDecMap = new HashMap<>();
-        // TODO: add feature of auto-discovery of platform enc-dec.
-        platformEncDecMap.put(AvroEncDec.AVRO_ENC_DEC_ID, new AvroEncDec());
+        this.platformEncDecMap = initPlatformProtocolMap(platformProtocols);
         this.sessionInitMeter = metricsService.createMeter("sessionInitMeter", Thread.currentThread().getName());
         this.sessionRequestMeter = metricsService.createMeter("sessionRequestMeter", Thread.currentThread().getName());
         this.sessionResponseMeter = metricsService.createMeter("sessionResponseMeter", Thread.currentThread().getName());
         this.redirectMeter = metricsService.createMeter("redirectMeter", Thread.currentThread().getName());
         this.errorMeter = metricsService.createMeter("errorMeter", Thread.currentThread().getName());
+    }
+
+    private Map<Integer, PlatformEncDec> initPlatformProtocolMap(Set<String> platformProtocols) {
+        Map<Integer, PlatformEncDec> platformEncDecMap = new HashMap<>();
+        for (String platformProtocol : platformProtocols) {
+            try {
+                Class<?> clazz = Class.forName(platformProtocol);
+                PlatformEncDec protocol = (PlatformEncDec) clazz.newInstance();
+                platformEncDecMap.put(protocol.getId(), protocol);
+                LOG.info("Successfully initialized platform protocol {}", platformProtocol);
+            } catch (ReflectiveOperationException e) {
+                LOG.error("Error during instantiation of platform protocol", e);
+            }
+        }
+        return platformEncDecMap;
     }
 
     void decodeAndForward(ActorContext context, SessionInitRequest message) {
@@ -280,20 +293,20 @@ public class EncDecActorMessageProcessor {
         return request;
     }
 
-    private byte[] encodePlatformLevelData(String platformID, SessionResponse message) throws PlatformEncDecException {
+    private byte[] encodePlatformLevelData(int platformID, SessionResponse message) throws PlatformEncDecException {
         PlatformEncDec encDec = platformEncDecMap.get(platformID);
-        if(encDec != null){
+        if (encDec != null) {
             return platformEncDecMap.get(platformID).encode(message.getResponse());
-        }else{
+        } else {
             throw new PlatformEncDecException(MessageFormat.format("Encoder for platform protocol [{0}] is not defined", platformID));
         }
     }
 
-    private ClientSync decodePlatformLevelData(String platformID, byte[] requestRaw) throws PlatformEncDecException {
+    private ClientSync decodePlatformLevelData(Integer platformID, byte[] requestRaw) throws PlatformEncDecException {
         PlatformEncDec encDec = platformEncDecMap.get(platformID);
-        if(encDec != null){
+        if (encDec != null) {
             return platformEncDecMap.get(platformID).decode(requestRaw);
-        }else{
+        } else {
             throw new PlatformEncDecException(MessageFormat.format("Decoder for platform protocol [{0}] is not defined", platformID));
         }
     }

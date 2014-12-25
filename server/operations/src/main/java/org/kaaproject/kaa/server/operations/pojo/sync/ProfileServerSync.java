@@ -44,4 +44,13 @@ public class ProfileServerSync {
     public void setResponseStatus(SyncResponseStatus value) {
         this.responseStatus = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ProfileServerSync [responseStatus=");
+        builder.append(responseStatus);
+        builder.append("]");
+        return builder.toString();
+    }
 }

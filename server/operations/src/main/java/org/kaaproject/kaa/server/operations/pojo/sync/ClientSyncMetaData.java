@@ -153,4 +153,19 @@ public class ClientSyncMetaData {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ClientSyncMetaData [applicationToken=");
+        builder.append(applicationToken);
+        builder.append(", endpointPublicKeyHash=");
+        builder.append(endpointPublicKeyHash);
+        builder.append(", profileHash=");
+        builder.append(profileHash);
+        builder.append(", timeout=");
+        builder.append(timeout);
+        builder.append("]");
+        return builder.toString();
+    }
 }

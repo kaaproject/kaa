@@ -105,4 +105,19 @@ public class ConfigurationServerSync {
     public void setConfDeltaBody(ByteBuffer value) {
         this.confDeltaBody = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ConfigurationServerSync [appStateSeqNumber=");
+        builder.append(appStateSeqNumber);
+        builder.append(", responseStatus=");
+        builder.append(responseStatus);
+        builder.append(", confSchemaBody=");
+        builder.append(confSchemaBody);
+        builder.append(", confDeltaBody=");
+        builder.append(confDeltaBody);
+        builder.append("]");
+        return builder.toString();
+    }
 }

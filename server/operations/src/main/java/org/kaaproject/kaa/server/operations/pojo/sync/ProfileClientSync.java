@@ -158,4 +158,19 @@ public class ProfileClientSync {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ProfileClientSync [endpointPublicKey=");
+        builder.append(endpointPublicKey);
+        builder.append(", profileBody=");
+        builder.append(profileBody);
+        builder.append(", versionInfo=");
+        builder.append(versionInfo);
+        builder.append(", endpointAccessToken=");
+        builder.append(endpointAccessToken);
+        builder.append("]");
+        return builder.toString();
+    }
 }

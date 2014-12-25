@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
 
 public class NettySessionInfoTest {
 
@@ -26,9 +27,9 @@ public class NettySessionInfoTest {
     public void equalsHashCode(){
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
-        NettySessionInfo info1 = new NettySessionInfo(uuid1, null, null, null, null, null, null, 0, false);
-        NettySessionInfo info2 = new NettySessionInfo(uuid1, null, null, null, null, null, null, 0, false);
-        NettySessionInfo info3 = new NettySessionInfo(uuid2, null, null, null, null, null, null, 0, false);
+        NettySessionInfo info1 = new NettySessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
+        NettySessionInfo info2 = new NettySessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
+        NettySessionInfo info3 = new NettySessionInfo(uuid2, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
         Assert.assertEquals(info1, info2);
         Assert.assertEquals(info1.hashCode(), info2.hashCode());
         Assert.assertNotEquals(info1, info3);

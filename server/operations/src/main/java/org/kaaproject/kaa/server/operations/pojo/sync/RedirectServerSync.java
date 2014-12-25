@@ -45,4 +45,13 @@ public class RedirectServerSync {
         this.dnsName = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RedirectServerSync [dnsName=");
+        builder.append(dnsName);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

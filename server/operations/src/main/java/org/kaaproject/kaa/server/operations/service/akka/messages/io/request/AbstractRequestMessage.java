@@ -24,14 +24,14 @@ import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 
 public class AbstractRequestMessage implements PlatformAware{
     private final UUID uuid;
-    private final String platformId;
+    private final int platformId;
     private final ChannelHandlerContext channelContext;
     private final ChannelType channelType;
     private final ResponseBuilder responseConverter;
     private final ErrorBuilder errorConverter;
     private final SyncStatistics syncStatistics;
 
-    protected AbstractRequestMessage(UUID uuid, String platformId, ChannelHandlerContext channelContext, ChannelType channelType, ResponseBuilder responseConverter,
+    protected AbstractRequestMessage(UUID uuid, Integer platformId, ChannelHandlerContext channelContext, ChannelType channelType, ResponseBuilder responseConverter,
             ErrorBuilder errorConverter, SyncStatistics syncStatistics) {
         super();
         this.uuid = uuid;
@@ -68,7 +68,7 @@ public class AbstractRequestMessage implements PlatformAware{
     }
 
     @Override
-    public String getPlatformId() {
+    public int getPlatformId() {
         return platformId;
     }
 

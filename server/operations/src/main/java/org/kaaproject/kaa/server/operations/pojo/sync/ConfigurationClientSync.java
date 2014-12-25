@@ -99,4 +99,15 @@ public class ConfigurationClientSync {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ConfigurationClientSync [appStateSeqNumber=");
+        builder.append(appStateSeqNumber);
+        builder.append(", configurationHash=");
+        builder.append(configurationHash);
+        builder.append("]");
+        return builder.toString();
+    }
 }

@@ -25,6 +25,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 
@@ -44,7 +45,6 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData;
  */
 public class CommandTestProcessor extends AbstractCommand {
 
-    private static final String UNKNOWN = "unknown";
     protected static String TEST_COMMAND_NAME = "testCommand";
     public static String COMMAND_NAME = TEST_COMMAND_NAME;
 
@@ -52,8 +52,12 @@ public class CommandTestProcessor extends AbstractCommand {
     private String requestRandom;
     private String requestBody;
     private String responseBody;
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#parse()
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.http.server.CommandProcessor#parse()
      */
     @Override
     public void parse() throws Exception {
@@ -64,29 +68,32 @@ public class CommandTestProcessor extends AbstractCommand {
             Attribute attribute = (Attribute) data;
             id = new String(attribute.get());
         } else {
-            LOG.error("HTTP Resolve request inccorect, "+NettyHttpServerIT.REQUEST_ID+"  attribute not found");
-            throw new BadRequestException("HTTP Resolve request inccorect, "+NettyHttpServerIT.REQUEST_ID+" attribute not found");
+            LOG.error("HTTP Resolve request inccorect, " + NettyHttpServerIT.REQUEST_ID + "  attribute not found");
+            throw new BadRequestException("HTTP Resolve request inccorect, " + NettyHttpServerIT.REQUEST_ID + " attribute not found");
         }
         data = decoder.getBodyHttpData(NettyHttpServerIT.REQUEST_RANDOM);
         if (data != null) {
             Attribute attribute = (Attribute) data;
             requestRandom = new String(attribute.get());
         } else {
-            LOG.error("HTTP Resolve request inccorect, "+NettyHttpServerIT.REQUEST_ID+"  attribute not found");
-            throw new BadRequestException("HTTP Resolve request inccorect, "+NettyHttpServerIT.REQUEST_ID+" attribute not found");
+            LOG.error("HTTP Resolve request inccorect, " + NettyHttpServerIT.REQUEST_ID + "  attribute not found");
+            throw new BadRequestException("HTTP Resolve request inccorect, " + NettyHttpServerIT.REQUEST_ID + " attribute not found");
         }
         data = decoder.getBodyHttpData(NettyHttpServerIT.REQUEST_DATA);
         if (data != null) {
             Attribute attribute = (Attribute) data;
             requestBody = new String(attribute.get());
         } else {
-            LOG.error("HTTP Resolve request inccorect, "+NettyHttpServerIT.REQUEST_ID+"  attribute not found");
-            throw new BadRequestException("HTTP Resolve request inccorect, "+NettyHttpServerIT.REQUEST_ID+" attribute not found");
+            LOG.error("HTTP Resolve request inccorect, " + NettyHttpServerIT.REQUEST_ID + "  attribute not found");
+            throw new BadRequestException("HTTP Resolve request inccorect, " + NettyHttpServerIT.REQUEST_ID + " attribute not found");
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#process()
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.http.server.CommandProcessor#process()
      */
     @Override
     public void process() throws Exception {
@@ -94,8 +101,12 @@ public class CommandTestProcessor extends AbstractCommand {
         NettyHttpServerIT.setHttpResponseData(id, requestBody, responseBody);
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#getHttpResponse()
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.common.http.server.CommandProcessor#getHttpResponse
+     * ()
      */
     @Override
     public HttpResponse getResponse() {
@@ -112,8 +123,11 @@ public class CommandTestProcessor extends AbstractCommand {
         return httpResponse;
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#isNeedConnectionClose()
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#
+     * isNeedConnectionClose()
      */
     @Override
     public boolean isNeedConnectionClose() {
@@ -121,11 +135,11 @@ public class CommandTestProcessor extends AbstractCommand {
     }
 
     public static String getCommandName() {
-        return  TEST_COMMAND_NAME;
+        return TEST_COMMAND_NAME;
     }
 
     @Override
-    public String getNextProtocol() {
-        return UNKNOWN;
+    public int getNextProtocol() {
+        return Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID;
     }
 }

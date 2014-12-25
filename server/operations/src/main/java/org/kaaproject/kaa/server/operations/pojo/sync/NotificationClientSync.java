@@ -178,4 +178,21 @@ public class NotificationClientSync {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("NotificationClientSync [appStateSeqNumber=");
+        builder.append(appStateSeqNumber);
+        builder.append(", topicListHash=");
+        builder.append(topicListHash);
+        builder.append(", topicStates=");
+        builder.append(topicStates);
+        builder.append(", acceptedUnicastNotifications=");
+        builder.append(acceptedUnicastNotifications);
+        builder.append(", subscriptionCommands=");
+        builder.append(subscriptionCommands);
+        builder.append("]");
+        return builder.toString();
+    }
 }

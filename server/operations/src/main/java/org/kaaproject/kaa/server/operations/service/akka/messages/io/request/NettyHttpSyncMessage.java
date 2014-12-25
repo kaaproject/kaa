@@ -31,7 +31,7 @@ public class NettyHttpSyncMessage extends AbstractRequestMessage implements Sess
 
     private final AbstractHttpSyncCommand command;
 
-    public NettyHttpSyncMessage(UUID uuid, String platformId, ChannelHandlerContext channelContext, ChannelType channelType, AbstractHttpSyncCommand command,
+    public NettyHttpSyncMessage(UUID uuid, Integer platformId, ChannelHandlerContext channelContext, ChannelType channelType, AbstractHttpSyncCommand command,
             ResponseBuilder responseConverter, ErrorBuilder errorConverter, SyncStatistics syncStatistics) {
         super(uuid, platformId, channelContext, channelType, responseConverter, errorConverter, syncStatistics);
         this.command = command;

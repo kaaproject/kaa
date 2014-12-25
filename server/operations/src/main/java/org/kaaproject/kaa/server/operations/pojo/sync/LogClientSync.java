@@ -103,4 +103,13 @@ public class LogClientSync {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("LogClientSync [requestId=");
+        builder.append(requestId);
+        builder.append("]");
+        return builder.toString();
+    }
 }

@@ -58,7 +58,7 @@ public class GrowingByteBuffer {
         data.position(tmp);
         return this;
     }
-    
+
     public GrowingByteBuffer putLong(long value) {
         resizeIfNeeded(SIZE_OF_LONG);
         data.putLong(value);
@@ -77,7 +77,9 @@ public class GrowingByteBuffer {
 
     private void resizeIfNeeded(int size) {
         if (size > data.remaining()) {
-            data = ByteBuffer.wrap(Arrays.copyOf(data.array(), data.array().length * 2));
+            int position = data.position();
+            data = ByteBuffer.wrap(Arrays.copyOf(data.array(), Math.max(data.position() + size, data.array().length * 2)));
+            data.position(position);
         }
     }
 

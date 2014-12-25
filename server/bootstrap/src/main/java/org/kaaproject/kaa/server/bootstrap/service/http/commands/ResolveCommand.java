@@ -33,6 +33,7 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 
 import org.apache.commons.codec.binary.Base64;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.bootstrap.CommonBSConstants;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
@@ -177,7 +178,7 @@ public class ResolveCommand extends AbstractCommand implements CommonBSConstants
     }
 
     @Override
-    public String getNextProtocol() {
-        return UNKNOWN;
+    public int getNextProtocol() {
+        return Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID;
     }
 }

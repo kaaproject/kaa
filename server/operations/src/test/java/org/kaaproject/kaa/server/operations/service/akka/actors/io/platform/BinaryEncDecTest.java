@@ -94,7 +94,7 @@ public class BinaryEncDecTest {
                 buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 0, md.length), md));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
-        Assert.assertEquals(1 * 256 * 256 * 256 + 2 * 256 * 256 + 3 * 256 + 4, sync.getRequestId().intValue());
+        Assert.assertEquals(1 * 256 * 256 * 256 + 2 * 256 * 256 + 3 * 256 + 4, sync.getRequestId());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class BinaryEncDecTest {
         ClientSync sync = encDec.decode(concat(buildHeader(BinaryEncDec.PROTOCOL_ID, 1, 1), getValidMetaData()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
-        Assert.assertEquals(1, sync.getRequestId().intValue());
+        Assert.assertEquals(1, sync.getRequestId());
         Assert.assertEquals(60l, sync.getClientSyncMetaData().getTimeout());
         Assert.assertEquals(MAGIC_NUMBER, sync.getClientSyncMetaData().getEndpointPublicKeyHash().get(MAGIC_INDEX));
         Assert.assertEquals(MAGIC_NUMBER + 1, sync.getClientSyncMetaData().getProfileHash().get(MAGIC_INDEX));

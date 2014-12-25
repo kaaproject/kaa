@@ -63,4 +63,15 @@ public class UserAttachNotification {
     public void setEndpointAccessToken(String value) {
         this.endpointAccessToken = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UserAttachNotification [userExternalId=");
+        builder.append(userExternalId);
+        builder.append(", endpointAccessToken=");
+        builder.append(endpointAccessToken);
+        builder.append("]");
+        return builder.toString();
+    }
 }

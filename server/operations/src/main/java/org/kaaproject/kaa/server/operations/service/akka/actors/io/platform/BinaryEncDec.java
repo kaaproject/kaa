@@ -4,8 +4,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
@@ -48,13 +50,19 @@ import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The Class BinaryEncDec is an implementation of {@link PlatformEncDec} that
+ * uses internal binary protocol for data representation.
+ */
+@KaaPlatformProtocol
 public class BinaryEncDec implements PlatformEncDec {
 
+    private static final int DEFAULT_BUFFER_SIZE = 128;
     public static final int PROTOCOL_ID = 0x3553c66f;
     public static final short PROTOCOL_VERSION = 1;
     public static final int MIN_SUPPORTED_VERSION = 1;
     public static final int MAX_SUPPORTED_VERSION = 1;
-    
+
     // General constants
     private static final Logger LOG = LoggerFactory.getLogger(BinaryEncDec.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -131,8 +139,23 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte NF_NOTIFICATIONS_FIELD_ID = 0;
     private static final byte NF_TOPICS_FIELD_ID = 1;
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
+     * PlatformEncDec#getId()
+     */
+    @Override
+    public int getId() {
+        return Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID;
+    }
+
     @Override
     public ClientSync decode(byte[] data) throws PlatformEncDecException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Decoding binary data {}", Arrays.toString(data));
+        }
         ByteBuffer buf = ByteBuffer.wrap(data);
         if (buf.remaining() < MIN_SIZE_OF_MESSAGE_HEADER) {
             throw new PlatformEncDecException(MessageFormat.format("Message header is to small {0} to be kaa binary message!",
@@ -152,12 +175,15 @@ public class BinaryEncDec implements PlatformEncDec {
         int extensionsCount = getIntFromUnsignedShort(buf);
         LOG.trace("received data for protocol id {} and version {} that contain {} extensions", protocolId, protocolVersion,
                 extensionsCount);
-        return parseExtensions(buf, protocolVersion, extensionsCount);
+        ClientSync sync = parseExtensions(buf, protocolVersion, extensionsCount);
+        LOG.trace("Decoded binary data {}", sync);
+        return sync;
     }
 
     @Override
     public byte[] encode(ServerSync sync) throws PlatformEncDecException {
-        GrowingByteBuffer buf = new GrowingByteBuffer(2048);
+        LOG.trace("Encoding server sync {}", sync);
+        GrowingByteBuffer buf = new GrowingByteBuffer(DEFAULT_BUFFER_SIZE);
         buf.putInt(PROTOCOL_ID);
         buf.putShort(PROTOCOL_VERSION);
         buf.putShort(NOTHING); // will be updated later
@@ -188,15 +214,18 @@ public class BinaryEncDec implements PlatformEncDec {
             encode(buf, sync.getEventSync());
             extensionCount++;
         }
-        
+
         if (sync.getRedirectSync() != null) {
             encode(buf, sync.getRedirectSync());
             extensionCount++;
         }
 
-
         buf.putShort(EXTENSIONS_COUNT_POSITION, extensionCount);
-        return buf.toByteArray();
+        byte[] result =  buf.toByteArray();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Encoded binary data {}", result);
+        }
+        return result;
     }
 
     private void buildExtensionHeader(GrowingByteBuffer buf, byte extensionId, byte optionA, byte optionB, byte optionC, int length) {
@@ -389,7 +418,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
     }
-    
+
     private void encode(GrowingByteBuffer buf, RedirectServerSync redirectSync) {
         buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
         buf.putInt(redirectSync.getDnsName().hashCode());
@@ -672,9 +701,9 @@ public class BinaryEncDec implements PlatformEncDec {
                 event.setTarget(Base64Util.encode(getNewByteArray(buf, PUBLIC_KEY_HASH_SIZE)));
             }
             event.setEventClassFQN(getUTF8String(buf, fqnLength));
-            if(dataSize > 0){
+            if (dataSize > 0) {
                 event.setEventData(getNewByteBuffer(buf, dataSize));
-            }else{
+            } else {
                 event.setEventData(EMPTY_BUFFER);
             }
             events.add(event);

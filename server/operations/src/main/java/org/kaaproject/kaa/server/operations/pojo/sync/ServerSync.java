@@ -199,4 +199,29 @@ public class ServerSync {
     public void setLogSync(LogServerSync value) {
         this.logSync = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ServerSync [requestId=");
+        builder.append(requestId);
+        builder.append(", status=");
+        builder.append(status);
+        builder.append(", profileSync=");
+        builder.append(profileSync);
+        builder.append(", configurationSync=");
+        builder.append(configurationSync);
+        builder.append(", notificationSync=");
+        builder.append(notificationSync);
+        builder.append(", userSync=");
+        builder.append(userSync);
+        builder.append(", eventSync=");
+        builder.append(eventSync);
+        builder.append(", redirectSync=");
+        builder.append(redirectSync);
+        builder.append(", logSync=");
+        builder.append(logSync);
+        builder.append("]");
+        return builder.toString();
+    }
 }

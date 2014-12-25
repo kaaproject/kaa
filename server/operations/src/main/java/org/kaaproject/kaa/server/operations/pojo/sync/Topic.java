@@ -83,4 +83,17 @@ public class Topic {
         this.subscriptionType = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Topic [id=");
+        builder.append(id);
+        builder.append(", name=");
+        builder.append(name);
+        builder.append(", subscriptionType=");
+        builder.append(subscriptionType);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

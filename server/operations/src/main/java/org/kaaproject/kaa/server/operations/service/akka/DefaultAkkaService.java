@@ -17,6 +17,10 @@
 package org.kaaproject.kaa.server.operations.service.akka;
 
 import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -28,6 +32,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.OperationsServerActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.EncDecActor;
+import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.KaaPlatformProtocol;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
@@ -41,6 +46,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Service;
 
 import akka.actor.ActorRef;
@@ -96,7 +104,7 @@ public class DefaultAkkaService implements AkkaService {
     /** The event service. */
     @Autowired
     private EventService eventService;
-    
+
     @Autowired
     private MetricsService metricsService;
 
@@ -116,15 +124,29 @@ public class DefaultAkkaService implements AkkaService {
         LOG.info("Initializing Akka system...");
         akka = ActorSystem.create(EPS);
         LOG.info("Initializing Akka EPS actor...");
-        opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService, notificationDeltaService, eventService,
-                applicationService, logAppenderService)), EPS);
+        opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService,
+                notificationDeltaService, eventService, applicationService, logAppenderService)), EPS);
+        LOG.info("Lookup platform protocol");
+        Set<String> platformProtocols = lookupPlatformProtocols();
         LOG.info("Initializing Akka io router...");
-        ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor, metricsService, cacheService, new KeyPair(
-                keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()), supportUnencryptedConnection))), "ioRouter");
+        ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor,
+                metricsService, cacheService, new KeyPair(keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()),
+                platformProtocols, supportUnencryptedConnection))), "ioRouter");
         LOG.info("Initializing Akka event service listener...");
         listener = new AkkaEventServiceListener(opsActor);
         eventService.addListener(listener);
         LOG.info("Initializing Akka system done");
+    }
+
+    private Set<String> lookupPlatformProtocols() {
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPlatformProtocol.class));
+        Set<BeanDefinition> beans = scanner.findCandidateComponents("org.kaaproject.kaa.server.operations.service");
+        Set<String> protocols = new HashSet<>();
+        for (BeanDefinition bean : beans) {
+            protocols.add(bean.getBeanClassName());
+        }
+        return protocols;
     }
 
     /*

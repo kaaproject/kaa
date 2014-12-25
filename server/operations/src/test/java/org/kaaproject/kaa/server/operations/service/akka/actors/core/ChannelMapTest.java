@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
@@ -38,7 +39,7 @@ public class ChannelMapTest {
         ChannelMap map = new ChannelMap("endpointKey", "actorKey");
         Assert.assertNull(map.getByRequestId(UUID.randomUUID()));
         ChannelHandlerContext ctxMock = Mockito.mock(ChannelHandlerContext.class);
-        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), AvroEncDec.AVRO_ENC_DEC_ID, ctxMock, ChannelType.HTTP, null,
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctxMock, ChannelType.HTTP, null,
                 null, "applicationToken", 0, true);
         SyncRequestMessage message = new SyncRequestMessage(session, null, null, null);
         map.addChannel(new ChannelMetaData(message));
@@ -52,7 +53,7 @@ public class ChannelMapTest {
         request.setClientSyncMetaData(new ClientSyncMetaData());
         UUID sameUid = UUID.randomUUID();
         ChannelHandlerContext ctxMock = Mockito.mock(ChannelHandlerContext.class);
-        NettySessionInfo session = new NettySessionInfo(sameUid, AvroEncDec.AVRO_ENC_DEC_ID, ctxMock, ChannelType.HTTP, null, null,
+        NettySessionInfo session = new NettySessionInfo(sameUid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctxMock, ChannelType.HTTP, null, null,
                 "applicationToken", 0, true);
         SyncRequestMessage message = new SyncRequestMessage(session, request, null, null);
         ChannelMetaData md1 = new ChannelMetaData(message);

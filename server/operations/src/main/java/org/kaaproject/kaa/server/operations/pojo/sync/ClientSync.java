@@ -21,7 +21,7 @@ package org.kaaproject.kaa.server.operations.pojo.sync;
 public class ClientSync {
 
     /** The request id. */
-    private Integer requestId;
+    private int requestId;
 
     /** The client sync meta data. */
     private ClientSyncMetaData clientSyncMetaData;
@@ -67,7 +67,7 @@ public class ClientSync {
      * @param logSyncRequest
      *            the log sync request
      */
-    public ClientSync(java.lang.Integer requestId, ClientSyncMetaData clientSyncMetaData, ProfileClientSync profileSync,
+    public ClientSync(int requestId, ClientSyncMetaData clientSyncMetaData, ProfileClientSync profileSync,
             ConfigurationClientSync configurationSync, NotificationClientSync notificationSync, UserClientSync userSync,
             EventClientSync eventSync, LogClientSync logSync) {
         this.requestId = requestId;
@@ -85,7 +85,7 @@ public class ClientSync {
      *
      * @return the request id
      */
-    public java.lang.Integer getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -95,7 +95,7 @@ public class ClientSync {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(java.lang.Integer value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 
@@ -232,99 +232,92 @@ public class ClientSync {
         this.logSync = value;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((clientSyncMetaData == null) ? 0 : clientSyncMetaData.hashCode());
         result = prime * result + ((configurationSync == null) ? 0 : configurationSync.hashCode());
         result = prime * result + ((eventSync == null) ? 0 : eventSync.hashCode());
         result = prime * result + ((logSync == null) ? 0 : logSync.hashCode());
         result = prime * result + ((notificationSync == null) ? 0 : notificationSync.hashCode());
         result = prime * result + ((profileSync == null) ? 0 : profileSync.hashCode());
-        result = prime * result + ((requestId == null) ? 0 : requestId.hashCode());
-        result = prime * result + ((clientSyncMetaData == null) ? 0 : clientSyncMetaData.hashCode());
+        result = prime * result + requestId;
         result = prime * result + ((userSync == null) ? 0 : userSync.hashCode());
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         ClientSync other = (ClientSync) obj;
-        if (configurationSync == null) {
-            if (other.configurationSync != null) {
-                return false;
-            }
-        } else if (!configurationSync.equals(other.configurationSync)) {
-            return false;
-        }
-        if (eventSync == null) {
-            if (other.eventSync != null) {
-                return false;
-            }
-        } else if (!eventSync.equals(other.eventSync)) {
-            return false;
-        }
-        if (logSync == null) {
-            if (other.logSync != null) {
-                return false;
-            }
-        } else if (!logSync.equals(other.logSync)) {
-            return false;
-        }
-        if (notificationSync == null) {
-            if (other.notificationSync != null) {
-                return false;
-            }
-        } else if (!notificationSync.equals(other.notificationSync)) {
-            return false;
-        }
-        if (profileSync == null) {
-            if (other.profileSync != null) {
-                return false;
-            }
-        } else if (!profileSync.equals(other.profileSync)) {
-            return false;
-        }
-        if (requestId == null) {
-            if (other.requestId != null) {
-                return false;
-            }
-        } else if (!requestId.equals(other.requestId)) {
-            return false;
-        }
         if (clientSyncMetaData == null) {
-            if (other.clientSyncMetaData != null) {
+            if (other.clientSyncMetaData != null)
                 return false;
-            }
-        } else if (!clientSyncMetaData.equals(other.clientSyncMetaData)) {
+        } else if (!clientSyncMetaData.equals(other.clientSyncMetaData))
             return false;
-        }
+        if (configurationSync == null) {
+            if (other.configurationSync != null)
+                return false;
+        } else if (!configurationSync.equals(other.configurationSync))
+            return false;
+        if (eventSync == null) {
+            if (other.eventSync != null)
+                return false;
+        } else if (!eventSync.equals(other.eventSync))
+            return false;
+        if (logSync == null) {
+            if (other.logSync != null)
+                return false;
+        } else if (!logSync.equals(other.logSync))
+            return false;
+        if (notificationSync == null) {
+            if (other.notificationSync != null)
+                return false;
+        } else if (!notificationSync.equals(other.notificationSync))
+            return false;
+        if (profileSync == null) {
+            if (other.profileSync != null)
+                return false;
+        } else if (!profileSync.equals(other.profileSync))
+            return false;
+        if (requestId != other.requestId)
+            return false;
         if (userSync == null) {
-            if (other.userSync != null) {
+            if (other.userSync != null)
                 return false;
-            }
-        } else if (!userSync.equals(other.userSync)) {
+        } else if (!userSync.equals(other.userSync))
             return false;
-        }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ClientSync [requestId=");
+        builder.append(requestId);
+        builder.append(", clientSyncMetaData=");
+        builder.append(clientSyncMetaData);
+        builder.append(", profileSync=");
+        builder.append(profileSync);
+        builder.append(", configurationSync=");
+        builder.append(configurationSync);
+        builder.append(", notificationSync=");
+        builder.append(notificationSync);
+        builder.append(", userSync=");
+        builder.append(userSync);
+        builder.append(", eventSync=");
+        builder.append(eventSync);
+        builder.append(", logSync=");
+        builder.append(logSync);
+        builder.append("]");
+        return builder.toString();
     }
 }

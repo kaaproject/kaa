@@ -21,13 +21,13 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
@@ -126,7 +126,7 @@ public class EndpointActorMessageProcessorTest {
         Mockito.when(message.getChannelUuid()).thenReturn(channelId);
         Mockito.when(message.getChannelContext()).thenReturn(channelCtx);
         Mockito.when(message.getSession()).thenReturn(
-                new NettySessionInfo(channelId, AvroEncDec.AVRO_ENC_DEC_ID, channelCtx, ChannelType.TCP, null, EndpointObjectHash
+                new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelCtx, ChannelType.TCP, null, EndpointObjectHash
                         .fromSHA1("key"), "APP_TOKEN", 1000, true));
         Mockito.when(message.getCommand()).thenReturn(Mockito.mock(Request.class));
         Mockito.when(message.getOriginator()).thenReturn(Mockito.mock(ActorRef.class));

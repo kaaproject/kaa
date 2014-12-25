@@ -45,4 +45,13 @@ public class UserAttachResponse {
         this.result = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UserAttachResponse [result=");
+        builder.append(result);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

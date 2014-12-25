@@ -124,4 +124,21 @@ public class UserServerSync {
     public void setEndpointDetachResponses(List<EndpointDetachResponse> value) {
         this.endpointDetachResponses = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UserServerSync [userAttachResponse=");
+        builder.append(userAttachResponse);
+        builder.append(", userAttachNotification=");
+        builder.append(userAttachNotification);
+        builder.append(", userDetachNotification=");
+        builder.append(userDetachNotification);
+        builder.append(", endpointAttachResponses=");
+        builder.append(endpointAttachResponses);
+        builder.append(", endpointDetachResponses=");
+        builder.append(endpointDetachResponses);
+        builder.append("]");
+        return builder.toString();
+    }
 }

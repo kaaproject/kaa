@@ -233,4 +233,16 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("SyncRequestMessage [command=");
+        builder.append(command);
+        builder.append(", request=");
+        builder.append(request);
+        builder.append(", session=");
+        builder.append(session);
+        builder.append("]");
+        return builder.toString();
+    }
 }

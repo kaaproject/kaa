@@ -24,7 +24,7 @@ import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 
 public interface SessionResponse extends ChannelAware, PlatformAware{
 
-    String getPlatformId();
+    int getPlatformId();
     ServerSync getResponse();
     NettySessionInfo getSessionInfo();
     ResponseBuilder getResponseConverter();

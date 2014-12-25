@@ -45,4 +45,13 @@ public class EventSequenceNumberResponse {
         this.seqNum = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EventSequenceNumberResponse [seqNum=");
+        builder.append(seqNum);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

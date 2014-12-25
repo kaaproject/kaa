@@ -35,7 +35,7 @@ public class EndpointAttachResponse {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public java.lang.String getRequestId() {
+    public String getRequestId() {
         return requestId;
     }
 
@@ -45,7 +45,7 @@ public class EndpointAttachResponse {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(java.lang.String value) {
+    public void setRequestId(String value) {
         this.requestId = value;
     }
 
@@ -62,7 +62,7 @@ public class EndpointAttachResponse {
      * @param value
      *            the value to set.
      */
-    public void setEndpointKeyHash(java.lang.String value) {
+    public void setEndpointKeyHash(String value) {
         this.endpointKeyHash = value;
     }
 
@@ -81,5 +81,18 @@ public class EndpointAttachResponse {
      */
     public void setResult(SyncStatus value) {
         this.result = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EndpointAttachResponse [requestId=");
+        builder.append(requestId);
+        builder.append(", endpointKeyHash=");
+        builder.append(endpointKeyHash);
+        builder.append(", result=");
+        builder.append(result);
+        builder.append("]");
+        return builder.toString();
     }
 }
