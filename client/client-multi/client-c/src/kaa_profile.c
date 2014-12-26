@@ -30,6 +30,12 @@
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
 
+
+
+#define KAA_PROFILE_RESYNC_OPTION 0x1
+
+
+
 extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
 
 
@@ -39,7 +45,7 @@ static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
 
 
 typedef struct {
-    size_t extension_size;
+    size_t payload_size;
     kaa_bytes_t public_key;
     kaa_bytes_t access_token;
 } kaa_profile_extension_data_t;
@@ -114,46 +120,54 @@ kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *r
 
 
 
+static size_t kaa_versions_info_get_size()
+{
+    static size_t size = 0;
+
+    if (size == 0) {
+        size += sizeof(uint32_t); // config schema version
+        size += sizeof(uint32_t); // profile schema version
+        size += sizeof(uint32_t); // system notification schema version
+        size += sizeof(uint32_t); // user notification schema version
+        size += sizeof(uint32_t); // log schema version
+
+        if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
+            size += sizeof(uint32_t); // event family schema versions count
+
+            size_t i = 0;
+            for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
+                size += sizeof(uint16_t); // event family version
+                size += sizeof(uint16_t); // event family name length
+                size += kaa_aligned_size_get(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name)); // event family name
+            }
+        }
+    }
+
+    return size;
+}
+
 kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size)
 {
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
-
-    bool is_versions_needed = true; // FIXME: replace with valid check
-    bool is_public_key_needed = true; // FIXME: replace with valid check
-    bool is_access_token_needed = true; // FIXME: replace with valid check
 
     *expected_size = KAA_EXTENSION_HEADER_SIZE;
     *expected_size += sizeof(uint32_t); // profile body size
     *expected_size += kaa_aligned_size_get(self->profile_body.size); // profile data
 
-    if (is_versions_needed) {
-        *expected_size += sizeof(uint32_t); // config schema version
-        *expected_size += sizeof(uint32_t); // profile schema version
-        *expected_size += sizeof(uint32_t); // system notification schema version
-        *expected_size += sizeof(uint32_t); // user notification schema version
-        *expected_size += sizeof(uint32_t); // log schema version
+    *expected_size += kaa_versions_info_get_size();
 
-        if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
-            *expected_size += kaa_aligned_size_get(KAA_EVENT_SCHEMA_VERSIONS_SIZE);
+    bool is_registered = false;
+    if (kaa_is_endpoint_registered(self->status, &is_registered))
+        return KAA_ERR_BAD_STATE;
 
-            size_t i = 0;
-            for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
-                *expected_size += sizeof(uint16_t); // event family version
-                *expected_size += sizeof(uint16_t); // event family name length
-                *expected_size += kaa_aligned_size_get(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name)); // event family name
-            }
-        }
-    }
-
-    /**
-     * Retrieve public key once.
-     */
-    if (is_public_key_needed && !self->extension_data->public_key.buffer) {
+    if (!is_registered) {
         bool need_deallocation = false;
 
-        kaa_get_endpoint_public_key((char **)&self->extension_data->public_key.buffer
-                                  , (size_t *)&self->extension_data->public_key.size
-                                  , &need_deallocation);
+        if (!self->extension_data->public_key.buffer) {
+            kaa_get_endpoint_public_key((char **)&self->extension_data->public_key.buffer
+                                      , (size_t *)&self->extension_data->public_key.size
+                                      , &need_deallocation);
+        }
 
         if (self->extension_data->public_key.buffer && self->extension_data->public_key.size > 0) {
             *expected_size += sizeof(uint32_t); // public key size
@@ -167,19 +181,19 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
         }
     }
 
-    if (is_access_token_needed) {
-        kaa_error_t err_code = kaa_status_get_endpoint_access_token(
-                                    self->status, (const char**)&self->extension_data->access_token.buffer);
-        if (!err_code) {
+    kaa_error_t error_code = kaa_status_get_endpoint_access_token(
+                                self->status, (const char**)&self->extension_data->access_token.buffer);
+    if (!error_code) {
+        if (self->extension_data->access_token.buffer) {
             self->extension_data->access_token.size = strlen((const char*)self->extension_data->access_token.buffer);
             *expected_size += sizeof(uint32_t); // access token length
             *expected_size += kaa_aligned_size_get(self->extension_data->access_token.size); // access token
-        } else {
-            return err_code;
         }
+    } else {
+        return error_code;
     }
 
-    self->extension_data->extension_size = *expected_size;
+    self->extension_data->payload_size = *expected_size - KAA_EXTENSION_HEADER_SIZE;
 
     return KAA_ERR_NONE;
 }
@@ -191,126 +205,147 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 #endif
 
 
+static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t* writer)
+{
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+    static uint8_t fields_number[KAA_SCHEMA_VERSION_NUMBER] = {
+                                                                CONFIG_SCHEMA_VERSION_VALUE
+                                                              , PROFILE_SCHEMA_VERSION_VALUE
+                                                              , SYS_NF_VERSION_VALUE
+                                                              , USER_NF_VERSION_VALUE
+                                                              , LOG_SCHEMA_VERSION_VALUE
+#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
+                                                              , EVENT_FAMILY_VERSIONS_COUNT_VALUE
+#endif
+                                                               };
+
+    static uint16_t schema_versions[KAA_SCHEMA_VERSION_NUMBER] = {
+                                                                   CONFIG_SCHEMA_VERSION
+                                                                 , PROFILE_SCHEMA_VERSION
+                                                                 , SYSTEM_NF_SCHEMA_VERSION
+                                                                 , USER_NF_SCHEMA_VERSION
+                                                                 , LOG_SCHEMA_VERSION
+#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
+                                                                 , KAA_EVENT_SCHEMA_VERSIONS_SIZE
+#endif
+                                                                  };
+
+    uint16_t field_number_with_reserved = 0;
+    uint16_t network_order_schema_version = 0;
+
+    size_t i = 0;
+    for (; i < KAA_SCHEMA_VERSION_NUMBER; ++i) {
+        field_number_with_reserved = fields_number[i];
+        error_code = kaa_platform_message_write(writer, &field_number_with_reserved, sizeof(uint16_t));
+        KAA_RETURN_IF_ERR(error_code);
+
+        network_order_schema_version = KAA_HTONS(schema_versions[i]);
+        error_code = kaa_platform_message_write(writer, &network_order_schema_version, sizeof(uint16_t));
+        KAA_RETURN_IF_ERR(error_code);
+    }
+
+    if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
+        uint16_t network_order_family_version = 0;
+        uint16_t network_order_family_name_len = 0;
+
+        for (i = 0; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
+            network_order_family_version = KAA_HTONS(KAA_EVENT_SCHEMA_VERSIONS[i].version);
+            error_code = kaa_platform_message_write(writer
+                                                  , &network_order_family_version
+                                                  , sizeof(uint16_t));
+            KAA_RETURN_IF_ERR(error_code);
+
+            network_order_family_name_len = KAA_HTONS(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name));
+            error_code = kaa_platform_message_write(writer
+                                                  , &network_order_family_name_len
+                                                  , sizeof(uint16_t));
+            KAA_RETURN_IF_ERR(error_code);
+
+            error_code = kaa_platform_message_write_aligned(writer
+                                                          , KAA_EVENT_SCHEMA_VERSIONS[i].name
+                                                          , KAA_NTOHS(network_order_family_name_len));
+            KAA_RETURN_IF_ERR(error_code);
+        }
+    }
+
+    return error_code;
+}
+
 kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer)
 {
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
-    bool is_versions_needed = true; // FIXME: replace with valid check
-    bool is_public_key_needed = true; // FIXME: replace with valid check
-    bool is_access_token_needed = true; // FIXME: replace with valid check
+    kaa_error_t error_code = kaa_platform_message_write_extension_header(writer
+                                                                       , KAA_PROFILE_EXTENSION_TYPE
+                                                                       , 0
+                                                                       , self->extension_data->payload_size);
+    KAA_RETURN_IF_ERR(error_code);
 
-    kaa_error_t err_code = kaa_platform_message_write(writer, &self->profile_body.size, sizeof(uint32_t));
-    KAA_RETURN_IF_ERR(err_code);
-    err_code = kaa_platform_message_write_aligned(writer, self->profile_body.buffer, self->profile_body.size);
-    KAA_RETURN_IF_ERR(err_code);
+    uint32_t network_order_32 = KAA_HTONL(self->profile_body.size);
+    error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
+    KAA_RETURN_IF_ERR(error_code);
+    error_code = kaa_platform_message_write_aligned(writer, self->profile_body.buffer, self->profile_body.size);
+    KAA_RETURN_IF_ERR(error_code);
 
-    if (is_versions_needed) {
-        size_t schemas_number = KAA_SCHEMA_VERSION_NUMBER;
-        uint16_t schema_versions[KAA_SCHEMA_VERSION_NUMBER] = { CONFIG_SCHEMA_VERSION
-                                                              , PROFILE_SCHEMA_VERSION
-                                                              , SYSTEM_NF_SCHEMA_VERSION
-                                                              , USER_NF_SCHEMA_VERSION
-                                                              , LOG_SCHEMA_VERSION
-#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-                                                              , KAA_EVENT_SCHEMA_VERSIONS_SIZE
-#endif
-                                                              };
+    error_code = kaa_version_info_serialize(writer);
+    KAA_RETURN_IF_ERR(error_code);
 
-        uint8_t fields_number[KAA_SCHEMA_VERSION_NUMBER] = { CONFIG_SCHEMA_VERSION_VALUE
-                                                           , PROFILE_SCHEMA_VERSION_VALUE
-                                                           , SYS_NF_VERSION_VALUE
-                                                           , USER_NF_VERSION_VALUE
-                                                           , LOG_SCHEMA_VERSION_VALUE
-#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-                                                           , EVENT_FAMILY_VERSIONS_COUNT_VALUE
-#endif
-                                                           };
+    bool is_registered = false;
+    error_code = kaa_is_endpoint_registered(self->status, &is_registered);
+    KAA_RETURN_IF_ERR(error_code);
 
-        uint16_t field_number_with_reserved = 0;
-        uint16_t network_order_schema_version = 0;
+    uint16_t network_order_16 = 0;
+    uint16_t field_number_with_reserved = 0;
 
-        while (schemas_number--) {
-            field_number_with_reserved = fields_number[schemas_number] << 8;
-            err_code = kaa_platform_message_write(writer, &field_number_with_reserved, sizeof(uint16_t));
-            KAA_RETURN_IF_ERR(err_code);
+    if (!is_registered) {
+        field_number_with_reserved = PUB_KEY_VALUE;
+        error_code = kaa_platform_message_write(writer
+                                             , &field_number_with_reserved
+                                             , sizeof(uint16_t));
+        KAA_RETURN_IF_ERR(error_code);
 
-            network_order_schema_version = KAA_HTONS(schema_versions[schemas_number]);
-            err_code = kaa_platform_message_write(writer, &network_order_schema_version, sizeof(uint16_t));
-            KAA_RETURN_IF_ERR(err_code);
-        }
+        network_order_16 = KAA_HTONS(self->extension_data->public_key.size);
+        error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
+        KAA_RETURN_IF_ERR(error_code);
 
-        if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
-            uint16_t network_order_family_version = 0;
-            uint16_t network_order_family_name_len = 0;
-            size_t event_schema_version_number = KAA_EVENT_SCHEMA_VERSIONS_SIZE;
-
-            while (event_schema_version_number--) {
-                network_order_family_version =
-                        KAA_HTONS(KAA_EVENT_SCHEMA_VERSIONS[event_schema_version_number].version);
-                err_code = kaa_platform_message_write(
-                        writer, &network_order_family_version, sizeof(network_order_family_version));
-                KAA_RETURN_IF_ERR(err_code);
-
-
-                network_order_family_name_len =
-                        KAA_HTONS(strlen(KAA_EVENT_SCHEMA_VERSIONS[event_schema_version_number].name));
-                err_code = kaa_platform_message_write(
-                        writer, &network_order_family_name_len, sizeof(network_order_family_name_len));
-                KAA_RETURN_IF_ERR(err_code);
-
-                err_code = kaa_platform_message_write_aligned(
-                                          writer
-                                        , KAA_EVENT_SCHEMA_VERSIONS[event_schema_version_number].name
-                                        , KAA_NTOHS(network_order_family_name_len));
-                KAA_RETURN_IF_ERR(err_code);
-            }
-        }
-
-        uint16_t len = 0;
-
-        if (is_public_key_needed) {
-            field_number_with_reserved = PUB_KEY_VALUE << 8;
-            err_code = kaa_platform_message_write(
-                    writer, &field_number_with_reserved, sizeof(field_number_with_reserved));
-            KAA_RETURN_IF_ERR(err_code);
-
-            len = KAA_HTONS(self->extension_data->public_key.size);
-            err_code = kaa_platform_message_write(writer, &len, sizeof(len));
-            KAA_RETURN_IF_ERR(err_code);
-
-            err_code = kaa_platform_message_write_aligned(
-                    writer, (char*)self->extension_data->public_key.buffer, KAA_NTOHS(len));
-            KAA_RETURN_IF_ERR(err_code);
-        }
-
-        if (is_access_token_needed) {
-            field_number_with_reserved = ACCESS_TOKEN_VALUE << 8;
-            err_code = kaa_platform_message_write(
-                    writer, &field_number_with_reserved, sizeof(field_number_with_reserved));
-            KAA_RETURN_IF_ERR(err_code);
-
-            len = KAA_HTONS(self->extension_data->access_token.size);
-            err_code = kaa_platform_message_write(writer, &len, sizeof(len));
-            KAA_RETURN_IF_ERR(err_code);
-
-            err_code = kaa_platform_message_write_aligned(
-                    writer, (char*)self->extension_data->access_token.buffer, KAA_NTOHS(len));
-            KAA_RETURN_IF_ERR(err_code);
-        }
+        error_code = kaa_platform_message_write_aligned(writer
+                                                     , (char*)self->extension_data->public_key.buffer
+                                                     , self->extension_data->public_key.size);
+        KAA_RETURN_IF_ERR(error_code);
     }
 
-    return err_code;
+    if (self->extension_data->access_token.buffer) {
+        field_number_with_reserved = ACCESS_TOKEN_VALUE;
+        error_code = kaa_platform_message_write(writer
+                                             , &field_number_with_reserved
+                                             , sizeof(uint16_t));
+        KAA_RETURN_IF_ERR(error_code);
+
+        network_order_16 = KAA_HTONS(self->extension_data->access_token.size);
+        error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
+        KAA_RETURN_IF_ERR(error_code);
+
+        error_code = kaa_platform_message_write_aligned(writer
+                                                     , (char*)self->extension_data->access_token.buffer
+                                                     , self->extension_data->access_token.size);
+        KAA_RETURN_IF_ERR(error_code);
+    }
+
+    return error_code;
 }
 
 
 
-#define KAA_PROFILE_RESYNC_OPTION 0x1
-
-
-
-kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length)
+kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
+                                         , kaa_platform_message_reader_t *reader
+                                         , uint32_t extension_options
+                                         , size_t extension_length)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
 
     self->need_resync = false;
     if (extension_options & KAA_PROFILE_RESYNC_OPTION) {
@@ -320,13 +355,17 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_plat
         if (sync)
             (*sync)(profile_sync_services, 1);
     }
-    bool is_registered = false;
-    if (kaa_is_endpoint_registered(self->status, &is_registered))
-        return KAA_ERR_BAD_STATE;
-    if (!is_registered && kaa_set_endpoint_registered(self->status, true))
-        return KAA_ERR_BAD_STATE;
 
-    return KAA_ERR_NONE;
+    bool is_registered = false;
+    error_code = kaa_is_endpoint_registered(self->status, &is_registered);
+    KAA_RETURN_IF_ERR(error_code);
+
+    if (!is_registered) {
+        error_code = kaa_set_endpoint_registered(self->status, true);
+        KAA_RETURN_IF_ERR(error_code);
+    }
+
+    return error_code;
 }
 
 kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_t * profile_body)
@@ -359,6 +398,8 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
         KAA_FREE(serialized_profile);
         return KAA_ERR_NONE;
     }
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint profile is updated")
 
     if (kaa_status_set_profile_hash(self->status, new_hash)) {
         KAA_FREE(serialized_profile);

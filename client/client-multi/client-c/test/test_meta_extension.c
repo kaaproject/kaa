@@ -71,14 +71,25 @@ void test_meta_extension_serialize_failed()
 {
     KAA_TRACE_IN(logger);
 
-    kaa_error_t error_code = kaa_meta_data_request_serialize(NULL, NULL);
+    kaa_error_t error_code;
+    kaa_context_t context;
+    const buffer_size = 6;
+    char buffer[buffer_size];
+    kaa_platform_message_writer_t *writer;
+
+    error_code = kaa_platform_message_reader_create(&writer, buffer, buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_meta_data_request_serialize(NULL, NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize((kaa_context_t *)!NULL, NULL);
+    error_code = kaa_meta_data_request_serialize(&context, NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_meta_data_request_serialize(NULL, (kaa_platform_message_writer_t *)!NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
+
+    kaa_platform_message_reader_destroy(writer);
 }
 
 void test_meta_extension_serialize()
@@ -186,6 +197,4 @@ KAA_SUITE_MAIN(MetaExtension, test_init, test_deinit,
         KAA_TEST_CASE(meta_extension_get_size, test_meta_extension_get_size)
         KAA_TEST_CASE(meta_extension_serialize_failed, test_meta_extension_serialize_failed)
         KAA_TEST_CASE(meta_extension_serialize, test_meta_extension_serialize)
-        KAA_TEST_CASE(meta_extension_serialize, test_meta_extension_serialize)
-        KAA_TEST_CASE(meta_extension_server_sync, test_meta_extension_server_sync)
 )

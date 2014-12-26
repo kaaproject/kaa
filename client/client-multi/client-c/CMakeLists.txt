@@ -145,7 +145,6 @@ target_link_libraries(test_bootstrap kaac crypto ${CUNIT_LIB_NAME})
 add_executable  (test_profile
                     src/gen/kaa_profile_gen.c
                     test/test_kaa_profile.c
-                   test/kaa_test_external.c
                 )
 target_link_libraries(test_profile kaac crypto ${CUNIT_LIB_NAME})
 
