@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck.ReturnCode;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
@@ -129,7 +130,7 @@ public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTc
         LOG.trace("[{}] Processing {}", uuid, frame);
         if (frame.getMessageType() == MessageType.CONNECT) {
             if (session == null) {
-                akkaService.process(new NettyTcpConnectMessage(uuid, AvroEncDec.AVRO_ENC_DEC_ID, ctx, (Connect) frame, ChannelType.TCP,
+                akkaService.process(new NettyTcpConnectMessage(uuid, ctx, (Connect) frame, ChannelType.TCP,
                         this, connectResponseConverter, connectErrorConverter, null));
             } else {
                 LOG.warn("[{}] Ignoring duplicate {} message ", uuid, MessageType.CONNECT);

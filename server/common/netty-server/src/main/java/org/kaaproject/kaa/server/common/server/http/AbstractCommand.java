@@ -185,6 +185,6 @@ public abstract class AbstractCommand implements Callable<AbstractCommand>, KaaC
         this.syncTime = syncTime;
     }
     
-    public abstract String getNextProtocol();
+    public abstract int getNextProtocol();
 
 }

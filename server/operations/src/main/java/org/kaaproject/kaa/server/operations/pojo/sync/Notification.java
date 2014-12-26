@@ -123,4 +123,21 @@ public class Notification {
     public void setBody(ByteBuffer value) {
         this.body = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Notification [topicId=");
+        builder.append(topicId);
+        builder.append(", type=");
+        builder.append(type);
+        builder.append(", uid=");
+        builder.append(uid);
+        builder.append(", seqNumber=");
+        builder.append(seqNumber);
+        builder.append(", body=");
+        builder.append(body);
+        builder.append("]");
+        return builder.toString();
+    }
 }

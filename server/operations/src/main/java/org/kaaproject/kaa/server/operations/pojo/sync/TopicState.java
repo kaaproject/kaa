@@ -25,7 +25,7 @@ public class TopicState {
     /**
      * All-args constructor.
      */
-    public TopicState(String topicId, Integer seqNumber) {
+    public TopicState(String topicId, int seqNumber) {
         this.topicId = topicId;
         this.seqNumber = seqNumber;
     }
@@ -50,7 +50,7 @@ public class TopicState {
     /**
      * Gets the value of the 'seqNumber' field.
      */
-    public Integer getSeqNumber() {
+    public int getSeqNumber() {
         return seqNumber;
     }
 
@@ -60,7 +60,7 @@ public class TopicState {
      * @param value
      *            the value to set.
      */
-    public void setSeqNumber(Integer value) {
+    public void setSeqNumber(int value) {
         this.seqNumber = value;
     }
 

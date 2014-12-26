@@ -26,7 +26,7 @@ public class EndpointDetachResponse {
     /**
      * All-args constructor.
      */
-    public EndpointDetachResponse(java.lang.String requestId, SyncStatus result) {
+    public EndpointDetachResponse(String requestId, SyncStatus result) {
         this.requestId = requestId;
         this.result = result;
     }
@@ -34,7 +34,7 @@ public class EndpointDetachResponse {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public java.lang.String getRequestId() {
+    public String getRequestId() {
         return requestId;
     }
 
@@ -44,7 +44,7 @@ public class EndpointDetachResponse {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(java.lang.String value) {
+    public void setRequestId(String value) {
         this.requestId = value;
     }
 
@@ -63,6 +63,17 @@ public class EndpointDetachResponse {
      */
     public void setResult(SyncStatus value) {
         this.result = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EndpointDetachResponse [requestId=");
+        builder.append(requestId);
+        builder.append(", result=");
+        builder.append(result);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

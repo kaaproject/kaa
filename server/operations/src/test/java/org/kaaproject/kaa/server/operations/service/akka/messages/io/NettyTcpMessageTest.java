@@ -26,7 +26,6 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpDisconnectMessage;
@@ -51,7 +50,7 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, AvroEncDec.AVRO_ENC_DEC_ID, ctx, channelType, sessionKey, key,
+        NettySessionInfo session = new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
                 applicationToken, keepAlive, true);
 
         Connect command = new Connect(keepAlive, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, "aesSessionKey".getBytes(), "syncRequest".getBytes(), "signature".getBytes());
@@ -59,7 +58,7 @@ public class NettyTcpMessageTest {
         ResponseBuilder responseBuilder = Mockito.mock(ResponseBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
         SyncStatistics stats = Mockito.mock(SyncStatistics.class);
-        NettyTcpConnectMessage message = new NettyTcpConnectMessage(channelId, AvroEncDec.AVRO_ENC_DEC_ID, ctx, command, channelType,
+        NettyTcpConnectMessage message = new NettyTcpConnectMessage(channelId, ctx, command, channelType,
                 listener, responseBuilder, errorBuilder, stats);
 
         Assert.assertEquals(channelId, message.getChannelUuid());
@@ -88,7 +87,7 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, AvroEncDec.AVRO_ENC_DEC_ID, ctx, channelType, sessionKey, key,
+        NettySessionInfo session = new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
                 applicationToken, keepAlive, true);
 
         SyncRequest command = new SyncRequest("avroObject".getBytes(), false, false);
@@ -110,7 +109,7 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, AvroEncDec.AVRO_ENC_DEC_ID, ctx, channelType, sessionKey, key,
+        NettySessionInfo session = new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
                 applicationToken, keepAlive, true);
 
         NettyTcpDisconnectMessage message = new NettyTcpDisconnectMessage(session);
@@ -131,7 +130,7 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, AvroEncDec.AVRO_ENC_DEC_ID, ctx, channelType, sessionKey, key,
+        NettySessionInfo session = new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
                 applicationToken, keepAlive, true);
 
         NettyTcpPingMessage message = new NettyTcpPingMessage(session);

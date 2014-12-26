@@ -30,7 +30,7 @@ public class ConfigurationServerSync {
     /**
      * All-args constructor.
      */
-    public ConfigurationServerSync(Integer appStateSeqNumber, SyncResponseStatus responseStatus, ByteBuffer confSchemaBody,
+    public ConfigurationServerSync(int appStateSeqNumber, SyncResponseStatus responseStatus, ByteBuffer confSchemaBody,
             ByteBuffer confDeltaBody) {
         this.appStateSeqNumber = appStateSeqNumber;
         this.responseStatus = responseStatus;
@@ -41,7 +41,7 @@ public class ConfigurationServerSync {
     /**
      * Gets the value of the 'appStateSeqNumber' field.
      */
-    public Integer getAppStateSeqNumber() {
+    public int getAppStateSeqNumber() {
         return appStateSeqNumber;
     }
 
@@ -51,7 +51,7 @@ public class ConfigurationServerSync {
      * @param value
      *            the value to set.
      */
-    public void setAppStateSeqNumber(Integer value) {
+    public void setAppStateSeqNumber(int value) {
         this.appStateSeqNumber = value;
     }
 
@@ -104,5 +104,20 @@ public class ConfigurationServerSync {
      */
     public void setConfDeltaBody(ByteBuffer value) {
         this.confDeltaBody = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ConfigurationServerSync [appStateSeqNumber=");
+        builder.append(appStateSeqNumber);
+        builder.append(", responseStatus=");
+        builder.append(responseStatus);
+        builder.append(", confSchemaBody=");
+        builder.append(confSchemaBody);
+        builder.append(", confDeltaBody=");
+        builder.append(confDeltaBody);
+        builder.append("]");
+        return builder.toString();
     }
 }

@@ -30,7 +30,7 @@ public class Event {
     /**
      * All-args constructor.
      */
-    public Event(Integer seqNum, String eventClassFQN, ByteBuffer eventData, String source, String target) {
+    public Event(int seqNum, String eventClassFQN, ByteBuffer eventData, String source, String target) {
         this.seqNum = seqNum;
         this.eventClassFQN = eventClassFQN;
         this.eventData = eventData;
@@ -41,7 +41,7 @@ public class Event {
     /**
      * Gets the value of the 'seqNum' field.
      */
-    public Integer getSeqNum() {
+    public int getSeqNum() {
         return seqNum;
     }
 
@@ -51,7 +51,7 @@ public class Event {
      * @param value
      *            the value to set.
      */
-    public void setSeqNum(Integer value) {
+    public void setSeqNum(int value) {
         this.seqNum = value;
     }
 

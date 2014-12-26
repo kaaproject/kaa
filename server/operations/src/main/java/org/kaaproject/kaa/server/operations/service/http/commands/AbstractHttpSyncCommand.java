@@ -37,12 +37,12 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SyncStatistics;
 
 /**
@@ -67,7 +67,7 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand implements
     /** The response body. */
     private byte[] responseBody;
     
-    private String nextProtocol;
+    private int nextProtocol = Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID;
 
     /**
      * Gets the type of channel that issued this command.
@@ -126,7 +126,7 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand implements
                                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestData));
                             }
                         } else if (CommonEPConstans.NEXT_PROTOCOL_ATTR_NAME.equals(data.getName())) {
-                            nextProtocol = attribute.getString();
+                            nextProtocol = Integer.valueOf(attribute.getString());
                             LOG.trace("[{}] next protocol is {}", getSessionUuid(), nextProtocol);
                         }
                     }
@@ -205,7 +205,7 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand implements
     }
 
     @Override
-    public String getNextProtocol() {
-        return nextProtocol != null ? nextProtocol : AvroEncDec.AVRO_ENC_DEC_ID;
+    public int getNextProtocol() {
+        return nextProtocol;
     }
 }

@@ -26,7 +26,7 @@ import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 
 public final class NettySessionInfo implements PlatformAware{
     private final UUID uuid;
-    private final String platformId;
+    private final int platformId;
     private final ChannelHandlerContext ctx;
     private final ChannelType channelType;
     private final CipherPair cipherPair;
@@ -35,7 +35,7 @@ public final class NettySessionInfo implements PlatformAware{
     private final int keepAlive;
     private final boolean isEncrypted;
 
-    public NettySessionInfo(UUID uuid, String platformId, ChannelHandlerContext ctx, ChannelType channelType, CipherPair cipherPair, EndpointObjectHash key,
+    public NettySessionInfo(UUID uuid, int platformId, ChannelHandlerContext ctx, ChannelType channelType, CipherPair cipherPair, EndpointObjectHash key,
             String applicationToken, int keepAlive, boolean isEncrypted) {
         super();
         this.uuid = uuid;
@@ -53,7 +53,7 @@ public final class NettySessionInfo implements PlatformAware{
         return uuid;
     }
 
-    public String getPlatformId() {
+    public int getPlatformId() {
         return platformId;
     }
 

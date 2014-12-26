@@ -131,4 +131,17 @@ public class UserClientSync {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UserClientSync [userAttachRequest=");
+        builder.append(userAttachRequest);
+        builder.append(", endpointAttachRequests=");
+        builder.append(endpointAttachRequests);
+        builder.append(", endpointDetachRequests=");
+        builder.append(endpointDetachRequests);
+        builder.append("]");
+        return builder.toString();
+    }
 }

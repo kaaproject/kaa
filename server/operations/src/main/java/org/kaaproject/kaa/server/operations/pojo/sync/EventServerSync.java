@@ -86,4 +86,17 @@ public class EventServerSync {
     public void setEvents(List<Event> value) {
         this.events = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EventServerSync [eventSequenceNumberResponse=");
+        builder.append(eventSequenceNumberResponse);
+        builder.append(", eventListenersResponses=");
+        builder.append(eventListenersResponses);
+        builder.append(", events=");
+        builder.append(events);
+        builder.append("]");
+        return builder.toString();
+    }
 }

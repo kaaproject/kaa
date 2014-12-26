@@ -31,8 +31,8 @@ public class EndpointVersionInfo {
     /**
      * All-args constructor.
      */
-    public EndpointVersionInfo(Integer configVersion, Integer profileVersion, Integer systemNfVersion, Integer userNfVersion,
-            List<EventClassFamilyVersionInfo> eventFamilyVersions, Integer logSchemaVersion) {
+    public EndpointVersionInfo(int configVersion, int profileVersion, int systemNfVersion, int userNfVersion,
+            List<EventClassFamilyVersionInfo> eventFamilyVersions, int logSchemaVersion) {
         this.configVersion = configVersion;
         this.profileVersion = profileVersion;
         this.systemNfVersion = systemNfVersion;
@@ -44,7 +44,7 @@ public class EndpointVersionInfo {
     /**
      * Gets the value of the 'configVersion' field.
      */
-    public Integer getConfigVersion() {
+    public int getConfigVersion() {
         return configVersion;
     }
 
@@ -54,14 +54,14 @@ public class EndpointVersionInfo {
      * @param value
      *            the value to set.
      */
-    public void setConfigVersion(Integer value) {
+    public void setConfigVersion(int value) {
         this.configVersion = value;
     }
 
     /**
      * Gets the value of the 'profileVersion' field.
      */
-    public Integer getProfileVersion() {
+    public int getProfileVersion() {
         return profileVersion;
     }
 
@@ -71,14 +71,14 @@ public class EndpointVersionInfo {
      * @param value
      *            the value to set.
      */
-    public void setProfileVersion(Integer value) {
+    public void setProfileVersion(int value) {
         this.profileVersion = value;
     }
 
     /**
      * Gets the value of the 'systemNfVersion' field.
      */
-    public Integer getSystemNfVersion() {
+    public int getSystemNfVersion() {
         return systemNfVersion;
     }
 
@@ -88,14 +88,14 @@ public class EndpointVersionInfo {
      * @param value
      *            the value to set.
      */
-    public void setSystemNfVersion(Integer value) {
+    public void setSystemNfVersion(int value) {
         this.systemNfVersion = value;
     }
 
     /**
      * Gets the value of the 'userNfVersion' field.
      */
-    public Integer getUserNfVersion() {
+    public int getUserNfVersion() {
         return userNfVersion;
     }
 
@@ -105,7 +105,7 @@ public class EndpointVersionInfo {
      * @param value
      *            the value to set.
      */
-    public void setUserNfVersion(Integer value) {
+    public void setUserNfVersion(int value) {
         this.userNfVersion = value;
     }
 
@@ -129,7 +129,7 @@ public class EndpointVersionInfo {
     /**
      * Gets the value of the 'logSchemaVersion' field.
      */
-    public Integer getLogSchemaVersion() {
+    public int getLogSchemaVersion() {
         return logSchemaVersion;
     }
 

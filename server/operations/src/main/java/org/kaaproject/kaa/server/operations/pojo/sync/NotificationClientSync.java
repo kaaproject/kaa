@@ -31,7 +31,7 @@ public class NotificationClientSync {
     /**
      * All-args constructor.
      */
-    public NotificationClientSync(Integer appStateSeqNumber, ByteBuffer topicListHash,
+    public NotificationClientSync(int appStateSeqNumber, ByteBuffer topicListHash,
             List<TopicState> topicStates,
             List<String> acceptedUnicastNotifications,
             List<SubscriptionCommand> subscriptionCommands) {
@@ -45,7 +45,7 @@ public class NotificationClientSync {
     /**
      * Gets the value of the 'appStateSeqNumber' field.
      */
-    public Integer getAppStateSeqNumber() {
+    public int getAppStateSeqNumber() {
         return appStateSeqNumber;
     }
 
@@ -55,7 +55,7 @@ public class NotificationClientSync {
      * @param value
      *            the value to set.
      */
-    public void setAppStateSeqNumber(Integer value) {
+    public void setAppStateSeqNumber(int value) {
         this.appStateSeqNumber = value;
     }
 
@@ -177,5 +177,22 @@ public class NotificationClientSync {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("NotificationClientSync [appStateSeqNumber=");
+        builder.append(appStateSeqNumber);
+        builder.append(", topicListHash=");
+        builder.append(topicListHash);
+        builder.append(", topicStates=");
+        builder.append(topicStates);
+        builder.append(", acceptedUnicastNotifications=");
+        builder.append(acceptedUnicastNotifications);
+        builder.append(", subscriptionCommands=");
+        builder.append(subscriptionCommands);
+        builder.append("]");
+        return builder.toString();
     }
 }

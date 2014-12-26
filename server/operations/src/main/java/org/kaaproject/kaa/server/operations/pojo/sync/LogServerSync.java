@@ -63,4 +63,15 @@ public class LogServerSync {
     public void setResult(SyncStatus value) {
         this.result = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("LogServerSync [requestId=");
+        builder.append(requestId);
+        builder.append(", result=");
+        builder.append(result);
+        builder.append("]");
+        return builder.toString();
+    }
 }

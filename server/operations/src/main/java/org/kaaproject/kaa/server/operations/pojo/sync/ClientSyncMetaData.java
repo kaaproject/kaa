@@ -90,7 +90,7 @@ public class ClientSyncMetaData {
     /**
      * Gets the value of the 'timeout' field.
      */
-    public Long getTimeout() {
+    public long getTimeout() {
         return timeout;
     }
 
@@ -152,5 +152,20 @@ public class ClientSyncMetaData {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ClientSyncMetaData [applicationToken=");
+        builder.append(applicationToken);
+        builder.append(", endpointPublicKeyHash=");
+        builder.append(endpointPublicKeyHash);
+        builder.append(", profileHash=");
+        builder.append(profileHash);
+        builder.append(", timeout=");
+        builder.append(timeout);
+        builder.append("]");
+        return builder.toString();
     }
 }

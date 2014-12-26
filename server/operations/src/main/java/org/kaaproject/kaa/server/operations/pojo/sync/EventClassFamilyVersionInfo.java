@@ -25,7 +25,7 @@ public class EventClassFamilyVersionInfo {
     /**
      * All-args constructor.
      */
-    public EventClassFamilyVersionInfo(String name, Integer version) {
+    public EventClassFamilyVersionInfo(String name, int version) {
         this.name = name;
         this.version = version;
     }
@@ -50,7 +50,7 @@ public class EventClassFamilyVersionInfo {
     /**
      * Gets the value of the 'version' field.
      */
-    public Integer getVersion() {
+    public int getVersion() {
         return version;
     }
 
@@ -60,7 +60,7 @@ public class EventClassFamilyVersionInfo {
      * @param value
      *            the value to set.
      */
-    public void setVersion(Integer value) {
+    public void setVersion(int value) {
         this.version = value;
     }
 

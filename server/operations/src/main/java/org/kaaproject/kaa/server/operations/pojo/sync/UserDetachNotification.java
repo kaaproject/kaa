@@ -44,4 +44,13 @@ public class UserDetachNotification {
     public void setEndpointAccessToken(String value) {
         this.endpointAccessToken = value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UserDetachNotification [endpointAccessToken=");
+        builder.append(endpointAccessToken);
+        builder.append("]");
+        return builder.toString();
+    }
 }

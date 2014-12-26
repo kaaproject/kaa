@@ -99,4 +99,19 @@ public class NotificationServerSync {
   public void setAvailableTopics(List<Topic> value) {
     this.availableTopics = value;
   }
+
+@Override
+public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("NotificationServerSync [appStateSeqNumber=");
+    builder.append(appStateSeqNumber);
+    builder.append(", responseStatus=");
+    builder.append(responseStatus);
+    builder.append(", notifications=");
+    builder.append(notifications);
+    builder.append(", availableTopics=");
+    builder.append(availableTopics);
+    builder.append("]");
+    return builder.toString();
+}
 }

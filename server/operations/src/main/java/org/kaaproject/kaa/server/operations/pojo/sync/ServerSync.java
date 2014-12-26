@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class ServerSync {
 
-    private Integer requestId;
+    private int requestId;
     private SyncStatus status;
     private ProfileServerSync profileSync;
     private ConfigurationServerSync configurationSync;
@@ -33,7 +33,7 @@ public class ServerSync {
     /**
      * All-args constructor.
      */
-    public ServerSync(Integer requestId, SyncStatus status, ProfileServerSync profileSync,
+    public ServerSync(int requestId, SyncStatus status, ProfileServerSync profileSync,
             ConfigurationServerSync configurationSync, NotificationServerSync notificationSync, UserServerSync userSync,
             EventServerSync eventSync, RedirectServerSync redirectSync, LogServerSync logSync) {
         this.requestId = requestId;
@@ -50,7 +50,7 @@ public class ServerSync {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public Integer getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -60,7 +60,7 @@ public class ServerSync {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(Integer value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 
@@ -198,5 +198,30 @@ public class ServerSync {
      */
     public void setLogSync(LogServerSync value) {
         this.logSync = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ServerSync [requestId=");
+        builder.append(requestId);
+        builder.append(", status=");
+        builder.append(status);
+        builder.append(", profileSync=");
+        builder.append(profileSync);
+        builder.append(", configurationSync=");
+        builder.append(configurationSync);
+        builder.append(", notificationSync=");
+        builder.append(notificationSync);
+        builder.append(", userSync=");
+        builder.append(userSync);
+        builder.append(", eventSync=");
+        builder.append(eventSync);
+        builder.append(", redirectSync=");
+        builder.append(redirectSync);
+        builder.append(", logSync=");
+        builder.append(logSync);
+        builder.append("]");
+        return builder.toString();
     }
 }

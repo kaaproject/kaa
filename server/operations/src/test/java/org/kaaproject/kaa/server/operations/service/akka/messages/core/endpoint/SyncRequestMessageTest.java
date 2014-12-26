@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
@@ -38,7 +39,7 @@ public class SyncRequestMessageTest {
     @Test
     public void testIsValid() {
 
-        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), AvroEncDec.AVRO_ENC_DEC_ID, null, ChannelType.HTTP, null, null,
+        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, ChannelType.HTTP, null, null,
                 "applicationToken", 0, true);
 
         ClientSync request = new ClientSync();

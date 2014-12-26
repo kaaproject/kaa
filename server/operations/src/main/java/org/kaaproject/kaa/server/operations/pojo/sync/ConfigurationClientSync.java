@@ -27,7 +27,7 @@ public class ConfigurationClientSync {
     /**
      * All-args constructor.
      */
-    public ConfigurationClientSync(java.lang.Integer appStateSeqNumber, ByteBuffer configurationHash) {
+    public ConfigurationClientSync(int appStateSeqNumber, ByteBuffer configurationHash) {
         this.appStateSeqNumber = appStateSeqNumber;
         this.configurationHash = configurationHash;
     }
@@ -35,7 +35,7 @@ public class ConfigurationClientSync {
     /**
      * Gets the value of the 'appStateSeqNumber' field.
      */
-    public java.lang.Integer getAppStateSeqNumber() {
+    public int getAppStateSeqNumber() {
         return appStateSeqNumber;
     }
 
@@ -45,7 +45,7 @@ public class ConfigurationClientSync {
      * @param value
      *            the value to set.
      */
-    public void setAppStateSeqNumber(java.lang.Integer value) {
+    public void setAppStateSeqNumber(int value) {
         this.appStateSeqNumber = value;
     }
 
@@ -98,5 +98,16 @@ public class ConfigurationClientSync {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ConfigurationClientSync [appStateSeqNumber=");
+        builder.append(appStateSeqNumber);
+        builder.append(", configurationHash=");
+        builder.append(configurationHash);
+        builder.append("]");
+        return builder.toString();
     }
 }
