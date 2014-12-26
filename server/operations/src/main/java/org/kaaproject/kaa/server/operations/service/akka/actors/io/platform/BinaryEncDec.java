@@ -124,7 +124,6 @@ public class BinaryEncDec implements PlatformEncDec {
     static final byte EVENT_EXTENSION_ID = 7;
 
     // Meta data constants
-    private static final int APP_TOKEN_SIZE = 20;
     private static final int PUBLIC_KEY_HASH_SIZE = 20;
     private static final int PROFILE_HASH_SIZE = 20;
     private static final int CONFIGURATION_HASH_SIZE = 20;
@@ -531,7 +530,7 @@ public class BinaryEncDec implements PlatformEncDec {
             md.setProfileHash(getNewByteBuffer(buf, PROFILE_HASH_SIZE));
         }
         if (hasOption(options, CLIENT_META_SYNC_APP_TOKEN_OPTION)) {
-            md.setApplicationToken(getUTF8String(buf, APP_TOKEN_SIZE));
+            md.setApplicationToken(getUTF8String(buf, Constants.APP_TOKEN_SIZE));
         }
         sync.setClientSyncMetaData(md);
     }

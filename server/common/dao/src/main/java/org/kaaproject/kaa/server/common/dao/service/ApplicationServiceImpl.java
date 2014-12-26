@@ -26,6 +26,7 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlO
 import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -75,7 +76,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.json";
     private static final String DEFAULT_LOG_SCHEMA_FILE = "/default_log_schema.json";
     private static final String DEFAULT_SCHEMA_NAME = "Generated";
-    private static final int DEFAULT_TOKEN_SIZE = 20;
+    
 
     @Autowired
     private ApplicationDao<Application> applicationDao;
@@ -166,7 +167,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 }
                 return appDto;
             }
-            String appToken = RandomStringUtils.randomNumeric(DEFAULT_TOKEN_SIZE);
+            String appToken = RandomStringUtils.randomNumeric(Constants.APP_TOKEN_SIZE);
             applicationDto.setApplicationToken(appToken);
 
             if(applicationDto.getUserVerifierName() == null || applicationDto.getUserVerifierName().isEmpty()){
