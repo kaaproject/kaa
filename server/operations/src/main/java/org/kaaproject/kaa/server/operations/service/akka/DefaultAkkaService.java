@@ -17,9 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.akka;
 
 import java.security.KeyPair;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -62,6 +60,10 @@ import akka.routing.RoundRobinPool;
  */
 @Service
 public class DefaultAkkaService implements AkkaService {
+
+    private static final String PROTOCOL_SCAN_PACKAGE_NAME = "org.kaaproject.kaa.server.operations.service";
+
+    private static final String IO_ROUTER_ACTOR_NAME = "ioRouter";
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultAkkaService.class);
@@ -131,7 +133,7 @@ public class DefaultAkkaService implements AkkaService {
         LOG.info("Initializing Akka io router...");
         ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor,
                 metricsService, cacheService, new KeyPair(keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()),
-                platformProtocols, supportUnencryptedConnection))), "ioRouter");
+                platformProtocols, supportUnencryptedConnection))), IO_ROUTER_ACTOR_NAME);
         LOG.info("Initializing Akka event service listener...");
         listener = new AkkaEventServiceListener(opsActor);
         eventService.addListener(listener);
@@ -141,7 +143,7 @@ public class DefaultAkkaService implements AkkaService {
     private Set<String> lookupPlatformProtocols() {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPlatformProtocol.class));
-        Set<BeanDefinition> beans = scanner.findCandidateComponents("org.kaaproject.kaa.server.operations.service");
+        Set<BeanDefinition> beans = scanner.findCandidateComponents(PROTOCOL_SCAN_PACKAGE_NAME);
         Set<String> protocols = new HashSet<>();
         for (BeanDefinition bean : beans) {
             protocols.add(bean.getBeanClassName());

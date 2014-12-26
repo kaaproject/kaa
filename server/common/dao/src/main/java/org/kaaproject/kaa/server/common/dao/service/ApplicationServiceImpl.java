@@ -75,7 +75,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.json";
     private static final String DEFAULT_LOG_SCHEMA_FILE = "/default_log_schema.json";
     private static final String DEFAULT_SCHEMA_NAME = "Generated";
-    private static final int DEFAULT_TOKEN_SIZE = 15;
+    private static final int DEFAULT_TOKEN_SIZE = 20;
 
     @Autowired
     private ApplicationDao<Application> applicationDao;

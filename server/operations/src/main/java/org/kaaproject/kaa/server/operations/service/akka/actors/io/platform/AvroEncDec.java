@@ -82,7 +82,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is an implementation of {@link PlatformEncDec} that uses Apache Avro for data serialization.
+ * This class is an implementation of {@link PlatformEncDec} that uses Apache
+ * Avro for data serialization.
  */
 @KaaPlatformProtocol
 public class AvroEncDec implements PlatformEncDec {
@@ -101,21 +102,29 @@ public class AvroEncDec implements PlatformEncDec {
         this.serverSyncConverter = new AvroByteArrayConverter<>(SyncResponse.class);
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.PlatformEncDec#getId()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
+     * PlatformEncDec#getId()
      */
     @Override
     public int getId() {
         return Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID;
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.PlatformEncDec#decode(byte[])
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
+     * PlatformEncDec#decode(byte[])
      */
     @Override
     public ClientSync decode(byte[] data) throws PlatformEncDecException {
-        try{
-            if(LOG.isTraceEnabled()){
+        try {
+            if (LOG.isTraceEnabled()) {
                 LOG.trace("Decoding avro data {}", Arrays.toString(data));
             }
             SyncRequest source = clientSyncConverter.fromByteArray(data);
@@ -126,13 +135,18 @@ public class AvroEncDec implements PlatformEncDec {
             ClientSync sync = convert(source);
             LOG.trace("Decoded client sync {}", sync);
             return sync;
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new PlatformEncDecException(e);
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.PlatformEncDec#encode(org.kaaproject.kaa.common.endpoint.protocol.ServerSync)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
+     * PlatformEncDec
+     * #encode(org.kaaproject.kaa.common.endpoint.protocol.ServerSync)
      */
     @Override
     public byte[] encode(ServerSync sync) throws PlatformEncDecException {
@@ -142,13 +156,13 @@ public class AvroEncDec implements PlatformEncDec {
         LOG.trace("Encoding server sync {}", sync);
         SyncResponse response = convert(sync);
         LOG.trace("Encoded server sync {}", response);
-        try{
+        try {
             byte[] data = serverSyncConverter.toByteArray(response);
-            if(LOG.isTraceEnabled()){
+            if (LOG.isTraceEnabled()) {
                 LOG.trace("Encoded avro data {}", Arrays.toString(data));
             }
             return data;
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new PlatformEncDecException(e);
         }
     }
@@ -156,7 +170,8 @@ public class AvroEncDec implements PlatformEncDec {
     /**
      * Converts Avro {@link SyncRequest} to {@link ClientSync}.
      *
-     * @param source the avro structure
+     * @param source
+     *            the avro structure
      * @return the client sync
      */
     public static ClientSync convert(SyncRequest source) {
@@ -175,7 +190,8 @@ public class AvroEncDec implements PlatformEncDec {
     /**
      * Converts {@link ServerSync} to Avro {@link SyncResponse}.
      *
-     * @param source the server sync
+     * @param source
+     *            the server sync
      * @return the Avro sync response
      */
     public static SyncResponse convert(ServerSync source) {
@@ -191,11 +207,13 @@ public class AvroEncDec implements PlatformEncDec {
         sync.setLogSyncResponse(convert(source.getLogSync()));
         return sync;
     }
-    
+
     /**
-     * Converts {@link Event} to {@link org.kaaproject.kaa.common.endpoint.gen.Event}.
+     * Converts {@link Event} to
+     * {@link org.kaaproject.kaa.common.endpoint.gen.Event}.
      *
-     * @param event the event
+     * @param event
+     *            the event
      * @return the Avro event
      */
     public static org.kaaproject.kaa.common.endpoint.gen.Event convert(Event event) {
@@ -205,11 +223,13 @@ public class AvroEncDec implements PlatformEncDec {
         return new org.kaaproject.kaa.common.endpoint.gen.Event(event.getSeqNum(), event.getEventClassFQN(), event.getEventData(),
                 event.getSource(), event.getTarget());
     }
-    
+
     /**
-     * Converts Avro {@link org.kaaproject.kaa.common.endpoint.gen.Event} to {@link Event}.
+     * Converts Avro {@link org.kaaproject.kaa.common.endpoint.gen.Event} to
+     * {@link Event}.
      *
-     * @param source the avro structure
+     * @param source
+     *            the avro structure
      * @return the event
      */
     public static Event convert(org.kaaproject.kaa.common.endpoint.gen.Event event) {
@@ -217,7 +237,7 @@ public class AvroEncDec implements PlatformEncDec {
             return null;
         }
         return new Event(event.getSeqNum(), event.getEventClassFQN(), event.getEventData(), event.getSource(), event.getTarget());
-    }    
+    }
 
     private static SyncResponseResultType convert(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus status) {
         if (status == null) {
