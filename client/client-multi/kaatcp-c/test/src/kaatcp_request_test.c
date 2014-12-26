@@ -27,35 +27,35 @@ void test_kaatcp_connect()
     char *session_key = "session_key";
     char *signature = "signature";
     char *payload = "payload";
-    kaatcp_error_t rval = kaatcp_fill_connect_message(200, payload, strlen(payload), session_key, strlen(session_key), signature, strlen(signature), &connect);
+    kaatcp_error_t rval = kaatcp_fill_connect_message(200, 0x3553c66f, payload, strlen(payload), session_key, strlen(session_key), signature, strlen(signature), &connect);
     assert(rval == KAATCP_ERR_NONE);
 
     char connect_buf[1024];
     uint32_t connect_buf_size = 1024;
     assert(kaatcp_get_request_connect(&connect, connect_buf, &connect_buf_size) == KAATCP_ERR_NONE);
-    unsigned char checkConnectHeader[] = { 0x10, 0x29, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x11, 0x01, 0x00, 0xC8 };
+    unsigned char checkConnectHeader[] = { 0x10, 0x2D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x35, 0x53, 0xC6, 0x6F, 0x11, 0x01, 0x00, 0xC8 };
 
-    assert(connect_buf_size == 43);
-    assert(memcmp(connect_buf, checkConnectHeader, 16) == 0);
-    assert(memcmp(connect_buf + 16, session_key, strlen(session_key)) == 0);
-    assert(memcmp(connect_buf + 16 + strlen(session_key), signature, strlen(signature)) == 0);
-    assert(memcmp(connect_buf + 16 + strlen(session_key) + strlen(signature), payload, strlen(payload)) == 0);
+    assert(connect_buf_size == 47);
+    assert(memcmp(connect_buf, checkConnectHeader, 20) == 0);
+    assert(memcmp(connect_buf + 20, session_key, strlen(session_key)) == 0);
+    assert(memcmp(connect_buf + 20 + strlen(session_key), signature, strlen(signature)) == 0);
+    assert(memcmp(connect_buf + 20 + strlen(session_key) + strlen(signature), payload, strlen(payload)) == 0);
 }
 
 void test_kaatcp_connect_without_key()
 {
     kaatcp_connect_t connect;
     char *payload = "payload";
-    assert(kaatcp_fill_connect_message(200, payload, strlen(payload), NULL, 0, NULL, 0, &connect) == KAATCP_ERR_NONE);
+    assert(kaatcp_fill_connect_message(200, 0x3553c66f, payload, strlen(payload), NULL, 0, NULL, 0, &connect) == KAATCP_ERR_NONE);
 
     char connect_buf[1024];
     uint32_t connect_buf_size = 1024;
     assert(kaatcp_get_request_connect(&connect, connect_buf, &connect_buf_size) == KAATCP_ERR_NONE);
-    unsigned char checkConnectHeader[] = { 0x10, 0x15, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x00, 0x00, 0x00, 0xC8 };
+    unsigned char checkConnectHeader[] = { 0x10, 0x19, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x35, 0x53, 0xC6, 0x6F, 0x00, 0x00, 0x00, 0xC8 };
 
-    assert(connect_buf_size == 23);
-    assert(memcmp(connect_buf, checkConnectHeader, 16) == 0);
-    assert(memcmp(connect_buf + 16, payload, strlen(payload)) == 0);
+    assert(connect_buf_size == 27);
+    assert(memcmp(connect_buf, checkConnectHeader, 20) == 0);
+    assert(memcmp(connect_buf + 20, payload, strlen(payload)) == 0);
 }
 
 void test_kaatcp_disconnect()

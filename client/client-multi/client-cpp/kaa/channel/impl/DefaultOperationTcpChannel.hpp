@@ -101,6 +101,7 @@ private:
     static const std::string CHANNEL_ID;
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
     static const std::uint16_t THREADPOOL_SIZE = 2;
+    static const std::uint32_t KAA_PLATFORM_PROTOCOL_AVRO_ID;
 
     std::list<TransportType> ackTypes_;
     KeyPair clientKeys_;

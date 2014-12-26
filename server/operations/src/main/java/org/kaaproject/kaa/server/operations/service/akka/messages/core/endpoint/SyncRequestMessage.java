@@ -22,12 +22,12 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
@@ -48,7 +48,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     private final Request command;
 
     /** The request. */
-    private final SyncRequest request;
+    private final ClientSync request;
 
     /** The session. */
     private final NettySessionInfo session;
@@ -65,7 +65,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
      * @param originator
      *            the originator
      */
-    public SyncRequestMessage(NettySessionInfo session, SyncRequest request, Request requestMessage, ActorRef originator) {
+    public SyncRequestMessage(NettySessionInfo session, ClientSync request, Request requestMessage, ActorRef originator) {
         super(session.getApplicationToken(), session.getKey(), originator);
         this.command = requestMessage;
         this.request = request;
@@ -77,7 +77,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
      * 
      * @return the request
      */
-    public SyncRequest getRequest() {
+    public ClientSync getRequest() {
         return request;
     }
 
@@ -104,86 +104,86 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         return command;
     }
 
-    public void updateRequest(SyncResponse response) {
+    public void updateRequest(ServerSync response) {
         UUID channelUuid = getChannelUuid();
         LOG.debug("[{}] Cleanup profile request", channelUuid);
-        request.setProfileSyncRequest(null);
-        if (request.getUserSyncRequest() != null) {
+        request.setProfileSync(null);
+        if (request.getUserSync() != null) {
             LOG.debug("[{}] Cleanup user request", channelUuid);
-            request.setUserSyncRequest(new UserSyncRequest());
+            request.setUserSync(new UserClientSync());
         }
-        if (request.getEventSyncRequest() != null) {
+        if (request.getEventSync() != null) {
             LOG.debug("[{}] Cleanup event request", channelUuid);
-            request.setEventSyncRequest(new EventSyncRequest());
+            request.setEventSync(new EventClientSync());
         }
-        if (request.getLogSyncRequest() != null) {
+        if (request.getLogSync() != null) {
             LOG.debug("[{}] Cleanup log request", channelUuid);
-            request.getLogSyncRequest().setLogEntries(null);
+            request.getLogSync().setLogEntries(null);
         }
-        if (request.getNotificationSyncRequest() != null) {
+        if (request.getNotificationSync() != null) {
             LOG.debug("[{}] Cleanup/update notification request", channelUuid);
-            if (response != null && response.getNotificationSyncResponse() != null) {
-                request.getNotificationSyncRequest().setAppStateSeqNumber(
-                        response.getNotificationSyncResponse().getAppStateSeqNumber());
+            if (response != null && response.getNotificationSync() != null) {
+                request.getNotificationSync().setAppStateSeqNumber(
+                        response.getNotificationSync().getAppStateSeqNumber());
             }
-            request.getNotificationSyncRequest().setSubscriptionCommands(null);
-            request.getNotificationSyncRequest().setAcceptedUnicastNotifications(null);
+            request.getNotificationSync().setSubscriptionCommands(null);
+            request.getNotificationSync().setAcceptedUnicastNotifications(null);
         }
-        if (request.getConfigurationSyncRequest() != null) {
+        if (request.getConfigurationSync() != null) {
             LOG.debug("[{}] Cleanup/update configuration request", channelUuid);
-            if (response != null && response.getConfigurationSyncResponse() != null) {
-                request.getConfigurationSyncRequest().setAppStateSeqNumber(
-                        response.getConfigurationSyncResponse().getAppStateSeqNumber());
+            if (response != null && response.getConfigurationSync() != null) {
+                request.getConfigurationSync().setAppStateSeqNumber(
+                        response.getConfigurationSync().getAppStateSeqNumber());
             }
         }
     }
 
-    public SyncRequest merge(SyncRequestMessage syncRequest) {
+    public ClientSync merge(SyncRequestMessage syncRequest) {
         UUID channelUuid = getChannelUuid();
-        SyncRequest other = syncRequest.getRequest();
+        ClientSync other = syncRequest.getRequest();
         LOG.trace("[{}] Merging original request {} with new request {}", channelUuid, request, other);
         request.setRequestId(other.getRequestId());
-        request.getSyncRequestMetaData().setProfileHash(other.getSyncRequestMetaData().getProfileHash());
+        request.getClientSyncMetaData().setProfileHash(other.getClientSyncMetaData().getProfileHash());
         LOG.debug("[{}] Updated request id and profile hash", channelUuid);
-        SyncRequest diff = new SyncRequest();
+        ClientSync diff = new ClientSync();
         diff.setRequestId(other.getRequestId());
-        diff.setSyncRequestMetaData(other.getSyncRequestMetaData());
-        if (other.getConfigurationSyncRequest() != null) {
-            diff.setConfigurationSyncRequest(diff(request.getConfigurationSyncRequest(),
-                    other.getConfigurationSyncRequest()));
-            request.setConfigurationSyncRequest(other.getConfigurationSyncRequest());
+        diff.setClientSyncMetaData(other.getClientSyncMetaData());
+        if (other.getConfigurationSync() != null) {
+            diff.setConfigurationSync(diff(request.getConfigurationSync(),
+                    other.getConfigurationSync()));
+            request.setConfigurationSync(other.getConfigurationSync());
             LOG.debug("[{}] Updated configuration request", channelUuid);
         }
-        if (other.getNotificationSyncRequest() != null) {
-            diff.setNotificationSyncRequest(diff(request.getNotificationSyncRequest(),
-                    other.getNotificationSyncRequest()));
-            request.setNotificationSyncRequest(other.getNotificationSyncRequest());
+        if (other.getNotificationSync() != null) {
+            diff.setNotificationSync(diff(request.getNotificationSync(),
+                    other.getNotificationSync()));
+            request.setNotificationSync(other.getNotificationSync());
             LOG.debug("[{}] Updated notification request", channelUuid);
         }
-        if (other.getProfileSyncRequest() != null) {
-            diff.setProfileSyncRequest(other.getProfileSyncRequest());
-            request.setProfileSyncRequest(other.getProfileSyncRequest());
+        if (other.getProfileSync() != null) {
+            diff.setProfileSync(other.getProfileSync());
+            request.setProfileSync(other.getProfileSync());
             LOG.debug("[{}] Updated profile request", channelUuid);
         }
-        if (other.getUserSyncRequest() != null) {
-            diff.setUserSyncRequest(other.getUserSyncRequest());
-            request.setUserSyncRequest(other.getUserSyncRequest());
+        if (other.getUserSync() != null) {
+            diff.setUserSync(other.getUserSync());
+            request.setUserSync(other.getUserSync());
             LOG.debug("[{}] Updated user request", channelUuid);
         }
-        if (other.getEventSyncRequest() != null) {
-            diff.setEventSyncRequest(other.getEventSyncRequest());
-            request.setEventSyncRequest(other.getEventSyncRequest());
+        if (other.getEventSync() != null) {
+            diff.setEventSync(other.getEventSync());
+            request.setEventSync(other.getEventSync());
             LOG.debug("[{}] Updated event request", channelUuid);
         }
-        if (other.getLogSyncRequest() != null) {
-            diff.setLogSyncRequest(other.getLogSyncRequest());
-            request.setLogSyncRequest(other.getLogSyncRequest());
+        if (other.getLogSync() != null) {
+            diff.setLogSync(other.getLogSync());
+            request.setLogSync(other.getLogSync());
             LOG.debug("[{}] Updated log request", channelUuid);
         }
         return diff;
     }
 
-    private NotificationSyncRequest diff(NotificationSyncRequest oldRequest, NotificationSyncRequest newRequest) {
+    private NotificationClientSync diff(NotificationClientSync oldRequest, NotificationClientSync newRequest) {
         if (oldRequest == null) {
             return newRequest;
         } else {
@@ -200,7 +200,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         }
     }
 
-    private ConfigurationSyncRequest diff(ConfigurationSyncRequest oldRequest, ConfigurationSyncRequest newRequest) {
+    private ConfigurationClientSync diff(ConfigurationClientSync oldRequest, ConfigurationClientSync newRequest) {
         if (oldRequest == null) {
             return newRequest;
         } else {
@@ -217,20 +217,32 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     public boolean isValid(TransportType type) {
         switch (type) {
         case EVENT:
-            return request.getEventSyncRequest() != null;
+            return request.getEventSync() != null;
         case NOTIFICATION:
-            return request.getNotificationSyncRequest() != null;
+            return request.getNotificationSync() != null;
         case CONFIGURATION:
-            return request.getConfigurationSyncRequest() != null;
+            return request.getConfigurationSync() != null;
         case USER:
-            return request.getUserSyncRequest() != null;
+            return request.getUserSync() != null;
         case PROFILE:
-            return request.getProfileSyncRequest() != null;
+            return request.getProfileSync() != null;
         case LOGGING:
-            return request.getLogSyncRequest() != null;
+            return request.getLogSync() != null;
         default:
             return false;
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("SyncRequestMessage [command=");
+        builder.append(command);
+        builder.append(", request=");
+        builder.append(request);
+        builder.append(", session=");
+        builder.append(session);
+        builder.append("]");
+        return builder.toString();
+    }
 }

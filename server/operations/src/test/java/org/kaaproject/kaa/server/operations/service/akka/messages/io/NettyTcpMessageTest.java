@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
@@ -40,7 +41,7 @@ import org.mockito.Mockito;
 public class NettyTcpMessageTest {
 
     @Test
-    public void connectTest(){
+    public void connectTest() {
         UUID channelId = UUID.randomUUID();
         ChannelHandlerContext ctx = Mockito.mock(ChannelHandlerContext.class);
         ChannelType channelType = ChannelType.TCP;
@@ -49,15 +50,16 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive, true);
+        NettySessionInfo session = new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
+                applicationToken, keepAlive, true);
 
-        Connect command = new Connect(keepAlive, "aesSessionKey".getBytes(), "syncRequest".getBytes(), "signature".getBytes());
+        Connect command = new Connect(keepAlive, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, "aesSessionKey".getBytes(), "syncRequest".getBytes(), "signature".getBytes());
         SessionCreateListener listener = Mockito.mock(SessionCreateListener.class);
         ResponseBuilder responseBuilder = Mockito.mock(ResponseBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
         SyncStatistics stats = Mockito.mock(SyncStatistics.class);
-        NettyTcpConnectMessage message = new NettyTcpConnectMessage(channelId, ctx, command, channelType, listener, responseBuilder, errorBuilder, stats);
-
+        NettyTcpConnectMessage message = new NettyTcpConnectMessage(channelId, ctx, command, channelType,
+                listener, responseBuilder, errorBuilder, stats);
 
         Assert.assertEquals(channelId, message.getChannelUuid());
         Assert.assertEquals(channelType, message.getChannelType());
@@ -76,7 +78,7 @@ public class NettyTcpMessageTest {
     }
 
     @Test
-    public void syncTest(){
+    public void syncTest() {
         UUID channelId = UUID.randomUUID();
         ChannelHandlerContext ctx = Mockito.mock(ChannelHandlerContext.class);
         ChannelType channelType = ChannelType.TCP;
@@ -85,7 +87,8 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive, true);
+        NettySessionInfo session = new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
+                applicationToken, keepAlive, true);
 
         SyncRequest command = new SyncRequest("avroObject".getBytes(), false, false);
 
@@ -97,7 +100,7 @@ public class NettyTcpMessageTest {
     }
 
     @Test
-    public void disconnectTest(){
+    public void disconnectTest() {
         UUID channelId = UUID.randomUUID();
         ChannelHandlerContext ctx = Mockito.mock(ChannelHandlerContext.class);
         ChannelType channelType = ChannelType.TCP;
@@ -106,7 +109,8 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive, true);
+        NettySessionInfo session = new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
+                applicationToken, keepAlive, true);
 
         NettyTcpDisconnectMessage message = new NettyTcpDisconnectMessage(session);
 
@@ -117,7 +121,7 @@ public class NettyTcpMessageTest {
     }
 
     @Test
-    public void pingTest(){
+    public void pingTest() {
         UUID channelId = UUID.randomUUID();
         ChannelHandlerContext ctx = Mockito.mock(ChannelHandlerContext.class);
         ChannelType channelType = ChannelType.TCP;
@@ -126,7 +130,8 @@ public class NettyTcpMessageTest {
         String applicationToken = "AppToken";
         int keepAlive = 100;
 
-        NettySessionInfo session = new NettySessionInfo(channelId, ctx, channelType, sessionKey, key, applicationToken, keepAlive, true);
+        NettySessionInfo session = new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
+                applicationToken, keepAlive, true);
 
         NettyTcpPingMessage message = new NettyTcpPingMessage(session);
 

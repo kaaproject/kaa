@@ -16,8 +16,9 @@
 package org.kaaproject.kaa.server.operations.service.akka.messages.io.request;
 
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.PlatformAware;
 
-public interface Request extends ChannelAware{
+public interface Request extends ChannelAware, PlatformAware{
 
     ResponseBuilder getResponseBuilder();
     ErrorBuilder getErrorBuilder();

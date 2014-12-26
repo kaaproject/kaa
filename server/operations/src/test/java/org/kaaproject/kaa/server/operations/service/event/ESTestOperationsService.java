@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 
 /**
@@ -43,18 +43,18 @@ public class ESTestOperationsService implements OperationsService {
      * @see org.kaaproject.kaa.server.operations.service.OperationsService#sync(org.kaaproject.kaa.common.endpoint.gen.SyncRequest)
      */
     @Override
-    public SyncResponseHolder sync(SyncRequest request) throws GetDeltaException {
+    public SyncResponseHolder sync(ClientSync request) throws GetDeltaException {
         return sync(request, null);
     }
 
     @Override
-    public SyncResponse updateSyncResponse(SyncResponse response, List<NotificationDto> notifications, String unicastNotificationId) {
+    public ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public SyncResponseHolder sync(SyncRequest request, EndpointProfileDto profile) throws GetDeltaException {
+    public SyncResponseHolder sync(ClientSync request, EndpointProfileDto profile) throws GetDeltaException {
         // TODO Auto-generated method stub
         return null;
     }
