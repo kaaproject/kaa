@@ -17,6 +17,7 @@
 #include "kaa_test.h"
 
 #include <stddef.h>
+#include <string.h>
 
 #include "kaa_error.h"
 #include "kaa_common.h"
