@@ -89,7 +89,7 @@ typedef struct {
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self, kaa_attachment_status_listeners_t listeners);
+kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self, const kaa_attachment_status_listeners_t *listeners);
 
 #ifdef __cplusplus
 }      /* extern "C" */

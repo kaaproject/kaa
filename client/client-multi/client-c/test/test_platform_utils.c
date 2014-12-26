@@ -17,6 +17,7 @@
 #include "kaa_test.h"
 
 #include <stddef.h>
+#include <string.h>
 
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"

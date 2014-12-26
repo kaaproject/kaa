@@ -17,6 +17,7 @@
 #include "kaa_test.h"
 
 #include <stddef.h>
+#include <string.h>
 
 #include "kaa_error.h"
 #include "kaa_common.h"
@@ -186,6 +187,4 @@ KAA_SUITE_MAIN(MetaExtension, test_init, test_deinit,
         KAA_TEST_CASE(meta_extension_get_size, test_meta_extension_get_size)
         KAA_TEST_CASE(meta_extension_serialize_failed, test_meta_extension_serialize_failed)
         KAA_TEST_CASE(meta_extension_serialize, test_meta_extension_serialize)
-        KAA_TEST_CASE(meta_extension_serialize, test_meta_extension_serialize)
-        KAA_TEST_CASE(meta_extension_server_sync, test_meta_extension_server_sync)
 )

@@ -250,7 +250,7 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received log sync response");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received log server sync");
 
     if (extension_length >= sizeof(uint32_t)) {
         uint16_t id = KAA_NTOHS(*((uint16_t *) reader->current));

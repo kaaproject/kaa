@@ -56,8 +56,6 @@ static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
 static kaa_log_collector_t *log_collector = NULL;
 
-#define NUM_OF_SERVICES 4
-
 #define TEST_LOG_BUFFER  "log_record"
 
 static const uint16_t request_id = 0x01;
