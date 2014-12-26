@@ -50,15 +50,15 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
         if (processor != null) {
             UserSyncRequest request = new UserSyncRequest();
 
-            Map<String, EndpointAccessToken> attachEndpointRequests = processor.getAttachEndpointRequests();
+            Map<Integer, EndpointAccessToken> attachEndpointRequests = processor.getAttachEndpointRequests();
             List<EndpointAttachRequest> attachEPRequestList = new LinkedList<EndpointAttachRequest>();
-            for (Map.Entry<String, EndpointAccessToken> attachEPRequest : attachEndpointRequests.entrySet()) {
+            for (Map.Entry<Integer, EndpointAccessToken> attachEPRequest : attachEndpointRequests.entrySet()) {
                 attachEPRequestList.add(new EndpointAttachRequest(attachEPRequest.getKey(), attachEPRequest.getValue().getToken()));
             }
 
-            Map<String, EndpointKeyHash> detachEndpointRequests = processor.getDetachEndpointRequests();
+            Map<Integer, EndpointKeyHash> detachEndpointRequests = processor.getDetachEndpointRequests();
             List<EndpointDetachRequest> detachEPRequestList = new LinkedList<EndpointDetachRequest>();
-            for (Map.Entry<String, EndpointKeyHash> detachEPRequest : detachEndpointRequests.entrySet()) {
+            for (Map.Entry<Integer, EndpointKeyHash> detachEPRequest : detachEndpointRequests.entrySet()) {
                 detachEPRequestList.add(new EndpointDetachRequest(detachEPRequest.getKey(), detachEPRequest.getValue().getKeyHash()));
             }
 
@@ -74,7 +74,7 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
     public void onUserResponse(UserSyncResponse response) throws IOException {
         if (processor != null) {
             boolean hasChanges = false;
-            Map<String, EndpointAccessToken> attachEndpointRequests = processor.getAttachEndpointRequests();
+            Map<Integer, EndpointAccessToken> attachEndpointRequests = processor.getAttachEndpointRequests();
             if (response.getEndpointAttachResponses() != null && !response.getEndpointAttachResponses().isEmpty()) {
                 synchronized (attachEndpointRequests) {
                     for (EndpointAttachResponse attached : response.getEndpointAttachResponses()) {
@@ -89,7 +89,7 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
                     }
                 }
             }
-            Map<String, EndpointKeyHash> detachEndpointRequests = processor.getDetachEndpointRequests();
+            Map<Integer, EndpointKeyHash> detachEndpointRequests = processor.getDetachEndpointRequests();
             if (response.getEndpointDetachResponses() != null && !response.getEndpointDetachResponses().isEmpty()) {
                 synchronized (detachEndpointRequests) {
                     for (EndpointDetachResponse detached : response.getEndpointDetachResponses()) {

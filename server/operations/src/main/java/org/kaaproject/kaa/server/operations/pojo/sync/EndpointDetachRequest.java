@@ -16,7 +16,7 @@
 package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class EndpointDetachRequest {
-    private String requestId;
+    private int requestId;
     private String endpointKeyHash;
 
     public EndpointDetachRequest() {
@@ -25,7 +25,7 @@ public class EndpointDetachRequest {
     /**
      * All-args constructor.
      */
-    public EndpointDetachRequest(String requestId, String endpointKeyHash) {
+    public EndpointDetachRequest(int requestId, String endpointKeyHash) {
         this.requestId = requestId;
         this.endpointKeyHash = endpointKeyHash;
     }
@@ -33,7 +33,7 @@ public class EndpointDetachRequest {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -43,7 +43,7 @@ public class EndpointDetachRequest {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(String value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 
@@ -69,7 +69,7 @@ public class EndpointDetachRequest {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((endpointKeyHash == null) ? 0 : endpointKeyHash.hashCode());
-        result = prime * result + ((requestId == null) ? 0 : requestId.hashCode());
+        result = prime * result + requestId;
         return result;
     }
 
@@ -92,13 +92,20 @@ public class EndpointDetachRequest {
         } else if (!endpointKeyHash.equals(other.endpointKeyHash)) {
             return false;
         }
-        if (requestId == null) {
-            if (other.requestId != null) {
-                return false;
-            }
-        } else if (!requestId.equals(other.requestId)) {
+        if (requestId != other.requestId) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EndpointDetachRequest [requestId=");
+        builder.append(requestId);
+        builder.append(", endpointKeyHash=");
+        builder.append(endpointKeyHash);
+        builder.append("]");
+        return builder.toString();
     }
 }

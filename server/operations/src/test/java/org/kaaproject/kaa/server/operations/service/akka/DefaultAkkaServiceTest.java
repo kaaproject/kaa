@@ -1147,7 +1147,7 @@ public class DefaultAkkaServiceTest {
         md.setTimeout(1000l);
         request.setSyncRequestMetaData(md);
 
-        LogSyncRequest logRequest = new LogSyncRequest("logUploadRequest1", Collections.singletonList(new LogEntry(ByteBuffer.wrap("String"
+        LogSyncRequest logRequest = new LogSyncRequest(REQUEST_ID, Collections.singletonList(new LogEntry(ByteBuffer.wrap("String"
                 .getBytes()))));
         request.setLogSyncRequest(logRequest);
 
@@ -1334,7 +1334,7 @@ public class DefaultAkkaServiceTest {
         sourceRequest.setEventSyncRequest(new EventSyncRequest());
 
         UserSyncRequest userSyncRequest = new UserSyncRequest();
-        EndpointAttachRequest eaRequest = new EndpointAttachRequest("request1", "token");
+        EndpointAttachRequest eaRequest = new EndpointAttachRequest(REQUEST_ID, "token");
         userSyncRequest.setEndpointAttachRequests(Collections.singletonList(eaRequest));
         sourceRequest.setUserSyncRequest(userSyncRequest);
 
@@ -1343,7 +1343,7 @@ public class DefaultAkkaServiceTest {
         sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         UserServerSync userSyncResponse = new UserServerSync();
         userSyncResponse.setEndpointAttachResponses(Collections
-                .singletonList(new org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse("request1", Base64Util
+                .singletonList(new org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse(REQUEST_ID, Base64Util
                         .encode(targetPublicKeyHash.array()), org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS)));
         sourceResponse.setUserSync(userSyncResponse);
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
@@ -1442,7 +1442,7 @@ public class DefaultAkkaServiceTest {
         sourceRequest.setEventSyncRequest(new EventSyncRequest());
 
         UserSyncRequest userSyncRequest = new UserSyncRequest();
-        EndpointDetachRequest eaRequest = new EndpointDetachRequest("request1", Base64Util.encode(targetPublicKeyHash.array()));
+        EndpointDetachRequest eaRequest = new EndpointDetachRequest(REQUEST_ID, Base64Util.encode(targetPublicKeyHash.array()));
         userSyncRequest.setEndpointDetachRequests(Collections.singletonList(eaRequest));
         sourceRequest.setUserSyncRequest(userSyncRequest);
 
@@ -1451,7 +1451,7 @@ public class DefaultAkkaServiceTest {
         sourceResponse.setStatus(org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS);
         UserServerSync userSyncResponse = new UserServerSync();
         userSyncResponse.setEndpointDetachResponses(Collections
-                .singletonList(new org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse("request1",
+                .singletonList(new org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse(REQUEST_ID,
                         org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus.SUCCESS)));
         sourceResponse.setUserSync(userSyncResponse);
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);

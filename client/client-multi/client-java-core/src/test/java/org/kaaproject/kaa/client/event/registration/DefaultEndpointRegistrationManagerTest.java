@@ -49,6 +49,8 @@ import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 
 public class DefaultEndpointRegistrationManagerTest {
 
+    private static final int REQUEST_ID = 42;
+    
     @Test
     public void checkUserAttach() throws Exception {
         KaaClientState state = mock(KaaClientState.class);
@@ -115,14 +117,14 @@ public class DefaultEndpointRegistrationManagerTest {
             sr.setEndpointDetachResponses(null);
 
             List<EndpointAttachResponse> attach = new LinkedList<EndpointAttachResponse>();
-            attach.add(new EndpointAttachResponse("requestId", "keyHash", SyncResponseResultType.SUCCESS));
+            attach.add(new EndpointAttachResponse(REQUEST_ID, "keyHash", SyncResponseResultType.SUCCESS));
             sr.setEndpointAttachResponses(attach);
             transport.onUserResponse(sr);
 
             manager.removeAttachedEndpointListChangeListener(listListener);
 
             List<EndpointDetachResponse> detach = new LinkedList<EndpointDetachResponse>();
-            detach.add(new EndpointDetachResponse("requestId", SyncResponseResultType.SUCCESS));
+            detach.add(new EndpointDetachResponse(REQUEST_ID, SyncResponseResultType.SUCCESS));
             sr.setEndpointAttachResponses(null);
             sr.setEndpointDetachResponses(detach);
             transport.onUserResponse(sr);

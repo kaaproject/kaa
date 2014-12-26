@@ -67,7 +67,7 @@ public class DefaultEndpointUserServiceTest {
     private static final String TEST_TENANT_ID = "testTenantId";
 
     private static final String EXTERNAL_USER_ID_OTHER = "userExternalIdOther";
-    private static final String REQUEST_ID = "requestId";
+    private static final int REQUEST_ID = 42;
     private static final byte[] ENDPOINT_KEY_HASH = new byte[]{1,2,3};
     private static final byte[] ENDPOINT_KEY_HASH_OTHER = new byte[]{4,5,6};
     private static final byte[] ENDPOINT_KEY_HASH1 = new byte[]{1,2,0,1};
@@ -82,8 +82,6 @@ public class DefaultEndpointUserServiceTest {
     private static final String TEST_APP_TOKEN2 = "testAppToken2";
     private static final String TEST_APP_TOKEN3 = "testAppToken3";
     private static final int TEST_APP_SEQ_NUM = 42;
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpointUserServiceTest.class);
 
     private EndpointUserService endpointUserService;
     private EndpointService endpointService;

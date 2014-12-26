@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.logging;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +30,10 @@ import org.slf4j.LoggerFactory;
 public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     private static final Logger LOG = LoggerFactory.getLogger(MemoryLogStorage.class);
 
+    private final static Random RANDOM = new Random();
+    
     private class Bucket {
-        private final String id;
+        private final int id;
         private final LinkedList<LogRecord> records; //NOSONAR
 
         private final long maxBucketSize;
@@ -39,7 +41,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         private boolean isUsed;
 
         public Bucket(long bucketSize) {
-            id = UUID.randomUUID().toString();
+            id = RANDOM.nextInt();
             records = new LinkedList<>();
             maxBucketSize = bucketSize;
             consumedSize = 0;
@@ -50,7 +52,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
             return records;
         }
 
-        public String getId() {
+        public int getId() {
             return id;
         }
 
@@ -157,7 +159,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void removeRecordBlock(String id) {
+    public void removeRecordBlock(int id) {
         synchronized (buckets) {
             LOG.trace("Removing log group by id: {}", id);
 
@@ -167,7 +169,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
 
                 while (it.hasNext()) {
                     Bucket bucket = it.next();
-                    if (bucket.getId().equals(id) && bucket.isUsed()) {
+                    if (bucket.getId() == id && bucket.isUsed()) {
                         consumedSize -= bucket.getConsumedSize();
                         recordCount -= bucket.getRecords().size();
                         isFound = true;
@@ -219,7 +221,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void notifyUploadFailed(String id) {
+    public void notifyUploadFailed(int id) {
         LOG.warn("Failed to upload log group with id {}. Try to send them later", id);
 
         Iterator<Bucket> it = buckets.iterator();
@@ -227,7 +229,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         while (it.hasNext()) {
             Bucket bucket = it.next();
 
-            if (bucket.getId().equals(id) && bucket.isUsed) {
+            if (bucket.getId() == id && bucket.isUsed) {
                 bucket.setUsage(false);
                 break;
             }

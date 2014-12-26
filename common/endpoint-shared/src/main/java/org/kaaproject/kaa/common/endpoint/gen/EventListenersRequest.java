@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class EventListenersRequest extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EventListenersRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventClassFQNs\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EventListenersRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"eventClassFQNs\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String requestId;
+   private int requestId;
    private java.util.List<java.lang.String> eventClassFQNs;
 
   /**
@@ -22,7 +22,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
   /**
    * All-args constructor.
    */
-  public EventListenersRequest(java.lang.String requestId, java.util.List<java.lang.String> eventClassFQNs) {
+  public EventListenersRequest(java.lang.Integer requestId, java.util.List<java.lang.String> eventClassFQNs) {
     this.requestId = requestId;
     this.eventClassFQNs = eventClassFQNs;
   }
@@ -40,7 +40,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: requestId = (java.lang.String)value$; break;
+    case 0: requestId = (java.lang.Integer)value$; break;
     case 1: eventClassFQNs = (java.util.List<java.lang.String>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -49,7 +49,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
   /**
    * Gets the value of the 'requestId' field.
    */
-  public java.lang.String getRequestId() {
+  public java.lang.Integer getRequestId() {
     return requestId;
   }
 
@@ -57,7 +57,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
    * Sets the value of the 'requestId' field.
    * @param value the value to set.
    */
-  public void setRequestId(java.lang.String value) {
+  public void setRequestId(java.lang.Integer value) {
     this.requestId = value;
   }
 
@@ -97,7 +97,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<EventListenersRequest>
     implements org.apache.avro.data.RecordBuilder<EventListenersRequest> {
 
-    private java.lang.String requestId;
+    private int requestId;
     private java.util.List<java.lang.String> eventClassFQNs;
 
     /** Creates a new Builder */
@@ -132,12 +132,12 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
     }
 
     /** Gets the value of the 'requestId' field */
-    public java.lang.String getRequestId() {
+    public java.lang.Integer getRequestId() {
       return requestId;
     }
     
     /** Sets the value of the 'requestId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder setRequestId(java.lang.String value) {
+    public org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
       fieldSetFlags()[0] = true;
@@ -151,7 +151,6 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
     
     /** Clears the value of the 'requestId' field */
     public org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder clearRequestId() {
-      requestId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -185,7 +184,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
     public EventListenersRequest build() {
       try {
         EventListenersRequest record = new EventListenersRequest();
-        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.String) defaultValue(fields()[0]);
+        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.Integer) defaultValue(fields()[0]);
         record.eventClassFQNs = fieldSetFlags()[1] ? this.eventClassFQNs : (java.util.List<java.lang.String>) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {

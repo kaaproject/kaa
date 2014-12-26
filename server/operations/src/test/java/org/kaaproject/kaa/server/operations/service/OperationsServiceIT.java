@@ -121,7 +121,7 @@ public class OperationsServiceIT extends AbstractTest {
 
     private static final String ENDPOINT_ACCESS_TOKEN = "endpointAccessToken";
     private static final String INVALID_ENDPOINT_ACCESS_TOKEN = "InvalidEndpointAccessToken";
-    private static final String REQUEST_ID1 = "request1";
+    private static final int REQUEST_ID1 = 42;
     private static final String USER_EXTERNAL_ID = "user@test.com";
     private static final String USER_ACCESS_TOKEN = "userAccessToken";
     private static final String INVALID_USER_ACCESS_TOKEN = "invalidUserAccessToken";
