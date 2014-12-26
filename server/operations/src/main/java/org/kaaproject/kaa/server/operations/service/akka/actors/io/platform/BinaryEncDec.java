@@ -74,7 +74,9 @@ import org.slf4j.LoggerFactory;
  */
 @KaaPlatformProtocol
 public class BinaryEncDec implements PlatformEncDec {
-
+    
+    private static final int EVENT_SEQ_NUMBER_REQUEST_OPTION = 0x02;
+    private static final int CONFIGURATION_HASH_OPTION = 0x02;
     public static final short PROTOCOL_VERSION = 1;
     public static final int MIN_SUPPORTED_VERSION = 1;
     public static final int MAX_SUPPORTED_VERSION = 1;
@@ -91,8 +93,19 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte SUCCESS = 0x00;
     
     static final int PADDING_SIZE = 4;
+    // Options
     static final byte FAILURE = 0x01;
+    static final byte RESYNC = 0x01;
     static final byte NOTHING = 0x00;
+    
+    private static final byte USER_SYNC_ENDPOINT_ID_OPTION = 0x01;
+    private static final short EVENT_DATA_IS_EMPTY_OPTION = (short) 0x02;
+    private static final int CLIENT_EVENT_DATA_IS_PRESENT_OPTION = 0x02;
+    private static final int CLIENT_META_SYNC_APP_TOKEN_OPTION = 0x08;
+    private static final int CLIENT_META_SYNC_PROFILE_HASH_OPTION = 0x04;
+    private static final int CLIENT_META_SYNC_KEY_HASH_OPTION = 0x02;
+    private static final int CLIENT_META_SYNC_TIMEOUT_OPTION = 0x01;
+
 
     // Notification types
     static final byte SYSTEM = 0x00;
@@ -111,7 +124,6 @@ public class BinaryEncDec implements PlatformEncDec {
     static final byte EVENT_EXTENSION_ID = 7;
 
     // Meta data constants
-    private static final int APP_TOKEN_SIZE = 20;
     private static final int PUBLIC_KEY_HASH_SIZE = 20;
     private static final int PROFILE_HASH_SIZE = 20;
     private static final int CONFIGURATION_HASH_SIZE = 20;
@@ -261,7 +273,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void encode(GrowingByteBuffer buf, ProfileServerSync profileSync) {
         buildExtensionHeader(buf, PROFILE_EXTENSION_ID, NOTHING, NOTHING,
-                (profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? (byte) 0x01 : (byte) 0x00), 0);
+                (profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? RESYNC : NOTHING), 0);
     }
 
     private void encode(GrowingByteBuffer buf, UserServerSync userSync) {
@@ -294,7 +306,7 @@ public class BinaryEncDec implements PlatformEncDec {
             for (EndpointAttachResponse response : userSync.getEndpointAttachResponses()) {
                 buf.put(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
                 if (response.getEndpointKeyHash() != null) {
-                    buf.put((byte) 0x01);
+                    buf.put(USER_SYNC_ENDPOINT_ID_OPTION);
                 } else {
                     buf.put(NOTHING);
                 }
@@ -421,11 +433,14 @@ public class BinaryEncDec implements PlatformEncDec {
             for (Event event : eventSync.getEvents()) {
                 boolean eventDataIsEmpty = event.getEventData() == null || event.getEventData().array().length == 0;
                 if (!eventDataIsEmpty) {
-                    buf.putShort((short) 0x02);
+                    buf.putShort(EVENT_DATA_IS_EMPTY_OPTION);
                 } else {
                     buf.putShort(NOTHING);
                 }
                 buf.putShort((short) event.getEventClassFQN().length());
+                if (!eventDataIsEmpty) {
+                    buf.putInt(event.getEventData().array().length);
+                }
                 buf.put(Base64Util.decode(event.getSource()));
                 putUTF(buf, event.getEventClassFQN());
                 if (!eventDataIsEmpty) {
@@ -505,17 +520,17 @@ public class BinaryEncDec implements PlatformEncDec {
     private void parseClientSyncMetaData(ClientSync sync, ByteBuffer buf, int options, int payloadLength) throws PlatformEncDecException {
         sync.setRequestId(buf.getInt());
         ClientSyncMetaData md = new ClientSyncMetaData();
-        if (hasOption(options, 0x01)) {
+        if (hasOption(options, CLIENT_META_SYNC_TIMEOUT_OPTION)) {
             md.setTimeout((long) buf.getInt());
         }
-        if (hasOption(options, 0x02)) {
+        if (hasOption(options, CLIENT_META_SYNC_KEY_HASH_OPTION)) {
             md.setEndpointPublicKeyHash(getNewByteBuffer(buf, PUBLIC_KEY_HASH_SIZE));
         }
-        if (hasOption(options, 0x04)) {
+        if (hasOption(options, CLIENT_META_SYNC_PROFILE_HASH_OPTION)) {
             md.setProfileHash(getNewByteBuffer(buf, PROFILE_HASH_SIZE));
         }
-        if (hasOption(options, 0x08)) {
-            md.setApplicationToken(getUTF8String(buf, APP_TOKEN_SIZE));
+        if (hasOption(options, CLIENT_META_SYNC_APP_TOKEN_OPTION)) {
+            md.setApplicationToken(getUTF8String(buf, Constants.APP_TOKEN_SIZE));
         }
         sync.setClientSyncMetaData(md);
     }
@@ -593,7 +608,7 @@ public class BinaryEncDec implements PlatformEncDec {
     private void parseConfigurationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
         ConfigurationClientSync confSync = new ConfigurationClientSync();
         confSync.setAppStateSeqNumber(buf.getInt());
-        if (hasOption(options, 0x02)) {
+        if (hasOption(options, CONFIGURATION_HASH_OPTION)) {
             confSync.setConfigurationHash(getNewByteBuffer(buf, CONFIGURATION_HASH_SIZE));
         }
         sync.setConfigurationSync(confSync);
@@ -601,7 +616,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void parseEventClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
         EventClientSync eventSync = new EventClientSync();
-        if (hasOption(options, 0x02)) {
+        if (hasOption(options, EVENT_SEQ_NUMBER_REQUEST_OPTION)) {
             eventSync.setSeqNumberRequest(true);
         }
         int payloadLimitPosition = buf.position() + payloadLength;
@@ -712,7 +727,7 @@ public class BinaryEncDec implements PlatformEncDec {
             int eventOptions = getIntFromUnsignedShort(buf);
             int fqnLength = getIntFromUnsignedShort(buf);
             int dataSize = 0;
-            if (hasOption(eventOptions, 0x02)) {
+            if (hasOption(eventOptions, CLIENT_EVENT_DATA_IS_PRESENT_OPTION)) {
                 dataSize = buf.getInt();
             }
             if (hasOption(eventOptions, 0x01)) {
