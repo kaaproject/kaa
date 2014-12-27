@@ -29,12 +29,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.sql.JoinType;
 import org.kaaproject.kaa.server.common.dao.impl.Dao;
+import org.kaaproject.kaa.server.common.dao.impl.SqlDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements Dao<T> {
+public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements SqlDao<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractDao.class);
 

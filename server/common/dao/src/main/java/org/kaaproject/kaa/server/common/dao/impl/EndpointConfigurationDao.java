@@ -23,7 +23,7 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
  * The interface Endpoint configuration dao.
  * @param <T>  the type parameter
  */
-public interface EndpointConfigurationDao<T extends EndpointConfiguration> extends Dao<T> {
+public interface EndpointConfigurationDao<T extends EndpointConfiguration> extends Dao<T, String> {
 
     T save(EndpointConfigurationDto dto);
     

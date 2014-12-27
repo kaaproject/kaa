@@ -27,7 +27,7 @@ import org.kaaproject.kaa.server.common.dao.model.Notification;
  *
  * @param <T> the generic type
  */
-public interface NotificationDao<T extends Notification> extends Dao<T> {
+public interface NotificationDao<T extends Notification> extends Dao<T, String> {
 
     T save(NotificationDto notification);
     

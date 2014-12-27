@@ -13,7 +13,7 @@ import com.datastax.driver.mapping.annotations.Transient;
 import java.io.Serializable;
 
 @Table(name = NOTIFICATIONS_BY_APPLICATION_COLUMN_FAMILY_NAME)
-public class CassandraEPNfsByAppId implements Serializable {
+public class CassandraNfsByAppId implements Serializable {
 
     @Transient
     private static final long serialVersionUID = -5193245010946339876L;
@@ -25,10 +25,10 @@ public class CassandraEPNfsByAppId implements Serializable {
     @Column(name = NOTIFICATIONS_BY_APPLICATION_NOTIFICATION_ID_PROPERTY)
     private String notificationId;
 
-    public CassandraEPNfsByAppId() {
+    public CassandraNfsByAppId() {
     }
 
-    public CassandraEPNfsByAppId(String appId, String notificationId) {
+    public CassandraNfsByAppId(String appId, String notificationId) {
         this.appId = appId;
         this.notificationId = notificationId;
     }
@@ -54,7 +54,7 @@ public class CassandraEPNfsByAppId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        CassandraEPNfsByAppId that = (CassandraEPNfsByAppId) o;
+        CassandraNfsByAppId that = (CassandraNfsByAppId) o;
 
         if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
         if (notificationId != null ? !notificationId.equals(that.notificationId) : that.notificationId != null)

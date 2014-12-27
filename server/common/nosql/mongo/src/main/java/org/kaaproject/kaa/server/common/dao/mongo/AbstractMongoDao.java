@@ -33,7 +33,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import com.mongodb.DBCollection;
 
-public abstract class AbstractMongoDao<T> implements Dao<T> {
+public abstract class AbstractMongoDao<T> implements Dao<T, String> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMongoDao.class);
 
@@ -114,11 +114,6 @@ public abstract class AbstractMongoDao<T> implements Dao<T> {
     }
 
     @Override
-    public T persist(T dto) {
-        return save(dto);
-    }
-
-    @Override
     public <V> V save(V dto, Class<?> clazz) {
         LOG.debug("Save entity of {} class", clazz.getName());
         mongoTemplate.save(dto);
@@ -133,11 +128,6 @@ public abstract class AbstractMongoDao<T> implements Dao<T> {
 
     @Override
     public T findById(String id) {
-        return findById(id, false);
-    }
-
-    @Override
-    public T findById(String id, boolean lazy) {
         LOG.debug("Find document of collection [{}] by id [{}]", getCollectionName(), id);
         return mongoTemplate.findById(id, getDocumentClass());
     }

@@ -26,7 +26,7 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
  *
  * @param <T> the type parameter
  */
-public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T> {
+public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, String> {
 
     T save(EndpointProfileDto dto);
 

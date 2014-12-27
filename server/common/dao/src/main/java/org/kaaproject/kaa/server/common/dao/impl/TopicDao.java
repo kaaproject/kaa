@@ -26,7 +26,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
  *
  * @param <T> the generic type
  */
-public interface TopicDao<T> extends Dao<T> {
+public interface TopicDao<T> extends SqlDao<T> {
 
     /**
      * Find topics by application id.

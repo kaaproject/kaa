@@ -44,16 +44,16 @@ public class CassandraModelConstants {
     /**
      * Cassandra endpoint profile constants.
      */
-    public static final String ENDPOINT_PROFILE_COLUMN_FAMILY_NAME = "ep_profile";
-    public static final String ENDPOINT_PROFILE_APPLICATION_ID_PROPERTY  = APPLICATION_ID_PROPERTY;
-    public static final String ENDPOINT_PROFILE_CONFIGURATION_HASH_PROPERTY  = CONFIGURATION_HASH_PROPERTY;
-    public static final String ENDPOINT_PROFILE_ACCESS_TOKEN_PROPERTY  = ACCESS_TOKEN_PROPERTY;
-    public static final String ENDPOINT_PROFILE_ENDPOINT_ID_PROPERTY  = "ep_id";
-    public static final String ENDPOINT_PROFILE_ENDPOINT_KEY_HASH_PROPERTY  = ENDPOINT_KEY_HASH_PROPERTY;
-    public static final String ENDPOINT_PROFILE_ENDPOINT_KEY_PROPERTY  = "ep_key";
-    public static final String ENDPOINT_PROFILE_USER_ID_PROPERTY = USER_ID_PROPERTY;
-    public static final String ENDPOINT_PROFILE_PROFILE_SCHEMA_ID_PROPERTY  = "pf_schema_id";
-    public static final String ENDPOINT_PROFILE_CONFIGURATION_GROUP_STATE_PROPERTY  = "cf_group_state";
+    public static final String EP_COLUMN_FAMILY_NAME = "ep_profile";
+    public static final String EP_APP_ID_PROPERTY = APPLICATION_ID_PROPERTY;
+    public static final String EP_CONFIG_HASH_PROPERTY = CONFIGURATION_HASH_PROPERTY;
+    public static final String EP_ACCESS_TOKEN_PROPERTY = ACCESS_TOKEN_PROPERTY;
+    public static final String EP_ENDPOINT_ID_PROPERTY = "ep_id";
+    public static final String EP_EP_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+    public static final String EP_EP_KEY_PROPERTY = "ep_key";
+    public static final String EP_USER_ID_PROPERTY = USER_ID_PROPERTY;
+    public static final String EP_PROFILE_SCHEMA_ID_PROPERTY = "pf_schema_id";
+    public static final String EP_CONFIG_GROUP_STATE_PROPERTY = "cf_group_state";
     public static final String ENDPOINT_PROFILE_NOTIFICATION_GROUP_STATE_PROPERTY  = "nf_group_state";
     public static final String ENDPOINT_PROFILE_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY  = "cf_seq_num";
     public static final String ENDPOINT_PROFILE_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY  = "nf_seq_num";
@@ -87,6 +87,14 @@ public class CassandraModelConstants {
     public static final String NOTIFICATIONS_BY_APPLICATION_COLUMN_FAMILY_NAME = "app_nfs";
     public static final String NOTIFICATIONS_BY_APPLICATION_APPLICATION_ID_PROPERTY= APPLICATION_ID_PROPERTY;
     public static final String NOTIFICATIONS_BY_APPLICATION_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
+
+
+    /**
+     * Cassandra CassandraUnicastNfsByAppId constants.
+     */
+    public static final String EP_KEY_HASH_BY_APP_COLUMN_FAMILY_NAME = "app_key_hash";
+    public static final String EP_KEY_HASH_BY_APP_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
+    public static final String EP_KEY_HASH_BY_APP_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
      * CassandraEPByAccessToken constants.

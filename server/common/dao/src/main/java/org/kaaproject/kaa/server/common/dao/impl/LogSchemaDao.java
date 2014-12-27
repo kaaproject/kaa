@@ -23,7 +23,7 @@ import java.util.List;
  * The interface Log Schema dao.
  * @param <T>  the type parameter
  */
-public interface LogSchemaDao<T> extends Dao<T> {
+public interface LogSchemaDao<T> extends SqlDao<T> {
 
     /**
      * Find all Log Schemas for Application with specific id

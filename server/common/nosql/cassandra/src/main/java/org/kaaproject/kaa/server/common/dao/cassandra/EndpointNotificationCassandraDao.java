@@ -5,7 +5,8 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Select;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.cassandra.filter.CassandraEPByAppIdDao;
-import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEPNfsByAppId;
+import org.kaaproject.kaa.server.common.dao.cassandra.filter.CassandraEPKeyHashByAppIdDao;
+import org.kaaproject.kaa.server.common.dao.cassandra.filter.CassandraNfsByAppIdDao;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointNotification;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraNotification;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
@@ -76,13 +77,11 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
     public CassandraEndpointNotification save(CassandraEndpointNotification endpointNotification) {
         LOG.debug("Save endpoint notification {}", endpointNotification);
         CassandraNotification notification = endpointNotification.getNotification();
-        String appId = notification.getApplicationId();
         String nfId = getStringId();
         notification.setId(nfId);
         executeBatch(BatchStatement.Type.UNLOGGED,
                 getSaveQuery(notification, notification.getClass()),
-                getSaveQuery(endpointNotification),
-                getSaveQuery(new CassandraEPNfsByAppId(appId, nfId), CassandraEPNfsByAppId.class));
+                getSaveQuery(endpointNotification));
         return endpointNotification;
     }
 

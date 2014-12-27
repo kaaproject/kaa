@@ -32,11 +32,11 @@ public class AbstractCassandraTest {
 
     protected List<CassandraEndpointNotification> generateEndpointNotification(ByteBuffer endpointKeyHash, int count) {
         List<CassandraEndpointNotification> savedNotifications = new ArrayList<>();
+        String appId = generateStringId();
         if (endpointKeyHash == null) {
-            endpointKeyHash = ByteBuffer.allocate(8).putLong(RANDOM.nextLong()).compact();
+            endpointKeyHash = ByteBuffer.wrap(generateEndpointProfile(appId, null, null).getEndpointKeyHash());
         }
         String topicId = generateStringId();
-        String appId = generateStringId();
         String schemaId = generateStringId();
         for (int i = 0; i < count; i++) {
             CassandraEndpointNotification endpointNotification = new CassandraEndpointNotification();
@@ -77,14 +77,22 @@ public class AbstractCassandraTest {
         return configurations;
     }
 
-    protected EndpointProfileDto generateEndpointProfile(String appId, String accessToken, byte[] keyHash, List<String> topicIds) {
-        if (keyHash == null) {
-            keyHash = "TEST_KEY_HASH".getBytes();
+    protected EndpointProfileDto generateEndpointProfile(String appId, String accessToken, List<String> topicIds) {
+        byte[] keyHash = generateBytes();
+
+        if (appId == null) {
+            appId = generateStringId();
         }
+
+        if (accessToken == null) {
+            accessToken = generateStringId();
+        }
+
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash(keyHash);
+        profileDto.setAccessToken(accessToken);
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 

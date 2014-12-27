@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public interface ProfileFilterDao<T> extends Dao<T> {
+public interface ProfileFilterDao<T> extends SqlDao<T> {
 
     /**
      * Find all profile filters by profile schema id

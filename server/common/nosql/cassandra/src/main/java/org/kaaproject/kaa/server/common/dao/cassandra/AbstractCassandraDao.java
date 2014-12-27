@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractCassandraDao<T> implements Dao<T> {
+public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCassandraDao.class);
 
@@ -93,23 +93,18 @@ public abstract class AbstractCassandraDao<T> implements Dao<T> {
     }
 
     protected void executeBatch(BatchStatement.Type type, Statement... statements) {
-        LOG.info("Execute cassandra batch {}", statements);
+        LOG.info("Execute cassandra batch {} with type {} ", statements, type);
         BatchStatement batchStatement = new BatchStatement(type);
         for (Statement statement : statements) {
             batchStatement.add(statement);
         }
         ResultSet resultSet = getSession().execute(batchStatement);
-        LOG.info("Executed batch {}", resultSet);
+        LOG.info("Result of batch execution is {}", resultSet);
     }
 
     protected ResultSet execute(Statement statement) {
         LOG.info("Execute cassandra batch {}", statement);
         return getSession().execute(statement);
-    }
-
-    @Override
-    public T persist(T dto) {
-        return save(dto);
     }
 
     @Override
@@ -132,11 +127,6 @@ public abstract class AbstractCassandraDao<T> implements Dao<T> {
     }
 
     @Override
-    public T findById(String id, boolean lazy) {
-        return (T) getMapper().get(id);
-    }
-
-    @Override
     public void removeAll() {
         Delete delete = QueryBuilder.delete().all().from(getColumnFamilyName());
         LOG.debug("Remove all request: {}", delete.toString());
@@ -150,5 +140,9 @@ public abstract class AbstractCassandraDao<T> implements Dao<T> {
 
     protected String getStringId() {
         return UUID.randomUUID().toString();
+    }
+
+    protected <V> List<Statement> getSaveQueryList(V dto, Class<?> clazz) {
+        return null;
     }
 }

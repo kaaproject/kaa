@@ -13,7 +13,7 @@ public class CassandraEPByAccessTokenDao extends AbstractCassandraDao<CassandraE
 
     @Override
     protected Class<?> getColumnFamilyClass() {
-        return CassandraEPByAccessTokenDao.class;
+        return CassandraEPByAccessToken.class;
     }
 
     @Override

@@ -4,7 +4,7 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
 
 import com.datastax.driver.core.Statement;
 import org.kaaproject.kaa.server.common.dao.cassandra.AbstractCassandraDao;
-import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEPNfsByAppId;
+import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraNfsByAppId;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraMode
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATIONS_BY_APPLICATION_COLUMN_FAMILY_NAME;
 
 @Repository
-public class CassandraEPNfsByAppIdDao extends AbstractCassandraDao<CassandraEPNfsByAppId> {
+public class CassandraNfsByAppIdDao extends AbstractCassandraDao<CassandraNfsByAppId> {
 
     @Override
-    protected Class<CassandraEPNfsByAppId> getColumnFamilyClass() {
-        return CassandraEPNfsByAppId.class;
+    protected Class<CassandraNfsByAppId> getColumnFamilyClass() {
+        return CassandraNfsByAppId.class;
     }
 
     @Override
@@ -28,9 +28,9 @@ public class CassandraEPNfsByAppIdDao extends AbstractCassandraDao<CassandraEPNf
 
     public List<String> findNotificationIdsByAppId(String appId) {
         Statement select = select().from(getColumnFamilyName()).where(eq(NOTIFICATIONS_BY_APPLICATION_APPLICATION_ID_PROPERTY, appId));
-        List<CassandraEPNfsByAppId> result = findListByStatement(select);
+        List<CassandraNfsByAppId> result = findListByStatement(select);
         List<String> ids = new ArrayList<>(result.size());
-        for (CassandraEPNfsByAppId id : result) {
+        for (CassandraNfsByAppId id : result) {
             ids.add(id.getNotificationId());
         }
         return ids;

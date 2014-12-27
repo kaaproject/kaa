@@ -25,11 +25,12 @@ public class CassandraEPByAppIdDao extends AbstractCassandraDao<CassandraEPByApp
         return EP_BY_APP_ID_COLUMN_FAMILY_NAME;
     }
 
-    public List<ByteBuffer> getEPIdsListByAppId(String appId) {
+    public ByteBuffer[] getEPIdsListByAppId(String appId) {
         List<CassandraEPByAppId> filter = findListByStatement(select().from(getColumnFamilyName()).where(eq(EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId)));
-        List<ByteBuffer> result = new ArrayList<>(filter.size());
+        ByteBuffer[] result = new ByteBuffer[filter.size()];
+        int i = 0;
         for (CassandraEPByAppId ep : filter) {
-            result.add(ep.getEndpointKeyHash());
+            result[i++] = ep.getEndpointKeyHash();
         }
         return result;
     }

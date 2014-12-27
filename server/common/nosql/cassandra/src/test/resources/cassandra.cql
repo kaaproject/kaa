@@ -1,14 +1,14 @@
-CREATE TABLE kaa . ep_nfs (
+CREATE TABLE kaa.ep_nfs (
     ep_key_hash blob,
-    nf_id varchar,
+    nf_id text,
     PRIMARY KEY (ep_key_hash, nf_id)
 );
 
-CREATE TABLE kaa . notification (
+CREATE TABLE kaa.notification (
     nf_id text PRIMARY KEY,
     app_id text,
-    schema_id varchar,
-    topic_id varchar,
+    schema_id text,
+    topic_id text,
     last_mod_time timestamp,
     version int,
     nf_type text,
@@ -17,51 +17,51 @@ CREATE TABLE kaa . notification (
     seq_num int
 );
 
-CREATE TABLE kaa . ep_conf (
+CREATE TABLE kaa.ep_conf (
     cf_hash blob PRIMARY KEY,
     cf blob
 );
 
-CREATE TABLE kaa . topic_nfs (
-    topic_id varchar,
+CREATE TABLE kaa.topic_nfs (
+    topic_id text,
     seq_num bigint,
     ntf_id uuid,
     PRIMARY KEY (topic_id, seq_num)
 );
 
-CREATE TABLE kaa . ep_user (
+CREATE TABLE kaa.ep_user (
     user_id uuid PRIMARY KEY,
     username text,
     ext_id text,
-    tenant_id varchar,
+    tenant_id text,
     access_token text
 );
 
-CREATE TABLE kaa . user_eps (
-    user_id varchar,
+CREATE TABLE kaa.user_eps (
+    user_id text,
     ep_ids text,
     PRIMARY KEY (user_id, ep_ids)
 );
 
-CREATE TYPE kaa . ecf_ver_state (
+CREATE TYPE kaa.ecf_ver_state (
     ecf_id text,
     ecf_ver int
 );
 
-CREATE TYPE kaa . ep_group_state (
-    ep_group_id varchar,
-    pf_filter_id varchar,
-    cf_id varchar
+CREATE TYPE kaa.ep_group_state (
+    ep_group_id text,
+    pf_filter_id text,
+    cf_id text
 );
 
-CREATE TABLE kaa . ep_profile (
+CREATE TABLE kaa.ep_profile (
     ep_key_hash blob PRIMARY KEY,
-    ep_id varchar,
-    app_id varchar,
+    ep_id text,
+    app_id text,
     ep_key blob,
-    ep_user_id uuid,
+    user_id uuid,
     access_token text,
-    pf_schema_id varchar,
+    pf_schema_id text,
     cf_group_state list < frozen < ep_group_state > >,
     nf_group_state list < frozen < ep_group_state > >,
     cf_seq_num int,
@@ -71,9 +71,9 @@ CREATE TABLE kaa . ep_profile (
     pf_ver int,
     cf_hash blob,
     cf_ver int,
-    nt_hash blob,
-    nt_ver int,
-    subscs list < text >,
+    nf_hash blob,
+    nf_ver int,
+    subscs list <text>,
     sys_nf_ver int,
     user_nf_ver int,
     log_schema_ver int,
@@ -81,14 +81,26 @@ CREATE TABLE kaa . ep_profile (
     server_hash text
 );
 
-CREATE TABLE kaa . app_eps (
-    app_id varchar,
+CREATE TABLE kaa.app_eps (
+    app_id text,
     ep_key_hash blob,
     PRIMARY KEY (app_id, ep_key_hash)
 );
 
-CREATE TABLE app_nfs (
-    app_id varchar,
-    nf_id varchar,
+CREATE TABLE kaa.app_nfs (
+    app_id text,
+    nf_id text,
     PRIMARY KEY (app_id, nf_id)
+);
+
+CREATE TABLE kaa.app_key_hash (
+    app_id text,
+    ep_key_hash blob,
+    PRIMARY KEY (app_id, ep_key_hash)
+);
+
+CREATE TABLE kaa.access_token_eps (
+    access_token text,
+    ep_key_hash blob,
+    PRIMARY KEY (access_token, ep_key_hash)
 );

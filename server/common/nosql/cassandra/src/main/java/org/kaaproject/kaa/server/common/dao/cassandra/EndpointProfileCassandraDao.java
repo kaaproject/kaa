@@ -26,8 +26,8 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_ENDPOINT_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_APP_ID_APPLICATION_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME;
 
@@ -50,15 +50,18 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     @Override
     protected String getColumnFamilyName() {
-        return ENDPOINT_PROFILE_COLUMN_FAMILY_NAME;
+        return EP_COLUMN_FAMILY_NAME;
     }
 
     @Override
     public CassandraEndpointProfile save(EndpointProfileDto dto) {
-        CassandraEndpointProfile profile = new CassandraEndpointProfile(dto);
-        profile.setId(getStringId());
+        return save(new CassandraEndpointProfile(dto));
+    }
 
-        ByteBuffer epKeyHash = getByteBuffer(profile.getEndpointKeyHash());
+    @Override
+    public CassandraEndpointProfile save(CassandraEndpointProfile profile) {
+        profile.setId(getStringId());
+        ByteBuffer epKeyHash = profile.getEndpointKeyHash();
         Statement saveByAppId = cassandraEPByAppIdDao.getSaveQuery(new CassandraEPByAppId(profile.getApplicationId(), epKeyHash));
         String accessToken = profile.getAccessToken();
         Statement saveByAccessToken = null;
@@ -83,7 +86,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     public long getCountByKeyHash(byte[] endpointKeyHash) {
         int count = 0;
         ResultSet resultSet = execute(select().countAll().from(getColumnFamilyName())
-                .where(eq(ENDPOINT_PROFILE_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
+                .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
         Row row = resultSet.one();
         if (row != null) {
             count = row.getInt(0);
@@ -98,7 +101,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     @Override
     public void removeByAppId(String appId) {
-        Statement deleteEps = delete().from(getColumnFamilyName()).where(in(ENDPOINT_PROFILE_ENDPOINT_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
+        Statement deleteEps = delete().from(getColumnFamilyName()).where(in(EP_EP_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
         Statement deleteEpsByAppId = delete().from(EP_BY_APP_ID_COLUMN_FAMILY_NAME).where(eq(EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId));
         executeBatch(BatchStatement.Type.UNLOGGED, deleteEps, deleteEpsByAppId);
     }
@@ -118,7 +121,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         List<CassandraEndpointProfile> profileList = Collections.emptyList();
         List<ByteBuffer> keyHashList = cassandraEPByUserIdDao.findEPKeyHashListByUserId(endpointUserId);
         if (keyHashList != null) {
-            Statement select = select().from(getColumnFamilyName()).where(in(ENDPOINT_PROFILE_ENDPOINT_KEY_HASH_PROPERTY, keyHashList));
+            Statement select = select().from(getColumnFamilyName()).where(in(EP_EP_KEY_HASH_PROPERTY, keyHashList));
             profileList = findListByStatement(select);
         }
         return profileList;

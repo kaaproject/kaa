@@ -62,7 +62,7 @@ public abstract class DaoUtil {
     /**
      * This method take string id from <code>GenericModel</code> object
      *
-     * @param the <code>GenericModel</code> object
+     * @param model <code>GenericModel</code> object
      * @return the id as string type
      */
     public static String idToString(GenericModel<? extends Object> model) {

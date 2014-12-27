@@ -57,7 +57,7 @@ public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpoin
     @Override
     public void removeByHash(final byte[] hash) {
         LOG.debug("Remove endpoint configuration by hash [{}] ", hash);
-        mongoTemplate.remove(query(where(CONFIGURATION_HASH).is(hash)), getCollectionName());
+        remove(query(where(CONFIGURATION_HASH).is(hash)));
     }
 
     @Override

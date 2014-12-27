@@ -2,6 +2,7 @@ package org.kaaproject.kaa.server.common.dao.cassandra;
 
 import org.cassandraunit.spring.CassandraDataSet;
 import org.cassandraunit.spring.CassandraUnitDependencyInjectionTestExecutionListener;
+import org.cassandraunit.spring.CassandraUnitTestExecutionListener;
 import org.cassandraunit.spring.EmbeddedCassandra;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -15,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -22,8 +24,11 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@TestExecutionListeners({CassandraUnitDependencyInjectionTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestExecutionListeners({CassandraUnitDependencyInjectionTestExecutionListener.class,
+                DependencyInjectionTestExecutionListener.class,
+                CassandraUnitTestExecutionListener.class,
+                DirtiesContextTestExecutionListener.class})
 @CassandraDataSet(keyspace = "kaa", value = {"cassandra.cql"})
 @EmbeddedCassandra(configuration = "/embedded-cassandra.yaml")
 public class EndpointNotificationCassandraDaoTest extends AbstractCassandraTest {
@@ -50,14 +55,13 @@ public class EndpointNotificationCassandraDaoTest extends AbstractCassandraTest 
 
     @Test
     public void testRemoveNotificationsByAppId() throws Exception {
-        ByteBuffer epKeyHash = ByteBuffer.wrap(generateBytes());
-        String appId = generateEndpointNotification(epKeyHash, 3).get(0).getNotification().getApplicationId();
+        CassandraEndpointNotification notification = generateEndpointNotification(null, 3).get(0);
+        String appId = notification.getNotification().getApplicationId();
         endpointNotificationDao.removeNotificationsByAppId(appId);
-        List<CassandraEndpointNotification> found = endpointNotificationDao.findNotificationsByKeyHash(epKeyHash.array());
+        List<CassandraEndpointNotification> found = endpointNotificationDao.findNotificationsByKeyHash(notification.getEndpointKeyHash().array());
         Assert.assertTrue(found.isEmpty());
     }
 
-    @Ignore
     @Test
     public void testSave() throws Exception {
 

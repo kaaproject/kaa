@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @param <T> the generic type
  */
-public interface NotificationSchemaDao<T> extends Dao<T> {
+public interface NotificationSchemaDao<T> extends SqlDao<T> {
     
     /**
      * Find notification schemas by application id.
