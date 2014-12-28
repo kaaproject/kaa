@@ -242,7 +242,7 @@ bool kaa_platform_message_is_buffer_large_enough(kaa_platform_message_reader_t *
         return true;
     }
 
-    return (reader->current + size < reader->end);
+    return (reader->current + size <= reader->end);
 }
 
 kaa_error_t kaa_platform_message_skip(kaa_platform_message_reader_t *reader, size_t size)
