@@ -260,10 +260,11 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
                                                      , &need_resync);
             if (error_code) {
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to read 'need_resync' flag");
+            } else if (need_resync) {
+                error_code = kaa_profile_request_serialize(self->kaa_context->profile_manager, writer);
+                if (error_code)
+                    KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the profile extension");
             }
-            error_code = kaa_profile_request_serialize(self->kaa_context->profile_manager, writer);
-            if (error_code)
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the profile extension");
             break;
         }
         case KAA_SERVICE_USER: {
