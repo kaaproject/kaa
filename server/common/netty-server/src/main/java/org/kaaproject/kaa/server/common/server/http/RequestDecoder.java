@@ -77,7 +77,7 @@ public class RequestDecoder extends SimpleChannelInboundHandler<HttpObject> {
             LOG.trace("Session: {} got valid HTTP request:\n{}", sessionUuidAttr.get().toString(), httpRequest.headers().toString());
             if (httpRequest.getMethod().equals(HttpMethod.POST)) {
                 String uri = httpRequest.getUri();
-                CommandProcessor cp = (CommandProcessor) commandFactory.getCommandProcessor(uri);
+                AbstractCommand cp = (AbstractCommand) commandFactory.getCommandProcessor(uri);
                 if (sessionTrackAttr.get() != null) {
                     int id = sessionTrackAttr.get().newRequest();
                     cp.setCommandId(id);

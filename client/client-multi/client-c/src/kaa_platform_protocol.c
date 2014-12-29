@@ -74,29 +74,18 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
 {
     KAA_RETURN_IF_NIL(expected_size, KAA_ERR_BADPARAM);
 
-    bool is_timeout_needed = true; // FIXME: replace with valid check
-    bool is_public_key_hash_needed = true; // FIXME: replace with valid check
-    bool is_profile_hash_needed = true; // FIXME: replace with valid check
-    bool is_token_needed = true; // FIXME: replace with valid check
+    static size_t size = 0;
 
-    *expected_size = KAA_EXTENSION_HEADER_SIZE;
-    *expected_size += sizeof(uint32_t); // request id
-
-    if (is_timeout_needed) {
-        *expected_size += sizeof(uint32_t); // timeout value
+    if (size == 0) {
+        size = KAA_EXTENSION_HEADER_SIZE;
+        size += sizeof(uint32_t); // request id
+        size += sizeof(uint32_t); // timeout value
+        size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // public key hash length
+        size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // profile hash length
+        size += kaa_aligned_size_get(KAA_APPLICATION_TOKEN_LENGTH); // token length
     }
 
-    if (is_public_key_hash_needed) {
-        *expected_size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // public key hash length
-    }
-
-    if (is_profile_hash_needed) {
-        *expected_size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // profile hash length
-    }
-
-    if (is_token_needed) {
-        *expected_size += KAA_APPLICATION_TOKEN_LENGTH; // token length
-    }
+    *expected_size = size;
 
     return KAA_ERR_NONE;
 }
@@ -107,58 +96,38 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_platform
 {
     KAA_RETURN_IF_NIL2(context, writer, KAA_ERR_BADPARAM);
 
-    bool is_timeout_needed = true; // FIXME: replace with valid check
-    bool is_public_key_hash_needed = true; // FIXME: replace with valid check
-    bool is_profile_hash_needed = true; // FIXME: replace with valid check
-    bool is_token_needed = true; // FIXME: replace with valid check
+    uint32_t options = TIMEOUT_VALUE | PUBLIC_KEY_HASH_VALUE | PROFILE_HASH_VALUE | APP_TOKEN_VALUE;
 
-    uint32_t token_len = (is_token_needed ? strlen(APPLICATION_TOKEN) : 0);
+    size_t payload_length = 0;
+    kaa_error_t err_code = kaa_meta_data_request_get_size(&payload_length);
+    KAA_RETURN_IF_ERR(err_code);
+    payload_length -= KAA_EXTENSION_HEADER_SIZE;
 
-    uint32_t options = 0;
-    options |= (is_timeout_needed ? TIMEOUT_VALUE : 0);
-    options |= (is_public_key_hash_needed ? PUBLIC_KEY_HASH_VALUE : 0);
-    options |= (is_profile_hash_needed ? PROFILE_HASH_VALUE : 0);
-    options |= (is_token_needed ? APP_TOKEN_VALUE : 0);
-
-    uint32_t payload_length = 0;
-    payload_length += (is_timeout_needed ? sizeof(uint32_t) : 0);
-    payload_length += (is_public_key_hash_needed ? kaa_aligned_size_get(SHA_1_DIGEST_LENGTH) : 0);
-    payload_length += (is_profile_hash_needed ? kaa_aligned_size_get(SHA_1_DIGEST_LENGTH) : 0);
-    payload_length += (is_token_needed ? sizeof(uint32_t) : 0);
-    payload_length += (is_token_needed ? kaa_aligned_size_get(token_len) : 0);
-
-    kaa_error_t err_code = kaa_platform_message_write_extension_header(
-                                writer, KAA_META_DATA_EXTENSION_TYPE, options, payload_length);
+    err_code = kaa_platform_message_write_extension_header(writer
+                                                         , KAA_META_DATA_EXTENSION_TYPE
+                                                         , options
+                                                         , payload_length);
     KAA_RETURN_IF_ERR(err_code);
 
-    if (is_timeout_needed) {
-        uint32_t timeout = KAA_HTONL(KAA_SYNC_TIMEOUT);
-        err_code = kaa_platform_message_write(writer, &timeout, sizeof(timeout));
-        KAA_RETURN_IF_ERR(err_code);
-    }
+    uint32_t timeout = KAA_HTONL(KAA_SYNC_TIMEOUT);
+    err_code = kaa_platform_message_write(writer, &timeout, sizeof(timeout));
+    KAA_RETURN_IF_ERR(err_code);
 
-    if (is_public_key_hash_needed) {
-        kaa_digest_p pub_key_hash = NULL;
-        err_code = kaa_status_get_endpoint_public_key_hash(context->status, &pub_key_hash);
-        KAA_RETURN_IF_ERR(err_code);
-        KAA_RETURN_IF_NIL(pub_key_hash, err_code);
-        err_code = kaa_platform_message_write_aligned(writer, pub_key_hash, SHA_1_DIGEST_LENGTH);
-        KAA_RETURN_IF_ERR(err_code);
-    }
+    kaa_digest_p pub_key_hash = NULL;
+    err_code = kaa_status_get_endpoint_public_key_hash(context->status, &pub_key_hash);
+    KAA_RETURN_IF_ERR(err_code);
+    KAA_RETURN_IF_NIL(pub_key_hash, err_code);
+    err_code = kaa_platform_message_write_aligned(writer, pub_key_hash, SHA_1_DIGEST_LENGTH);
+    KAA_RETURN_IF_ERR(err_code);
 
-    if (is_profile_hash_needed) {
-        kaa_digest_p profile_hash = NULL;
-        err_code = kaa_status_get_profile_hash(context->status, &profile_hash);
-        KAA_RETURN_IF_ERR(err_code);
-        KAA_RETURN_IF_NIL(profile_hash, err_code);
-        err_code = kaa_platform_message_write_aligned(writer, profile_hash, SHA_1_DIGEST_LENGTH);
-        KAA_RETURN_IF_ERR(err_code);
-    }
+    kaa_digest_p profile_hash = NULL;
+    err_code = kaa_status_get_profile_hash(context->status, &profile_hash);
+    KAA_RETURN_IF_ERR(err_code);
+    KAA_RETURN_IF_NIL(profile_hash, err_code);
+    err_code = kaa_platform_message_write_aligned(writer, profile_hash, SHA_1_DIGEST_LENGTH);
+    KAA_RETURN_IF_ERR(err_code);
 
-    if (is_token_needed) {
-        err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);
-        KAA_RETURN_IF_ERR(err_code);
-    }
+    err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);
 
     return err_code;
 }

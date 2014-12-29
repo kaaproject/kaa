@@ -21,7 +21,7 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.util.UUID;
 
-import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
+import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 import org.kaaproject.kaa.server.common.server.http.DefaultHttpServerInitializer;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.http.handler.AkkaHttpHandler;
@@ -58,7 +58,7 @@ public class HttpServerInitializer extends DefaultHttpServerInitializer {
      * #getMainHandler(java.util.UUID)
      */
     @Override
-    protected SimpleChannelInboundHandler<CommandProcessor> getMainHandler(UUID uuid) {
+    protected SimpleChannelInboundHandler<AbstractCommand> getMainHandler(UUID uuid) {
         return new AkkaHttpHandler(uuid, akkaService, new DefaultEventExecutorGroup(1));
     }
 

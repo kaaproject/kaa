@@ -25,6 +25,7 @@
 #include "kaa_defaults.h"
 #include "kaa_external.h"
 #include "gen/kaa_profile_gen.h"
+#include "kaa_platform_utils.h"
 
 
 
@@ -39,6 +40,9 @@ extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_ma
 extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
 
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
+extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
+extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
+extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
 
 
 
@@ -46,6 +50,33 @@ static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
 static kaa_profile_manager_t *profile_manager = NULL;
+
+
+#define TEST_PUB_KEY_SIZE 20
+static const char test_ep_key[TEST_PUB_KEY_SIZE] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
+
+
+
+void kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+{
+}
+
+void kaa_store_status_ext(const char *buffer, size_t buffer_size)
+{
+}
+
+void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+{
+    *buffer = (char *) KAA_MALLOC(TEST_PUB_KEY_SIZE * sizeof(char));
+    if (*buffer) {
+        memcpy(*buffer, test_ep_key, TEST_PUB_KEY_SIZE);
+        *buffer_size = TEST_PUB_KEY_SIZE;
+        *needs_deallocation = true;
+    } else {
+        *buffer_size = 0;
+        *needs_deallocation = false;
+    }
+}
 
 
 
@@ -84,99 +115,226 @@ void test_profile_update()
     profile2->destroy(profile2);
 }
 
-void test_profile_compile_request()
+void test_profile_sync_get_size()
 {
-//    KAA_TRACE_IN(logger);
-//
-//    kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
-//    profile1->profile_body = kaa_string_copy_create("dummy2", kaa_data_destroy);
-//
-//    size_t serialized_profile_size = profile1->get_size(profile1);
-//    char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
-//    avro_writer_t writer = avro_writer_memory(serialized_profile, serialized_profile_size);
-//    profile1->serialize(writer, profile1);
-//    avro_writer_free(writer);
-//
-//    ASSERT_EQUAL(kaa_status_set_endpoint_access_token(status, "token1"), KAA_ERR_NONE);
-//    ASSERT_EQUAL(kaa_profile_update_profile(profile_manager, profile1), KAA_ERR_NONE);
-//
-//    kaa_profile_sync_request_t *profile_request = NULL;
-//    ASSERT_EQUAL(kaa_profile_compile_request(profile_manager, &profile_request), KAA_ERR_NONE);
-//    ASSERT_NOT_NULL(profile_manager);
-//
-//    ASSERT_EQUAL(profile_request->version_info->config_version, CONFIG_SCHEMA_VERSION);
-//    ASSERT_EQUAL(profile_request->version_info->log_schema_version, LOG_SCHEMA_VERSION);
-//    ASSERT_EQUAL(profile_request->version_info->profile_version, PROFILE_SCHEMA_VERSION);
-//    ASSERT_EQUAL(profile_request->version_info->system_nf_version, SYSTEM_NF_SCHEMA_VERSION);
-//    ASSERT_EQUAL(profile_request->version_info->user_nf_version, USER_NF_SCHEMA_VERSION);
-//
-//#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-//    kaa_list_t *event_versions = (kaa_list_t *) profile_request->version_info->event_family_versions->data;
-//    kaa_event_class_family_version_info_t *ecfv1 = (kaa_event_class_family_version_info_t *) kaa_list_get_data(event_versions);
-//    ASSERT_EQUAL(strcmp(ecfv1->name->data, KAA_EVENT_SCHEMA_VERSIONS[0].name), 0);
-//    ASSERT_EQUAL(ecfv1->version, KAA_EVENT_SCHEMA_VERSIONS[0].version);
-//#endif
-//    ASSERT_EQUAL(memcmp(profile_request->profile_body->buffer, serialized_profile, profile_request->profile_body->size), 0);
-//    kaa_string_t *token = (kaa_string_t *)profile_request->endpoint_access_token->data;
-//    ASSERT_EQUAL(strcmp(token->data, "token1"), 0);
-//
-//    char *pub_key_buffer = NULL;
-//    size_t buf_size = 0;
-//    bool pub_key_dealloc = false;
-//    kaa_get_endpoint_public_key(&pub_key_buffer, &buf_size, &pub_key_dealloc);
-//
-//    kaa_bytes_t *pub_key_bytes = (kaa_bytes_t *) profile_request->endpoint_public_key->data;
-//    ASSERT_EQUAL(memcmp(pub_key_bytes->buffer, pub_key_buffer, buf_size), 0);
-//    if (pub_key_dealloc)
-//        KAA_FREE(pub_key_buffer);
-//
-//
-//    profile_request->destroy(profile_request);
-//    KAA_FREE(serialized_profile);
-//    profile1->destroy(profile1);
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+    kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
+    profile->profile_body = kaa_string_copy_create("dummy", kaa_data_destroy);
+
+    size_t serialized_profile_size = profile->get_size(profile);
+    char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
+    avro_writer_t writer = avro_writer_memory(serialized_profile, serialized_profile_size);
+    profile->serialize(writer, profile);
+
+    size_t version_info_size = sizeof(uint32_t)
+                             + sizeof(uint32_t)
+                             + sizeof(uint32_t)
+                             + sizeof(uint32_t)
+                             + sizeof(uint32_t);
+
+#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
+     version_info_size += sizeof(uint32_t);
+
+     for (size_t i = 0; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
+         version_info_size += sizeof(uint16_t)
+                            + sizeof(uint16_t)
+                            + kaa_aligned_size_get(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name));
+     }
+#endif
+
+    size_t expected_size = KAA_EXTENSION_HEADER_SIZE
+                         + sizeof(uint32_t)  // profile size
+                         + kaa_aligned_size_get(serialized_profile_size)
+                         + version_info_size;
+
+    size_t profile_sync_size = 0;
+
+    error_code = kaa_profile_update_profile(profile_manager, profile);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_set_endpoint_registered(status, true);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_profile_request_get_size(profile_manager, &profile_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(expected_size, profile_sync_size);
+
+    error_code = kaa_set_endpoint_registered(status, false);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    expected_size += sizeof(uint32_t)
+                   + TEST_PUB_KEY_SIZE;
+
+    error_code = kaa_profile_request_get_size(profile_manager, &profile_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(expected_size, profile_sync_size);
+
+    const char *access_token = "access token";
+    error_code = kaa_status_set_endpoint_access_token(status, access_token);
+
+    expected_size += sizeof(uint32_t)
+                   + strlen(access_token);
+
+    error_code = kaa_profile_request_get_size(profile_manager, &profile_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(expected_size, profile_sync_size);
+
+    avro_writer_free(writer);
+    KAA_FREE(serialized_profile);
+    profile->destroy(profile);
 }
 
-void test_profile_compile_request_when_registered()
+void test_profile_sync_serialize()
 {
-//    KAA_TRACE_IN(logger);
-//
-//    kaa_set_endpoint_registered(status, true);
-//    kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
-//    profile1->profile_body = kaa_string_copy_create("dummy3", kaa_data_destroy);
-//
-//    ASSERT_EQUAL(kaa_profile_update_profile(profile_manager, profile1), KAA_ERR_NONE);
-//
-//    kaa_profile_sync_request_t *profile_request = NULL;
-//    ASSERT_EQUAL(kaa_profile_compile_request(profile_manager, &profile_request), KAA_ERR_NONE);
-//    ASSERT_NOT_NULL(profile_manager);
-//    ASSERT_NULL(profile_request->endpoint_public_key->data);
-//
-//    profile_request->destroy(profile_request);
-//    kaa_set_endpoint_registered(status, false);
-//
-//    profile1->destroy(profile1);
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code;
+    kaa_platform_message_writer_t *manual_writer;
+    kaa_platform_message_writer_t *auto_writer;
+
+    const char *access_token = "access token";
+    const size_t access_token_size = strlen(access_token);
+    kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
+    profile->profile_body = kaa_string_copy_create("dummy", kaa_data_destroy);
+    size_t serialized_profile_size = profile->get_size(profile);
+    char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
+    avro_writer_t avro_writer = avro_writer_memory(serialized_profile, serialized_profile_size);
+
+    profile->serialize(avro_writer, profile);
+
+    error_code = kaa_profile_update_profile(profile_manager, profile);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_set_endpoint_registered(status, false);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_status_set_endpoint_access_token(status, access_token);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    size_t profile_sync_size;
+    error_code = kaa_profile_request_get_size(profile_manager, &profile_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    char buffer[profile_sync_size];
+    error_code = kaa_platform_message_writer_create(&manual_writer, buffer, profile_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    uint16_t network_order_16;
+    uint32_t network_order_32;
+
+    error_code = kaa_platform_message_write_extension_header(manual_writer
+                                                           , KAA_PROFILE_EXTENSION_TYPE
+                                                           , 0
+                                                           , profile_sync_size - KAA_EXTENSION_HEADER_SIZE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_32 = KAA_HTONL(serialized_profile_size);
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_platform_message_write_aligned(manual_writer, serialized_profile, serialized_profile_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_32 = KAA_HTONS(CONFIG_SCHEMA_VERSION) << 16 | CONFIG_SCHEMA_VERSION_VALUE;
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_32 = KAA_HTONS(PROFILE_SCHEMA_VERSION) << 16 | PROFILE_SCHEMA_VERSION_VALUE;
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_32 = KAA_HTONS(SYSTEM_NF_SCHEMA_VERSION) << 16 | SYS_NF_VERSION_VALUE;
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_32 = KAA_HTONS(USER_NF_SCHEMA_VERSION) << 16 | USER_NF_VERSION_VALUE;
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_32 = KAA_HTONS(LOG_SCHEMA_VERSION) << 16 | LOG_SCHEMA_VERSION_VALUE;
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
+    network_order_32 = KAA_HTONS(KAA_EVENT_SCHEMA_VERSIONS_SIZE) << 16 | EVENT_FAMILY_VERSIONS_COUNT_VALUE;
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    uint16_t event_family_name_len = 0;
+    for (size_t i = 0; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
+        network_order_16 = KAA_NTOHS(KAA_EVENT_SCHEMA_VERSIONS[i].version);
+        error_code = kaa_platform_message_write(manual_writer, &network_order_16, sizeof(uint16_t));
+        ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+        event_family_name_len = strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name);
+        network_order_16 = KAA_NTOHS(event_family_name_len);
+        error_code = kaa_platform_message_write(manual_writer, &network_order_16, sizeof(uint16_t));
+        ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+        error_code = kaa_platform_message_write_aligned(manual_writer, KAA_EVENT_SCHEMA_VERSIONS[i].name, event_family_name_len);
+        ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    }
+#endif
+
+    network_order_32 = KAA_HTONS(TEST_PUB_KEY_SIZE) << 16 | PUB_KEY_VALUE;
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_platform_message_write_aligned(manual_writer, test_ep_key, TEST_PUB_KEY_SIZE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_32 = KAA_HTONS(access_token_size) << 16 | ACCESS_TOKEN_VALUE;
+    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_platform_message_write_aligned(manual_writer, access_token, access_token_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    char buffer2[profile_sync_size];
+    error_code = kaa_platform_message_writer_create(&auto_writer, buffer2, profile_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_profile_request_serialize(profile_manager, auto_writer);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = (memcmp(buffer, buffer2, profile_sync_size) == 0 ? KAA_ERR_NONE : KAA_ERR_BADDATA);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    KAA_FREE(serialized_profile);
+    avro_writer_free(avro_writer);
+    profile->destroy(profile);
+    kaa_platform_message_writer_destroy(auto_writer);
+    kaa_platform_message_writer_destroy(manual_writer);
 }
 
 void test_profile_handle_sync()
 {
-//    KAA_TRACE_IN(logger);
-//
-//    kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
-//    profile1->profile_body = kaa_string_copy_create("dummy4", kaa_data_destroy);
-//
-//    ASSERT_EQUAL(kaa_profile_update_profile(profile_manager, profile1), KAA_ERR_NONE);
-//
-//    bool is_registered = false;
-//    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
-//    ASSERT_FALSE(is_registered);
-//
-//    kaa_profile_sync_response_t response;
-//    response.response_status = ENUM_SYNC_RESPONSE_STATUS_NO_DELTA;
-//    kaa_profile_handle_sync(profile_manager, &response);
-//    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
-//    ASSERT_TRUE(is_registered);
-//
-//    profile1->destroy(profile1);
+    KAA_TRACE_IN(logger);
+
+    bool need_resync = false;
+    kaa_error_t error_code = KAA_ERR_NONE;
+    uint32_t extension_options = 0x1; /* Need resync */
+
+    const size_t buffer_size = 6;
+    char buffer[buffer_size];
+    kaa_platform_message_reader_t *reader;
+    error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_profile_handle_server_sync(profile_manager, reader, extension_options, 0);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_profile_need_profile_resync(profile_manager, &need_resync);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_TRUE(need_resync);
+
+    extension_options = 0x0; /* Need resync */
+    error_code = kaa_profile_handle_server_sync(profile_manager, reader, extension_options, 0);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_profile_need_profile_resync(profile_manager, &need_resync);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_FALSE(need_resync);
+
+    kaa_platform_message_reader_destroy(reader);
 }
 
 int test_init(void)
@@ -219,7 +377,7 @@ int test_deinit(void)
 
 KAA_SUITE_MAIN(Profile, test_init, test_deinit,
         KAA_TEST_CASE(profile_update, test_profile_update)
-        KAA_TEST_CASE(profile_request, test_profile_compile_request)
-        KAA_TEST_CASE(profile_request_when_registered, test_profile_compile_request_when_registered)
+        KAA_TEST_CASE(profile_request, test_profile_sync_get_size)
+        KAA_TEST_CASE(profile_sync_serialize, test_profile_sync_serialize)
         KAA_TEST_CASE(profile_handle_sync, test_profile_handle_sync)
 )

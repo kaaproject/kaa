@@ -41,7 +41,9 @@ typedef struct kaa_event_manager_t kaa_event_manager_t;
  * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
  * @param[in]       event_data          Serialized event object.
  * @param[in]       event_data_size     Size of data in event_data parameter.
- * @param[in]       target              The target endpoint of the event. If @code NULL @endcode event will be broadcasted.
+ * @param[in]       target              The target endpoint of the event (null-terminated string). The size of
+ *                                      the target parameter should be equal to @link KAA_ENDPOINT_ID_LENGTH @endlink .
+ *                                      If @code NULL @endcode event will be broadcasted.
  *
  * @return Error code.
  */

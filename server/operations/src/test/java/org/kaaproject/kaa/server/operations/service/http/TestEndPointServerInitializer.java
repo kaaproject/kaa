@@ -21,7 +21,7 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.util.UUID;
 
-import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
+import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 
 /**
  * Test Initializator Class.
@@ -40,7 +40,7 @@ public class TestEndPointServerInitializer extends HttpServerInitializer {
      * @see org.kaaproject.kaa.server.common.http.server.DefaultServerInitializer#getMainHandler(java.util.UUID)
      */
     @Override
-    protected SimpleChannelInboundHandler<CommandProcessor> getMainHandler(UUID uuid){
+    protected SimpleChannelInboundHandler<AbstractCommand> getMainHandler(UUID uuid){
         return new TestHandler(
                 uuid,
                 testAkkaService,

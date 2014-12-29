@@ -53,7 +53,9 @@ kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager
  * 
  * @param[in]       self        Valid pointer to event manager.
  * @param[in]       event       Pointer to the event object.
- * @param[in]       target      Target of the event (null-terminated string). If NULL - event will be broadcasted.
+ * @param[in]       target      The target endpoint of the event (null-terminated string). The size of
+ *                              the target parameter should be equal to @link KAA_ENDPOINT_ID_LENGTH @endlink .
+ *                              If @code NULL @endcode event will be broadcasted.
  * 
  * @return Error code.
  */
