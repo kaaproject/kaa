@@ -122,22 +122,24 @@ kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *r
 
 static size_t kaa_versions_info_get_size()
 {
-    size_t size = 0;
+    static size_t size = 0;
 
-    size += sizeof(uint32_t); // config schema version
-    size += sizeof(uint32_t); // profile schema version
-    size += sizeof(uint32_t); // system notification schema version
-    size += sizeof(uint32_t); // user notification schema version
-    size += sizeof(uint32_t); // log schema version
+    if (!size) {
+        size += sizeof(uint32_t); // config schema version
+        size += sizeof(uint32_t); // profile schema version
+        size += sizeof(uint32_t); // system notification schema version
+        size += sizeof(uint32_t); // user notification schema version
+        size += sizeof(uint32_t); // log schema version
 
-    if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
-        size += sizeof(uint32_t); // event family schema versions count
+        if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
+            size += sizeof(uint32_t); // event family schema versions count
 
-        size_t i = 0;
-        for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
-            size += sizeof(uint16_t); // event family version
-            size += sizeof(uint16_t); // event family name length
-            size += kaa_aligned_size_get(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name)); // event family name
+            size_t i = 0;
+            for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
+                size += sizeof(uint16_t); // event family version
+                size += sizeof(uint16_t); // event family name length
+                size += kaa_aligned_size_get(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name)); // event family name
+            }
         }
     }
 
