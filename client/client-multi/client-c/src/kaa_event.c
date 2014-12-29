@@ -273,7 +273,7 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOT_INITIALIZED);
     KAA_RETURN_IF_NIL(fqn, KAA_ERR_EVENT_BAD_FQN);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding new event '%s'", fqn);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding a new event \"%s\"", fqn);
 
     /**
      * KAA_CALLOC is really needed there.
@@ -292,18 +292,21 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
                                                     , event_data_size
                                                     , target);
     if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to fill a new event (size=%u, target=\"%s\")", event_data_size, target);
         kaa_event_destroy(event);
         return error_code;
     }
 
     if (self->pending_events) {
         if (!kaa_list_push_back(self->pending_events, event)) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to save a new event");
             kaa_event_destroy(event);
             return KAA_ERR_NOMEM;
         }
     } else {
         self->pending_events = kaa_list_create(event);
         if (!self->pending_events) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to save a new event");
             kaa_event_destroy(event);
             return KAA_ERR_NOMEM;
         }
