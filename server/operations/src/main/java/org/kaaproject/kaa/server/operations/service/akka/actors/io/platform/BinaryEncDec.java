@@ -214,7 +214,7 @@ public class BinaryEncDec implements PlatformEncDec {
     public byte[] encode(ServerSync sync) throws PlatformEncDecException {
         LOG.trace("Encoding server sync {}", sync);
         GrowingByteBuffer buf = new GrowingByteBuffer(DEFAULT_BUFFER_SIZE);
-        buf.putInt(Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID);
+        buf.putInt(getId());
         buf.putShort(PROTOCOL_VERSION);
         buf.putShort(NOTHING); // will be updated later
         encodeMetaData(buf, sync);
