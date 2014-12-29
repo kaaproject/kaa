@@ -95,15 +95,11 @@ kaa_error_t kaa_platform_message_header_write(kaa_platform_message_writer_t* wri
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
     if ((writer->current + KAA_PROTOCOL_MESSAGE_HEADER_SIZE) <= writer->end) {
-        protocol_id = KAA_HTONL(protocol_id);
-        protocol_version = KAA_HTONS(protocol_version);
-        extension_count = KAA_HTONS(extension_count);
-
-        memcpy((void *)writer->current, &protocol_id, KAA_PROTOCOL_ID_SIZE);
+        *(uint32_t *) writer->current = KAA_HTONL(protocol_id);
         writer->current += KAA_PROTOCOL_ID_SIZE;
-        memcpy((void *)writer->current, &protocol_version, KAA_PROTOCOL_VERSION_SIZE);
+        *(uint16_t *) writer->current = KAA_HTONS(protocol_version);
         writer->current += KAA_PROTOCOL_VERSION_SIZE;
-        memcpy((void *)writer->current, &extension_count, KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE);
+        *(uint16_t *) writer->current = KAA_HTONS(extension_count);
         writer->current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
 
         return KAA_ERR_NONE;

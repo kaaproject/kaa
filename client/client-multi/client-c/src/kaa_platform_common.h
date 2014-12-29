@@ -21,6 +21,9 @@
 extern "C" {
 #endif
 
+#define KAA_PLATFORM_PROTOCOL_VERSION        1
+#define KAA_PLATFORM_PROTOCOL_ID             0x3553c66f
+
 #define KAA_ALIGNMENT                        4
 
 /**

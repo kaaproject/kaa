@@ -235,10 +235,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
     KAA_RETURN_IF_ERR(error_code);
 
-    uint32_t protocol_id = 0;
-    uint16_t protocol_version = 0;
-
-    error_code = kaa_platform_message_header_write(writer, protocol_id, protocol_version, services_count);
+    error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION, services_count);
     KAA_RETURN_IF_ERR(error_code);
 
     error_code = kaa_meta_data_request_serialize(self->kaa_context, writer);
@@ -329,6 +326,15 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
 
     error_code = kaa_platform_message_header_read(reader, &protocol_id, &protocol_version, &extension_count);
     KAA_RETURN_IF_ERR(error_code);
+
+    if (protocol_id != KAA_PLATFORM_PROTOCOL_ID) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_PROTOCOL_ID, "Unsupported protocol ID %x", protocol_id);
+        return KAA_ERR_BAD_PROTOCOL_ID;
+    }
+    if (protocol_version != KAA_PLATFORM_PROTOCOL_VERSION) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_PROTOCOL_VERSION, "Unsupported protocol version %u", protocol_version);
+        return KAA_ERR_BAD_PROTOCOL_VERSION;
+    }
 
     uint32_t request_id = 0;
     uint8_t extension_type = 0;
