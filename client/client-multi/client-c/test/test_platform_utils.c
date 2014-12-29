@@ -147,11 +147,11 @@ void test_write_buffer_overflow()
 void test_write_protocol_message_header()
 {
     kaa_error_t error_code = KAA_ERR_NONE;
-    char buffer[KAA_PROTOCOL_MESSAGE_HEADER_SIZE];
+    char buffer[KAA_PROTOCOL_ID_SIZE + KAA_PROTOCOL_VERSION_SIZE];
     size_t buffer_size = sizeof(buffer) / sizeof(char);
     kaa_platform_message_writer_t *writer = NULL;
 
-    const char serialized_header[KAA_PROTOCOL_MESSAGE_HEADER_SIZE] = {0x00, 0x00, 0x30, 0x39, 0x01, 0x00, 0x00, 0x05};
+    const char serialized_header[KAA_PROTOCOL_ID_SIZE + KAA_PROTOCOL_VERSION_SIZE] = {0x00, 0x00, 0x30, 0x39, 0x01, 0x00};
     uint32_t protocol_id = 12345;
     uint16_t protocol_version = 256;
     uint16_t extension_count = 5;
@@ -159,10 +159,10 @@ void test_write_protocol_message_header()
     error_code = kaa_platform_message_writer_create(&writer, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_platform_message_header_write(writer, protocol_id, protocol_version, extension_count);
+    error_code = kaa_platform_message_header_write(writer, protocol_id, protocol_version);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = (memcmp(writer->begin, serialized_header, KAA_PROTOCOL_MESSAGE_HEADER_SIZE) == 0? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
+    error_code = (memcmp(writer->begin, serialized_header, KAA_PROTOCOL_ID_SIZE + KAA_PROTOCOL_VERSION_SIZE) == 0? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_writer_destroy(writer);

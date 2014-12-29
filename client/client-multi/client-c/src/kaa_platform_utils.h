@@ -70,8 +70,7 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
 
 kaa_error_t kaa_platform_message_header_write(kaa_platform_message_writer_t* writer
                                             , uint32_t protocol_id
-                                            , uint16_t protocol_version
-                                            , uint16_t extension_count);
+                                            , uint16_t protocol_version);
 
 kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_writer_t* writer
                                                       , uint8_t extension_type

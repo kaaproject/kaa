@@ -244,11 +244,15 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
     KAA_RETURN_IF_ERR(error_code);
 
-    error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION, services_count);
+    uint16_t total_services_count = services_count;
+
+    error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to write the client sync header");
         return error_code;
     }
+    char *extension_count_p = writer->current;
+    writer->current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
 
     error_code = kaa_meta_data_request_serialize(self->kaa_context, writer, self->request_id);
 
@@ -258,12 +262,16 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
             bool need_resync = false;
             error_code = kaa_profile_need_profile_resync(self->kaa_context->profile_manager
                                                      , &need_resync);
-            if (error_code) {
+            if (!error_code) {
+                if (need_resync) {
+                    error_code = kaa_profile_request_serialize(self->kaa_context->profile_manager, writer);
+                    if (error_code)
+                        KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the profile extension");
+                } else {
+                    --total_services_count;
+                }
+            } else {
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to read 'need_resync' flag");
-            } else if (need_resync) {
-                error_code = kaa_profile_request_serialize(self->kaa_context->profile_manager, writer);
-                if (error_code)
-                    KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the profile extension");
             }
             break;
         }
@@ -293,7 +301,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
             break;
         }
     }
-
+    *(uint16_t *) extension_count_p = KAA_HTONS(total_services_count);
     *size = writer->current - writer->begin;
     kaa_platform_message_writer_destroy(writer);
 
