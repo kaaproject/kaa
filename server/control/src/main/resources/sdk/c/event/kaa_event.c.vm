@@ -273,18 +273,22 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOT_INITIALIZED);
     KAA_RETURN_IF_NIL(fqn, KAA_ERR_EVENT_BAD_FQN);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding new event '%s'", fqn);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding a new event \"%s\"", fqn);
 
     /**
      * KAA_CALLOC is really needed there.
      */
     kaa_event_t *event = (kaa_event_t*)KAA_CALLOC(1, sizeof(kaa_event_t));
-    KAA_RETURN_IF_NIL(event, KAA_ERR_NOMEM);
+    if (!event) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to allocate a new event structure");
+        return KAA_ERR_NOMEM;
+    }
 
     size_t new_sequence_number = (self->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED ?
                                         ++self->event_sequence_number :
                                         (size_t) -1);
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Filling a new event with data size %u", event_data_size);
     kaa_error_t error_code = kaa_fill_event_structure(event
                                                     , new_sequence_number
                                                     , fqn
@@ -292,18 +296,21 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
                                                     , event_data_size
                                                     , target);
     if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to fill a new event (size=%u, target=\"%s\")", event_data_size, target);
         kaa_event_destroy(event);
         return error_code;
     }
 
     if (self->pending_events) {
         if (!kaa_list_push_back(self->pending_events, event)) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to save a new event");
             kaa_event_destroy(event);
             return KAA_ERR_NOMEM;
         }
     } else {
         self->pending_events = kaa_list_create(event);
         if (!self->pending_events) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to save a new event");
             kaa_event_destroy(event);
             return KAA_ERR_NOMEM;
         }
@@ -469,6 +476,8 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile event client sync");
+
     /* write extension header */
     uint32_t extension_options = 0;
     if (self->sequence_number_status != KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
@@ -533,6 +542,8 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event received");
+
     uint16_t event_options = 0;
     kaa_error_t error_code = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
     if (error_code) {
@@ -578,6 +589,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         return error_code;
     }
     event_fqn[event_class_fqn_length] = '\0';
+    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Processing event with FQN=\"%s\"", event_fqn);
 
     char *event_data = NULL;
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
@@ -594,6 +606,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
             KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data field");
             return error_code;
         }
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
     }
 
     kaa_event_callback_t cb = find_event_callback(self->event_callbacks, event_fqn);
@@ -613,6 +626,8 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                                        , size_t request_id)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received event server sync");
 
     if (extension_options & KAA_EVENT_SERVER_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_PRESENT) {
         uint32_t event_sequence_number = 0;
