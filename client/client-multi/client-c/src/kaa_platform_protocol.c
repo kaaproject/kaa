@@ -240,7 +240,10 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     KAA_RETURN_IF_ERR(error_code);
 
     error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION, services_count);
-    KAA_RETURN_IF_ERR(error_code);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to write the client sync header");
+        return error_code;
+    }
 
     error_code = kaa_meta_data_request_serialize(self->kaa_context, writer, self->request_id);
 
@@ -254,21 +257,29 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to read 'need_resync' flag");
             }
             error_code = kaa_profile_request_serialize(self->kaa_context->profile_manager, writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the profile extension");
             break;
         }
         case KAA_SERVICE_USER: {
             error_code = kaa_user_request_serialize(self->kaa_context->user_manager, writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the user extension");
             break;
         }
 #ifndef KAA_DISABLE_FEATURE_EVENTS
         case KAA_SERVICE_EVENT: {
             error_code = kaa_event_request_serialize(self->kaa_context->event_manager, self->request_id, writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the event extension");
             break;
         }
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
         case KAA_SERVICE_LOGGING: {
             error_code = kaa_logging_request_serialize(self->kaa_context->log_collector, writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the logging extension");
             break;
         }
 #endif

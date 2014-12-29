@@ -275,7 +275,9 @@ static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t* wri
 
 kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer)
 {
-    KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile profile client sync");
 
     kaa_error_t error_code = kaa_platform_message_write_extension_header(writer
                                                                        , KAA_PROFILE_EXTENSION_TYPE
@@ -344,6 +346,8 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
                                          , size_t extension_length)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received profile server sync");
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
