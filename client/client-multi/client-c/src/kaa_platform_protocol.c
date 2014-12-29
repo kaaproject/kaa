@@ -260,12 +260,10 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
                                            , const kaa_service_t services[]
                                            , size_t services_count
                                            , char* buffer
-                                           , size_t size)
+                                           , size_t *size)
 {
-    KAA_RETURN_IF_NIL5(self, services, services_count, buffer, size, KAA_ERR_BADPARAM);
-
     kaa_platform_message_writer_t *writer = NULL;
-    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, size);
+    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
     KAA_RETURN_IF_ERR(error_code);
 
     uint32_t protocol_id = 0;
@@ -309,6 +307,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
         }
     }
 
+    *size = writer->current - writer->begin;
     kaa_platform_message_writer_destroy(writer);
 
     return error_code;
@@ -317,21 +316,21 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
 
 
 kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_service_t services[]
-                                                      , size_t services_count
-                                                      , kaa_buffer_alloc_fn allocator
-                                                      , void *allocator_context)
+                                                      , const kaa_serialize_info_t *info
+                                                      , char **buffer
+                                                      , size_t *buffer_size)
 {
-    KAA_RETURN_IF_NIL4(self, services, services_count, allocator, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL4(self, info, buffer, buffer_size, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(info->allocator, info->services, info->services_count, KAA_ERR_BADDATA);
 
-    size_t buffer_size = 0;
-    kaa_error_t error = kaa_client_sync_get_size(self, services, services_count, &buffer_size);
+    *buffer_size = 0;
+    kaa_error_t error = kaa_client_sync_get_size(self, info->services, info->services_count, buffer_size);
     KAA_RETURN_IF_ERR(error)
 
-    char *buffer = allocator(allocator_context, buffer_size);
-    if (buffer) {
+    *buffer = info->allocator(info->allocator_context, *buffer_size);
+    if (*buffer) {
         self->request_id++;
-        error = kaa_client_sync_serialize(self, services, services_count, buffer, buffer_size);
+        error = kaa_client_sync_serialize(self, info->services, info->services_count, *buffer, buffer_size);
     } else {
         error = KAA_ERR_WRITE_FAILED;
     }

@@ -43,6 +43,16 @@ typedef struct kaa_platform_protocol_t kaa_platform_protocol_t;
 typedef char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
 
 /**
+ * Serialize info structure
+ */
+typedef struct {
+    kaa_service_t *services;        /**< Non-empty list of services to include into the sync message */
+    size_t services_count;          /**< Number of elements in @c services */
+    kaa_buffer_alloc_fn allocator;  /**< Pointer to a buffer memory allocation function */
+    void *allocator_context;        /**< Context to be passed to the @c allocator callback as @c context parameter */
+} kaa_serialize_info_t;
+
+/**
  * @brief Constructs a sync request for the specified list of services based on the current state of Kaa context and
  * serializes it into the buffer returned by the allocator function.
  *
@@ -50,19 +60,17 @@ typedef char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
  * function expects the memory allocation callback, @c allocator, to return a buffer of the requested size. It is
  * perfectly acceptable to return a pointer to a previously allocated buffer (even on the stack) if its size is sufficient.
  *
- * @param[in] self              Pointer to a @link kaa_platform_protocol_t @endlink instance.
- * @param[in] services          Non-empty list of services to include into the sync message.
- * @param[in] services_count    Number of elements in @c services.
- * @param[in] allocator         Pointer to a buffer memory allocation function.
- * @param[in] allocator_context Context to be passed to the @c allocator callback as @c context parameter.
+ * @param[in]  self              Pointer to a @link kaa_platform_protocol_t @endlink instance.
+ * @param[in]  info              Pointer to a @link kaa_serialize_info_t @endlink instance.
+ * @param[out] buffer            The buffer with serialized data.
+ * @param[out] buffer_size       The buffer's actual size.
  *
  * @return Error code.
  */
 kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_service_t services[]
-                                                      , size_t services_count
-                                                      , kaa_buffer_alloc_fn allocator
-                                                      , void *allocator_context);
+                                                      , const kaa_serialize_info_t *info
+                                                      , char **buffer
+                                                      , size_t *buffer_size);
 
 /**
  * @brief Processes downstream data received from Operations server.
