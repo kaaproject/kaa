@@ -196,7 +196,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage.get_record, KAA_ERR_NOT_INITIALIZED);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile log request");
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile log client sync");
 
     uint32_t total_size = sizeof(uint32_t);
     char *extension_size_p = writer->current + sizeof(uint32_t); // pointer to the extension size. Will be filled later.

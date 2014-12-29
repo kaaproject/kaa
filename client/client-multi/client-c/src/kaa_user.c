@@ -188,7 +188,7 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile user request");
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile user client sync");
 
     size_t size = kaa_user_request_get_size_no_header(self);
     if (kaa_platform_message_write_extension_header(writer, KAA_USER_EXTENSION_TYPE, KAA_USER_RECEIVE_UPDATES_FLAG, size)) {
