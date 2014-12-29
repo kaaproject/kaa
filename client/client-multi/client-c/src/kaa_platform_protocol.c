@@ -92,7 +92,7 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
 
 
 
-kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_platform_message_writer_t* writer)
+kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_platform_message_writer_t* writer, uint32_t request_id)
 {
     KAA_RETURN_IF_NIL2(context, writer, KAA_ERR_BADPARAM);
 
@@ -107,6 +107,10 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_platform
                                                          , KAA_META_DATA_EXTENSION_TYPE
                                                          , options
                                                          , payload_length);
+    KAA_RETURN_IF_ERR(err_code);
+
+    uint32_t request_id_network = KAA_HTONL(request_id);
+    err_code = kaa_platform_message_write(writer, &request_id_network, sizeof(uint32_t));
     KAA_RETURN_IF_ERR(err_code);
 
     uint32_t timeout = KAA_HTONL(KAA_SYNC_TIMEOUT);
@@ -238,7 +242,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION, services_count);
     KAA_RETURN_IF_ERR(error_code);
 
-    error_code = kaa_meta_data_request_serialize(self->kaa_context, writer);
+    error_code = kaa_meta_data_request_serialize(self->kaa_context, writer, self->request_id);
 
     for (;!error_code && services_count--;) {
         switch (services[services_count]) {

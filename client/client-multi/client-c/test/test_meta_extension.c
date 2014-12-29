@@ -34,7 +34,8 @@ extern void        kaa_status_destroy(kaa_status_t *self);
 
 extern kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size);
 extern kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context
-                                                 , kaa_platform_message_writer_t* writer);
+                                                 , kaa_platform_message_writer_t* writer
+                                                 , uint32_t request_id);
 
 
 
@@ -81,13 +82,13 @@ void test_meta_extension_serialize_failed()
     error_code = kaa_platform_message_writer_create(&writer, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(NULL, NULL);
+    error_code = kaa_meta_data_request_serialize(NULL, NULL, 0);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(&context, NULL);
+    error_code = kaa_meta_data_request_serialize(&context, NULL, 0);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(NULL, (kaa_platform_message_writer_t *)!NULL);
+    error_code = kaa_meta_data_request_serialize(NULL, (kaa_platform_message_writer_t *)!NULL, 0);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_writer_destroy(writer);
@@ -115,7 +116,7 @@ void test_meta_extension_serialize()
     error_code = kaa_status_set_profile_hash(kaa_context.status, expected_profile_hash);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(&kaa_context, writer);
+    error_code = kaa_meta_data_request_serialize(&kaa_context, writer, 1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_reader_t *reader;
@@ -131,14 +132,18 @@ void test_meta_extension_serialize()
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_EQUAL(extension_type, KAA_META_DATA_EXTENSION_TYPE);
-    ASSERT_EQUAL(extension_options, TIMEOUT_VALUE | PUBLIC_KEY_HASH_VALUE | PROFILE_HASH_VALUE | APP_TOKEN_VALUE);
+    ASSERT_EQUAL(extension_options, (TIMEOUT_VALUE | PUBLIC_KEY_HASH_VALUE | PROFILE_HASH_VALUE | APP_TOKEN_VALUE));
     ASSERT_EQUAL(extension_payload, meta_extension_size - KAA_EXTENSION_HEADER_SIZE);
 
+    uint32_t request_id;
     uint32_t timeout;
     kaa_digest public_key_hash;
     kaa_digest profile_hash;
     char application_token[KAA_APPLICATION_TOKEN_LENGTH];
 
+    error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(KAA_NTOHL(request_id), 1);
     error_code = kaa_platform_message_read(reader, &timeout, sizeof(uint32_t));
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     timeout = KAA_NTOHL(timeout);
