@@ -293,6 +293,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     KAA_RETURN_IF_NIL4(self, info, buffer, buffer_size, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL3(info->allocator, info->services, info->services_count, KAA_ERR_BADDATA);
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing client sync...");
+
     *buffer_size = 0;
     kaa_error_t error = kaa_client_sync_get_size(self, info->services, info->services_count, buffer_size);
     KAA_RETURN_IF_ERR(error)
@@ -307,6 +309,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 
     if (error) {
         self->request_id--;
+    } else {
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Client sync successfully serialized");
     }
 
     return error;
@@ -319,6 +323,8 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , size_t buffer_size)
 {
     KAA_RETURN_IF_NIL3(self, buffer, buffer_size, KAA_ERR_BADPARAM);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Processing server sync...");
 
     kaa_platform_message_reader_t *reader = NULL;
     kaa_error_t error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
@@ -403,6 +409,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
 
     if (!error_code) {
         error_code = kaa_status_save(self->kaa_context->status);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync successfully processed");
     } else {
         KAA_LOG_ERROR(self->logger, error_code,
                 "Server sync is corrupted. Failed to read extension with type %u", extension_type);
