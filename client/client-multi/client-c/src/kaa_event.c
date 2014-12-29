@@ -279,12 +279,16 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
      * KAA_CALLOC is really needed there.
      */
     kaa_event_t *event = (kaa_event_t*)KAA_CALLOC(1, sizeof(kaa_event_t));
-    KAA_RETURN_IF_NIL(event, KAA_ERR_NOMEM);
+    if (!event) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to allocate a new event structure");
+        return KAA_ERR_NOMEM;
+    }
 
     size_t new_sequence_number = (self->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED ?
                                         ++self->event_sequence_number :
                                         (size_t) -1);
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Filling a new event with data size %u", event_data_size);
     kaa_error_t error_code = kaa_fill_event_structure(event
                                                     , new_sequence_number
                                                     , fqn
