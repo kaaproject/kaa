@@ -237,7 +237,7 @@ static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t* wri
 
     size_t i = 0;
     for (; i < KAA_SCHEMA_VERSION_NUMBER; ++i) {
-        field_number_with_reserved = fields_number[i];
+        field_number_with_reserved = KAA_HTONS(fields_number[i] << 8);
         error_code = kaa_platform_message_write(writer, &field_number_with_reserved, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 
@@ -249,6 +249,7 @@ static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t* wri
     if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
         uint16_t network_order_family_version = 0;
         uint16_t network_order_family_name_len = 0;
+        size_t event_schema_name_length = 0;
 
         for (i = 0; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
             network_order_family_version = KAA_HTONS(KAA_EVENT_SCHEMA_VERSIONS[i].version);
@@ -257,7 +258,8 @@ static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t* wri
                                                   , sizeof(uint16_t));
             KAA_RETURN_IF_ERR(error_code);
 
-            network_order_family_name_len = KAA_HTONS(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name));
+            event_schema_name_length = strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name);
+            network_order_family_name_len = KAA_HTONS(event_schema_name_length);
             error_code = kaa_platform_message_write(writer
                                                   , &network_order_family_name_len
                                                   , sizeof(uint16_t));
@@ -265,7 +267,7 @@ static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t* wri
 
             error_code = kaa_platform_message_write_aligned(writer
                                                           , KAA_EVENT_SCHEMA_VERSIONS[i].name
-                                                          , KAA_NTOHS(network_order_family_name_len));
+                                                          , event_schema_name_length);
             KAA_RETURN_IF_ERR(error_code);
         }
     }
@@ -288,11 +290,19 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
     uint32_t network_order_32 = KAA_HTONL(self->profile_body.size);
     error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
     KAA_RETURN_IF_ERR(error_code);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Writing profile body (size %u)...", self->profile_body.size);
     error_code = kaa_platform_message_write_aligned(writer, self->profile_body.buffer, self->profile_body.size);
-    KAA_RETURN_IF_ERR(error_code);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to write profile body");
+        return error_code;
+    }
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Writing version info...");
     error_code = kaa_version_info_serialize(writer);
-    KAA_RETURN_IF_ERR(error_code);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to write version info");
+        return error_code;
+    }
 
     bool is_registered = false;
     error_code = kaa_is_endpoint_registered(self->status, &is_registered);
@@ -302,7 +312,7 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
     uint16_t field_number_with_reserved = 0;
 
     if (!is_registered) {
-        field_number_with_reserved = PUB_KEY_VALUE;
+        field_number_with_reserved = KAA_HTONS(PUB_KEY_VALUE << 8);
         error_code = kaa_platform_message_write(writer
                                              , &field_number_with_reserved
                                              , sizeof(uint16_t));
@@ -312,14 +322,18 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
         error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Writing public key (size %u)...", self->extension_data->public_key.size);
         error_code = kaa_platform_message_write_aligned(writer
                                                      , (char*)self->extension_data->public_key.buffer
                                                      , self->extension_data->public_key.size);
-        KAA_RETURN_IF_ERR(error_code);
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to write public key");
+            return error_code;
+        }
     }
 
     if (self->extension_data->access_token.buffer) {
-        field_number_with_reserved = ACCESS_TOKEN_VALUE;
+        field_number_with_reserved = KAA_HTONS(ACCESS_TOKEN_VALUE << 8);
         error_code = kaa_platform_message_write(writer
                                              , &field_number_with_reserved
                                              , sizeof(uint16_t));
@@ -329,10 +343,14 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
         error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Writing access token (size %u)...", self->extension_data->access_token.size);
         error_code = kaa_platform_message_write_aligned(writer
                                                      , (char*)self->extension_data->access_token.buffer
                                                      , self->extension_data->access_token.size);
-        KAA_RETURN_IF_ERR(error_code);
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to write access token");
+            return error_code;
+        }
     }
 
     return error_code;

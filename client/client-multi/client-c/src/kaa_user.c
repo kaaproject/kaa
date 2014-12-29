@@ -133,7 +133,7 @@ kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
 {
     KAA_RETURN_IF_NIL3(self, user_external_id, access_token, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to attach to user (external id = \"%s\", access token = \"%s\"", user_external_id, access_token);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to attach to user (external id = \"%s\", access token = \"%s\")", user_external_id, access_token);
 
     if (self->is_waiting_user_attach_response) {
         destroy_user_info(self->user_info);
