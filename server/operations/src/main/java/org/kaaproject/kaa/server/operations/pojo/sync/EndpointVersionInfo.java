@@ -50,7 +50,7 @@ public class EndpointVersionInfo {
 
     /**
      * Sets the value of the 'configVersion' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -67,7 +67,7 @@ public class EndpointVersionInfo {
 
     /**
      * Sets the value of the 'profileVersion' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -84,7 +84,7 @@ public class EndpointVersionInfo {
 
     /**
      * Sets the value of the 'systemNfVersion' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -101,7 +101,7 @@ public class EndpointVersionInfo {
 
     /**
      * Sets the value of the 'userNfVersion' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -118,7 +118,7 @@ public class EndpointVersionInfo {
 
     /**
      * Sets the value of the 'eventFamilyVersions' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -135,7 +135,7 @@ public class EndpointVersionInfo {
 
     /**
      * Sets the value of the 'logSchemaVersion' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -191,6 +191,12 @@ public class EndpointVersionInfo {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "EndpointVersionInfo [configVersion=" + configVersion + ", profileVersion=" + profileVersion + ", systemNfVersion=" + systemNfVersion
+                + ", userNfVersion=" + userNfVersion + ", eventFamilyVersions=" + eventFamilyVersions + ", logSchemaVersion=" + logSchemaVersion + "]";
     }
 
 }
