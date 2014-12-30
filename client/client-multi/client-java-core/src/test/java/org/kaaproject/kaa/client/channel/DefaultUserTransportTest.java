@@ -41,6 +41,9 @@ import org.mockito.Mockito;
 
 public class DefaultUserTransportTest {
 
+    private static final int REQUEST_ID_1 = 42;
+    private static final int REQUEST_ID_2 = 73;
+    
     @Test(expected = ChannelRuntimeException.class)
     public void testSyncNegative() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
@@ -68,11 +71,11 @@ public class DefaultUserTransportTest {
 
     @Test
     public void testCreateRequest() {
-        Map<String, EndpointAccessToken> attachedEPs = new HashMap<>();
-        attachedEPs.put("key1", new EndpointAccessToken("acessToken1"));
+        Map<Integer, EndpointAccessToken> attachedEPs = new HashMap<>();
+        attachedEPs.put(REQUEST_ID_1, new EndpointAccessToken("acessToken1"));
 
-        Map<String, EndpointKeyHash> detachedEPs = new HashMap<>();
-        detachedEPs.put("key1", new EndpointKeyHash("keyhash1"));
+        Map<Integer, EndpointKeyHash> detachedEPs = new HashMap<>();
+        detachedEPs.put(REQUEST_ID_1, new EndpointKeyHash("keyhash1"));
 
         EndpointRegistrationProcessor processor = Mockito.mock(EndpointRegistrationProcessor.class);
         Mockito.when(processor.getAttachEndpointRequests()).thenReturn(attachedEPs);
@@ -94,16 +97,14 @@ public class DefaultUserTransportTest {
 
     @Test
     public void onUserResponse() throws Exception {
-        String requestId1 = "requestId1";
-        String requestId2 = "requestId2";
 
-        Map<String, EndpointAccessToken> attachingEPs = new HashMap<>();
-        attachingEPs.put(requestId1, new EndpointAccessToken("token1"));
-        attachingEPs.put(requestId2, new EndpointAccessToken("token2"));
+        Map<Integer, EndpointAccessToken> attachingEPs = new HashMap<>();
+        attachingEPs.put(REQUEST_ID_1, new EndpointAccessToken("token1"));
+        attachingEPs.put(REQUEST_ID_2, new EndpointAccessToken("token2"));
 
-        Map<String, EndpointKeyHash> dettachingEPs = new HashMap<>();
-        dettachingEPs.put(requestId1, new EndpointKeyHash("keyhash1"));
-        dettachingEPs.put(requestId2, new EndpointKeyHash("keyhash2"));
+        Map<Integer, EndpointKeyHash> dettachingEPs = new HashMap<>();
+        dettachingEPs.put(REQUEST_ID_1, new EndpointKeyHash("keyhash1"));
+        dettachingEPs.put(REQUEST_ID_2, new EndpointKeyHash("keyhash2"));
 
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         EndpointRegistrationProcessor processor = Mockito.mock(EndpointRegistrationProcessor.class);
@@ -115,13 +116,13 @@ public class DefaultUserTransportTest {
         UserSyncResponse response1 = new UserSyncResponse();
 
         response1.setEndpointAttachResponses(Arrays.asList(
-                new EndpointAttachResponse(requestId1, "keyhash1", SyncResponseResultType.SUCCESS),
-                new EndpointAttachResponse(requestId2, "keyhash2", SyncResponseResultType.SUCCESS),
-                new EndpointAttachResponse("anotherAttachedRequest", "keyhash2", SyncResponseResultType.FAILURE)));
+                new EndpointAttachResponse(REQUEST_ID_1, "keyhash1", SyncResponseResultType.SUCCESS),
+                new EndpointAttachResponse(REQUEST_ID_2, "keyhash2", SyncResponseResultType.SUCCESS),
+                new EndpointAttachResponse(REQUEST_ID_1 + 1, "keyhash2", SyncResponseResultType.FAILURE)));
 
         response1.setEndpointDetachResponses(Arrays.asList(
-                new EndpointDetachResponse(requestId1, SyncResponseResultType.SUCCESS),
-                new EndpointDetachResponse("anotherRequest", SyncResponseResultType.FAILURE)));
+                new EndpointDetachResponse(REQUEST_ID_1, SyncResponseResultType.SUCCESS),
+                new EndpointDetachResponse(REQUEST_ID_1 + 2, SyncResponseResultType.FAILURE)));
 
         transport.onUserResponse(response1);
         transport.setEndpointRegistrationProcessor(processor);
@@ -133,7 +134,7 @@ public class DefaultUserTransportTest {
         UserSyncResponse response2 = new UserSyncResponse();
 
         response2.setEndpointDetachResponses(Arrays.asList(
-                new EndpointDetachResponse(requestId2, SyncResponseResultType.SUCCESS)));
+                new EndpointDetachResponse(REQUEST_ID_2, SyncResponseResultType.SUCCESS)));
 
         transport.onUserResponse(response2);
 

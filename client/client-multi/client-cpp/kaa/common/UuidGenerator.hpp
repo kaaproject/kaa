@@ -40,6 +40,14 @@ public:
         return ss.str();
     }
 
+    static std::int32_t generateRandomInt() {
+        boost::uuids::basic_random_generator<boost::mt19937> gen;
+        boost::uuids::uuid uuid = gen();
+		std::int32_t rand = (uuid.data[12] << 24) | (uuid.data[13] << 16)
+				| (uuid.data[14] << 8) | (uuid.data[15]);
+		return rand;
+    }
+
     static void generateUuid(std::string& uuid_s) {
         boost::uuids::basic_random_generator<boost::mt19937> gen;
         boost::uuids::uuid uuid = gen();

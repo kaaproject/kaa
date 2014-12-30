@@ -61,5 +61,5 @@ public interface EventListenersResolver {
      *
      * @return Request ID of submitted request
      */
-    String findEventListeners(List<String> eventFQNs, FetchEventListeners listener);
+    int findEventListeners(List<String> eventFQNs, FetchEventListeners listener);
 }

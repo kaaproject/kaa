@@ -16,7 +16,7 @@
 package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class EndpointAttachRequest {
-    private String requestId;
+    private int requestId;
     private String endpointAccessToken;
 
     public EndpointAttachRequest() {
@@ -25,7 +25,7 @@ public class EndpointAttachRequest {
     /**
      * All-args constructor.
      */
-    public EndpointAttachRequest(String requestId, String endpointAccessToken) {
+    public EndpointAttachRequest(int requestId, String endpointAccessToken) {
         this.requestId = requestId;
         this.endpointAccessToken = endpointAccessToken;
     }
@@ -33,7 +33,7 @@ public class EndpointAttachRequest {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public java.lang.String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -43,14 +43,14 @@ public class EndpointAttachRequest {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(java.lang.String value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 
     /**
      * Gets the value of the 'endpointAccessToken' field.
      */
-    public java.lang.String getEndpointAccessToken() {
+    public String getEndpointAccessToken() {
         return endpointAccessToken;
     }
 
@@ -60,7 +60,7 @@ public class EndpointAttachRequest {
      * @param value
      *            the value to set.
      */
-    public void setEndpointAccessToken(java.lang.String value) {
+    public void setEndpointAccessToken(String value) {
         this.endpointAccessToken = value;
     }
 
@@ -69,7 +69,7 @@ public class EndpointAttachRequest {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((endpointAccessToken == null) ? 0 : endpointAccessToken.hashCode());
-        result = prime * result + ((requestId == null) ? 0 : requestId.hashCode());
+        result = prime * result + requestId;
         return result;
     }
 
@@ -92,14 +92,20 @@ public class EndpointAttachRequest {
         } else if (!endpointAccessToken.equals(other.endpointAccessToken)) {
             return false;
         }
-        if (requestId == null) {
-            if (other.requestId != null) {
-                return false;
-            }
-        } else if (!requestId.equals(other.requestId)) {
+        if (requestId != other.requestId) {
             return false;
         }
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EndpointAttachRequest [requestId=");
+        builder.append(requestId);
+        builder.append(", endpointAccessToken=");
+        builder.append(endpointAccessToken);
+        builder.append("]");
+        return builder.toString();
+    }
 }

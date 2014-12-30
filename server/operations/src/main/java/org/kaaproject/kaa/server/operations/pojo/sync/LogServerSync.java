@@ -16,7 +16,7 @@
 package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class LogServerSync {
-    private String requestId;
+    private int requestId;
     private SyncStatus result;
 
     public LogServerSync() {
@@ -25,7 +25,7 @@ public class LogServerSync {
     /**
      * All-args constructor.
      */
-    public LogServerSync(String requestId, SyncStatus result) {
+    public LogServerSync(int requestId, SyncStatus result) {
         this.requestId = requestId;
         this.result = result;
     }
@@ -33,7 +33,7 @@ public class LogServerSync {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -43,7 +43,7 @@ public class LogServerSync {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(String value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 

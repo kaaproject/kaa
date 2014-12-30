@@ -161,7 +161,7 @@ public class BinaryEncDecTest {
     public void testEncodeLogServerSync() throws PlatformEncDecException {
         ServerSync sync = new ServerSync();
         sync.setRequestId(MAGIC_NUMBER);
-        LogServerSync lSync = new LogServerSync("" + MAGIC_NUMBER, SyncStatus.FAILURE);
+        LogServerSync lSync = new LogServerSync(MAGIC_NUMBER, SyncStatus.FAILURE);
         sync.setLogSync(lSync);
 
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));

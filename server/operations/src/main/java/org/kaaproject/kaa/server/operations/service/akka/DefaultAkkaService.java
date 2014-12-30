@@ -61,7 +61,7 @@ import akka.routing.RoundRobinPool;
 @Service
 public class DefaultAkkaService implements AkkaService {
 
-    private static final String PROTOCOL_SCAN_PACKAGE_NAME = "org.kaaproject.kaa.server.operations.service";
+    private static final String PROTOCOL_LOOKUP_PACKAGE_NAME = "org.kaaproject.kaa.server.operations.service";
 
     private static final String IO_ROUTER_ACTOR_NAME = "ioRouter";
 
@@ -143,7 +143,7 @@ public class DefaultAkkaService implements AkkaService {
     private Set<String> lookupPlatformProtocols() {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPlatformProtocol.class));
-        Set<BeanDefinition> beans = scanner.findCandidateComponents(PROTOCOL_SCAN_PACKAGE_NAME);
+        Set<BeanDefinition> beans = scanner.findCandidateComponents(PROTOCOL_LOOKUP_PACKAGE_NAME);
         Set<String> protocols = new HashSet<>();
         for (BeanDefinition bean : beans) {
             protocols.add(bean.getBeanClassName());
