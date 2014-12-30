@@ -409,7 +409,7 @@ public class BinaryEncDec implements PlatformEncDec {
             buf.putInt(eventSync.getEventSequenceNumberResponse().getSeqNum());
         }
 
-        if (eventSync.getEventListenersResponses() != null) {
+        if (eventSync.getEventListenersResponses() != null && !eventSync.getEventListenersResponses().isEmpty()) {
             buf.put(EVENT_LISTENERS_RESPONSE_FIELD_ID);
             buf.put(NOTHING);
             buf.putShort((short) eventSync.getEventListenersResponses().size());

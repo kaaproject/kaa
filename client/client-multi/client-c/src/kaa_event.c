@@ -42,7 +42,9 @@
 # define KAA_EVENT_OPTION_TARGET_ID_PRESENT    0x1
 # define KAA_EVENT_OPTION_EVENT_HAS_DATA       0x2
 
-
+typedef enum {
+    EVENTS_FIELD = 0x01,
+} event_server_sync_field_t;
 
 typedef struct {
     int32_t          seq_num;
@@ -687,21 +689,28 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
             KAA_LOG_ERROR(self->logger, error_code, "Failed to skip reserved field in Event server sync message");
             return error_code;
         }
+        switch (field_id) {
+            case EVENTS_FIELD: {
+                uint16_t events_count = 0;
+                error_code = kaa_platform_message_read(reader, &events_count, sizeof(uint16_t)); // read events count
+                if (error_code) {
+                    KAA_LOG_ERROR(self->logger, error_code, "Failed to read field id in Event server sync message");
+                    return error_code;
+                }
 
-        uint16_t events_count = 0;
-        error_code = kaa_platform_message_read(reader, &events_count, sizeof(uint16_t)); // read events count
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to read field id in Event server sync message");
-            return error_code;
-        }
-
-        events_count = KAA_NTOHS(events_count);
-        for (;events_count--;) {
-            error_code = kaa_event_read_event(self, reader);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to read event from server sync");
-                return error_code;
+                events_count = KAA_NTOHS(events_count);
+                for (;events_count--;) {
+                    error_code = kaa_event_read_event(self, reader);
+                    if (error_code) {
+                        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event from server sync");
+                        return error_code;
+                    }
+                }
+                break;
             }
+            default:
+                KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Unexpected field id %u", field_id);
+                return KAA_ERR_BADDATA;
         }
 
     }
