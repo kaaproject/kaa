@@ -22,7 +22,6 @@
 #include "kaa_test.h"
 #include "kaa.h"
 #include "kaa_platform_protocol.h"
-#include "log/kaa_memory_log_storage.h"
 #include "kaa_channel_manager.h"
 #include "kaa_profile.h"
 #include "kaa_platform_utils.h"
@@ -148,8 +147,6 @@ int test_init(void)
     if (error || !logger) {
         return error;
     }
-    set_memory_log_storage_logger(logger);
-
 
     error = kaa_status_create(&status);
     if (error || !status) {
@@ -181,7 +178,6 @@ int test_deinit(void)
     kaa_channel_manager_destroy(channel_manager);
     kaa_status_destroy(status);
     kaa_log_destroy(logger);
-    set_memory_log_storage_logger(NULL);
 
     return 0;
 }

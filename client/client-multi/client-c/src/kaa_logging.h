@@ -18,7 +18,7 @@
  * @file kaa_logging.h
  * @brief Kaa data logging subsystem API
  *
- * Supplies API for Kaa data collection / logging subsystem
+ * Supplies API for Kaa data collection / logging subsystem.
  */
 
 #ifndef KAA_LOGGING_H_
@@ -33,8 +33,20 @@
 extern "C" {
 #endif
 
+
+
+/**
+ * Log records structure generated based on the specified data schema.
+ */
 typedef kaa_test_log_record_t    kaa_user_log_record_t;
+
+
+
+/**
+ * Private log collector structure.
+ */
 typedef struct kaa_log_collector kaa_log_collector_t;
+
 
 
 /**
@@ -52,15 +64,16 @@ typedef struct {
  * the logs before sending them to Operations server.
  */
 typedef struct {
-    void             *context;                                                                 /**< Context to pass to all functions below. */
-    void            (* add_log_record)    (void *context, kaa_log_entry_t record);             /**< Adds log entry to the log storage. */
-    kaa_log_entry_t (* get_record)        (void *context, uint16_t id, size_t remaining_size); /**< Returns the next log entry and marks it with pack @c id @b only if the record size does not exceed @c remaining_size. */
-    void            (* upload_succeeded)  (void *context, uint16_t id);                        /**< Removes from the storage all records marked with the provided pack @c id. */
-    void            (* upload_failed)     (void *context, uint16_t id);                        /**< Unmarks all records marked with the provided pack @c id. */
-    void            (* shrink_to_size)    (void *context, size_t size);                        /**< Shrink log storage to the specified size. */
-    size_t          (* get_total_size)    (void *context);                                     /**< Get total size occupied by logs in log storage. */
-    uint16_t        (* get_records_count) (void *context);                                     /**< Get total log records count. */
-    void            (* destroy)           (void *context);                                     /**< Destroy log storage. */
+    void             * context;                                                                     /**< Context to pass to all functions below. */
+    // FIXME: return kaa_error_t instead of void everywhere
+    void            (* add_log_record)    (void *context, kaa_log_entry_t record);                  /**< Adds log entry to the log storage. */
+    kaa_log_entry_t (* get_next_record)   (void *context, uint16_t bucket_id, size_t size_limit);   /**< Returns the next log entry and marks it with @c bucket_id @b only if the record size does not exceed the @c size_limit. */
+    void            (* upload_succeeded)  (void *context, uint16_t bucket_id);                      /**< Removes from the storage all records marked with the provided @c bucket_id. */
+    void            (* upload_failed)     (void *context, uint16_t bucket_id);                      /**< Unmarks all records marked with the provided @c bucket_id. */
+    void            (* shrink_to_size)    (void *context, size_t size);                             /**< Shrinks log storage to the specified size. */
+    size_t          (* get_total_size)    (void *context);                                          /**< Returns total size occupied by logs in the log storage. */
+    uint16_t        (* get_records_count) (void *context);                                          /**< Returns total log records count. */
+    void            (* destroy)           (void *context);                                          /**< Destroys the log storage. */
 } kaa_log_storage_t;
 
 
@@ -77,12 +90,12 @@ typedef struct {
 
 
 /**
- * Log upload decisions
+ * Log upload decisions.
  */
 typedef enum {
-    NOOP    = 0, /**< No operation should be performed now. */
-    UPLOAD  = 1, /**< Log upload should be triggered. */
-    CLEANUP = 2  /**< Need to cleanup log storage to fit available space. */
+    NOOP    = 0, /**< Nothing to do yet. */
+    UPLOAD  = 1, /**< Trigger log upload. */
+    CLEANUP = 2  /**< Trigger log storage cleanup. */
 } kaa_log_upload_decision_t;
 
 
@@ -91,7 +104,7 @@ typedef enum {
  * Interface for the client log upload strategy.
  */
 typedef struct {
-    void                       *context;                                                                        /**< Context to pass to all functions below. */
+    void                       * context;                                                                       /**< Context to pass to all functions below. */
     kaa_log_upload_decision_t (* log_upload_decision_fn) (void *context, const kaa_log_storage_t *log_storage); /**< Makes a decision whether to upload logs or cleanup storage. */
 } kaa_log_upload_strategy_t;
 

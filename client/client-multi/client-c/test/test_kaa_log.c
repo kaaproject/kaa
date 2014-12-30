@@ -192,7 +192,6 @@ int test_init(void)
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     if (error || !logger)
         return error;
-    set_memory_log_storage_logger(logger);
 
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
@@ -243,7 +242,6 @@ int test_deinit(void)
         KAA_FREE(test_log_entry.record_data);
 #endif
     kaa_log_destroy(logger);
-    set_memory_log_storage_logger(NULL);
 
     return 0;
 }

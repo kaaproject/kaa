@@ -205,7 +205,7 @@ kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expe
 kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer)
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(self->log_storage.get_record, KAA_ERR_NOT_INITIALIZED);
+    KAA_RETURN_IF_NIL(self->log_storage.get_next_record, KAA_ERR_NOT_INITIALIZED);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile log client sync");
 
@@ -229,9 +229,9 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (Block size is %zu)", remaining_size);
 
     uint16_t records_count = 0;
-    kaa_log_entry_t entry = self->log_storage.get_record(self->log_storage.context
+    kaa_log_entry_t entry = self->log_storage.get_next_record(self->log_storage.context
             , self->log_bucket_id, MAX_RECORD_SIZE(remaining_size));
-    for (; entry.record_data; entry = self->log_storage.get_record(self->log_storage.context, self->log_bucket_id, MAX_RECORD_SIZE(remaining_size))) {
+    for (; entry.record_data; entry = self->log_storage.get_next_record(self->log_storage.context, self->log_bucket_id, MAX_RECORD_SIZE(remaining_size))) {
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Got record {%p}, size: %zu", entry.record_data, entry.record_size);
         ++records_count;
         remaining_size -= (kaa_aligned_size_get(entry.record_size) + sizeof(uint32_t));
