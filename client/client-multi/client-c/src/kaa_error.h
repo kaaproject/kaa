@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_error.h
+ * @brief Kaa error codes
+ *
+ * Defines @c kaa_error_t enumeration type for standard error codes used across the C Endpoint SDK.
+ */
+
 #ifndef KAA_ERROR_H_
 #define KAA_ERROR_H_
 
