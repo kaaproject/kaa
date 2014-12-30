@@ -598,7 +598,10 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
     event_fqn[event_class_fqn_length] = '\0';
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Processing event with FQN=\"%s\"", event_fqn);
 
-    char *event_data = NULL;
+    kaa_event_callback_t callback = find_event_callback(self->event_callbacks, event_fqn);
+    if (!callback)
+        callback = self->global_event_callback;
+
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
         is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_data_size));
         if (!is_enough) {
@@ -606,23 +609,18 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
             return KAA_ERR_READ_FAILED;
         }
 
-        char buffer[event_data_size];
-        event_data = buffer;
+        char event_data[event_data_size];
         error_code = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
         if (error_code) {
             KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data field");
             return error_code;
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
+        if (callback)
+           (*callback)(event_fqn, event_data, event_data_size, event_source);
+    } else if (callback) {
+       (*callback)(event_fqn, NULL, 0, event_source);
     }
-
-    kaa_event_callback_t cb = find_event_callback(self->event_callbacks, event_fqn);
-    if (cb) {
-       (*cb)(event_fqn, event_data, event_data_size, event_source);
-    } else if (self->global_event_callback) {
-       (*self->global_event_callback)(event_fqn, event_data, event_data_size, event_source);
-    }
-
     return KAA_ERR_NONE;
 }
 
@@ -699,7 +697,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                 }
 
                 events_count = KAA_NTOHS(events_count);
-                for (;events_count--;) {
+                while (events_count--) {
                     error_code = kaa_event_read_event(self, reader);
                     if (error_code) {
                         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event from server sync");
