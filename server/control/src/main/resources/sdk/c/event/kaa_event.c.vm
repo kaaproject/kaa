@@ -52,7 +52,7 @@ typedef struct {
      */
     kaa_bytes_t*    event_class_fqn;
     kaa_bytes_t*    event_data;
-    kaa_string_t*   target;
+    kaa_bytes_t*    target;
 } kaa_event_t;
 
 typedef struct {
@@ -114,7 +114,7 @@ static void kaa_event_destroy(void* data)
 
         kaa_bytes_destroy(record->event_class_fqn);
         kaa_bytes_destroy(record->event_data);
-        kaa_string_destroy(record->target);
+        kaa_bytes_destroy(record->target);
 
         KAA_FREE(record);
     }
@@ -229,7 +229,7 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
                                           , const char *fqn
                                           , const char *event_data
                                           , size_t event_data_size
-                                          , const char *target)
+                                          , kaa_endpoint_id_p target)
 {
     KAA_RETURN_IF_NIL2(event, fqn, KAA_ERR_BADPARAM);
 
@@ -249,13 +249,8 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
     }
 
     if (target) {
-        size_t len = strlen(target);
-        if (len == KAA_ENDPOINT_ID_LENGTH) {
-            event->target = kaa_string_copy_create(target, &kaa_data_destroy);
-            KAA_RETURN_IF_NIL(event->target, KAA_ERR_NOMEM);
-        } else {
-            return KAA_ERR_BADDATA;
-        }
+        event->target = kaa_bytes_copy_create(target, KAA_ENDPOINT_ID_LENGTH, &kaa_data_destroy);
+        KAA_RETURN_IF_NIL(event->target, KAA_ERR_NOMEM);
     }
 
     return KAA_ERR_NONE;
@@ -265,7 +260,7 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
                                        , const char *fqn
                                        , const char *event_data
                                        , size_t event_data_size
-                                       , const char *target)
+                                       , kaa_endpoint_id_p target)
 {
     /**
      * Both the event data + its size and the target may be left unspecified (null).
@@ -289,6 +284,16 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
                                         (size_t) -1);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Filling a new event with data size %u", event_data_size);
+#ifdef KAA_LOG_LEVEL_TRACE_ENABLED
+    if (target) {
+        char target_string[2 * KAA_ENDPOINT_ID_LENGTH + 1];
+        int i = 0;
+        for (; i < KAA_ENDPOINT_ID_LENGTH; ++i) {
+            snprintf(&target_string[2 * i], 2, "%02X", target[i]);
+        }
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event target = %s", target_string);
+    }
+#endif
     kaa_error_t error_code = kaa_fill_event_structure(event
                                                     , new_sequence_number
                                                     , fqn
@@ -296,7 +301,7 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
                                                     , event_data_size
                                                     , target);
     if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to fill a new event (size=%u, target=\"%s\")", event_data_size, target);
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to fill a new event (size=%u)", event_data_size);
         kaa_event_destroy(event);
         return error_code;
     }
@@ -440,7 +445,7 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
 
         if (event->target) {
             error_code = kaa_platform_message_write_aligned(writer,
-                                                            event->target->data
+                                                            event->target->buffer
                                                           , KAA_ENDPOINT_ID_LENGTH);
             if (error_code) {
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to write event target id");
@@ -570,7 +575,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         event_data_size = KAA_NTOHL(event_data_size);
     }
 
-    char event_source[KAA_ENDPOINT_ID_LENGTH];
+    kaa_endpoint_id event_source;
     error_code = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event source endpoint id field");
@@ -832,7 +837,7 @@ kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self
                                                      , const char *fqn
                                                      , const char *event_data
                                                      , size_t event_data_size
-                                                     , const char *target)
+                                                     , kaa_endpoint_id_p target)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOT_INITIALIZED);
 

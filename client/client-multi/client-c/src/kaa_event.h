@@ -24,9 +24,15 @@ extern "C" {
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 
 #include <stddef.h>
+#include <stdint.h>
 #include "kaa_error.h"
 
-typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size, const char *event_source);
+#define KAA_ENDPOINT_ID_LENGTH 20
+
+typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
+typedef const uint8_t* kaa_endpoint_id_p;
+
+typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p event_source);
 typedef size_t kaa_event_block_id;
 
 typedef struct kaa_event_manager_t kaa_event_manager_t;
@@ -47,7 +53,7 @@ typedef struct kaa_event_manager_t kaa_event_manager_t;
  *
  * @return Error code.
  */
-kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data, size_t event_data_size, const char *target);
+kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
 #ifdef kaa_broadcast_event
 #undef kaa_broadcast_event
 #endif
@@ -121,7 +127,7 @@ kaa_error_t kaa_event_remove_transaction(kaa_event_manager_t *self, kaa_event_bl
  *
  * @return Error code.
  */
-kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char *fqn, const char *event_data, size_t event_data_size, const char *target);
+kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
 
 /**
  * @brief Find class family name of the event by its fully-qualified name.

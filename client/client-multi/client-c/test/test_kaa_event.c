@@ -41,7 +41,7 @@ extern kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
                                               , const char *fqn
                                               , const char *event_data
                                               , size_t event_data_size
-                                              , const char *target);
+                                              , kaa_endpoint_id_p target);
 
 extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length, size_t request_id);
@@ -99,7 +99,7 @@ void test_kaa_event_sync_get_size()
      */
     const char *event_data = (const char *) KAA_MALLOC(event_data_size);
 
-    const char *target = "12345678901234567890";
+    kaa_endpoint_id target = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
 
     const size_t buffer_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t);
     char buffer[buffer_size];
@@ -152,7 +152,7 @@ static kaa_error_t serialize_event(kaa_platform_message_writer_t *writer
                                  , const char *fqn
                                  , const char *event_data
                                  , size_t event_data_size
-                                 , const char *target
+                                 , kaa_endpoint_id_p target
                                  , size_t sequence_number
                                  , bool need_sequence_number)
 {
@@ -224,7 +224,7 @@ void test_event_sync_serialize()
     const size_t event_data_size = 16;
     const char *event_data = (const char *) KAA_MALLOC(event_data_size);
 
-    const char *target = "12345678901234567890";
+    kaa_endpoint_id target = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
 
     const size_t server_sync_buffer_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t);
     char server_sync_buffer[server_sync_buffer_size];
@@ -297,14 +297,14 @@ void test_event_sync_serialize()
 
 
 
-void global_event_cb(const char *fqn, const char *data, size_t size, const char *source)
+void global_event_cb(const char *fqn, const char *data, size_t size, kaa_endpoint_id_p source)
 {
     global_events_counter++;
 }
 
 
 
-void specific_event_cb(const char *fqn, const char *data, size_t size, const char *source)
+void specific_event_cb(const char *fqn, const char *data, size_t size, kaa_endpoint_id_p source)
 {
     specific_events_counter++;
 }
@@ -312,7 +312,7 @@ void specific_event_cb(const char *fqn, const char *data, size_t size, const cha
 static size_t event_get_size(const char *fqn
                            , const char *event_data
                            , size_t event_data_size
-                           , const char *source)
+                           , kaa_endpoint_id_p source)
 {
     size_t size = 0;
 
@@ -355,7 +355,7 @@ void test_kaa_server_sync_with_event_callbacks()
     const size_t event_data_size = 14;
     const char *event_data = (const char *) KAA_MALLOC(event_data_size);
 
-    const char *source = "12345678901234567890";
+    kaa_endpoint_id source = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
 
      error_code = kaa_event_manager_add_on_event_callback(event_manager, important_fqn, specific_event_cb);
      ASSERT_EQUAL(error_code, KAA_ERR_NONE);
