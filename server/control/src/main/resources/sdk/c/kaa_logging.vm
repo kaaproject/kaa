@@ -19,9 +19,7 @@
 
 # ifndef KAA_DISABLE_FEATURE_LOGGING
 # include <stddef.h>
-# include "gen/kaa_endpoint_gen.h"
 # include "gen/kaa_logging_gen.h"
-# include "utilities/kaa_uuid.h"
 
 # ifdef __cplusplus
 extern "C" {
@@ -30,7 +28,10 @@ extern "C" {
 typedef kaa_logging_${logName}_t            kaa_user_log_record_t;
 typedef struct kaa_log_collector            kaa_log_collector_t;
 
-void                destroy_log_record(void *record_p);
+typedef struct {
+    uint8_t     *record_data;
+    uint32_t     record_size;
+} kaa_log_entry_t;
 
 /**
  * Interface for log storage.
@@ -50,12 +51,12 @@ void                destroy_log_record(void *record_p);
  *      void destroy(void);
  */
 typedef struct kaa_log_storage_t {
-    void                (* add_log_record)  (kaa_log_entry_t * record);
-    kaa_log_entry_t *   (* get_record)      (kaa_uuid_t uuid);
-    void                (* upload_succeeded)(kaa_uuid_t uuid);
-    void                (* upload_failed)   (kaa_uuid_t uuid);
-    void                (* shrink_to_size)  (size_t size);
-    void                (* destroy)         (void);
+    void                (* add_log_record)       (kaa_log_entry_t record);
+    kaa_log_entry_t     (* get_record)           (uint16_t id, size_t remaining_size);
+    void                (* upload_succeeded)     (uint16_t id);
+    void                (* upload_failed)        (uint16_t id);
+    void                (* shrink_to_size)       (size_t size);
+    void                (* destroy)              (void);
 } kaa_log_storage_t;
 
 /**
@@ -68,7 +69,7 @@ typedef struct kaa_log_storage_t {
  */
 typedef struct kaa_storage_status_t {
     size_t          (* get_total_size)(void);
-    size_t          (* get_records_count)(void);
+    uint16_t        (* get_records_count)(void);
 } kaa_storage_status_t;
 
 typedef struct kaa_log_upload_properties_t {
@@ -92,7 +93,7 @@ typedef enum kaa_log_upload_decision_t {
     CLEANUP     = 2  // Need to cleanup log storage to fit available space.
 } kaa_log_upload_decision_t;
 
-typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_t *);
+typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(const kaa_storage_status_t *);
 
 /**
  * @brief Provide log storage to Kaa.
@@ -110,9 +111,9 @@ typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_
  */
 kaa_error_t                 kaa_logging_init(
                                                     kaa_log_collector_t *
-                                                  , kaa_log_storage_t *
-                                                  , kaa_log_upload_properties_t *
-                                                  , kaa_storage_status_t *
+                                                  , const kaa_log_storage_t *
+                                                  , const kaa_log_upload_properties_t *
+                                                  , const kaa_storage_status_t *
                                                   , log_upload_decision_fn
                                                   );
 

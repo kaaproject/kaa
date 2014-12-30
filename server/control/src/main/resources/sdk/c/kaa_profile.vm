@@ -24,7 +24,6 @@ extern "C" {
 # include <stdbool.h>
 # include "kaa_error.h"
 # include "gen/kaa_profile_gen.h"
-# include "gen/kaa_endpoint_gen.h"
 
 typedef kaa_profile_${profileName}_t kaa_profile_t;
 typedef struct kaa_profile_manager_t kaa_profile_manager_t;

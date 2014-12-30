@@ -68,13 +68,13 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is an implementation of {@link PlatformEncDec} that
  * uses internal binary protocol for data serialization.
- * 
+ *
  * @author Andrew Shvayka
- * 
+ *
  */
 @KaaPlatformProtocol
 public class BinaryEncDec implements PlatformEncDec {
-    
+
     private static final int EVENT_SEQ_NUMBER_REQUEST_OPTION = 0x02;
     private static final int CONFIGURATION_HASH_OPTION = 0x02;
     public static final short PROTOCOL_VERSION = 1;
@@ -91,13 +91,13 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final int MIN_SIZE_OF_MESSAGE_HEADER = 8;
     private static final int MIN_SIZE_OF_EXTENSION_HEADER = 8;
     private static final byte SUCCESS = 0x00;
-    
+
     static final int PADDING_SIZE = 4;
     // Options
     static final byte FAILURE = 0x01;
     static final byte RESYNC = 0x01;
     static final byte NOTHING = 0x00;
-    
+
     private static final byte USER_SYNC_ENDPOINT_ID_OPTION = 0x01;
     private static final short EVENT_DATA_IS_EMPTY_OPTION = (short) 0x02;
     private static final int CLIENT_EVENT_DATA_IS_PRESENT_OPTION = 0x02;
@@ -193,7 +193,7 @@ public class BinaryEncDec implements PlatformEncDec {
         }
 
         int protocolId = buf.getInt();
-        if (protocolId != Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID) {
+        if (protocolId != getId()) {
             throw new PlatformEncDecException(MessageFormat.format("Unknown protocol id {0}!", protocolId));
         }
 
@@ -214,7 +214,7 @@ public class BinaryEncDec implements PlatformEncDec {
     public byte[] encode(ServerSync sync) throws PlatformEncDecException {
         LOG.trace("Encoding server sync {}", sync);
         GrowingByteBuffer buf = new GrowingByteBuffer(DEFAULT_BUFFER_SIZE);
-        buf.putInt(Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID);
+        buf.putInt(getId());
         buf.putShort(PROTOCOL_VERSION);
         buf.putShort(NOTHING); // will be updated later
         encodeMetaData(buf, sync);
@@ -409,7 +409,7 @@ public class BinaryEncDec implements PlatformEncDec {
             buf.putInt(eventSync.getEventSequenceNumberResponse().getSeqNum());
         }
 
-        if (eventSync.getEventListenersResponses() != null) {
+        if (eventSync.getEventListenersResponses() != null && !eventSync.getEventListenersResponses().isEmpty()) {
             buf.put(EVENT_LISTENERS_RESPONSE_FIELD_ID);
             buf.put(NOTHING);
             buf.putShort((short) eventSync.getEventListenersResponses().size());
@@ -790,7 +790,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private static int getIntFromUnsignedShort(ByteBuffer buf) {
         // handle unsigned integers from client
-        return (int) buf.getChar();
+        return buf.getChar();
     }
 
     private static boolean hasOption(int options, int option) {

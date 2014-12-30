@@ -21,6 +21,9 @@
 extern "C" {
 #endif
 
+#define KAA_PLATFORM_PROTOCOL_VERSION        1
+#define KAA_PLATFORM_PROTOCOL_ID             0x3553c66f
+
 #define KAA_ALIGNMENT                        4
 
 /**
@@ -52,6 +55,7 @@ extern "C" {
 #define KAA_REDIRECT_EXTENSION_TYPE         8
 
 
+#define KAA_APPLICATION_TOKEN_LENGTH    20
 
 /**
  * Constants used for a meta data extension.

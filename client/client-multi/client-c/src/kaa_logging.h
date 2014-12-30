@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef KAA_LOGGING_H_
-#define KAA_LOGGING_H_
+# ifndef KAA_LOGGING_H_
+# define KAA_LOGGING_H_
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-#include <stddef.h>
-#include "gen/kaa_logging_gen.h"
+# ifndef KAA_DISABLE_FEATURE_LOGGING
+# include <stddef.h>
+# include "gen/kaa_logging_gen.h"
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 extern "C" {
-#endif
+# endif
 
 typedef kaa_test_log_record_t               kaa_user_log_record_t;
 typedef struct kaa_log_collector            kaa_log_collector_t;
@@ -93,7 +93,7 @@ typedef enum kaa_log_upload_decision_t {
     CLEANUP     = 2  // Need to cleanup log storage to fit available space.
 } kaa_log_upload_decision_t;
 
-typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_t *);
+typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(const kaa_storage_status_t *);
 
 /**
  * @brief Provide log storage to Kaa.
@@ -111,9 +111,9 @@ typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_
  */
 kaa_error_t                 kaa_logging_init(
                                                     kaa_log_collector_t *
-                                                  , kaa_log_storage_t *
-                                                  , kaa_log_upload_properties_t *
-                                                  , kaa_storage_status_t *
+                                                  , const kaa_log_storage_t *
+                                                  , const kaa_log_upload_properties_t *
+                                                  , const kaa_storage_status_t *
                                                   , log_upload_decision_fn
                                                   );
 
@@ -135,10 +135,10 @@ kaa_error_t                 kaa_logging_init(
  */
 kaa_error_t                 kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 } // extern "C"
-#endif
+# endif
 
-#endif
+# endif
 
-#endif /* KAA_LOGGING_H_ */
+# endif /* KAA_LOGGING_H_ */
