@@ -284,16 +284,16 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
                                         (size_t) -1);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Filling a new event with data size %u", event_data_size);
-#ifdef KAA_LOG_LEVEL_TRACE_ENABLED
+# ifdef KAA_LOG_LEVEL_TRACE_ENABLED
     if (target) {
         char target_string[2 * KAA_ENDPOINT_ID_LENGTH + 1];
         int i = 0;
         for (; i < KAA_ENDPOINT_ID_LENGTH; ++i) {
-            snprintf(&target_string[2 * i], 2, "%02X", target[i]);
+            snprintf(&target_string[2 * i], 3, "%02X", target[i]);
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event target = %s", target_string);
     }
-#endif
+# endif
     kaa_error_t error_code = kaa_fill_event_structure(event
                                                     , new_sequence_number
                                                     , fqn
