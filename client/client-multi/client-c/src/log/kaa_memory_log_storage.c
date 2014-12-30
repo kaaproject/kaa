@@ -79,7 +79,7 @@ static void destroy_memory_log_block(void * block_p)
     }
 }
 
-static void memory_log_storage_add_log_record(kaa_log_entry_t record)
+static void memory_log_storage_add_log_record(void *context, kaa_log_entry_t record)
 {
     kaa_log_entry_t *new_entry = (kaa_log_entry_t *) KAA_MALLOC(sizeof(kaa_log_entry_t));
     *new_entry = record;
@@ -87,14 +87,14 @@ static void memory_log_storage_add_log_record(kaa_log_entry_t record)
     log_storage->occupied_size += (size_t) record.record_size;
 }
 
-static bool find_log_block_by_id(void * block_p, void *context)
+static bool find_log_block_by_id(void *block_p, void *context)
 {
     kaa_memory_log_block_t *block = (kaa_memory_log_block_t *) block_p;
     uint16_t *matcher = (uint16_t *) context;
     return (block && matcher) ? (block->id == (*matcher)) : false;
 }
 
-static kaa_log_entry_t memory_log_storage_get_record(uint16_t id, size_t remaining_size)
+static kaa_log_entry_t memory_log_storage_get_record(void *context, uint16_t id, size_t remaining_size)
 {
     kaa_deque_iterator_t *single_log_record = NULL;
 
@@ -144,7 +144,7 @@ static kaa_log_entry_t memory_log_storage_get_record(uint16_t id, size_t remaini
 }
 
 
-static void memory_log_storage_upload_succeeded(uint16_t id)
+static void memory_log_storage_upload_succeeded(void *context, uint16_t id)
 {
     kaa_list_t * block = kaa_list_find_next(log_storage->uploading_blocks, &find_log_block_by_id, &id);
     if (block) {
@@ -152,7 +152,7 @@ static void memory_log_storage_upload_succeeded(uint16_t id)
     }
 }
 
-static void memory_log_storage_upload_failed(uint16_t id)
+static void memory_log_storage_upload_failed(void *context, uint16_t id)
 {
     kaa_list_t * it = kaa_list_find_next(log_storage->uploading_blocks, &find_log_block_by_id, &id);
     if (it) {
@@ -162,7 +162,7 @@ static void memory_log_storage_upload_failed(uint16_t id)
     }
 }
 
-static void memory_log_storage_shrink_to_size(size_t allowed_size)
+static void memory_log_storage_shrink_to_size(void *context, size_t allowed_size)
 {
     while (log_storage->occupied_size > allowed_size) {
         kaa_deque_iterator_t *it = NULL;
@@ -176,7 +176,7 @@ static void memory_log_storage_shrink_to_size(size_t allowed_size)
     }
 }
 
-static void memory_log_storage_destroy()
+static void memory_log_storage_destroy(void *context)
 {
     if (log_storage) {
         kaa_deque_destroy(log_storage->logs, &destroy_log_record);
@@ -185,29 +185,35 @@ static void memory_log_storage_destroy()
     }
 }
 
-static kaa_log_storage_t public_log_storage_interface = {
-        /* add_log_record */    &memory_log_storage_add_log_record,
-        /* get_record */        &memory_log_storage_get_record,
-        /* upload_succeeded */  &memory_log_storage_upload_succeeded,
-        /* upload_failed */     &memory_log_storage_upload_failed,
-        /* shrink_to_size */    &memory_log_storage_shrink_to_size,
-        /* destroy */           &memory_log_storage_destroy
-};
 
-static size_t memory_log_storage_get_total_size()
+
+static size_t memory_log_storage_get_total_size(void *context)
 {
     return log_storage->occupied_size;
 }
 
-static uint16_t memory_log_storage_get_records_count()
+
+
+static uint16_t memory_log_storage_get_records_count(void *context)
 {
     return kaa_deque_size(log_storage->logs);
 }
 
-static kaa_storage_status_t public_log_storage_status_interface = {
-        /* get_total_size */        &memory_log_storage_get_total_size,
-        /* get_records_count */     &memory_log_storage_get_records_count
+
+
+static kaa_log_storage_t public_log_storage_interface = {
+    NULL,                                   /* context */
+    &memory_log_storage_add_log_record,     /* add_log_record */
+    &memory_log_storage_get_record,         /* get_record */
+    &memory_log_storage_upload_succeeded,   /* upload_succeeded */
+    &memory_log_storage_upload_failed,      /* upload_failed */
+    &memory_log_storage_shrink_to_size,     /* shrink_to_size */
+    &memory_log_storage_get_total_size,     /* get_total_size */
+    &memory_log_storage_get_records_count,  /* get_records_count */
+    &memory_log_storage_destroy             /* destroy */
 };
+
+
 
 static void init_memory_log_storage()
 {
@@ -220,33 +226,26 @@ static void init_memory_log_storage()
     kaa_deque_create(&log_storage->logs); // FIXME: handle error if any;
 }
 
+
+
 kaa_log_storage_t * get_memory_log_storage()
 {
     init_memory_log_storage();
     return &public_log_storage_interface;
 }
 
-kaa_storage_status_t * get_memory_log_storage_status()
-{
-    init_memory_log_storage();
-    return &public_log_storage_status_interface;
-}
 
-kaa_log_upload_properties_t * get_memory_log_upload_properties()
-{
-    return &kaa_memory_log_upload_properties;
-}
 
-kaa_log_upload_decision_t memory_log_storage_is_upload_needed(kaa_storage_status_t *status)
+kaa_log_upload_decision_t memory_log_storage_is_upload_needed(void *context, const kaa_log_storage_t *log_storage)
 {
-    if (status != NULL) {
-        if ((*status->get_total_size)() > kaa_memory_log_upload_properties.max_log_storage_volume) {
-            return CLEANUP;
-        }
-        if ((*status->get_total_size)() >= kaa_memory_log_upload_properties.max_log_upload_threshold) {
-            return UPLOAD;
-        }
-    }
+    KAA_RETURN_IF_NIL(log_storage, NOOP);
+
+    if ((*log_storage->get_total_size)(log_storage->context) > kaa_memory_log_upload_properties.max_log_storage_volume)
+        return CLEANUP;
+
+    if ((*log_storage->get_total_size)(log_storage->context) >= kaa_memory_log_upload_properties.max_log_upload_threshold)
+        return UPLOAD;
+
     return NOOP;
 }
 
