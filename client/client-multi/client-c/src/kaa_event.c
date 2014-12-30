@@ -258,6 +258,22 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
     return KAA_ERR_NONE;
 }
 
+/*
+ * @brief Sends raw event
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ * @param[in]       event_data          Serialized event object.
+ * @param[in]       event_data_size     Size of data in event_data parameter.
+ * @param[in]       target              The target endpoint of the event (null-terminated string). The size of
+ *                                      the target parameter should be equal to @link KAA_ENDPOINT_ID_LENGTH @endlink .
+ *                                      If @code NULL @endcode event will be broadcasted.
+ *
+ * @return Error code.
+ */
 kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
                                        , const char *fqn
                                        , const char *event_data
@@ -716,6 +732,20 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
     return KAA_ERR_NONE;
 }
 
+/*
+ * @brief Register listener to an event.
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ *                                      If @code NULL @endcode, this callback will be invoked for
+ *                                      all events which do not have registered specific callback.
+ * @param[in]       callback            Event callback function.
+ *
+ * @return  Error code.
+ */
 kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback)
 {
     KAA_RETURN_IF_NIL2(self, callback, KAA_ERR_BADPARAM);
@@ -839,6 +869,22 @@ kaa_error_t kaa_event_remove_transaction(kaa_event_manager_t *self, kaa_event_bl
     return KAA_ERR_NOT_FOUND;
 }
 
+/*
+ * @brief Adds a raw event to the transaction.
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (@code kaa_event_manager_add_*_event_to_block(...) @endcode)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       trx_id              The ID of the event block to be sent.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ * @param[in]       event_data          Serialized event object.
+ * @param[in]       event_data_size     Size of data in event_data parameter.
+ * @param[in]       target              The target endpoint of the event. If @code NULL @endcode event will be broadcasted.
+ * @param[in]       target_size         Size of data in target parameter.
+ *
+ * @return Error code.
+ */
 kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self
                                                      , kaa_event_block_id trx_id
                                                      , const char *fqn

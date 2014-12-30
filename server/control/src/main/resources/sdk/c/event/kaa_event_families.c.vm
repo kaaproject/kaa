@@ -23,6 +23,16 @@
 # include "kaa_error.h"
 # include "utilities/kaa_mem.h"
 
+extern kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
+extern kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback);
+extern kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
+# ifdef kaa_broadcast_event
+# undef kaa_broadcast_event
+# endif
+# define kaa_broadcast_event(context, fqn, fqn_length, event_data, event_data_size) \
+    kaa_event_manager_send_event((context), (fqn), (fqn_length), (event_data), (event_data_size), NULL, 0)
+
+
 typedef struct kaa_${event_family_name}_ {
 #foreach ($event in $incomingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
