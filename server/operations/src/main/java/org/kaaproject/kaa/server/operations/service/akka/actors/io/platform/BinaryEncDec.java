@@ -414,7 +414,7 @@ public class BinaryEncDec implements PlatformEncDec {
             buf.put(NOTHING);
             buf.putShort((short) eventSync.getEventListenersResponses().size());
             for (EventListenersResponse response : eventSync.getEventListenersResponses()) {
-                buf.putShort((short) Integer.parseInt(response.getRequestId()));
+                buf.putShort((short) response.getRequestId());
                 buf.putShort(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
                 if (response.getListeners() != null) {
                     buf.putInt(response.getListeners().size());
@@ -595,7 +595,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void parseLogClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
         LogClientSync logSync = new LogClientSync();
-        logSync.setRequestId(String.valueOf(getIntFromUnsignedShort(buf)));
+        logSync.setRequestId(getIntFromUnsignedShort(buf));
         int size = getIntFromUnsignedShort(buf);
         List<LogEntry> logs = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -713,7 +713,7 @@ public class BinaryEncDec implements PlatformEncDec {
                 buf.getShort();
                 fqns.add(getUTF8String(buf, fqnLength));
             }
-            requests.add(new EventListenersRequest(String.valueOf(requestId), fqns));
+            requests.add(new EventListenersRequest(requestId, fqns));
         }
         return requests;
     }
@@ -752,7 +752,7 @@ public class BinaryEncDec implements PlatformEncDec {
         for (int i = 0; i < count; i++) {
             int requestId = getIntFromUnsignedShort(buf);
             String accessToken = getUTF8String(buf);
-            requests.add(new EndpointAttachRequest(String.valueOf(requestId), accessToken));
+            requests.add(new EndpointAttachRequest(requestId, accessToken));
         }
         return requests;
     }
@@ -766,7 +766,7 @@ public class BinaryEncDec implements PlatformEncDec {
             int requestId = getIntFromUnsignedShort(buf);
             // reserved
             buf.getShort();
-            requests.add(new EndpointDetachRequest(String.valueOf(requestId), Base64Util.encode(getNewByteArray(buf, PUBLIC_KEY_HASH_SIZE))));
+            requests.add(new EndpointDetachRequest(requestId, Base64Util.encode(getNewByteArray(buf, PUBLIC_KEY_HASH_SIZE))));
         }
         return requests;
     }

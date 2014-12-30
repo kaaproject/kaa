@@ -16,7 +16,7 @@
 package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class EndpointAttachResponse {
-    private String requestId;
+    private int requestId;
     private String endpointKeyHash;
     private SyncStatus result;
 
@@ -26,7 +26,7 @@ public class EndpointAttachResponse {
     /**
      * All-args constructor.
      */
-    public EndpointAttachResponse(String requestId, String endpointKeyHash, SyncStatus result) {
+    public EndpointAttachResponse(int requestId, String endpointKeyHash, SyncStatus result) {
         this.requestId = requestId;
         this.endpointKeyHash = endpointKeyHash;
         this.result = result;
@@ -35,7 +35,7 @@ public class EndpointAttachResponse {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -45,14 +45,14 @@ public class EndpointAttachResponse {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(String value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 
     /**
      * Gets the value of the 'endpointKeyHash' field.
      */
-    public java.lang.String getEndpointKeyHash() {
+    public String getEndpointKeyHash() {
         return endpointKeyHash;
     }
 
@@ -81,6 +81,44 @@ public class EndpointAttachResponse {
      */
     public void setResult(SyncStatus value) {
         this.result = value;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((endpointKeyHash == null) ? 0 : endpointKeyHash.hashCode());
+        result = prime * result + requestId;
+        result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        EndpointAttachResponse other = (EndpointAttachResponse) obj;
+        if (endpointKeyHash == null) {
+            if (other.endpointKeyHash != null) {
+                return false;
+            }
+        } else if (!endpointKeyHash.equals(other.endpointKeyHash)) {
+            return false;
+        }
+        if (requestId != other.requestId) {
+            return false;
+        }
+        if (result != other.result) {
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -194,8 +195,8 @@ public class MessageFactoryTest {
         request.setSyncRequestMetaData(md);
 
         final byte[] rawData = requestConverter.toByteArray(request);
-
-        final byte connectHeader[] = new byte [] { 0x10, 0x3B, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, (byte) 0xf2, (byte) 0x91, (byte) 0xf2, (byte) 0xd4, 0x00, 0x00, 0x00, (byte) 0xC8 };
+        //we assume that size of rawdata is less then 128 here
+        final byte connectHeader[] = new byte [] { 0x10, (byte)(rawData.length + 18), 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, (byte) 0xf2, (byte) 0x91, (byte) 0xf2, (byte) 0xd4, 0x00, 0x00, 0x00, (byte) 0xC8 };
 
         ByteBuffer connectBuffer = ByteBuffer.allocate(rawData.length + 20);
         connectBuffer.put(connectHeader);
@@ -209,8 +210,9 @@ public class MessageFactoryTest {
             @Override
             public void onMessage(Connect message) {
                 Assert.assertEquals(200, message.getKeepAlive());
-                Assert.assertArrayEquals(rawData, message.getSyncRequest());
                 Assert.assertEquals(0xf291f2d4, message.getNextProtocolId());
+                System.out.println(Arrays.toString(message.getSyncRequest()));
+                Assert.assertArrayEquals(rawData, message.getSyncRequest());
             }
         });
         factory.registerMessageListener(listener);

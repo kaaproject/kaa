@@ -40,7 +40,7 @@ std::shared_ptr<LogSyncRequest> LoggingTransport::createLogSyncRequest()
     std::shared_ptr<LogSyncRequest> request(new LogSyncRequest());
 
     LogSyncRequest logBlockRequest = collector_.getLogUploadRequest();
-    if (!logBlockRequest.requestId.is_null() && !logBlockRequest.requestId.get_string().empty()) {
+    if (logBlockRequest.requestId != 0) {
         request.reset(new LogSyncRequest(logBlockRequest));
     }
 

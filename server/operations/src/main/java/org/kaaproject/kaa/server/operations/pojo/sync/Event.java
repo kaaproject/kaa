@@ -183,8 +183,19 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event [seqNum=" + seqNum + ", eventClassFQN=" + eventClassFQN + ", eventData=" + eventData + ", source=" + source + ", target=" + target + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("Event [seqNum=");
+        builder.append(seqNum);
+        builder.append(", eventClassFQN=");
+        builder.append(eventClassFQN);
+        builder.append(", eventData=");
+        builder.append(eventData);
+        builder.append(", source=");
+        builder.append(source);
+        builder.append(", target=");
+        builder.append(target);
+        builder.append("]");
+        return builder.toString();
     }
-
 
 }

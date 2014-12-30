@@ -51,7 +51,7 @@ public interface LogStorage {
      *
      * @param id Unique id of sent log block
      */
-    void removeRecordBlock(String id);
+    void removeRecordBlock(int id);
 
     /**
      * Removes elder records until occupied size becomes equal or less than
@@ -66,5 +66,5 @@ public interface LogStorage {
      *
      * @param id Unique id of log block.
      */
-    void notifyUploadFailed(String id);
+    void notifyUploadFailed(int id);
 }

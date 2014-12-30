@@ -117,7 +117,7 @@
  "name": "EndpointAttachRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "endpointAccessToken", "type": "string"}
  ]
 },
@@ -127,7 +127,7 @@
  "name": "EndpointAttachResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "endpointKeyHash", "type": ["string", "null"]},
      {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
  ]
@@ -138,7 +138,7 @@
  "name": "EndpointDetachRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "endpointKeyHash", "type": "string"}
  ]
 },
@@ -148,7 +148,7 @@
  "name": "EndpointDetachResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
  ]
 },
@@ -170,7 +170,7 @@
  "name": "EventListenersRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "eventClassFQNs", "type": {"type": "array", "items":"string"}}
  ]
 },
@@ -180,7 +180,7 @@
  "name": "EventListenersResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "listeners", "type": [{"type": "array", "items":"string"}, "null"]},
      {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
  ]
@@ -310,7 +310,7 @@
  "name": "LogSyncRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": ["string", "null"]},
+     {"name": "requestId", "type": "int"},
      {"name": "logEntries", "type": [{ "type": "array", "items": "org.kaaproject.kaa.common.endpoint.gen.LogEntry"}, "null"] }
  ]
 },
@@ -377,7 +377,7 @@
  "name": "LogSyncResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
  ]
 },
@@ -396,7 +396,7 @@
  "name": "SyncRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": ["int", "null"]},
+     {"name": "requestId", "type": "int"},
      {"name": "syncRequestMetaData", "type": ["org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData", "null"]},
      {"name": "profileSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest", "null"]},
      {"name": "configurationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest", "null"]},
@@ -412,7 +412,7 @@
  "name": "SyncResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": ["int", "null"]},
+     {"name": "requestId", "type": "int"},
      {"name": "status", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
      {"name": "profileSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse", "null"]},
      {"name": "configurationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse", "null"]},

@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.operations.pojo.sync;
 import java.util.List;
 
 public class EventListenersRequest {
-    private String requestId;
+    private int requestId;
     private List<String> eventClassFQNs;
 
     public EventListenersRequest() {
@@ -27,7 +27,7 @@ public class EventListenersRequest {
     /**
      * All-args constructor.
      */
-    public EventListenersRequest(String requestId, List<String> eventClassFQNs) {
+    public EventListenersRequest(int requestId, List<String> eventClassFQNs) {
         this.requestId = requestId;
         this.eventClassFQNs = eventClassFQNs;
     }
@@ -35,7 +35,7 @@ public class EventListenersRequest {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -45,7 +45,7 @@ public class EventListenersRequest {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(String value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 
@@ -71,7 +71,7 @@ public class EventListenersRequest {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((eventClassFQNs == null) ? 0 : eventClassFQNs.hashCode());
-        result = prime * result + ((requestId == null) ? 0 : requestId.hashCode());
+        result = prime * result + requestId;
         return result;
     }
 
@@ -94,14 +94,20 @@ public class EventListenersRequest {
         } else if (!eventClassFQNs.equals(other.eventClassFQNs)) {
             return false;
         }
-        if (requestId == null) {
-            if (other.requestId != null) {
-                return false;
-            }
-        } else if (!requestId.equals(other.requestId)) {
+        if (requestId != other.requestId) {
             return false;
         }
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EventListenersRequest [requestId=");
+        builder.append(requestId);
+        builder.append(", eventClassFQNs=");
+        builder.append(eventClassFQNs);
+        builder.append("]");
+        return builder.toString();
+    }
 }

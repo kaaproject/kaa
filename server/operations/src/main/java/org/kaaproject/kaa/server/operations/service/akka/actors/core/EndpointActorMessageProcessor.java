@@ -444,7 +444,7 @@ public class EndpointActorMessageProcessor {
                 for (EndpointDetachRequest detachRequest : detachRequests) {
                     for (EndpointDetachResponse detachResponse : responseHolder.getResponse().getUserSync()
                             .getEndpointDetachResponses()) {
-                        if (detachRequest.getRequestId().equals(detachResponse.getRequestId())) {
+                        if (detachRequest.getRequestId() == detachResponse.getRequestId()) {
                             if (detachResponse.getResult() != SyncStatus.SUCCESS) {
                                 LOG.debug("[{}][{}] Skipped unsuccessful detach response [{}]", endpointKey, actorKey,
                                         detachResponse.getRequestId());

@@ -63,15 +63,15 @@ public:
 
     virtual std::list<Event> getPendingEvents();
 
-    virtual std::map<std::string, std::list<std::string> > getPendingListenerRequests() {
-        std::map<std::string, std::list<std::string> > result;
+    virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests() {
+        std::map<std::int32_t, std::list<std::string> > result;
         for (const auto& idToFqnList : eventListenersRequests_) {
             result.insert(std::make_pair(idToFqnList.first, idToFqnList.second->eventFQNs_));
         }
         return result;
     }
 
-    virtual std::string findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener);
+    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener);
 
     virtual void setTransport(EventTransport *transport) {
         eventTransport_ = transport;
@@ -111,7 +111,7 @@ private:
     EventTransport *          eventTransport_;
     IKaaClientStateStoragePtr status_;
 
-    std::map<std::string/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
+    std::map<std::int32_t/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
 };
 
 } /* namespace kaa */

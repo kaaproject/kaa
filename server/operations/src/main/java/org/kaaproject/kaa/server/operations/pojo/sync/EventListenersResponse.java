@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.operations.pojo.sync;
 import java.util.List;
 
 public class EventListenersResponse {
-    private String requestId;
+    private int requestId;
     private List<String> listeners;
     private SyncStatus result;
 
@@ -28,7 +28,7 @@ public class EventListenersResponse {
     /**
      * All-args constructor.
      */
-    public EventListenersResponse(String requestId, List<String> listeners,
+    public EventListenersResponse(int requestId, List<String> listeners,
             SyncStatus result) {
         this.requestId = requestId;
         this.listeners = listeners;
@@ -38,7 +38,7 @@ public class EventListenersResponse {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -48,7 +48,7 @@ public class EventListenersResponse {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(String value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 

@@ -16,9 +16,8 @@
 package org.kaaproject.kaa.server.operations.pojo.sync;
 
 public class EndpointDetachResponse {
-    private String requestId;
+    private int requestId;
     private SyncStatus result;
-
 
     public EndpointDetachResponse() {
     }
@@ -26,7 +25,7 @@ public class EndpointDetachResponse {
     /**
      * All-args constructor.
      */
-    public EndpointDetachResponse(String requestId, SyncStatus result) {
+    public EndpointDetachResponse(int requestId, SyncStatus result) {
         this.requestId = requestId;
         this.result = result;
     }
@@ -34,7 +33,7 @@ public class EndpointDetachResponse {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -44,7 +43,7 @@ public class EndpointDetachResponse {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(String value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 
@@ -66,6 +65,36 @@ public class EndpointDetachResponse {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + requestId;
+        result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        EndpointDetachResponse other = (EndpointDetachResponse) obj;
+        if (requestId != other.requestId) {
+            return false;
+        }
+        if (result != other.result) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("EndpointDetachResponse [requestId=");
@@ -75,5 +104,4 @@ public class EndpointDetachResponse {
         builder.append("]");
         return builder.toString();
     }
-
 }

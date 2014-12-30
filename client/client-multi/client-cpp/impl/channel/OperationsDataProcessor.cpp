@@ -47,7 +47,7 @@ OperationsDataProcessor::OperationsDataProcessor(
 std::vector<std::uint8_t> OperationsDataProcessor::compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes)
 {
     SyncRequest request;
-    request.requestId.set_int(++requestId);
+    request.requestId = ++requestId;
     request.configurationSyncRequest.set_null();
     request.eventSyncRequest.set_null();
     request.logSyncRequest.set_null();
@@ -156,7 +156,7 @@ std::vector<std::uint8_t> OperationsDataProcessor::compileRequest(const std::map
                 if (isDownDirection) {
                     LogSyncRequest log;
                     log.logEntries.set_null();
-                    log.requestId.set_null();
+                    log.requestId = 0;
                     request.logSyncRequest.set_LogSyncRequest(log);
                 } else if (loggingTransport_) {
                     auto ptr = loggingTransport_->createLogSyncRequest();
@@ -181,7 +181,7 @@ std::vector<std::uint8_t> OperationsDataProcessor::compileRequest(const std::map
 void OperationsDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
     SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
-    std::int32_t requestId = syncResponse.requestId.is_null() ? -1 : syncResponse.requestId.get_int();
+    std::int32_t requestId = syncResponse.requestId;
     KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%")
         % requestId );
 

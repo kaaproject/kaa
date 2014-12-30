@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.operations.pojo.sync;
 import java.util.List;
 
 public class LogClientSync {
-    private String requestId;
+    private int requestId;
     private List<LogEntry> logEntries;
 
     public LogClientSync() {
@@ -27,7 +27,7 @@ public class LogClientSync {
     /**
      * All-args constructor.
      */
-    public LogClientSync(String requestId, List<LogEntry> logEntries) {
+    public LogClientSync(int requestId, List<LogEntry> logEntries) {
         this.requestId = requestId;
         this.logEntries = logEntries;
     }
@@ -35,7 +35,7 @@ public class LogClientSync {
     /**
      * Gets the value of the 'requestId' field.
      */
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
@@ -45,7 +45,7 @@ public class LogClientSync {
      * @param value
      *            the value to set.
      */
-    public void setRequestId(String value) {
+    public void setRequestId(int value) {
         this.requestId = value;
     }
 
@@ -71,7 +71,7 @@ public class LogClientSync {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((logEntries == null) ? 0 : logEntries.hashCode());
-        result = prime * result + ((requestId == null) ? 0 : requestId.hashCode());
+        result = prime * result + requestId;
         return result;
     }
 
@@ -94,11 +94,7 @@ public class LogClientSync {
         } else if (!logEntries.equals(other.logEntries)) {
             return false;
         }
-        if (requestId == null) {
-            if (other.requestId != null) {
-                return false;
-            }
-        } else if (!requestId.equals(other.requestId)) {
+        if (requestId != other.requestId) {
             return false;
         }
         return true;
