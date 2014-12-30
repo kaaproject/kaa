@@ -71,7 +71,7 @@ static void destroy_log_bucket(void *bucket_ptr)
 {
     if (bucket_ptr) {
         kaa_log_bucket_t *bucket = (kaa_log_bucket_t *) bucket_ptr;
-        kaa_deque_destroy(bucket->logs, destroy_log_record);
+        kaa_deque_destroy(bucket->logs, &destroy_log_record);
         KAA_FREE(bucket);
     }
 }
@@ -212,12 +212,9 @@ static void kaa_memory_log_storage_shrink_to_size(void *context, size_t allowed_
     while (log_storage->occupied_size > allowed_size) {
         kaa_deque_iterator_t *it = NULL;
         kaa_deque_pop_front(log_storage->logs, &it); // FIXME: handle error if any;
-        kaa_log_entry_t * record = (kaa_log_entry_t *) kaa_deque_iterator_get_data(it);
-        if (record) {
-            log_storage->occupied_size -= record->record_size;
-        } else {
-            break;
-        }
+        kaa_log_entry_t *record = (kaa_log_entry_t *) kaa_deque_iterator_get_data(it);
+        log_storage->occupied_size -= record->record_size;
+        kaa_deque_iterator_destroy(it, &destroy_log_record);
     }
 }
 
