@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
 
     registrationManager.detachEndpoint(status->getEndpointKeyHash(), &statusListener);
 
-    std::string req_id = registrationManager.getEndpointsToDetach().begin()->first;
+    std::int32_t req_id = registrationManager.getEndpointsToDetach().begin()->first;
 
     EndpointDetachResponse detachResponse;
     detachResponse.requestId = req_id;

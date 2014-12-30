@@ -701,9 +701,8 @@ public:
         if (!logSyncRequest.is_null()) {
             const auto& request = logSyncRequest.get_LogSyncRequest();
             std::ostringstream stream;
-            std::string requestId = request.requestId.is_null() ? "null" : request.requestId.get_string();
             size_t entriesCount = request.logEntries.is_null() ? 0 : request.logEntries.get_array().size();
-            stream << "{ requestId: " << requestId << ", logEntriesCount: " << entriesCount << "}";
+            stream << "{ requestId: " << request.requestId << ", logEntriesCount: " << entriesCount << "}";
             return stream.str();
         }
         static std::string null("null");
@@ -713,9 +712,8 @@ public:
     static std::string LogSyncResponseToString(const SyncResponse::logSyncResponse_t& logSyncResponse) {
         if (!logSyncResponse.is_null()) {
             std::ostringstream stream;
-            std::string requestId = logSyncResponse.get_LogSyncResponse().requestId;
             std::string result = RequestResultTypeToString(logSyncResponse.get_LogSyncResponse().result);
-            stream << "{ requestId: " << requestId << ", result: " << result << "}";
+            stream << "{ requestId: " << logSyncResponse.get_LogSyncResponse().requestId << ", result: " << result << "}";
             return stream.str();
         }
         static std::string null("null");

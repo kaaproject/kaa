@@ -42,7 +42,7 @@ void MemoryLogStorage::addLogRecord(const LogRecord & record)
                      % record.getSize() % occupiedSize_);
 }
 
-ILogStorage::container_type MemoryLogStorage::getRecordBlock(std::size_t blockSize, const std::string& blockId)
+ILogStorage::container_type MemoryLogStorage::getRecordBlock(std::size_t blockSize, const std::int32_t blockId)
 {
     if (blockSize_ != blockSize) {
         resize(blockSize);
@@ -61,10 +61,10 @@ ILogStorage::container_type MemoryLogStorage::getRecordBlock(std::size_t blockSi
     return emptyBlock;
 }
 
-void MemoryLogStorage::removeRecordBlock(const std::string& blockId)
+void MemoryLogStorage::removeRecordBlock(const std::int32_t blockId)
 {
     for (auto block = logBlocks_.begin(); block != logBlocks_.end(); ++block) {
-        if (block->blockId.compare(blockId) == 0) {
+        if (block->blockId == blockId) {
             if (block->finalized_) {
                 occupiedSize_ -= block->actualSize_;
                 logBlocks_.erase(block);
@@ -77,10 +77,10 @@ void MemoryLogStorage::removeRecordBlock(const std::string& blockId)
     KAA_LOG_ERROR(boost::format("Can not remove find log block with id: \"%1%\"") % blockId);
 }
 
-void MemoryLogStorage::notifyUploadFailed(const std::string& blockId)
+void MemoryLogStorage::notifyUploadFailed(const std::int32_t blockId)
 {
     for (auto block = logBlocks_.begin(); block != logBlocks_.end(); ++block) {
-        if (block->blockId.compare(blockId) == 0) {
+        if (block->blockId == blockId) {
             if (block->finalized_) {
                 KAA_LOG_WARN(boost::format("Failed to upload log block with id: \"%1%\"") % blockId);
                 block->finalized_ = false;

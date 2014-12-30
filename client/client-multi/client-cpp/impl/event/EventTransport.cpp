@@ -38,7 +38,7 @@ EventTransport::EventTransport(IEventDataProcessor& processor
 
 std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_t requestId)
 {
-    std::map<std::string, std::list<std::string> > resolveRequests = eventDataProcessor_.getPendingListenerRequests();
+    std::map<std::int32_t, std::list<std::string> > resolveRequests = eventDataProcessor_.getPendingListenerRequests();
     std::list<Event> pendingEvents(eventDataProcessor_.getPendingEvents());
     std::shared_ptr<EventSyncRequest> request(new EventSyncRequest);
 

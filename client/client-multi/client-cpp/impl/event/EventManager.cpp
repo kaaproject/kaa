@@ -164,15 +164,14 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
     }
 }
 
-std::string EventManager::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener)
+std::int32_t EventManager::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener)
 {
     if (eventFQNs.empty() || listener == nullptr) {
         KAA_LOG_WARN("Failed to add event listeners request: bad input data");
         throw KaaException("Bad event listeners data");
     }
 
-    std::string requestId;
-    UuidGenerator::generateUuid(requestId);
+    std::int32_t requestId = UuidGenerator::generateRandomInt();
 
     std::shared_ptr<EventListenersInfo> info(new EventListenersInfo);
     info->eventFQNs_ = eventFQNs;
