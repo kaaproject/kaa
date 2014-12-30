@@ -47,7 +47,7 @@ public class Event {
 
     /**
      * Sets the value of the 'seqNum' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -64,7 +64,7 @@ public class Event {
 
     /**
      * Sets the value of the 'eventClassFQN' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -81,7 +81,7 @@ public class Event {
 
     /**
      * Sets the value of the 'eventData' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -98,7 +98,7 @@ public class Event {
 
     /**
      * Sets the value of the 'source' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -115,7 +115,7 @@ public class Event {
 
     /**
      * Sets the value of the 'target' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -180,5 +180,11 @@ public class Event {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Event [seqNum=" + seqNum + ", eventClassFQN=" + eventClassFQN + ", eventData=" + eventData + ", source=" + source + ", target=" + target + "]";
+    }
+
 
 }

@@ -34,7 +34,7 @@ static kaa_${event_family_name} listeners;
 
 #foreach ($event in $incomingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-static void kaa_event_manager_${e_name}_listener(const char * event_fqn, const char *data, size_t size, const char* event_source)
+static void kaa_event_manager_${e_name}_listener(const char * event_fqn, const char *data, size_t size, kaa_endpoint_id_p event_source)
 {
     (void)event_fqn;
     avro_reader_t reader = avro_reader_memory(data, size);
@@ -54,7 +54,7 @@ kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager
 
 #foreach ($event in $outgoingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, const char *target)
+kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target)
 {
     KAA_RETURN_IF_NIL2(self, event, KAA_ERR_BADPARAM);
 #if(!$emptyRecords.contains($event))
@@ -76,7 +76,7 @@ kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self
 
 #foreach ($event in $outgoingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, const char *target, kaa_event_block_id trx_id)
+kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target, kaa_event_block_id trx_id)
 {
     KAA_RETURN_IF_NIL2(self, event, KAA_ERR_BADPARAM);
 #if(!$emptyRecords.contains($event))
