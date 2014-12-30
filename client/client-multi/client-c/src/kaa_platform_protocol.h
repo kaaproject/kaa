@@ -16,7 +16,8 @@
 
 /**
  * @file kaa_platform_protocol.h
- * @brief Kaa platform level protocol implementation.
+ * @brief Kaa binary platform level protocol implementation
+ * (<a href="https://docs.kaaproject.org/display/KAA/Binary+platform+protocol">org.kaaproject.protocol.platform.binary</a>).
  *
  * Supplies API for serializing client sync messages to Operations server and processing server sync messages.
  */

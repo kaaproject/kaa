@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_common.h
+ * @brief Common C EP SDK definitions and small utilities
+ */
+
 #ifndef KAA_COMMON_H_
 #define KAA_COMMON_H_
 
