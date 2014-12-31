@@ -160,6 +160,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     if (error) {
         KAA_LOG_FATAL(logger, error, "Failed to create Kaa context");
         kaa_log_destroy(logger);
+        *kaa_context_p = NULL;
         return error;
     }
 
@@ -184,7 +185,15 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
         return error;
     }
 
-    return kaa_status_set_endpoint_public_key_hash((*kaa_context_p)->status, d);
+    error = kaa_status_set_endpoint_public_key_hash((*kaa_context_p)->status, d);
+    if (error) {
+        KAA_LOG_FATAL(logger, error, "Failed to set Endpoint public key");
+        kaa_context_destroy(*kaa_context_p);
+        *kaa_context_p = NULL;
+        kaa_log_destroy(logger);
+        return error;
+    }
+    return KAA_ERR_NONE;
 }
 
 
