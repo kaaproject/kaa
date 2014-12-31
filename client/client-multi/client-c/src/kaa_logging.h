@@ -73,19 +73,8 @@ typedef struct {
     void            (* shrink_to_size)    (void *context, size_t size);                             /**< Shrinks log storage to the specified size. */
     size_t          (* get_total_size)    (void *context);                                          /**< Returns total size occupied by logs in the log storage. */
     uint16_t        (* get_records_count) (void *context);                                          /**< Returns total log records count. */
-    void            (* destroy)           (void *context);                                          /**< Destroys the log storage. */
+    void            (* release)           (void *context);                                          /**< Releases the log storage (which may self-destroy). */
 } kaa_log_storage_t;
-
-
-
-/**
- * Logging subsystem settings.
- */
-typedef struct {
-    uint32_t max_log_block_size;       /**< Maximum volume of logs in a single upload request (in bytes). */
-    uint32_t max_log_upload_threshold; /**< Volume of the collected logs (in bytes) to trigger upload. */
-    uint32_t max_log_storage_volume;   /**< Maximum allowed log records volume (in bytes). */
-} kaa_log_upload_properties_t;
 
 
 
@@ -110,32 +99,39 @@ typedef struct {
 
 
 
-/** TODO
- * @brief Provide log storage to Kaa.
+/**
+ * Logging subsystem settings.
+ */
+typedef struct {
+    uint32_t max_log_bucket_size;       /**< Maximum volume of logs in a single upload request (in bytes). */
+    uint32_t max_log_upload_threshold; /**< Volume of the collected logs (in bytes) to trigger upload. */
+    uint32_t max_log_storage_volume;   /**< Maximum allowed log records volume (in bytes). */
+} kaa_log_upload_properties_t;
+
+
+
+/**
+ * @brief Initializes data collection module with the storage interface, upload strategy, and other settings.
  *
- * @param[in] i_storage   Structure containing pointers to functions which are used to manage log storage.
+ * @param[in] self              Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in] storage           Log storage interface.
+ * @param[in] upload_strategy   Log upload strategy interface.
+ * @param[in] properties        Log upload properties structure.
  *
  * @return      Error code.
  */
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self
                            , const kaa_log_storage_t *storage
-                           , const kaa_log_upload_properties_t *properties
-                           , kaa_log_upload_strategy_t *upload_strategy);
+                           , const kaa_log_upload_strategy_t *upload_strategy
+                           , const kaa_log_upload_properties_t *properties);
 
 
 
-/** TODO
- * @brief Add log record to log storage.
+/**
+ * @brief Serializes and adds a log record to the log storage.
  *
- * Use this to add the log entry to the predefined log storage.
- * Log record will be serialized and pushed to a log storage interface via
- * <pre>
- * void            (* add_log_record)  (kaa_log_entry_t * record);
- * </pre>
- * See also @see kaa_log_storage_t.
- *
- * @param[in]   self    Valid pointer to log collector instance.
- * @param[in]   entry   Valid pointer to log entry which is going to be added.
+ * @param[in] self    Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in] entry   Valid pointer to log entry to be added to the storage.
  *
  * @return      Error code.
  *

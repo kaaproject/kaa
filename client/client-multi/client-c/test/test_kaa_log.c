@@ -220,7 +220,7 @@ int test_init(void)
     kaa_log_upload_properties_t props = { 1024, 1024, 2048 };
     kaa_log_upload_strategy_t strategy = { NULL, &upload_decision };
 
-    error = kaa_logging_init(log_collector, &storage, &props, &strategy);
+    error = kaa_logging_init(log_collector, &storage, &strategy, &props);
     if (error)
         return error;
 

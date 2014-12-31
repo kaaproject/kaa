@@ -20,6 +20,7 @@
  *
  * Provides a sample implementation of Kaa C EP SDK log storage that does in-memory temporary persistence of log records.
  */
+
 #ifndef KAA_MEMORY_LOG_STORAGE_H_
 #define KAA_MEMORY_LOG_STORAGE_H_
 
@@ -50,6 +51,15 @@ typedef struct kaa_memory_log_storage_t kaa_memory_log_storage_t;
  * @return Error code.
  */
 kaa_error_t kaa_memory_log_storage_create(kaa_memory_log_storage_t **log_storage_p, kaa_logger_t *logger);
+
+
+
+/**
+ * @brief Destroys an in-memory log storage
+ *
+ * @param[in] self      Pointer to a @c kaa_memory_log_storage_t instance.
+ */
+void kaa_memory_log_storage_destroy(kaa_memory_log_storage_t *self);
 
 
 

@@ -50,13 +50,13 @@ typedef enum {
 
 
 struct kaa_log_collector {
-    uint16_t                        log_bucket_id;
-    kaa_log_storage_t               log_storage;
-    kaa_log_upload_properties_t     log_properties;
-    kaa_log_upload_strategy_t       log_upload_strategy;
-    kaa_status_t                *   status;
-    kaa_channel_manager_t       *   channel_manager;
-    kaa_logger_t                *   logger;
+    uint16_t                     log_bucket_id;
+    kaa_log_storage_t            log_storage;
+    kaa_log_upload_properties_t  log_properties;
+    kaa_log_upload_strategy_t    log_upload_strategy;
+    kaa_status_t                *status;
+    kaa_channel_manager_t       *channel_manager;
+    kaa_logger_t                *logger;
 };
 
 
@@ -65,7 +65,7 @@ static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
 
 
 
-kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
+kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
                                    , kaa_status_t *status
                                    , kaa_channel_manager_t *channel_manager
                                    , kaa_logger_t *logger)
@@ -74,10 +74,10 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
     kaa_log_collector_t * collector = (kaa_log_collector_t *) KAA_CALLOC(1, sizeof(kaa_log_collector_t));
     KAA_RETURN_IF_NIL(collector, KAA_ERR_NOMEM);
 
-    collector->log_bucket_id        = 0;
-    collector->status               = status;
-    collector->channel_manager      = channel_manager;
-    collector->logger               = logger;
+    collector->log_bucket_id   = 0;
+    collector->status          = status;
+    collector->channel_manager = channel_manager;
+    collector->logger          = logger;
 
     *log_collector_p = collector;
     return KAA_ERR_NONE;
@@ -88,8 +88,8 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
 void kaa_log_collector_destroy(kaa_log_collector_t *self)
 {
     if (self) {
-        if (self->log_storage.destroy)
-            (*self->log_storage.destroy)(self->log_storage.context);
+        if (self->log_storage.release)
+            (*self->log_storage.release)(self->log_storage.context);
         KAA_FREE(self);
     }
 }
@@ -98,13 +98,13 @@ void kaa_log_collector_destroy(kaa_log_collector_t *self)
 
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self
                            , const kaa_log_storage_t *storage
-                           , const kaa_log_upload_properties_t *properties
-                           , kaa_log_upload_strategy_t *upload_strategy)
+                           , const kaa_log_upload_strategy_t *upload_strategy
+                           , const kaa_log_upload_properties_t *properties)
 {
     KAA_RETURN_IF_NIL4(self, storage, properties, upload_strategy, KAA_ERR_BADPARAM);
 
-    if (self->log_storage.destroy)
-        (*self->log_storage.destroy)(self->log_storage.context);    // FIXME: Why destroy???
+    if (self->log_storage.release)
+        (*self->log_storage.release)(self->log_storage.context);
 
     self->log_storage = *storage;
     self->log_properties = *properties;
@@ -121,8 +121,8 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self
 
 static void update_storage(kaa_log_collector_t *self)
 {
-    kaa_log_upload_decision_t decision = (*self->log_upload_strategy.log_upload_decision_fn)(
-            self->log_upload_strategy.context, &self->log_storage);
+    kaa_log_upload_decision_t decision =
+            (*self->log_upload_strategy.log_upload_decision_fn)(self->log_upload_strategy.context, &self->log_storage);
     switch (decision) {
         case CLEANUP:
             KAA_LOG_WARN(self->logger, KAA_ERR_NONE, "Need to cleanup log storage. Current size: %zu, Maximum volume: %zu"
@@ -195,7 +195,7 @@ kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expe
     size_t total_size = self->log_storage.get_total_size(self->log_storage.context);
 
     size_t actual_size = records_count * sizeof(uint32_t) + records_count * KAA_MAX_PADDING_LENGTH + total_size;
-    *expected_size += ((actual_size < self->log_properties.max_log_block_size) ? actual_size : self->log_properties.max_log_block_size);
+    *expected_size += ((actual_size < self->log_properties.max_log_bucket_size) ? actual_size : self->log_properties.max_log_bucket_size);
 
     return KAA_ERR_NONE;
 }
@@ -225,8 +225,8 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     char *records_count_p = writer->current; // pointer to the records count. Will be filled later.
     writer->current += sizeof(uint16_t);
 
-    ssize_t remaining_size = self->log_properties.max_log_block_size;
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (Block size is %zu)", remaining_size);
+    ssize_t remaining_size = self->log_properties.max_log_bucket_size;
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (Bucket size is %zu)", remaining_size);
 
     uint16_t records_count = 0;
     kaa_log_entry_t entry = self->log_storage.get_next_record(self->log_storage.context
@@ -246,7 +246,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
             return KAA_ERR_WRITE_FAILED;
         }
     }
-    total_size += (self->log_properties.max_log_block_size - remaining_size);
+    total_size += (self->log_properties.max_log_bucket_size - remaining_size);
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracted log records. Total records count = %u. Total extension size = %lu", records_count, total_size);
 
     *((uint32_t *) extension_size_p) = KAA_HTONL(total_size);
@@ -272,9 +272,9 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
         logging_sync_result_t result = *((const uint8_t *) reader->current);
         reader->current += sizeof(uint16_t);
 
-        KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Log block with id %u : %s"
+        KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Log bucket with ID %u : %s"
                 , id
-                , (result == LOGGING_RESULT_SUCCESS ? "uploaded succesfully." : "upload failed.")
+                , (result == LOGGING_RESULT_SUCCESS ? "uploaded successfully." : "upload failed.")
             );
 
         if (result == LOGGING_RESULT_SUCCESS) {

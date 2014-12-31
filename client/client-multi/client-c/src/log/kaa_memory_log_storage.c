@@ -39,22 +39,22 @@ struct kaa_memory_log_storage_t {
 
 
 typedef struct {
-    uint16_t     bucket_id;
+    uint16_t     id;
     kaa_deque_t *logs;          /**< List of @c kaa_log_entry_t */
-    size_t       bucket_size;
+    size_t       size;
 } kaa_log_bucket_t;
 
 
 
 static kaa_log_bucket_t* create_log_bucket(uint16_t id)
 {
-    kaa_log_bucket_t *block = (kaa_log_bucket_t *) KAA_MALLOC(sizeof(kaa_log_bucket_t));
-    if (!block)
+    kaa_log_bucket_t *bucket = (kaa_log_bucket_t *) KAA_MALLOC(sizeof(kaa_log_bucket_t));
+    if (!bucket)
         return NULL;
-    block->bucket_id = id;
-    kaa_deque_create(&block->logs);  // FIXME: handle error if any;
-    block->bucket_size = 0;
-    return block;
+    bucket->id = id;
+    kaa_deque_create(&bucket->logs);  // FIXME: handle error if any;
+    bucket->size = 0;
+    return bucket;
 }
 
 
@@ -100,6 +100,17 @@ kaa_error_t kaa_memory_log_storage_create(kaa_memory_log_storage_t** log_storage
 
 
 
+void kaa_memory_log_storage_destroy(kaa_memory_log_storage_t *self)
+{
+    if (self) {
+        kaa_deque_destroy(self->logs, &destroy_log_record);
+        kaa_list_destroy(self->log_buckets, &destroy_log_bucket);
+        KAA_FREE(self);
+    }
+}
+
+
+
 static void kaa_memory_log_storage_add_log_record(void *context, kaa_log_entry_t record)
 {
     KAA_RETURN_IF_NIL(context,);
@@ -113,11 +124,11 @@ static void kaa_memory_log_storage_add_log_record(void *context, kaa_log_entry_t
 
 
 
-static bool find_log_block_by_id(void *block_p, void *context)
+static bool find_log_bucket_by_id(void *bucket_p, void *context)
 {
-    kaa_log_bucket_t *block = (kaa_log_bucket_t *) block_p;
+    kaa_log_bucket_t *bucket = (kaa_log_bucket_t *) bucket_p;
     uint16_t *matcher = (uint16_t *) context;
-    return (block && matcher) ? (block->bucket_id == (*matcher)) : false;
+    return (bucket && matcher) ? (bucket->id == (*matcher)) : false;
 }
 
 
@@ -143,7 +154,7 @@ static kaa_log_entry_t kaa_memory_log_storage_get_next_record(void *context, uin
     kaa_log_bucket_t *bucket = NULL;
 
     kaa_log_bucket_t *top_log_bucket = (kaa_log_bucket_t*) kaa_list_get_data(self->log_buckets);
-    if (top_log_bucket && bucket_id == top_log_bucket->bucket_id) {
+    if (top_log_bucket && bucket_id == top_log_bucket->id) {
         bucket = top_log_bucket;
     } else {
         bucket = create_log_bucket(bucket_id);
@@ -181,7 +192,7 @@ static void kaa_memory_log_storage_upload_succeeded(void *context, uint16_t buck
     KAA_RETURN_IF_NIL(context,);
     kaa_memory_log_storage_t *log_storage = (kaa_memory_log_storage_t *)context;
 
-    kaa_list_t * block = kaa_list_find_next(log_storage->log_buckets, &find_log_block_by_id, &bucket_id);
+    kaa_list_t *block = kaa_list_find_next(log_storage->log_buckets, &find_log_bucket_by_id, &bucket_id);
     if (block) {
         kaa_list_remove_at(&log_storage->log_buckets, block, &destroy_log_bucket);
     }
@@ -194,7 +205,7 @@ static void kaa_memory_log_storage_upload_failed(void *context, uint16_t bucket_
     KAA_RETURN_IF_NIL(context,);
     kaa_memory_log_storage_t *log_storage = (kaa_memory_log_storage_t *)context;
 
-    kaa_list_t * it = kaa_list_find_next(log_storage->log_buckets, &find_log_block_by_id, &bucket_id);
+    kaa_list_t *it = kaa_list_find_next(log_storage->log_buckets, &find_log_bucket_by_id, &bucket_id);
     if (it) {
         kaa_log_bucket_t *block = kaa_list_get_data(it);
         kaa_list_remove_at(&log_storage->log_buckets, it, &kaa_null_destroy);
@@ -240,14 +251,10 @@ static uint16_t kaa_memory_log_storage_get_records_count(void *context)
 
 
 
-static void kaa_memory_log_storage_destroy(void *context)
+static void kaa_memory_log_storage_release(void *context)
 {
     KAA_RETURN_IF_NIL(context,);
-    kaa_memory_log_storage_t *log_storage = (kaa_memory_log_storage_t *)context;
-
-    kaa_deque_destroy(log_storage->logs, &destroy_log_record);
-    kaa_list_destroy(log_storage->log_buckets, &destroy_log_bucket);
-    KAA_FREE(log_storage);
+    kaa_memory_log_storage_destroy((kaa_memory_log_storage_t *)context);
 }
 
 
@@ -265,7 +272,7 @@ kaa_error_t kaa_memory_log_storage_get_interface(kaa_memory_log_storage_t *self,
         &kaa_memory_log_storage_shrink_to_size,
         &kaa_memory_log_storage_get_total_size,
         &kaa_memory_log_storage_get_records_count,
-        &kaa_memory_log_storage_destroy
+        &kaa_memory_log_storage_release
     };
     return KAA_ERR_NONE;
 }
