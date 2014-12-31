@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FileUploadForm;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -35,7 +36,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AddEcfSchemaDialog extends KaaDialog implements ChangeHandler {
+public class AddEcfSchemaDialog extends KaaDialog implements ChangeHandler, HasErrorMessage {
 
     private AlertPanel errorPanel;
 
@@ -133,7 +134,7 @@ public class AddEcfSchemaDialog extends KaaDialog implements ChangeHandler {
                 new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        setError(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, AddEcfSchemaDialog.this);
                     }
 
                     @Override
@@ -148,23 +149,24 @@ public class AddEcfSchemaDialog extends KaaDialog implements ChangeHandler {
         return schemaFileUpload.getFileName().length()>0;
     }
 
-    private void setError(String error) {
-        if (error!= null) {
-            errorPanel.setText(error);
-            errorPanel.setVisible(true);
-        }
-        else {
-            errorPanel.setText("");
-            errorPanel.setVisible(false);
-        }
-    }
-    
     public interface Listener {
 
         public void onAdd();
 
         public void onClose();
 
+    }
+
+    @Override
+    public void clearError() {
+        errorPanel.setMessage("");
+        errorPanel.setVisible(false);
+    }
+
+    @Override
+    public void setErrorMessage(String message) {
+        errorPanel.setMessage(message);
+        errorPanel.setVisible(true);
     }
 
 }

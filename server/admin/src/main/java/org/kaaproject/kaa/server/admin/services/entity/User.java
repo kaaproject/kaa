@@ -27,13 +27,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 public class User {
-
-    private static final long serialVersionUID = -89829838179537039L;
+    
+    public static final int TEMPORARY_PASSWORD_LENGTH = 12;
 
     @Id
     @GeneratedValue
@@ -46,7 +44,8 @@ public class User {
     private String lastName;
     private String mail;
     private boolean tempPassword;
-
+    private String passwordResetHash;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @Fetch(FetchMode.JOIN)
     private Collection<Authority> authorities;
@@ -115,6 +114,13 @@ public class User {
         this.tempPassword = tempPassword;
     }
 
+    public String getPasswordResetHash() {
+        return passwordResetHash;
+    }
+
+    public void setPasswordResetHash(String passwordResetHash) {
+        this.passwordResetHash = passwordResetHash;
+    }
 
     @XmlTransient
     public Collection<Authority> getAuthorities() {

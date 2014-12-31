@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.TopicListBox;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,7 +38,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List<TopicDto>> {
+public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List<TopicDto>>, HasErrorMessage {
 
     private AlertPanel errorPanel;
 
@@ -140,11 +141,12 @@ public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List
                     new AsyncCallback<Void>() {
                       @Override
                       public void onFailure(Throwable caught) {
-                          setError(Utils.getErrorMessage(caught));
+                          Utils.handleException(caught, AddTopicDialog.this);
                       }
 
                       @Override
                       public void onSuccess(Void result) {
+                          clearError();
                           addTopics(topicIds);
                       }
             });
@@ -158,15 +160,16 @@ public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List
         return topic.getValue() != null && !topic.getValue().isEmpty();
     }
 
-    private void setError(String error) {
-        if (error!= null) {
-            errorPanel.setText(error);
-            errorPanel.setVisible(true);
-        }
-        else {
-            errorPanel.setText("");
-            errorPanel.setVisible(false);
-        }
+    @Override
+    public void clearError() {
+        errorPanel.setMessage("");
+        errorPanel.setVisible(false);
+    }
+
+    @Override
+    public void setErrorMessage(String message) {
+        errorPanel.setMessage(message);
+        errorPanel.setVisible(true);
     }
 
 }

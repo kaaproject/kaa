@@ -96,7 +96,7 @@ public class UserProfileActivity
         KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId,new AsyncCallback<ResultCode>() {
             @Override
             public void onFailure(Throwable caught) {
-                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                Utils.handleException(caught, detailsView);
             }
 
             @Override
@@ -121,7 +121,7 @@ public class UserProfileActivity
                     }
 
                     public void onFailure(Throwable caught) {
-                        detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, detailsView);
                     }
         });
     }

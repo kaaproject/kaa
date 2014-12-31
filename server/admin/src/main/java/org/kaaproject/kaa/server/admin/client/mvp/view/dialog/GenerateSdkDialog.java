@@ -36,6 +36,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -54,7 +55,7 @@ import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class GenerateSdkDialog extends KaaDialog {
+public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
 
     private AlertPanel errorPanel;
 
@@ -416,11 +417,12 @@ public class GenerateSdkDialog extends KaaDialog {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        setError(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, GenerateSdkDialog.this);
                     }
 
                     @Override
                     public void onSuccess(String key) {
+                        clearError();
                         ServletHelper.downloadSdk(key);
                     }
                 });
@@ -435,14 +437,16 @@ public class GenerateSdkDialog extends KaaDialog {
         return result;
     }
 
-    private void setError(String error) {
-        if (error != null) {
-            errorPanel.setText(error);
-            errorPanel.setVisible(true);
-        } else {
-            errorPanel.setText("");
-            errorPanel.setVisible(false);
-        }
+    @Override
+    public void clearError() {
+        errorPanel.setMessage("");
+        errorPanel.setVisible(false);
+    }
+
+    @Override
+    public void setErrorMessage(String message) {
+        errorPanel.setMessage(message);
+        errorPanel.setVisible(true);
     }
 
 }

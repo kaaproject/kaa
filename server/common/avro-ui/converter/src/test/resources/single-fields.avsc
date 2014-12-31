@@ -4,6 +4,7 @@
     "name": "Test",
     "fields": [
             {"name": "testString", "displayName": "Test string field", "maxLength": 1000, "default": "default string", "type": "string"},
+            {"name": "testPasswordString", "displayName": "Test password string field", "maxLength": 1000, "default": "default password", "inputType": "password", "type": "string"},
             {"name": "testInteger", "displayName": "Test integer field", "maxLength": 1000, "default": 20, "type": "int"},
             {"name": "testLong", "displayName": "Test long field", "maxLength": 1000, "default": 30, "type": "long"},
             {"name": "testBoolean", "displayName": "Test boolean field", "default": true, "type": "boolean"},

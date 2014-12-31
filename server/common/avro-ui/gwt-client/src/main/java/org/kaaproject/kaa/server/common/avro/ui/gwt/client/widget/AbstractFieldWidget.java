@@ -222,7 +222,7 @@ public abstract class AbstractFieldWidget<T extends FormField> extends SimplePan
     }
     
     private Widget constructStringWidget(final StringField field, List<HandlerRegistration> handlerRegistrations) {
-        final SizedTextBox textBox = new SizedTextBox(sizedTextStyle, field.getMaxLength());
+        final SizedTextBox textBox = new SizedTextBox(sizedTextStyle, field.getInputType(), field.getMaxLength());
         textBox.setValue(field.getValue());
         handlerRegistrations.add(textBox.addInputHandler(new InputEventHandler() {
             @Override

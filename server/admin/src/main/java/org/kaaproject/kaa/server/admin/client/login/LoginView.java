@@ -51,6 +51,7 @@ public class LoginView extends Composite {
     private TextBox usernameBox;
     private PasswordTextBox passwordBox;
     private Button loginButton;
+    private Label forgotPasswordLabel;
 
     public LoginView() {
 
@@ -75,6 +76,10 @@ public class LoginView extends Composite {
         loginTable.setWidget(0, 1, usernameBox);
         loginTable.setWidget(1, 0, passwordLabel);
         loginTable.setWidget(1, 1, passwordBox);
+        
+        forgotPasswordLabel = new Label(Utils.constants.forgotPassword());
+        forgotPasswordLabel.addStyleName("linkLabel");
+        loginTable.setWidget(2, 0, forgotPasswordLabel);
 
         loginTable.getFlexCellFormatter().setWidth(0, 0, "130px");
         loginTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -84,7 +89,7 @@ public class LoginView extends Composite {
 
         loginButton = new Button(Utils.constants.login());
         loginButton.addStyleName("loginButton");
-        loginTable.setWidget(2, 2, loginButton);
+        loginTable.setWidget(3, 2, loginButton);
         loginButton.getElement().getStyle().setMarginTop(15, Unit.PX);
 
         loginForm.setWidget(loginTable);
@@ -102,6 +107,10 @@ public class LoginView extends Composite {
 
     public PasswordTextBox getPasswordBox() {
         return passwordBox;
+    }
+    
+    public Label getForgotPasswordLabel() {
+        return forgotPasswordLabel;
     }
 
     public void clearMessages() {

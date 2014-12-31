@@ -21,6 +21,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
@@ -29,8 +30,8 @@ import com.google.gwt.view.client.MultiSelectionModel;
 public class TenantsDataProvider extends AbstractDataProvider<TenantUserDto>{
 
     public TenantsDataProvider(MultiSelectionModel<TenantUserDto> selectionModel,
-                                    AsyncCallback<List<TenantUserDto>> asyncCallback) {
-        super(selectionModel, asyncCallback);
+                               HasErrorMessage hasErrorMessage) {
+        super(selectionModel, hasErrorMessage);
     }
 
     @Override

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -46,9 +44,8 @@ public class NotificationSchemasActivity extends AbstractListActivity<Notificati
 
     @Override
     protected AbstractDataProvider<NotificationSchemaDto> getDataProvider(
-            MultiSelectionModel<NotificationSchemaDto> selectionModel,
-            AsyncCallback<List<NotificationSchemaDto>> asyncCallback) {
-        return new NotificationSchemasDataProvider(selectionModel, asyncCallback, applicationId);
+            MultiSelectionModel<NotificationSchemaDto> selectionModel) {
+        return new NotificationSchemasDataProvider(selectionModel, listView, applicationId);
     }
 
     @Override

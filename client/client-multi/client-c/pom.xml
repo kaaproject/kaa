@@ -71,9 +71,12 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
+                        <exclude>**/gcovr.log</exclude>
+                        <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/.*</exclude>
                         <exclude>**/*.log</exclude>
                         <exclude>**/build/**</exclude>
+                        <exclude>**/gcovr</exclude>
                     </excludes>
                 </configuration>
             </plugin>

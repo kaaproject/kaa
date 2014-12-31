@@ -63,7 +63,7 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
             KaaAdmin.getAuthService().checkUserNameOccupied(entity.getUsername(), null, new AsyncCallback<ResultCode>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                    Utils.handleException(caught, detailsView);
                 }
 
                 @Override
@@ -87,7 +87,7 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
         KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId,new AsyncCallback<ResultCode>() {
             @Override
             public void onFailure(Throwable caught) {
-                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                Utils.handleException(caught, detailsView);
             }
 
             @Override
@@ -110,7 +110,7 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
                     }
 
                     public void onFailure(Throwable caught) {
-                        detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, detailsView);
                     }
         });
     }
