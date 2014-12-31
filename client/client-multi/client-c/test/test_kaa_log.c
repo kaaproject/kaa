@@ -24,7 +24,6 @@
 #include "kaa_test.h"
 #include "kaa.h"
 #include "kaa_platform_protocol.h"
-#include "log/kaa_memory_log_storage.h"
 #include "kaa_channel_manager.h"
 #include "kaa_profile.h"
 #include "kaa_platform_utils.h"
