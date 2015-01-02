@@ -1,0 +1,18 @@
+digraph "kaa::IKaaTransport"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="kaa::IKaaTransport",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa::AbstractKaaTransport\l\< TransportType::BOOTSTRAP \>",height=0.2,width=0.4,color="black",URL="$classkaa_1_1AbstractKaaTransport.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="kaa::BootstrapTransport",height=0.2,width=0.4,color="black",URL="$classkaa_1_1BootstrapTransport.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="kaa::AbstractKaaTransport\l\< TransportType::PROFILE \>",height=0.2,width=0.4,color="black",URL="$classkaa_1_1AbstractKaaTransport.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="kaa::ProfileTransport",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ProfileTransport.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="kaa::AbstractKaaTransport\l\< Type \>",height=0.2,width=0.4,color="black",URL="$classkaa_1_1AbstractKaaTransport.html"];
+}

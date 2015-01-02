@@ -1,0 +1,48 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-cpp/kaa" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_6c948d767caf930dc5f0dbd2ef187244 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="client-cpp" fontname="FreeSans", fontsize="10", URL="dir_6c948d767caf930dc5f0dbd2ef187244.html"]
+  subgraph clusterdir_83f90e4da98ad448748a0c1293854263 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_83f90e4da98ad448748a0c1293854263.html"];
+    dir_83f90e4da98ad448748a0c1293854263 [shape=plaintext label="kaa"];
+    dir_18be0b2d964b07d50860ab78d502bbbf [shape=box label="bootstrap" color="black" fillcolor="white" style="filled" URL="dir_18be0b2d964b07d50860ab78d502bbbf.html"];
+    dir_e0d3c5e08d2a34b96d39e895ad0bbab8 [shape=box label="channel" color="red" fillcolor="white" style="filled" URL="dir_e0d3c5e08d2a34b96d39e895ad0bbab8.html"];
+    dir_1ce304b01336447395af3637d7d1b29f [shape=box label="common" color="red" fillcolor="white" style="filled" URL="dir_1ce304b01336447395af3637d7d1b29f.html"];
+    dir_230b36af7c735be2433e119c1ba09e4d [shape=box label="configuration" color="red" fillcolor="white" style="filled" URL="dir_230b36af7c735be2433e119c1ba09e4d.html"];
+    dir_64303bfe0c57eb336a8e27fbff9e5cc0 [shape=box label="event" color="red" fillcolor="white" style="filled" URL="dir_64303bfe0c57eb336a8e27fbff9e5cc0.html"];
+    dir_0f74aed913855a8ac373e87458ac2ffb [shape=box label="http" color="black" fillcolor="white" style="filled" URL="dir_0f74aed913855a8ac373e87458ac2ffb.html"];
+    dir_dde3a508c72b038fc5a353259d77a8e9 [shape=box label="kaatcp" color="black" fillcolor="white" style="filled" URL="dir_dde3a508c72b038fc5a353259d77a8e9.html"];
+    dir_307316089663e495b19829194eebdeab [shape=box label="log" color="black" fillcolor="white" style="filled" URL="dir_307316089663e495b19829194eebdeab.html"];
+    dir_3df7e76c44d941fae8903687d8eead5b [shape=box label="logging" color="black" fillcolor="white" style="filled" URL="dir_3df7e76c44d941fae8903687d8eead5b.html"];
+    dir_36e0ac03a229f34c54c75ffb7231630b [shape=box label="notification" color="black" fillcolor="white" style="filled" URL="dir_36e0ac03a229f34c54c75ffb7231630b.html"];
+    dir_8cfba5d75a6eafa0a0a3cbd7ad99f3cc [shape=box label="observer" color="black" fillcolor="white" style="filled" URL="dir_8cfba5d75a6eafa0a0a3cbd7ad99f3cc.html"];
+    dir_05b69ccf18a4a977e745c043183cd6d9 [shape=box label="profile" color="black" fillcolor="white" style="filled" URL="dir_05b69ccf18a4a977e745c043183cd6d9.html"];
+    dir_57a092d0bef712a9f97a7e363648eab9 [shape=box label="schema" color="red" fillcolor="white" style="filled" URL="dir_57a092d0bef712a9f97a7e363648eab9.html"];
+    dir_9778d4bf6183422a66b3de3497a3ecbf [shape=box label="security" color="black" fillcolor="white" style="filled" URL="dir_9778d4bf6183422a66b3de3497a3ecbf.html"];
+    dir_ad7469b7b033b5c61467ea564b8b4e53 [shape=box label="transact" color="black" fillcolor="white" style="filled" URL="dir_ad7469b7b033b5c61467ea564b8b4e53.html"];
+    dir_9859074c69d47fa78b6e468178f1601b [shape=box label="transport" color="black" fillcolor="white" style="filled" URL="dir_9859074c69d47fa78b6e468178f1601b.html"];
+  }
+  }
+  dir_ad7469b7b033b5c61467ea564b8b4e53->dir_3df7e76c44d941fae8903687d8eead5b [headlabel="1", labeldistance=1.5 headhref="dir_000035_000028.html"];
+  dir_ad7469b7b033b5c61467ea564b8b4e53->dir_1ce304b01336447395af3637d7d1b29f [headlabel="1", labeldistance=1.5 headhref="dir_000035_000015.html"];
+  dir_3df7e76c44d941fae8903687d8eead5b->dir_1ce304b01336447395af3637d7d1b29f [headlabel="2", labeldistance=1.5 headhref="dir_000028_000015.html"];
+  dir_9859074c69d47fa78b6e468178f1601b->dir_1ce304b01336447395af3637d7d1b29f [headlabel="1", labeldistance=1.5 headhref="dir_000036_000015.html"];
+  dir_e0d3c5e08d2a34b96d39e895ad0bbab8->dir_1ce304b01336447395af3637d7d1b29f [headlabel="8", labeldistance=1.5 headhref="dir_000010_000015.html"];
+  dir_e0d3c5e08d2a34b96d39e895ad0bbab8->dir_0f74aed913855a8ac373e87458ac2ffb [headlabel="1", labeldistance=1.5 headhref="dir_000010_000025.html"];
+  dir_e0d3c5e08d2a34b96d39e895ad0bbab8->dir_18be0b2d964b07d50860ab78d502bbbf [headlabel="1", labeldistance=1.5 headhref="dir_000010_000009.html"];
+  dir_05b69ccf18a4a977e745c043183cd6d9->dir_1ce304b01336447395af3637d7d1b29f [headlabel="6", labeldistance=1.5 headhref="dir_000031_000015.html"];
+  dir_05b69ccf18a4a977e745c043183cd6d9->dir_e0d3c5e08d2a34b96d39e895ad0bbab8 [headlabel="3", labeldistance=1.5 headhref="dir_000031_000010.html"];
+  dir_18be0b2d964b07d50860ab78d502bbbf->dir_0f74aed913855a8ac373e87458ac2ffb [headlabel="1", labeldistance=1.5 headhref="dir_000009_000025.html"];
+  dir_18be0b2d964b07d50860ab78d502bbbf->dir_e0d3c5e08d2a34b96d39e895ad0bbab8 [headlabel="2", labeldistance=1.5 headhref="dir_000009_000010.html"];
+  dir_dde3a508c72b038fc5a353259d77a8e9->dir_1ce304b01336447395af3637d7d1b29f [headlabel="1", labeldistance=1.5 headhref="dir_000026_000015.html"];
+  dir_83f90e4da98ad448748a0c1293854263->dir_9778d4bf6183422a66b3de3497a3ecbf [headlabel="1", labeldistance=1.5 headhref="dir_000008_000034.html"];
+  dir_83f90e4da98ad448748a0c1293854263->dir_230b36af7c735be2433e119c1ba09e4d [headlabel="4", labeldistance=1.5 headhref="dir_000008_000018.html"];
+  dir_83f90e4da98ad448748a0c1293854263->dir_57a092d0bef712a9f97a7e363648eab9 [headlabel="2", labeldistance=1.5 headhref="dir_000008_000032.html"];
+  dir_83f90e4da98ad448748a0c1293854263->dir_307316089663e495b19829194eebdeab [headlabel="1", labeldistance=1.5 headhref="dir_000008_000027.html"];
+  dir_83f90e4da98ad448748a0c1293854263->dir_05b69ccf18a4a977e745c043183cd6d9 [headlabel="2", labeldistance=1.5 headhref="dir_000008_000031.html"];
+  dir_83f90e4da98ad448748a0c1293854263->dir_64303bfe0c57eb336a8e27fbff9e5cc0 [headlabel="2", labeldistance=1.5 headhref="dir_000008_000023.html"];
+  dir_83f90e4da98ad448748a0c1293854263->dir_36e0ac03a229f34c54c75ffb7231630b [headlabel="1", labeldistance=1.5 headhref="dir_000008_000029.html"];
+}

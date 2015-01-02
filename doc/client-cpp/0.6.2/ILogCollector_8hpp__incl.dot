@@ -1,0 +1,41 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-cpp/kaa/log/ILogCollector.hpp"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-cpp/kaa/log\l/ILogCollector.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa/KaaDefaults.hpp",height=0.2,width=0.4,color="black",URL="$KaaDefaults_8hpp.html"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="map",height=0.2,width=0.4,color="grey75"];
+  Node2 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="list",height=0.2,width=0.4,color="grey75"];
+  Node2 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="string",height=0.2,width=0.4,color="grey75"];
+  Node2 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="botan/base64.h",height=0.2,width=0.4,color="grey75"];
+  Node2 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="cstdint",height=0.2,width=0.4,color="grey75"];
+  Node2 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="kaa/channel/server\l/IServerInfo.hpp",height=0.2,width=0.4,color="black",URL="$IServerInfo_8hpp.html"];
+  Node8 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="memory",height=0.2,width=0.4,color="grey75"];
+  Node8 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 [label="botan/botan.h",height=0.2,width=0.4,color="grey75"];
+  Node8 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 [label="kaa/gen/BootstrapGen.hpp",height=0.2,width=0.4,color="grey75"];
+  Node8 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 [label="kaa/channel/ServerType.hpp",height=0.2,width=0.4,color="black",URL="$ServerType_8hpp.html"];
+  Node2 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node13 [label="kaa/common/EndpointObject\lHash.hpp",height=0.2,width=0.4,color="black",URL="$EndpointObjectHash_8hpp.html"];
+  Node13 -> Node14 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node14 [label="utility",height=0.2,width=0.4,color="grey75"];
+  Node13 -> Node15 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node15 [label="cstring",height=0.2,width=0.4,color="grey75"];
+  Node13 -> Node16 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node16 [label="botan/sha160.h",height=0.2,width=0.4,color="grey75"];
+  Node13 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node13 -> Node17 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node17 [label="boost/shared_array.hpp",height=0.2,width=0.4,color="grey75"];
+}

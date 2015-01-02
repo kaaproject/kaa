@@ -1,0 +1,10 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-cpp/kaa/event/registration" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_64303bfe0c57eb336a8e27fbff9e5cc0 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="event" fontname="FreeSans", fontsize="10", URL="dir_64303bfe0c57eb336a8e27fbff9e5cc0.html"]
+  dir_096219cf270ceb0d6b536fd79f17c290 [shape=box, label="registration", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_096219cf270ceb0d6b536fd79f17c290.html"];
+  }
+}
