@@ -76,6 +76,7 @@
                         <exclude>**/gcovr</exclude>
                         <exclude>**/*.json</exclude>
                         <exclude>**/.cproject</exclude>
+                        <exclude>**/kaa_status.file</exclude>
                     </excludes>
                 </configuration>
             </plugin>
