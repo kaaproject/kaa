@@ -21,17 +21,17 @@
  * Supplies API for Kaa data collection / logging subsystem.
  */
 
-#ifndef KAA_LOGGING_H_
-#define KAA_LOGGING_H_
+# ifndef KAA_LOGGING_H_
+# define KAA_LOGGING_H_
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
+# ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include <stddef.h>
-#include "gen/kaa_logging_gen.h"
+# include <stddef.h>
+# include "gen/kaa_logging_gen.h"
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 extern "C" {
-#endif
+# endif
 
 
 
@@ -138,10 +138,10 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self
  */
 kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 }      /* extern "C" */
-#endif
+# endif
 
-#endif /* KAA_DISABLE_FEATURE_LOGGING */
+# endif /* KAA_DISABLE_FEATURE_LOGGING */
 
-#endif /* KAA_LOGGING_H_ */
+# endif /* KAA_LOGGING_H_ */
