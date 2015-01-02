@@ -71,8 +71,8 @@ public:
 
     virtual void removeAttachedEndpointListListener(IAttachedEndpointListListener *listener);
 
-    virtual std::map<std::string, std::string>  getEndpointsToAttach();
-    virtual std::map<std::string, std::string>  getEndpointsToDetach();
+    virtual std::map<std::int32_t, std::string>  getEndpointsToAttach();
+    virtual std::map<std::int32_t, std::string>  getEndpointsToDetach();
     virtual UserAttachRequestPtr                getUserAttachRequest();
 
     virtual void onUserAttach(const UserSyncResponse::userAttachResponse_t& response);
@@ -118,8 +118,8 @@ private:
 
     UserAttachRequestPtr userAttachRequest_;
 
-    std::map<std::string/*requestId*/, EndpointOperationInfo>  attachingEndpoints_;
-    std::map<std::string/*requestId*/, EndpointOperationInfo>  detachingEndpoints_;
+    std::map<std::int32_t/*requestId*/, EndpointOperationInfo>  attachingEndpoints_;
+    std::map<std::int32_t/*requestId*/, EndpointOperationInfo>  detachingEndpoints_;
     std::map<std::string/*epToken*/, std::string/*epHash*/>    attachedEndpoints_;
     KAA_R_MUTEX_DECLARE(endpointsGuard_);
 

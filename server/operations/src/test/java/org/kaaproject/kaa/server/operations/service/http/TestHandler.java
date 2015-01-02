@@ -21,7 +21,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.util.UUID;
 
-import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
+import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 import org.kaaproject.kaa.server.common.server.http.DefaultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class TestHandler extends DefaultHandler {
      */
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx,
-            final CommandProcessor msg) throws Exception {
+            final AbstractCommand msg) throws Exception {
 //        TODO: fix this
 //        AbstractHttpSyncCommand<SpecificRecordBase, SpecificRecordBase> command = (AbstractHttpSyncCommand<SpecificRecordBase, SpecificRecordBase>) msg;
 //        NettyEncodedRequestMessage message = new NettyEncodedRequestMessage(uuidToStr(uuid), ctx, command, ChannelType.HTTP);

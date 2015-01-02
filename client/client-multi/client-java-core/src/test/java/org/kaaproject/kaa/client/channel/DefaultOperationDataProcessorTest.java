@@ -40,6 +40,8 @@ import org.mockito.Mockito;
 
 public class DefaultOperationDataProcessorTest {
 
+    private static final int REQUEST_ID = 42;
+    
     @Test
     public void testUpRequestCreationWithNullTypes() throws Exception {
         DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
@@ -173,7 +175,7 @@ public class DefaultOperationDataProcessorTest {
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
         response.setRedirectSyncResponse(new RedirectSyncResponse("abc"));
         response.setUserSyncResponse(new UserSyncResponse());
-        response.setLogSyncResponse(new LogSyncResponse("id", SyncResponseResultType.SUCCESS));
+        response.setLogSyncResponse(new LogSyncResponse(REQUEST_ID, SyncResponseResultType.SUCCESS));
 
         AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
         operationsDataProcessor.processResponse(converter.toByteArray(response));
@@ -199,7 +201,7 @@ public class DefaultOperationDataProcessorTest {
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
         response.setRedirectSyncResponse(new RedirectSyncResponse("abc"));
         response.setUserSyncResponse(new UserSyncResponse());
-        response.setLogSyncResponse(new LogSyncResponse("id", SyncResponseResultType.SUCCESS));
+        response.setLogSyncResponse(new LogSyncResponse(REQUEST_ID, SyncResponseResultType.SUCCESS));
 
         AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
         operationsDataProcessor.processResponse(converter.toByteArray(response));

@@ -33,7 +33,7 @@ import io.netty.util.concurrent.GenericFutureListener;
  * executor thread for processing
  *
  */
-public class DefaultHandler extends SimpleChannelInboundHandler<CommandProcessor> {
+public class DefaultHandler extends SimpleChannelInboundHandler<AbstractCommand> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestDecoder.class);
 
@@ -53,10 +53,10 @@ public class DefaultHandler extends SimpleChannelInboundHandler<CommandProcessor
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx,
-            final CommandProcessor msg) throws Exception {
-        Callable<CommandProcessor> callable = msg;
+            final AbstractCommand msg) throws Exception {
+        Callable<AbstractCommand> callable = msg;
 
-        final Future<CommandProcessor> future = executor.submit(callable);
+        final Future<AbstractCommand> future = executor.submit(callable);
 
         future.addListener(new GenericFutureListener<Future<Object>>() {
             @Override

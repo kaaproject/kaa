@@ -38,7 +38,7 @@ static uint8_t create_basic_header(uint8_t message_type, uint32_t length, char *
     return 0;
 }
 
-kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive,
+kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_protocol_id,
         char *sync_request, uint32_t sync_request_size,
         char *session_key, uint32_t session_key_size,
         char *signature, uint32_t signature_size,
@@ -55,6 +55,8 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive,
 
     message->protocol_version = PROTOCOL_VERSION;
     message->connect_flags = KAA_CONNECT_FLAGS;
+
+    message->next_ptorocol_id = next_protocol_id;
 
     if (session_key) {
         message->session_key = session_key;
@@ -94,20 +96,25 @@ kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message, char 
     cursor += header_size;
 
     uint16_t name_length = htons(message->protocol_name_length);
-    memcpy(cursor, &name_length, 2);
-    cursor += 2;
+    memcpy(cursor, &name_length, sizeof(uint16_t));
+    cursor += sizeof(uint16_t);
 
     memcpy(cursor, message->protocol_name, message->protocol_name_length);
     cursor += message->protocol_name_length;
 
     *(cursor++) = PROTOCOL_VERSION;
     *(cursor++) = message->connect_flags;
+
+    uint32_t next_protocol_id = htonl(message->next_ptorocol_id);
+    memcpy(cursor, &next_protocol_id, sizeof(uint32_t));
+    cursor += sizeof(uint32_t);
+
     *(cursor++) = message->session_key_flags;
     *(cursor++) = message->signature_flags;
 
     uint16_t keep_alive = htons(message->keep_alive);
-    memcpy(cursor, &keep_alive, 2);
-    cursor += 2;
+    memcpy(cursor, &keep_alive, sizeof(uint16_t));
+    cursor += sizeof(uint16_t);
 
     if (message->session_key && message->session_key_flags) {
         memcpy(cursor, message->session_key, message->session_key_size);
@@ -188,8 +195,8 @@ static kaatcp_error_t kaatcp_get_kaasync_header(const kaatcp_kaasync_header_t *s
     cursor += header_size;
 
     uint16_t name_length = htons(sync_header->protocol_name_length);
-    memcpy(cursor, &name_length, 2);
-    cursor += 2;
+    memcpy(cursor, &name_length, sizeof(uint16_t));
+    cursor += sizeof(uint16_t);
 
     memcpy(cursor, sync_header->protocol_name, sync_header->protocol_name_length);
     cursor += sync_header->protocol_name_length;
@@ -197,8 +204,8 @@ static kaatcp_error_t kaatcp_get_kaasync_header(const kaatcp_kaasync_header_t *s
     *(cursor++) = PROTOCOL_VERSION;
 
     uint16_t message_id = htons(sync_header->message_id);
-    memcpy(cursor, &message_id, 2);
-    cursor += 2;
+    memcpy(cursor, &message_id, sizeof(uint16_t));
+    cursor += sizeof(uint16_t);
 
     *(cursor++) = sync_header->flags;
     *end = cursor;

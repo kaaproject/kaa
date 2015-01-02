@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_bootstrap.h
+ * @brief Management of the Operations servers connection parameters.
+ *
+ * Manages connection parameters to Operations servers that are received from Bootstrap servers.
+ */
+
 #ifndef KAA_BOOTSTRAP_H_
 #define KAA_BOOTSTRAP_H_
 

@@ -23,6 +23,16 @@
 # include "kaa_error.h"
 # include "utilities/kaa_mem.h"
 
+extern kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
+extern kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback);
+extern kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
+# ifdef kaa_broadcast_event
+# undef kaa_broadcast_event
+# endif
+# define kaa_broadcast_event(context, fqn, fqn_length, event_data, event_data_size) \
+    kaa_event_manager_send_event((context), (fqn), (fqn_length), (event_data), (event_data_size), NULL, 0)
+
+
 typedef struct kaa_${event_family_name}_ {
 #foreach ($event in $incomingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
@@ -34,7 +44,7 @@ static kaa_${event_family_name} listeners;
 
 #foreach ($event in $incomingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-static void kaa_event_manager_${e_name}_listener(const char * event_fqn, const char *data, size_t size, const char* event_source)
+static void kaa_event_manager_${e_name}_listener(const char * event_fqn, const char *data, size_t size, kaa_endpoint_id_p event_source)
 {
     (void)event_fqn;
     avro_reader_t reader = avro_reader_memory(data, size);
@@ -54,7 +64,7 @@ kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager
 
 #foreach ($event in $outgoingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, const char *target)
+kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target)
 {
     KAA_RETURN_IF_NIL2(self, event, KAA_ERR_BADPARAM);
 #if(!$emptyRecords.contains($event))
@@ -62,10 +72,10 @@ kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self
     char *buffer = (char *)KAA_MALLOC((event_size) * sizeof(char));
     KAA_RETURN_IF_NIL(buffer, KAA_ERR_NOMEM);
     avro_writer_t writer = avro_writer_memory(buffer, event_size);
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_NOMEM);
     event->serialize(writer, event);
     kaa_error_t result = kaa_event_manager_send_event(self, "${event}", writer->buf, writer->written, target);
     avro_writer_free(writer);
-    KAA_FREE(buffer);
     return result;
 #else
     return kaa_event_manager_send_event(self, "${event}", NULL, 0, target);
@@ -76,7 +86,7 @@ kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self
 
 #foreach ($event in $outgoingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, const char *target, kaa_event_block_id trx_id)
+kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target, kaa_event_block_id trx_id)
 {
     KAA_RETURN_IF_NIL2(self, event, KAA_ERR_BADPARAM);
 #if(!$emptyRecords.contains($event))
@@ -84,10 +94,10 @@ kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_m
     char *buffer = (char *)KAA_MALLOC((event_size) * sizeof(char));
     KAA_RETURN_IF_NIL(buffer, KAA_ERR_NOMEM);
     avro_writer_t writer = avro_writer_memory(buffer, event_size);
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_NOMEM);
     event->serialize(writer, event);
     kaa_error_t result = kaa_event_manager_add_event_to_transaction(self, trx_id, "${event}", writer->buf, writer->written, target);
     avro_writer_free(writer);
-    KAA_FREE(buffer);
     return result;
 #else
     return kaa_event_manager_add_event_to_transaction(self, trx_id, "${event}", NULL, 0, target);

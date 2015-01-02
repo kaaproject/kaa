@@ -121,13 +121,16 @@ kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *
         size_t service_count = details->supported_services_size;
         kaa_service_t* services = details->supported_services;
         for (;service_count--;) {
-            if (*services++ == service_type)
+            if (*services++ == service_type) {
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Sync handler for service %u was found", service_type);
                 return details->sync_fn;
+            }
         }
         handlers = kaa_list_next(handlers);
         details = (kaa_sync_details *) kaa_list_get_data(handlers);
     }
 
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Failed to find sync handler for service %u", service_type);
     return NULL;
 }
 

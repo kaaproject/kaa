@@ -50,21 +50,21 @@ public:
      * \param blockId       Unique identifier of the log record block.
      * \return  Container of records
      */
-    virtual container_type  getRecordBlock(std::size_t blockSize, const std::string& blockId)        = 0;
+    virtual container_type  getRecordBlock(std::size_t blockSize, std::int32_t blockId)        = 0;
 
     /**
      * Called when log block was successfully uploaded.
      *
      * \param blockId   Unique identifier of the log block.
      */
-    virtual void            removeRecordBlock(const std::string& blockId)       = 0;
+    virtual void            removeRecordBlock(std::int32_t blockId)       = 0;
 
     /**
      * Called when log block upload failed.
      *
      * \param blockId   Unique identifier of the log block.
      */
-    virtual void            notifyUploadFailed(const std::string& blockId)      = 0;
+    virtual void            notifyUploadFailed(std::int32_t blockId)      = 0;
 
     /**
      * Shrink storage to fit allowed volume size.

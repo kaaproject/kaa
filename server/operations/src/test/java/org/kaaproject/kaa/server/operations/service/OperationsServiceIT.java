@@ -50,23 +50,6 @@ import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
-import org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
-import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
@@ -101,6 +84,23 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointVersionInfo;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand;
+import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,7 +121,7 @@ public class OperationsServiceIT extends AbstractTest {
 
     private static final String ENDPOINT_ACCESS_TOKEN = "endpointAccessToken";
     private static final String INVALID_ENDPOINT_ACCESS_TOKEN = "InvalidEndpointAccessToken";
-    private static final String REQUEST_ID1 = "request1";
+    private static final int REQUEST_ID1 = 42;
     private static final String USER_EXTERNAL_ID = "user@test.com";
     private static final String USER_ACCESS_TOKEN = "userAccessToken";
     private static final String INVALID_USER_ACCESS_TOKEN = "invalidUserAccessToken";
@@ -336,72 +336,72 @@ public class OperationsServiceIT extends AbstractTest {
     @Test
     public void basicRegistrationTest() throws GetDeltaException, IOException {
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        ProfileSyncRequest profileSync = new ProfileSyncRequest(ByteBuffer.wrap(ENDPOINT_KEY),
+        ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
                 ByteBuffer.wrap(profile),
                 new EndpointVersionInfo(CONF_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
                 null);
-        request.setProfileSyncRequest(profileSync);
+        request.setProfileSync(profileSync);
 
-        request.setConfigurationSyncRequest(new ConfigurationSyncRequest());
+        request.setConfigurationSync(new ConfigurationClientSync());
 
         SyncResponseHolder holder = operationsService.sync(request);
         currentConfigurationHash = holder.getEndpointProfile().getConfigurationHash();
-        SyncResponse response = holder.getResponse();
+        ServerSync response = holder.getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNotNull(response.getConfigurationSyncResponse());
-        Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSyncResponse().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSyncResponse().getAppStateSeqNumber());
-        Assert.assertNotNull(response.getConfigurationSyncResponse().getConfDeltaBody());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getConfigurationSync());
+        Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
+        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
+        Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
-        Assert.assertNull(response.getConfigurationSyncResponse().getConfSchemaBody());
+        Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
     }
 
     @Test
     public void basicDoubleRegistrationTest() throws GetDeltaException, IOException {
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        ProfileSyncRequest profileSync = new ProfileSyncRequest(ByteBuffer.wrap(ENDPOINT_KEY),
+        ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
                 ByteBuffer.wrap(profile),
                 new EndpointVersionInfo(CONF_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
                 null);
-        request.setProfileSyncRequest(profileSync);
+        request.setProfileSync(profileSync);
 
-        request.setConfigurationSyncRequest(new ConfigurationSyncRequest());
+        request.setConfigurationSync(new ConfigurationClientSync());
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
 
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNotNull(response.getConfigurationSyncResponse());
-        Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSyncResponse().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSyncResponse().getAppStateSeqNumber());
-        Assert.assertNotNull(response.getConfigurationSyncResponse().getConfDeltaBody());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getConfigurationSync());
+        Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
+        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
+        Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
-        Assert.assertNull(response.getConfigurationSyncResponse().getConfSchemaBody());
+        Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
 
         response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNotNull(response.getConfigurationSyncResponse());
-        Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSyncResponse().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSyncResponse().getAppStateSeqNumber());
-        Assert.assertNotNull(response.getConfigurationSyncResponse().getConfDeltaBody());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getConfigurationSync());
+        Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
+        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
+        Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
-        Assert.assertNull(response.getConfigurationSyncResponse().getConfSchemaBody());
+        Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
     }
 
     @Test
@@ -409,34 +409,34 @@ public class OperationsServiceIT extends AbstractTest {
         basicRegistrationTest();
         byte[] oldProfile = avroConverter.encode(ENDPOINT_PROFILE);
         byte[] profile = avroConverter.encode(NEW_ENDPOINT_PROFILE);
-        SyncRequest request = new SyncRequest();
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSync request = new ClientSync();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(oldProfile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        ProfileSyncRequest profileSync = new ProfileSyncRequest(null,
+        ProfileClientSync profileSync = new ProfileClientSync(null,
                 ByteBuffer.wrap(profile),
                 new EndpointVersionInfo(CONF_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
                 null);
-        request.setProfileSyncRequest(profileSync);
+        request.setProfileSync(profileSync);
 
-        ConfigurationSyncRequest confSyncRequest = new ConfigurationSyncRequest();
+        ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
         confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
-        request.setConfigurationSyncRequest(confSyncRequest);
+        request.setConfigurationSync(confSyncRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNotNull(response.getConfigurationSyncResponse());
-        Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSyncResponse().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSyncResponse().getAppStateSeqNumber());
-        Assert.assertNull(response.getConfigurationSyncResponse().getConfDeltaBody());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getConfigurationSync());
+        Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
+        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
+        Assert.assertNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
-        Assert.assertNull(response.getConfigurationSyncResponse().getConfSchemaBody());
+        Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
     }
 
     @Test
@@ -444,25 +444,25 @@ public class OperationsServiceIT extends AbstractTest {
         basicRegistrationTest();
         byte[] profile = avroConverter.encode(FAKE_ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        ConfigurationSyncRequest confSyncRequest = new ConfigurationSyncRequest();
+        ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
         confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER - 1);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
-        request.setConfigurationSyncRequest(confSyncRequest);
+        request.setConfigurationSync(confSyncRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.PROFILE_RESYNC, response.getStatus());
-        Assert.assertNull(response.getConfigurationSyncResponse());
-        Assert.assertNull(response.getNotificationSyncResponse());
+        Assert.assertEquals(SyncStatus.PROFILE_RESYNC, response.getStatus());
+        Assert.assertNull(response.getConfigurationSync());
+        Assert.assertNull(response.getNotificationSync());
     }
 
     @Test
@@ -470,30 +470,30 @@ public class OperationsServiceIT extends AbstractTest {
         basicRegistrationTest();
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        ConfigurationSyncRequest confSyncRequest = new ConfigurationSyncRequest();
+        ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
         confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
-        request.setConfigurationSyncRequest(confSyncRequest);
+        request.setConfigurationSync(confSyncRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNotNull(response.getConfigurationSyncResponse());
-        Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSyncResponse().getResponseStatus());
-        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getConfigurationSyncResponse().getAppStateSeqNumber());
-        Assert.assertNull(response.getConfigurationSyncResponse().getConfDeltaBody());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getConfigurationSync());
+        Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
+        Assert.assertEquals(APPLICATION_SEQ_NUMBER, response.getConfigurationSync().getAppStateSeqNumber());
+        Assert.assertNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
-        Assert.assertNull(response.getConfigurationSyncResponse().getConfSchemaBody());
-        Assert.assertNull(response.getNotificationSyncResponse());
+        Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
+        Assert.assertNull(response.getNotificationSync());
     }
 
     @Test
@@ -501,28 +501,28 @@ public class OperationsServiceIT extends AbstractTest {
         basicRegistrationTest();
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        NotificationSyncRequest nfSyncRequest = new NotificationSyncRequest();
+        NotificationClientSync nfSyncRequest = new NotificationClientSync();
         nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
 
-        request.setNotificationSyncRequest(nfSyncRequest);
+        request.setNotificationSync(nfSyncRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNotNull(response.getNotificationSyncResponse());
-        Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSyncResponse().getResponseStatus());
-        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSyncResponse().getAppStateSeqNumber());
-        Assert.assertNotNull(response.getNotificationSyncResponse().getNotifications());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getNotificationSync());
+        Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSync().getResponseStatus());
+        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSync().getAppStateSeqNumber());
+        Assert.assertNotNull(response.getNotificationSync().getNotifications());
         //Only mandatory notification
-        Assert.assertEquals(1, response.getNotificationSyncResponse().getNotifications().size());
+        Assert.assertEquals(1, response.getNotificationSync().getNotifications().size());
     }
 
     @Test
@@ -530,29 +530,29 @@ public class OperationsServiceIT extends AbstractTest {
         basicRegistrationTest();
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        NotificationSyncRequest nfSyncRequest = new NotificationSyncRequest();
+        NotificationClientSync nfSyncRequest = new NotificationClientSync();
         nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         SubscriptionCommand command = new SubscriptionCommand(optionalTopicDto.getId(), SubscriptionCommandType.ADD);
         nfSyncRequest.setSubscriptionCommands(Collections.singletonList(command));
-        request.setNotificationSyncRequest(nfSyncRequest);
+        request.setNotificationSync(nfSyncRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNotNull(response.getNotificationSyncResponse());
-        Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSyncResponse().getResponseStatus());
-        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSyncResponse().getAppStateSeqNumber());
-        Assert.assertNotNull(response.getNotificationSyncResponse().getNotifications());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNotNull(response.getNotificationSync());
+        Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSync().getResponseStatus());
+        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSync().getAppStateSeqNumber());
+        Assert.assertNotNull(response.getNotificationSync().getNotifications());
         //Mandatory + Optional notification
-        Assert.assertEquals(2, response.getNotificationSyncResponse().getNotifications().size());
+        Assert.assertEquals(2, response.getNotificationSync().getNotifications().size());
     }
 
     @Test
@@ -560,27 +560,27 @@ public class OperationsServiceIT extends AbstractTest {
         basicRegistrationTest();
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        UserSyncRequest userRequest = new UserSyncRequest();
+        UserClientSync userRequest = new UserClientSync();
         userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
-        request.setUserSyncRequest(userRequest);
+        request.setUserSync(userRequest);
 
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSyncResponse());
-        Assert.assertNull(response.getNotificationSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSyncResponse().getUserAttachResponse().getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNull(response.getConfigurationSync());
+        Assert.assertNull(response.getNotificationSync());
+        Assert.assertNotNull(response.getUserSync());
+        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
     }
 
     @Test
@@ -588,49 +588,49 @@ public class OperationsServiceIT extends AbstractTest {
         basicRegistrationTest();
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        UserSyncRequest userRequest = new UserSyncRequest();
+        UserClientSync userRequest = new UserClientSync();
         userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, INVALID_USER_ACCESS_TOKEN));
-        request.setUserSyncRequest(userRequest);
+        request.setUserSync(userRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSyncResponse());
-        Assert.assertNull(response.getNotificationSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.FAILURE, response.getUserSyncResponse().getUserAttachResponse().getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNull(response.getConfigurationSync());
+        Assert.assertNull(response.getNotificationSync());
+        Assert.assertNotNull(response.getUserSync());
+        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
+        Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getUserAttachResponse().getResult());
     }
 
     private void createSecondEndpoint() throws GetDeltaException, IOException {
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        ProfileSyncRequest profileSync = new ProfileSyncRequest(ByteBuffer.wrap(ENDPOINT_KEY2),
+        ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY2),
                 ByteBuffer.wrap(profile),
                 new EndpointVersionInfo(CONF_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
                 ENDPOINT_ACCESS_TOKEN);
-        request.setProfileSyncRequest(profileSync);
+        request.setProfileSync(profileSync);
 
-        request.setConfigurationSyncRequest(new ConfigurationSyncRequest());
+        request.setConfigurationSync(new ConfigurationClientSync());
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
     }
 
     @Test
@@ -642,30 +642,30 @@ public class OperationsServiceIT extends AbstractTest {
 
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        UserSyncRequest userRequest = new UserSyncRequest();
+        UserClientSync userRequest = new UserClientSync();
         userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointAttachRequests(Collections.singletonList(new EndpointAttachRequest(REQUEST_ID1, ENDPOINT_ACCESS_TOKEN)));
-        request.setUserSyncRequest(userRequest);
+        request.setUserSync(userRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSyncResponse());
-        Assert.assertNull(response.getNotificationSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSyncResponse().getUserAttachResponse().getResult());
-        Assert.assertNotNull(response.getUserSyncResponse().getEndpointAttachResponses());
-        Assert.assertEquals(1, response.getUserSyncResponse().getEndpointAttachResponses().size());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSyncResponse().getEndpointAttachResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNull(response.getConfigurationSync());
+        Assert.assertNull(response.getNotificationSync());
+        Assert.assertNotNull(response.getUserSync());
+        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertNotNull(response.getUserSync().getEndpointAttachResponses());
+        Assert.assertEquals(1, response.getUserSync().getEndpointAttachResponses().size());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getEndpointAttachResponses().get(0).getResult());
     }
 
     @Test
@@ -677,30 +677,30 @@ public class OperationsServiceIT extends AbstractTest {
 
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        UserSyncRequest userRequest = new UserSyncRequest();
+        UserClientSync userRequest = new UserClientSync();
         userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointAttachRequests(Collections.singletonList(new EndpointAttachRequest(REQUEST_ID1, INVALID_ENDPOINT_ACCESS_TOKEN)));
-        request.setUserSyncRequest(userRequest);
+        request.setUserSync(userRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSyncResponse());
-        Assert.assertNull(response.getNotificationSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSyncResponse().getUserAttachResponse().getResult());
-        Assert.assertNotNull(response.getUserSyncResponse().getEndpointAttachResponses());
-        Assert.assertEquals(1, response.getUserSyncResponse().getEndpointAttachResponses().size());
-        Assert.assertEquals(SyncResponseResultType.FAILURE, response.getUserSyncResponse().getEndpointAttachResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNull(response.getConfigurationSync());
+        Assert.assertNull(response.getNotificationSync());
+        Assert.assertNotNull(response.getUserSync());
+        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertNotNull(response.getUserSync().getEndpointAttachResponses());
+        Assert.assertEquals(1, response.getUserSync().getEndpointAttachResponses().size());
+        Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getEndpointAttachResponses().get(0).getResult());
     }
 
     @Test
@@ -709,30 +709,30 @@ public class OperationsServiceIT extends AbstractTest {
         basicEndpointAttachTest();
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        UserSyncRequest userRequest = new UserSyncRequest();
+        UserClientSync userRequest = new UserClientSync();
         userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()))));
-        request.setUserSyncRequest(userRequest);
+        request.setUserSync(userRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSyncResponse());
-        Assert.assertNull(response.getNotificationSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSyncResponse().getUserAttachResponse().getResult());
-        Assert.assertNotNull(response.getUserSyncResponse().getEndpointDetachResponses());
-        Assert.assertEquals(1, response.getUserSyncResponse().getEndpointDetachResponses().size());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSyncResponse().getEndpointDetachResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNull(response.getConfigurationSync());
+        Assert.assertNull(response.getNotificationSync());
+        Assert.assertNotNull(response.getUserSync());
+        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertNotNull(response.getUserSync().getEndpointDetachResponses());
+        Assert.assertEquals(1, response.getUserSync().getEndpointDetachResponses().size());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getEndpointDetachResponses().get(0).getResult());
     }
 
     @Test
@@ -744,30 +744,30 @@ public class OperationsServiceIT extends AbstractTest {
 
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        UserSyncRequest userRequest = new UserSyncRequest();
+        UserClientSync userRequest = new UserClientSync();
         userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()))));
-        request.setUserSyncRequest(userRequest);
+        request.setUserSync(userRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSyncResponse());
-        Assert.assertNull(response.getNotificationSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse());
-        Assert.assertNotNull(response.getUserSyncResponse().getUserAttachResponse());
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getUserSyncResponse().getUserAttachResponse().getResult());
-        Assert.assertNotNull(response.getUserSyncResponse().getEndpointDetachResponses());
-        Assert.assertEquals(1, response.getUserSyncResponse().getEndpointDetachResponses().size());
-        Assert.assertEquals(SyncResponseResultType.FAILURE, response.getUserSyncResponse().getEndpointDetachResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNull(response.getConfigurationSync());
+        Assert.assertNull(response.getNotificationSync());
+        Assert.assertNotNull(response.getUserSync());
+        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        Assert.assertNotNull(response.getUserSync().getEndpointDetachResponses());
+        Assert.assertEquals(1, response.getUserSync().getEndpointDetachResponses().size());
+        Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getEndpointDetachResponses().get(0).getResult());
     }
 
     @Test
@@ -777,28 +777,28 @@ public class OperationsServiceIT extends AbstractTest {
 
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
-        SyncRequest request = new SyncRequest();
+        ClientSync request = new ClientSync();
 
-        SyncRequestMetaData md = new SyncRequestMetaData();
+        ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setSyncRequestMetaData(md);
+        request.setClientSyncMetaData(md);
 
-        EventSyncRequest eventRequest = new EventSyncRequest();
+        EventClientSync eventRequest = new EventClientSync();
         eventRequest.setEventListenersRequests(Collections.singletonList(new EventListenersRequest(REQUEST_ID1, Arrays.asList("fqn"))));
 
-        request.setEventSyncRequest(eventRequest);
+        request.setEventSync(eventRequest);
 
-        SyncResponse response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request).getResponse();
         Assert.assertNotNull(response);
-        Assert.assertEquals(SyncResponseResultType.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSyncResponse());
-        Assert.assertNull(response.getNotificationSyncResponse());
-        Assert.assertNotNull(response.getEventSyncResponse());
-        Assert.assertNotNull(response.getEventSyncResponse().getEventListenersResponses());
-        Assert.assertEquals(1, response.getEventSyncResponse().getEventListenersResponses().size());
-        Assert.assertEquals(SyncResponseResultType.FAILURE, response.getEventSyncResponse().getEventListenersResponses().get(0).getResult());
+        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        Assert.assertNull(response.getConfigurationSync());
+        Assert.assertNull(response.getNotificationSync());
+        Assert.assertNotNull(response.getEventSync());
+        Assert.assertNotNull(response.getEventSync().getEventListenersResponses());
+        Assert.assertEquals(1, response.getEventSync().getEventListenersResponses().size());
+        Assert.assertEquals(SyncStatus.FAILURE, response.getEventSync().getEventListenersResponses().get(0).getResult());
     }
 
 

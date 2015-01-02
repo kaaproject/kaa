@@ -29,7 +29,7 @@
 /**
  * @brief Listener of ${e_name} events.
  */
-typedef void (* on_${prefix}_${e_name})(${prefix}_${e_name}_t *event, const char *source);
+typedef void (* on_${prefix}_${e_name})(${prefix}_${e_name}_t *event, kaa_endpoint_id_p source);
 #end
 
 #foreach ($event in $incomingEventFqns)
@@ -53,11 +53,13 @@ kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager
  * 
  * @param[in]       self        Valid pointer to event manager.
  * @param[in]       event       Pointer to the event object.
- * @param[in]       target      Target of the event (null-terminated string). If NULL - event will be broadcasted.
+ * @param[in]       target      The target endpoint of the event (null-terminated string). The size of
+ *                              the target parameter should be equal to @link KAA_ENDPOINT_ID_LENGTH @endlink .
+ *                              If @code NULL @endcode event will be broadcasted.
  * 
  * @return Error code.
  */
-kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, const char *target);
+kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target);
 #end
 
 #foreach ($event in $outgoingEventFqns)
@@ -73,7 +75,7 @@ kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self
  *
  * @return Error code.
  */
-kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, const char *target, kaa_event_block_id trx_id);
+kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target, kaa_event_block_id trx_id);
 #end
 
 # endif // KAA_${EVENT_FAMILY_NAME}_H

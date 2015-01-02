@@ -33,6 +33,7 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 
 import org.apache.commons.codec.binary.Base64;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.bootstrap.CommonBSConstants;
 import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
@@ -40,7 +41,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
 import org.kaaproject.kaa.server.common.server.BadRequestException;
-import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
+import org.kaaproject.kaa.server.common.server.http.AbstractCommand;
 
 /**
  * ResolveCommand Class.
@@ -64,7 +65,9 @@ import org.kaaproject.kaa.server.common.server.http.CommandProcessor;
  * @author Andrey Panasenko
  *
  */
-public class ResolveCommand extends CommandProcessor implements CommonBSConstants {
+public class ResolveCommand extends AbstractCommand implements CommonBSConstants {
+
+    private static final String UNKNOWN = "unknown";
 
     static {
         COMMAND_NAME = BOOTSTRAP_RESOLVE_COMMAND;
@@ -172,5 +175,10 @@ public class ResolveCommand extends CommandProcessor implements CommonBSConstant
      */
     public static String getCommandName() {
         return COMMAND_NAME;
+    }
+
+    @Override
+    public int getNextProtocol() {
+        return Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID;
     }
 }

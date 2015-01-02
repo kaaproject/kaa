@@ -64,7 +64,6 @@ set (KAA_SOURCE_FILES
                        src/avro_src/encoding_binary.c
                        src/collections/kaa_deque.c
                        src/collections/kaa_list.c
-                       src/gen/kaa_endpoint_gen.c
                        src/kaa_bootstrap.c
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
@@ -79,7 +78,7 @@ set (KAA_SOURCE_FILES
                        src/log/kaa_memory_log_storage.c
                        src/utilities/kaa_log.c
                        src/utilities/kaa_mem.c
-                       src/utilities/kaa_uuid_int.c
+                       src/kaa_platform_utils.c
 
 )
 
@@ -108,6 +107,24 @@ configure_file (
                     "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties"
 )
 
+add_executable  (test_user_extension
+                    test/test_kaa_user.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_user_extension kaac crypto ${CUNIT_LIB_NAME})
+
+add_executable  (test_meta_extension
+                    test/test_meta_extension.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_meta_extension kaac crypto ${CUNIT_LIB_NAME})
+
+add_executable  (test_platform_utils
+                    test/test_platform_utils.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_platform_utils kaac crypto ${CUNIT_LIB_NAME})
+
 add_executable  (test_context
                     test/test_kaa_context.c
                     test/kaa_test_external.c
@@ -134,7 +151,6 @@ target_link_libraries(test_bootstrap kaac crypto ${CUNIT_LIB_NAME})
 add_executable  (test_profile
                     src/gen/kaa_profile_gen.c
                     test/test_kaa_profile.c
-                   test/kaa_test_external.c
                 )
 target_link_libraries(test_profile kaac crypto ${CUNIT_LIB_NAME})
 

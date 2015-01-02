@@ -16,23 +16,15 @@
 
 package org.kaaproject.kaa.server.operations.service.http;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.avro.specific.SpecificRecordBase;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
-import org.kaaproject.kaa.server.operations.service.http.commands.AbstractHttpSyncCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +41,6 @@ public class TestAkkaService extends Thread implements AkkaService {
     private static final Logger logger = LoggerFactory
             .getLogger(TestAkkaService.class);
 
-    /** Endpoint Service */
-    private final OperationsService endpointService;
-
     /** Boolean operate */
     private boolean operate = true;
 
@@ -64,7 +53,6 @@ public class TestAkkaService extends Thread implements AkkaService {
      */
     public TestAkkaService(OperationsService endpointService) {
         commands = new LinkedList<>();
-        this.endpointService = endpointService;
     }
 
     /* (non-Javadoc)
@@ -153,55 +141,6 @@ public class TestAkkaService extends Thread implements AkkaService {
      */
     @Override
     public void process(SessionInitRequest command) {
-//        TODO: FIX THIS
-//        try {
-//            SpecificRecordBase request = command.getCommand().decode();
-//
-//            command.getCommand().process();
-//
-//
-//            command.getCommand().encode(getResponse(request, command.getCommand()));
-//
-//            command.getChannelContext().writeAndFlush(command.getCommand());
-//
-//        } catch (BadRequestException | GeneralSecurityException | IOException | GetDeltaException e) {
-//            command.getChannelContext().fireExceptionCaught(e);
-//        }
-
-    }
-
-    /**
-     * Generate response
-     * @param request SpecificRecordBase
-     * @param command AbstractEndpointCommand
-     * @return SpecificRecordBase
-     * @throws BadRequestException
-     * @throws GeneralSecurityException
-     * @throws IOException
-     * @throws GetDeltaException
-     */
-    private SpecificRecordBase getResponse(SpecificRecordBase request, AbstractHttpSyncCommand command)
-            throws BadRequestException, GeneralSecurityException, IOException, GetDeltaException {
-
-        if (request == null || command == null) {
-            throw new BadRequestException("Error processing");
-        }
-
-        SpecificRecordBase response = null;
-
-        if (request instanceof SyncRequest) {
-            OperationsHttpServerIT.SyncTestSetRequestReceived(((SyncRequest) request).getConfigurationSyncRequest().getAppStateSeqNumber().intValue(),
-                        (SyncRequest) request);
-
-            response = endpointService.sync((SyncRequest) request).getResponse();
-
-            OperationsHttpServerIT.SyncTestSetResponseSent(((SyncRequest) request).getConfigurationSyncRequest().getAppStateSeqNumber().intValue(),
-                        (SyncResponse) response);
-        } else {
-            throw new BadRequestException("invalid instance of request");
-        }
-
-        return response;
     }
 
     @Override

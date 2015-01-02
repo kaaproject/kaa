@@ -32,17 +32,17 @@ extern "C" {
 #endif
 
 /**
- * @brief Kaa channel manager structure.
+ * Kaa channel manager structure.
  */
 typedef struct kaa_channel_manager_t kaa_channel_manager_t;
 
 /**
- * @brief Kaa sync request handler function for specific services.
+ * Kaa sync request handler function for specific services.
  */
 typedef void (*kaa_sync_handler_fn)(const kaa_service_t services[], size_t service_count);
 
 /**
- * @brief General Kaa sync request handler function for all available services.
+ * General Kaa sync request handler function for all available services.
  */
 typedef void (*kaa_sync_all_handler_fn)();
 
@@ -89,7 +89,7 @@ kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *self,
  * the previously set handler.
  *
  * @param[in]   self                Valid pointer to the channel manager instance.
- * @param[in]   handler             Pointer to a sync handler function.
+ * @param[in]   handler             Pointer to a sync handler function. NULL unsets the value.
  *
  * @return      Error code.
  */

@@ -21,6 +21,8 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
+import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyHttpSyncMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ResponseBuilder;
@@ -45,7 +47,7 @@ public class NettyHttpMessageTest {
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
         SyncStatistics stats = Mockito.mock(SyncStatistics.class);
 
-        NettyHttpSyncMessage message = new NettyHttpSyncMessage(channelId, ctx, channelType, command, responseBuilder, errorBuilder, stats);
+        NettyHttpSyncMessage message = new NettyHttpSyncMessage(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, command, responseBuilder, errorBuilder, stats);
 
         Assert.assertEquals(channelId, message.getChannelUuid());
         Assert.assertEquals(channelType, message.getChannelType());
