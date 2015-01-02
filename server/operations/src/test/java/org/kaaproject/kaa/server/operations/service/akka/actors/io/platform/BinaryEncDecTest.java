@@ -358,11 +358,11 @@ public class BinaryEncDecTest {
         Assert.assertEquals("token", uSync.getUserAttachRequest().getUserAccessToken());
         Assert.assertNotNull(uSync.getEndpointAttachRequests());
         Assert.assertEquals(1, uSync.getEndpointAttachRequests().size());
-        Assert.assertEquals(BIG_MAGIC_NUMBER + "", uSync.getEndpointAttachRequests().get(0).getRequestId());
+        Assert.assertEquals(BIG_MAGIC_NUMBER, uSync.getEndpointAttachRequests().get(0).getRequestId());
         Assert.assertEquals("token2", uSync.getEndpointAttachRequests().get(0).getEndpointAccessToken());
         Assert.assertNotNull(uSync.getEndpointDetachRequests());
         Assert.assertEquals(1, uSync.getEndpointDetachRequests().size());
-        Assert.assertEquals((BIG_MAGIC_NUMBER + 1) + "", uSync.getEndpointDetachRequests().get(0).getRequestId());
+        Assert.assertEquals(BIG_MAGIC_NUMBER + 1, uSync.getEndpointDetachRequests().get(0).getRequestId());
         Assert.assertEquals(Base64Util.encode(keyHash), uSync.getEndpointDetachRequests().get(0).getEndpointKeyHash());
     }
 
@@ -385,7 +385,7 @@ public class BinaryEncDecTest {
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getLogSync());
         LogClientSync logSync = sync.getLogSync();
-        Assert.assertEquals(BIG_MAGIC_NUMBER + "", logSync.getRequestId());
+        Assert.assertEquals(BIG_MAGIC_NUMBER, logSync.getRequestId());
         Assert.assertNotNull(logSync.getLogEntries());
         Assert.assertEquals(1, logSync.getLogEntries().size());
         Assert.assertEquals(MAGIC_NUMBER, logSync.getLogEntries().get(0).getData().array()[MAGIC_NUMBER]);
@@ -538,7 +538,7 @@ public class BinaryEncDecTest {
         Assert.assertEquals(true, eSync.isSeqNumberRequest());
         Assert.assertNotNull(eSync.getEventListenersRequests());
         Assert.assertEquals(1, eSync.getEventListenersRequests().size());
-        Assert.assertEquals(MAGIC_NUMBER + "", eSync.getEventListenersRequests().get(0).getRequestId());
+        Assert.assertEquals(MAGIC_NUMBER, eSync.getEventListenersRequests().get(0).getRequestId());
         Assert.assertNotNull(eSync.getEventListenersRequests().get(0).getEventClassFQNs());
         Assert.assertEquals("name", eSync.getEventListenersRequests().get(0).getEventClassFQNs().get(0));
         Assert.assertNotNull(eSync.getEvents());
