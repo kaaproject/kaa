@@ -24,7 +24,6 @@
 #include "kaa_test.h"
 #include "kaa.h"
 #include "kaa_platform_protocol.h"
-#include "log/kaa_memory_log_storage.h"
 #include "kaa_channel_manager.h"
 #include "kaa_profile.h"
 #include "kaa_platform_utils.h"
@@ -65,22 +64,22 @@ static bool is_add_record_invoked = false;
 static bool is_get_record_invoked = false;
 static bool is_upload_succeeded_invoked = false;
 
-static kaa_log_upload_decision_t upload_decision(const kaa_storage_status_t *status)
+static kaa_log_upload_decision_t upload_decision(void *context, const kaa_log_storage_t *log_storage)
 {
     return UPLOAD;
 }
 
-static size_t get_total_size()
+static size_t get_total_size(void *context)
 {
     return test_log_entry.record_size;
 }
 
-static uint16_t get_records_count()
+static uint16_t get_records_count(void *context)
 {
     return 1;
 }
 
-static void add_log_record(kaa_log_entry_t record)
+static void add_log_record(void *context, kaa_log_entry_t record)
 {
     KAA_LOG_DEBUG(logger, KAA_ERR_NONE, "Adding test record");
     size_t test_log_record_size = test_log_record->get_size(test_log_record);
@@ -99,7 +98,7 @@ static void add_log_record(kaa_log_entry_t record)
     KAA_LOG_DEBUG(logger, KAA_ERR_NONE, "Test record successfully added");
 }
 
-static kaa_log_entry_t get_record(uint16_t id, size_t remaining_size)
+static kaa_log_entry_t get_record(void *context, uint16_t id, size_t remaining_size)
 {
     static kaa_log_entry_t empty = { NULL, 0 };
     if (!is_get_record_invoked) {
@@ -109,23 +108,23 @@ static kaa_log_entry_t get_record(uint16_t id, size_t remaining_size)
     return empty;
 }
 
-static void upload_succeeded(uint16_t id)
+static void upload_succeeded(void *context, uint16_t id)
 {
     ASSERT_EQUAL(request_id, id);
     is_upload_succeeded_invoked = true;
 }
 
-static void upload_failed(uint16_t id)
+static void upload_failed(void *context, uint16_t id)
 {
 
 }
 
-static void shrink_to_size(size_t size)
+static void shrink_to_size(void *context, size_t size)
 {
 
 }
 
-static void destroy()
+static void destroy(void *context)
 {
 
 }
@@ -190,36 +189,39 @@ void test_response()
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
-    if (error || !logger) {
+    if (error || !logger)
         return error;
-    }
-    set_memory_log_storage_logger(logger);
 
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     error = kaa_status_create(&status);
-    if (error || !status) {
+    if (error || !status)
         return error;
-    }
 
     error = kaa_channel_manager_create(&channel_manager, logger);
-    if (error || !channel_manager) {
+    if (error || !channel_manager)
         return error;
-    }
 
     error = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
-    if (error || !log_collector) {
+    if (error || !log_collector)
         return error;
-    }
 
-    kaa_log_storage_t storage = { &add_log_record, &get_record, &upload_succeeded, &upload_failed, &shrink_to_size, &destroy };
+    kaa_log_storage_t storage = {
+            NULL
+            , &add_log_record
+            , &get_record
+            , &upload_succeeded
+            , &upload_failed
+            , &shrink_to_size
+            , &get_total_size
+            , &get_records_count
+            , &destroy };
     kaa_log_upload_properties_t props = { 1024, 1024, 2048 };
-    kaa_storage_status_t status = { &get_total_size, &get_records_count };
+    kaa_log_upload_strategy_t strategy = { NULL, &upload_decision };
 
-    error = kaa_logging_init(log_collector, &storage, &props, &status, &upload_decision);
-    if (error) {
+    error = kaa_logging_init(log_collector, &storage, &strategy, &props);
+    if (error)
         return error;
-    }
 
     test_log_record = kaa_test_log_record_create();
     test_log_record->data = kaa_string_move_create(TEST_LOG_BUFFER, NULL);
@@ -239,7 +241,6 @@ int test_deinit(void)
         KAA_FREE(test_log_entry.record_data);
 #endif
     kaa_log_destroy(logger);
-    set_memory_log_storage_logger(NULL);
 
     return 0;
 }
