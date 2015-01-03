@@ -64,6 +64,8 @@ kaa_error_t kaa_platform_message_write(kaa_platform_message_writer_t* writer
                                      , const void *data
                                      , size_t data_size);
 
+kaa_error_t kaa_platform_message_write_alignment(kaa_platform_message_writer_t* writer);
+
 kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* writer
                                              , const void *data
                                              , size_t data_size);
