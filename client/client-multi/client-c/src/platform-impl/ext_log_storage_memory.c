@@ -21,7 +21,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "kaa_logging.h"    // FIXME: remove this dependency
 #include "collections/kaa_list.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
@@ -191,13 +190,16 @@ kaa_error_t ext_log_storage_unmark_by_bucket_id(ext_log_storage_t *self, uint16_
 
 
 
-kaa_error_t ext_log_storage_shrink_to_size(ext_log_storage_t *self, size_t size)
+kaa_error_t ext_log_storage_shrink_by_size(ext_log_storage_t *self, size_t size)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    size_t removed_size = 0;
 
-    while (self->occupied_size > size) {
+    while ((removed_size < size) && self->occupied_size) {
         // May delete records already marked with bucket_id. C'est la vie...
-        self->occupied_size -= ((ext_log_record_t *)kaa_list_get_data(self->logs))->size;
+        size_t record_size = ((ext_log_record_t *)kaa_list_get_data(self->logs))->size;
+        removed_size += record_size;
+        self->occupied_size -= record_size;
         kaa_list_remove_at(&self->logs, self->logs, &log_record_destroy);
     }
     return KAA_ERR_NONE;

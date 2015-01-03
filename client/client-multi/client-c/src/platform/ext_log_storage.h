@@ -138,14 +138,14 @@ kaa_error_t ext_log_storage_unmark_by_bucket_id(ext_log_storage_t *self, uint16_
 
 
 /**
- * @brief Shrinks log storage to the specified size by removing records starting from the oldest ones.
+ * @brief Shrinks log storage by the specified size by removing records starting from the oldest ones.
  *
  * @param[in]       self        Log storage instance.
- * @param[in]       size        Target storage size limit.
+ * @param[in]       size        Records volume to remove.
  *
  * @return Error code
  */
-kaa_error_t ext_log_storage_shrink_to_size(ext_log_storage_t *self, size_t size);
+kaa_error_t ext_log_storage_shrink_by_size(ext_log_storage_t *self, size_t size);
 
 
 

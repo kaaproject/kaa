@@ -25,6 +25,7 @@
 #define EXT_LOG_UPLOAD_STRATEGY_H_
 
 #include "platform/ext_log_storage.h"
+#include <stddef.h>
 
 
 
@@ -51,9 +52,11 @@ typedef enum {
  *
  * @param[in]       self        Log upload strategy instance.
  * @param[in]       log_storage Log storage instance to operate against.
+ * @param[out]      volume      Volume of logs to process (in bytes). Zero if decision is @c NOOP.
  *
  * @return Log upload decision.
  */
-ext_log_upload_decision_t ext_log_upload_strategy_decide(ext_log_upload_strategy_t *self, const ext_log_storage_t *log_storage);
+ext_log_upload_decision_t ext_log_upload_strategy_decide(ext_log_upload_strategy_t *self
+        , const ext_log_storage_t *log_storage, size_t *volume);
 
 #endif /* EXT_LOG_UPLOAD_STRATEGY_H_ */

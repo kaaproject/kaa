@@ -38,8 +38,9 @@ extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
 extern kaa_error_t ext_log_storage_create(ext_log_storage_t** log_storage_p, kaa_logger_t *logger);
 
-extern kaa_error_t ext_log_upload_strategy_create(ext_log_upload_strategy_t **strategy_p
-        , size_t max_upload_threshold, size_t  max_cleanup_threshold);
+kaa_error_t ext_log_upload_strategy_create(ext_log_upload_strategy_t **strategy_p
+        , size_t max_upload_threshold, size_t max_log_bucket_size
+        , size_t max_cleanup_threshold);
 
 extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
         , kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
@@ -149,12 +150,11 @@ int test_init(void)
         return error;
 
     ext_log_upload_strategy_t *strategy = NULL;
-    error = ext_log_upload_strategy_create(&strategy, 1, 0);
+    error = ext_log_upload_strategy_create(&strategy, 1, 1024, 0);
     if (error || !strategy)
         return error;
 
-    kaa_log_upload_properties_t props = { 1024, 1024, 2048 };
-    error = kaa_logging_init(log_collector, storage, strategy, &props);
+    error = kaa_logging_init(log_collector, storage, strategy);
     if (error)
         return error;
 

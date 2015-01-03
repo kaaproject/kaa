@@ -50,17 +50,6 @@ typedef struct kaa_log_collector kaa_log_collector_t;
 
 
 /**
- * Logging subsystem settings.
- */
-typedef struct {
-    uint32_t max_log_bucket_size;      /**< Maximum volume of logs in a single upload request (in bytes). */
-    uint32_t max_log_upload_threshold; /**< Volume of the collected logs (in bytes) to trigger upload. */
-    uint32_t max_log_storage_volume;   /**< Maximum allowed log records volume (in bytes). */
-} kaa_log_upload_properties_t;
-
-
-
-/**
  * @brief Initializes data collection module with the storage interface, upload strategy, and other settings.
  *
  * @param[in] self              Pointer to a @link kaa_log_collector_t @endlink instance.
@@ -72,8 +61,7 @@ typedef struct {
  */
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self
                            , ext_log_storage_t *storage
-                           , ext_log_upload_strategy_t *upload_strategy
-                           , const kaa_log_upload_properties_t *properties);
+                           , ext_log_upload_strategy_t *upload_strategy);
 
 
 

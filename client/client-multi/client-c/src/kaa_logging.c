@@ -52,7 +52,7 @@ struct kaa_log_collector {
     uint16_t                     log_bucket_id;
     ext_log_storage_t           *log_storage;
     ext_log_upload_strategy_t   *log_upload_strategy;
-    kaa_log_upload_properties_t  log_properties;
+    size_t                      max_log_bucket_size;
     kaa_status_t                *status;
     kaa_channel_manager_t       *channel_manager;
     kaa_logger_t                *logger;
@@ -73,10 +73,11 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
     kaa_log_collector_t * collector = (kaa_log_collector_t *) KAA_CALLOC(1, sizeof(kaa_log_collector_t));
     KAA_RETURN_IF_NIL(collector, KAA_ERR_NOMEM);
 
-    collector->log_bucket_id   = 0;
-    collector->status          = status;
-    collector->channel_manager = channel_manager;
-    collector->logger          = logger;
+    collector->log_bucket_id        = 0;
+    collector->status               = status;
+    collector->channel_manager      = channel_manager;
+    collector->logger               = logger;
+    collector->max_log_bucket_size  = 0;
 
     *log_collector_p = collector;
     return KAA_ERR_NONE;
@@ -96,20 +97,17 @@ void kaa_log_collector_destroy(kaa_log_collector_t *self)
 
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self
                            , ext_log_storage_t *storage
-                           , ext_log_upload_strategy_t *upload_strategy
-                           , const kaa_log_upload_properties_t *properties)
+                           , ext_log_upload_strategy_t *upload_strategy)
 {
-    KAA_RETURN_IF_NIL4(self, storage, properties, upload_strategy, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(self, storage, upload_strategy, KAA_ERR_BADPARAM);
 
     ext_log_storage_release(self->log_storage);
 
     self->log_storage = storage;
-    self->log_properties = *properties;
     self->log_upload_strategy = upload_strategy;
 
-    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Initialized log collector with: "
-                "log storage {%p}, log properties {%p}, log upload strategy {%p}"
-            , storage, properties, upload_strategy);
+    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Initialized log collector with log storage {%p}, log upload strategy {%p}"
+            , storage, upload_strategy);
 
     return KAA_ERR_NONE;
 }
@@ -118,23 +116,22 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self
 
 static void update_storage(kaa_log_collector_t *self)
 {
-    switch (ext_log_upload_strategy_decide(self->log_upload_strategy, self->log_storage)) {
+    size_t volume = 0;
+    switch (ext_log_upload_strategy_decide(self->log_upload_strategy, self->log_storage, &volume)) {
         case CLEANUP:
-            KAA_LOG_WARN(self->logger, KAA_ERR_NONE, "Initiating log storage cleanup (max allowed volume %zu; current size %zu)"
-                    , self->log_properties.max_log_storage_volume
-                    , ext_log_storage_get_total_size(self->log_storage)
-                    );
-            kaa_error_t error = ext_log_storage_shrink_to_size(self->log_storage, self->log_properties.max_log_storage_volume);
+            KAA_LOG_WARN(self->logger, KAA_ERR_NONE, "Initiating log storage cleanup by %zu bytes (current size %zu)"
+                    , volume, ext_log_storage_get_total_size(self->log_storage));
+            kaa_error_t error = ext_log_storage_shrink_by_size(self->log_storage, volume);
             if (error)
                 KAA_LOG_ERROR(self->logger, error, "Failed to cleanup log storage");
             break;
-        case UPLOAD: {
+        case UPLOAD:
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Initiating log upload...");
+            self->max_log_bucket_size = volume;
             kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, logging_sync_services[0]);
             if (sync)
                 (*sync)(logging_sync_services, 1);
             break;
-        }
         default:
             KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Upload will not be triggered now.");
             break;
@@ -194,9 +191,9 @@ kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expe
     size_t total_size = ext_log_storage_get_total_size(self->log_storage);
 
     size_t actual_size = records_count * sizeof(uint32_t) + records_count * KAA_MAX_PADDING_LENGTH + total_size;
-    *expected_size += ((actual_size < self->log_properties.max_log_bucket_size)
+    *expected_size += ((actual_size < self->max_log_bucket_size)
             ? actual_size
-            : self->log_properties.max_log_bucket_size);
+            : self->max_log_bucket_size);
 
     return KAA_ERR_NONE;
 }
@@ -228,8 +225,8 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     char *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
     tmp_writer.current += sizeof(uint16_t);
 
-    ssize_t remaining_size = self->log_properties.max_log_bucket_size < (tmp_writer.end - tmp_writer.current)
-            ? self->log_properties.max_log_bucket_size
+    ssize_t remaining_size = self->max_log_bucket_size < (tmp_writer.end - tmp_writer.current)
+            ? self->max_log_bucket_size
             : tmp_writer.end - tmp_writer.current;
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (remaining bucket size is %zu)", remaining_size);
 
