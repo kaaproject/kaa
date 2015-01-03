@@ -167,7 +167,7 @@ size_t ext_log_storage_get_total_size(const ext_log_storage_t *self);
  *
  * @return Total amount of log records in the storage. Zero in case of errors.
  */
-size_t ext_log_storage_get_records_count(ext_log_storage_t *self);
+size_t ext_log_storage_get_records_count(const ext_log_storage_t *self);
 
 
 

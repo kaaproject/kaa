@@ -215,7 +215,7 @@ size_t ext_log_storage_get_total_size(const ext_log_storage_t *self)
 
 
 
-size_t ext_log_storage_get_records_count(ext_log_storage_t *self)
+size_t ext_log_storage_get_records_count(const ext_log_storage_t *self)
 {
     KAA_RETURN_IF_NIL(self, 0);
     return kaa_list_get_size(self->logs);
