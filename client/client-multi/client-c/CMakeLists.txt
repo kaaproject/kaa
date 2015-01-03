@@ -75,11 +75,11 @@ set (KAA_SOURCE_FILES
                        src/kaa_status.c
                        src/kaa_user.c
                        src/kaa.c
-                       src/platform-impl/ext_log_storage_memory.c
                        src/utilities/kaa_log.c
                        src/utilities/kaa_mem.c
                        src/kaa_platform_utils.c
-
+                       src/platform-impl/ext_log_storage_memory.c
+                       src/platform-impl/ext_log_upload_strategy_by_volume.c
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)

@@ -228,48 +228,4 @@ kaa_error_t ext_log_storage_release(ext_log_storage_t *self)
     return KAA_ERR_NONE;
 }
 
-
-
-
-
-
-/* FIXME: move into a separate interface
- * Log upload strategy
- */
-
-
-static const kaa_log_upload_properties_t kaa_memory_log_upload_properties = {
-      128   /**< max_log_block_size */
-    , 256   /**< max_log_upload_threshold */
-    , 1024  /**< max_log_storage_volume */
-};
-
-
-
-static kaa_log_upload_decision_t memory_log_storage_is_upload_needed(void *context, const ext_log_storage_t *log_storage)
-{
-    KAA_RETURN_IF_NIL(log_storage, NOOP);
-
-    if (ext_log_storage_get_total_size(log_storage) > kaa_memory_log_upload_properties.max_log_storage_volume)
-        return CLEANUP;
-
-    if (ext_log_storage_get_total_size(log_storage) >= kaa_memory_log_upload_properties.max_log_upload_threshold)
-        return UPLOAD;
-
-    return NOOP;
-}
-
-
-
-kaa_error_t kaa_memory_log_storage_get_strategy(ext_log_storage_t *self, kaa_log_upload_strategy_t *strategy)
-{
-    KAA_RETURN_IF_NIL2(self, strategy, KAA_ERR_BADPARAM);
-
-     *strategy = (kaa_log_upload_strategy_t) {
-        NULL,
-        &memory_log_storage_is_upload_needed
-    };
-    return KAA_ERR_NONE;
-}
-
 #endif

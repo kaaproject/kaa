@@ -51,8 +51,8 @@ typedef enum {
 struct kaa_log_collector {
     uint16_t                     log_bucket_id;
     ext_log_storage_t           *log_storage;
+    ext_log_upload_strategy_t   *log_upload_strategy;
     kaa_log_upload_properties_t  log_properties;
-    kaa_log_upload_strategy_t    log_upload_strategy;
     kaa_status_t                *status;
     kaa_channel_manager_t       *channel_manager;
     kaa_logger_t                *logger;
@@ -96,7 +96,7 @@ void kaa_log_collector_destroy(kaa_log_collector_t *self)
 
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self
                            , ext_log_storage_t *storage
-                           , const kaa_log_upload_strategy_t *upload_strategy
+                           , ext_log_upload_strategy_t *upload_strategy
                            , const kaa_log_upload_properties_t *properties)
 {
     KAA_RETURN_IF_NIL4(self, storage, properties, upload_strategy, KAA_ERR_BADPARAM);
@@ -105,7 +105,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self
 
     self->log_storage = storage;
     self->log_properties = *properties;
-    self->log_upload_strategy = *upload_strategy;
+    self->log_upload_strategy = upload_strategy;
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Initialized log collector with: "
                 "log storage {%p}, log properties {%p}, log upload strategy {%p}"
@@ -118,9 +118,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self
 
 static void update_storage(kaa_log_collector_t *self)
 {
-    kaa_log_upload_decision_t decision =
-            (*self->log_upload_strategy.log_upload_decision_fn)(self->log_upload_strategy.context, self->log_storage);
-    switch (decision) {
+    switch (ext_log_upload_strategy_decide(self->log_upload_strategy, self->log_storage)) {
         case CLEANUP:
             KAA_LOG_WARN(self->logger, KAA_ERR_NONE, "Initiating log storage cleanup (max allowed volume %zu; current size %zu)"
                     , self->log_properties.max_log_storage_volume

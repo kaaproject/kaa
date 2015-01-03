@@ -38,6 +38,9 @@ extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
 extern kaa_error_t ext_log_storage_create(ext_log_storage_t** log_storage_p, kaa_logger_t *logger);
 
+extern kaa_error_t ext_log_upload_strategy_create(ext_log_upload_strategy_t **strategy_p
+        , size_t max_upload_threshold, size_t  max_cleanup_threshold);
+
 extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
         , kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
@@ -57,12 +60,6 @@ static kaa_log_collector_t *log_collector = NULL;
 
 #define TEST_LOG_BUFFER  "log_record"
 static kaa_user_log_record_t *test_log_record;
-
-
-static kaa_log_upload_decision_t upload_decision(void *context, const ext_log_storage_t *log_storage)
-{
-    return UPLOAD;
-}
 
 
 
@@ -150,10 +147,14 @@ int test_init(void)
     error = ext_log_storage_create(&storage, logger);
     if (error || !storage)
         return error;
-    kaa_log_upload_properties_t props = { 1024, 1024, 2048 };
-    kaa_log_upload_strategy_t strategy = { NULL, &upload_decision };
 
-    error = kaa_logging_init(log_collector, storage, &strategy, &props);
+    ext_log_upload_strategy_t *strategy = NULL;
+    error = ext_log_upload_strategy_create(&strategy, 1, 0);
+    if (error || !strategy)
+        return error;
+
+    kaa_log_upload_properties_t props = { 1024, 1024, 2048 };
+    error = kaa_logging_init(log_collector, storage, strategy, &props);
     if (error)
         return error;
 

@@ -29,6 +29,7 @@
 # include <stddef.h>
 # include "gen/kaa_logging_gen.h"
 # include "platform/ext_log_storage.h"
+# include "platform/ext_log_upload_strategy.h"
 
 # ifdef __cplusplus
 extern "C" {
@@ -45,27 +46,6 @@ typedef kaa_test_log_record_t    kaa_user_log_record_t;
  * Private log collector structure.
  */
 typedef struct kaa_log_collector kaa_log_collector_t;
-
-
-
-/**
- * Log upload decisions.
- */
-typedef enum {
-    NOOP    = 0, /**< Nothing to do yet. */
-    UPLOAD  = 1, /**< Trigger log upload. */
-    CLEANUP = 2  /**< Trigger log storage cleanup. */
-} kaa_log_upload_decision_t;
-
-
-
-/**
- * Interface for the client log upload strategy.
- */
-typedef struct {
-    void                       * context;                                                                       /**< Context to pass to all functions below. */
-    kaa_log_upload_decision_t (* log_upload_decision_fn) (void *context, const ext_log_storage_t *log_storage); /**< Makes a decision whether to upload logs or cleanup storage. */
-} kaa_log_upload_strategy_t;
 
 
 
@@ -92,7 +72,7 @@ typedef struct {
  */
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self
                            , ext_log_storage_t *storage
-                           , const kaa_log_upload_strategy_t *upload_strategy
+                           , ext_log_upload_strategy_t *upload_strategy
                            , const kaa_log_upload_properties_t *properties);
 
 
