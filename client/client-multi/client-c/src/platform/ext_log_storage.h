@@ -114,42 +114,69 @@ kaa_error_t ext_log_storage_write_next_record(ext_log_storage_t *self, char *buf
 
 
 /**
- * Removes from the storage all records marked with the provided @c bucket_id.
+ * @brief Removes from the storage all records marked with the provided @c bucket_id.
+ *
+ * @param[in]       self        Log storage instance.
+ * @param[in]       bucket_id   Non-zero bucket ID to search for records to be removed.
+ *
+ * @return Error code
  */
 kaa_error_t ext_log_storage_remove_by_bucket_id(ext_log_storage_t *self, uint16_t bucket_id);
 
 
 
 /**
- * Unmarks all records marked with the provided @c bucket_id.
+ * @brief Unmarks all records marked with the provided @c bucket_id.
+ *
+ * @param[in]       self        Log storage instance.
+ * @param[in]       bucket_id   Non-zero bucket ID to search for records to be unmarked.
+ *
+ * @return Error code
  */
 kaa_error_t ext_log_storage_unmark_by_bucket_id(ext_log_storage_t *self, uint16_t bucket_id);
 
 
 
 /**
- * Shrinks log storage to the specified size.
+ * @brief Shrinks log storage to the specified size by removing records starting from the oldest ones.
+ *
+ * @param[in]       self        Log storage instance.
+ * @param[in]       size        Target storage size limit.
+ *
+ * @return Error code
  */
 kaa_error_t ext_log_storage_shrink_to_size(ext_log_storage_t *self, size_t size);
 
 
 
 /**
- * Returns total size occupied by logs in the log storage.
+ * @brief Returns total size occupied by logs in the log storage.
+ *
+ * @param[in]       self        Log storage instance.
+ *
+ * @return Total log storage size in bytes, occupied by log records. Zero in case of errors.
  */
 size_t ext_log_storage_get_total_size(const ext_log_storage_t *self);
 
 
 
 /**
- * Returns total log records count.
+ * @brief Returns total log records count.
+ *
+ * @param[in]       self        Log storage instance.
+ *
+ * @return Total amount of log records in the storage. Zero in case of errors.
  */
 size_t ext_log_storage_get_records_count(ext_log_storage_t *self);
 
 
 
 /**
- * Releases the log storage (which may decide to self-destroy).
+ * @brief Releases the log storage (which may decide to self-destroy).
+ *
+ * @param[in]       self        Log storage instance.
+ *
+ * @return Error code
  */
 kaa_error_t ext_log_storage_release(ext_log_storage_t *self);
 
