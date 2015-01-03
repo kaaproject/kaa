@@ -75,7 +75,7 @@ set (KAA_SOURCE_FILES
                        src/kaa_status.c
                        src/kaa_user.c
                        src/kaa.c
-                       src/log/kaa_memory_log_storage.c
+                       src/platform-impl/ext_log_storage_memory.c
                        src/utilities/kaa_log.c
                        src/utilities/kaa_mem.c
                        src/kaa_platform_utils.c
