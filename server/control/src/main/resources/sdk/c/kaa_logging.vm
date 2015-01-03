@@ -28,12 +28,11 @@
 
 # include <stddef.h>
 # include "gen/kaa_logging_gen.h"
+# include "platform/ext_log_storage.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
-
-
 
 /**
  * Log records structure generated based on the specified data schema.
@@ -46,35 +45,6 @@ typedef kaa_logging_${logName}_t kaa_user_log_record_t;
  * Private log collector structure.
  */
 typedef struct kaa_log_collector kaa_log_collector_t;
-
-
-
-/**
- * Wrapper for a serialized log entry.
- */
-typedef struct {
-    uint8_t  *record_data;  /**< Serialized data */
-    uint32_t  record_size;  /**< Size of data */
-} kaa_log_entry_t;
-
-
-
-/**
- * Interface for the client log storage implementation. Kaa logging subsystem uses this interface to temporarily store
- * the logs before sending them to Operations server.
- */
-typedef struct {
-    void             * context;                                                                     /**< Context to pass to all functions below. */
-    // FIXME: return kaa_error_t instead of void everywhere
-    void            (* add_log_record)    (void *context, kaa_log_entry_t record);                  /**< Adds log entry to the log storage. */
-    kaa_log_entry_t (* get_next_record)   (void *context, uint16_t bucket_id, size_t size_limit);   /**< Returns the next log entry and marks it with @c bucket_id @b only if the record size does not exceed the @c size_limit. */
-    void            (* upload_succeeded)  (void *context, uint16_t bucket_id);                      /**< Removes from the storage all records marked with the provided @c bucket_id. */
-    void            (* upload_failed)     (void *context, uint16_t bucket_id);                      /**< Unmarks all records marked with the provided @c bucket_id. */
-    void            (* shrink_to_size)    (void *context, size_t size);                             /**< Shrinks log storage to the specified size. */
-    size_t          (* get_total_size)    (void *context);                                          /**< Returns total size occupied by logs in the log storage. */
-    uint16_t        (* get_records_count) (void *context);                                          /**< Returns total log records count. */
-    void            (* release)           (void *context);                                          /**< Releases the log storage (which may self-destroy). */
-} kaa_log_storage_t;
 
 
 
@@ -94,7 +64,7 @@ typedef enum {
  */
 typedef struct {
     void                       * context;                                                                       /**< Context to pass to all functions below. */
-    kaa_log_upload_decision_t (* log_upload_decision_fn) (void *context, const kaa_log_storage_t *log_storage); /**< Makes a decision whether to upload logs or cleanup storage. */
+    kaa_log_upload_decision_t (* log_upload_decision_fn) (void *context, const ext_log_storage_t *log_storage); /**< Makes a decision whether to upload logs or cleanup storage. */
 } kaa_log_upload_strategy_t;
 
 
@@ -103,7 +73,7 @@ typedef struct {
  * Logging subsystem settings.
  */
 typedef struct {
-    uint32_t max_log_bucket_size;       /**< Maximum volume of logs in a single upload request (in bytes). */
+    uint32_t max_log_bucket_size;      /**< Maximum volume of logs in a single upload request (in bytes). */
     uint32_t max_log_upload_threshold; /**< Volume of the collected logs (in bytes) to trigger upload. */
     uint32_t max_log_storage_volume;   /**< Maximum allowed log records volume (in bytes). */
 } kaa_log_upload_properties_t;
@@ -121,7 +91,7 @@ typedef struct {
  * @return      Error code.
  */
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self
-                           , const kaa_log_storage_t *storage
+                           , ext_log_storage_t *storage
                            , const kaa_log_upload_strategy_t *upload_strategy
                            , const kaa_log_upload_properties_t *properties);
 
