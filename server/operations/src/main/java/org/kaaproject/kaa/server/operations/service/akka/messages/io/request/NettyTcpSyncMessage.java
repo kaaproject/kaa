@@ -25,7 +25,7 @@ public class NettyTcpSyncMessage extends AbstractRequestMessage implements Sessi
 
     public NettyTcpSyncMessage(SyncRequest command, NettySessionInfo sessionInfo,
             ResponseBuilder responseConverter, ErrorBuilder errorConverter, SyncStatistics syncStatistics) {
-        super(sessionInfo.getUuid(), sessionInfo.getCtx(), sessionInfo.getChannelType(), responseConverter, errorConverter, syncStatistics);
+        super(sessionInfo.getUuid(), sessionInfo.getPlatformId(), sessionInfo.getCtx(), sessionInfo.getChannelType(), responseConverter, errorConverter, syncStatistics);
         this.command = command;
         this.sessionInfo = sessionInfo;
     }

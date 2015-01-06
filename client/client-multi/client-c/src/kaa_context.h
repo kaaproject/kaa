@@ -16,9 +16,9 @@
 
 /**
  * @file kaa_context.h
- * @brief Kaa endpoint context
+ * @brief Kaa endpoint context definition
  *
- * Defines general Kaa endpoint context.
+ * Defines the general Kaa endpoint context.
  */
 
 #ifndef KAA_CONTEXT_H_
@@ -47,20 +47,24 @@ typedef struct kaa_logger_t             kaa_logger_t;
 
 
 
+/**
+ * General Kaa endpoint context. Contains private structures of all Kaa endpoint SDK subsystems that can be used
+ * independently to perform API calls to specific subsystems.
+ */
 typedef struct {
-    kaa_status_t               *status;
-    kaa_platform_protocol_t    *platfrom_protocol;
-    kaa_bootstrap_manager_t    *bootstrap_manager;
-    kaa_channel_manager_t      *channel_manager;
-    kaa_profile_manager_t      *profile_manager;
-    kaa_user_manager_t         *user_manager;
+    kaa_status_t               *status;             /**< See @link kaa_status.h @endlink. */
+    kaa_platform_protocol_t    *platfrom_protocol;  /**< See @link kaa_platform_protocol.h @endlink. */
+    kaa_bootstrap_manager_t    *bootstrap_manager;  /**< See @link kaa_bootstrap.h @endlink. */
+    kaa_channel_manager_t      *channel_manager;    /**< See @link kaa_channel_manager.h @endlink. */
+    kaa_profile_manager_t      *profile_manager;    /**< See @link kaa_profile.h @endlink. */
+    kaa_user_manager_t         *user_manager;       /**< See @link kaa_user.h @endlink. */
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    kaa_event_manager_t        *event_manager;
+    kaa_event_manager_t        *event_manager;      /**< See @link kaa_event.h @endlink. */
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-    kaa_log_collector_t        *log_collector;
+    kaa_log_collector_t        *log_collector;      /**< See @link kaa_logging.h @endlink. */
 #endif
-    kaa_logger_t               *logger;
+    kaa_logger_t               *logger;             /**< See @link kaa_log.h @endlink. */
 } kaa_context_t;
 
 #ifdef __cplusplus

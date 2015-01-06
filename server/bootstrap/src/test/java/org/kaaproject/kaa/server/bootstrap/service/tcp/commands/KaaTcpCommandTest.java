@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.bootstrap.gen.HTTPLPComunicationParameters;
 import org.kaaproject.kaa.common.bootstrap.gen.KaaTCPComunicationParameters;
@@ -52,9 +53,9 @@ import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
  *
  */
 public class KaaTcpCommandTest {
-    
+
     private static OperationsServerListService opListMock;
-    
+
     private static final String hostName = "localhost";
     private static final int port = 1000;
     private static byte[] key = new byte[] {10,20,30,40,50,60,70,80,90,100};
@@ -127,7 +128,7 @@ public class KaaTcpCommandTest {
     public void testCallError2() {
         KaaTcpCommand command = new KaaTcpCommand(opListMock);
         assertNotNull(command);
-        Connect connect = new Connect(10, key, key, key);
+        Connect connect = new Connect(10, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, key, key, key);
         command.setRequest(connect);
         assertNotNull(command.getRequest());
         try {
@@ -144,7 +145,7 @@ public class KaaTcpCommandTest {
             fail(e.toString());
         }
     }
-    
+
     /**
      * Test method for {@link org.kaaproject.kaa.server.bootstrap.service.tcp.commands.KaaTcpCommand#call()}.
      */
@@ -169,7 +170,7 @@ public class KaaTcpCommandTest {
             fail(e.toString());
         }
     }
-    
+
     /**
      * Test method for {@link org.kaaproject.kaa.server.bootstrap.service.tcp.commands.KaaTcpCommand#call()}.
      */
@@ -187,23 +188,23 @@ public class KaaTcpCommandTest {
             if (command.getResponse().getMessageType() == MessageType.DISCONNECT) {
                 fail("Incorect response message type");
             }
-            
+
             BootstrapResponse response = (BootstrapResponse)command.getResponse();
-            
+
             assertEquals(111,response.getMessageId());
-            
+
             assertNotNull(response.getOperationsServers());
-            
+
             assertEquals(1,response.getOperationsServers().size());
-            
+
             assertNotNull(response.getOperationsServers().get("Name1"));
-            
+
             assertEquals(10,response.getOperationsServers().get("Name1").priority);
-            
+
             assertArrayEquals(key, response.getOperationsServers().get("Name1").publicKey);
-            
+
             assertEquals(PublicKeyType.RSA_PKSC8, response.getOperationsServers().get("Name1").publicKeyType);
-            
+
             for(SupportedChannelRecord record : response.getOperationsServers().get("Name1").supportedChannelsList) {
                 if (record.supportedChannelType == SupportedChannelType.HTTP
                         || record.supportedChannelType == SupportedChannelType.HTTPLP
@@ -217,7 +218,7 @@ public class KaaTcpCommandTest {
                     fail("unknown channel type");
                 }
             }
-            
+
         } catch (Exception e) {
             fail(e.toString());
         }

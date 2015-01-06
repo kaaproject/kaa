@@ -27,35 +27,35 @@ import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
-import org.kaaproject.kaa.common.endpoint.gen.Event;
-import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
-import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification;
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
-import org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
+import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.Event;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventSequenceNumberResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.LogClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.LogEntry;
+import org.kaaproject.kaa.server.operations.pojo.sync.LogServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachNotification;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserDetachNotification;
+import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
@@ -171,33 +171,33 @@ public class EndpointActorMessageProcessor {
         LOG.debug("[{}][{}] Processing thrift norification for {} channels", endpointKey, actorKey, channels.size());
 
         for (ChannelMetaData channel : channels) {
-            SyncRequest originalRequest = channel.getRequestMessage().getRequest();
-            SyncResponse syncResponse = channel.getResponseHolder().getResponse();
+            ClientSync originalRequest = channel.getRequestMessage().getRequest();
+            ServerSync syncResponse = channel.getResponseHolder().getResponse();
             
-            SyncRequest newRequest = new SyncRequest();
+            ClientSync newRequest = new ClientSync();
             newRequest.setRequestId(originalRequest.getRequestId());
-            newRequest.setSyncRequestMetaData(originalRequest.getSyncRequestMetaData());
-            if (originalRequest.getConfigurationSyncRequest() != null) {
-                ConfigurationSyncRequest configurationSyncRequest = originalRequest.getConfigurationSyncRequest();
-                if(syncResponse.getConfigurationSyncResponse() != null){
-                    int newSeqNumber = syncResponse.getConfigurationSyncResponse().getAppStateSeqNumber();
+            newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
+            if (originalRequest.getConfigurationSync() != null) {
+                ConfigurationClientSync configurationSyncRequest = originalRequest.getConfigurationSync();
+                if(syncResponse.getConfigurationSync() != null){
+                    int newSeqNumber = syncResponse.getConfigurationSync().getAppStateSeqNumber();
                     LOG.debug("[{}][{}] Change original configuration request {} appSeqNumber from {} to {}", endpointKey,
                             actorKey, originalRequest, configurationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
                     configurationSyncRequest.setAppStateSeqNumber(newSeqNumber);
                 }
-                newRequest.setConfigurationSyncRequest(configurationSyncRequest);
-                originalRequest.setConfigurationSyncRequest(null);
+                newRequest.setConfigurationSync(configurationSyncRequest);
+                originalRequest.setConfigurationSync(null);
             }
-            if (originalRequest.getNotificationSyncRequest() != null) {
-                NotificationSyncRequest notificationSyncRequest = originalRequest.getNotificationSyncRequest();
-                if(syncResponse.getNotificationSyncResponse() != null){
-                    int newSeqNumber = syncResponse.getNotificationSyncResponse().getAppStateSeqNumber();
+            if (originalRequest.getNotificationSync() != null) {
+                NotificationClientSync notificationSyncRequest = originalRequest.getNotificationSync();
+                if(syncResponse.getNotificationSync() != null){
+                    int newSeqNumber = syncResponse.getNotificationSync().getAppStateSeqNumber();
                     LOG.debug("[{}][{}] Change original notification request {} appSeqNumber from {} to {}", endpointKey,
                             actorKey, originalRequest, notificationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
                     notificationSyncRequest.setAppStateSeqNumber(newSeqNumber);
                 }
-                newRequest.setNotificationSyncRequest(notificationSyncRequest);
-                originalRequest.setNotificationSyncRequest(null);
+                newRequest.setNotificationSync(notificationSyncRequest);
+                originalRequest.setNotificationSync(null);
             }
             LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, originalRequest);
             sync(context, new SyncRequestMessage(channel.getRequestMessage().getSession(), newRequest, channel
@@ -211,7 +211,7 @@ public class EndpointActorMessageProcessor {
         for (ChannelMetaData channel : channels) {
             LOG.debug("[{}][{}] processing channel {} and response {}", endpointKey, actorKey, channel, channel
                     .getResponseHolder().getResponse());
-            SyncResponse syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(),
+            ServerSync syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(),
                     message.getNotifications(), message.getUnicastNotificationId());
             if (syncResponse != null) {
                 LOG.debug("[{}][{}] processed channel {} and response {}", endpointKey, actorKey, channel, syncResponse);
@@ -249,7 +249,7 @@ public class EndpointActorMessageProcessor {
 
             ChannelMetaData channel = initChannel(context, requestMessage);
 
-            SyncRequest request;
+            ClientSync request;
             if (channel.getType().isAsync()) {
                 if (channel.isFirstRequest()) {
                     request = channel.getRequestMessage().getRequest();
@@ -305,11 +305,11 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processEvents(ActorContext context, SyncRequest request, SyncResponseHolder responseHolder) {
+    private void processEvents(ActorContext context, ClientSync request, SyncResponseHolder responseHolder) {
         if (isValidForEvents(endpointProfile)) {
             updateUserConnection(context);
-            if(request.getEventSyncRequest() != null){
-                EventSyncRequest eventRequest = request.getEventSyncRequest();
+            if(request.getEventSync() != null){
+                EventClientSync eventRequest = request.getEventSync();
                 processSeqNumber(eventRequest, responseHolder);
                 sendEventsIfPresent(context, eventRequest);
             }
@@ -320,12 +320,12 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processSeqNumber(EventSyncRequest request, SyncResponseHolder responseHolder) {
-        if (request.getEventSequenceNumberRequest() != null) {
-            EventSyncResponse response = responseHolder.getResponse().getEventSyncResponse();
+    private void processSeqNumber(EventClientSync request, SyncResponseHolder responseHolder) {
+        if (request.isSeqNumberRequest()) {
+            EventServerSync response = responseHolder.getResponse().getEventSync();
             if(response == null){
-                response = new EventSyncResponse();
-                responseHolder.getResponse().setEventSyncResponse(response);
+                response = new EventServerSync();
+                responseHolder.getResponse().setEventSync(response);
             }
             response.setEventSequenceNumberResponse(new EventSequenceNumberResponse(Math.max(processedEventSeqNum, 0)));
         }
@@ -347,10 +347,10 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processLogUpload(ActorContext context, SyncRequest request, SyncResponseHolder responseHolder) {
+    private void processLogUpload(ActorContext context, ClientSync request, SyncResponseHolder responseHolder) {
         if (requireLogUpload(request)) {
-            responseHolder.getResponse().setLogSyncResponse(
-                    sendLogs(context, endpointProfile, request.getLogSyncRequest()));
+            responseHolder.getResponse().setLogSync(
+                    sendLogs(context, endpointProfile, request.getLogSync()));
         }
     }
 
@@ -371,7 +371,7 @@ public class EndpointActorMessageProcessor {
     }
 
     private long getDelay(SyncRequestMessage requestMessage, long start) {
-        long delay = requestMessage.getRequest().getSyncRequestMetaData().getTimeout()
+        long delay = requestMessage.getRequest().getClientSyncMetaData().getTimeout()
                 - (System.currentTimeMillis() - start);
         return delay;
     }
@@ -415,15 +415,15 @@ public class EndpointActorMessageProcessor {
         scheduleTimeoutMessage(context, message, channel.getKeepAlive() * 1000);
     }
 
-    private void processUserAttachDetachResults(ActorContext context, SyncRequest request,
+    private void processUserAttachDetachResults(ActorContext context, ClientSync request,
             SyncResponseHolder responseHolder) {
-        if (responseHolder.getResponse().getUserSyncResponse() != null) {
-            List<EndpointAttachResponse> attachResponses = responseHolder.getResponse().getUserSyncResponse()
+        if (responseHolder.getResponse().getUserSync() != null) {
+            List<EndpointAttachResponse> attachResponses = responseHolder.getResponse().getUserSync()
                     .getEndpointAttachResponses();
             if (attachResponses != null && !attachResponses.isEmpty()) {
                 resetEventSeqNumber();
                 for (EndpointAttachResponse response : attachResponses) {
-                    if (response.getResult() != SyncResponseResultType.SUCCESS) {
+                    if (response.getResult() != SyncStatus.SUCCESS) {
                         LOG.debug("[{}][{}] Skipped unsuccessful attach response [{}]", endpointKey, actorKey,
                                 response.getRequestId());
                         continue;
@@ -437,15 +437,15 @@ public class EndpointActorMessageProcessor {
                 }
             }
 
-            List<EndpointDetachRequest> detachRequests = request.getUserSyncRequest() == null ? null : request
-                    .getUserSyncRequest().getEndpointDetachRequests();
+            List<EndpointDetachRequest> detachRequests = request.getUserSync() == null ? null : request
+                    .getUserSync().getEndpointDetachRequests();
             if (detachRequests != null && !detachRequests.isEmpty()) {
                 resetEventSeqNumber();
                 for (EndpointDetachRequest detachRequest : detachRequests) {
-                    for (EndpointDetachResponse detachResponse : responseHolder.getResponse().getUserSyncResponse()
+                    for (EndpointDetachResponse detachResponse : responseHolder.getResponse().getUserSync()
                             .getEndpointDetachResponses()) {
-                        if (detachRequest.getRequestId().equals(detachResponse.getRequestId())) {
-                            if (detachResponse.getResult() != SyncResponseResultType.SUCCESS) {
+                        if (detachRequest.getRequestId() == detachResponse.getRequestId()) {
+                            if (detachResponse.getResult() != SyncStatus.SUCCESS) {
                                 LOG.debug("[{}][{}] Skipped unsuccessful detach response [{}]", endpointKey, actorKey,
                                         detachResponse.getRequestId());
                                 continue;
@@ -467,7 +467,7 @@ public class EndpointActorMessageProcessor {
         processedEventSeqNum = Integer.MIN_VALUE;
     }
 
-    protected LogSyncResponse sendLogs(ActorContext context, EndpointProfileDto profile, LogSyncRequest logUploadRequest) {
+    protected LogServerSync sendLogs(ActorContext context, EndpointProfileDto profile, LogClientSync logUploadRequest) {
         LOG.debug("[{}][{}] Processing log upload request {}", endpointKey, actorKey, logUploadRequest.getLogEntries()
                 .size());
         LogEventPack logPack = new LogEventPack();
@@ -482,13 +482,13 @@ public class EndpointActorMessageProcessor {
         logPack.setEvents(logEvents);
         logPack.setLogSchemaVersion(profile.getLogSchemaVersion());
         context.parent().tell(new LogEventPackMessage(logPack), context.self());
-        return new LogSyncResponse(logUploadRequest.getRequestId(), SyncResponseResultType.SUCCESS);
+        return new LogServerSync(logUploadRequest.getRequestId(), SyncStatus.SUCCESS);
     }
 
-    private boolean requireLogUpload(SyncRequest request) {
-        return request != null && request.getLogSyncRequest() != null
-                && request.getLogSyncRequest().getLogEntries() != null
-                && request.getLogSyncRequest().getLogEntries().size() > 0;
+    private boolean requireLogUpload(ClientSync request) {
+        return request != null && request.getLogSync() != null
+                && request.getLogSync().getLogEntries() != null
+                && request.getLogSync().getLogEntries().size() > 0;
     }
 
     protected void scheduleActorTimeout(ActorContext context) {
@@ -528,10 +528,10 @@ public class EndpointActorMessageProcessor {
         SyncRequestMessage pendingRequest = channel.getRequestMessage();
         SyncResponseHolder pendingResponse = channel.getResponseHolder();
 
-        EventSyncResponse eventResponse = pendingResponse.getResponse().getEventSyncResponse();
+        EventServerSync eventResponse = pendingResponse.getResponse().getEventSync();
         if (eventResponse == null) {
-            eventResponse = new EventSyncResponse();
-            pendingResponse.getResponse().setEventSyncResponse(eventResponse);
+            eventResponse = new EventServerSync();
+            pendingResponse.getResponse().setEventSync(eventResponse);
         }
 
         eventResponse.setEvents(message.getEvents());
@@ -541,7 +541,7 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void sendReply(ActorContext context, SyncRequestMessage request, SyncResponse syncResponse) {
+    private void sendReply(ActorContext context, SyncRequestMessage request, ServerSync syncResponse) {
         sendReply(context, request, null, syncResponse);
     }
 
@@ -558,7 +558,7 @@ public class EndpointActorMessageProcessor {
      *            the sync response
      */
     private void sendReply(ActorContext context, SyncRequestMessage request, GetDeltaException e,
-            SyncResponse syncResponse) {
+            ServerSync syncResponse) {
         LOG.debug("[{}] response: {}", actorKey, syncResponse);
 
         SyncStatistics stats = request.getCommand().getSyncStatistics();
@@ -566,7 +566,7 @@ public class EndpointActorMessageProcessor {
             stats.reportSyncTime(syncTime);
         }
 
-        SyncResponse copy = deepCopy(syncResponse);
+        ServerSync copy = deepCopy(syncResponse);
         
         NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, request
                 .getCommand().getResponseBuilder(), request.getCommand().getErrorBuilder());
@@ -575,28 +575,28 @@ public class EndpointActorMessageProcessor {
         scheduleActorTimeout(context);
     }
 
-    private SyncResponse deepCopy(SyncResponse source) {
+    private ServerSync deepCopy(ServerSync source) {
         if (source == null) {
             return null;
         }
-        SyncResponse copy = new SyncResponse();
+        ServerSync copy = new ServerSync();
         copy.setRequestId(source.getRequestId());
         copy.setStatus(source.getStatus());
-        copy.setUserSyncResponse(deepCopy(source.getUserSyncResponse()));
-        copy.setRedirectSyncResponse(deepCopy(source.getRedirectSyncResponse()));
-        copy.setProfileSyncResponse(deepCopy(source.getProfileSyncResponse()));
-        copy.setNotificationSyncResponse(deepCopy(source.getNotificationSyncResponse()));
-        copy.setLogSyncResponse(deepCopy(source.getLogSyncResponse()));
-        copy.setEventSyncResponse(deepCopy(source.getEventSyncResponse()));
-        copy.setConfigurationSyncResponse(deepCopy(source.getConfigurationSyncResponse()));
+        copy.setUserSync(deepCopy(source.getUserSync()));
+        copy.setRedirectSync(deepCopy(source.getRedirectSync()));
+        copy.setProfileSync(deepCopy(source.getProfileSync()));
+        copy.setNotificationSync(deepCopy(source.getNotificationSync()));
+        copy.setLogSync(deepCopy(source.getLogSync()));
+        copy.setEventSync(deepCopy(source.getEventSync()));
+        copy.setConfigurationSync(deepCopy(source.getConfigurationSync()));
         return copy;
     }
 
-    private ConfigurationSyncResponse deepCopy(ConfigurationSyncResponse source) {
+    private ConfigurationServerSync deepCopy(ConfigurationServerSync source) {
         if (source == null) {
             return null;
         }
-        ConfigurationSyncResponse copy = new ConfigurationSyncResponse();
+        ConfigurationServerSync copy = new ConfigurationServerSync();
         copy.setAppStateSeqNumber(source.getAppStateSeqNumber());
         copy.setResponseStatus(source.getResponseStatus());
         copy.setConfDeltaBody(source.getConfDeltaBody());
@@ -604,11 +604,11 @@ public class EndpointActorMessageProcessor {
         return copy;
     }
 
-    private EventSyncResponse deepCopy(EventSyncResponse source) {
+    private EventServerSync deepCopy(EventServerSync source) {
         if (source == null) {
             return null;
         }
-        EventSyncResponse copy = new EventSyncResponse();
+        EventServerSync copy = new EventServerSync();
         if(source.getEventSequenceNumberResponse() != null){
             copy.setEventSequenceNumberResponse(source.getEventSequenceNumberResponse());
         }
@@ -621,18 +621,18 @@ public class EndpointActorMessageProcessor {
         return copy;
     }
 
-    private LogSyncResponse deepCopy(LogSyncResponse source) {
+    private LogServerSync deepCopy(LogServerSync source) {
         if (source == null) {
             return null;
         }
-        return new LogSyncResponse(source.getRequestId(), source.getResult());
+        return new LogServerSync(source.getRequestId(), source.getResult());
     }
 
-    private NotificationSyncResponse deepCopy(NotificationSyncResponse source) {
+    private NotificationServerSync deepCopy(NotificationServerSync source) {
         if (source == null) {
             return null;
         }
-        NotificationSyncResponse copy = new NotificationSyncResponse();
+        NotificationServerSync copy = new NotificationServerSync();
         copy.setAppStateSeqNumber(source.getAppStateSeqNumber());
         copy.setResponseStatus(source.getResponseStatus());
         if (source.getNotifications() != null) {
@@ -644,25 +644,25 @@ public class EndpointActorMessageProcessor {
         return copy;
     }
 
-    private ProfileSyncResponse deepCopy(ProfileSyncResponse source) {
+    private ProfileServerSync deepCopy(ProfileServerSync source) {
         if (source == null) {
             return null;
         }
-        return new ProfileSyncResponse(source.getResponseStatus());
+        return new ProfileServerSync(source.getResponseStatus());
     }
 
-    private RedirectSyncResponse deepCopy(RedirectSyncResponse source) {
+    private RedirectServerSync deepCopy(RedirectServerSync source) {
         if (source == null) {
             return null;
         }
-        return new RedirectSyncResponse(source.getDnsName());
+        return new RedirectServerSync(source.getDnsName());
     }
 
-    private UserSyncResponse deepCopy(UserSyncResponse source) {
+    private UserServerSync deepCopy(UserServerSync source) {
         if (source == null) {
             return null;
         }
-        UserSyncResponse copy = new UserSyncResponse();
+        UserServerSync copy = new UserServerSync();
         if (source.getEndpointAttachResponses() != null) {
             copy.setEndpointAttachResponses(new ArrayList<>(source.getEndpointAttachResponses()));
         }
@@ -687,7 +687,7 @@ public class EndpointActorMessageProcessor {
         target.tell(message, context.self());
     }
 
-    protected void sendEventsIfPresent(ActorContext context, EventSyncRequest request) {
+    protected void sendEventsIfPresent(ActorContext context, EventClientSync request) {
         List<Event> events = request.getEvents();
         if (userId != null && events != null && !events.isEmpty()) {
             LOG.debug("[{}][{}] Processing events {} with seq number > {}", endpointKey, actorKey, events,
@@ -737,9 +737,9 @@ public class EndpointActorMessageProcessor {
         if (!eventChannels.isEmpty()) {
             for (ChannelMetaData channel : eventChannels) {
                 SyncRequestMessage pendingRequest = channel.getRequestMessage();
-                SyncResponse pendingResponse = channel.getResponseHolder().getResponse();
+                ServerSync pendingResponse = channel.getResponseHolder().getResponse();
 
-                UserSyncResponse userSyncResponse = pendingResponse.getUserSyncResponse();
+                UserServerSync userSyncResponse = pendingResponse.getUserSync();
                 if (userSyncResponse != null) {
                     if (message instanceof EndpointUserAttachMessage) {
                         if (endpointProfile != null) {

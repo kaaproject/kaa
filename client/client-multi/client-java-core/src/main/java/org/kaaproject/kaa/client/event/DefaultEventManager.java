@@ -24,8 +24,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
@@ -51,7 +51,7 @@ public class DefaultEventManager implements EventManager {
     private final List<Event>       currentEvents = new LinkedList<Event>();
     private final Object            eventsGuard = new Object();
     private final Object            trxGuard = new Object();
-    private final Map<String, EventListenersRequestBinding> eventListenersRequests = new HashMap<String, EventListenersRequestBinding>();
+    private final Map<Integer, EventListenersRequestBinding> eventListenersRequests = new HashMap<Integer, EventListenersRequestBinding>();
     private final EventTransport transport;
     private final KaaClientState state;
 
@@ -100,7 +100,7 @@ public class DefaultEventManager implements EventManager {
                     , eventListenersRequests.size()
                     , (eventListenersRequests.size() == 1 ? "" : "s")); //NOSONAR
             List<EventListenersRequest> requests = new ArrayList<EventListenersRequest>();
-            for (Map.Entry<String, EventListenersRequestBinding> entry : eventListenersRequests.entrySet()) {
+            for (Map.Entry<Integer, EventListenersRequestBinding> entry : eventListenersRequests.entrySet()) {
                 if (!entry.getValue().isSent()) {
                     requests.add(entry.getValue().getRequest());
                     entry.getValue().setSent(Boolean.TRUE);
@@ -165,9 +165,9 @@ public class DefaultEventManager implements EventManager {
     }
 
     @Override
-    public String findEventListeners(List<String> eventClassFQNs,
+    public int findEventListeners(List<String> eventClassFQNs,
             FetchEventListeners listener) {
-        String requestId = UUID.randomUUID().toString();
+        int requestId = new Random().nextInt();
         EventListenersRequest request = new EventListenersRequest(requestId, eventClassFQNs);
         EventListenersRequestBinding bind = new EventListenersRequestBinding(listener, request);
         eventListenersRequests.put(requestId, bind);

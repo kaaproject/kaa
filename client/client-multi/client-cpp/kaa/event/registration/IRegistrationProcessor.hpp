@@ -31,8 +31,8 @@ typedef std::shared_ptr<UserAttachRequest> UserAttachRequestPtr;
 
 class IRegistrationProcessor {
 public:
-    virtual std::map<std::string, std::string>  getEndpointsToAttach() = 0;
-    virtual std::map<std::string, std::string>  getEndpointsToDetach() = 0;
+    virtual std::map<std::int32_t, std::string>  getEndpointsToAttach() = 0;
+    virtual std::map<std::int32_t, std::string>  getEndpointsToDetach() = 0;
     virtual UserAttachRequestPtr                getUserAttachRequest() = 0;
 
     virtual void onUserAttach(const UserSyncResponse::userAttachResponse_t& response) = 0;

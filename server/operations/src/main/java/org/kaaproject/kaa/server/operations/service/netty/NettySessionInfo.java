@@ -21,10 +21,12 @@ import java.util.UUID;
 
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.operations.service.akka.messages.io.PlatformAware;
 import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
 
-public final class NettySessionInfo {
+public final class NettySessionInfo implements PlatformAware{
     private final UUID uuid;
+    private final int platformId;
     private final ChannelHandlerContext ctx;
     private final ChannelType channelType;
     private final CipherPair cipherPair;
@@ -33,10 +35,11 @@ public final class NettySessionInfo {
     private final int keepAlive;
     private final boolean isEncrypted;
 
-    public NettySessionInfo(UUID uuid, ChannelHandlerContext ctx, ChannelType channelType, CipherPair cipherPair, EndpointObjectHash key,
+    public NettySessionInfo(UUID uuid, int platformId, ChannelHandlerContext ctx, ChannelType channelType, CipherPair cipherPair, EndpointObjectHash key,
             String applicationToken, int keepAlive, boolean isEncrypted) {
         super();
         this.uuid = uuid;
+        this.platformId = platformId;
         this.ctx = ctx;
         this.channelType = channelType;
         this.cipherPair = cipherPair;
@@ -48,6 +51,10 @@ public final class NettySessionInfo {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public int getPlatformId() {
+        return platformId;
     }
 
     public ChannelHandlerContext getCtx() {

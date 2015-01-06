@@ -28,7 +28,7 @@ public class LogBlock {
     /**
      * Unique id for sending log block
      */
-    private final String id;
+    private final int id;
 
     /**
      * A log block, which is going to be sent.
@@ -41,7 +41,7 @@ public class LogBlock {
      * @param id Unique id used for mapping in a delivery stuff and local log storage
      * @param records Sending log block
      */
-    public LogBlock(String id, List<LogRecord> records) {
+    public LogBlock(int id, List<LogRecord> records) {
         this.id = id;
         this.logRecords = records;
     }
@@ -51,7 +51,7 @@ public class LogBlock {
      *
      * @return Unique log block id
      */
-    String getBlockId() {
+    int getBlockId() {
         return id;
     }
 

@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.server.operations.service.akka.actors.io.platform;
 
-#ifndef KAA_UUID_H_
-#define KAA_UUID_H_
+/**
+ * The PlatformEncDec is used to represent exception during enc/dec of platform
+ * level data.
+ */
+public class PlatformEncDecException extends Exception {
 
-#include <stdint.h>
+    private static final long serialVersionUID = -2530355397172088562L;
 
-#define KAA_UUID_T          uint32_t
-#define KAA_UUID_VALUE_T    uint32_t
+    public PlatformEncDecException(Throwable cause) {
+        super(cause);
+    }
+    
+    public PlatformEncDecException(String cause) {
+        super(cause);
+    }    
 
-typedef KAA_UUID_T kaa_uuid_t;
-
-void        kaa_uuid_fill(kaa_uuid_t *dst, KAA_UUID_VALUE_T src);
-void        kaa_uuid_copy(kaa_uuid_t *dst, kaa_uuid_t *src);
-void        kaa_uuid_to_string(char **dst, kaa_uuid_t *uuid);
-void        kaa_uuid_from_string(const char *src, kaa_uuid_t *uuid);
-int         kaa_uuid_compare(kaa_uuid_t *uuid1, kaa_uuid_t *uuid2);
-
-#endif /* KAA_UUID_H_ */
+}

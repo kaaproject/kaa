@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck.ReturnCode;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
@@ -34,6 +35,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.server.common.server.kaatcp.AbstractKaaTcpCommandProcessor;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
+import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpDisconnectMessage;
@@ -46,7 +48,7 @@ import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> implements SessionCreateListener{
+public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> implements SessionCreateListener {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AkkaKaaTcpHandler.class);
@@ -57,14 +59,13 @@ public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTc
     private final AkkaService akkaService;
     private volatile NettySessionInfo session;
 
-
     private final static ErrorBuilder connectErrorConverter = new ErrorBuilder() {
         @Override
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];
-            if(e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException){
+            if (e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException) {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_BAD_CREDETIALS);
-            }else{
+            } else {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_SERVER_UNAVAILABLE);
             }
             return responses;
@@ -75,7 +76,8 @@ public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTc
         @Override
         public Object[] build(byte[] encriptedResponseData, boolean isEncrypted) {
             Object[] responses = new Object[1];
-            responses[0] = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(encriptedResponseData, NOT_ZIPPED, isEncrypted);
+            responses[0] = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(encriptedResponseData, NOT_ZIPPED,
+                    isEncrypted);
             LOG.debug("Sending {} response objects", responses.length);
             return responses;
         }
@@ -85,9 +87,9 @@ public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTc
         @Override
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];
-            if(e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException){
+            if (e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException) {
                 responses[0] = new Disconnect(DisconnectReason.BAD_REQUEST);
-            }else{
+            } else {
                 responses[0] = new Disconnect(DisconnectReason.INTERNAL_ERROR);
             }
             return responses;
@@ -101,15 +103,17 @@ public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTc
         this.akkaService = akkaService;
         this.connectResponseConverter = new ResponseBuilder() {
             volatile boolean connAckSent = false;
+
             @Override
             public Object[] build(byte[] encriptedResponseData, boolean isEncrypted) {
-                if(!connAckSent){
-                    synchronized(this){
-                        if(!connAckSent){
+                if (!connAckSent) {
+                    synchronized (this) {
+                        if (!connAckSent) {
                             connAckSent = true;
                             Object[] responses = new Object[2];
                             responses[0] = new ConnAck(ReturnCode.ACCEPTED);
-                            responses[1] = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(encriptedResponseData, NOT_ZIPPED, isEncrypted);
+                            responses[1] = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(
+                                    encriptedResponseData, NOT_ZIPPED, isEncrypted);
                             LOG.debug("Sending {} response objects", responses.length);
                             return responses;
                         }
@@ -122,20 +126,22 @@ public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTc
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AbstractKaaTcpCommandProcessor msg) throws Exception {
-        MqttFrame frame =  msg.getRequest();
+        MqttFrame frame = msg.getRequest();
         LOG.trace("[{}] Processing {}", uuid, frame);
-        if(frame.getMessageType() == MessageType.CONNECT){
-            if(session == null){
-                akkaService.process(new NettyTcpConnectMessage(uuid, ctx, (Connect)frame, ChannelType.TCP, this, connectResponseConverter, connectErrorConverter, null));
-            }else{
+        if (frame.getMessageType() == MessageType.CONNECT) {
+            if (session == null) {
+                akkaService.process(new NettyTcpConnectMessage(uuid, ctx, (Connect) frame, ChannelType.TCP,
+                        this, connectResponseConverter, connectErrorConverter, null));
+            } else {
                 LOG.warn("[{}] Ignoring duplicate {} message ", uuid, MessageType.CONNECT);
             }
-        }else{
-            if(session != null){
+        } else {
+            if (session != null) {
                 switch (frame.getMessageType()) {
                 case KAASYNC:
-                    if (((KaaSync)frame).getKaaSyncMessageType() == KaaSyncMessageType.SYNC) {
-                        akkaService.process(new NettyTcpSyncMessage((SyncRequest)frame, session, syncResponseConverter, syncErrorConverter, null));
+                    if (((KaaSync) frame).getKaaSyncMessageType() == KaaSyncMessageType.SYNC) {
+                        akkaService.process(new NettyTcpSyncMessage((SyncRequest) frame, session, syncResponseConverter,
+                                syncErrorConverter, null));
                     }
                     break;
                 case PINGREQ:
@@ -147,7 +153,7 @@ public class AkkaKaaTcpHandler extends SimpleChannelInboundHandler<AbstractKaaTc
                 default:
                     break;
                 }
-            }else{
+            } else {
                 LOG.warn("[{}] Ignoring {} message due to incomplete CONNECT sequence", uuid, frame.getMessageType());
             }
         }
