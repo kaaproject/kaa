@@ -128,7 +128,7 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
     
     @Override
     public String customizeErrorMessage(Throwable caught) {
-        String errorMessage = caught.getMessage();        
+        String errorMessage = caught.getLocalizedMessage();        
         int leftSquareBracketIndex = errorMessage.indexOf(LEFT_SQUARE_BRACKET);
         int rightSquareBracketIndex = -1;
         if (leftSquareBracketIndex != -1) {

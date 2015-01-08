@@ -647,4 +647,10 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("SMTP Mail Server Details")
     String smtpMailServerDetails();
     
+    @DefaultStringValue("Incompatible Server Version")
+    String incompatibleRemoteService();
+    
+    @DefaultStringValue("Server is unreachable")
+    String serverIsUnreachable();
+    
 }
