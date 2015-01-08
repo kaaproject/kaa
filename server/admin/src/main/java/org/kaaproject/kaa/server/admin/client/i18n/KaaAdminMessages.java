@@ -83,6 +83,10 @@ public interface KaaAdminMessages extends Messages {
     @DefaultMessage("Your password has been reset. You should receive mail with new temporary password.")
     String passwordWasReset();
 
-
+    @DefaultMessage("This client is not compatible with the server. Cleanup and refresh the browser.")
+    String incompatibleRemoteService();
+    
+    @DefaultMessage("An error occurred while communicating with the server. Possible causes are:<br>a) Server is not running, or <br>b) Network problem.<br>Check your network connection or try again later.")
+    String serverIsUnreacheableMessage();
 
 }
