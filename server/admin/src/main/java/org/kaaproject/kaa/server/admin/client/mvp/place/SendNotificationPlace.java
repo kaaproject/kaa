@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
@@ -95,11 +94,6 @@ public class SendNotificationPlace extends TreePlace {
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
     }
 
     @Override

@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceTokenizer;
 
 public abstract class AbstractRecordPlace extends TreePlace {
@@ -126,11 +125,6 @@ public abstract class AbstractRecordPlace extends TreePlace {
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
     }
 
     @Override
