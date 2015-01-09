@@ -23,11 +23,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProv
 import org.kaaproject.kaa.server.admin.client.mvp.data.TopicsDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
 import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.SendNotificationDialog;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -77,17 +76,9 @@ public class TopicsActivity extends AbstractListActivity<TopicDto, TopicsPlace> 
     }
 
     private void sendNotification(String topicId) {
-        SendNotificationDialog.showSendNotificationDialog(applicationId,
-                topicId,
-                new AsyncCallback<SendNotificationDialog>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Utils.handleException(caught, listView);
-                    }
-
-                    @Override
-                    public void onSuccess(SendNotificationDialog result) {}
-        });
+        SendNotificationPlace sendNotificationPlace = new SendNotificationPlace(applicationId, topicId);
+        sendNotificationPlace.setPreviousPlace(place);
+        goTo(sendNotificationPlace);
     }
 
 }

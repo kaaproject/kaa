@@ -36,7 +36,7 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.admin.shared.util.UrlParams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -120,7 +120,7 @@ public class KaaAuthServiceImpl implements KaaAuthService {
         }
         
         userEntity.setUsername(username);
-        userEntity.setPassword(passwordEncoder.encodePassword(password, null));
+        userEntity.setPassword(passwordEncoder.encode(password));
         userEntity.setEnabled(true);
         userEntity.setTempPassword(false);
 
@@ -141,13 +141,13 @@ public class KaaAuthServiceImpl implements KaaAuthService {
         if (userEntity == null) {
             return ResultCode.USER_NOT_FOUND;
         }
-        if (!passwordEncoder.isPasswordValid(userEntity.getPassword(), oldPassword, null)) {
+        if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
             return ResultCode.OLD_PASSWORD_MISMATCH;
         }
         if (!checkPasswordStrength(newPassword)) {
             return ResultCode.BAD_PASSWORD_STRENGTH;
         }
-        userEntity.setPassword(passwordEncoder.encodePassword(newPassword, null));
+        userEntity.setPassword(passwordEncoder.encode(newPassword));
         userEntity.setTempPassword(false);
         userFacade.save(userEntity);
         return ResultCode.OK;
@@ -218,7 +218,7 @@ public class KaaAuthServiceImpl implements KaaAuthService {
         }
         userEntity.setPasswordResetHash(null);
         String generatedPassword = RandomStringUtils.randomAlphanumeric(User.TEMPORARY_PASSWORD_LENGTH);
-        userEntity.setPassword(passwordEncoder.encodePassword(generatedPassword, null));
+        userEntity.setPassword(passwordEncoder.encode(generatedPassword));
         userEntity.setTempPassword(true);
         userFacade.save(userEntity);
         messagingService.sendPasswordAfterReset(userEntity.getUsername(), generatedPassword, userEntity.getMail());

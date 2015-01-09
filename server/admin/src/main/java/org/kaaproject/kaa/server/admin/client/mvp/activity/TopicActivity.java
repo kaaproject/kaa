@@ -20,9 +20,9 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.SendNotificationDialog;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -101,18 +101,9 @@ public class TopicActivity
 	}
 
     private void sendNotification() {
-        SendNotificationDialog.showSendNotificationDialog(applicationId,
-                entityId,
-                new AsyncCallback<SendNotificationDialog>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Utils.handleException(caught, detailsView);
-                    }
-
-                    @Override
-                    public void onSuccess(SendNotificationDialog result) {}
-        });
+        SendNotificationPlace sendNotificationPlace = new SendNotificationPlace(applicationId, entityId);
+        sendNotificationPlace.setPreviousPlace(place);
+        goTo(sendNotificationPlace);
     }
-
 
 }

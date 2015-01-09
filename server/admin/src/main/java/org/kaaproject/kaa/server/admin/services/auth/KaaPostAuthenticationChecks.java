@@ -37,12 +37,12 @@ public class KaaPostAuthenticationChecks implements UserDetailsChecker {
 
             throw new CredentialsExpiredException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.credentialsExpired",
-                    "User credentials have expired"), user);
+                    "User credentials have expired"));
         }
         if (user instanceof AuthUserDto) {
             AuthUserDto authUser = (AuthUserDto)user;
             if (authUser.isTempPassword()) {
-                throw new TempCredentialsException("Temp credentials used to authenticate", user);
+                throw new TempCredentialsException("Temp credentials used to authenticate");
             }
         }
     }

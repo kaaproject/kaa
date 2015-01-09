@@ -74,9 +74,8 @@ public class PropertiesFacade {
     
     public <S extends SpecificRecordBase> PropertiesDto editPropertiesDto(PropertiesDto propertiesDto, Class<S> propertiesClass) throws Exception {
         Properties entity = findOrCreateByClass(propertiesClass);
-        Schema schema = (Schema)propertiesClass.getField(SCHEMA).get(null);
-        GenericRecord record = FormAvroConverter.createGenericRecordFormRecordField(propertiesDto.getConfiguration(), schema);
-        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+        GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(propertiesDto.getConfiguration());
+        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
         byte[] rawConfiguration = converter.encode(record);
         entity.setRawConfiguration(rawConfiguration);
         save(entity);

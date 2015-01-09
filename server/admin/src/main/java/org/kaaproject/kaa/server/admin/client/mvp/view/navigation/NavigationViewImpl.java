@@ -38,8 +38,6 @@ public class NavigationViewImpl extends Composite implements NavigationView {
     @UiField(provided = true) final CellTree menuTree;
     @UiField(provided = true) final KaaAdminStyle kaaAdminStyle;
 
-    private Presenter presenter;
-
     private NavigationTreeViewModel treeModel;
 
     public NavigationViewImpl() {
@@ -52,7 +50,6 @@ public class NavigationViewImpl extends Composite implements NavigationView {
 
     @Override
     public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override

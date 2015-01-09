@@ -118,7 +118,9 @@
     </bean>
 	
 	<security:http pattern="/kaaAdmin/rest/**"
-	               entry-point-ref="authenticationEntryPoint" use-expressions="true">
+	               authentication-manager-ref="authenticationManager" 
+                   entry-point-ref="authenticationEntryPoint" 
+                   use-expressions="true">
 	    <security:access-denied-handler ref="accessDeniedHandler"/>    
 	    <security:anonymous/>
         <security:intercept-url pattern="/kaaAdmin/rest/api/auth/**" access="permitAll"/>
@@ -127,7 +129,9 @@
 	</security:http>
 	
 	<!--security:http auto-config="true"-->
-	<security:http entry-point-ref="authenticationEntryPoint" use-expressions="true">     	
+	<security:http authentication-manager-ref="authenticationManager" 
+                   entry-point-ref="authenticationEntryPoint" 
+                   use-expressions="true">     	
 	    <security:access-denied-handler ref="accessDeniedHandler"/>	
 	    <!--security:form-login login-processing-url="/j_spring_security_check"/-->
 	    <security:logout logout-url="/j_spring_security_logout"
@@ -197,28 +201,7 @@
     </bean>
     
 	<bean id="encoder" 
-            class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+            class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
     </bean>
-	
-	<security:authentication-manager>
-      <security:authentication-provider user-service-ref="userDetailsService">
-        <security:password-encoder ref="encoder"/>
-      </security:authentication-provider>
-    </security:authentication-manager>
-	
-	
-	<!-- security:authentication-manager alias="authenticationManager">
-	    <security:authentication-provider>
-	    <security:password-encoder hash="sha"/>
-	    <security:user-service -->
-		<!-- kaa/kaa -->
-	        <!-- security:user name="kaa" password="a00bbe560e6b0f5263e3e6cba4ff3fb9a6fe9ef0"
-	                            authorities="ROLE_USER" / -->	    
-		<!-- igor/igor1 -->
-	        <!-- security:user name="igor" password="2e44a258066cb61c133e347beb79f7ce349d9f5b"
-	                            authorities="ROLE_USER" />
-	    </security:user-service>
-	    </security:authentication-provider>
-	</security:authentication-manager-->
 
 </beans>

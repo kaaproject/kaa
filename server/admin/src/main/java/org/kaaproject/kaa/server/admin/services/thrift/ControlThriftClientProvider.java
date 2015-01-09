@@ -20,11 +20,10 @@ import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
-import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
