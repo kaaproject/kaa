@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.services.auth;
+package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.springframework.security.authentication.AccountStatusException;
+import java.util.Date;
 
-public class TempCredentialsException extends AccountStatusException {
+import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-    private static final long serialVersionUID = 1L;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ValueListBox;
 
-    public TempCredentialsException(String msg) {
-        super(msg);
-    }
+public interface SendNotificationView extends BaseDetailsView {
 
-    public TempCredentialsException(String msg, Throwable t) {
-        super(msg, t);
-    }
+    ValueListBox<SchemaInfoDto> getNotificationSchemaInfo();
+    
+    HasValue<Date> getExpiredAt();
+    
+    HasValue<RecordField> getNotificationData();
     
 }

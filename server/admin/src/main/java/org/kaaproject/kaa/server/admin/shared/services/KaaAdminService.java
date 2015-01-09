@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.shared.services;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -48,6 +49,7 @@ import org.kaaproject.kaa.server.admin.shared.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -119,6 +121,8 @@ public interface KaaAdminService extends RemoteService {
 
     public List<SchemaDto> getUserNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<SchemaInfoDto> getUserNotificationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
+
     public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException;
 
     public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema, String fileItemName) throws KaaAdminServiceException;
@@ -186,9 +190,11 @@ public interface KaaAdminService extends RemoteService {
     public void addTopicToEndpointGroup(String endpointGroupId, String topicId) throws KaaAdminServiceException;
 
     public void removeTopicFromEndpointGroup(String endpointGroupId, String topicId) throws KaaAdminServiceException;
+    
+    public RecordField getRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException;
 
-    public void sendNotification(NotificationDto notification, String fileItemName) throws KaaAdminServiceException;
-
+    public void sendNotification(NotificationDto notification, RecordField notificationData) throws KaaAdminServiceException;
+    
     public void sendNotification(NotificationDto notification, byte[] body) throws KaaAdminServiceException;
 
     public List<EventClassFamilyDto> getEventClassFamilies() throws KaaAdminServiceException;

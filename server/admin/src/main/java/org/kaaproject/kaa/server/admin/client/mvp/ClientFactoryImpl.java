@@ -44,6 +44,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
@@ -75,6 +76,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.settings.GeneralPropertie
 import org.kaaproject.kaa.server.admin.client.mvp.view.settings.MailPropertiesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.tenant.TenantViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.tenant.TenantsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.topic.SendNotificationViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserProfileViewImpl;
@@ -141,6 +143,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<TopicDto> topicsView = new TopicsViewImpl();
     private final TopicView topicView = new TopicViewImpl(false);
     private final TopicView createTopicView = new TopicViewImpl(true);
+    
+    private final SendNotificationView sendNotificationView = new SendNotificationViewImpl();
 
     private final BaseListView<LogAppenderDto> appendersView = new LogAppendersViewImpl();
     private final LogAppenderView appenderView = new LogAppenderViewImpl(false);
@@ -346,6 +350,11 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public TopicView getCreateTopicView() {
         return createTopicView;
+    }
+
+    @Override
+    public SendNotificationView getSendNotificationView() {
+        return sendNotificationView;
     }
 
     @Override

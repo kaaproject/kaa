@@ -32,7 +32,7 @@ import org.kaaproject.kaa.server.admin.services.entity.Authority;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 @Repository("userFacade")
@@ -56,8 +56,7 @@ public class UserFacade {
                 || userDto.getExternalUid().isEmpty()) {
             user = new User();
             generatedPassword = RandomStringUtils.randomAlphanumeric(User.TEMPORARY_PASSWORD_LENGTH);
-            user.setPassword(passwordEncoder.encodePassword(generatedPassword,
-                    null));
+            user.setPassword(passwordEncoder.encode(generatedPassword));
             user.setTempPassword(true);
             user.setEnabled(true);
         } else {

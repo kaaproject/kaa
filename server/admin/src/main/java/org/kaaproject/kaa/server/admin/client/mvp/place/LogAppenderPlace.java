@@ -20,7 +20,6 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
-import com.google.web.bindery.event.shared.EventBus;
 
 public class LogAppenderPlace extends LogAppendersPlace {
 
@@ -78,11 +77,6 @@ public class LogAppenderPlace extends LogAppendersPlace {
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
     }
 
     @Override

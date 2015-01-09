@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
-import com.google.web.bindery.event.shared.EventBus;
 
 public class EcfPlace extends TreePlace {
 
@@ -79,11 +78,6 @@ public class EcfPlace extends TreePlace {
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
     }
 
     @Override

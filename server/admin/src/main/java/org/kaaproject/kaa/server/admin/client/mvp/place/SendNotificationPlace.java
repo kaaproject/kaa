@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,54 +21,73 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class TopicsPlace extends TreePlace {
+public class SendNotificationPlace extends TreePlace {
 
-    protected String applicationId;
+    private String applicationId;
+    private String topicId;
 
-    public TopicsPlace(String applicationId) {
+    public SendNotificationPlace(String applicationId, String topicId) {
         this.applicationId = applicationId;
+        this.topicId = topicId;
     }
 
     public String getApplicationId() {
         return applicationId;
     }
+    
+    public String getTopicId() {
+        return topicId;
+    }
 
     @Override
     public String getName() {
-        return Utils.constants.notificationTopics();
+        return Utils.constants.send_notification();
     }
 
-    @Prefix(value = "topics")
-    public static class Tokenizer implements PlaceTokenizer<TopicsPlace>, PlaceConstants {
+    @Prefix(value = "sendNotif")
+    public static class Tokenizer implements PlaceTokenizer<SendNotificationPlace>, PlaceConstants {
 
         @Override
-        public TopicsPlace getPlace(String token) {
+        public SendNotificationPlace getPlace(String token) {
             PlaceParams.paramsFromToken(token);
-            return new TopicsPlace(PlaceParams.getParam(APPLICATION_ID));
+            return new SendNotificationPlace(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(TOPIC_ID));
         }
 
         @Override
-        public String getToken(TopicsPlace place) {
+        public String getToken(SendNotificationPlace place) {
             PlaceParams.clear();
             PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+            PlaceParams.putParam(TOPIC_ID, place.getTopicId());
             return PlaceParams.generateToken();
         }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        TopicsPlace other = (TopicsPlace) obj;
+        }
+        SendNotificationPlace other = (SendNotificationPlace) obj;
         if (applicationId == null) {
-            if (other.applicationId != null)
+            if (other.applicationId != null) {
                 return false;
-        } else if (!applicationId.equals(other.applicationId))
+            }
+        } else if (!applicationId.equals(other.applicationId)) {
             return false;
+        }
+        if (topicId == null) {
+            if (other.topicId != null) {
+                return false;
+            }
+        } else if (!topicId.equals(other.topicId)) {
+            return false;
+        }
         return true;
     }
 
@@ -79,7 +98,7 @@ public class TopicsPlace extends TreePlace {
 
     @Override
     public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
+        return new TopicPlace(applicationId, topicId);
     }
 
 }

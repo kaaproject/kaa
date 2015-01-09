@@ -647,4 +647,16 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("SMTP Mail Server Details")
     String smtpMailServerDetails();
     
+    @DefaultStringValue("Upload from file")
+    String uploadFromFile();
+    
+    @DefaultStringValue("Upload")
+    String upload();
+    
+    @DefaultStringValue("Notification body")
+    String notificationBody();
+    
+    @DefaultStringValue("Notification details")
+    String notificationDetails();
+    
 }
