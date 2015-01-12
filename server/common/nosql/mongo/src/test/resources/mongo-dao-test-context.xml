@@ -64,7 +64,6 @@
     <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl">
         <property name="notificationDao" ref="notificationDao"/>
         <property name="unicastNotificationDao" ref="unicastNotificationDao"/>
-        <property name="notificationSchemaDao" ref="notificationSchemaDao"/>
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
     </bean>
     

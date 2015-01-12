@@ -28,8 +28,9 @@ import java.nio.ByteBuffer;
 
 import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getBytes;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONFIGURATION_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONFIGURATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_PROPERTY;
 
 
 @Table(name = CassandraModelConstants.ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME)
@@ -39,10 +40,12 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
     private static final long serialVersionUID = -5646769700581347085L;
 
     @PartitionKey
-    @Column(name = ENDPOINT_CONFIGURATION_CONFIGURATION_HASH_PROPERTY)
+    @Column(name = ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY)
     private ByteBuffer configurationHash;
-    @Column(name = ENDPOINT_CONFIGURATION_CONFIGURATION_PROPERTY)
+    @Column(name = ENDPOINT_CONFIGURATION_CONF_PROPERTY)
     private ByteBuffer configuration;
+    @Column(name = ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY)
+    private String id;
 
     public CassandraEndpointConfiguration() {
     }
@@ -68,6 +71,14 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
         this.configuration = configuration;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -79,6 +90,7 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
             return false;
         if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null)
             return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
         return true;
     }
@@ -87,12 +99,13 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
     public int hashCode() {
         int result = configurationHash != null ? configurationHash.hashCode() : 0;
         result = 31 * result + (configuration != null ? configuration.hashCode() : 0);
+        result = 31 * result + (id != null ? id.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "CassandraEndpointConfiguration{" +
+        return "EndpointConfiguration{" +
                 "configurationHash=" + configurationHash +
                 ", configuration=" + configuration +
                 '}';

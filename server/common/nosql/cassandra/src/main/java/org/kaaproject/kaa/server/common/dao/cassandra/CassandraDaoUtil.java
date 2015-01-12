@@ -1,5 +1,6 @@
 package org.kaaproject.kaa.server.common.dao.cassandra;
 
+import com.datastax.driver.core.utils.Bytes;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointGroupState;
@@ -65,7 +66,7 @@ public class CassandraDaoUtil {
 
     public static ByteBuffer getByteBuffer(byte[] array) {
         ByteBuffer bb = null;
-        if(array != null) {
+        if (array != null) {
             bb = ByteBuffer.wrap(array);
         }
         return bb;
@@ -73,8 +74,8 @@ public class CassandraDaoUtil {
 
     public static byte[] getBytes(ByteBuffer byteBuffer) {
         byte[] array = null;
-        if(byteBuffer != null) {
-            array = byteBuffer.array();
+        if (byteBuffer != null) {
+            array = Bytes.getArray(byteBuffer);
         }
         return array;
     }

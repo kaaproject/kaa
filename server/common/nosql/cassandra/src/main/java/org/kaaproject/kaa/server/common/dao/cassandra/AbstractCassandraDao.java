@@ -1,6 +1,7 @@
 package org.kaaproject.kaa.server.common.dao.cassandra;
 
 import com.datastax.driver.core.BatchStatement;
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
@@ -9,16 +10,16 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import org.kaaproject.kaa.server.common.dao.cassandra.client.CassandraClient;
-import org.kaaproject.kaa.server.common.dao.impl.Dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
+public abstract class AbstractCassandraDao<T, K> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCassandraDao.class);
 
@@ -27,6 +28,11 @@ public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
      */
     @Autowired
     private CassandraClient cassandraClient;
+    @Value("#{properties[read_consistency_level]}")
+    private Integer readConsistencyLevel;
+    @Value("#{properties[write_consistency_level]}")
+    private Integer writeConsistencyLevel;
+
     private Session session;
 
     protected abstract Class<?> getColumnFamilyClass();
@@ -60,7 +66,7 @@ public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
 
     protected T findOneByStatement(Statement statement) {
         T object = null;
-        ResultSet resultSet = session.execute(statement);
+        ResultSet resultSet = getSession().execute(statement);
         Result result = getMapper().map(resultSet);
         if (result != null) {
             object = (T) result.one();
@@ -69,7 +75,7 @@ public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
     }
 
     protected <V> Statement getSaveQuery(V dto, Class<?> clazz) {
-        Mapper<V> mapper= (Mapper<V>) getMapper(clazz);
+        Mapper<V> mapper = (Mapper<V>) getMapper(clazz);
         return mapper.saveQuery(dto);
     }
 
@@ -78,7 +84,6 @@ public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
         return mapper.saveQuery(dto);
     }
 
-    @Override
     public T save(T dto) {
         LOG.info("Save entity {}", dto);
         Mapper mapper = getMapper();
@@ -107,7 +112,6 @@ public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
         return getSession().execute(statement);
     }
 
-    @Override
     public <V> V save(V dto, Class<?> clazz) {
         LOG.debug("Save entity of {} class", clazz.getName());
         Mapper mapper = getMapper(clazz);
@@ -115,27 +119,23 @@ public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
         return dto;
     }
 
-    @Override
     public List<T> find() {
         LOG.debug("Get all entities from column family {}", getColumnFamilyName());
         return findListByStatement(QueryBuilder.select().all().from(getColumnFamilyName()));
     }
 
-    @Override
-    public T findById(String id) {
-        return (T) getMapper().get(id);
+    public T findById(K key) {
+        return (T) getMapper().get(key);
     }
 
-    @Override
     public void removeAll() {
         Delete delete = QueryBuilder.delete().all().from(getColumnFamilyName());
         LOG.debug("Remove all request: {}", delete.toString());
         session.execute(delete);
     }
 
-    @Override
-    public void removeById(String id) {
-        getMapper().delete(id);
+    public void removeById(K key) {
+        getMapper().delete(key);
     }
 
     protected String getStringId() {
@@ -144,5 +144,21 @@ public abstract class AbstractCassandraDao<T> implements Dao<T, String> {
 
     protected <V> List<Statement> getSaveQueryList(V dto, Class<?> clazz) {
         return null;
+    }
+
+    protected ConsistencyLevel getReadConsistencyLevel() {
+        ConsistencyLevel defaultConsistencyLevel = ConsistencyLevel.ANY;
+        if (readConsistencyLevel != null) {
+            defaultConsistencyLevel = ConsistencyLevel.values()[readConsistencyLevel];
+        }
+        return defaultConsistencyLevel;
+    }
+
+    protected ConsistencyLevel getWriteConsistencyLevel() {
+        ConsistencyLevel defaultConsistencyLevel = ConsistencyLevel.ANY;
+        if (writeConsistencyLevel != null) {
+            defaultConsistencyLevel = ConsistencyLevel.values()[writeConsistencyLevel];
+        }
+        return defaultConsistencyLevel;
     }
 }

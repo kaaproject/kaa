@@ -15,7 +15,7 @@ import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraMode
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_KEY_HASH_BY_APP_COLUMN_FAMILY_NAME;
 
 @Repository
-public class CassandraEPKeyHashByAppIdDao extends AbstractCassandraDao<CassandraEPKeyHashByAppId> {
+public class CassandraEPKeyHashByAppIdDao extends AbstractCassandraDao<CassandraEPKeyHashByAppId, String> {
 
     @Override
     protected Class<CassandraEPKeyHashByAppId> getColumnFamilyClass() {

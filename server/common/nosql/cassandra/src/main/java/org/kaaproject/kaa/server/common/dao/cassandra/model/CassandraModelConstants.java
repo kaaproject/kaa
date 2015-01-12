@@ -11,35 +11,37 @@ public class CassandraModelConstants {
     public static final String NOTIFICATION_ID_PROPERTY = "nf_id";
     public static final String ENDPOINT_KEY_HASH_PROPERTY = "ep_key_hash";
     public static final String USER_ID_PROPERTY = "user_id";
+    public static final String KEY_DELIMITER= "::";
 
     /**
      * Cassandra Endpoint Notification constants.
      */
-    public static final String ENDPOINT_NOTIFICATION_COLUMN_FAMILY_NAME = "ep_nfs";
-    public static final String ENDPOINT_NOTIFICATION_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
-    public static final String ENDPOINT_NOTIFICATION_ID_PROPERTY = "nf_id";
+    public static final String ENDPOINT_NF_COLUMN_FAMILY_NAME = "ep_nfs";
+    public static final String ENDPOINT_NF_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+    public static final String ENDPOINT_NF_ID_PROPERTY = "nf_id";
 
     /**
      * Cassandra notification constants.
      */
-    public static final String NOTIFICATION_COLUMN_FAMILY_NAME = "notification";
-    public static final String NOTIFICATION_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
-    public static final String NOTIFICATION_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
-    public static final String NOTIFICATION_SCHEMA_ID_PROPERTY = "schema_id";
-    public static final String NOTIFICATION_TOPIC_ID_PROPERTY = "topic_id";
-    public static final String NOTIFICATION_VERSION_PROPERTY = "version";
-    public static final String NOTIFICATION_LAST_MOD_TIME_PROPERTY = "last_mod_time";
-    public static final String NOTIFICATION_NOTIFICATION_TYPE_PROPERTY = "nf_type";
-    public static final String NOTIFICATION_BODY_PROPERTY = "body";
-    public static final String NOTIFICATION_EXPIRED_AT_PROPERTY = "expired_at";
-    public static final String NOTIFICATION_SEQ_NUM_PROPERTY = "seq_num";
+    public static final String NF_COLUMN_FAMILY_NAME = "notification";
+    public static final String NF_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
+    public static final String NF_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
+    public static final String NF_SCHEMA_ID_PROPERTY = "schema_id";
+    public static final String NF_TOPIC_ID_PROPERTY = "topic_id";
+    public static final String NF_VERSION_PROPERTY = "version";
+    public static final String NF_LAST_MOD_TIME_PROPERTY = "last_mod_time";
+    public static final String NF_NOTIFICATION_TYPE_PROPERTY = "nf_type";
+    public static final String NF_BODY_PROPERTY = "body";
+    public static final String NF_EXPIRED_AT_PROPERTY = "expired_at";
+    public static final String NF_SEQ_NUM_PROPERTY = "seq_num";
 
     /**
      * Cassandra endpoint configuration constants.
      */
     public static final String ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME = "ep_conf";
-    public static final String ENDPOINT_CONFIGURATION_CONFIGURATION_HASH_PROPERTY = CONFIGURATION_HASH_PROPERTY;
-    public static final String ENDPOINT_CONFIGURATION_CONFIGURATION_PROPERTY = "cf";
+    public static final String ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY = CONFIGURATION_HASH_PROPERTY;
+    public static final String ENDPOINT_CONFIGURATION_CONF_PROPERTY = "cf";
+    public static final String ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY = "cf_id";
 
     /**
      * Cassandra endpoint profile constants.
@@ -54,39 +56,39 @@ public class CassandraModelConstants {
     public static final String EP_USER_ID_PROPERTY = USER_ID_PROPERTY;
     public static final String EP_PROFILE_SCHEMA_ID_PROPERTY = "pf_schema_id";
     public static final String EP_CONFIG_GROUP_STATE_PROPERTY = "cf_group_state";
-    public static final String ENDPOINT_PROFILE_NOTIFICATION_GROUP_STATE_PROPERTY  = "nf_group_state";
-    public static final String ENDPOINT_PROFILE_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY  = "cf_seq_num";
-    public static final String ENDPOINT_PROFILE_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY  = "nf_seq_num";
-    public static final String ENDPOINT_PROFILE_PROFILE_PROPERTY  = "pf";
-    public static final String ENDPOINT_PROFILE_PROFILE_HASH_PROPERTY  = "pf_hash";
-    public static final String ENDPOINT_PROFILE_PROFILE_VERSION_PROPERTY  = "pf_ver";
-    public static final String ENDPOINT_PROFILE_CONFIGURATION_VERSION_PROPERTY  = "cf_ver";
-    public static final String ENDPOINT_PROFILE_NOTIFICATION_VERSION_PROPERTY  = "nf_ver";
-    public static final String ENDPOINT_PROFILE_NOTIFICATION_HASH_PROPERTY  = "nf_hash";
-    public static final String ENDPOINT_PROFILE_SUBSCRIPTIONS_PROPERTY  = "subscs";
-    public static final String ENDPOINT_PROFILE_SYSTEM_NOTIFICATION_VERSION_PROPERTY  = "sys_nf_ver";
-    public static final String ENDPOINT_PROFILE_USER_NOTIFICATION_VERSION_PROPERTY  = "user_nf_ver";
-    public static final String ENDPOINT_PROFILE_LOG_SCHEMA_VERSION_PROPERTY  = "log_schema_ver";
-    public static final String ENDPOINT_PROFILE_ECF_VERSION_STATE_PROPERTY  = "ecf_ver_state";
-    public static final String ENDPOINT_PROFILE_SERVER_HASH_PROPERTY  = "server_hash";
+    public static final String EP_NOTIFICATION_GROUP_STATE_PROPERTY = "nf_group_state";
+    public static final String EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY = "cf_seq_num";
+    public static final String EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY = "nf_seq_num";
+    public static final String EP_PROFILE_PROPERTY = "pf";
+    public static final String EP_PROFILE_HASH_PROPERTY = "pf_hash";
+    public static final String EP_PROFILE_VERSION_PROPERTY = "pf_ver";
+    public static final String EP_CONFIGURATION_VERSION_PROPERTY = "cf_ver";
+    public static final String EP_NOTIFICATION_VERSION_PROPERTY = "nf_ver";
+    public static final String EP_NOTIFICATION_HASH_PROPERTY = "nf_hash";
+    public static final String EP_SUBSCRIPTIONS_PROPERTY = "subscs";
+    public static final String EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY = "sys_nf_ver";
+    public static final String EP_USER_NOTIFICATION_VERSION_PROPERTY = "user_nf_ver";
+    public static final String EP_LOG_SCHEMA_VERSION_PROPERTY = "log_schema_ver";
+    public static final String EP_ECF_VERSION_STATE_PROPERTY = "ecf_ver_state";
+    public static final String EP_SERVER_HASH_PROPERTY = "server_hash";
 
     /**
      * Cassandra endpoint user constants.
      */
-    public static final String ENDPOINT_USER_COLUMN_FAMILY_NAME = "ep_user";
-    public static final String ENDPOINT_USER_ACCESS_TOKEN_PROPERTY = ACCESS_TOKEN_PROPERTY;
-    public static final String ENDPOINT_USER_USER_ID_PROPERTY = USER_ID_PROPERTY;
-    public static final String ENDPOINT_USER_USERNAME_PROPERTY = "username";
-    public static final String ENDPOINT_USER_EXTERNAL_ID_PROPERTY = "ext_id";
-    public static final String ENDPOINT_USER_TENANT_ID_PROPERTY = "tenant_id";
-    public static final String ENDPOINT_USER_ENDPOINT_IDS_PROPERTY = "ep_ids";
+    public static final String EP_USER_COLUMN_FAMILY_NAME = "ep_user";
+    public static final String EP_USER_ACCESS_TOKEN_PROPERTY = ACCESS_TOKEN_PROPERTY;
+    public static final String EP_USER_USER_ID_PROPERTY = USER_ID_PROPERTY;
+    public static final String EP_USER_USERNAME_PROPERTY = "username";
+    public static final String EP_USER_EXTERNAL_ID_PROPERTY = "ext_id";
+    public static final String EP_USER_TENANT_ID_PROPERTY = "tenant_id";
+    public static final String EP_USER_ENDPOINT_IDS_PROPERTY = "ep_ids";
 
     /**
      * Cassandra notifications by application constants.
      */
-    public static final String NOTIFICATIONS_BY_APPLICATION_COLUMN_FAMILY_NAME = "app_nfs";
-    public static final String NOTIFICATIONS_BY_APPLICATION_APPLICATION_ID_PROPERTY= APPLICATION_ID_PROPERTY;
-    public static final String NOTIFICATIONS_BY_APPLICATION_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
+    public static final String NF_BY_APP_COLUMN_FAMILY_NAME = "app_nfs";
+    public static final String NF_BY_APP_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
+    public static final String NF_BY_APP_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
 
 
     /**

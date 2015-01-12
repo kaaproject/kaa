@@ -134,20 +134,6 @@ public class AbstractTest {
     protected static final int DEFAULT_FLUME_PORT = 9764;
     protected static final int DEFAULT_FLUME_PRIORITY = 0;
 
-    protected List<String> tenants = new ArrayList<String>();
-    protected List<String> users = new ArrayList<String>();
-    protected List<String> logSchemas = new ArrayList<String>();
-    protected List<String> apps = new ArrayList<String>();
-    protected List<String> schemas = new ArrayList<String>();
-    protected List<String> configurations = new ArrayList<String>();
-    protected List<String> endGroups = new ArrayList<String>();
-    protected List<String> endConf = new ArrayList<String>();
-    protected List<String> endProfiles = new ArrayList<String>();
-    protected List<String> eventClassFamilies = new ArrayList<String>();
-    protected List<String> eventClasses = new ArrayList<String>();
-    protected List<String> applicationEventFamilyMaps = new ArrayList<String>();
-    protected List<String> endUsers = new ArrayList<String>();
-
     @Autowired
     private DataSource dataSource;
     @Autowired
@@ -188,44 +174,6 @@ public class AbstractTest {
     protected Application application;
 
     public AbstractTest() {
-        tenants.add("530cb57de4b08e6930468c99");
-        users.add("530cb57de4b08e6930468c9a");
-
-        logSchemas.add("530cb57de4b08e6930468c99");
-
-        apps.add("52fe2de7e4b0082727dd214b");
-        apps.add("52fe2de7e4b0082727dd214c");
-        apps.add("52fe2de7e4b0082727dd214d");
-
-        schemas.add("530cc8f108c05463a7797b9a");
-        schemas.add("530cc8f408c05463a7797b9b");
-        schemas.add("530cc8fa08c05463a7797b9c");
-
-        configurations.add("530cc8fa08c05463a7797b8c");
-        configurations.add("530cc8fa08c05463a7797b9d");
-        configurations.add("530cc8fa08c05463a7797b9e");
-        configurations.add("530cc8fa08c05463a7797b9f");
-        configurations.add("530cc8fa08c05463a7797b10");
-        configurations.add("530cc8fa08c05463a7797b91");
-        configurations.add("530cc8fa08c05463a7797b92");
-        configurations.add("530cc8fa08c05463a7797b93");
-
-        endGroups.add("530db663687f16fec35271f2");
-
-        endConf.add("530cc8fa08c05463a7797b92");
-        endProfiles.add("530db773687f16fec3529243");
-
-        eventClassFamilies.add("530db773687f16fec3529245");
-        eventClassFamilies.add("530db773687f16fec3529246");
-
-        eventClasses.add("530db773687f16fec3529247");
-        eventClasses.add("530db773687f16fec3529248");
-
-        applicationEventFamilyMaps.add("530db773687f16fec3529249");
-        applicationEventFamilyMaps.add("530db773687f16fec3529250");
-
-        endUsers.add("123cb57de4b08e6930468c9a");
-        endUsers.add("124cb57de4b08e6930468c9a");
     }
 
     protected String generateString(String string) {

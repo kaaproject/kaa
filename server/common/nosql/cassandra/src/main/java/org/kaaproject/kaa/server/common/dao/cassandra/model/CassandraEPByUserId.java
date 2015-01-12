@@ -1,9 +1,5 @@
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_USER_ID_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_USER_ID_ENDPOINT_KEY_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_USER_ID_USER_ID_PROPERTY;
-
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -12,6 +8,10 @@ import com.datastax.driver.mapping.annotations.Transient;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_USER_ID_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_USER_ID_ENDPOINT_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_USER_ID_USER_ID_PROPERTY;
 
 @Table(name = EP_BY_USER_ID_COLUMN_FAMILY_NAME)
 public class CassandraEPByUserId implements Serializable {

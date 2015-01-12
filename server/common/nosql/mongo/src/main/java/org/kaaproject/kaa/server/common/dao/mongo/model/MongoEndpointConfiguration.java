@@ -16,17 +16,15 @@
 
 package org.kaaproject.kaa.server.common.dao.mongo.model;
 
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
+import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 
 @Document(collection = MongoEndpointConfiguration.COLLECTION_NAME)
 public final class MongoEndpointConfiguration implements EndpointConfiguration, Serializable {
@@ -36,9 +34,6 @@ public final class MongoEndpointConfiguration implements EndpointConfiguration, 
     public static final String COLLECTION_NAME = "endpoint_configuration";
 
     @Id
-    private String id;
-    @Indexed
-    @Field("configuration_hash")
     private byte[] configurationHash;
     private byte[] configuration;
 
@@ -46,17 +41,8 @@ public final class MongoEndpointConfiguration implements EndpointConfiguration, 
     }
 
     public MongoEndpointConfiguration(EndpointConfigurationDto dto) {
-        this.id = dto.getId();
         this.configuration = dto.getConfiguration();
         this.configurationHash = dto.getConfigurationHash();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public byte[] getConfigurationHash() {
@@ -77,49 +63,27 @@ public final class MongoEndpointConfiguration implements EndpointConfiguration, 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof MongoEndpointConfiguration)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         MongoEndpointConfiguration that = (MongoEndpointConfiguration) o;
 
-        if (!Arrays.equals(configuration, that.configuration)) {
-            return false;
-        }
-        if (!Arrays.equals(configurationHash, that.configurationHash)) {
-            return false;
-        }
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
-        }
+        if (!Arrays.equals(configuration, that.configuration)) return false;
+        if (!Arrays.equals(configurationHash, that.configurationHash)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (configurationHash != null ? Arrays.hashCode(configurationHash) : 0);
+        int result = configurationHash != null ? Arrays.hashCode(configurationHash) : 0;
         result = 31 * result + (configuration != null ? Arrays.hashCode(configuration) : 0);
         return result;
     }
 
     @Override
-    public String toString() {
-        return "EndpointConfiguration{" +
-                "id='" + id + '\'' +
-                ", configurationHash=" + Arrays.toString(configurationHash) +
-                ", configuration='" + configuration + '\'' +
-                '}';
-    }
-
-    @Override
     public EndpointConfigurationDto toDto() {
         EndpointConfigurationDto dto = new EndpointConfigurationDto();
-        dto.setId(id);
         dto.setConfiguration(configuration);
         dto.setConfigurationHash(configurationHash);
         return dto;

@@ -16,16 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getStringId;
-import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getUuidId;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_ACCESS_TOKEN_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_ENDPOINT_IDS_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_EXTERNAL_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_TENANT_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_USERNAME_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_USER_USER_ID_PROPERTY;
-
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
@@ -35,34 +25,44 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
+
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_ACCESS_TOKEN_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_ENDPOINT_IDS_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_USERNAME_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_USER_ID_PROPERTY;
 
 
-@Table(name = ENDPOINT_USER_COLUMN_FAMILY_NAME)
+@Table(name = EP_USER_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointUser implements EndpointUser, Serializable {
 
     @Transient
     private static final long serialVersionUID = 3766947955702551264L;
 
-    @PartitionKey
-    @Column(name = ENDPOINT_USER_USER_ID_PROPERTY)
-    private UUID id;
-    @Column(name = ENDPOINT_USER_USERNAME_PROPERTY)
-    private String username;
-    @Column(name = ENDPOINT_USER_EXTERNAL_ID_PROPERTY)
+    @PartitionKey(value = 0)
+    @Column(name = EP_USER_EXTERNAL_ID_PROPERTY)
     private String externalId;
-    @Column(name = ENDPOINT_USER_TENANT_ID_PROPERTY)
+    @PartitionKey(value = 1)
+    @Column(name = EP_USER_TENANT_ID_PROPERTY)
     private String tenantId;
-    @Column(name = ENDPOINT_USER_ACCESS_TOKEN_PROPERTY)
+
+    @Column(name = EP_USER_USER_ID_PROPERTY)
+    private String id;
+    @Column(name = EP_USER_USERNAME_PROPERTY)
+    private String username;
+
+    @Column(name = EP_USER_ACCESS_TOKEN_PROPERTY)
     private String accessToken;
-    @Column(name = ENDPOINT_USER_ENDPOINT_IDS_PROPERTY)
+    @Column(name = EP_USER_ENDPOINT_IDS_PROPERTY)
     private List<String> endpointIds;
 
     public CassandraEndpointUser() {
     }
 
     public CassandraEndpointUser(EndpointUserDto dto) {
-        this.id = getUuidId(dto.getId());
+        this.id = dto.getId();
         this.username = dto.getUsername();
         this.externalId = dto.getExternalId();
         this.tenantId = dto.getTenantId();
@@ -71,10 +71,10 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
     }
 
     public String getId() {
-        return getStringId(id);
+        return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -165,7 +165,7 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
     @Override
     public EndpointUserDto toDto() {
         EndpointUserDto dto = new EndpointUserDto();
-        dto.setId(getStringId(id));
+        dto.setId(id);
         dto.setUsername(username);
         dto.setExternalId(externalId);
         dto.setTenantId(tenantId);

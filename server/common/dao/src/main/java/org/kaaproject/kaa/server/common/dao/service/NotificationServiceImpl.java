@@ -71,14 +71,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Value("#{dao[dao_max_wait_time]}")
     private int waitSeconds;
-
     @Autowired
     private TopicDao<Topic> topicDao;
+    @Autowired
+    private NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private NotificationDao<Notification> notificationDao;
     private EndpointNotificationDao<EndpointNotification> unicastNotificationDao;
-    private NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
 
     // 7 days
     private static final int TTL = 7 * 24 * 3600 * 1000;
@@ -230,7 +230,6 @@ public class NotificationServiceImpl implements NotificationService {
     public void removeNotificationSchemasByAppId(String appId) {
         validateId(appId, "Can't remove notification schemas. Invalid application id: " + appId);
         LOG.debug("Cascade remove corresponding notification to application id [{}]", appId);
-        notificationDao.removeNotificationsByAppId(appId);
         unicastNotificationDao.removeNotificationsByAppId(appId);
         notificationSchemaDao.removeNotificationSchemasByAppId(appId);
     }

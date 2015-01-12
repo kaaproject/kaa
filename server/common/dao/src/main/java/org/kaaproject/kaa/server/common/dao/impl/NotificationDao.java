@@ -30,36 +30,6 @@ import org.kaaproject.kaa.server.common.dao.model.Notification;
 public interface NotificationDao<T extends Notification> extends Dao<T, String> {
 
     T save(NotificationDto notification);
-    
-    /**
-     * Find notifications by schema id.
-     *
-     * @param schemaId the schema id
-     * @return the list of notifications
-     */
-    List<T> findNotificationsBySchemaId(String schemaId);
-
-    /**
-     * Removes the notifications by schema id.
-     *
-     * @param schemaId the schema id
-     */
-    void removeNotificationsBySchemaId(String schemaId);
-
-    /**
-     * Find notifications by application id.
-     *
-     * @param appId the application id
-     * @return the list of notifications
-     */
-    List<T> findNotificationsByAppId(String appId);
-
-    /**
-     * Removes the notifications by application id.
-     *
-     * @param appId the application id
-     */
-    void removeNotificationsByAppId(String appId);
 
     /**
      * Find notifications by topic id.
@@ -75,15 +45,6 @@ public interface NotificationDao<T extends Notification> extends Dao<T, String> 
      * @param topicId the topic id
      */
     void removeNotificationsByTopicId(String topicId);
-
-    /**
-     * Find notifications by schema id and type.
-     *
-     * @param schemaId the schema id
-     * @param type the type of notification
-     * @return the list of notifications
-     */
-    List<T> findNotificationsBySchemaIdAndType(String schemaId, NotificationTypeDto type);
 
     /**
      * Find notifications by topic id,

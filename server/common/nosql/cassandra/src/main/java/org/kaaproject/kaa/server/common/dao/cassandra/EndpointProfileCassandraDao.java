@@ -26,13 +26,13 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_APP_ID_APPLICATION_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 
 @Repository("endpointProfileDao")
-public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile> implements EndpointProfileDao<CassandraEndpointProfile> {
+public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDao.class);
 
@@ -60,6 +60,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     @Override
     public CassandraEndpointProfile save(CassandraEndpointProfile profile) {
+        LOG.debug("Saving endpoint profile...");
         profile.setId(getStringId());
         ByteBuffer epKeyHash = profile.getEndpointKeyHash();
         Statement saveByAppId = cassandraEPByAppIdDao.getSaveQuery(new CassandraEPByAppId(profile.getApplicationId(), epKeyHash));
@@ -74,22 +75,24 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         } else {
             executeBatch(BatchStatement.Type.UNLOGGED, saveProfile, saveByAppId);
         }
+        LOG.debug("Endpoint profile saved");
         return profile;
     }
 
     @Override
     public CassandraEndpointProfile findByKeyHash(byte[] endpointKeyHash) {
+        LOG.debug("Try to find endpoint profile by key hash {}", endpointKeyHash);
         return (CassandraEndpointProfile) getMapper().get(getByteBuffer(endpointKeyHash));
     }
 
     @Override
     public long getCountByKeyHash(byte[] endpointKeyHash) {
-        int count = 0;
+        long count = 0;
         ResultSet resultSet = execute(select().countAll().from(getColumnFamilyName())
                 .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
         Row row = resultSet.one();
         if (row != null) {
-            count = row.getInt(0);
+            count = row.getLong(0);
         }
         return count;
     }

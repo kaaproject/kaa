@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.dao.mongo;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 @Repository
-public class EndpointNotificationMongoDao extends AbstractMongoDao<MongoEndpointNotification> implements EndpointNotificationDao<MongoEndpointNotification> {
+public class EndpointNotificationMongoDao extends AbstractMongoDao<MongoEndpointNotification, String> implements EndpointNotificationDao<MongoEndpointNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointNotificationMongoDao.class);
 

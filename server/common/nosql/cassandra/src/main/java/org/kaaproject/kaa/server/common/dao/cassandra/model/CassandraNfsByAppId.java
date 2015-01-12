@@ -1,9 +1,5 @@
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATIONS_BY_APPLICATION_APPLICATION_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATIONS_BY_APPLICATION_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATIONS_BY_APPLICATION_NOTIFICATION_ID_PROPERTY;
-
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -12,17 +8,21 @@ import com.datastax.driver.mapping.annotations.Transient;
 
 import java.io.Serializable;
 
-@Table(name = NOTIFICATIONS_BY_APPLICATION_COLUMN_FAMILY_NAME)
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_BY_APP_APPLICATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_BY_APP_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_BY_APP_NOTIFICATION_ID_PROPERTY;
+
+@Table(name = NF_BY_APP_COLUMN_FAMILY_NAME)
 public class CassandraNfsByAppId implements Serializable {
 
     @Transient
     private static final long serialVersionUID = -5193245010946339876L;
 
     @PartitionKey
-    @Column(name = NOTIFICATIONS_BY_APPLICATION_APPLICATION_ID_PROPERTY)
+    @Column(name = NF_BY_APP_APPLICATION_ID_PROPERTY)
     private String appId;
     @ClusteringColumn
-    @Column(name = NOTIFICATIONS_BY_APPLICATION_NOTIFICATION_ID_PROPERTY)
+    @Column(name = NF_BY_APP_NOTIFICATION_ID_PROPERTY)
     private String notificationId;
 
     public CassandraNfsByAppId() {

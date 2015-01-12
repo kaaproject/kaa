@@ -8,10 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.nio.ByteBuffer;
+
 import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getByteBuffer;
 
 @Repository("endpointConfigurationDao")
-public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointConfiguration> implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
+public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointConfiguration, ByteBuffer> implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);
 

@@ -1,44 +1,46 @@
 package org.kaaproject.kaa.server.common.dao.cassandra;
 
-import org.cassandraunit.spring.CassandraDataSet;
-import org.cassandraunit.spring.CassandraUnitDependencyInjectionTestExecutionListener;
-import org.cassandraunit.spring.EmbeddedCassandra;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@TestExecutionListeners({CassandraUnitDependencyInjectionTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
-@CassandraDataSet(keyspace = "kaa", value = {"cassandra.cql"})
-@EmbeddedCassandra(configuration = "/embedded-cassandra.yaml")
 public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testSave() throws Exception {
-
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null);
+        EndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertEquals(endpointProfile, found.toDto());
     }
 
     @Test
     public void testFindByKeyHash() throws Exception {
-
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+        Assert.assertEquals(expected, found.toDto());
     }
 
     @Test
     public void testGetCountByKeyHash() throws Exception {
-
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null);
+        long count = endpointProfileDao.getCountByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertEquals(1L, count);
     }
 
     @Test
     public void testRemoveByKeyHash() throws Exception {
-
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        endpointProfileDao.removeByKeyHash(expected.getEndpointKeyHash());
+        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+        Assert.assertNull(found);
     }
 
     @Test
@@ -48,7 +50,9 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testFindByAccessToken() throws Exception {
-
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfile found = endpointProfileDao.findByAccessToken(expected.getAccessToken());
+        Assert.assertEquals(expected, found.toDto());
     }
 
     @Test

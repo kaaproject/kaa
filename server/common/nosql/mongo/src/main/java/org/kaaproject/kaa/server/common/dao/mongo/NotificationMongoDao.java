@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.mongo;
 
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-import java.util.List;
-
-import org.bson.types.ObjectId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
@@ -30,8 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 @Repository
-public class NotificationMongoDao extends AbstractMongoDao<MongoNotification> implements NotificationDao<MongoNotification> {
+public class NotificationMongoDao extends AbstractMongoDao<MongoNotification, String> implements NotificationDao<MongoNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationMongoDao.class);
     private static final String TOPIC_ID = "topic_id";
@@ -54,30 +53,6 @@ public class NotificationMongoDao extends AbstractMongoDao<MongoNotification> im
     }
 
     @Override
-    public List<MongoNotification> findNotificationsBySchemaId(String schemaId) {
-        LOG.debug("Find notifications by schema id [{}]", schemaId);
-        return find(query(where(NOTIFICATION_SCHEMA_ID).is(new ObjectId(schemaId))));
-    }
-
-    @Override
-    public void removeNotificationsBySchemaId(String schemaId) {
-        LOG.debug("Remove notifications by schema id [{}]", schemaId);
-        remove(query(where(NOTIFICATION_SCHEMA_ID).is(new ObjectId(schemaId))));
-    }
-
-    @Override
-    public List<MongoNotification> findNotificationsByAppId(String appId) {
-        LOG.debug("Find notifications by application id [{}]", appId);
-        return find(query(where(APPLICATION_ID).is(appId)));
-    }
-
-    @Override
-    public void removeNotificationsByAppId(String appId) {
-        LOG.debug("Remove notifications by application id [{}]", appId);
-        remove(query(where(APPLICATION_ID).is(appId)));
-    }
-
-    @Override
     public List<MongoNotification> findNotificationsByTopicId(String topicId) {
         LOG.debug("Find notifications by topic id [{}]", topicId);
         return find(query(where(TOPIC_ID).is(topicId)));
@@ -87,12 +62,6 @@ public class NotificationMongoDao extends AbstractMongoDao<MongoNotification> im
     public void removeNotificationsByTopicId(String topicId) {
         LOG.debug("Remove notifications by topic id [{}]", topicId);
         remove(query(where(TOPIC_ID).is(topicId)));
-    }
-
-    @Override
-    public List<MongoNotification> findNotificationsBySchemaIdAndType(String schemaId, NotificationTypeDto type) {
-        LOG.debug("Find notifications by schema id [{}] and type [{}]", schemaId, type);
-        return find(query(where(NOTIFICATION_SCHEMA_ID).is(new ObjectId(schemaId)).and(NOTIFICATION_TYPE).is(type.name())));
     }
 
     @Override

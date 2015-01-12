@@ -38,28 +38,28 @@ import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.ge
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_ACCESS_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_APP_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_CONFIG_GROUP_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_CONFIG_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_CONFIGURATION_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_ECF_VERSION_STATE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_ECF_VERSION_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_ENDPOINT_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_EP_KEY_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_LOG_SCHEMA_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_NOTIFICATION_GROUP_STATE_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_NOTIFICATION_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_NOTIFICATION_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_PROFILE_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_PROFILE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_LOG_SCHEMA_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_NOTIFICATION_GROUP_STATE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_NOTIFICATION_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_PROFILE_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_PROFILE_SCHEMA_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_PROFILE_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_SERVER_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_SUBSCRIPTIONS_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_SYSTEM_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_SERVER_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_SUBSCRIPTIONS_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_PROFILE_USER_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_NOTIFICATION_VERSION_PROPERTY;
 
 @Table(name = EP_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointProfile implements EndpointProfile, Serializable {
@@ -85,39 +85,39 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     @Column(name = EP_CONFIG_GROUP_STATE_PROPERTY)
     @FrozenValue
     private List<CassandraEndpointGroupState> cfGroupState;
-    @Column(name = ENDPOINT_PROFILE_NOTIFICATION_GROUP_STATE_PROPERTY)
+    @Column(name = EP_NOTIFICATION_GROUP_STATE_PROPERTY)
     @FrozenValue
     private List<CassandraEndpointGroupState> nfGroupState;
-    @Column(name = ENDPOINT_PROFILE_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY)
+    @Column(name = EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY)
     private int cfSequenceNumber;
-    @Column(name = ENDPOINT_PROFILE_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY)
+    @Column(name = EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY)
     private int nfSequenceNumber;
-    @Column(name = ENDPOINT_PROFILE_PROFILE_PROPERTY)
+    @Column(name = EP_PROFILE_PROPERTY)
     private String profile;
-    @Column(name = ENDPOINT_PROFILE_PROFILE_HASH_PROPERTY)
+    @Column(name = EP_PROFILE_HASH_PROPERTY)
     private ByteBuffer profileHash;
-    @Column(name = ENDPOINT_PROFILE_PROFILE_VERSION_PROPERTY)
+    @Column(name = EP_PROFILE_VERSION_PROPERTY)
     private int profileVersion;
     @Column(name = EP_CONFIG_HASH_PROPERTY)
     private ByteBuffer configurationHash;
-    @Column(name = ENDPOINT_PROFILE_CONFIGURATION_VERSION_PROPERTY)
+    @Column(name = EP_CONFIGURATION_VERSION_PROPERTY)
     private int configurationVersion;
-    @Column(name = ENDPOINT_PROFILE_NOTIFICATION_VERSION_PROPERTY)
+    @Column(name = EP_NOTIFICATION_VERSION_PROPERTY)
     private int notificationVersion;
-    @Column(name = ENDPOINT_PROFILE_SUBSCRIPTIONS_PROPERTY)
+    @Column(name = EP_SUBSCRIPTIONS_PROPERTY)
     private List<String> subscriptions;
-    @Column(name = ENDPOINT_PROFILE_NOTIFICATION_HASH_PROPERTY)
+    @Column(name = EP_NOTIFICATION_HASH_PROPERTY)
     private ByteBuffer ntHash;
-    @Column(name = ENDPOINT_PROFILE_SYSTEM_NOTIFICATION_VERSION_PROPERTY)
+    @Column(name = EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY)
     private int systemNfVersion;
-    @Column(name = ENDPOINT_PROFILE_USER_NOTIFICATION_VERSION_PROPERTY)
+    @Column(name = EP_USER_NOTIFICATION_VERSION_PROPERTY)
     private int userNfVersion;
-    @Column(name = ENDPOINT_PROFILE_LOG_SCHEMA_VERSION_PROPERTY)
+    @Column(name = EP_LOG_SCHEMA_VERSION_PROPERTY)
     private int logSchemaVersion;
-    @Column(name = ENDPOINT_PROFILE_ECF_VERSION_STATE_PROPERTY)
+    @Column(name = EP_ECF_VERSION_STATE_PROPERTY)
     @FrozenValue
     private List<CassandraEventClassFamilyVersionState> ecfVersionStates;
-    @Column(name = ENDPOINT_PROFILE_SERVER_HASH_PROPERTY)
+    @Column(name = EP_SERVER_HASH_PROPERTY)
     private String serverHash;
 
 

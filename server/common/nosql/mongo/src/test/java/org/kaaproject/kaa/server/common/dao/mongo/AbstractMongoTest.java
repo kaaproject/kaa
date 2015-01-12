@@ -16,7 +16,9 @@
 package org.kaaproject.kaa.server.common.dao.mongo;
 
 import java.util.List;
+import java.util.UUID;
 
+import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
@@ -24,6 +26,7 @@ import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointProfile;
 import org.springframework.beans.factory.annotation.Autowired;
+import sun.plugin.util.UIUtil;
 
 public class AbstractMongoTest extends AbstractTest {
 
@@ -32,11 +35,18 @@ public class AbstractMongoTest extends AbstractTest {
     @Autowired
     protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
 
-    protected EndpointProfileDto generateEndpointprofile(String appId, List<String> topicIds) {
+    protected EndpointProfileDto generateEndpointProfile(String appId, List<String> topicIds) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         return endpointProfileDao.save(new MongoEndpointProfile(profileDto)).toDto();
+    }
+
+    protected EndpointConfigurationDto generateEndpointConfiguration() {
+        EndpointConfigurationDto configurationDto = new EndpointConfigurationDto();
+        configurationDto.setConfigurationHash(UUID.randomUUID().toString().getBytes());
+        configurationDto.setConfiguration(UUID.randomUUID().toString().getBytes());
+        return endpointConfigurationDao.save(new MongoEndpointConfiguration(configurationDto)).toDto();
     }
 }

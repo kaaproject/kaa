@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.dao.mongo;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -65,40 +66,41 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
 
     @Test
     public void testFindByKeyHash() {
-        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null);
         Assert.assertNotNull(endpointProfile);
         MongoEndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertNotNull(found);
-        Assert.assertEquals(endpointProfile, found);
+        Assert.assertEquals(endpointProfile, found.toDto());
     }
 
     @Test
     public void testFindById() {
-        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
-        Assert.assertNotNull(endpointProfile);
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null);
+        MongoEndpointProfile profile = endpointProfileDao.findById(ByteBuffer.wrap(endpointProfile.getEndpointKeyHash()));
+        Assert.assertNotNull(profile);
     }
 
     @Test
     public void testRemoveByKeyHash() {
-        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(endProfiles.get(0));
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null);
         Assert.assertNotNull(endpointProfile);
         endpointProfileDao.removeByKeyHash(endpointProfile.getEndpointKeyHash());
-        endpointProfile = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
-        Assert.assertNull(endpointProfile);
+        MongoEndpointProfile profile = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertNull(profile);
     }
 
     @Test
     public void removeByIdTest() {
-        EndpointProfileDto epDto = generateEndpointprofile(null, null);
+        EndpointProfileDto epDto = generateEndpointProfile(null, null);
         Assert.assertNotNull(epDto);
-        endpointProfileDao.removeById(epDto.getId());
-        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(epDto.getId());
+        endpointProfileDao.removeById(ByteBuffer.wrap(epDto.getEndpointKeyHash()));
+        MongoEndpointProfile endpointProfile = endpointProfileDao.findById(ByteBuffer.wrap(epDto.getEndpointKeyHash()));
         Assert.assertNull(endpointProfile);
     }
 
     @Test
     public void saveEndpointProfileTest() {
-        EndpointProfileDto endpointProfile = generateEndpointprofile(null, null);
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null);
         Assert.assertNotNull(endpointProfile);
         endpointProfile.setId(null);
         MongoEndpointProfile saved = endpointProfileDao.save(new MongoEndpointProfile(endpointProfile));
@@ -108,7 +110,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
 
     @Test
     public void convertToDtoTest() {
-        EndpointProfileDto endpointProfile = generateEndpointprofile(null, null);
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null);
         Assert.assertNotNull(endpointProfile);
         MongoEndpointProfile converted = new MongoEndpointProfile(endpointProfile);
         Assert.assertEquals(endpointProfile, converted.toDto());
@@ -116,7 +118,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
 
     @Test
     public void getCountByKeyHash() {
-        EndpointProfileDto endpointProfile = generateEndpointprofile(null, null);
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null);
         Assert.assertNotNull(endpointProfile);
         long count = endpointProfileDao.getCountByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertEquals(1, count);
@@ -124,7 +126,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
 
     @Test
     public void removeByAppId() {
-        EndpointProfileDto endpointProfile = generateEndpointprofile(null, null);
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null);
         Assert.assertNotNull(endpointProfile);
         byte[] keyHash = endpointProfile.getEndpointKeyHash();
         endpointProfileDao.removeByAppId(endpointProfile.getApplicationId());

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.mongo;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -25,7 +23,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
@@ -69,39 +66,4 @@ public class NotificationMongoDaoTest extends AbstractTest {
         Assert.assertNull(found);
     }
 
-    @Test
-    public void testFindNotificationsBySchemaId() {
-        NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
-        Assert.assertNotNull(notification.getId());
-        List<MongoNotification> found = notificationDao.findNotificationsBySchemaId(notification.getSchemaId());
-        Assert.assertEquals(notification, found.get(0).toDto());
-    }
-
-    @Test
-    public void removeNotificationsBySchemaId() {
-        NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
-        Assert.assertNotNull(notification.getId());
-        String schemaId = notification.getSchemaId();
-        List<MongoNotification> found = notificationDao.findNotificationsBySchemaId(schemaId);
-        Assert.assertEquals(notification, found.get(0).toDto());
-        notificationDao.removeNotificationsBySchemaId(schemaId);;
-        found = notificationDao.findNotificationsBySchemaId(schemaId);
-        Assert.assertTrue(found.isEmpty());
-    }
-
-    @Test
-    public void findNotificationsByAppId() {
-        NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
-        Assert.assertNotNull(notification.getId());
-        List<MongoNotification> found = notificationDao.findNotificationsByAppId(notification.getApplicationId());
-        Assert.assertEquals(notification, found.get(0).toDto());
-    }
-
-    @Test
-    public void findNotificationsBySchemaIdAndType() {
-        NotificationDto notification = generateNotifications(null, null, 1, NotificationTypeDto.USER).get(0);
-        Assert.assertNotNull(notification.getId());
-        List<MongoNotification> found = notificationDao.findNotificationsBySchemaIdAndType(notification.getSchemaId(), NotificationTypeDto.USER);
-        Assert.assertEquals(notification, found.get(0).toDto());
-    }
 }

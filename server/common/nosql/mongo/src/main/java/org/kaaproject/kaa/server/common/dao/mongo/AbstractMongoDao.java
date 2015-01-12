@@ -33,7 +33,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import com.mongodb.DBCollection;
 
-public abstract class AbstractMongoDao<T> implements Dao<T, String> {
+public abstract class AbstractMongoDao<T, K> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMongoDao.class);
 
@@ -107,40 +107,37 @@ public abstract class AbstractMongoDao<T> implements Dao<T, String> {
         return mongoTemplate.count(query, getDocumentClass());
     }
 
-    @Override
     public T save(T dto) {
         mongoTemplate.save(dto);
         return dto;
     }
 
-    @Override
     public <V> V save(V dto, Class<?> clazz) {
         LOG.debug("Save entity of {} class", clazz.getName());
         mongoTemplate.save(dto);
         return dto;
     }
 
-    @Override
     public List<T> find() {
         LOG.debug("Find  all documents from [{}] collection.", getCollectionName());
         return mongoTemplate.findAll(getDocumentClass());
     }
 
-    @Override
-    public T findById(String id) {
-        LOG.debug("Find document of collection [{}] by id [{}]", getCollectionName(), id);
-        return mongoTemplate.findById(id, getDocumentClass());
+    public T findById(K key) {
+        LOG.debug("Find document of collection [{}] by id [{}]", getCollectionName(), key);
+        return mongoTemplate.findById(key, getDocumentClass());
     }
 
-    @Override
     public void removeAll() {
         LOG.debug("Remove all documents from [{}] collection.", getCollectionName());
         mongoTemplate.dropCollection(getDocumentClass());
     }
 
-    @Override
-    public void removeById(String id) {
-        LOG.debug("Remove document of collection [{}] by id [{}]", getCollectionName(), id);
-        mongoTemplate.remove(query(where(ID).is(new ObjectId(id))), getDocumentClass());
+    public void removeById(K key) {
+        LOG.debug("Remove document of collection [{}] by id [{}]", getCollectionName(), key);
+        T object = findById(key);
+        if (object != null) {
+            mongoTemplate.remove(object);
+        }
     }
 }

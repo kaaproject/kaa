@@ -41,7 +41,6 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
-import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.slf4j.Logger;
@@ -217,7 +216,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
     @Test
     public void testFindUnicastNotificationById() {
         TopicDto topicDto = generateTopic(null, null);
-        EndpointProfileDto profile = generateEndpointprofile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
+        EndpointProfileDto profile = generateEndpointProfile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
         byte[] keyHash = profile.getEndpointKeyHash();
         EndpointNotificationDto notification = generateUnicastNotification(null, topicDto.getId(), keyHash);
         Assert.assertTrue(isNotBlank(notification.getId()));
@@ -228,7 +227,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
     @Test
     public void testRemoveUnicastNotificationsByKeyHash() {
         TopicDto topicDto = generateTopic(null, null);
-        EndpointProfileDto profile = generateEndpointprofile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
+        EndpointProfileDto profile = generateEndpointProfile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
         byte[] keyHash = profile.getEndpointKeyHash();
         EndpointNotificationDto notification = generateUnicastNotification(null, topicDto.getId(), keyHash);
         Assert.assertTrue(isNotBlank(notification.getId()));
@@ -259,7 +258,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
     @Test
     public void testRemoveUnicastNotificationById() {
         TopicDto topicDto = generateTopic(null, null);
-        EndpointProfileDto profile = generateEndpointprofile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
+        EndpointProfileDto profile = generateEndpointProfile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
         byte[] keyHash = profile.getEndpointKeyHash();
         EndpointNotificationDto notification = generateUnicastNotification(null, topicDto.getId(), keyHash);
         Assert.assertTrue(isNotBlank(notification.getId()));
@@ -274,7 +273,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
         notificationService.saveNotification(notification);
     }
 
-    @Test(expected = DatabaseProcessingException.class)
+    @Test(expected = NumberFormatException.class)
     public void testSaveNotificationWithIncorrectIds() {
         NotificationDto notification = new NotificationDto();
         notification.setSchemaId(new ObjectId().toString());

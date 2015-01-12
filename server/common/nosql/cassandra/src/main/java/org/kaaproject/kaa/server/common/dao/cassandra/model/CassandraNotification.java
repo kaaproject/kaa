@@ -16,19 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_APPLICATION_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_BODY_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_EXPIRED_AT_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_LAST_MOD_TIME_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_NOTIFICATION_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_NOTIFICATION_TYPE_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_SCHEMA_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_SEQ_NUM_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_TOPIC_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NOTIFICATION_VERSION_PROPERTY;
-
 import com.datastax.driver.mapping.EnumType;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -42,35 +31,56 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getByteBuffer;
+import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getBytes;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_APPLICATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_BODY_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_EXPIRED_AT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_LAST_MOD_TIME_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_NOTIFICATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_NOTIFICATION_TYPE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_SCHEMA_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_SEQ_NUM_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_TOPIC_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_VERSION_PROPERTY;
 
-@Table(name = NOTIFICATION_COLUMN_FAMILY_NAME)
+
+@Table(name = NF_COLUMN_FAMILY_NAME)
 public final class CassandraNotification implements Notification, Serializable {
 
     @Transient
     private static final long serialVersionUID = 348872010210481058L;
 
-    @PartitionKey
-    @Column(name = NOTIFICATION_NOTIFICATION_ID_PROPERTY)
-    private String id;
-    @Column(name = NOTIFICATION_APPLICATION_ID_PROPERTY)
-    private String applicationId;
-    @Column(name = NOTIFICATION_SCHEMA_ID_PROPERTY)
-    private String schemaId;
-    @Column(name = NOTIFICATION_TOPIC_ID_PROPERTY)
+    @PartitionKey(value = 0)
+    @Column(name = NF_TOPIC_ID_PROPERTY)
     private String topicId;
-    @Column(name = NOTIFICATION_VERSION_PROPERTY)
-    private int version;
-    @Column(name = NOTIFICATION_LAST_MOD_TIME_PROPERTY)
-    private Date lastModifyTime;
-    @Column(name = NOTIFICATION_NOTIFICATION_TYPE_PROPERTY)
+
+    @PartitionKey(value = 1)
+    @Column(name = NF_NOTIFICATION_TYPE_PROPERTY)
     @Enumerated(EnumType.STRING)
     private NotificationTypeDto type;
-    @Column(name = NOTIFICATION_BODY_PROPERTY)
-    private ByteBuffer body;
-    @Column(name = NOTIFICATION_EXPIRED_AT_PROPERTY)
-    private Date expiredAt;
-    @Column(name = NOTIFICATION_SEQ_NUM_PROPERTY)
+
+    @Column(name = NF_NOTIFICATION_ID_PROPERTY)
+    private String id;
+    @Column(name = NF_APPLICATION_ID_PROPERTY)
+    private String applicationId;
+    @Column(name = NF_SCHEMA_ID_PROPERTY)
+    private String schemaId;
+
+    @ClusteringColumn(value = 0)
+    @Column(name = NF_VERSION_PROPERTY)
+    private int version;
+    @ClusteringColumn(value = 1)
+    @Column(name = NF_SEQ_NUM_PROPERTY)
     private int seqNum;
+
+    @Column(name = NF_LAST_MOD_TIME_PROPERTY)
+    private Date lastModifyTime;
+    @Column(name = NF_BODY_PROPERTY)
+    private ByteBuffer body;
+    @Column(name = NF_EXPIRED_AT_PROPERTY)
+    private Date expiredAt;
 
     public CassandraNotification() {
 
@@ -84,7 +94,7 @@ public final class CassandraNotification implements Notification, Serializable {
         this.version = dto.getVersion();
         this.lastModifyTime = dto.getLastTimeModify();
         this.type = dto.getType();
-        this.body = ByteBuffer.wrap(dto.getBody());
+        this.body = getByteBuffer(dto.getBody());
         this.expiredAt = dto.getExpiredAt();
         this.seqNum = dto.getSecNum();
     }
@@ -194,33 +204,17 @@ public final class CassandraNotification implements Notification, Serializable {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = topicId != null ? topicId.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
-        result = 31 * result + (topicId != null ? topicId.hashCode() : 0);
         result = 31 * result + version;
+        result = 31 * result + seqNum;
         result = 31 * result + (lastModifyTime != null ? lastModifyTime.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (body != null ? body.hashCode() : 0);
         result = 31 * result + (expiredAt != null ? expiredAt.hashCode() : 0);
-        result = 31 * result + seqNum;
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "CassandraNotification{" +
-                "id='" + id + '\'' +
-                ", applicationId='" + applicationId + '\'' +
-                ", schemaId='" + schemaId + '\'' +
-                ", topicId='" + topicId + '\'' +
-                ", version=" + version +
-                ", lastModifyTime=" + lastModifyTime +
-                ", type=" + type +
-                ", body=" + body +
-                ", expiredAt=" + expiredAt +
-                ", seqNum=" + seqNum +
-                '}';
     }
 
     @Override
@@ -233,7 +227,7 @@ public final class CassandraNotification implements Notification, Serializable {
         dto.setLastTimeModify(lastModifyTime);
         dto.setVersion(version);
         dto.setType(type);
-        dto.setBody(body != null ? body.array() : null);
+        dto.setBody(body != null ? getBytes(body) : null);
         dto.setExpiredAt(expiredAt);
         dto.setSecNum(seqNum);
         return dto;

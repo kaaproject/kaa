@@ -17,23 +17,22 @@
 package org.kaaproject.kaa.server.common.dao.mongo;
 
 
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-import java.util.List;
-
+import com.mongodb.DBObject;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.mongodb.DBObject;
+import java.nio.ByteBuffer;
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
-public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfile> implements EndpointProfileDao<MongoEndpointProfile> {
+public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDao.class);
 
@@ -90,6 +89,22 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     public List<MongoEndpointProfile> findByEndpointUserId(String endpointUserId) {
         LOG.debug("Find endpoint profiles by endpoint user id [{}] ", endpointUserId);
         return find(query(where(ENDPOINT_USER_ID).is(endpointUserId)));
+    }
+
+    @Override
+    public MongoEndpointProfile findById(ByteBuffer key) {
+        MongoEndpointProfile profile = null;
+        if (key != null) {
+            profile = findByKeyHash(key.array());
+        }
+        return profile;
+    }
+
+    @Override
+    public void removeById(ByteBuffer key) {
+        if (key != null) {
+            removeByKeyHash(key.array());
+        }
     }
 
     @Override

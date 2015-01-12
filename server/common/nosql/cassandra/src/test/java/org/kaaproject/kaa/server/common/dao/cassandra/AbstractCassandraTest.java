@@ -1,20 +1,27 @@
 package org.kaaproject.kaa.server.common.dao.cassandra;
 
+import org.cassandraunit.CassandraCQLUnit;
+import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
+import org.junit.ClassRule;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointNotification;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointProfile;
+import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraNotification;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -23,12 +30,19 @@ public class AbstractCassandraTest {
 
     private static final Random RANDOM = new Random();
 
+    @ClassRule
+    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
+
     @Autowired
     protected EndpointNotificationDao<CassandraEndpointNotification> endpointNotificationDao;
     @Autowired
     protected EndpointConfigurationDao<CassandraEndpointConfiguration> endpointConfigurationDao;
     @Autowired
-    private EndpointProfileDao<CassandraEndpointProfile> endpointProfileDao;
+    protected EndpointProfileDao<CassandraEndpointProfile> endpointProfileDao;
+    @Autowired
+    protected EndpointUserDao<CassandraEndpointUser> userEndpointUserDao;
+    @Autowired
+    protected NotificationDao<CassandraNotification> notificationDao;
 
     protected List<CassandraEndpointNotification> generateEndpointNotification(ByteBuffer endpointKeyHash, int count) {
         List<CassandraEndpointNotification> savedNotifications = new ArrayList<>();
@@ -54,14 +68,16 @@ public class AbstractCassandraTest {
         NotificationDto notification;
         for (int i = 0; i < count; i++) {
             notification = new NotificationDto();
-            notification.setId(UUID.randomUUID().toString());
-            notification.setApplicationId(appId);
-            notification.setSchemaId(schemaId);
-            notification.setTopicId(topicId);
+            notification.setApplicationId(appId != null ? appId : UUID.randomUUID().toString());
+            notification.setSchemaId(schemaId != null ? schemaId : UUID.randomUUID().toString());
+            notification.setTopicId(topicId != null ? topicId : UUID.randomUUID().toString());
             notification.setType(type != null ? type : NotificationTypeDto.USER);
-            byte[] body = "dao/schema/testBaseData.json".getBytes(Charset.forName("UTF-8"));
-            notification.setBody(body);
-            notifications.add(notification);
+            notification.setSecNum(i);
+            notification.setBody(UUID.randomUUID().toString().getBytes());
+            notification.setLastTimeModify(new Date(System.currentTimeMillis()));
+            notification.setVersion(1);
+            notification.setExpiredAt(new Date(System.currentTimeMillis() + 7 * 24 * 3600 * 1000));
+            notifications.add(notificationDao.save(notification).toDto());
         }
         return notifications;
     }
@@ -94,6 +110,14 @@ public class AbstractCassandraTest {
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
+    }
+
+    protected EndpointUserDto generateEndpointUser() {
+        EndpointUserDto endpointUserDto = new EndpointUserDto();
+        endpointUserDto.setExternalId(UUID.randomUUID().toString());
+        endpointUserDto.setUsername("Test username");
+        endpointUserDto.setTenantId(UUID.randomUUID().toString());
+        return userEndpointUserDao.save(new CassandraEndpointUser(endpointUserDto)).toDto();
     }
 
     protected byte[] generateBytes() {

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.*;
-
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -29,17 +27,20 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-@Table(name = CassandraModelConstants.ENDPOINT_NOTIFICATION_COLUMN_FAMILY_NAME)
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_NF_ENDPOINT_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_NF_ID_PROPERTY;
+
+@Table(name = CassandraModelConstants.ENDPOINT_NF_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointNotification implements EndpointNotification, Serializable {
 
     @Transient
     private static final long serialVersionUID = -6770166693195322360L;
 
     @PartitionKey
-    @Column(name = ENDPOINT_NOTIFICATION_ENDPOINT_KEY_HASH_PROPERTY)
+    @Column(name = ENDPOINT_NF_ENDPOINT_KEY_HASH_PROPERTY)
     private ByteBuffer endpointKeyHash;
     @ClusteringColumn
-    @Column(name = ENDPOINT_NOTIFICATION_ID_PROPERTY)
+    @Column(name = ENDPOINT_NF_ID_PROPERTY)
     private String id;
     @Transient
     private CassandraNotification notification;

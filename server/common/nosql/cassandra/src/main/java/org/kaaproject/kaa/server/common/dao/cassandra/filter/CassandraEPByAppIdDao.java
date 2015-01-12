@@ -5,15 +5,15 @@ import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEPByAppId;
 import org.springframework.stereotype.Repository;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_APP_ID_APPLICATION_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
 
 @Repository
-public class CassandraEPByAppIdDao extends AbstractCassandraDao<CassandraEPByAppId> {
+public class CassandraEPByAppIdDao extends AbstractCassandraDao<CassandraEPByAppId, String> {
 
     @Override
     protected Class<CassandraEPByAppId> getColumnFamilyClass() {

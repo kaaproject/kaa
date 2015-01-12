@@ -11,7 +11,7 @@ import java.util.List;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_BY_USER_ID_COLUMN_FAMILY_NAME;
 
 @Repository
-public class CassandraEPByUserIdDao extends AbstractCassandraDao<CassandraEPByUserId> {
+public class CassandraEPByUserIdDao extends AbstractCassandraDao<CassandraEPByUserId, String> {
 
     @Override
     protected Class<CassandraEPByUserId> getColumnFamilyClass() {

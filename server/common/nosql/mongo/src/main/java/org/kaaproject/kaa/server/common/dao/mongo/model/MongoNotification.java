@@ -16,15 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.mongo.model;
 
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.idToObjectId;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.idToString;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Date;
-
-import org.bson.types.ObjectId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
@@ -33,6 +24,12 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
+
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 
 @Document(collection = MongoNotification.COLLECTION_NAME)
 public final class MongoNotification implements Notification, Serializable {
@@ -46,7 +43,7 @@ public final class MongoNotification implements Notification, Serializable {
     @Field("application_id")
     private String applicationId;
     @Field("notification_schema_id")
-    private ObjectId schemaId;
+    private String schemaId;
     @Field("topic_id")
     private String topicId;
     private int version;
@@ -68,7 +65,7 @@ public final class MongoNotification implements Notification, Serializable {
     public MongoNotification(NotificationDto dto) {
         this.id = dto.getId();
         this.applicationId = dto.getApplicationId();
-        this.schemaId = idToObjectId(dto.getSchemaId());
+        this.schemaId = dto.getSchemaId();
         this.topicId = dto.getTopicId();
         this.version = dto.getVersion();
         this.lastModifyTime = dto.getLastTimeModify();
@@ -86,7 +83,7 @@ public final class MongoNotification implements Notification, Serializable {
         return applicationId;
     }
 
-    public ObjectId getSchemaId() {
+    public String getSchemaId() {
         return schemaId;
     }
 
@@ -195,7 +192,7 @@ public final class MongoNotification implements Notification, Serializable {
         NotificationDto dto = new NotificationDto();
         dto.setId(id);
         dto.setApplicationId(applicationId);
-        dto.setSchemaId(idToString(schemaId));
+        dto.setSchemaId(schemaId);
         dto.setTopicId(topicId);
         dto.setLastTimeModify(lastModifyTime);
         dto.setVersion(version);

@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_USER_TYPE_NAME;
-
-import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
@@ -29,6 +23,11 @@ import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_USER_TYPE_NAME;
 
 @UDT(name = ENDPOINT_GROUP_STATE_USER_TYPE_NAME)
 public final class CassandraEndpointGroupState implements ToDto<EndpointGroupStateDto>, Serializable {

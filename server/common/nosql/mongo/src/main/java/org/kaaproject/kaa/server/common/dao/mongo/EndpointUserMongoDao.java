@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser> implements EndpointUserDao<MongoEndpointUser>, EndpointUserVerifier {
+public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, String> implements EndpointUserDao<MongoEndpointUser>, EndpointUserVerifier {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserMongoDao.class);
 
     @Override

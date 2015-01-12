@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.common.dao.mongo;
 
 import com.mongodb.DBObject;
-
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointConfiguration;
@@ -25,15 +24,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.nio.ByteBuffer;
+
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
-public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpointConfiguration> implements EndpointConfigurationDao<MongoEndpointConfiguration> {
+public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpointConfiguration, ByteBuffer> implements EndpointConfigurationDao<MongoEndpointConfiguration> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationMongoDao.class);
-
-    private static final String CONFIGURATION_HASH = "configuration_hash";
 
     @Override
     protected String getCollectionName() {
@@ -49,7 +48,7 @@ public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpoin
     @Override
     public MongoEndpointConfiguration findByHash(final byte[] hash) {
         LOG.debug("Find endpoint configuration by hash [{}] ", hash);
-        DBObject dbObject = query(where(CONFIGURATION_HASH).is(hash)).getQueryObject();
+        DBObject dbObject = query(where(ID).is(hash)).getQueryObject();
         DBObject result = mongoTemplate.getDb().getCollection(MongoEndpointConfiguration.COLLECTION_NAME).findOne(dbObject);
         return mongoTemplate.getConverter().read(getDocumentClass(), result);
     }
@@ -57,7 +56,23 @@ public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpoin
     @Override
     public void removeByHash(final byte[] hash) {
         LOG.debug("Remove endpoint configuration by hash [{}] ", hash);
-        remove(query(where(CONFIGURATION_HASH).is(hash)));
+        remove(query(where(ID).is(hash)));
+    }
+
+    @Override
+    public MongoEndpointConfiguration findById(ByteBuffer key) {
+        MongoEndpointConfiguration mongoEndpointConfiguration = null;
+        if (key != null) {
+            mongoEndpointConfiguration = findByHash(key.array());
+        }
+        return mongoEndpointConfiguration;
+    }
+
+    @Override
+    public void removeById(ByteBuffer key) {
+        if (key != null) {
+            removeByHash(key.array());
+        }
     }
 
     @Override

@@ -1,11 +1,6 @@
 package org.kaaproject.kaa.server.common.dao.cassandra;
 
-import org.cassandraunit.spring.CassandraDataSet;
-import org.cassandraunit.spring.CassandraUnitDependencyInjectionTestExecutionListener;
-import org.cassandraunit.spring.CassandraUnitTestExecutionListener;
-import org.cassandraunit.spring.EmbeddedCassandra;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointNotification;
@@ -13,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -24,13 +16,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@TestExecutionListeners({CassandraUnitDependencyInjectionTestExecutionListener.class,
-                DependencyInjectionTestExecutionListener.class,
-                CassandraUnitTestExecutionListener.class,
-                DirtiesContextTestExecutionListener.class})
-@CassandraDataSet(keyspace = "kaa", value = {"cassandra.cql"})
-@EmbeddedCassandra(configuration = "/embedded-cassandra.yaml")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class EndpointNotificationCassandraDaoTest extends AbstractCassandraTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointNotificationCassandraDaoTest.class);
@@ -64,6 +50,8 @@ public class EndpointNotificationCassandraDaoTest extends AbstractCassandraTest 
 
     @Test
     public void testSave() throws Exception {
-
+        CassandraEndpointNotification notification = generateEndpointNotification(null, 1).get(0);
+        List<CassandraEndpointNotification> found = endpointNotificationDao.findNotificationsByKeyHash(notification.getEndpointKeyHash().array());
+        Assert.assertEquals(1, found.size());
     }
 }

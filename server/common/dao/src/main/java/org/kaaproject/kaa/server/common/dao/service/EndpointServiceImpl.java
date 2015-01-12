@@ -215,8 +215,6 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public EndpointConfigurationDto saveEndpointConfiguration(EndpointConfigurationDto endpointConfigurationDto) {
-        validateObject(endpointConfigurationDto, "Can't save endpoint configuration object. Incorrect endpoint configuration object."
-                + endpointConfigurationDto);
         return getDto(endpointConfigurationDao.save(endpointConfigurationDto));
     }
 

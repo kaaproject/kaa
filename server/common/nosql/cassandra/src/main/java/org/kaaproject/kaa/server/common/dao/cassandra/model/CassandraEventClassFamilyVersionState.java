@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.*;
-import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
@@ -25,6 +23,10 @@ import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME;
 
 @UDT(name = EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME)
 public final class CassandraEventClassFamilyVersionState implements ToDto<EventClassFamilyVersionStateDto>, Serializable {
