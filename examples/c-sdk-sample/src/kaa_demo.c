@@ -167,7 +167,7 @@ static char * demo_allocator(void *allocation_context, size_t buffer_size)
     return buf_ptr->buffer;
 }
 
-int kaa_demo_create_socket_and_connect(const char *hostname, uint16_t port, bool non_block)
+int kaa_demo_create_socket_and_connect(const char *hostname, uint16_t port)
 {
     if (!hostname || !port) {
         KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_BADPARAM, "Bad params for connect: hostname=%p, port=%u", hostname, port);
@@ -196,17 +196,8 @@ int kaa_demo_create_socket_and_connect(const char *hostname, uint16_t port, bool
 
     KAA_LOG_DEBUG(kaa_context_->logger, KAA_ERR_NONE, "For server %s:%u created socket %d", hostname, port, kaa_client_socket);
 
-    if (non_block) {
-        int flags = fcntl(kaa_client_socket, F_GETFL, 0);
-        if (fcntl(kaa_client_socket, F_SETFL, flags | O_NONBLOCK)) {
-            KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_BADDATA, "Socket %d: ", kaa_client_socket, strerror(errno));
-            freeaddrinfo(server_info);
-            return -1;
-        }
-    }
-
     int connect_rval = connect(kaa_client_socket, server_info->ai_addr, server_info->ai_addrlen);
-    if (connect_rval && !(non_block && errno == EINPROGRESS)) {
+    if (connect_rval) {
         KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_WRITE_FAILED, "Failed to connect to server %s:%u, socket %d. %s", hostname, port, kaa_client_socket, strerror(errno));
         freeaddrinfo(server_info);
         return connect_rval;
@@ -450,7 +441,7 @@ int kaa_demo_receive_operation_server_list()
         KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_BADDATA, "Failed to get bootstrap KaaTCP channel. Hostname=%p, port=%u", kaatcp_info.host, kaatcp_info.port);
         return -1;
     }
-    if (kaa_demo_create_socket_and_connect(kaatcp_info.host, kaatcp_info.port, false)) {
+    if (kaa_demo_create_socket_and_connect(kaatcp_info.host, kaatcp_info.port)) {
         KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_BAD_STATE, "Failed to connect to bootstrap server");
         return -1;
     }
@@ -481,10 +472,19 @@ int kaa_demo_connect_to_next_operation_server()
             kaatcp_supported_channel_t *channel = server->supported_channels + i;
             if (channel->channel_type == KAA_BOOTSTRAP_CHANNEL_KAATCP) {
                 KAA_LOG_DEBUG(kaa_context_->logger, KAA_ERR_NONE, "Found KaaTCP channel %s:%u", channel->hostname, channel->port);
-                if (kaa_demo_create_socket_and_connect(channel->hostname, channel->port, true)) {
+                // Connecting to the operation server
+                if (kaa_demo_create_socket_and_connect(channel->hostname, channel->port)) {
                     KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_BAD_STATE, "Failed to connect to KaaTCP server %s:%u", channel->hostname, channel->port);
+                    kaa_demo_close_socket();
                     return -1;
                 }
+                // Setting NONBLOCK flag to the client socket
+                int flags = fcntl(kaa_client_socket, F_GETFL, 0);
+                if (fcntl(kaa_client_socket, F_SETFL, flags | O_NONBLOCK)) {
+                    KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_BADDATA, "Socket %d: ", kaa_client_socket, strerror(errno));
+                    return -1;
+                }
+                // Sending Connect message
                 if (kaatcp_send_connect_message()) {
                     KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_WRITE_FAILED, "Failed to send Connect message to KaaTCP server %s:%u", channel->hostname, channel->port);
                     kaa_demo_close_socket();
@@ -580,8 +580,6 @@ void kaa_sdk_on_sync(const kaa_service_t services[], size_t service_count)
         }
     }
 }
-
-/* forward declarations */
 
 kaa_error_t kaa_sdk_init()
 {
