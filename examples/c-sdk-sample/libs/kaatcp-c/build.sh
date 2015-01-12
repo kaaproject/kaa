@@ -14,24 +14,41 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 2.8.8)
+#!/bin/bash
 
-project (C-SDK-sample)
-enable_language(C)
+RUN_DIR=`pwd`
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c1x -Wall -Wextra")
+function help {
+    echo "Choose one of the following: {build|install|clean}"
+    exit 1
+}
 
-find_package (OpenSSL REQUIRED)
+if [ $# -eq 0 ]
+then
+    help
+fi
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/kaa/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/kaatcp-c/src
-)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
+mkdir -p build; cd build; cmake ..; cd ..
 
-set (SAMPLE_SOURCE_FILES
-                src/kaa_demo.c
-)
+for cmd in $@
+do
 
-add_executable(${APP_NAME} ${SAMPLE_SOURCE_FILES})
-target_link_libraries(${APP_NAME} kaac kaatcp crypto)
+case "$cmd" in
+    build)
+    cd build && make && cd ..
+    ;;
+
+    install)
+    cd build && make install && cd ..
+    ;;
+
+    clean)
+    cd build && make clean && cd .. 
+    ;;
+    
+    *)
+    help
+    ;;
+esac
+
+done

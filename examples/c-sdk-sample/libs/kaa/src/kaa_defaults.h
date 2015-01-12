@@ -82,7 +82,7 @@ static const kaa_bootstrap_server_info_t KAA_BOOTSTRAP_SERVERS[KAA_BOOTSTRAP_SER
                                     ,
                                         { NULL, 0 }
                                     ,
-                                        { "localhost", 9888 }
+                                        { "10.2.1.190", 9888 }
                                      }
 }};
 
