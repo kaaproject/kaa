@@ -38,6 +38,7 @@ typedef struct {
 
 struct ext_log_storage_t {
     kaa_list_t     *logs;           /**< List of @link ext_log_record_t @endlink */
+    kaa_list_t     *first_unmarked; /**< Pointer to the first unmarked record position (with zero bucket_id) */
     size_t          occupied_size;  /**< Currently occupied logs volume */
     kaa_logger_t   *logger;         /**< Logger instance */
 };
@@ -62,6 +63,7 @@ kaa_error_t ext_log_storage_create(ext_log_storage_t** log_storage_p, kaa_logger
     KAA_RETURN_IF_NIL(*log_storage_p, KAA_ERR_NOMEM);
 
     (*log_storage_p)->logs = NULL;
+    (*log_storage_p)->first_unmarked = NULL;
     (*log_storage_p)->occupied_size = 0;
     (*log_storage_p)->logger = logger;
 
@@ -85,6 +87,9 @@ kaa_error_t ext_log_storage_allocate_log_record_buffer(ext_log_storage_t *self, 
     KAA_RETURN_IF_NIL2(record, record->size, KAA_ERR_BADPARAM);
 
     record->data = (char *) KAA_MALLOC(record->size * sizeof(char));
+    if (!record->data)
+        return KAA_ERR_NOMEM;
+
     return KAA_ERR_NONE;
 }
 
@@ -141,7 +146,8 @@ kaa_error_t ext_log_storage_write_next_record(ext_log_storage_t *self, char *buf
     KAA_RETURN_IF_NIL5(self, buffer, buffer_len, bucket_id, record_len, KAA_ERR_BADPARAM);
 
     uint16_t zero_bucket_id = 0;
-    kaa_list_t *record_position = kaa_list_find_next(self->logs, &logs_list_find_by_bucket_id, &zero_bucket_id);
+    kaa_list_t *record_position = kaa_list_find_next(self->first_unmarked ? self->first_unmarked : self->logs
+            , &logs_list_find_by_bucket_id, &zero_bucket_id);
     if (!record_position) {
         *record_len = 0;
         return KAA_ERR_NOT_FOUND;
@@ -154,6 +160,7 @@ kaa_error_t ext_log_storage_write_next_record(ext_log_storage_t *self, char *buf
 
     memcpy((void *)buffer, record->data, record->size);
     record->bucket_id = bucket_id;
+    self->first_unmarked = kaa_list_next(record_position);
 
     return KAA_ERR_NONE;
 }
@@ -165,11 +172,17 @@ kaa_error_t ext_log_storage_remove_by_bucket_id(ext_log_storage_t *self, uint16_
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
     kaa_list_t *record_position = kaa_list_find_next(self->logs, logs_list_find_by_bucket_id, &bucket_id);
+    if (!record_position)
+        return KAA_ERR_NOT_FOUND;
+
     while (record_position) {
         self->occupied_size -= ((ext_log_record_t *)kaa_list_get_data(record_position))->size;
         record_position = kaa_list_remove_at(&self->logs, record_position, &log_record_destroy);
         record_position = kaa_list_find_next(record_position, &logs_list_find_by_bucket_id, &bucket_id);
     }
+
+    if (!bucket_id)
+        self->first_unmarked = NULL;
 
     return KAA_ERR_NONE;
 }
@@ -181,10 +194,14 @@ kaa_error_t ext_log_storage_unmark_by_bucket_id(ext_log_storage_t *self, uint16_
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
     kaa_list_t *record_position = kaa_list_find_next(self->logs, logs_list_find_by_bucket_id, &bucket_id);
+    if (!record_position)
+        return KAA_ERR_NOT_FOUND;
+
     while (record_position) {
         ((ext_log_record_t *)kaa_list_get_data(record_position))->bucket_id = 0;
         record_position = kaa_list_find_next(record_position, &logs_list_find_by_bucket_id, &bucket_id);
     }
+    self->first_unmarked = NULL;
 
     return KAA_ERR_NONE;
 }
@@ -201,6 +218,8 @@ kaa_error_t ext_log_storage_shrink_by_size(ext_log_storage_t *self, size_t size)
         size_t record_size = ((ext_log_record_t *)kaa_list_get_data(self->logs))->size;
         removed_size += record_size;
         self->occupied_size -= record_size;
+        if (self->first_unmarked && (self->first_unmarked == self->logs))
+            self->first_unmarked = NULL;
         kaa_list_remove_at(&self->logs, self->logs, &log_record_destroy);
     }
     return KAA_ERR_NONE;

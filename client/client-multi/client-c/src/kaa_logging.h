@@ -26,7 +26,6 @@
 
 # ifndef KAA_DISABLE_FEATURE_LOGGING
 
-# include <stddef.h>
 # include "gen/kaa_logging_gen.h"
 # include "platform/ext_log_storage.h"
 # include "platform/ext_log_upload_strategy.h"
@@ -55,13 +54,11 @@ typedef struct kaa_log_collector kaa_log_collector_t;
  * @param[in] self              Pointer to a @link kaa_log_collector_t @endlink instance.
  * @param[in] storage           Log storage interface.
  * @param[in] upload_strategy   Log upload strategy interface.
- * @param[in] properties        Log upload properties structure.
  *
  * @return      Error code.
  */
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self
-                           , ext_log_storage_t *storage
-                           , ext_log_upload_strategy_t *upload_strategy);
+        , ext_log_storage_t *storage, ext_log_upload_strategy_t *upload_strategy);
 
 
 
