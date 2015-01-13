@@ -65,12 +65,13 @@
 // 200 seconds
 #define KEEP_ALIVE_TIMEOUT 200
 // 100 seconds
-#define PING_TIMEOUT       100
+#define PING_TIMEOUT       3
 
 #define KAA_KEY_STORAGE "key.txt"
 #define KAA_STATUS_STORAGE "status.conf"
 
-#define KAA_THRESHOLD_RECORD_COUNT   1
+#define KAA_THRESHOLD_RECORD_COUNT   5
+#define KAA_MAX_LOG_STORAGE_VOLUME   10 * 1024 * 1024
 
 static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_BOOTSTRAP, KAA_SERVICE_PROFILE, KAA_SERVICE_USER, KAA_SERVICE_EVENT, KAA_SERVICE_LOGGING };
 static const int SUPPORTED_SERVICES_COUNT = 5;
@@ -99,7 +100,7 @@ kaa_log_storage_t log_storage_interface;
 static kaa_log_upload_properties_t kaa_log_upload_properties = {
       128   /**< max_log_block_size */
     , 256   /**< max_log_upload_threshold */
-    , 1024  /**< max_log_storage_volume */
+    , KAA_MAX_LOG_STORAGE_VOLUME  /**< max_log_storage_volume */
 };
 
 static kaa_log_upload_decision_t is_log_upload_needed(void *context, const kaa_log_storage_t *log_storage);
@@ -704,6 +705,17 @@ void kaa_demo_destroy()
     }
 }
 
+void check_ping(struct timeval *timer_start)
+{
+    struct timeval timer_finish;
+    gettimeofday(&timer_finish, NULL);
+    if (timer_finish.tv_sec - timer_start->tv_sec >= PING_TIMEOUT) {
+        KAA_LOG_DEBUG(kaa_context_->logger, KAA_ERR_NONE, "Timer timeout occurred. Sending ping to server");
+        kaatcp_send_ping_message();
+        gettimeofday(timer_start, NULL); // restarting timer
+    }
+}
+
 int kaa_demo_event_loop()
 {
     if (kaa_demo_receive_operation_server_list()) {
@@ -713,7 +725,6 @@ int kaa_demo_event_loop()
     while (kaa_demo_connect_to_next_operation_server());
 
     struct timeval timer_start = { 0, 0 };
-    struct timeval timer_finish = { 0, 0 };
     gettimeofday(&timer_start, NULL); // starting timer
 
     fd_set read_set;
@@ -727,8 +738,7 @@ int kaa_demo_event_loop()
         int select_result = select(kaa_client_socket + 1, &read_set, NULL, NULL, &select_timeout);
         if (select_result == 0) {
             KAA_LOG_DEBUG(kaa_context_->logger, KAA_ERR_NONE, "Select timeout occurred. Sending ping to server");
-            kaatcp_send_ping_message();
-            gettimeofday(&timer_start, NULL); // restarting timer
+            check_ping(&timer_start);
         } else if (select_result > 0) {
             if (FD_ISSET(kaa_client_socket, &read_set)) {
                 KAA_LOG_DEBUG(kaa_context_->logger, KAA_ERR_NONE, "Processing IN event for the Kaa client socket %d", kaa_client_socket);
@@ -749,12 +759,7 @@ int kaa_demo_event_loop()
                     kaatcp_read_from_socket();
                 }
             }
-            gettimeofday(&timer_finish, NULL);
-            if (timer_finish.tv_sec - timer_start.tv_sec >= PING_TIMEOUT) {
-                KAA_LOG_DEBUG(kaa_context_->logger, KAA_ERR_NONE, "Timer timeout occurred. Sending ping to server");
-                kaatcp_send_ping_message();
-                gettimeofday(&timer_start, NULL); // restarting timer
-            }
+            check_ping(&timer_start);
         } else {
             KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_BAD_STATE, "Failed to poll descriptors: %s", strerror(errno));
             return -1;
