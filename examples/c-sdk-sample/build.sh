@@ -37,8 +37,8 @@ APP_NAME="sample_c_client"
 
 function prepare_build {
     mkdir -p build;
-    cd $KAA_LIB_PATH && ./build.sh build && cd $BUILD_DIR && cp libkaa* "$PROJECT_HOME/$BUILD_DIR/" && cd $PROJECT_HOME
-    cd $KAATCP_LIB_PATH && ./build.sh build && cd $BUILD_DIR && cp libkaatcp* "$PROJECT_HOME/$BUILD_DIR/" && cd $PROJECT_HOME
+    cd $KAA_LIB_PATH; ./build.sh build; cd $BUILD_DIR; cp libkaa* "$PROJECT_HOME/$BUILD_DIR/"; cd $PROJECT_HOME
+    cd $KAATCP_LIB_PATH; ./build.sh build; cd $BUILD_DIR; cp libkaatcp* "$PROJECT_HOME/$BUILD_DIR/"; cd $PROJECT_HOME
     cd $BUILD_DIR && cmake -DAPP_NAME=$APP_NAME .. && cd $PROJECT_HOME
 }
 

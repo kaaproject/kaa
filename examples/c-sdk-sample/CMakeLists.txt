@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 2.8.8)
 project (C-SDK-sample)
 enable_language(C)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c1x -Wall -Wextra")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -Wextra")
 
 find_package (OpenSSL REQUIRED)
 
