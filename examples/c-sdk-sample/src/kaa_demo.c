@@ -52,7 +52,6 @@
 #include <utilities/kaa_log.h>
 #include <utilities/kaa_mem.h>
 
-#define DEFAULT_PROFILE_BODY "dummy"
 #define SAMPLE_PROFILE_ID "sampleid"
 #define SAMPLE_OS_VERSION "1.0"
 #define SAMPLE_BUILD_INFO "3cbaf67e"
@@ -121,7 +120,7 @@ void kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_dealloc
 
     fseek(status_file, 0, SEEK_END);
     *buffer_size = ftell(status_file);
-    *buffer = (char*)calloc(*buffer_size, sizeof(char));
+    *buffer = (char*) KAA_MALLOC(*buffer_size);
 
     if (*buffer == NULL) {
         return;
@@ -156,21 +155,6 @@ void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
     *buffer = kaa_public_key;
     *buffer_size = kaa_public_key_length;
     *needs_deallocation = false;
-}
-
-void kaa_sdk_on_user_response(bool is_attached)
-{
-    KAA_LOG_INFO(kaa_context_->logger, KAA_ERR_NONE, "Endpoint attached=%s", is_attached ? "true": "false");
-}
-
-void kaa_sdk_on_attached_callback(const char *user_external_id, const char *endpoint_access_token)
-{
-    KAA_LOG_INFO(kaa_context_->logger, KAA_ERR_NONE, "Endpoint attached to %s by %s", user_external_id, endpoint_access_token);
-}
-
-void kaa_sdk_on_detached_callback(const char *endpoint_access_token)
-{
-    KAA_LOG_INFO(kaa_context_->logger, KAA_ERR_NONE, "Endpoint detached by %s", endpoint_access_token);
 }
 
 typedef struct kaa_demo_sized_buffer_t {
@@ -652,7 +636,7 @@ kaa_error_t kaa_sdk_init()
         return error_code;
     }
 
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Creating basic endpoint profile: %s", DEFAULT_PROFILE_BODY);
+    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Creating endpoint profile");
     kaa_profile_t *profile = kaa_profile_profile_create();
     profile->id = kaa_string_move_create(SAMPLE_PROFILE_ID, NULL);
     profile->os = ENUM_OS_Linux;
@@ -733,13 +717,13 @@ int kaa_demo_event_loop()
     gettimeofday(&timer_start, NULL); // starting timer
 
     fd_set read_set;
-    struct timeval select_timeout = { PING_TIMEOUT, 0 };
     while (!is_shutdown) {
         add_log_record();
 
         FD_ZERO(&read_set);
         FD_SET(kaa_client_socket, &read_set);
 
+        struct timeval select_timeout = { PING_TIMEOUT, 0 };
         int select_result = select(kaa_client_socket + 1, &read_set, NULL, NULL, &select_timeout);
         if (select_result == 0) {
             KAA_LOG_DEBUG(kaa_context_->logger, KAA_ERR_NONE, "Select timeout occurred. Sending ping to server");
