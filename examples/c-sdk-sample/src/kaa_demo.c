@@ -36,6 +36,7 @@
 #include <kaatcp.h>
 
 #include <kaa.h>
+#include <kaa_common.h>
 #include <kaa_channel_manager.h>
 #include <kaa_common_schema.h>
 #include <kaa_context.h>
@@ -46,6 +47,8 @@
 #include <kaa_platform_protocol.h>
 #include <kaa_profile.h>
 #include <kaa_user.h>
+#include <kaa_logging.h>
+#include <log/kaa_memory_log_storage.h>
 #include <utilities/kaa_log.h>
 #include <utilities/kaa_mem.h>
 
@@ -53,6 +56,9 @@
 #define SAMPLE_PROFILE_ID "sampleid"
 #define SAMPLE_OS_VERSION "1.0"
 #define SAMPLE_BUILD_INFO "3cbaf67e"
+
+#define SAMPLE_LOG_TAG     "Log tag"
+#define SAMPLE_LOG_MESSAGE "Sample log message"
 
 #define SOCKET_READ_BUFFER_SIZE 1024
 #define SOCKET_WRITE_BUFFER_SIZE 1024
@@ -65,8 +71,10 @@
 #define KAA_KEY_STORAGE "key.txt"
 #define KAA_STATUS_STORAGE "status.conf"
 
-static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_BOOTSTRAP, KAA_SERVICE_PROFILE, KAA_SERVICE_USER, KAA_SERVICE_EVENT };
-static const int SUPPORTED_SERVICES_COUNT = 4;
+#define KAA_THRESHOLD_RECORD_COUNT   1
+
+static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_BOOTSTRAP, KAA_SERVICE_PROFILE, KAA_SERVICE_USER, KAA_SERVICE_EVENT, KAA_SERVICE_LOGGING };
+static const int SUPPORTED_SERVICES_COUNT = 5;
 
 static char socket_read_buffer[SOCKET_READ_BUFFER_SIZE];
 static char socket_write_buffer[SOCKET_WRITE_BUFFER_SIZE];
@@ -86,13 +94,24 @@ static uint32_t kaa_public_key_length = 0;
 static kaa_digest kaa_public_key_hash;
 
 kaa_context_t *kaa_context_ = NULL;
+kaa_memory_log_storage_t *log_storage = NULL;
+kaa_log_storage_t log_storage_interface;
+
+static kaa_log_upload_properties_t kaa_log_upload_properties = {
+      128   /**< max_log_block_size */
+    , 256   /**< max_log_upload_threshold */
+    , 1024  /**< max_log_storage_volume */
+};
+
+static kaa_log_upload_decision_t is_log_upload_needed(void *context, const kaa_log_storage_t *log_storage);
+
+static kaa_log_upload_strategy_t kaa_log_upload_strategy = { &kaa_log_upload_properties, &is_log_upload_needed };
 
 void kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;
-    //FIXME: memory leak in case of status file exists
-    *needs_deallocation = false;
+    *needs_deallocation = true;
 
     FILE* status_file = fopen(KAA_STATUS_STORAGE, "rb");
 
@@ -581,12 +600,55 @@ void kaa_sdk_on_sync(const kaa_service_t services[], size_t service_count)
     }
 }
 
+kaa_log_upload_decision_t is_log_upload_needed(void *context, const kaa_log_storage_t *log_storage)
+{
+    if (log_storage && context) {
+        kaa_log_upload_properties_t *log_upload_properties = (kaa_log_upload_properties_t *)context;
+
+        if ((*log_storage->get_total_size)(log_storage->context) > log_upload_properties->max_log_storage_volume) {
+            return CLEANUP;
+        } else if (log_storage->get_records_count(log_storage->context) >= KAA_THRESHOLD_RECORD_COUNT) {
+            return UPLOAD;
+        }
+    }
+
+    return NOOP;
+}
+
+kaa_error_t kaa_log_collector_init()
+{
+    kaa_error_t error_code = kaa_memory_log_storage_create(&log_storage, kaa_context_->logger);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_context_->logger, error_code, "Failed to create log storage: error_code = %d", error_code);
+        return error_code;
+    }
+
+    error_code = kaa_memory_log_storage_get_interface(log_storage, &log_storage_interface);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_context_->logger, error_code, "Failed to create common log storage interface: error_code = %d", error_code);
+        return error_code;
+    }
+
+    error_code = kaa_logging_init(kaa_context_->log_collector
+                                , &log_storage_interface
+                                , &kaa_log_upload_strategy
+                                , &kaa_log_upload_properties);
+
+    return error_code;
+}
+
 kaa_error_t kaa_sdk_init()
 {
-    printf("%s", "Initializing Kaa SDK...\n");
+    printf("Initializing Kaa SDK...");
     kaa_error_t error_code = kaa_init(&kaa_context_);
     if (error_code) {
-        printf("Error during kaa context creation %d\n", error_code);
+        KAA_LOG_ERROR(kaa_context_->logger, error_code, "Error during kaa context creation %d", error_code);
+        return error_code;
+    }
+
+    error_code = kaa_log_collector_init();
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_context_->logger, error_code, "Failed to init Kaa log collector %d", error_code);
         return error_code;
     }
 
@@ -624,6 +686,25 @@ kaa_error_t kaa_demo_init()
     return KAA_ERR_NONE;
 }
 
+static void add_log_record()
+{
+    kaa_user_log_record_t *log_record = kaa_logging_log_data_create();
+    if (!log_record) {
+        KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_NOT_INITIALIZED, "Failed to allocate log record");
+        return;
+    }
+
+    log_record->level = (kaa_logging_level_t)(rand() % 6);
+    log_record->tag = kaa_string_move_create(SAMPLE_LOG_TAG, NULL);
+    log_record->message = kaa_string_move_create(SAMPLE_LOG_MESSAGE, NULL);
+
+    kaa_error_t error_code = kaa_logging_add_record(kaa_context_->log_collector, log_record);
+    if (error_code)
+        KAA_LOG_ERROR(kaa_context_->logger, error_code, "Failed to add log record");
+
+    log_record->destroy(log_record);
+}
+
 void kaa_demo_destroy()
 {
     KAA_LOG_DEBUG(kaa_context_->logger, KAA_ERR_NONE, "Destroying Kaa driver...");
@@ -654,6 +735,8 @@ int kaa_demo_event_loop()
     fd_set read_set;
     struct timeval select_timeout = { PING_TIMEOUT, 0 };
     while (!is_shutdown) {
+        add_log_record();
+
         FD_ZERO(&read_set);
         FD_SET(kaa_client_socket, &read_set);
 
@@ -704,7 +787,7 @@ void signal_handler(int sig)
     size = backtrace(stack, 16);
     char **backtrace_syms = backtrace_symbols(stack, 16);
 
-    printf("SIGSEGV\n");
+    printf("SIGSEGV");
     for (size_t i = 1; i < size - 1; ++i) {
         printf("%s\n", backtrace_syms[i]);
     }
@@ -714,7 +797,7 @@ void signal_handler(int sig)
     exit(1);
 }
 
-int main(int argc, char *argv[])
+int main(/*int argc, char *argv[]*/)
 {
     signal(SIGSEGV, signal_handler);
 
