@@ -36,12 +36,12 @@ typedef struct {
 
 
 
-struct ext_log_storage_t {
+typedef struct {
     kaa_list_t     *logs;           /**< List of @link ext_log_record_t @endlink */
     kaa_list_t     *first_unmarked; /**< Pointer to the first unmarked record position (with zero bucket_id) */
     size_t          occupied_size;  /**< Currently occupied logs volume */
     kaa_logger_t   *logger;         /**< Logger instance */
-};
+} ext_log_storage_memory_t;
 
 
 
@@ -55,25 +55,27 @@ void log_record_destroy(void *record_p)
 
 
 
-kaa_error_t ext_log_storage_create(ext_log_storage_t** log_storage_p, kaa_logger_t *logger)
+kaa_error_t ext_log_storage_create(void **log_storage_context_p, kaa_logger_t *logger)
 {
-    KAA_RETURN_IF_NIL(log_storage_p, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(log_storage_context_p, KAA_ERR_BADPARAM);
 
-    *log_storage_p = (ext_log_storage_t *) KAA_MALLOC(sizeof(ext_log_storage_t));
-    KAA_RETURN_IF_NIL(*log_storage_p, KAA_ERR_NOMEM);
+    ext_log_storage_memory_t *log_storage = (ext_log_storage_memory_t *) KAA_MALLOC(sizeof(ext_log_storage_memory_t));
+    KAA_RETURN_IF_NIL(log_storage, KAA_ERR_NOMEM);
 
-    (*log_storage_p)->logs = NULL;
-    (*log_storage_p)->first_unmarked = NULL;
-    (*log_storage_p)->occupied_size = 0;
-    (*log_storage_p)->logger = logger;
+    log_storage->logs = NULL;
+    log_storage->first_unmarked = NULL;
+    log_storage->occupied_size = 0;
+    log_storage->logger = logger;
 
+    *log_storage_context_p = (void *)log_storage;
     return KAA_ERR_NONE;
 }
 
 
 
-void ext_log_storage_destroy(ext_log_storage_t *self)
+void ext_log_storage_destroy(void *context)
 {
+    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
     if (self) {
         kaa_list_destroy(self->logs, &log_record_destroy);
         KAA_FREE(self);
@@ -82,7 +84,7 @@ void ext_log_storage_destroy(ext_log_storage_t *self)
 
 
 
-kaa_error_t ext_log_storage_allocate_log_record_buffer(ext_log_storage_t *self, kaa_log_record_t *record)
+kaa_error_t ext_log_storage_allocate_log_record_buffer(void *context, kaa_log_record_t *record)
 {
     KAA_RETURN_IF_NIL2(record, record->size, KAA_ERR_BADPARAM);
 
@@ -95,9 +97,10 @@ kaa_error_t ext_log_storage_allocate_log_record_buffer(ext_log_storage_t *self, 
 
 
 
-kaa_error_t ext_log_storage_add_log_record(ext_log_storage_t *self, kaa_log_record_t *record)
+kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *record)
 {
-    KAA_RETURN_IF_NIL2(self, record, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(context, record, KAA_ERR_BADPARAM);
+    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
 
     ext_log_record_t *new_record = (ext_log_record_t *) KAA_MALLOC(sizeof(ext_log_record_t));
     KAA_RETURN_IF_NIL(new_record, KAA_ERR_NOMEM);
@@ -122,7 +125,7 @@ kaa_error_t ext_log_storage_add_log_record(ext_log_storage_t *self, kaa_log_reco
 
 
 
-kaa_error_t ext_log_storage_deallocate_log_record_buffer(ext_log_storage_t *self, kaa_log_record_t *record)
+kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_record_t *record)
 {
     KAA_RETURN_IF_NIL2(record, record->data, KAA_ERR_BADPARAM);
 
@@ -140,10 +143,11 @@ bool logs_list_find_by_bucket_id(void *log_record_p, void *bucket_id_p)
 
 
 
-kaa_error_t ext_log_storage_write_next_record(ext_log_storage_t *self, char *buffer, size_t buffer_len
+kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_t buffer_len
         , uint16_t bucket_id, size_t *record_len)
 {
-    KAA_RETURN_IF_NIL5(self, buffer, buffer_len, bucket_id, record_len, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL5(context, buffer, buffer_len, bucket_id, record_len, KAA_ERR_BADPARAM);
+    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
 
     uint16_t zero_bucket_id = 0;
     kaa_list_t *record_position = kaa_list_find_next(self->first_unmarked ? self->first_unmarked : self->logs
@@ -167,9 +171,10 @@ kaa_error_t ext_log_storage_write_next_record(ext_log_storage_t *self, char *buf
 
 
 
-kaa_error_t ext_log_storage_remove_by_bucket_id(ext_log_storage_t *self, uint16_t bucket_id)
+kaa_error_t ext_log_storage_remove_by_bucket_id(void *context, uint16_t bucket_id)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
 
     kaa_list_t *record_position = kaa_list_find_next(self->logs, logs_list_find_by_bucket_id, &bucket_id);
     if (!record_position)
@@ -189,9 +194,10 @@ kaa_error_t ext_log_storage_remove_by_bucket_id(ext_log_storage_t *self, uint16_
 
 
 
-kaa_error_t ext_log_storage_unmark_by_bucket_id(ext_log_storage_t *self, uint16_t bucket_id)
+kaa_error_t ext_log_storage_unmark_by_bucket_id(void *context, uint16_t bucket_id)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
 
     kaa_list_t *record_position = kaa_list_find_next(self->logs, logs_list_find_by_bucket_id, &bucket_id);
     if (!record_position)
@@ -208,9 +214,10 @@ kaa_error_t ext_log_storage_unmark_by_bucket_id(ext_log_storage_t *self, uint16_
 
 
 
-kaa_error_t ext_log_storage_shrink_by_size(ext_log_storage_t *self, size_t size)
+kaa_error_t ext_log_storage_shrink_by_size(void *context, size_t size)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
     size_t removed_size = 0;
 
     while ((removed_size < size) && self->occupied_size) {
@@ -227,26 +234,26 @@ kaa_error_t ext_log_storage_shrink_by_size(ext_log_storage_t *self, size_t size)
 
 
 
-size_t ext_log_storage_get_total_size(const ext_log_storage_t *self)
+size_t ext_log_storage_get_total_size(const void *context)
 {
-    KAA_RETURN_IF_NIL(self, 0);
-    return self->occupied_size;
+    KAA_RETURN_IF_NIL(context, 0);
+    return ((ext_log_storage_memory_t *)context)->occupied_size;
 }
 
 
 
-size_t ext_log_storage_get_records_count(const ext_log_storage_t *self)
+size_t ext_log_storage_get_records_count(const void *context)
 {
-    KAA_RETURN_IF_NIL(self, 0);
-    return kaa_list_get_size(self->logs);
+    KAA_RETURN_IF_NIL(context, 0);
+    return kaa_list_get_size(((ext_log_storage_memory_t *)context)->logs);
 }
 
 
 
-kaa_error_t ext_log_storage_release(ext_log_storage_t *self)
+kaa_error_t ext_log_storage_release(void *context)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    ext_log_storage_destroy(self);
+    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+    ext_log_storage_destroy(context);
     return KAA_ERR_NONE;
 }
 

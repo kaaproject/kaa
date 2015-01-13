@@ -18,20 +18,13 @@
  * @file ext_log_upload_strategy.h
  * @brief External log upload strategy interface used by Kaa data collection subsystem to decide when to upload or
  * cleanup logs.
- * Must be implemented in a concrete application.
+ * Must be implemented in a concrete application for the data collection feature to function.
  */
 
 #ifndef EXT_LOG_UPLOAD_STRATEGY_H_
 #define EXT_LOG_UPLOAD_STRATEGY_H_
 
 #include "../platform/ext_log_storage.h"
-
-
-
-/**
- * Private log upload strategy structure. Must be defined in the concrete log upload strategy implementation.
- */
-typedef struct ext_log_upload_strategy_t ext_log_upload_strategy_t;
 
 
 
@@ -49,13 +42,12 @@ typedef enum {
 /**
  * @brief Makes a decision whether to upload logs or cleanup the storage.
  *
- * @param[in]       self        Log upload strategy instance.
- * @param[in]       log_storage Log storage instance to operate against.
- * @param[out]      volume      Volume of logs to process (in bytes). Zero if decision is @c NOOP.
+ * @param[in]       context             Log upload strategy context.
+ * @param[in]       log_storage_context Log storage instance to operate against.
+ * @param[out]      volume              Volume of logs to process (in bytes). Zero if decision is @c NOOP.
  *
  * @return Log upload decision.
  */
-ext_log_upload_decision_t ext_log_upload_strategy_decide(ext_log_upload_strategy_t *self
-        , const ext_log_storage_t *log_storage, size_t *volume);
+ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const void *log_storage_context, size_t *volume);
 
 #endif /* EXT_LOG_UPLOAD_STRATEGY_H_ */

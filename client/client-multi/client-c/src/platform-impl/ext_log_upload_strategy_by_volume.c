@@ -28,16 +28,15 @@
 
 
 
-
-struct ext_log_upload_strategy_t {
+typedef struct {
     size_t  max_upload_threshold;
     size_t  max_log_bucket_size;
     size_t  max_cleanup_threshold;
-};
+} ext_log_upload_strategy_t;
 
 
 
-kaa_error_t ext_log_upload_strategy_create(ext_log_upload_strategy_t **strategy_p
+kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
         , size_t max_upload_threshold, size_t max_log_bucket_size
         , size_t max_cleanup_threshold)
 {
@@ -45,31 +44,32 @@ kaa_error_t ext_log_upload_strategy_create(ext_log_upload_strategy_t **strategy_
     if (max_cleanup_threshold && ((max_cleanup_threshold < max_log_bucket_size) || (max_cleanup_threshold < max_upload_threshold)))
         return KAA_ERR_BADPARAM;
 
-    *strategy_p = (ext_log_upload_strategy_t *) KAA_MALLOC(sizeof(ext_log_upload_strategy_t));
-    KAA_RETURN_IF_NIL(*strategy_p, KAA_ERR_NOMEM);
+    ext_log_upload_strategy_t *strategy = (ext_log_upload_strategy_t *) KAA_MALLOC(sizeof(ext_log_upload_strategy_t));
+    KAA_RETURN_IF_NIL(strategy, KAA_ERR_NOMEM);
 
-    (*strategy_p)->max_upload_threshold = max_upload_threshold;
-    (*strategy_p)->max_log_bucket_size = max_log_bucket_size;
-    (*strategy_p)->max_cleanup_threshold = max_cleanup_threshold;
+    strategy->max_upload_threshold = max_upload_threshold;
+    strategy->max_log_bucket_size = max_log_bucket_size;
+    strategy->max_cleanup_threshold = max_cleanup_threshold;
+    *strategy_p = strategy;
 
     return KAA_ERR_NONE;
 }
 
 
 
-void ext_log_upload_strategy_destroy(ext_log_upload_strategy_t *self)
+void ext_log_upload_strategy_by_volume_destroy(void *self)
 {
     if (self)
-        KAA_FREE(self);
+        KAA_FREE((ext_log_upload_strategy_t *)self);
 }
 
 
 
-ext_log_upload_decision_t ext_log_upload_strategy_decide(ext_log_upload_strategy_t *self
-        , const ext_log_storage_t *log_storage, size_t *volume)
+ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const void *log_storage_context, size_t *volume)
 {
-    KAA_RETURN_IF_NIL2(log_storage, volume, NOOP);
-    size_t storage_size = ext_log_storage_get_total_size(log_storage);
+    KAA_RETURN_IF_NIL3(context, log_storage_context, volume, NOOP);
+    ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)context;
+    size_t storage_size = ext_log_storage_get_total_size(log_storage_context);
 
     if (self->max_cleanup_threshold && (storage_size > self->max_cleanup_threshold)) {
         // Request to cleanup below the threshold by max bucket size to prevent cleanup dead loop

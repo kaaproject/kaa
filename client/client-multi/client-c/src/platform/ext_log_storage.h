@@ -17,7 +17,8 @@
 /**
  * @file ext_log_storage.h
  * @brief External log storage interface used by Kaa data collection subsystem to temporarily store the logs
- * before sending them to Operations server. Must be implemented in a concrete application.
+ * before sending them to Operations server.
+ * Must be implemented in a concrete application for the data collection feature to function.
  */
 
 #ifndef EXT_LOG_STORAGE_H_
@@ -28,11 +29,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * Private log storage structure. Must be defined in the concrete log storage implementation.
- */
-typedef struct ext_log_storage_t ext_log_storage_t;
 
 
 
@@ -51,12 +47,12 @@ typedef struct {
  *
  * Allocates the @c data buffer of @c size bytes in the @c record.
  *
- * @param[in]       self    Log storage instance.
- * @param[in,out]   record  Log record to allocate buffer to.
+ * @param[in]       context     Log storage context.
+ * @param[in,out]   record      Log record to allocate buffer to.
  *
  * @return Error code.
  */
-kaa_error_t ext_log_storage_allocate_log_record_buffer(ext_log_storage_t *self, kaa_log_record_t *record);
+kaa_error_t ext_log_storage_allocate_log_record_buffer(void *context, kaa_log_record_t *record);
 
 
 
@@ -66,12 +62,12 @@ kaa_error_t ext_log_storage_allocate_log_record_buffer(ext_log_storage_t *self, 
  * In case of success assumes ownership of the @c record @c data buffer.
  * (No need to call @link ext_log_storage_destroy_log_record_buffer @endlink.)
  *
- * @param[in]       self    Log storage instance.
- * @param[in]       record  Log record to add to log storage.
+ * @param[in]       context     Log storage context.
+ * @param[in]       record      Log record to add to log storage.
  *
  * @return Error code.
  */
-kaa_error_t ext_log_storage_add_log_record(ext_log_storage_t *self, kaa_log_record_t *record);
+kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *record);
 
 
 
@@ -80,12 +76,12 @@ kaa_error_t ext_log_storage_add_log_record(ext_log_storage_t *self, kaa_log_reco
  *
  * Deallocates the @c data buffer in the @c record and sets @c size to 0.
  *
- * @param[in]       self    Log storage instance.
- * @param[in,out]   record  Log record to deallocate buffer of.
+ * @param[in]       context     Log storage context.
+ * @param[in,out]   record      Log record to deallocate buffer of.
  *
  * @return Error code.
  */
-kaa_error_t ext_log_storage_deallocate_log_record_buffer(ext_log_storage_t *self, kaa_log_record_t *record);
+kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_record_t *record);
 
 
 
@@ -93,7 +89,7 @@ kaa_error_t ext_log_storage_deallocate_log_record_buffer(ext_log_storage_t *self
  * @brief Writes the next unmarked log entry into the supplied buffer and marks it with @c bucket_id if the record size
  * does not exceed the @c buffer_len.
  *
- * @param[in]       self        Log storage instance.
+ * @param[in]       context     Log storage context.
  * @param[in]       buffer      Buffer to write next unmarked record into.
  * @param[in]       buffer_len  Buffer length in bytes.
  * @param[in]       bucket_id   Non-zero bucket ID to mark the written record with.
@@ -106,7 +102,7 @@ kaa_error_t ext_log_storage_deallocate_log_record_buffer(ext_log_storage_t *self
  * @link KAA_ERR_INSUFFICIENT_BUFFER @endlink when the buffer size was not sufficient to fit in the next unmarked entry.
  * @c record_len is set to the size of the record that was not written.\br
  */
-kaa_error_t ext_log_storage_write_next_record(ext_log_storage_t *self, char *buffer, size_t buffer_len
+kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_t buffer_len
         , uint16_t bucket_id, size_t *record_len);
 
 
@@ -114,69 +110,69 @@ kaa_error_t ext_log_storage_write_next_record(ext_log_storage_t *self, char *buf
 /**
  * @brief Removes from the storage all records marked with the provided @c bucket_id.
  *
- * @param[in]       self        Log storage instance.
+ * @param[in]       context     Log storage context.
  * @param[in]       bucket_id   Non-zero bucket ID to search for records to be removed.
  *
  * @return Error code
  */
-kaa_error_t ext_log_storage_remove_by_bucket_id(ext_log_storage_t *self, uint16_t bucket_id);
+kaa_error_t ext_log_storage_remove_by_bucket_id(void *context, uint16_t bucket_id);
 
 
 
 /**
  * @brief Unmarks all records marked with the provided @c bucket_id.
  *
- * @param[in]       self        Log storage instance.
+ * @param[in]       context     Log storage context.
  * @param[in]       bucket_id   Non-zero bucket ID to search for records to be unmarked.
  *
  * @return Error code
  */
-kaa_error_t ext_log_storage_unmark_by_bucket_id(ext_log_storage_t *self, uint16_t bucket_id);
+kaa_error_t ext_log_storage_unmark_by_bucket_id(void *context, uint16_t bucket_id);
 
 
 
 /**
  * @brief Shrinks log storage by the specified size by removing records starting from the oldest ones.
  *
- * @param[in]       self        Log storage instance.
+ * @param[in]       context     Log storage context.
  * @param[in]       size        Records volume to remove.
  *
  * @return Error code
  */
-kaa_error_t ext_log_storage_shrink_by_size(ext_log_storage_t *self, size_t size);
+kaa_error_t ext_log_storage_shrink_by_size(void *context, size_t size);
 
 
 
 /**
  * @brief Returns total size occupied by logs in the log storage.
  *
- * @param[in]       self        Log storage instance.
+ * @param[in]       context     Log storage context.
  *
  * @return Total log storage size in bytes, occupied by log records. Zero in case of errors.
  */
-size_t ext_log_storage_get_total_size(const ext_log_storage_t *self);
+size_t ext_log_storage_get_total_size(const void *context);
 
 
 
 /**
  * @brief Returns total log records count.
  *
- * @param[in]       self        Log storage instance.
+ * @param[in]       context     Log storage context.
  *
  * @return Total amount of log records in the storage. Zero in case of errors.
  */
-size_t ext_log_storage_get_records_count(const ext_log_storage_t *self);
+size_t ext_log_storage_get_records_count(const void *context);
 
 
 
 /**
  * @brief Releases the log storage (which may decide to self-destroy).
  *
- * @param[in]       self        Log storage instance.
+ * @param[in]       context     Log storage context.
  *
  * @return Error code
  */
-kaa_error_t ext_log_storage_release(ext_log_storage_t *self);
+kaa_error_t ext_log_storage_release(void *context);
 
 #ifdef __cplusplus
 }      /* extern "C" */

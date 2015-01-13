@@ -53,13 +53,13 @@ typedef enum {
 
 
 struct kaa_log_collector {
-    uint16_t                     log_bucket_id;
-    ext_log_storage_t           *log_storage;
-    ext_log_upload_strategy_t   *log_upload_strategy;
+    uint16_t                    log_bucket_id;
+    void                       *log_storage_context;
+    void                       *log_upload_strategy_context;
     size_t                      max_log_bucket_size;
-    kaa_status_t                *status;
-    kaa_channel_manager_t       *channel_manager;
-    kaa_logger_t                *logger;
+    kaa_status_t               *status;
+    kaa_channel_manager_t      *channel_manager;
+    kaa_logger_t               *logger;
 };
 
 
@@ -92,26 +92,24 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
 void kaa_log_collector_destroy(kaa_log_collector_t *self)
 {
     if (self) {
-        ext_log_storage_release(self->log_storage);
+        ext_log_storage_release(self->log_storage_context);
         KAA_FREE(self);
     }
 }
 
 
 
-kaa_error_t kaa_logging_init(kaa_log_collector_t *self
-                           , ext_log_storage_t *storage
-                           , ext_log_upload_strategy_t *upload_strategy)
+kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context)
 {
-    KAA_RETURN_IF_NIL3(self, storage, upload_strategy, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(self, log_storage_context, log_upload_strategy_context, KAA_ERR_BADPARAM);
 
-    ext_log_storage_release(self->log_storage);
+    ext_log_storage_release(self->log_storage_context);
 
-    self->log_storage = storage;
-    self->log_upload_strategy = upload_strategy;
+    self->log_storage_context = log_storage_context;
+    self->log_upload_strategy_context = log_upload_strategy_context;
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Initialized log collector with log storage {%p}, log upload strategy {%p}"
-            , storage, upload_strategy);
+            , log_storage_context, log_upload_strategy_context);
 
     return KAA_ERR_NONE;
 }
@@ -121,11 +119,11 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self
 static void update_storage(kaa_log_collector_t *self)
 {
     size_t volume = 0;
-    switch (ext_log_upload_strategy_decide(self->log_upload_strategy, self->log_storage, &volume)) {
+    switch (ext_log_upload_strategy_decide(self->log_upload_strategy_context, self->log_storage_context, &volume)) {
         case CLEANUP:
             KAA_LOG_WARN(self->logger, KAA_ERR_NONE, "Initiating log storage cleanup by %zu bytes (current size %zu)"
-                    , volume, ext_log_storage_get_total_size(self->log_storage));
-            kaa_error_t error = ext_log_storage_shrink_by_size(self->log_storage, volume);
+                    , volume, ext_log_storage_get_total_size(self->log_storage_context));
+            kaa_error_t error = ext_log_storage_shrink_by_size(self->log_storage_context, volume);
             if (error)
                 KAA_LOG_ERROR(self->logger, error, "Failed to cleanup log storage");
             break;
@@ -147,7 +145,7 @@ static void update_storage(kaa_log_collector_t *self)
 kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry)
 {
     KAA_RETURN_IF_NIL2(self, entry, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(self->log_storage, KAA_ERR_NOT_INITIALIZED);
+    KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Adding new log record {%p}", entry);
 
@@ -156,13 +154,13 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     if (!record.size)
         return KAA_ERR_BADDATA;
 
-    kaa_error_t error = ext_log_storage_allocate_log_record_buffer(self->log_storage, &record);
+    kaa_error_t error = ext_log_storage_allocate_log_record_buffer(self->log_storage_context, &record);
     if (error)
         return error;
 
     avro_writer_t writer = avro_writer_memory((char *)record.data, record.size);
     if (!writer) {
-        ext_log_storage_deallocate_log_record_buffer(self->log_storage, &record);
+        ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
         return KAA_ERR_NOMEM;
     }
 
@@ -170,10 +168,10 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     avro_writer_free(writer);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding serialized record to the log storage");
-    error = ext_log_storage_add_log_record(self->log_storage, &record);
+    error = ext_log_storage_add_log_record(self->log_storage_context, &record);
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to add log record to storage");
-        ext_log_storage_deallocate_log_record_buffer(self->log_storage, &record);
+        ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
         return error;
     }
 
@@ -186,13 +184,13 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
 kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size)
 {
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(self->log_storage, KAA_ERR_NOT_INITIALIZED);
+    KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
     *expected_size = KAA_EXTENSION_HEADER_SIZE;
     *expected_size += sizeof(uint32_t); // request id + log records count
 
-    size_t records_count = ext_log_storage_get_records_count(self->log_storage);
-    size_t total_size = ext_log_storage_get_total_size(self->log_storage);
+    size_t records_count = ext_log_storage_get_records_count(self->log_storage_context);
+    size_t total_size = ext_log_storage_get_total_size(self->log_storage_context);
 
     size_t actual_size = records_count * sizeof(uint32_t) + records_count * KAA_MAX_PADDING_LENGTH + total_size;
     *expected_size += ((actual_size < self->max_log_bucket_size)
@@ -207,7 +205,7 @@ kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expe
 kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer)
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(self->log_storage, KAA_ERR_NOT_INITIALIZED);
+    KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile log client sync");
 
@@ -238,7 +236,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     while (!error) {
         size_t record_len = 0;
-        error = ext_log_storage_write_next_record(self->log_storage
+        error = ext_log_storage_write_next_record(self->log_storage_context
                 , tmp_writer.current + sizeof(uint32_t), remaining_size - sizeof(uint32_t)
                 , self->log_bucket_id, &record_len);
         switch (error) {
@@ -296,9 +294,9 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
             );
 
         if (result == LOGGING_RESULT_SUCCESS) {
-            ext_log_storage_remove_by_bucket_id(self->log_storage, id);
+            ext_log_storage_remove_by_bucket_id(self->log_storage_context, id);
         } else {
-            ext_log_storage_unmark_by_bucket_id(self->log_storage, id);
+            ext_log_storage_unmark_by_bucket_id(self->log_storage_context, id);
         }
         update_storage(self);
     }
