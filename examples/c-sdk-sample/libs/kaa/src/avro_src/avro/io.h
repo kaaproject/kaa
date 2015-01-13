@@ -17,14 +17,13 @@
 
 #ifndef AVRO_IO_H
 #define AVRO_IO_H
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <stdio.h>
 
-#include "../../../../kaa/src/avro_src/avro/platform.h"
+#include "platform.h"
 
 struct avro_reader_t_ {
     const char *buf;

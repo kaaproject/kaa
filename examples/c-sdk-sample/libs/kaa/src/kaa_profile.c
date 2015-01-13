@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-#include "../../kaa/src/kaa_profile.h"
+#include "kaa_profile.h"
+
 #include <string.h>
 
-#include "../../kaa/src/avro_src/avro/io.h"
-#include "../../kaa/src/kaa_channel_manager.h"
-#include "../../kaa/src/kaa_common.h"
-#include "../../kaa/src/kaa_defaults.h"
-#include "../../kaa/src/kaa_external.h"
-#include "../../kaa/src/kaa_platform_common.h"
-#include "../../kaa/src/kaa_platform_utils.h"
-#include "../../kaa/src/kaa_status.h"
-#include "../../kaa/src/utilities/kaa_log.h"
-#include "../../kaa/src/utilities/kaa_mem.h"
+#include "avro_src/avro/io.h"
+
+#include "kaa_common.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
+#include "kaa_defaults.h"
+#include "kaa_external.h"
+#include "kaa_channel_manager.h"
+#include "kaa_status.h"
+#include "kaa_platform_common.h"
+#include "kaa_platform_utils.h"
 
 
 

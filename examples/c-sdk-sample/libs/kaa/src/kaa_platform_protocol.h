@@ -25,9 +25,9 @@
 #ifndef KAA_PLATFORM_PROTOCOL_H_
 #define KAA_PLATFORM_PROTOCOL_H_
 
-#include "../../kaa/src/kaa_common.h"
-#include "../../kaa/src/kaa_context.h"
-#include "../../kaa/src/kaa_error.h"
+#include "kaa_error.h"
+#include "kaa_context.h"
+#include "kaa_common.h"
 
 #ifdef __cplusplus
 extern "C" {

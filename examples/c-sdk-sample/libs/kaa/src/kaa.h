@@ -24,8 +24,8 @@
 #ifndef KAA_H_
 #define KAA_H_
 
-#include "../../kaa/src/kaa_context.h"
-#include "../../kaa/src/kaa_error.h"
+#include "kaa_context.h"
+#include "kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {

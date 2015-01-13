@@ -24,8 +24,8 @@
 #ifndef KAA_BOOTSTRAP_H_
 #define KAA_BOOTSTRAP_H_
 
-#include "../../kaa/src/kaa_common.h"
-#include "../../kaa/src/kaa_error.h"
+#include "kaa_error.h"
+#include "kaa_common.h"
 
 #ifdef __cplusplus
 extern "C" {

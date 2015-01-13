@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "../../../kaa/src/collections/kaa_deque.h"
+#include "kaa_deque.h"
+
 #include <stddef.h>
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"

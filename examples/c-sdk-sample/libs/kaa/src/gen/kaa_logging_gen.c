@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "../../../kaa/src/gen/kaa_logging_gen.h"
+# include "kaa_logging_gen.h"
+
 # include <stdio.h>
 # include <string.h>
 

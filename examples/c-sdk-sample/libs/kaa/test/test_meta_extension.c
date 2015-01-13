@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include "kaa_test.h"
+
 #include <stddef.h>
 #include <string.h>
 
@@ -24,7 +26,6 @@
 #include "kaa_status.h"
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_log.h"
-#include "../../kaa/test/kaa_test.h"
 
 
 

@@ -15,13 +15,14 @@
  * permissions and limitations under the License. 
  */
 
-#include "../../../kaa/src/avro_src/avro/io.h"
+#include "avro/io.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 
-#include "../../../kaa/src/avro_src/avro_private.h"
+#include "avro_private.h"
 
 avro_reader_t avro_reader_memory(const char *buf, int64_t len)
 {

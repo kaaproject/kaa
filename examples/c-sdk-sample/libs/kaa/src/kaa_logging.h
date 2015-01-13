@@ -27,7 +27,7 @@
 # ifndef KAA_DISABLE_FEATURE_LOGGING
 
 # include <stddef.h>
-# include "../../kaa/src/gen/kaa_logging_gen.h"
+# include "gen/kaa_logging_gen.h"
 
 # ifdef __cplusplus
 extern "C" {

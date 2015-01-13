@@ -15,13 +15,14 @@
  * permissions and limitations under the License. 
  */
 
+#include "encoding.h"
+
 #include <stdlib.h>
 #include <limits.h>
 #include <errno.h>
 #include <string.h>
 
-#include "../../../kaa/src/avro_src/avro_private.h"
-#include "../../../kaa/src/avro_src/encoding.h"
+#include "avro_private.h"
 
 #define MAX_VARINT_BUF_SIZE 10
 

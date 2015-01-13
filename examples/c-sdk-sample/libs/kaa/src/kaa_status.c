@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-#include "../../kaa/src/kaa_status.h"
-
+#include "kaa_status.h"
+#include "kaa_common.h"
+#include "kaa_external.h"
+#include "utilities/kaa_mem.h"
 #include <string.h>
-#include "../../kaa/src/kaa_common.h"
-#include "../../kaa/src/kaa_external.h"
-#include "../../kaa/src/utilities/kaa_mem.h"
 
 struct kaa_status_t
 {

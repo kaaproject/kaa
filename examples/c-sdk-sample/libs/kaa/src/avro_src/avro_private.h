@@ -16,14 +16,13 @@
  */
 #ifndef AVRO_PRIVATE_H
 #define AVRO_PRIVATE_H
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <errno.h>
 
-#include "../../../kaa/src/avro_src/avro/platform.h"
+#include "avro/platform.h"
 
 #ifdef HAVE_CONFIG_H
 /* This is only true for now in the autotools build */

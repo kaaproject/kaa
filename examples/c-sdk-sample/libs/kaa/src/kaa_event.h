@@ -32,7 +32,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdint.h>
-#include "../../kaa/src/kaa_error.h"
+#include "kaa_error.h"
 
 #define KAA_ENDPOINT_ID_LENGTH 20
 

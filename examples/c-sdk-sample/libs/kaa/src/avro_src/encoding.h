@@ -16,13 +16,12 @@
  */
 #ifndef AVRO_ENCODING_H
 #define AVRO_ENCODING_H
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "../../../kaa/src/avro_src/avro/platform.h"
-#include "../../../kaa/src/avro_src/avro/io.h"
+#include "avro/platform.h"
+#include "avro/io.h"
 
 /*
  * TODO: this will need more functions when JSON encoding is added 

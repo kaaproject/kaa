@@ -16,7 +16,7 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "../../../kaa/src/log/kaa_memory_log_storage.h"
+#include "kaa_memory_log_storage.h"
 
 #include "collections/kaa_deque.h"
 #include "collections/kaa_list.h"

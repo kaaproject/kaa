@@ -21,8 +21,8 @@
 extern "C" {
 #endif
 
-#include "../../kaa/src/kaa_error.h"
-#include "../../kaa/src/kaa_common.h"
+#include "kaa_error.h"
+#include "kaa_common.h"
 
 typedef struct kaa_status_t kaa_status_t;
 

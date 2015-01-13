@@ -25,7 +25,7 @@
 #ifndef KAA_CHANNEL_MANAGER_H_
 #define KAA_CHANNEL_MANAGER_H_
 
-#include "../../kaa/src/kaa_common.h"
+#include "kaa_common.h"
 
 #ifdef __cplusplus
 extern "C" {

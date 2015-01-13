@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "kaa_status.h"
+#include "kaa_test.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_context.h"
@@ -25,7 +26,6 @@
 #include "kaa_external.h"
 #include "gen/kaa_profile_gen.h"
 #include "kaa_platform_utils.h"
-#include "../../kaa/test/kaa_test.h"
 
 
 

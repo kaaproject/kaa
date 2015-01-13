@@ -16,21 +16,21 @@
 
 # ifndef KAA_DISABLE_FEATURE_EVENTS
 
-# include "../../kaa/src/kaa_event.h"
+# include "kaa_event.h"
 
 # include <stdbool.h>
 # include <stddef.h>
 # include <stdint.h>
 # include <string.h>
 
-# include "../../kaa/src/kaa_status.h"
-# include "../../kaa/src/kaa_channel_manager.h"
-# include "../../kaa/src/kaa_platform_utils.h"
-# include "../../kaa/src/kaa_platform_common.h"
-# include "../../kaa/src/kaa_common_schema.h"
-# include "../../kaa/src/collections/kaa_list.h"
-# include "../../kaa/src/utilities/kaa_mem.h"
-# include "../../kaa/src/utilities/kaa_log.h"
+# include "kaa_status.h"
+# include "kaa_channel_manager.h"
+# include "kaa_platform_utils.h"
+# include "kaa_platform_common.h"
+# include "kaa_common_schema.h"
+# include "collections/kaa_list.h"
+# include "utilities/kaa_mem.h"
+# include "utilities/kaa_log.h"
 
 
 

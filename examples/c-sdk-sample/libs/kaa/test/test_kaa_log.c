@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../kaa/test/kaa_test.h"
+#include "kaa_test.h"
 #include "kaa.h"
 #include "kaa_platform_protocol.h"
 #include "kaa_channel_manager.h"

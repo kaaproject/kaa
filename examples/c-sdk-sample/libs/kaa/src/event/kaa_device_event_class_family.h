@@ -18,9 +18,9 @@
 # ifndef KAA_DEVICE_EVENT_CLASS_FAMILY_H
 # define KAA_DEVICE_EVENT_CLASS_FAMILY_H
 
+# include "kaa_device_event_class_family_definitions.h" 
 # include "kaa_event.h"
 # include "kaa_error.h"
-#include "../../../kaa/src/event/kaa_device_event_class_family_definitions.h"
 
 
 /**

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "../../../kaa/src/event/kaa_device_event_class_family.h"
+# include "kaa_device_event_class_family.h"
+
 # include "avro_src/avro/io.h"
 
 # include "kaa_common.h"

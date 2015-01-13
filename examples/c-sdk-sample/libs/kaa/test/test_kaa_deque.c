@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+#include "kaa_test.h"
+
 #include "collections/kaa_deque.h"
 #include <string.h>
-#include "../../kaa/test/kaa_test.h"
 
 void test_kaa_deque_create()
 {

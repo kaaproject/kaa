@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "../../../kaa/src/event/kaa_device_event_class_family_definitions.h"
+# include "kaa_device_event_class_family_definitions.h"
+
 # include <stdio.h>
 # include <string.h>
 

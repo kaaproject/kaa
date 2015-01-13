@@ -22,9 +22,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "kaa_error.h"
+#include "kaa_platform_common.h"
+
 #include <arpa/inet.h>
-#include "../../kaa/src/kaa_error.h"
-#include "../../kaa/src/kaa_platform_common.h"
 
 #ifdef __cplusplus
 extern "C" {

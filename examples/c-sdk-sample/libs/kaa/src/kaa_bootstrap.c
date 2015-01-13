@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-#include "../../kaa/src/kaa_bootstrap.h"
+#include "kaa_bootstrap.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../kaa/src/collections/kaa_list.h"
-#include "../../kaa/src/utilities/kaa_log.h"
-#include "../../kaa/src/utilities/kaa_mem.h"
+#include "collections/kaa_list.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 
 struct kaa_bootstrap_manager_t {
     kaa_list_t     *ops_list[KAA_CHANNEL_TYPE_COUNT];       /*!< Operations servers lists by channel type, sorted by increasing priority */

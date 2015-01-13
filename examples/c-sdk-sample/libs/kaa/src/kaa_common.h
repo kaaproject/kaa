@@ -26,7 +26,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "../../kaa/src/kaa_error.h"
+#include "kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {

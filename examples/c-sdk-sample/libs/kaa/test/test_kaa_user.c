@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "kaa_test.h"
 #include "kaa.h"
 #include "kaa_platform_protocol.h"
 #include "kaa_channel_manager.h"
@@ -26,7 +27,6 @@
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
-#include "../../kaa/test/kaa_test.h"
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);

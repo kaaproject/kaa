@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-#include "../../kaa/src/kaa_platform_utils.h"
+#include "kaa_platform_utils.h"
+
 #include <string.h>
 
-#include "../../kaa/src/kaa_common.h"
-#include "../../kaa/src/utilities/kaa_mem.h"
+#include "kaa_common.h"
+#include "utilities/kaa_mem.h"
 
 
 

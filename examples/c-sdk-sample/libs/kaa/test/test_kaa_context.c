@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+#include "kaa_test.h"
 #include "utilities/kaa_log.h"
 
 /* All right, we are testing static functions here */
 #include "kaa.c"
-#include "../../kaa/test/kaa_test.h"
 
 
 static kaa_logger_t *logger = NULL;

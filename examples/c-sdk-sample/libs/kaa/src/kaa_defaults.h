@@ -24,17 +24,16 @@
  */
 
 # include <stdint.h>
-
-#include "../../kaa/src/kaa_common.h"
+# include "kaa_common.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
 
-# define BUILD_VERSION                   "0.6.2"
-# define BUILD_COMMIT_HASH               "85254f48875962ec363536fd58028de3445e36f3"
+# define BUILD_VERSION                   "0.6.3-SNAPSHOT"
+# define BUILD_COMMIT_HASH               "38e508855bfbd5439b499ccd3b0530e2edc217df"
 
-# define APPLICATION_TOKEN               "80998256519270773671"
+# define APPLICATION_TOKEN               "93139931170804248968"
 
 # define CONFIG_SCHEMA_VERSION           1
 # define PROFILE_SCHEMA_VERSION          2
@@ -75,7 +74,7 @@ typedef struct
 
 static const kaa_bootstrap_server_info_t KAA_BOOTSTRAP_SERVERS[KAA_BOOTSTRAP_SERVER_COUNT] = {
 {
-      /* .encoded_public_key = */    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgjaY4T00eotm3xNVUjLp+KE3L7KTdFWI9/5QGbwBnZopUVxWfF/h0kTUYeTUeAe47mDdMfU/X5U3GMbqvr5eoqRed3eEtvcp8wk/nR82k8fz40POf0LpYuUDsexBMkGWkoQ+9OX3feBGvWLc0Nw+PHysAfcK8pXsUWT0uDSLwFaCQws8nUWbNXhEv7E85o1Sy50W9hCX1rXED+tSTyU9U8upm8+Bp+lvuVM5ueJPDDaiMhyRUD4l7Xjvk19L1HAJBAxcQn89I1z9ima0kij50dclfnQm0WoLjUZJltdfJ+XaUZ1CDuwQXm9KtKlKDrfVoYobnTeUXtJ0ynua1ecspQIDAQAB"
+      /* .encoded_public_key = */    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj0YJ9Zq9MylxIJkqL6dugZBQ6pXjA0ZXhNetY1PHbqnySewlG8cwkRdupE/VXBCwHli6m7MQ0IYxnHfbgtVbA9YsQ7bwRVJ+cnEZsU8H+QG/bj+iVTFyB1sK7gi8KSnbL0EkNtJJPlD3bDL+tG2a1WWrt2BsY5RTZ1Pdf/zaF8HiVIyLJ7wHoxS9JqHXBvbKgna32e0Rc9kcOwho90Y6/A6Q2GzB5Lns57ZBI/UhQbXkZcO+uMatLVC4U7j4vfPZdD5/kMu+9jBZb6qTvPhBLkKoZiJ2tncae4DZS3Wr2RgAJwfcX4wl5MQM1fevn9xC1+dhMtuUSDUFU6l+gCa+jQIDAQAB"
     , /* .encoded_public_key_len = */392
     , /* .channels = */              {
                                         { "10.2.1.190", 9889 }

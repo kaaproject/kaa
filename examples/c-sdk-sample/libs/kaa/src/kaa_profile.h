@@ -29,8 +29,8 @@ extern "C" {
 # endif
 
 # include <stdbool.h>
-# include "../../kaa/src/kaa_error.h"
-# include "../../kaa/src/gen/kaa_profile_gen.h"
+# include "kaa_error.h"
+# include "gen/kaa_profile_gen.h"
 
 
 

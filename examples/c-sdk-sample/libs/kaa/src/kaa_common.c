@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-#include "../../kaa/src/kaa_common.h"
-
 #include <openssl/sha.h>
 
+#include "kaa_common.h"
 
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
 {

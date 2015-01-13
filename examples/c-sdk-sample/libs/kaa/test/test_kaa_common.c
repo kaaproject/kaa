@@ -17,10 +17,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "kaa_test.h"
 #include "kaa_common.h"
 #include "kaa_error.h"
 #include "utilities/kaa_log.h"
-#include "../../kaa/test/kaa_test.h"
 
 static kaa_logger_t *logger = NULL;
 
