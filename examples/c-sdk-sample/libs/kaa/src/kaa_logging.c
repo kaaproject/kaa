@@ -125,7 +125,7 @@ static void update_storage(kaa_log_collector_t *self)
             (*self->log_upload_strategy.log_upload_decision_fn)(self->log_upload_strategy.context, &self->log_storage);
     switch (decision) {
         case CLEANUP:
-            KAA_LOG_WARN(self->logger, KAA_ERR_NONE, "Need to cleanup log storage. Current size: %zu, Maximum volume: %zu"
+            KAA_LOG_WARN(self->logger, KAA_ERR_NONE, "Need to cleanup log storage. Current size: %zu, Maximum volume: %u"
                     , (*self->log_storage.get_total_size)(self->log_storage.context)
                     , self->log_properties.max_log_storage_volume
                     );
@@ -232,7 +232,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     kaa_log_entry_t entry = self->log_storage.get_next_record(self->log_storage.context
             , self->log_bucket_id, MAX_RECORD_SIZE(remaining_size));
     for (; entry.record_data; entry = self->log_storage.get_next_record(self->log_storage.context, self->log_bucket_id, MAX_RECORD_SIZE(remaining_size))) {
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Got record {%p}, size: %zu", entry.record_data, entry.record_size);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Got record {%p}, size: %u", entry.record_data, entry.record_size);
         ++records_count;
         remaining_size -= (kaa_aligned_size_get(entry.record_size) + sizeof(uint32_t));
 
@@ -247,7 +247,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         }
     }
     total_size += (self->log_properties.max_log_bucket_size - remaining_size);
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracted log records. Total records count = %u. Total extension size = %lu", records_count, total_size);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracted log records. Total records count = %u. Total extension size = %u", records_count, total_size);
 
     *((uint32_t *) extension_size_p) = KAA_HTONL(total_size);
     *((uint16_t *) records_count_p) = KAA_HTONS(records_count);

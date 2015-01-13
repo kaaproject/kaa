@@ -247,7 +247,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         }
     }
     total_size += (self->log_properties.max_log_bucket_size - remaining_size);
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracted log records. Total records count = %u. Total extension size = %lu", records_count, total_size);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracted log records. Total records count = %u. Total extension size = %u", records_count, total_size);
 
     *((uint32_t *) extension_size_p) = KAA_HTONL(total_size);
     *((uint16_t *) records_count_p) = KAA_HTONS(records_count);
