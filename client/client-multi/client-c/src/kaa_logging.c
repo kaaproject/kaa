@@ -228,7 +228,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     ssize_t remaining_size = self->max_log_bucket_size < (tmp_writer.end - tmp_writer.current)
             ? self->max_log_bucket_size
             : tmp_writer.end - tmp_writer.current;
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (remaining bucket size is %zu)", remaining_size);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (remaining bucket size is %d)", remaining_size);
 
     uint16_t records_count = 0;
 
