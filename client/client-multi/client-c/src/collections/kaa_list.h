@@ -115,7 +115,7 @@ kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred, void *con
  * Returns last element in list from given position where ((*pred)(data, context) != 0).
  * If nothing matched given criteria or list is empty NULL is returned.
  */
-kaa_list_t *kaa_list_find_last_occurance(kaa_list_t *from, match_predicate pred, void *context);
+kaa_list_t *kaa_list_find_last(kaa_list_t *from, match_predicate pred, void *context);
 
 kaa_list_t *kaa_list_split_after(kaa_list_t *head, kaa_list_t *after, kaa_list_t **tail);
 
