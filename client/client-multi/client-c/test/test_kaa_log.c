@@ -36,11 +36,13 @@ extern void        kaa_status_destroy(kaa_status_t *self);
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
 extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
-extern kaa_error_t ext_log_storage_create(ext_log_storage_t** log_storage_p, kaa_logger_t *logger);
+extern kaa_error_t ext_log_storage_create(void **log_storage_p, kaa_logger_t *logger);
 
-kaa_error_t ext_log_upload_strategy_create(ext_log_upload_strategy_t **strategy_p
+kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
         , size_t max_upload_threshold, size_t max_log_bucket_size
         , size_t max_cleanup_threshold);
+void ext_log_upload_strategy_by_volume_destroy(void *self);
+
 
 extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
         , kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
@@ -57,6 +59,7 @@ extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
+static void *log_upload_strategy = NULL;
 static kaa_log_collector_t *log_collector = NULL;
 
 #define TEST_LOG_BUFFER  "log_record"
@@ -144,17 +147,16 @@ int test_init(void)
     if (error || !log_collector)
         return error;
 
-    ext_log_storage_t *storage = NULL;
+    void *storage = NULL;
     error = ext_log_storage_create(&storage, logger);
     if (error || !storage)
         return error;
 
-    ext_log_upload_strategy_t *strategy = NULL;
-    error = ext_log_upload_strategy_create(&strategy, 1, 1024, 0);
-    if (error || !strategy)
+    error = ext_log_upload_strategy_by_volume_create(&log_upload_strategy, 1, 1024, 0);
+    if (error || !log_upload_strategy)
         return error;
 
-    error = kaa_logging_init(log_collector, storage, strategy);
+    error = kaa_logging_init(log_collector, storage, log_upload_strategy);
     if (error)
         return error;
 
@@ -170,6 +172,7 @@ int test_deinit(void)
 {
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     kaa_log_collector_destroy(log_collector);
+    ext_log_upload_strategy_by_volume_destroy(log_upload_strategy);
     kaa_channel_manager_destroy(channel_manager);
     kaa_status_destroy(status);
 #endif
