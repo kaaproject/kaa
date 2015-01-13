@@ -71,9 +71,11 @@ kaa_error_t kaa_platform_message_write_alignment(kaa_platform_message_writer_t* 
 {
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
-    size_t alignment_size = KAA_ALIGNMENT - ((writer->current - writer->begin) % KAA_ALIGNMENT);
+    size_t alignment_size = (KAA_ALIGNMENT - ((writer->current - writer->begin) % KAA_ALIGNMENT)) % KAA_ALIGNMENT;
+    if (!alignment_size)
+        return KAA_ERR_NONE;
 
-    if (alignment_size && (writer->current + alignment_size <= writer->end)) {
+    if (writer->current + alignment_size <= writer->end) {
         memset((void *)writer->current, 0, alignment_size);
         writer->current += alignment_size;
         return KAA_ERR_NONE;

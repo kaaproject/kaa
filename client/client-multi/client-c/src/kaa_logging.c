@@ -33,7 +33,7 @@
 #include "avro_src/avro/io.h"
 
 #define KAA_LOGGING_RECEIVE_UPDATES_FLAG   0x01
-#define KAA_MAX_PADDING_LENGTH             3
+#define KAA_MAX_PADDING_LENGTH             (KAA_ALIGNMENT - 1)
 
 
 
@@ -148,7 +148,7 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Adding new log record {%p}", entry);
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Record size is %d", record.size);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Record size is %zu", record.size);
     if (!record.size)
         return KAA_ERR_BADDATA;
 
@@ -225,7 +225,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     char *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
     tmp_writer.current += sizeof(uint16_t);
 
-    ssize_t remaining_size = self->max_log_bucket_size < (tmp_writer.end - tmp_writer.current)
+    ssize_t remaining_size = self->max_log_bucket_size <= (tmp_writer.end - tmp_writer.current)
             ? self->max_log_bucket_size
             : tmp_writer.end - tmp_writer.current;
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (remaining bucket size is %d)", remaining_size);
