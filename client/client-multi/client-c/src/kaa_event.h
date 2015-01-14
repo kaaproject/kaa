@@ -44,6 +44,14 @@ typedef size_t kaa_event_block_id;
 
 typedef struct kaa_event_manager_t kaa_event_manager_t;
 
+typedef struct kaa_event_listeners_callback_t
+{
+    void *context;
+    kaa_error_t (*event_listeners_callback_t)(kaa_endpoint_id_p listeners[], size_t listeners_count, void *context);
+} kaa_event_listeners_callback_t;
+
+kaa_error_t kaa_event_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback);
+
 /**
  * @brief Start a new event block.
  *
