@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.bootstrap.service.initialization;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -32,15 +32,16 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
-import org.kaaproject.kaa.server.bootstrap.service.config.KaaHttpServiceChannelConfig;
 import org.kaaproject.kaa.server.bootstrap.service.config.BootstrapServerConfig;
 import org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.bootstrap.service.thrift.BootstrapThriftServiceImpl;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+import org.kaaproject.kaa.server.transport.TransportService;
+import org.kaaproject.kaa.server.transport.TransportUpdateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,18 +88,13 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
     @Value("#{properties[zk_ignore_errors]}")
     private boolean zkIgnoreErrors;
 
-    /** List from config xml of ServiceChannels */
-    @Autowired
-    private List<ServiceChannel> nettyServersList;
-    
     /** The bootstrap thrift service. */
     @Autowired
     private BootstrapThriftServiceImpl bootstrapThriftService;
 
-    /** Bootstrap Config. */
     @Autowired
-    private KaaHttpServiceChannelConfig bootstrapConfig;
-    
+    private TransportService transportService;
+
     @Autowired
     private BootstrapServerConfig serverConfig;
 
@@ -108,25 +104,12 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
     /** The server. */
     private TServer server;
 
-    /** The http service. */
-//    @Autowired
-//    private KaaHttpService httpService;
-
     @Autowired
     private OperationsServerListService operationsServerListService;
 
     /** The key store service. */
     @Autowired
     private KeyStoreService keyStoreService;
-
-    /**
-     * Return Bootstrap Config.
-     *
-     * @return KaaHttpServiceChannelConfig
-     */
-    private KaaHttpServiceChannelConfig getConfig() {
-        return bootstrapConfig;
-    }
 
     @Override
     public KeyStoreService getKeyStoreService() {
@@ -135,7 +118,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.bootstrap.service.initialization.
      * BootstrapInitializationService#start()
      */
@@ -147,15 +130,8 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             if (operationsServerListService == null) {
                 throw new Exception("Error initializing OperationsServerListService()"); // NOSONAR
             }
-
-            operationsServerListService.init();
-
-            LOG.trace("Config: " + getConfig().toString());
-
-            for(ServiceChannel channel : nettyServersList) {
-                LOG.trace("Starting Channel {} ", channel.getChannelType().toString());
-                channel.start();
-            }
+            
+            transportService.lookupAndInit();
 
             final CountDownLatch thriftStartupLatch = new CountDownLatch(1);
             final CountDownLatch thriftShutdownLatch = new CountDownLatch(1);
@@ -171,6 +147,25 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             if (zkEnabled) {
                 startZK();
             }
+            
+            operationsServerListService.init(bootstrapNode);
+
+            transportService.addListener(new TransportUpdateListener() {
+
+                @Override
+                public void onTransportsStarted(List<TransportMetaData> mdList) {
+                    BootstrapNodeInfo info = bootstrapNode.getNodeInfo();
+                    info.setTransports(mdList);
+                    try {
+                        bootstrapNode.updateNodeData(info);
+                    } catch (IOException e) {
+                        LOG.error("Failed to update bootstrap node info", e);
+                    }
+                }
+
+            });
+
+            transportService.start();
 
             try {
                 thriftShutdownLatch.await();
@@ -185,22 +180,13 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.bootstrap.service.initialization.
      * BootstrapInitializationService#stop()
      */
     @Override
     public void stop() {
         LOG.trace("Stopping Bootstrap Service..." + propertiesToString());
-
-        for(ServiceChannel channel : nettyServersList) {
-            channel.stop();
-        }
-        nettyServersList.clear();
-        
-        if (operationsServerListService != null) {
-            operationsServerListService.stop();
-        }
 
         if (zkEnabled) {
             stopZK();
@@ -215,8 +201,10 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
     /**
      * Start thrift.
      *
-     * @param thriftStartupLatch CountDownLatch
-     * @param thriftShutdownLatch CountDownLatch
+     * @param thriftStartupLatch
+     *            CountDownLatch
+     * @param thriftShutdownLatch
+     *            CountDownLatch
      */
     private void startThrift(final CountDownLatch thriftStartupLatch, final CountDownLatch thriftShutdownLatch) {
         Runnable thriftRunnable = new Runnable() {
@@ -251,10 +239,10 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
                 } finally {
                     server = null;
 
-                    if(thriftStartupLatch.getCount() > 0){
+                    if (thriftStartupLatch.getCount() > 0) {
                         thriftStartupLatch.countDown();
                     }
-                    if(thriftShutdownLatch.getCount() > 0){
+                    if (thriftShutdownLatch.getCount() > 0) {
                         LOG.info("Thrift Bootstrap Server Stopped.");
                         thriftShutdownLatch.countDown();
                     }
@@ -268,26 +256,21 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
     /**
      * Start zk.
      *
-     * @throws Exception in case of error
+     * @throws Exception
+     *             in case of error
      */
     private void startZK() throws Exception { // NOSONAR
         if (zkEnabled) {
             LOG.info("Bootstrap Server starting ZooKepper connection to {}", zkHostPortList);
             BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
             ByteBuffer keyData = ByteBuffer.wrap(keyStoreService.getPublicKey().getEncoded());
-            LOG.trace("Bootstrap server: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}", thriftHost, thriftPort, nettyHost,
-                    nettyPort);
-            ConnectionInfo connectionInfo = new ConnectionInfo(thriftHost, thriftPort, keyData);
-            List<BootstrapSupportedChannel> supportedChannelsList = new LinkedList<>();
-            for(ServiceChannel channel: nettyServersList) {
-                supportedChannelsList.add(new BootstrapSupportedChannel(channel.getZkSupportedChannel().getZkChannel()));
-            }
-            nodeInfo.setSupportedChannelsArray(supportedChannelsList );
-            nodeInfo.setConnectionInfo(connectionInfo);
+            LOG.trace("Bootstrap server: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}", thriftHost,
+                    thriftPort, nettyHost, nettyPort);
+            nodeInfo.setConnectionInfo(new ConnectionInfo(thriftHost, thriftPort, keyData));
+            nodeInfo.setTransports(new ArrayList<TransportMetaData>());
             bootstrapNode = new BootstrapNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(zkMaxRetryTime, zkSleepTime));
             if (bootstrapNode != null) {
                 bootstrapNode.start();
-                serverConfig.setBootstrapNode(bootstrapNode);
             }
         }
     }
@@ -300,33 +283,14 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             if (bootstrapNode != null) {
                 bootstrapNode.close();
             }
+            if (transportService != null) {
+                transportService.stop();
+            }
         } catch (IOException e) {
             LOG.warn("Exception when closing ZK node", e);
         } finally {
             bootstrapNode = null;
-            serverConfig.setBootstrapNode(bootstrapNode);
         }
-    }
-
-    /**
-     * @return the bootstrapThriftService
-     */
-    public BootstrapThriftServiceImpl getBootstrapThriftService() {
-        return bootstrapThriftService;
-    }
-
-    /**
-     * @return the bootstrapNode
-     */
-    public BootstrapNode getBootstrapNode() {
-        return bootstrapNode;
-    }
-
-    /**
-     * @return the operationsServerListService
-     */
-    public OperationsServerListService getOperationsServerListService() {
-        return operationsServerListService;
     }
 
     /**
@@ -345,12 +309,5 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
         sb.append("zkSleepTime: " + zkSleepTime + "\n");
         sb.append("zkIgnoreErrors: " + zkIgnoreErrors + "\n");
         return sb.toString();
-    }
-
-    /**
-     * @return the nettyServersList
-     */
-    public List<ServiceChannel> getNettyServersList() {
-        return nettyServersList;
     }
 }

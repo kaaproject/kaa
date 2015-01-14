@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
 import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.OperationsServerLoadHistory.OperationsServerLoad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +49,7 @@ public class DefaultRebalancer implements Rebalancer {
      * @see org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.Rebalancer#recalculate(java.util.Map)
      */
     @Override
-    public Map<String,RedirectionRule> recalculate(Map<String, Map<ZkChannelType,OperationsServerLoadHistory>> opsServerLoadHistory) {
+    public Map<String,RedirectionRule> recalculate(Map<String, OperationsServerLoadHistory> opsServerLoadHistory) {
         LOG.info("DefaultRebalancer recalculate Operations servers balance...");
         Map<String,RedirectionRule> rules = new HashMap<String, RedirectionRule>();
         if (opsServerLoadHistory.size() > 1) {
@@ -100,12 +99,12 @@ public class DefaultRebalancer implements Rebalancer {
      * @param map
      * @return
      */
-    private int getLastProcessedRequestCountFromAllChannels(Map<ZkChannelType, OperationsServerLoadHistory> map) {
+    private int getLastProcessedRequestCountFromAllChannels(OperationsServerLoadHistory history) {
         int totalLoad = 0;
-        for(OperationsServerLoadHistory history : map.values()) {
-            List<OperationsServerLoad> load = history.getHistory();
-            if (!load.isEmpty()) {
-                totalLoad += load.get(load.size() - 1).getProcessedRequestCount();
+        List<OperationsServerLoad> load = history.getHistory();
+        if (!load.isEmpty()) {
+            if(load.get(load.size() - 1).getLoadInfo() != null){
+                totalLoad += load.get(load.size() - 1).getLoadInfo().getLoadIndex();
             }
         }
         return totalLoad;

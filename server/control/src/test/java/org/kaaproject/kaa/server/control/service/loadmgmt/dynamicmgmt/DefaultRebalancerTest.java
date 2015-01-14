@@ -15,14 +15,15 @@
  */
 package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
+import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 
 /**
  * @author Andrey Panasenko
@@ -47,14 +48,9 @@ public class DefaultRebalancerTest {
         String server2 = "dns2";
         OperationsServerLoadHistory server2History = new OperationsServerLoadHistory(MAX_HISTORY_TIME_LIVE);
 
-        Map<String, Map<ZkChannelType, OperationsServerLoadHistory>> serversHistory = new HashMap<>();
-        Map<ZkChannelType, OperationsServerLoadHistory> server1OpsHistory = new HashMap<>();
-        server1OpsHistory.put(ZkChannelType.HTTP, server1History);
-        serversHistory.put(server1, server1OpsHistory );
-
-        Map<ZkChannelType, OperationsServerLoadHistory> server2OpsHistory = new HashMap<>();
-        server2OpsHistory.put(ZkChannelType.HTTP, server2History);
-        serversHistory.put(server2, server2OpsHistory  );
+        Map<String, OperationsServerLoadHistory> serversHistory = new HashMap<>();
+        serversHistory.put(server1, server1History );
+        serversHistory.put(server2, server2History  );
         Map<String,RedirectionRule> rules = rebalancer.recalculate(serversHistory );
         assertNotNull(rules);
         assertEquals(0, rules.size());
@@ -74,27 +70,21 @@ public class DefaultRebalancerTest {
 
         String server1 = "dns1";
         OperationsServerLoadHistory server1History = new OperationsServerLoadHistory(MAX_HISTORY_TIME_LIVE);
-        server1History.addOpsServerLoad(0, 10, 0);
-        Map<ZkChannelType, OperationsServerLoadHistory> server1OpsHistory = new HashMap<>();
-        server1OpsHistory.put(ZkChannelType.HTTP, server1History);
+        server1History.addOpsServerLoad(new LoadInfo(10));
 
         String server2 = "dns2";
         OperationsServerLoadHistory server2History = new OperationsServerLoadHistory(MAX_HISTORY_TIME_LIVE);
-        server2History.addOpsServerLoad(0, 30, 0);
-        Map<ZkChannelType, OperationsServerLoadHistory> server2OpsHistory = new HashMap<>();
-        server2OpsHistory.put(ZkChannelType.HTTP, server2History);
+        server2History.addOpsServerLoad(new LoadInfo(30));
 
         String server3 = "dns3";
         OperationsServerLoadHistory server3History = new OperationsServerLoadHistory(MAX_HISTORY_TIME_LIVE);
-        server3History.addOpsServerLoad(0, 55, 0);
-        Map<ZkChannelType, OperationsServerLoadHistory> server3OpsHistory = new HashMap<>();
-        server3OpsHistory.put(ZkChannelType.HTTP, server3History);
+        server3History.addOpsServerLoad(new LoadInfo(55));
 
-        Map<String, Map<ZkChannelType, OperationsServerLoadHistory>> serversHistory = new HashMap<>();
+        Map<String, OperationsServerLoadHistory> serversHistory = new HashMap<>();
 
-        serversHistory.put(server1, server1OpsHistory);
-        serversHistory.put(server2, server2OpsHistory);
-        serversHistory.put(server3, server3OpsHistory);
+        serversHistory.put(server1, server1History);
+        serversHistory.put(server2, server2History);
+        serversHistory.put(server3, server3History);
         Map<String,RedirectionRule> rules = rebalancer.recalculate(serversHistory );
         assertNotNull(rules);
 

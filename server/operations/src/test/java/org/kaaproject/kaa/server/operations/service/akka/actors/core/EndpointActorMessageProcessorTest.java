@@ -15,8 +15,6 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -26,15 +24,16 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request;
-import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
-import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
+import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.transport.channel.ChannelAware;
+import org.kaaproject.kaa.server.transport.channel.ChannelContext;
+import org.kaaproject.kaa.server.transport.channel.ChannelType;
+import org.kaaproject.kaa.server.transport.message.Message;
+import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.mockito.Mockito;
 
 import akka.actor.ActorContext;
@@ -121,14 +120,14 @@ public class EndpointActorMessageProcessorTest {
 
         final UUID channelId = UUID.randomUUID();
         SyncRequestMessage message = Mockito.mock(SyncRequestMessage.class);
-        ChannelHandlerContext channelCtx = Mockito.mock(ChannelHandlerContext.class);
+        ChannelContext channelCtx = Mockito.mock(ChannelContext.class);
         Mockito.when(message.getChannelType()).thenReturn(ChannelType.TCP);
         Mockito.when(message.getChannelUuid()).thenReturn(channelId);
         Mockito.when(message.getChannelContext()).thenReturn(channelCtx);
         Mockito.when(message.getSession()).thenReturn(
-                new NettySessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelCtx, ChannelType.TCP, null, EndpointObjectHash
+                new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelCtx, ChannelType.TCP, null, EndpointObjectHash
                         .fromSHA1("key"), "APP_TOKEN", 1000, true));
-        Mockito.when(message.getCommand()).thenReturn(Mockito.mock(Request.class));
+        Mockito.when(message.getCommand()).thenReturn(Mockito.mock(Message.class));
         Mockito.when(message.getOriginator()).thenReturn(Mockito.mock(ActorRef.class));
 
         EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
@@ -153,7 +152,7 @@ public class EndpointActorMessageProcessorTest {
             }
 
             @Override
-            public ChannelHandlerContext getChannelContext() {
+            public ChannelContext getChannelContext() {
                 return null;
             }
         };

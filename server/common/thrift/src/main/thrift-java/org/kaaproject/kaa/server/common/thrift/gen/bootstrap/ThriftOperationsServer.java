@@ -36,10 +36,8 @@ import org.slf4j.LoggerFactory;
 public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOperationsServer, ThriftOperationsServer._Fields>, java.io.Serializable, Cloneable, Comparable<ThriftOperationsServer> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ThriftOperationsServer");
 
-  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("Name", org.apache.thrift.protocol.TType.STRING, (short)1);
+  private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.STRING, (short)1);
   private static final org.apache.thrift.protocol.TField PRIORITY_FIELD_DESC = new org.apache.thrift.protocol.TField("priority", org.apache.thrift.protocol.TType.I32, (short)2);
-  private static final org.apache.thrift.protocol.TField PUBLIC_KEY_FIELD_DESC = new org.apache.thrift.protocol.TField("publicKey", org.apache.thrift.protocol.TType.STRING, (short)3);
-  private static final org.apache.thrift.protocol.TField SUPPORTED_CHANNELS_FIELD_DESC = new org.apache.thrift.protocol.TField("supportedChannels", org.apache.thrift.protocol.TType.LIST, (short)4);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -47,17 +45,13 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     schemes.put(TupleScheme.class, new ThriftOperationsServerTupleSchemeFactory());
   }
 
-  public String Name; // required
+  public String id; // required
   public int priority; // required
-  public ByteBuffer publicKey; // required
-  public List<ThriftSupportedChannel> supportedChannels; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    NAME((short)1, "Name"),
-    PRIORITY((short)2, "priority"),
-    PUBLIC_KEY((short)3, "publicKey"),
-    SUPPORTED_CHANNELS((short)4, "supportedChannels");
+    ID((short)1, "id"),
+    PRIORITY((short)2, "priority");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -72,14 +66,10 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // NAME
-          return NAME;
+        case 1: // ID
+          return ID;
         case 2: // PRIORITY
           return PRIORITY;
-        case 3: // PUBLIC_KEY
-          return PUBLIC_KEY;
-        case 4: // SUPPORTED_CHANNELS
-          return SUPPORTED_CHANNELS;
         default:
           return null;
       }
@@ -125,14 +115,10 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("Name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.PRIORITY, new org.apache.thrift.meta_data.FieldMetaData("priority", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32        , "Integer")));
-    tmpMap.put(_Fields.PUBLIC_KEY, new org.apache.thrift.meta_data.FieldMetaData("publicKey", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , true)));
-    tmpMap.put(_Fields.SUPPORTED_CHANNELS, new org.apache.thrift.meta_data.FieldMetaData("supportedChannels", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.LIST        , "ThriftSupportedChannels")));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ThriftOperationsServer.class, metaDataMap);
   }
@@ -141,17 +127,13 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
   }
 
   public ThriftOperationsServer(
-    String Name,
-    int priority,
-    ByteBuffer publicKey,
-    List<ThriftSupportedChannel> supportedChannels)
+    String id,
+    int priority)
   {
     this();
-    this.Name = Name;
+    this.id = id;
     this.priority = priority;
     setPriorityIsSet(true);
-    this.publicKey = publicKey;
-    this.supportedChannels = supportedChannels;
   }
 
   /**
@@ -159,17 +141,10 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
    */
   public ThriftOperationsServer(ThriftOperationsServer other) {
     __isset_bitfield = other.__isset_bitfield;
-    if (other.isSetName()) {
-      this.Name = other.Name;
+    if (other.isSetId()) {
+      this.id = other.id;
     }
     this.priority = other.priority;
-    if (other.isSetPublicKey()) {
-      this.publicKey = org.apache.thrift.TBaseHelper.copyBinary(other.publicKey);
-;
-    }
-    if (other.isSetSupportedChannels()) {
-      this.supportedChannels = other.supportedChannels;
-    }
   }
 
   public ThriftOperationsServer deepCopy() {
@@ -178,34 +153,32 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
 
   @Override
   public void clear() {
-    this.Name = null;
+    this.id = null;
     setPriorityIsSet(false);
     this.priority = 0;
-    this.publicKey = null;
-    this.supportedChannels = null;
   }
 
-  public String getName() {
-    return this.Name;
+  public String getId() {
+    return this.id;
   }
 
-  public ThriftOperationsServer setName(String Name) {
-    this.Name = Name;
+  public ThriftOperationsServer setId(String id) {
+    this.id = id;
     return this;
   }
 
-  public void unsetName() {
-    this.Name = null;
+  public void unsetId() {
+    this.id = null;
   }
 
-  /** Returns true if field Name is set (has been assigned a value) and false otherwise */
-  public boolean isSetName() {
-    return this.Name != null;
+  /** Returns true if field id is set (has been assigned a value) and false otherwise */
+  public boolean isSetId() {
+    return this.id != null;
   }
 
-  public void setNameIsSet(boolean value) {
+  public void setIdIsSet(boolean value) {
     if (!value) {
-      this.Name = null;
+      this.id = null;
     }
   }
 
@@ -232,86 +205,13 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PRIORITY_ISSET_ID, value);
   }
 
-  public byte[] getPublicKey() {
-    setPublicKey(org.apache.thrift.TBaseHelper.rightSize(publicKey));
-    return publicKey == null ? null : publicKey.array();
-  }
-
-  public ByteBuffer bufferForPublicKey() {
-    return publicKey;
-  }
-
-  public ThriftOperationsServer setPublicKey(byte[] publicKey) {
-    setPublicKey(publicKey == null ? (ByteBuffer)null : ByteBuffer.wrap(publicKey));
-    return this;
-  }
-
-  public ThriftOperationsServer setPublicKey(ByteBuffer publicKey) {
-    this.publicKey = publicKey;
-    return this;
-  }
-
-  public void unsetPublicKey() {
-    this.publicKey = null;
-  }
-
-  /** Returns true if field publicKey is set (has been assigned a value) and false otherwise */
-  public boolean isSetPublicKey() {
-    return this.publicKey != null;
-  }
-
-  public void setPublicKeyIsSet(boolean value) {
-    if (!value) {
-      this.publicKey = null;
-    }
-  }
-
-  public int getSupportedChannelsSize() {
-    return (this.supportedChannels == null) ? 0 : this.supportedChannels.size();
-  }
-
-  public java.util.Iterator<ThriftSupportedChannel> getSupportedChannelsIterator() {
-    return (this.supportedChannels == null) ? null : this.supportedChannels.iterator();
-  }
-
-  public void addToSupportedChannels(ThriftSupportedChannel elem) {
-    if (this.supportedChannels == null) {
-      this.supportedChannels = new ArrayList<ThriftSupportedChannel>();
-    }
-    this.supportedChannels.add(elem);
-  }
-
-  public List<ThriftSupportedChannel> getSupportedChannels() {
-    return this.supportedChannels;
-  }
-
-  public ThriftOperationsServer setSupportedChannels(List<ThriftSupportedChannel> supportedChannels) {
-    this.supportedChannels = supportedChannels;
-    return this;
-  }
-
-  public void unsetSupportedChannels() {
-    this.supportedChannels = null;
-  }
-
-  /** Returns true if field supportedChannels is set (has been assigned a value) and false otherwise */
-  public boolean isSetSupportedChannels() {
-    return this.supportedChannels != null;
-  }
-
-  public void setSupportedChannelsIsSet(boolean value) {
-    if (!value) {
-      this.supportedChannels = null;
-    }
-  }
-
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case NAME:
+    case ID:
       if (value == null) {
-        unsetName();
+        unsetId();
       } else {
-        setName((String)value);
+        setId((String)value);
       }
       break;
 
@@ -323,38 +223,16 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
       }
       break;
 
-    case PUBLIC_KEY:
-      if (value == null) {
-        unsetPublicKey();
-      } else {
-        setPublicKey((ByteBuffer)value);
-      }
-      break;
-
-    case SUPPORTED_CHANNELS:
-      if (value == null) {
-        unsetSupportedChannels();
-      } else {
-        setSupportedChannels((List<ThriftSupportedChannel>)value);
-      }
-      break;
-
     }
   }
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case NAME:
-      return getName();
+    case ID:
+      return getId();
 
     case PRIORITY:
       return Integer.valueOf(getPriority());
-
-    case PUBLIC_KEY:
-      return getPublicKey();
-
-    case SUPPORTED_CHANNELS:
-      return getSupportedChannels();
 
     }
     throw new IllegalStateException();
@@ -367,14 +245,10 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     }
 
     switch (field) {
-    case NAME:
-      return isSetName();
+    case ID:
+      return isSetId();
     case PRIORITY:
       return isSetPriority();
-    case PUBLIC_KEY:
-      return isSetPublicKey();
-    case SUPPORTED_CHANNELS:
-      return isSetSupportedChannels();
     }
     throw new IllegalStateException();
   }
@@ -392,12 +266,12 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     if (that == null)
       return false;
 
-    boolean this_present_Name = true && this.isSetName();
-    boolean that_present_Name = true && that.isSetName();
-    if (this_present_Name || that_present_Name) {
-      if (!(this_present_Name && that_present_Name))
+    boolean this_present_id = true && this.isSetId();
+    boolean that_present_id = true && that.isSetId();
+    if (this_present_id || that_present_id) {
+      if (!(this_present_id && that_present_id))
         return false;
-      if (!this.Name.equals(that.Name))
+      if (!this.id.equals(that.id))
         return false;
     }
 
@@ -410,24 +284,6 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
         return false;
     }
 
-    boolean this_present_publicKey = true && this.isSetPublicKey();
-    boolean that_present_publicKey = true && that.isSetPublicKey();
-    if (this_present_publicKey || that_present_publicKey) {
-      if (!(this_present_publicKey && that_present_publicKey))
-        return false;
-      if (!this.publicKey.equals(that.publicKey))
-        return false;
-    }
-
-    boolean this_present_supportedChannels = true && this.isSetSupportedChannels();
-    boolean that_present_supportedChannels = true && that.isSetSupportedChannels();
-    if (this_present_supportedChannels || that_present_supportedChannels) {
-      if (!(this_present_supportedChannels && that_present_supportedChannels))
-        return false;
-      if (!this.supportedChannels.equals(that.supportedChannels))
-        return false;
-    }
-
     return true;
   }
 
@@ -435,25 +291,15 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
 
-    boolean present_Name = true && (isSetName());
-    builder.append(present_Name);
-    if (present_Name)
-      builder.append(Name);
+    boolean present_id = true && (isSetId());
+    builder.append(present_id);
+    if (present_id)
+      builder.append(id);
 
     boolean present_priority = true;
     builder.append(present_priority);
     if (present_priority)
       builder.append(priority);
-
-    boolean present_publicKey = true && (isSetPublicKey());
-    builder.append(present_publicKey);
-    if (present_publicKey)
-      builder.append(publicKey);
-
-    boolean present_supportedChannels = true && (isSetSupportedChannels());
-    builder.append(present_supportedChannels);
-    if (present_supportedChannels)
-      builder.append(supportedChannels);
 
     return builder.toHashCode();
   }
@@ -466,12 +312,12 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetName()).compareTo(other.isSetName());
+    lastComparison = Boolean.valueOf(isSetId()).compareTo(other.isSetId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetName()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.Name, other.Name);
+    if (isSetId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.id, other.id);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -482,26 +328,6 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     }
     if (isSetPriority()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.priority, other.priority);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetPublicKey()).compareTo(other.isSetPublicKey());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetPublicKey()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.publicKey, other.publicKey);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetSupportedChannels()).compareTo(other.isSetSupportedChannels());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetSupportedChannels()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.supportedChannels, other.supportedChannels);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -526,32 +352,16 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     StringBuilder sb = new StringBuilder("ThriftOperationsServer(");
     boolean first = true;
 
-    sb.append("Name:");
-    if (this.Name == null) {
+    sb.append("id:");
+    if (this.id == null) {
       sb.append("null");
     } else {
-      sb.append(this.Name);
+      sb.append(this.id);
     }
     first = false;
     if (!first) sb.append(", ");
     sb.append("priority:");
     sb.append(this.priority);
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("publicKey:");
-    if (this.publicKey == null) {
-      sb.append("null");
-    } else {
-      org.apache.thrift.TBaseHelper.toString(this.publicKey, sb);
-    }
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("supportedChannels:");
-    if (this.supportedChannels == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.supportedChannels);
-    }
     first = false;
     sb.append(")");
     return sb.toString();
@@ -598,10 +408,10 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
           break;
         }
         switch (schemeField.id) {
-          case 1: // NAME
+          case 1: // ID
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.Name = iprot.readString();
-              struct.setNameIsSet(true);
+              struct.id = iprot.readString();
+              struct.setIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -610,33 +420,6 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
               struct.priority = iprot.readI32();
               struct.setPriorityIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 3: // PUBLIC_KEY
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.publicKey = iprot.readBinary();
-              struct.setPublicKeyIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 4: // SUPPORTED_CHANNELS
-            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
-              {
-                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
-                struct.supportedChannels = new ArrayList<ThriftSupportedChannel>(_list0.size);
-                for (int _i1 = 0; _i1 < _list0.size; ++_i1)
-                {
-                  ThriftSupportedChannel _elem2;
-                  _elem2 = new ThriftSupportedChannel();
-                  _elem2.read(iprot);
-                  struct.supportedChannels.add(_elem2);
-                }
-                iprot.readListEnd();
-              }
-              struct.setSupportedChannelsIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -656,31 +439,14 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      if (struct.Name != null) {
-        oprot.writeFieldBegin(NAME_FIELD_DESC);
-        oprot.writeString(struct.Name);
+      if (struct.id != null) {
+        oprot.writeFieldBegin(ID_FIELD_DESC);
+        oprot.writeString(struct.id);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldBegin(PRIORITY_FIELD_DESC);
       oprot.writeI32(struct.priority);
       oprot.writeFieldEnd();
-      if (struct.publicKey != null) {
-        oprot.writeFieldBegin(PUBLIC_KEY_FIELD_DESC);
-        oprot.writeBinary(struct.publicKey);
-        oprot.writeFieldEnd();
-      }
-      if (struct.supportedChannels != null) {
-        oprot.writeFieldBegin(SUPPORTED_CHANNELS_FIELD_DESC);
-        {
-          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.supportedChannels.size()));
-          for (ThriftSupportedChannel _iter3 : struct.supportedChannels)
-          {
-            _iter3.write(oprot);
-          }
-          oprot.writeListEnd();
-        }
-        oprot.writeFieldEnd();
-      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -699,68 +465,32 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     public void write(org.apache.thrift.protocol.TProtocol prot, ThriftOperationsServer struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetName()) {
+      if (struct.isSetId()) {
         optionals.set(0);
       }
       if (struct.isSetPriority()) {
         optionals.set(1);
       }
-      if (struct.isSetPublicKey()) {
-        optionals.set(2);
-      }
-      if (struct.isSetSupportedChannels()) {
-        optionals.set(3);
-      }
-      oprot.writeBitSet(optionals, 4);
-      if (struct.isSetName()) {
-        oprot.writeString(struct.Name);
+      oprot.writeBitSet(optionals, 2);
+      if (struct.isSetId()) {
+        oprot.writeString(struct.id);
       }
       if (struct.isSetPriority()) {
         oprot.writeI32(struct.priority);
-      }
-      if (struct.isSetPublicKey()) {
-        oprot.writeBinary(struct.publicKey);
-      }
-      if (struct.isSetSupportedChannels()) {
-        {
-          oprot.writeI32(struct.supportedChannels.size());
-          for (ThriftSupportedChannel _iter4 : struct.supportedChannels)
-          {
-            _iter4.write(oprot);
-          }
-        }
       }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, ThriftOperationsServer struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(4);
+      BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
-        struct.Name = iprot.readString();
-        struct.setNameIsSet(true);
+        struct.id = iprot.readString();
+        struct.setIdIsSet(true);
       }
       if (incoming.get(1)) {
         struct.priority = iprot.readI32();
         struct.setPriorityIsSet(true);
-      }
-      if (incoming.get(2)) {
-        struct.publicKey = iprot.readBinary();
-        struct.setPublicKeyIsSet(true);
-      }
-      if (incoming.get(3)) {
-        {
-          org.apache.thrift.protocol.TList _list5 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.supportedChannels = new ArrayList<ThriftSupportedChannel>(_list5.size);
-          for (int _i6 = 0; _i6 < _list5.size; ++_i6)
-          {
-            ThriftSupportedChannel _elem7;
-            _elem7 = new ThriftSupportedChannel();
-            _elem7.read(iprot);
-            struct.supportedChannels.add(_elem7);
-          }
-        }
-        struct.setSupportedChannelsIsSet(true);
       }
     }
   }

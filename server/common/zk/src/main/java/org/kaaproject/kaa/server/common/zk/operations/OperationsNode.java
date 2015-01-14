@@ -23,16 +23,9 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.kaaproject.kaa.server.common.zk.WorkerNodeTracker;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
-import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * The Class OperationsNode.
@@ -40,8 +33,7 @@ import org.slf4j.LoggerFactory;
 public class OperationsNode extends WorkerNodeTracker {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(BootstrapNode.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BootstrapNode.class);
 
     /** The node info. */
     private OperationsNodeInfo nodeInfo;
@@ -49,9 +41,12 @@ public class OperationsNode extends WorkerNodeTracker {
     /**
      * Instantiates a new endpoint node.
      *
-     * @param nodeInfo the node info
-     * @param zkHostPortList the zk host port list
-     * @param retryPolicy the retry policy
+     * @param nodeInfo
+     *            the node info
+     * @param zkHostPortList
+     *            the zk host port list
+     * @param retryPolicy
+     *            the retry policy
      */
     public OperationsNode(OperationsNodeInfo nodeInfo, String zkHostPortList, RetryPolicy retryPolicy) {
         super(zkHostPortList, retryPolicy);
@@ -62,69 +57,23 @@ public class OperationsNode extends WorkerNodeTracker {
     /**
      * Updates current ZK node data.
      *
-     * @param currentNodeInfo the current node info
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param currentNodeInfo
+     *            the current node info
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
-    public void updateNodeData(OperationsNodeInfo currentNodeInfo)
-            throws IOException {
+    public void updateNodeData(OperationsNodeInfo currentNodeInfo) throws IOException {
         this.nodeInfo = currentNodeInfo;
         doZKClientAction(new ZKClientAction() {
             @Override
             public void doWithZkClient(CuratorFramework client) throws Exception {
-                client.setData().forPath(nodePath,
-                        operationsNodeAvroConverter.get().toByteArray(nodeInfo));
+                client.setData().forPath(nodePath, operationsNodeAvroConverter.get().toByteArray(nodeInfo));
             }
         });
     }
 
-    /**
-     * Updates statistics of current NodeData
-     * @param deltaCalculationCount
-     * @param processedRequestCount
-     * @param RegisteredUsersCount
-     * @throws IOException
-     */
-    public void updateNodeStatsValues(ZkChannelType channelType,
-                                      int deltaCalculationCount,
-                                      int processedRequestCount,
-                                      int registeredUsersCount)
-            throws IOException {
-        for(SupportedChannel channel : nodeInfo.getSupportedChannelsArray()) {
-            if(channel.getZkChannel().getChannelType().equals(channelType)) {
-                BaseStatistics stats = null;
-                switch (channelType) { //NOSONAR
-                case HTTP:
-                    ZkHttpStatistics zkHttpStats = (ZkHttpStatistics)channel.getZkChannel().getChannelStatistics();
-                    stats = zkHttpStats.getZkStatistics();
-                    break;
-                case HTTP_LP:
-                    ZkHttpLpStatistics zkHttpLpStats = (ZkHttpLpStatistics)channel.getZkChannel().getChannelStatistics();
-                    stats = zkHttpLpStats.getZkStatistics();
-                    break;
-                case KAATCP:
-                    ZkKaaTcpStatistics zkTcpStats = (ZkKaaTcpStatistics)channel.getZkChannel().getChannelStatistics();
-                    stats = zkTcpStats.getZkStatistics();
-                    break;
-                }
-                if (stats != null) {
-                    stats.setDeltaCalculationCount(deltaCalculationCount);
-                    stats.setProcessedRequestCount(processedRequestCount);
-                    stats.setRegisteredUsersCount(registeredUsersCount);
-                    try {
-                        client.setData().forPath(nodePath,
-                                operationsNodeAvroConverter.get().toByteArray(nodeInfo));
-                    } catch (Exception e) {
-                        LOG.error("Unknown Error", e);
-                        close();
-                    }
-                }
-                break;
-            }
-        }
-    }
-
     @Override
-    public boolean createZkNode() throws IOException{
+    public boolean createZkNode() throws IOException {
         return doZKClientAction(new ZKClientAction() {
             @Override
             public void doWithZkClient(CuratorFramework client) throws Exception {
@@ -133,9 +82,7 @@ public class OperationsNode extends WorkerNodeTracker {
                         .create()
                         .creatingParentsIfNeeded()
                         .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-                        .forPath(
-                                OPERATIONS_SERVER_NODE_PATH
-                                        + OPERATIONS_SERVER_NODE_PATH,
+                        .forPath(OPERATIONS_SERVER_NODE_PATH + OPERATIONS_SERVER_NODE_PATH,
                                 operationsNodeAvroConverter.get().toByteArray(nodeInfo));
                 LOG.info("Created node with path: " + nodePath);
             }
@@ -144,9 +91,10 @@ public class OperationsNode extends WorkerNodeTracker {
 
     /**
      * Self NodeInfo getter.
+     * 
      * @return OperationsNodeInfo
      */
-    public OperationsNodeInfo getSelfNodeInfo() {
+    public OperationsNodeInfo getNodeInfo() {
         return nodeInfo;
     }
 }

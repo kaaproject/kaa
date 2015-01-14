@@ -45,11 +45,6 @@ import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.kaaproject.kaa.server.control.service.sdk.event.CEventSourcesGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -288,29 +283,6 @@ public class CSdkGenerator extends SdkGenerator {
         velocityEngine.getTemplate("sdk/c/kaa_defaults.vm").merge(context, writer);
 
         return writer.toString().getBytes();
-    }
-
-    static public IpComunicationParameters getIPParameters(ZkSupportedChannel channel) {
-        IpComunicationParameters params = null;
-
-        switch (channel.getChannelType()) {
-        case HTTP:
-            params = ((ZkHttpComunicationParameters)channel.
-                    getCommunicationParameters()).getZkComunicationParameters();
-            break;
-        case HTTP_LP:
-            params = ((ZkHttpLpComunicationParameters)channel.
-                    getCommunicationParameters()).getZkComunicationParameters();
-            break;
-        case KAATCP:
-            params = ((ZkKaaTcpComunicationParameters)channel.
-                    getCommunicationParameters()).getZkComunicationParameters();
-            break;
-        default:
-            break;
-        }
-
-        return params;
     }
 
     private List<TarEntryData> generateProfileSources(String profileSchemaBody) {

@@ -21,20 +21,20 @@ import static org.junit.Assert.assertFalse;
 import java.util.ArrayList;
 
 import org.junit.Test;
-import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.Event;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.LogServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
+import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
+import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
+import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
+import org.kaaproject.kaa.server.sync.Event;
+import org.kaaproject.kaa.server.sync.EventListenersResponse;
+import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.LogServerSync;
+import org.kaaproject.kaa.server.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.sync.UserAttachResponse;
+import org.kaaproject.kaa.server.sync.UserServerSync;
 
 public class SyncResponseHolderTest {
 

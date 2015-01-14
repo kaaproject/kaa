@@ -1,30 +1,22 @@
-<!--
-  Copyright 2014 CyberVision, Inc.
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
+<!-- Copyright 2014 CyberVision, Inc. Licensed under the Apache License, 
+    Version 2.0 (the "License"); you may not use this file except in compliance 
+    with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+    Unless required by applicable law or agreed to in writing, software distributed 
+    under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+    OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+    the specific language governing permissions and limitations under the License. -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.kaaproject.kaa</groupId>
-		<version>0.6.3-SNAPSHOT</version>
-		<artifactId>server</artifactId>
-	</parent>
-	<groupId>org.kaaproject.kaa.server</groupId>
-	<artifactId>bootstrap</artifactId>
-	<packaging>jar</packaging>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.kaaproject.kaa</groupId>
+        <version>0.6.3-SNAPSHOT</version>
+        <artifactId>server</artifactId>
+    </parent>
+    <groupId>org.kaaproject.kaa.server</groupId>
+    <artifactId>bootstrap</artifactId>
+    <packaging>jar</packaging>
 
 
     <name>Kaa Bootstrap Server</name>
@@ -51,6 +43,10 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>transport-shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>zk</artifactId>
         </dependency>
         <dependency>
@@ -60,17 +56,14 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift-cli-server</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift-cli-client</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -110,17 +103,14 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-jaxrs</artifactId>
-            <version>1.9.13</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
-            <version>${curator.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -193,7 +183,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>
@@ -265,7 +254,7 @@
                                 <replace file="tmp_rpm_control/postrm"
                                     token="#servername#" value="${script.server.name}" />
                                 <replace file="tmp_rpm_control/prerm"
-                                    token="#servername#" value="${script.server.name}" />                                
+                                    token="#servername#" value="${script.server.name}" />
                                 <move file="tmp_sh/bin/kaa-server"
                                     tofile="tmp_sh/bin/${script.server.name}"
                                     overwrite="true" />
@@ -478,6 +467,26 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>http-transport</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+                    <artifactId>transport</artifactId>
+                    <classifier>http</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>tcp-transport</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+                    <artifactId>transport</artifactId>
+                    <classifier>tcp</classifier>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>

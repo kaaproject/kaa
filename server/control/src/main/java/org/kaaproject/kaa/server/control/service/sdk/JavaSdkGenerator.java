@@ -44,12 +44,8 @@ import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompiler;
 import org.kaaproject.kaa.server.control.service.sdk.compress.ZipEntryData;
@@ -65,8 +61,7 @@ import org.slf4j.helpers.MessageFormatter;
 public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(JavaSdkGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JavaSdkGenerator.class);
 
     /** The Constant JAVA_SDK_DIR. */
     private static final String JAVA_SDK_DIR = "sdk/java";
@@ -179,27 +174,29 @@ public class JavaSdkGenerator extends SdkGenerator {
         this.sdkPlatform = sdkPlatform;
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk(java.lang.String, java.util.List, java.lang.String, int, int, int, java.lang.String, java.lang.String, java.lang.String, byte[], java.util.List)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk
+     * (java.lang.String, java.util.List, java.lang.String, int, int, int,
+     * java.lang.String, java.lang.String, java.lang.String, byte[],
+     * java.util.List)
      */
     @Override
-    public Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes,
-            String appToken, int profileSchemaVersion,
-            int configurationSchemaVersion, int notificationSchemaVersion,
-            int logSchemaVersion,
-            String profileSchemaBody,
-            String notificationSchemaBody,
-            String configurationProtocolSchemaBody,
-            byte[] defaultConfigurationData,
-            List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody) throws Exception {
+    public Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String appToken, int profileSchemaVersion,
+            int configurationSchemaVersion, int notificationSchemaVersion, int logSchemaVersion, String profileSchemaBody,
+            String notificationSchemaBody, String configurationProtocolSchemaBody, byte[] defaultConfigurationData,
+            List<EventFamilyMetadata> eventFamilies, String logSchemaBody) throws Exception {
 
         String sdkTemplateLocation;
-        if (sdkPlatform==SdkPlatform.JAVA) {
-            sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + JAVA_SDK_DIR + "/" + JAVA_SDK_PREFIX + buildVersion + ".jar";
+        if (sdkPlatform == SdkPlatform.JAVA) {
+            sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + JAVA_SDK_DIR + "/" + JAVA_SDK_PREFIX + buildVersion
+                    + ".jar";
             LOG.debug("Lookup Java SDK template: {}", sdkTemplateLocation);
-        } else { //ANDROID
-            sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + ANDROID_SDK_DIR + "/" + ANDROID_SDK_PREFIX + buildVersion + ".jar";
+        } else { // ANDROID
+            sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + ANDROID_SDK_DIR + "/" + ANDROID_SDK_PREFIX + buildVersion
+                    + ".jar";
             LOG.debug("Lookup Android SDK template: {}", sdkTemplateLocation);
         }
 
@@ -209,16 +206,9 @@ public class JavaSdkGenerator extends SdkGenerator {
         Map<String, ZipEntryData> replacementData = new HashMap<String, ZipEntryData>();
 
         ZipEntry clientPropertiesEntry = templateArhive.getEntry(CLIENT_PROPERTIES);
-        byte[] clientPropertiesData = generateClientProperties(templateArhive.getInputStream(clientPropertiesEntry),
-                                                               bootstrapNodes,
-                                                               appToken,
-                                                               configurationSchemaVersion,
-                                                               profileSchemaVersion,
-                                                               notificationSchemaVersion,
-                                                               logSchemaVersion,
-                                                               configurationProtocolSchemaBody,
-                                                               defaultConfigurationData,
-                                                               eventFamilies);
+        byte[] clientPropertiesData = generateClientProperties(templateArhive.getInputStream(clientPropertiesEntry), bootstrapNodes,
+                appToken, configurationSchemaVersion, profileSchemaVersion, notificationSchemaVersion, logSchemaVersion,
+                configurationProtocolSchemaBody, defaultConfigurationData, eventFamilies);
 
         replacementData.put(CLIENT_PROPERTIES, new ZipEntryData(new ZipEntry(CLIENT_PROPERTIES), clientPropertiesData));
 
@@ -226,8 +216,8 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         List<JavaDynamicBean> javaSources = generateSchemaSources(profileSchema);
         String profileContainerTemplate = readResource(ABSTRACT_RPOFILE_CONTAINER_SOURCE_TEMPLATE);
-        String profileContainerSource = profileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileSchema.getNamespace()).
-                replaceAll(PROFILE_CLASS_VAR, profileSchema.getName());
+        String profileContainerSource = profileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileSchema.getNamespace())
+                .replaceAll(PROFILE_CLASS_VAR, profileSchema.getName());
 
         JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(ABSTRACT_PROFILE_CONTAINER, profileContainerSource);
         javaSources.add(profileContainerClassBean);
@@ -235,8 +225,8 @@ public class JavaSdkGenerator extends SdkGenerator {
         Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
         javaSources.addAll(generateSchemaSources(notificationSchema));
         String notificationListenerTemplate = readResource(ABSTRACT_NOTIFICATION_LISTENER_SOURCE_TEMPLATE);
-        String notificationListenerSource = notificationListenerTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR, notificationSchema.getNamespace()).
-                replaceAll(NOTIFICATION_CLASS_VAR, notificationSchema.getName());
+        String notificationListenerSource = notificationListenerTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
+                notificationSchema.getNamespace()).replaceAll(NOTIFICATION_CLASS_VAR, notificationSchema.getName());
 
         JavaDynamicBean notificationListenerClassBean = new JavaDynamicBean(ABSTRACT_NOTIFICATION_LISTENER, notificationListenerSource);
         javaSources.add(notificationListenerClassBean);
@@ -244,16 +234,16 @@ public class JavaSdkGenerator extends SdkGenerator {
         Schema logSchema = new Schema.Parser().parse(logSchemaBody);
         javaSources.addAll(generateSchemaSources(logSchema));
         String logRecordTemplate = readResource(LOG_RECORD_SOURCE_TEMPLATE);
-        String logRecordSource = logRecordTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).
-                replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName());
+        String logRecordSource = logRecordTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
+                LOG_RECORD_CLASS_VAR, logSchema.getName());
 
         String logCollectorInterfaceTemplate = readResource(LOG_COLLECTOR_INTERFACE_TEMPLATE);
-        String logCollectorInterface = logCollectorInterfaceTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).
-                                    replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName());
+        String logCollectorInterface = logCollectorInterfaceTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+                .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName());
 
         String logCollectorSourceTemplate = readResource(LOG_COLLECTOR_SOURCE_TEMPLATE);
-        String logCollectorSource = logCollectorSourceTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).
-                                    replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName());
+        String logCollectorSource = logCollectorSourceTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+                .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName());
 
         JavaDynamicBean logRecordClassBean = new JavaDynamicBean(LOG_RECORD, logRecordSource);
         JavaDynamicBean logCollectorInterfaceClassBean = new JavaDynamicBean(LOG_COLLECTOR_INTERFACE, logCollectorInterface);
@@ -303,12 +293,10 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         sdkFile.close();
 
-        String sdkFileName = MessageFormatter.arrayFormat(sdkPlatform==SdkPlatform.JAVA ? JAVA_SDK_NAME_PATTERN
-                                                                                        : ANDROID_SDK_NAME_PATTERN,
-                new Object[]{profileSchemaVersion,
-                configurationSchemaVersion,
-                notificationSchemaVersion,
-                logSchemaVersion}).getMessage();
+        String sdkFileName = MessageFormatter.arrayFormat(
+                sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_NAME_PATTERN : ANDROID_SDK_NAME_PATTERN,
+                new Object[] { profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, logSchemaVersion })
+                .getMessage();
 
         byte[] sdkData = sdkOutput.toByteArray();
 
@@ -321,9 +309,11 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * Generate schema class.
      *
-     * @param schema the schema
+     * @param schema
+     *            the schema
      * @return the list
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     public static List<JavaDynamicBean> generateSchemaSources(Schema schema) throws IOException {
         SpecificCompiler compiler = new SpecificCompiler(schema);
@@ -338,7 +328,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         } else {
             n = Math.abs(n);
         }
-        File tmpOutputDir = new File(tmpdir, "tmp-gen-"+Long.toString(n));
+        File tmpOutputDir = new File(tmpdir, "tmp-gen-" + Long.toString(n));
         tmpOutputDir.mkdirs();
 
         compiler.compileToDestination(null, tmpOutputDir);
@@ -353,13 +343,15 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * Package sources.
      *
-     * @param javaSources the java sources
-     * @param data the data
+     * @param javaSources
+     *            the java sources
+     * @param data
+     *            the data
      */
     private void packageSources(List<JavaDynamicBean> javaSources, Map<String, ZipEntryData> data) {
         JavaDynamicCompiler dynamicCompiler = new JavaDynamicCompiler();
         dynamicCompiler.init();
-        for(JavaDynamicBean bean : javaSources){
+        for (JavaDynamicBean bean : javaSources) {
             LOG.debug("Compiling bean {} with source: {}", bean.getName(), bean.getCharContent(true));
         }
         Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources);
@@ -375,9 +367,11 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * Gets the java sources.
      *
-     * @param srcDir the src dir
+     * @param srcDir
+     *            the src dir
      * @return the java sources
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     private static List<JavaDynamicBean> getJavaSources(File srcDir) throws IOException {
         List<JavaDynamicBean> result = new ArrayList<JavaDynamicBean>();
@@ -385,7 +379,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         for (File f : files) {
             if (f.isDirectory()) {
                 result.addAll(getJavaSources(f));
-            } else if (f.getName().endsWith(Kind.SOURCE.extension)){
+            } else if (f.getName().endsWith(Kind.SOURCE.extension)) {
                 int index = f.getName().indexOf('.');
                 String className = f.getName().substring(0, index);
                 String sourceCode = readFile(f);
@@ -399,29 +393,34 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * Generate client properties.
      *
-     * @param clientPropertiesStream the client properties stream
-     * @param bootstrapNodes the bootstrap nodes
-     * @param appToken the app token
-     * @param configurationSchemaVersion the configuration schema version
-     * @param profileSchemaVersion the profile schema version
-     * @param notificationSchemaVersion the notification schema version
-     * @param logSchemaVersion the log schema version
-     * @param configurationProtocolSchemaBody the configuration protocol schema body
-     * @param defaultConfigurationData the default configuration data
-     * @param eventFamilies the event families meta information
+     * @param clientPropertiesStream
+     *            the client properties stream
+     * @param bootstrapNodes
+     *            the bootstrap nodes
+     * @param appToken
+     *            the app token
+     * @param configurationSchemaVersion
+     *            the configuration schema version
+     * @param profileSchemaVersion
+     *            the profile schema version
+     * @param notificationSchemaVersion
+     *            the notification schema version
+     * @param logSchemaVersion
+     *            the log schema version
+     * @param configurationProtocolSchemaBody
+     *            the configuration protocol schema body
+     * @param defaultConfigurationData
+     *            the default configuration data
+     * @param eventFamilies
+     *            the event families meta information
      * @return the byte[]
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
-    private byte[] generateClientProperties(InputStream clientPropertiesStream,
-            List<BootstrapNodeInfo> bootstrapNodes,
-            String appToken,
-            int configurationSchemaVersion,
-            int profileSchemaVersion,
-            int notificationSchemaVersion,
-            int logSchemaVersion,
-            String configurationProtocolSchemaBody,
-            byte[] defaultConfigurationData,
-            List<EventFamilyMetadata> eventFamilies) throws IOException {
+    private byte[] generateClientProperties(InputStream clientPropertiesStream, List<BootstrapNodeInfo> bootstrapNodes, String appToken,
+            int configurationSchemaVersion, int profileSchemaVersion, int notificationSchemaVersion, int logSchemaVersion,
+            String configurationProtocolSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies)
+            throws IOException {
 
         Properties clientProperties = new Properties();
         clientProperties.load(clientPropertiesStream);
@@ -435,47 +434,25 @@ public class JavaSdkGenerator extends SdkGenerator {
             }
 
             BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
-            List<BootstrapSupportedChannel> supportedChannels = node.getSupportedChannelsArray();
+            List<TransportMetaData> supportedChannels = node.getTransports();
 
             for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
-                ZkSupportedChannel channel = supportedChannels.get(chIndex).getZkChannel();
+                TransportMetaData transport = supportedChannels.get(chIndex);
 
-                bootstrapServers += channel.getChannelType().ordinal();
-                bootstrapServers += ":";
-
-                if (channel.getChannelType() == ZkChannelType.HTTP) {
-                    ZkHttpComunicationParameters params =
-                            (ZkHttpComunicationParameters)channel.getCommunicationParameters();
-
-                    bootstrapServers += params.getZkComunicationParameters().getHostName();
+                for(VersionConnectionInfoPair pair : transport.getConnectionInfo()){
+                    bootstrapServers += transport.getId();
                     bootstrapServers += ":";
-                    bootstrapServers += params.getZkComunicationParameters().getPort();
-                } else if (channel.getChannelType() == ZkChannelType.HTTP_LP) {
-                    ZkHttpLpComunicationParameters params =
-                            (ZkHttpLpComunicationParameters)channel.getCommunicationParameters();
-
-                    bootstrapServers += params.getZkComunicationParameters().getHostName();
-                    bootstrapServers += ":";
-                    bootstrapServers += params.getZkComunicationParameters().getPort();
-                } else if (channel.getChannelType() == ZkChannelType.KAATCP) {
-                    ZkKaaTcpComunicationParameters params =
-                            (ZkKaaTcpComunicationParameters)channel.getCommunicationParameters();
-
-                    bootstrapServers += params.getZkComunicationParameters().getHostName();
-                    bootstrapServers += ":";
-                    bootstrapServers += params.getZkComunicationParameters().getPort();
+                    bootstrapServers += pair.getVersion();
+                    bootstrapServers += "|";
+                    bootstrapServers += Base64.encodeBase64String(pair.getConenctionInfo().array());
                 }
-
-                bootstrapServers += "|";
             }
-
-            bootstrapServers += Base64.encodeBase64String(node.getConnectionInfo().getPublicKey().array());
         }
 
         String ecfs = "";
         if (eventFamilies != null) {
-            for (int i=0;i<eventFamilies.size();i++) {
-                if (i>0) {
+            for (int i = 0; i < eventFamilies.size(); i++) {
+                if (i > 0) {
                     ecfs += ";";
                 }
                 ecfs += eventFamilies.get(i).getEcfName() + ":" + eventFamilies.get(i).getVersion();
@@ -486,10 +463,10 @@ public class JavaSdkGenerator extends SdkGenerator {
         clientProperties.put(BUILD_COMMIT_HASH, Version.COMMIT_HASH);
         clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, bootstrapServers);
         clientProperties.put(APP_TOKEN_PROPERTY, appToken);
-        clientProperties.put(CONFIG_VERSION_PROPERTY, ""+configurationSchemaVersion);
-        clientProperties.put(PROFILE_VERSION_PROPERTY, ""+profileSchemaVersion);
-        clientProperties.put(NOTIFICATION_VERSION_PROPERTY, ""+notificationSchemaVersion);
-        clientProperties.put(LOGS_VERSION_PROPERTY, ""+logSchemaVersion);
+        clientProperties.put(CONFIG_VERSION_PROPERTY, "" + configurationSchemaVersion);
+        clientProperties.put(PROFILE_VERSION_PROPERTY, "" + profileSchemaVersion);
+        clientProperties.put(NOTIFICATION_VERSION_PROPERTY, "" + notificationSchemaVersion);
+        clientProperties.put(LOGS_VERSION_PROPERTY, "" + logSchemaVersion);
         clientProperties.put(CONFIG_SCHEMA_DEFAULT_PROPERTY, configurationProtocolSchemaBody);
         clientProperties.put(CONFIG_DATA_DEFAULT_PROPERTY, Base64.encodeBase64String(defaultConfigurationData));
         clientProperties.put(EVENT_CLASS_FAMILY_VERSION_PROPERTY, ecfs);
