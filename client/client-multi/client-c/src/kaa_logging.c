@@ -261,10 +261,10 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         }
     }
 
-    size_t total_size = tmp_writer.current - writer->current - KAA_EXTENSION_HEADER_SIZE;
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracted %u log records; total extension size %lu", records_count, total_size);
+    size_t payload_size = tmp_writer.current - writer->current - KAA_EXTENSION_HEADER_SIZE;
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracted %u log records; total payload size %zu", records_count, payload_size);
 
-    *((uint32_t *) extension_size_p) = KAA_HTONL(total_size);
+    *((uint32_t *) extension_size_p) = KAA_HTONL(payload_size);
     *((uint16_t *) records_count_p) = KAA_HTONS(records_count);
     *writer = tmp_writer;
 
