@@ -43,8 +43,14 @@
 # define KAA_EVENT_OPTION_EVENT_HAS_DATA       0x2
 
 typedef enum {
+    EVENT_LISTENERS_FIELD = 0x00,
     EVENTS_FIELD = 0x01,
 } event_server_sync_field_t;
+
+typedef enum {
+    EVENT_LISTENERS_SUCCESS = 0x00,
+    EVENT_LISTENERS_FAILURE = 0x01
+} event_listeners_result_t;
 
 typedef struct {
     int32_t          seq_num;
@@ -106,11 +112,6 @@ struct kaa_event_manager_t {
     uint16_t                     event_listeners_request_id;
 };
 
-/*
- * Not supported yet
- * static const uint8_t KAA_EVENT_FIELD_EVENT_LISTENERS_LIST    = 0;
- */
-static const uint8_t KAA_EVENT_FIELD_ID_EVENT_LIST           = 1;
 static kaa_service_t event_sync_services[1] = { KAA_SERVICE_EVENT };
 
 
@@ -575,6 +576,37 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
     return KAA_ERR_NONE;
 }
 
+static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *self, kaa_platform_message_writer_t *writer, uint16_t *listeners_count)
+{
+    uint16_t count = 0;
+    kaa_list_t *cursor = self->event_listeners_requests;
+    while (cursor) {
+        kaa_event_listeners_request_t *request = (kaa_event_listeners_request_t *) kaa_list_get_data(cursor);
+        if (!request->is_sent) {
+            *((uint16_t *) writer->current) = KAA_HTONS(request->request_id);
+            writer->current += sizeof(uint16_t);
+            *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) request->fqns_count);
+            writer->current += sizeof(uint16_t);
+            int i = 0;
+            for (; i < request->fqns_count; ++i) {
+                size_t fqn_length = strlen(request->fqns[i]);
+                *((uint16_t *) writer->current) = (uint16_t) fqn_length;
+                writer->current += sizeof(uint32_t); // fqn length + reserved
+                kaa_error_t error_code = kaa_platform_message_write_aligned(writer, request->fqns[i], fqn_length);
+                if (error_code) {
+                    KAA_LOG_ERROR(self->logger, error_code, "Failed to write event listener request");
+                    return error_code;
+                }
+            }
+            ++count;
+            request->is_sent = true;
+        }
+        cursor = kaa_list_next(cursor);
+    }
+    *listeners_count = count;
+    return KAA_ERR_NONE;
+}
+
 kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer)
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
@@ -612,13 +644,10 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
         events_count +=  sent_events_count > 0 ? sent_events_count : 0;
 
         if (events_count) {
-            uint32_t events_list_field_header = (KAA_HTONS(events_count) << 16) | KAA_EVENT_FIELD_ID_EVENT_LIST;
-
-            error_code = kaa_platform_message_write(writer, &events_list_field_header, sizeof(uint32_t));
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event list command field and events count");
-                return error_code;
-            }
+            *((uint8_t *) writer->current) = EVENTS_FIELD;
+            writer->current += sizeof(uint16_t); // field id + reserved
+            *((uint16_t *) writer->current) = KAA_HTONS(events_count);
+            writer->current += sizeof(uint16_t);
 
             error_code = kaa_event_list_serialize(self, resending_events, writer);
             if (error_code) {
@@ -636,6 +665,20 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
             self->events_awaiting_response.sent_events = kaa_lists_merge(self->events_awaiting_response.sent_events
                                                                        , self->pending_events);
             self->pending_events = NULL;
+        }
+        if (self->event_listeners_requests) {
+            *((uint8_t *) writer->current) = EVENT_LISTENERS_FIELD;
+            writer->current += sizeof(uint16_t); // field id + reserved
+            char *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
+            writer->current += sizeof(uint16_t);
+
+            uint16_t listeners_count = 0;
+            error_code = kaa_event_listeners_request_serialize(self, writer, &listeners_count);
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize event listeners request");
+                return error_code;
+            }
+            *((uint16_t *) listeners_count_p) = KAA_HTONS(listeners_count);
         }
     }
     return KAA_ERR_NONE;
@@ -720,6 +763,39 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
     return KAA_ERR_NONE;
 }
 
+static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader)
+{
+    uint16_t request_id = KAA_NTOHS(*(uint16_t *) reader->current);
+    reader->current += sizeof(uint16_t);
+    uint16_t listeners_result = KAA_NTOHS(*(uint16_t *) reader->current);
+    reader->current += sizeof(uint16_t);
+
+    uint32_t listeners_count =  KAA_NTOHL(*(uint32_t *) reader->current);
+    reader->current += sizeof(uint32_t);
+
+    kaa_list_t *request_node = kaa_list_find_next(self->event_listeners_requests, &find_listeners_request_by_id, &request_id);
+    if (request_node) {
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Found event listeners callback with request id %u", request_id);
+        if (reader->current + (listeners_count * KAA_ENDPOINT_ID_LENGTH) > reader->end) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to read endpoint ids for request id %u", request_id);
+            return KAA_ERR_READ_FAILED;
+        }
+        kaa_event_listeners_request_t *request = (kaa_event_listeners_request_t *) kaa_list_get_data(request_node);
+        if (listeners_result == EVENT_LISTENERS_SUCCESS) {
+            request->callback.event_listeners_callback_t((kaa_endpoint_id *) reader->current, listeners_count, request->callback.context);
+            KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Success event listeners response for request id %u", request_id);
+        } else {
+            request->callback.event_listeners_request_failed_t(request->callback.context);
+            KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Failed to find event listeners, request id %u", request_id);
+        }
+        kaa_list_remove_at(&self->event_listeners_requests, request_node, &destroy_event_listener_request);
+    } else {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_NOT_FOUND, "Failed to find event listeners callback with request id %u", request_id);
+    }
+    reader->current += listeners_count * KAA_ENDPOINT_ID_LENGTH;
+    return KAA_ERR_NONE;
+}
+
 kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                                        , kaa_platform_message_reader_t *reader
                                        , uint32_t extension_options
@@ -799,6 +875,23 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                         KAA_LOG_ERROR(self->logger, error_code, "Failed to read event from server sync");
                         return error_code;
                     }
+                }
+                break;
+            }
+            case EVENT_LISTENERS_FIELD: {
+                uint16_t event_listeners_responses_count = 0;
+                error_code = kaa_platform_message_read(reader, &event_listeners_responses_count, sizeof(uint16_t)); // read events count
+                if (error_code) {
+                    KAA_LOG_ERROR(self->logger, error_code, "Failed to read event listener response in Event server sync message");
+                    return error_code;
+                }
+                event_listeners_responses_count = KAA_HTONS(event_listeners_responses_count);
+                while (event_listeners_responses_count--) {
+                    error_code = kaa_event_read_listeners_response(self, reader);
+                    if (error_code) {
+                       KAA_LOG_ERROR(self->logger, error_code, "Failed to read event listeners response");
+                       return error_code;
+                   }
                 }
                 break;
             }
