@@ -35,7 +35,7 @@ int kaa_format_sprintf(char * buffer, size_t buffer_size, const char * FORMAT, c
 int kaa_snpintf(char * buffer, size_t buffer_size, const char * format, ...) {
 	va_list args;
 	va_start(args, format);
-	int res_len = kaa_logger_sprintf(buffer,buffer,format, args);
+	int res_len = kaa_logger_sprintf(buffer,buffer_size,format, args);
 	va_end(args);
 	return res_len;
 }

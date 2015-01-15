@@ -16,6 +16,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include "platform/stdio.h"
 #include "platform/kaa_sha.h"
 #include "kaa_user.h"
