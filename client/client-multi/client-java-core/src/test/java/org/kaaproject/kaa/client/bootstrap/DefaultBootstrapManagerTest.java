@@ -273,34 +273,4 @@ public class DefaultBootstrapManagerTest {
         assertEquals("http://localhost2:9889/EP/Sync", channelManager.getReceivedUrl());
         assertTrue(channelManager.isServerUpdated());
     }
-
-    @Test
-    public void testGetOperationsServerList() throws NoSuchAlgorithmException {
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null);
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
-        manager.setChannelManager(channelManager);
-        assertNull(manager.getOperationsServerList());
-
-        // Generating pseudo operation key
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048);
-        KeyPair keyPair = keyGen.genKeyPair();
-
-        OperationsServerList serverList = new OperationsServerList();
-        OperationsServer server1 = new OperationsServer();
-        server1.setName("localhost:9889");
-        server1.setPublicKey(ByteBuffer.wrap(keyPair.getPublic().getEncoded()));
-        List<SupportedChannel> channels1 = new LinkedList<>();
-        server1.setSupportedChannelsArray(channels1);
-        channels1.add(new SupportedChannel(ChannelType.HTTP, new HTTPComunicationParameters("localhost", 9889)));
-
-        LinkedList<OperationsServer> list = new LinkedList<OperationsServer>();
-        serverList.setOperationsServerArray(list);
-        list.add(server1);
-
-        manager.onServerListUpdated(serverList);
-
-        assertNotNull(manager.getOperationsServerList());
-    }
-
 }

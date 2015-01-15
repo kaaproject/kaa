@@ -22,12 +22,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
-import org.kaaproject.kaa.client.channel.AbstractServerInfo;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
 import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportId;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
@@ -39,7 +40,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(AbstractHttpChannel.class);
 
-    private AbstractServerInfo currentServer;
+    private IPTransportInfo currentServer;
     private final AbstractKaaClient client;
     private final KaaClientState state;
 
@@ -61,6 +62,11 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     protected ExecutorService createExecutor() {
         LOG.info("Creating a new executor for channel {}", getId());
         return Executors.newSingleThreadExecutor();
+    }
+    
+    @Override
+    public TransportId getTransportId() {
+        return TransportIdConstants.HTTP_TRANSPORT_ID;
     }
 
     @Override
@@ -141,7 +147,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             executor = createExecutor();
         }
         if (server != null) {
-            this.currentServer = (AbstractServerInfo) server;
+            this.currentServer = new IPTransportInfo(server);
             this.httpClient = client.createHttpClient(currentServer.getURL(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
             if (lastConnectionFailed && !isPaused) {
                 lastConnectionFailed = false;

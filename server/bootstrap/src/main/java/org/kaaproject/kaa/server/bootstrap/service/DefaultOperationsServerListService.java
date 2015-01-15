@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.bootstrap.service;
 
 import static org.kaaproject.kaa.server.common.zk.ServerNameUtil.getNameFromConnectionInfo;
 
-import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +29,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.zip.CRC32;
 
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
-import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
@@ -55,7 +52,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultOperationsServerListService implements OperationsServerListService, OperationsNodeListener {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationsServerListService.class);
-    private static final Charset UTF8 = Charset.forName("UTF-8");
     private Map<String, OperationsNodeInfo> opsMap;
     private Memorizer<List<ProtocolVersionKey>, Set<ProtocolConnectionData>> cache;
     private Object listenerLock = new Object();
@@ -160,14 +156,9 @@ public class DefaultOperationsServerListService implements OperationsServerListS
                 connectionData = pair.getConenctionInfo().array();
             }
         }
-        return new ProtocolConnectionData(crc32(node.getConnectionInfo()), md.getId(), version, connectionData);
+        return new ProtocolConnectionData(ServerNameUtil.crc32(node.getConnectionInfo()), md.getId(), version, connectionData);
     }
 
-    private static int crc32(ConnectionInfo info) {
-        CRC32 crc32 = new CRC32();
-        crc32.update(ServerNameUtil.getNameFromConnectionInfo(info).getBytes(UTF8));
-        return (int) crc32.getValue();
-    }
 
     public interface Computable<A, V> {
         V compute(A arg) throws InterruptedException;

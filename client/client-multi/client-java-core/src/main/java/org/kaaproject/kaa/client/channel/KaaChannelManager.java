@@ -23,7 +23,6 @@ import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 /**
  * Channel manager establishes/removes channels' links between client and
@@ -144,18 +143,6 @@ public interface KaaChannelManager {
      *
      */
     List<KaaDataChannel> getChannels();
-
-    /**
-     * Retrieves a list of channels by the specific type (HTTP, HTTP_LP etc.).
-     *
-     * @param type type of the channel.
-     * @return a list of channels.
-     *
-     * @see ChannelType
-     * @see KaaDataChannel
-     *
-     */
-    List<KaaDataChannel> getChannelsByType(ChannelType type);
 
     /**
      * Retrieves a list of channels by the specific transport type.

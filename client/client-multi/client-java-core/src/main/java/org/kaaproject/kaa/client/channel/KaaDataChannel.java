@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 /**
  * Channel is responsible for sending/receiving data to/from the endpoint server.
@@ -69,7 +68,7 @@ public interface KaaDataChannel {
      * @see ChannelType
      *
      */
-    ChannelType getType();
+    TransportId getTransportId();
 
     /**
      * Retrieves the channel's server type (i.e. OPERATIONS or BOOTSTRAP).

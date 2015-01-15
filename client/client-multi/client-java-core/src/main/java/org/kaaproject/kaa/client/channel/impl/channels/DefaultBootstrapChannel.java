@@ -26,7 +26,6 @@ import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.bootstrap.CommonBSConstants;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,11 +76,6 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
     @Override
     public String getId() {
         return CHANNEL_ID;
-    }
-
-    @Override
-    public ChannelType getType() {
-        return ChannelType.HTTP;
     }
 
     @Override

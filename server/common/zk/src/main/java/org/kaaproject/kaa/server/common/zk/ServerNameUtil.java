@@ -15,6 +15,9 @@
  */
 package org.kaaproject.kaa.server.common.zk;
 
+import java.nio.charset.Charset;
+import java.util.zip.CRC32;
+
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 
 /**
@@ -25,6 +28,7 @@ import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 public class ServerNameUtil {
     /** Delimiter in DNS name host:port. */
     private static final String HOST_PORT_DELIMITER = ":";
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     /**
      * Builds name based on connection info properties
@@ -37,5 +41,11 @@ public class ServerNameUtil {
         name.append(HOST_PORT_DELIMITER);
         name.append(connectionInfo.getThriftPort());
         return name.toString();
+    }
+    
+    public static int crc32(ConnectionInfo info) {
+        CRC32 crc32 = new CRC32();
+        crc32.update(getNameFromConnectionInfo(info).getBytes(UTF8));
+        return (int) crc32.getValue();
     }
 }
