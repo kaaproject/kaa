@@ -39,7 +39,7 @@ public class SyncRequestMessageTest {
     @Test
     public void testIsValid() {
 
-        SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, ChannelType.HTTP, null, null,
+        SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, ChannelType.SYNC, null, null,
                 "applicationToken", 0, true);
 
         ClientSync request = new ClientSync();

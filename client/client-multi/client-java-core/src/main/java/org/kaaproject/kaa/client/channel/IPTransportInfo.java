@@ -75,7 +75,13 @@ public class IPTransportInfo extends GenericTransportInfo {
 
     @Override
     public String toString() {
-        return "AbstractServerInfo [host=" + host + ", port=" + port + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("IPTransportInfo [host=");
+        builder.append(host);
+        builder.append(", port=");
+        builder.append(port);
+        builder.append("]");
+        return builder.toString();
     }
 
     @Override

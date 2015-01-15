@@ -24,7 +24,6 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;

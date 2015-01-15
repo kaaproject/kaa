@@ -38,7 +38,7 @@ public class NettyTcpMessageTest {
     public void connectTest() {
         UUID channelId = UUID.randomUUID();
         ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.TCP;
+        ChannelType channelType = ChannelType.ASYNC;
         CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
@@ -74,7 +74,7 @@ public class NettyTcpMessageTest {
     public void syncTest() {
         UUID channelId = UUID.randomUUID();
         ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.TCP;
+        ChannelType channelType = ChannelType.ASYNC;
         CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
@@ -96,7 +96,7 @@ public class NettyTcpMessageTest {
     public void disconnectTest() {
         UUID channelId = UUID.randomUUID();
         ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.TCP;
+        ChannelType channelType = ChannelType.ASYNC;
         CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
@@ -117,7 +117,7 @@ public class NettyTcpMessageTest {
     public void pingTest() {
         UUID channelId = UUID.randomUUID();
         ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.TCP;
+        ChannelType channelType = ChannelType.ASYNC;
         CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";

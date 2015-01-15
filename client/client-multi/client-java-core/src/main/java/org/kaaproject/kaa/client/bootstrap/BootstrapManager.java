@@ -52,7 +52,7 @@ public interface BootstrapManager {
      * @param name endpoint's DNS.
      *
      */
-    void useNextOperationsServerByDnsName(String name);
+    void useNextOperationsServerByAccessPointId(int accessPointId);
 
     /**
      * Sets bootstrap transport object.

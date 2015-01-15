@@ -29,7 +29,7 @@ public class SyncCommand extends AbstractHttpSyncCommand implements CommonEPCons
 
     @Override
     public ChannelType getChannelType() {
-        return ChannelType.HTTP;
+        return ChannelType.SYNC;
     }
 
     /**

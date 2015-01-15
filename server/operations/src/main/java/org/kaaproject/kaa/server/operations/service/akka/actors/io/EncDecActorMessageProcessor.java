@@ -159,7 +159,7 @@ public class EncDecActorMessageProcessor {
     }
 
     private ServerSync buildRedirectionResponse(RedirectionRule redirection, ClientSync request) {
-        RedirectServerSync redirectSyncResponse = new RedirectServerSync(redirection.getDnsName());
+        RedirectServerSync redirectSyncResponse = new RedirectServerSync(redirection.getAccessPointId());
         ServerSync response = new ServerSync();
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncStatus.REDIRECT);

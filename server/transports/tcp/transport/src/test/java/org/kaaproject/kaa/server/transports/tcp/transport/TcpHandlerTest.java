@@ -175,7 +175,7 @@ public class TcpHandlerTest {
     }
 
     protected SessionInfo buildSessionInfo(UUID uuid) {
-        return new SessionInfo(uuid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, Mockito.mock(ChannelContext.class), ChannelType.TCP, Mockito.mock(CipherPair.class),
+        return new SessionInfo(uuid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class),
                 EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
     }
 }

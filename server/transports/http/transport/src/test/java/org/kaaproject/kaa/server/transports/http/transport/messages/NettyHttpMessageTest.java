@@ -33,7 +33,7 @@ public class NettyHttpMessageTest {
     public void connectTest(){
         UUID channelId = UUID.randomUUID();
         ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.TCP;
+        ChannelType channelType = ChannelType.ASYNC;
 
         SyncCommand command = Mockito.mock(SyncCommand.class);
         Mockito.when(command.getRequestData()).thenReturn("syncRequest".getBytes());

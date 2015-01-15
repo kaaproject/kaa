@@ -148,13 +148,15 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
         }
         if (server != null) {
             this.currentServer = new IPTransportInfo(server);
-            this.httpClient = client.createHttpClient(currentServer.getURL(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
+            this.httpClient = client.createHttpClient(currentServer.getURL() + getURLSufix(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
             if (lastConnectionFailed && !isPaused) {
                 lastConnectionFailed = false;
                 syncAll();
             }
         }
     }
+    
+    protected abstract String getURLSufix();
 
     @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {}

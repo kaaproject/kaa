@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.control.service.loadmgmt;
 import static org.kaaproject.kaa.server.common.zk.ServerNameUtil.getNameFromConnectionInfo;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -34,6 +35,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftActivity;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftClient;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
+import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
@@ -86,7 +88,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     private LoadDistributionService loadDistributionService;
 
     /** Map to store Operations servers, key - DNS name host:port. */
-    private final Map<String, OperationsServerMeta> opsServersMap;
+    private final Map<Integer, OperationsServerMeta> opsServersMap;
 
     /** Map to store bootstrap servers, key - DNS name host:port. */
     private final Map<String, BootstrapNodeInfo> bootstrapsMap;
@@ -108,7 +110,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      */
     public DynamicLoadManager(LoadDistributionService loadDistributionService) {
         setLoadDistributionService(loadDistributionService);
-        opsServersMap = new Hashtable<String, OperationsServerMeta>();
+        opsServersMap = new Hashtable<Integer, OperationsServerMeta>();
         bootstrapsMap = new Hashtable<String, BootstrapNodeInfo>();
         // Translate seconds to ms
         opsLoadHistoryTTL = loadDistributionService.getOpsServerHistoryTTL() * 1000;
@@ -138,17 +140,17 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
             }
         }
         if (dynamicMgmt != null) {
-            Map<String, OperationsServerLoadHistory> opsServerHistory = new HashMap<String, OperationsServerLoadHistory>();
-            for (String dnsName : opsServersMap.keySet()) {
-                opsServerHistory.put(dnsName, opsServersMap.get(dnsName).history);
+            Map<Integer, OperationsServerLoadHistory> opsServerHistory = new HashMap<Integer, OperationsServerLoadHistory>();
+            for (Integer accessPointId : opsServersMap.keySet()) {
+                opsServerHistory.put(accessPointId, opsServersMap.get(accessPointId).history);
             }
-            Map<String, RedirectionRule> rules = dynamicMgmt.recalculate(opsServerHistory);
+            Map<Integer, RedirectionRule> rules = dynamicMgmt.recalculate(opsServerHistory);
             LOG.trace("DynamicLoadManager recalculate() got {} redirection rules", rules.size());
-            for (String dnsName : rules.keySet()) {
-                if (opsServersMap.containsKey(dnsName)) {
-                    sendRedirectionRule(dnsName, opsServersMap.get(dnsName).nodeInfo, rules.get(dnsName));
+            for (Integer accessPointId : rules.keySet()) {
+                if (opsServersMap.containsKey(accessPointId)) {
+                    sendRedirectionRule(accessPointId, opsServersMap.get(accessPointId).nodeInfo, rules.get(accessPointId));
                 } else {
-                    LOG.error("Operations server {} redirection rule exist, but NO server available, skip setting rule.", dnsName);
+                    LOG.error("Operations server {} redirection rule exist, but NO server available, skip setting rule.", accessPointId);
                 }
             }
         }
@@ -324,7 +326,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
         OperationsServerMeta meta = new OperationsServerMeta(null, nodeInfo);
         ThriftOperationsServer operations = new ThriftOperationsServer(dnsName, DEFAULT_PRIORITY);
         meta.opsServer = operations;
-        opsServersMap.put(dnsName, meta);
+        opsServersMap.put(ServerNameUtil.crc32(nodeInfo.getConnectionInfo()), meta);
     }
 
     /*
@@ -391,16 +393,16 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
                 public void doInTemplate(Client t) {
                     try { // NOSONAR
                         List<ThriftOperationsServer> operationsServersList = new ArrayList<>();
-                        for (String dnsName : opsServersMap.keySet()) {
-                            operationsServersList.add(opsServersMap.get(dnsName).opsServer);
-                            LOG.trace("Bootstrap {} server: {}", dnsName, opsServersMap.get(dnsName).opsServer.toString());
+                        for (Integer accessPointId : opsServersMap.keySet()) {
+                            operationsServersList.add(opsServersMap.get(accessPointId).opsServer);
+                            LOG.trace("Bootstrap {} server: {}", dnsName, opsServersMap.get(accessPointId).opsServer.toString());
                         }
                         LOG.trace("Bootstrap {} Operations servers list size {} ready to updates", dnsName, operationsServersList.size());
                         t.onOperationsServerListUpdate(operationsServersList);
-                        LOG.info("Bootstrap " + dnsName + " Operations servers list updated.");
+                        LOG.info("Bootstrap {} Operations servers list updated.", dnsName);
                     } catch (TException e) {
                         lastBootstrapServersUpdateFailed = true;
-                        LOG.error("Bootstrap " + dnsName + " Operations servers list updated failed: " + e.toString());
+                        LOG.error(MessageFormat.format("Bootstrap  Operations servers list updated failed", dnsName), e);
                     }
                 }
             });
@@ -409,7 +411,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             lastBootstrapServersUpdateFailed = true;
-            LOG.error("Bootstrap " + dnsName + " Operations servers list execute updated failed: " + e.toString());
+            LOG.error(MessageFormat.format("Bootstrap {0} Operations servers list execute updated failed", dnsName), e);
         }
     }
 
@@ -423,8 +425,8 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      * @param rule
      *            the rule
      */
-    private void sendRedirectionRule(final String dnsName, OperationsNodeInfo nodeInfo, final RedirectionRule rule) {
-        LOG.trace("Set redirection rule for Operations server: {}; Thrift: {}:{}", dnsName, nodeInfo.getConnectionInfo().getThriftHost()
+    private void sendRedirectionRule(final Integer accessPointId, OperationsNodeInfo nodeInfo, final RedirectionRule rule) {
+        LOG.trace("Set redirection rule for Operations server: {}; Thrift: {}:{}", accessPointId, nodeInfo.getConnectionInfo().getThriftHost()
                 .toString(), nodeInfo.getConnectionInfo().getThriftPort());
         try {
             ThriftClient<OperationsThriftService.Client> client = new ThriftClient<OperationsThriftService.Client>(nodeInfo
@@ -434,17 +436,17 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
 
                 @Override
                 public void isSuccess(boolean activitySuccess) {
-                    LOG.info("Operations server {} redirection rule set {}", dnsName, activitySuccess ? "successfully" : "unsuccessfully");
+                    LOG.info("Operations server {} redirection rule set {}", accessPointId, activitySuccess ? "successfully" : "unsuccessfully");
                 }
 
                 @Override
                 public void doInTemplate(org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Client t) {
                     try { // NOSONAR
                         t.setRedirectionRule(rule);
-                        LOG.info("Operations {} set redirection rule: {} <> {}", dnsName, rule.getDnsName(),
+                        LOG.info("Operations {} set redirection rule: {} <> {}", accessPointId, rule.getAccessPointId(),
                                 rule.getRedirectionProbability());
                     } catch (TException e) {
-                        LOG.error("Operations server {} set redirection rule failed", dnsName, e);
+                        LOG.error(MessageFormat.format("Operations server {0} set redirection rule failed", accessPointId), e);
                     }
                 }
             });
@@ -452,7 +454,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
             ThriftExecutor.execute(client);
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
-            LOG.error("Operations server {} set redirection rule failed", dnsName, e);
+            LOG.error(MessageFormat.format("Operations server {0} set redirection rule failed", accessPointId), e);
         }
     }
 

@@ -94,5 +94,8 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
         return new BootstrapRunnable();
     }
 
-
+    @Override
+    protected String getURLSufix() {
+        return "/BS/Sync";
+    }
 }

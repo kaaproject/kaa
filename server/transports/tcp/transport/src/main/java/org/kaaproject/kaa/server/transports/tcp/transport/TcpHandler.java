@@ -139,7 +139,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         LOG.trace("[{}] Processing {}", uuid, frame);
         if (frame.getMessageType() == MessageType.CONNECT) {
             if (session == null) {
-                handler.process(new NettyTcpConnectMessage(uuid, new NettyChannelContext(ctx), (Connect) frame, ChannelType.TCP, this,
+                handler.process(new NettyTcpConnectMessage(uuid, new NettyChannelContext(ctx), (Connect) frame, ChannelType.ASYNC, this,
                         connectResponseConverter, connectErrorConverter));
             } else {
                 LOG.warn("[{}] Ignoring duplicate {} message ", uuid, MessageType.CONNECT);

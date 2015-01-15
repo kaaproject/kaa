@@ -121,11 +121,11 @@ public class EndpointActorMessageProcessorTest {
         final UUID channelId = UUID.randomUUID();
         SyncRequestMessage message = Mockito.mock(SyncRequestMessage.class);
         ChannelContext channelCtx = Mockito.mock(ChannelContext.class);
-        Mockito.when(message.getChannelType()).thenReturn(ChannelType.TCP);
+        Mockito.when(message.getChannelType()).thenReturn(ChannelType.ASYNC);
         Mockito.when(message.getChannelUuid()).thenReturn(channelId);
         Mockito.when(message.getChannelContext()).thenReturn(channelCtx);
         Mockito.when(message.getSession()).thenReturn(
-                new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelCtx, ChannelType.TCP, null, EndpointObjectHash
+                new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelCtx, ChannelType.ASYNC, null, EndpointObjectHash
                         .fromSHA1("key"), "APP_TOKEN", 1000, true));
         Mockito.when(message.getCommand()).thenReturn(Mockito.mock(Message.class));
         Mockito.when(message.getOriginator()).thenReturn(Mockito.mock(ActorRef.class));
@@ -148,7 +148,7 @@ public class EndpointActorMessageProcessorTest {
 
             @Override
             public ChannelType getChannelType() {
-                return ChannelType.TCP;
+                return ChannelType.ASYNC;
             }
 
             @Override

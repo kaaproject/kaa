@@ -28,10 +28,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
+import org.kaaproject.kaa.client.channel.impl.channels.TransportIdConstants;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.mockito.Mockito;
@@ -110,7 +110,7 @@ public class DefaultOperationsChannelTest {
         KaaDataChannel channel = new DefaultOperationsChannel(client, state);
 
         Assert.assertEquals(SUPPORTED_TYPES, channel.getSupportedTransportTypes());
-        Assert.assertEquals(ChannelType.HTTP_LP, channel.getType());
+        Assert.assertEquals(TransportIdConstants.HTTP_TRANSPORT_ID, channel.getTransportId());
         Assert.assertEquals("default_operations_long_poll_channel", channel.getId());
     }
 
@@ -141,8 +141,9 @@ public class DefaultOperationsChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultOperationsChannelFake channel = new DefaultOperationsChannelFake(client, state, 3);
 
-        HttpLongPollServerInfo server = new HttpLongPollServerInfo(
-                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID,
+                "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+
         channel.setDemultiplexer(null);
         channel.setDemultiplexer(demultiplexer);
         channel.setMultiplexer(null);
@@ -183,11 +184,11 @@ public class DefaultOperationsChannelTest {
         channel.setDemultiplexer(demultiplexer);
         channel.setMultiplexer(multiplexer);
 
-        HttpLongPollServerInfo server = new HttpLongPollServerInfo(
-                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID,
+                "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
-        Mockito.verify(manager, Mockito.times(1)).onServerFailed(server);
+        Mockito.verify(manager, Mockito.times(1)).onServerFailed(Mockito.any(ServerInfo.class));
     }
 
     @Test
@@ -216,8 +217,8 @@ public class DefaultOperationsChannelTest {
         channel.setMultiplexer(multiplexer);
         channel.shutdown();
 
-        HttpLongPollServerInfo server = new HttpLongPollServerInfo(
-                ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID,
+                "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
         channel.sync(TransportType.EVENT);

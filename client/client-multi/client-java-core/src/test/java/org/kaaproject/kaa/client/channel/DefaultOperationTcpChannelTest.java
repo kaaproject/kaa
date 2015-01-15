@@ -26,16 +26,17 @@ import java.io.PipedOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
+import org.kaaproject.kaa.client.channel.impl.channels.TransportIdConstants;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.DisconnectReason;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
@@ -107,10 +108,11 @@ public class DefaultOperationTcpChannelTest {
         tcpChannel.setDemultiplexer(demultiplexer);
         tcpChannel.sync(TransportType.USER);        // will cause call to KaaDataMultiplexer.compileRequest(...) after "CONNECT" messsage
         tcpChannel.sync(TransportType.PROFILE);
-        KaaTcpServerInfo serverInfo = new KaaTcpServerInfo(
-                ServerType.OPERATIONS, "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
 
-        tcpChannel.setServer(serverInfo); // causes call to KaaDataMultiplexer.compileRequest(...) for "CONNECT" messsage
+        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.TCP_TRANSPORT_ID,
+                "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
+
+        tcpChannel.setServer(server); // causes call to KaaDataMultiplexer.compileRequest(...) for "CONNECT" messsage
         byte [] rawConnack = new byte[] { 0x20, 0x02, 0x00, 0x01 };
         tcpChannel.os.write(rawConnack);
 
@@ -139,7 +141,7 @@ public class DefaultOperationTcpChannelTest {
     }
 
     @Test
-    public void testConnectivity() {
+    public void testConnectivity() throws NoSuchAlgorithmException {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         Mockito.when(clientState.getPrivateKey()).thenReturn(clientKeys.getPrivate());
         Mockito.when(clientState.getPublicKey()).thenReturn(clientKeys.getPublic());
@@ -147,16 +149,15 @@ public class DefaultOperationTcpChannelTest {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         DefaultOperationTcpChannel channel = new DefaultOperationTcpChannel(clientState, channelManager);
 
-        KaaTcpServerInfo si = Mockito.mock(KaaTcpServerInfo.class);
-        Mockito.when(si.getHost()).thenReturn("www.test.fake");
-        Mockito.when(si.getPort()).thenReturn(999);
-
+        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.TCP_TRANSPORT_ID,
+                "www.test.fake", 999, KeyUtil.generateKeyPair().getPublic());
+        
         ConnectivityChecker checker = Mockito.mock(ConnectivityChecker.class);
         Mockito.when(checker.checkConnectivity()).thenReturn(false);
 
         channel.setConnectivityChecker(checker);
-        channel.setServer(si);
+        channel.setServer(server);
 
-        Mockito.verify(channelManager, Mockito.times(0)).onServerFailed(Mockito.any(KaaTcpServerInfo.class));
+        Mockito.verify(channelManager, Mockito.times(0)).onServerFailed(Mockito.any(ServerInfo.class));
     }
 }

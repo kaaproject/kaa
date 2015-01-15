@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,9 +25,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
-import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
 import org.kaaproject.kaa.client.channel.ServerInfo;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportId;
+import org.kaaproject.kaa.client.channel.impl.channels.TransportIdConstants;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 
@@ -83,13 +85,17 @@ public class KaaClientPropertiesTest {
     public void testGetBootstrapServers() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         KaaClientProperties properties = new KaaClientProperties();
-        Map<ChannelType, List<ServerInfo>> bootstraps = properties.getBootstrapServers();
+        Map<TransportId, List<ServerInfo>> bootstraps = properties.getBootstrapServers();
         assertEquals(1, bootstraps.size());
 
-        KaaTcpServerInfo si = (KaaTcpServerInfo)bootstraps.get(ChannelType.KAATCP).get(0);
-
-        assertEquals("localhost", si.getHost());
-        assertEquals(9889, si.getPort());
+        assertNotNull(bootstraps.get(TransportIdConstants.TCP_TRANSPORT_ID));
+        assertEquals(1, bootstraps.get(TransportIdConstants.TCP_TRANSPORT_ID).size());
+        ServerInfo serverInfo = bootstraps.get(TransportIdConstants.TCP_TRANSPORT_ID).get(0);
+        
+        assertEquals(ServerType.BOOTSTRAP, serverInfo.getServerType());
+        assertEquals(1, serverInfo.getAccessPointId());
+        assertEquals(TransportIdConstants.TCP_TRANSPORT_ID, serverInfo.getTransportId());
+        
     }
 
     @Test

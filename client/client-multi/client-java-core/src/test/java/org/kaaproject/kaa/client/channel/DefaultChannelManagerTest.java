@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +33,8 @@ import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
+import org.kaaproject.kaa.client.channel.impl.channels.TransportIdConstants;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.mockito.Mockito;
 
@@ -48,31 +49,31 @@ public class DefaultChannelManagerTest {
         SUPPORTED_TYPES.put(TransportType.EVENT, ChannelDirection.DOWN);
     }
 
-    @Test(expected=ChannelRuntimeException.class)
+    @Test(expected = ChannelRuntimeException.class)
     public void testNullBootstrapServer() {
         new DefaultChannelManager(Mockito.mock(BootstrapManager.class), null);
     }
 
-    @Test(expected=ChannelRuntimeException.class)
+    @Test(expected = ChannelRuntimeException.class)
     public void testEmptyBootstrapServer() {
-        new DefaultChannelManager(Mockito.mock(BootstrapManager.class), new HashMap<ChannelType, List<ServerInfo>>());
+        new DefaultChannelManager(Mockito.mock(BootstrapManager.class), new HashMap<TransportId, List<ServerInfo>>());
     }
 
-    @Test(expected=ChannelRuntimeException.class)
+    @Test(expected = ChannelRuntimeException.class)
     public void testEmptyBootstrapManager() {
         new DefaultChannelManager(null, null);
     }
 
     @Test
     public void testAddHttpLpChannel() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = new HashMap<>();
+        bootststrapServers.put(TransportIdConstants.HTTP_TRANSPORT_ID, Collections.singletonList(IPTransportInfoTest.createTestServerInfo(
+                ServerType.BOOTSTRAP, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(SUPPORTED_TYPES);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.HTTP_LP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel.getServerType()).thenReturn(ServerType.OPERATIONS);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
@@ -80,9 +81,9 @@ public class DefaultChannelManagerTest {
         channelManager.addChannel(channel);
         channelManager.addChannel(channel);
 
-        ServerInfo opServer = new HttpLongPollServerInfo(
-                ServerType.OPERATIONS, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
-        channelManager.onServerUpdated(opServer);
+        ServerInfo server = IPTransportInfoTest.createTestServerInfo(
+                ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
+        channelManager.onServerUpdated(server);
 
         assertEquals(channel, channelManager.getChannelByTransportType(TransportType.PROFILE));
         assertEquals(channel, channelManager.getChannel("mock_channel"));
@@ -93,22 +94,23 @@ public class DefaultChannelManagerTest {
         assertTrue(channelManager.getChannels().isEmpty());
 
         channelManager.addChannel(channel);
-        Mockito.verify(channel, Mockito.times(2)).setServer(opServer);
+        Mockito.verify(channel, Mockito.times(2)).setServer(server);
         channelManager.clearChannelList();
         assertTrue(channelManager.getChannels().isEmpty());
     }
 
     @Test
     public void testAddBootstrapChannel() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        ServerInfo server = new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(server));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = new HashMap<>();
+        ServerInfo server = IPTransportInfoTest.createTestServerInfo(
+                ServerType.BOOTSTRAP, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        bootststrapServers.put(TransportIdConstants.HTTP_TRANSPORT_ID, Collections.singletonList(server));
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(SUPPORTED_TYPES);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.HTTP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel.getServerType()).thenReturn(ServerType.BOOTSTRAP);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
@@ -129,71 +131,70 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testOperationServerFailed() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(SUPPORTED_TYPES);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.HTTP_LP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
         KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
         channelManager.addChannel(channel);
 
-        ServerInfo opServer = new HttpLongPollServerInfo(ServerType.OPERATIONS, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo opServer = IPTransportInfoTest.createTestServerInfo(
+                ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
         channelManager.onServerUpdated(opServer);
 
         channelManager.onServerFailed(opServer);
-        Mockito.verify(bootstrapManager, Mockito.times(1)).useNextOperationsServer(ChannelType.HTTP_LP);
+        Mockito.verify(bootstrapManager, Mockito.times(1)).useNextOperationsServer(TransportIdConstants.HTTP_TRANSPORT_ID);
     }
 
     @Test
     public void testBootstrapServerFailed() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())
-              , (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost2", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = new HashMap<>();
+        bootststrapServers.put(TransportIdConstants.HTTP_TRANSPORT_ID, Arrays.asList(
+                IPTransportInfoTest.createTestServerInfo(
+                        ServerType.BOOTSTRAP, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic()),
+                IPTransportInfoTest.createTestServerInfo(
+                        ServerType.BOOTSTRAP, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, KeyUtil.generateKeyPair().getPublic())));
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(SUPPORTED_TYPES);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.HTTP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel.getServerType()).thenReturn(ServerType.BOOTSTRAP);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
         KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
         channelManager.addChannel(channel);
 
-        channelManager.onServerFailed(bootststrapServers.get(ChannelType.HTTP).get(0));
-        Mockito.verify(channel, Mockito.times(1)).setServer(bootststrapServers.get(ChannelType.HTTP).get(1));
+        channelManager.onServerFailed(bootststrapServers.get(TransportIdConstants.HTTP_TRANSPORT_ID).get(0));
+        Mockito.verify(channel, Mockito.times(1)).setServer(bootststrapServers.get(TransportIdConstants.HTTP_TRANSPORT_ID).get(1));
     }
 
     @Test
     public void testRemoveHttpLpChannel() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
         Map<TransportType, ChannelDirection> typesForChannel2 = new HashMap<>(SUPPORTED_TYPES);
         typesForChannel2.remove(TransportType.USER);
         KaaDataChannel channel1 = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel1.getSupportedTransportTypes()).thenReturn(typesForChannel2);
-        Mockito.when(channel1.getType()).thenReturn(ChannelType.HTTP_LP);
+        Mockito.when(channel1.getTransportId()).thenReturn(TransportIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel1.getServerType()).thenReturn(ServerType.OPERATIONS);
         Mockito.when(channel1.getId()).thenReturn("mock_channel");
 
         KaaDataChannel channel2 = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel2.getSupportedTransportTypes()).thenReturn(SUPPORTED_TYPES);
-        Mockito.when(channel2.getType()).thenReturn(ChannelType.HTTP);
+        Mockito.when(channel2.getTransportId()).thenReturn(TransportIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel2.getServerType()).thenReturn(ServerType.OPERATIONS);
         Mockito.when(channel2.getId()).thenReturn("mock_channel2");
 
         KaaDataChannel channel3 = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel3.getSupportedTransportTypes()).thenReturn(typesForChannel2);
-        Mockito.when(channel3.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel3.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel3.getServerType()).thenReturn(ServerType.OPERATIONS);
         Mockito.when(channel3.getId()).thenReturn("mock_tcp_channel3");
 
@@ -201,12 +202,14 @@ public class DefaultChannelManagerTest {
         channelManager.addChannel(channel1);
         channelManager.addChannel(channel2);
 
-        ServerInfo opServer = new HttpLongPollServerInfo(ServerType.OPERATIONS, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo opServer = IPTransportInfoTest.createTestServerInfo(
+                ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
         channelManager.onServerUpdated(opServer);
 
-        ServerInfo opServer2 = new HttpServerInfo(ServerType.OPERATIONS, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
-        channelManager.onServerUpdated(opServer2);
+        ServerInfo opServer2 = IPTransportInfoTest.createTestServerInfo(
+                ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
+        channelManager.onServerUpdated(opServer2);
 
         Mockito.verify(channel1, Mockito.times(1)).setServer(opServer);
         Mockito.verify(channel2, Mockito.times(1)).setServer(opServer2);
@@ -215,7 +218,8 @@ public class DefaultChannelManagerTest {
 
         channelManager.removeChannel(channel2);
 
-        ServerInfo opServer3 = new KaaTcpServerInfo(ServerType.OPERATIONS, "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
+        ServerInfo opServer3 = IPTransportInfoTest.createTestServerInfo(
+                ServerType.OPERATIONS, TransportIdConstants.TCP_TRANSPORT_ID, "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
         channelManager.addChannel(channel3);
         channelManager.onServerUpdated(opServer3);
 
@@ -226,27 +230,17 @@ public class DefaultChannelManagerTest {
     }
 
     @Test
-    public void testServerInfo() throws Exception {
-        IPTransportInfo serverInfo = new KaaTcpServerInfo(ServerType.OPERATIONS, "localhost", 9909, KeyUtil.generateKeyPair().getPublic());
-        assertEquals("URL is not empty for TCP server info " + serverInfo.toString(), "", serverInfo.getURL());
-        serverInfo = new KaaTcpServerInfo(ServerType.OPERATIONS, "localhost", 9009, KeyUtil.generateKeyPair().getPublic().getEncoded());
-        assertEquals("URL is not empty for TCP server info " + serverInfo.toString(), "", serverInfo.getURL());
-    }
-
-    @Test
     public void testConnectivityChecker() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
         DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
 
-        ChannelType type = ChannelType.KAATCP;
+        TransportId type = TransportIdConstants.TCP_TRANSPORT_ID;
         KaaDataChannel channel1 = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel1.getType()).thenReturn(type);
+        Mockito.when(channel1.getTransportId()).thenReturn(type);
         KaaDataChannel channel2 = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel2.getType()).thenReturn(type);
+        Mockito.when(channel2.getTransportId()).thenReturn(type);
 
         channelManager.addChannel(channel1);
         channelManager.addChannel(channel2);
@@ -259,7 +253,7 @@ public class DefaultChannelManagerTest {
         Mockito.verify(channel2, Mockito.times(1)).setConnectivityChecker(checker);
 
         KaaDataChannel channel3 = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel3.getType()).thenReturn(type);
+        Mockito.when(channel3.getTransportId()).thenReturn(type);
 
         channelManager.addChannel(channel3);
         Mockito.verify(channel3, Mockito.times(1)).setConnectivityChecker(checker);
@@ -267,9 +261,7 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testUpdateForSpecifiedTransport() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
         DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
@@ -278,12 +270,12 @@ public class DefaultChannelManagerTest {
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
         types.put(TransportType.LOGGING, ChannelDirection.UP);
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
         Mockito.when(channel.getId()).thenReturn("channel1");
 
         KaaDataChannel channel2 = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel2.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel2.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel2.getSupportedTransportTypes()).thenReturn(types);
         Mockito.when(channel2.getId()).thenReturn("channel2");
 
@@ -301,12 +293,11 @@ public class DefaultChannelManagerTest {
         assertEquals(channel, channelManager.getChannelByTransportType(TransportType.CONFIGURATION));
     }
 
-    @Test(expected=KaaInvalidChannelException.class)
-    public void testNegativeUpdateForSpecifiedTransport() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
-
+    @Test(expected = KaaInvalidChannelException.class)
+    public void testNegativeUpdateForSpecifiedTransport() throws NoSuchAlgorithmException, InvalidKeySpecException,
+            KaaInvalidChannelException {
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
+        
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
         DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
 
@@ -314,7 +305,7 @@ public class DefaultChannelManagerTest {
         types.put(TransportType.CONFIGURATION, ChannelDirection.DOWN);
         types.put(TransportType.LOGGING, ChannelDirection.UP);
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
 
         channelManager.setChannel(TransportType.CONFIGURATION, channel);
@@ -322,9 +313,7 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testShutdown() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
         DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
@@ -333,7 +322,7 @@ public class DefaultChannelManagerTest {
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
         types.put(TransportType.LOGGING, ChannelDirection.UP);
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
         Mockito.when(channel.getId()).thenReturn("channel1");
 
@@ -350,9 +339,7 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testPauseAfterAdd() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
         DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
@@ -360,7 +347,7 @@ public class DefaultChannelManagerTest {
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
         Mockito.when(channel.getId()).thenReturn("channel1");
 
@@ -373,9 +360,7 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testPauseBeforeAdd() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
         DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
@@ -383,7 +368,7 @@ public class DefaultChannelManagerTest {
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
         Mockito.when(channel.getId()).thenReturn("channel1");
 
@@ -394,9 +379,7 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testPauseBeforeSet() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
         DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
@@ -404,7 +387,7 @@ public class DefaultChannelManagerTest {
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
         Mockito.when(channel.getId()).thenReturn("channel1");
 
@@ -415,9 +398,7 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testResume() throws NoSuchAlgorithmException, InvalidKeySpecException, KaaInvalidChannelException {
-        Map<ChannelType, List<ServerInfo>> bootststrapServers = new HashMap<>();
-        bootststrapServers.put(ChannelType.HTTP, Arrays.asList(
-                (ServerInfo)new HttpServerInfo(ServerType.BOOTSTRAP, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        Map<TransportId, List<ServerInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
         DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
@@ -425,7 +406,7 @@ public class DefaultChannelManagerTest {
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channel.getType()).thenReturn(ChannelType.KAATCP);
+        Mockito.when(channel.getTransportId()).thenReturn(TransportIdConstants.TCP_TRANSPORT_ID);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(types);
         Mockito.when(channel.getId()).thenReturn("channel1");
 
@@ -434,6 +415,14 @@ public class DefaultChannelManagerTest {
         channelManager.resume();
         Mockito.verify(channel, Mockito.times(1)).pause();
         Mockito.verify(channel, Mockito.times(1)).resume();
+    }
+
+    private Map<TransportId, List<ServerInfo>> getDefaultBootstrapServers() throws NoSuchAlgorithmException {
+        Map<TransportId, List<ServerInfo>> bootststrapServers = new HashMap<>();
+        ServerInfo server = IPTransportInfoTest.createTestServerInfo(
+                ServerType.BOOTSTRAP, TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        bootststrapServers.put(TransportIdConstants.HTTP_TRANSPORT_ID, Collections.singletonList(server));
+        return bootststrapServers;
     }
 
 }

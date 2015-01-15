@@ -429,7 +429,7 @@
  "name": "RedirectSyncResponse",
  "direction": "in",
  "fields": [
-     {"name": "dnsName", "type": "string"}
+     {"name": "accessPointId", "type": "int"}
  ]
 },
 {

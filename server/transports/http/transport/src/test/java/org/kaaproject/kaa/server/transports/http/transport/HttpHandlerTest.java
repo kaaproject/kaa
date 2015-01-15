@@ -32,7 +32,7 @@ public class HttpHandlerTest {
         UUID uuid = UUID.randomUUID();
         MessageHandler messageHandler = Mockito.mock(MessageHandler.class);
         AbstractHttpSyncCommand commandMock = Mockito.mock(AbstractHttpSyncCommand.class);
-        Mockito.when(commandMock.getChannelType()).thenReturn(ChannelType.HTTP);
+        Mockito.when(commandMock.getChannelType()).thenReturn(ChannelType.SYNC);
         HttpHandler handler = new HttpHandler(uuid, messageHandler);
         handler.channelRead0(null, commandMock);
         Mockito.verify(messageHandler).process(Mockito.any(NettyHttpSyncMessage.class));

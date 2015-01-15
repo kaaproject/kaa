@@ -37,7 +37,7 @@ public class ChannelMapTest {
         ChannelMap map = new ChannelMap("endpointKey", "actorKey");
         Assert.assertNull(map.getByRequestId(UUID.randomUUID()));
         ChannelContext ctxMock = Mockito.mock(ChannelContext.class);
-        SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctxMock, ChannelType.HTTP, null,
+        SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctxMock, ChannelType.SYNC, null,
                 null, "applicationToken", 0, true);
         SyncRequestMessage message = new SyncRequestMessage(session, null, null, null);
         map.addChannel(new ChannelMetaData(message));
@@ -51,7 +51,7 @@ public class ChannelMapTest {
         request.setClientSyncMetaData(new ClientSyncMetaData());
         UUID sameUid = UUID.randomUUID();
         ChannelContext ctxMock = Mockito.mock(ChannelContext.class);
-        SessionInfo session = new SessionInfo(sameUid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctxMock, ChannelType.HTTP, null, null,
+        SessionInfo session = new SessionInfo(sameUid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctxMock, ChannelType.SYNC, null, null,
                 "applicationToken", 0, true);
         SyncRequestMessage message = new SyncRequestMessage(session, request, null, null);
         ChannelMetaData md1 = new ChannelMetaData(message);

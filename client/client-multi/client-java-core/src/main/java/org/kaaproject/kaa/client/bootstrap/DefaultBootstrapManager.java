@@ -16,11 +16,8 @@
 
 package org.kaaproject.kaa.client.bootstrap;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -34,10 +31,6 @@ import org.kaaproject.kaa.client.channel.ServerInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportId;
 import org.kaaproject.kaa.client.transport.TransportException;
-import org.kaaproject.kaa.common.channels.ParsingException;
-import org.kaaproject.kaa.common.channels.communication.HttpLongPollParameters;
-import org.kaaproject.kaa.common.channels.communication.HttpParameters;
-import org.kaaproject.kaa.common.channels.communication.KaaTcpParameters;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +49,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     private BootstrapTransport transport;
     private List<ProtocolMetaData> operationsServerList;
     private KaaChannelManager channelManager;
-    private String serverToApply;
+    private Integer serverToApply;
     private final Map<TransportId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<TransportId, List<ProtocolMetaData>>();
     private final Map<TransportId, Iterator<ProtocolMetaData>> mappedIterators = new HashMap<>();
 
@@ -89,41 +82,34 @@ public class DefaultBootstrapManager implements BootstrapManager {
     }
 
     @Override
-    public synchronized void useNextOperationsServerByDnsName(String name) {
-        if (name != null) {
-            OperationsServer server = getServerByName(name);
-            if (server != null) {
-                notifyChannelManangerAboutServer(server);
-            } else {
-                serverToApply = name;
-                transport.sync();
-            }
-        }
-    }
-
-    private void notifyChannelManangerAboutServer(OperationsServer server) {
-        List<SupportedChannel> supportedChannelList = server.getSupportedChannelsArray();
-        for (SupportedChannel supportedChannel : supportedChannelList) {
-            try {
-                LOG.debug("Applying new server {}", server);
-                channelManager.onServerUpdated(getSeverInfoByChannel(server, supportedChannel));
-            } catch (ParsingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-                throw new BootstrapRuntimeException(e.getMessage());
-            }
-        }
-    }
-
-    private OperationsServer getServerByName(String name) {
-        if (operationsServerList != null && !operationsServerList.isEmpty()) {
-            for (OperationsServer server : operationsServerList) {
-                if (server.getName().equals(name)) {
-                    return server;
-                }
-            }
+    public synchronized void useNextOperationsServerByAccessPointId(int accessPointId) {
+        List<ProtocolMetaData> servers = getTransportsByAccessPointId(accessPointId);
+        if (servers != null && servers.size() > 0) {
+            notifyChannelManangerAboutServer(servers);
         } else {
+            serverToApply = accessPointId;
+            transport.sync();
+        }
+    }
+
+    private void notifyChannelManangerAboutServer(List<ProtocolMetaData> transports) {
+        for (ProtocolMetaData transport : transports) {
+            LOG.debug("Applying new transport {}", transports);
+            channelManager.onServerUpdated(new GenericTransportInfo(ServerType.OPERATIONS, transport));
+        }
+    }
+
+    private List<ProtocolMetaData> getTransportsByAccessPointId(int accessPointId) {
+        if (operationsServerList == null || operationsServerList.isEmpty()) {
             throw new BootstrapRuntimeException("Operations Server list is empty");
         }
-        return null;
+        List<ProtocolMetaData> result = new ArrayList<ProtocolMetaData>();
+        for (ProtocolMetaData transport : operationsServerList) {
+            if (transport.getAccessPointId().intValue() == accessPointId) {
+                result.add(transport);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -151,9 +137,9 @@ public class DefaultBootstrapManager implements BootstrapManager {
                 mappedIterators.put(entry.getKey(), entry.getValue().iterator());
             }
             if (serverToApply != null) {
-                OperationsServer server = getServerByName(serverToApply);
-                if (server != null) {
-                    notifyChannelManangerAboutServer(server);
+                List<ProtocolMetaData> servers = getTransportsByAccessPointId(serverToApply);
+                if (servers != null && servers.size() > 0) {
+                    notifyChannelManangerAboutServer(servers);
                     serverToApply = null;
                 }
             } else {

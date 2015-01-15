@@ -645,7 +645,7 @@ public class EndpointActorMessageProcessor {
         if (source == null) {
             return null;
         }
-        return new RedirectServerSync(source.getDnsName());
+        return new RedirectServerSync(source.getAccessPointId());
     }
 
     private UserServerSync deepCopy(UserServerSync source) {

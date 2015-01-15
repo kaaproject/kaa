@@ -27,7 +27,7 @@ public class LongSyncCommand extends SyncCommand {
 
     @Override
     public ChannelType getChannelType() {
-        return ChannelType.HTTP_LP;
+        return ChannelType.SYNC_WITH_TIMEOUT;
     }
 
     /**

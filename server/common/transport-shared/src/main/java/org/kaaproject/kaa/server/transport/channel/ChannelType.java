@@ -17,9 +17,9 @@ package org.kaaproject.kaa.server.transport.channel;
 
 public enum ChannelType {
 
-    HTTP(false, false),
-    HTTP_LP(true, false),
-    TCP(false, true);
+    SYNC(false, false),
+    SYNC_WITH_TIMEOUT(true, false),
+    ASYNC(false, true);
 
     private final boolean longPoll;
     private final boolean async;

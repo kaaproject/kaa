@@ -38,7 +38,7 @@ public class SyncCommandTest {
         HttpResponse response = command.getResponse();
         Assert.assertNotNull(response);
         Assert.assertEquals(RESPONSE_CONTENT_TYPE, response.headers().get(CONTENT_TYPE));
-        Assert.assertEquals(ChannelType.HTTP, command.getChannelType());
+        Assert.assertEquals(ChannelType.SYNC, command.getChannelType());
     }
 
     @Test
@@ -49,6 +49,6 @@ public class SyncCommandTest {
         HttpResponse response = command.getResponse();
         Assert.assertNotNull(response);
         Assert.assertEquals(RESPONSE_CONTENT_TYPE, response.headers().get(CONTENT_TYPE));
-        Assert.assertEquals(ChannelType.HTTP_LP, command.getChannelType());
+        Assert.assertEquals(ChannelType.SYNC_WITH_TIMEOUT, command.getChannelType());
     }
 }

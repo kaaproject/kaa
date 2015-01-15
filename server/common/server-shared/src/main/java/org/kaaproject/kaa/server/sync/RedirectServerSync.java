@@ -16,7 +16,7 @@
 package org.kaaproject.kaa.server.sync;
 
 public class RedirectServerSync {
-    private String dnsName;
+    private int accessPointId;
 
     public RedirectServerSync() {
     }
@@ -24,34 +24,46 @@ public class RedirectServerSync {
     /**
      * All-args constructor.
      */
-    public RedirectServerSync(String dnsName) {
-        this.dnsName = dnsName;
+    public RedirectServerSync(int accessPointId) {
+        this.accessPointId = accessPointId;
     }
 
-    /**
-     * Gets the value of the 'dnsName' field.
-     */
-    public String getDnsName() {
-        return dnsName;
+    public int getAccessPointId() {
+        return accessPointId;
     }
 
-    /**
-     * Sets the value of the 'dnsName' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setDnsName(String value) {
-        this.dnsName = value;
+    public void setAccessPointId(int accessPointId) {
+        this.accessPointId = accessPointId;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + accessPointId;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RedirectServerSync other = (RedirectServerSync) obj;
+        if (accessPointId != other.accessPointId)
+            return false;
+        return true;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("RedirectServerSync [dnsName=");
-        builder.append(dnsName);
+        builder.append("RedirectServerSync [accessPointId=");
+        builder.append(accessPointId);
         builder.append("]");
         return builder.toString();
     }
-
 }

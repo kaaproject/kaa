@@ -31,8 +31,9 @@ public interface Rebalancer {
     /**
      * Recalculate balancing
      *
-     * @param opsServerLoadHistory the Operations server load history
+     * @param opsServerLoadHistory
+     *            the Operations server load history
      * @return the map<string, redirection rule>
      */
-    public Map<String,RedirectionRule> recalculate(Map<String, OperationsServerLoadHistory> opsServerLoadHistory);
+    public Map<Integer, RedirectionRule> recalculate(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory);
 }

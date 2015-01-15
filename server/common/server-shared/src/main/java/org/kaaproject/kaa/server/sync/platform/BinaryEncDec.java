@@ -478,7 +478,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void encode(GrowingByteBuffer buf, RedirectServerSync redirectSync) {
         buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
-        buf.putInt(redirectSync.getDnsName().hashCode());
+        buf.putInt(redirectSync.getAccessPointId());
     }
 
     public void putUTF(GrowingByteBuffer buf, String str) {

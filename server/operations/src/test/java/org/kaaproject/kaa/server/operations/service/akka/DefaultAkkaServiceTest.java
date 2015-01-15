@@ -360,7 +360,7 @@ public class DefaultAkkaServiceTest {
         SessionAwareMessage message = Mockito.mock(SessionAwareMessage.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
         SessionInfo sessionInfo = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID,
-                Mockito.mock(ChannelContext.class), ChannelType.TCP, Mockito.mock(CipherPair.class),
+                Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class),
                 EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
         Mockito.when(message.getChannelContext()).thenReturn(Mockito.mock(ChannelContext.class));
         Mockito.when(message.getErrorBuilder()).thenReturn(errorBuilder);
@@ -393,7 +393,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
                 errorBuilder);
 
         Assert.assertNotNull(akkaService.getActorSystem());
@@ -427,7 +427,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
                 errorBuilder);
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
@@ -457,7 +457,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
                 errorBuilder);
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
@@ -489,9 +489,9 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message1 = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message1 = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
                 errorBuilder);
-        SessionInitMessage message2 = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message2 = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
                 errorBuilder);
         akkaService.process(message1);
         akkaService.process(message2);
@@ -520,7 +520,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request, responseBuilder,
                 errorBuilder);
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
@@ -553,7 +553,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request, responseBuilder,
                 errorBuilder);
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
@@ -593,7 +593,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request, responseBuilder,
                 errorBuilder);
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
@@ -651,7 +651,7 @@ public class DefaultAkkaServiceTest {
                 operationsService.updateSyncResponse(noDeltaResponseWithTopicState.getResponse(),
                         Collections.singletonList(topicNotification), null)).thenReturn(noDeltaResponseWithTopicState.getResponse());
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request, responseBuilder,
                 errorBuilder);
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
@@ -689,7 +689,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request, responseBuilder,
                 errorBuilder);
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
@@ -714,7 +714,7 @@ public class DefaultAkkaServiceTest {
     public void testRedirect() throws Exception {
         ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
         MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
-        akkaService.onRedirectionRule(new RedirectionRule("testDNS", 123, 1.0, 60000));
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 60000));
 
         Thread.sleep(1000);
 
@@ -729,14 +729,14 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request, responseBuilder,
                 errorBuilder, crypt);
         akkaService.process(message);
 
         SyncResponse response = new SyncResponse();
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.REDIRECT);
-        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS"));
+        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).never()).sync(AvroEncDec.convert(request));
 
@@ -749,7 +749,7 @@ public class DefaultAkkaServiceTest {
     public void testRedirectSessionRequest() throws Exception {
         ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
         MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
-        akkaService.onRedirectionRule(new RedirectionRule("testDNS", 123, 1.0, 60000));
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 60000));
 
         Thread.sleep(1000);
 
@@ -768,7 +768,7 @@ public class DefaultAkkaServiceTest {
         final org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest kaaSync = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest(
                 crypt.encodeData(requestConverter.toByteArray(request)), false, true);
         final SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelContextMock,
-                ChannelType.TCP, crypt.getSessionCipherPair(), EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN, 100, true);
+                ChannelType.ASYNC, crypt.getSessionCipherPair(), EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN, 100, true);
 
         SessionAwareMessage message = new SessionAwareMessage() {
             
@@ -822,7 +822,7 @@ public class DefaultAkkaServiceTest {
         SyncResponse response = new SyncResponse();
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.REDIRECT);
-        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS"));
+        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).never()).sync(AvroEncDec.convert(request));
 
@@ -835,7 +835,7 @@ public class DefaultAkkaServiceTest {
     public void testRedirectExpire() throws Exception {
         ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
         MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
-        akkaService.onRedirectionRule(new RedirectionRule("testDNS", 123, 1.0, 1000));
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 1000));
 
         Thread.sleep(2000);
 
@@ -850,7 +850,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request, responseBuilder,
                 errorBuilder, crypt);
 
         Mockito.when(operationsService.sync(Mockito.any(ClientSync.class), Mockito.any(EndpointProfileDto.class))).thenReturn(
@@ -861,7 +861,7 @@ public class DefaultAkkaServiceTest {
         SyncResponse response = new SyncResponse();
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.REDIRECT);
-        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS"));
+        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).sync(AvroEncDec.convert(request), null);
     }
@@ -935,7 +935,7 @@ public class DefaultAkkaServiceTest {
 
         MessageEncoderDecoder sourceCrypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
                 serverPair.getPublic());
-        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, sourceRequest,
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, sourceRequest,
                 responseBuilder, errorBuilder, sourceCrypt);
         akkaService.process(sourceMessage);
 
@@ -945,7 +945,7 @@ public class DefaultAkkaServiceTest {
 
         MessageEncoderDecoder targetCrypt = new MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
                 serverPair.getPublic());
-        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, targetRequest,
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, targetRequest,
                 responseBuilder, errorBuilder, targetCrypt);
         akkaService.process(targetMessage);
 
@@ -1012,7 +1012,7 @@ public class DefaultAkkaServiceTest {
 
         MessageEncoderDecoder sourceCrypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
                 serverPair.getPublic());
-        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, sourceRequest,
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, sourceRequest,
                 responseBuilder, errorBuilder, sourceCrypt);
         akkaService.process(sourceMessage);
 
@@ -1078,7 +1078,7 @@ public class DefaultAkkaServiceTest {
 
         MessageEncoderDecoder targetCrypt = new MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
                 serverPair.getPublic());
-        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, targetRequest,
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, targetRequest,
                 responseBuilder, errorBuilder, targetCrypt);
         akkaService.process(targetMessage);
 
@@ -1153,7 +1153,7 @@ public class DefaultAkkaServiceTest {
 
         MessageEncoderDecoder sourceCrypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
                 serverPair.getPublic());
-        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, sourceRequest,
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, sourceRequest,
                 responseBuilder, errorBuilder, sourceCrypt);
 
         akkaService.process(sourceMessage);
@@ -1200,7 +1200,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request, responseBuilder,
                 errorBuilder);
 
         Assert.assertNotNull(akkaService.getActorSystem());
@@ -1257,7 +1257,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, targetRequest,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, targetRequest,
                 responseBuilder, errorBuilder, targetCrypt);
 
         akkaService.process(message);
@@ -1299,7 +1299,7 @@ public class DefaultAkkaServiceTest {
 
         when(operationsService.sync(AvroEncDec.convert(targetRequest), targetProfileMock)).thenReturn(targetResponseHolder);
 
-        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, targetRequest,
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, targetRequest,
                 responseBuilder, errorBuilder, targetCrypt);
         akkaService.process(targetMessage);
         Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID + "2"));
@@ -1352,7 +1352,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, targetRequest,
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, targetRequest,
                 responseBuilder, errorBuilder, targetCrypt);
 
         akkaService.process(targetMessage);
@@ -1397,7 +1397,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder sourceResponseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder sourceErrorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, sourceRequest,
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, sourceRequest,
                 sourceResponseBuilder, sourceErrorBuilder);
         akkaService.process(sourceMessage);
 
@@ -1461,7 +1461,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder targetResponseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder targetErrorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, targetRequest,
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, targetRequest,
                 targetResponseBuilder, targetErrorBuilder, targetCrypt);
         akkaService.process(targetMessage);
 
@@ -1505,7 +1505,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder sourceResponseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder sourceErrorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.HTTP_LP, channelContextMock, sourceRequest,
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, sourceRequest,
                 sourceResponseBuilder, sourceErrorBuilder);
         akkaService.process(sourceMessage);
 

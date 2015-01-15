@@ -302,7 +302,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             this.currentServer = new IPTransportInfo(server);
             synchronized (httpClientLock) {
                 LOG.debug("Channel [{}]: creating HTTP client..", getId());
-                this.httpClient = client.createHttpClient(currentServer.getURL(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
+                this.httpClient = client.createHttpClient(currentServer.getURL() + "/EP/LongSync", state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
                 synchronized (httpClientSetLock) {
                     httpClientSetLock.notifyAll();
                 }

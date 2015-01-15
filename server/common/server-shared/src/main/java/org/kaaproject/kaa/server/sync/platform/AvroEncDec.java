@@ -293,7 +293,7 @@ public class AvroEncDec implements PlatformEncDec {
         if (redirectSyncResponse == null) {
             return null;
         }
-        return new RedirectSyncResponse(redirectSyncResponse.getDnsName());
+        return new RedirectSyncResponse(redirectSyncResponse.getAccessPointId());
     }
 
     private static ProfileSyncResponse convert(ProfileServerSync profileSyncResponse) {

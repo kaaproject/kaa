@@ -95,5 +95,9 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
             Map<TransportType, ChannelDirection> typeMap) {
         return new OperationRunnable(typeMap);
     }
-
+    
+    @Override
+    protected String getURLSufix() {
+        return "/EP/Sync";
+    }
 }
