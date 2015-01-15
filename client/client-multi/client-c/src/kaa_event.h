@@ -31,7 +31,6 @@ extern "C" {
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 
 #include <stddef.h>
-#include <stdint.h>
 #include "kaa_error.h"
 
 #define KAA_ENDPOINT_ID_LENGTH 20

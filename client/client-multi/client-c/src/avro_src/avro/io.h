@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "platform.h"
 

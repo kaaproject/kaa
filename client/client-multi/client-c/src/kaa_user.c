@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
+#include <stddef.h>
+#include <stdint.h>
+#include "platform/stdio.h"
+#include "platform/kaa_sha.h"
 #include "kaa_user.h"
-
-#include <string.h>
 
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
-#include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 
 #define KAA_USER_RECEIVE_UPDATES_FLAG   0x01
 

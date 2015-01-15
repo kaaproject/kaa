@@ -16,10 +16,14 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "kaa_logging.h"
-
 #include <stddef.h>
 #include <string.h>
+
+#include "platform/stdio.h"
+# include "platform/kaa_sha.h"
+
+#include "kaa_logging.h"
+
 
 #include "collections/kaa_list.h"
 #include "kaa_common.h"

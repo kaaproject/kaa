@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-# ifndef KAA_LOGGING_GEN_H_
-# define KAA_LOGGING_GEN_H_
+/*
+kaa_sha.h
+ Created on: Jan 15, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
 
-# include "../kaa_common_schema.h"
-# include "../collections/kaa_list.h"
+#ifndef SRC_KAA_PLATFORM_KAA_SHA_H_
+#define SRC_KAA_PLATFORM_KAA_SHA_H_
 
-# ifdef __cplusplus
+#include "../kaa_error.h"
+
+#ifdef __cplusplus
 extern "C" {
-# endif
+#endif
 
 
-typedef struct {
-    kaa_string_t* data;
+/*
+ * SHA1 hash
+ */
+#define SHA_1_DIGEST_LENGTH 20
+typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
+typedef const unsigned char* kaa_digest_p;
 
-    serialize_fn serialize;
-    get_size_fn  get_size;
-    destroy_fn   destroy;
-} kaa_test_log_record_t;
-
-kaa_test_log_record_t* kaa_test_log_record_create();
-kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader);
+kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif
-#endif
+#endif /* SRC_KAA_PLATFORM_KAA_SHA_H_ */

@@ -40,19 +40,7 @@ void    kaa_trace_memory_allocs_set_logger(kaa_logger_t *logger);
 
 #else // defined KAA_TRACE_MEMORY_ALLOCATIONS
 
-#include <stdlib.h>
-
-#ifndef KAA_MALLOC
-#define KAA_MALLOC(S)           malloc(S)
-#endif
-
-#ifndef KAA_CALLOC
-#define KAA_CALLOC(N,S)         calloc(N, S)
-#endif
-
-#ifndef KAA_FREE
-#define KAA_FREE(P)             free(P)
-#endif
+#include "../platform/mem.h"
 
 #endif // defined KAA_TRACE_MEMORY_ALLOCATIONS
 

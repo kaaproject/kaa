@@ -36,7 +36,7 @@ extern "C" {
 /**
  * Kaa platform protocol state structure
  */
-typedef struct kaa_platform_protocol_t kaa_platform_protocol_t;
+//typedef struct kaa_platform_protocol_t kaa_platform_protocol_t;
 
 /**
  * Buffer allocation callback

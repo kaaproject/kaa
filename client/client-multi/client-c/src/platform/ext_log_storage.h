@@ -23,9 +23,7 @@
 #ifndef EXT_LOG_STORAGE_H_
 #define EXT_LOG_STORAGE_H_
 
-#include <stddef.h>
-#include <stdint.h>
-#include "kaa_error.h"
+#include "../kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-#include <openssl/sha.h>
+/*
+sock.h
+ Created on: Jan 15, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
 
-#include "kaa_common.h"
+#ifndef SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_SOCK_H_
+#define SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_SOCK_H_
 
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
-{
-    KAA_RETURN_IF_NIL3(data, data_size, digest, KAA_ERR_BADPARAM);
+#include <sys/types.h>
+#include <sndc_sock_api.h>
+#define KAA_HTONS(hostshort)    sndc_htons((hostshort))
+#define KAA_HTONL(hostlong)     sndc_htonl((hostlong))
 
-    SHA1((const unsigned char *)data, data_size, digest);
-    return KAA_ERR_NONE;
-}
+#define KAA_NTOHS(netshort)     sndc_ntohs((netshort))
+#define KAA_NTOHL(netlong)      sndc_ntohl((netlong))
+
+#endif /* SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_SOCK_H_ */

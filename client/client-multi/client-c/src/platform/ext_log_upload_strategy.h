@@ -24,8 +24,7 @@
 #ifndef EXT_LOG_UPLOAD_STRATEGY_H_
 #define EXT_LOG_UPLOAD_STRATEGY_H_
 
-#include "platform/ext_log_storage.h"
-#include <stddef.h>
+#include "../platform/ext_log_storage.h"
 
 
 

@@ -14,29 +14,15 @@
  * limitations under the License.
  */
 
-# ifndef KAA_LOGGING_GEN_H_
-# define KAA_LOGGING_GEN_H_
+#include <openssl/sha.h>
 
-# include "../kaa_common_schema.h"
-# include "../collections/kaa_list.h"
+#include "../../platform/kaa_sha.h"
+#include "../../kaa_common.h"
 
-# ifdef __cplusplus
-extern "C" {
-# endif
+kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
+{
+    KAA_RETURN_IF_NIL3(data, data_size, digest, KAA_ERR_BADPARAM);
 
-
-typedef struct {
-    kaa_string_t* data;
-
-    serialize_fn serialize;
-    get_size_fn  get_size;
-    destroy_fn   destroy;
-} kaa_test_log_record_t;
-
-kaa_test_log_record_t* kaa_test_log_record_create();
-kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader);
-
-#ifdef __cplusplus
-}      /* extern "C" */
-#endif
-#endif
+    SHA1((const unsigned char *)data, data_size, digest);
+    return KAA_ERR_NONE;
+}

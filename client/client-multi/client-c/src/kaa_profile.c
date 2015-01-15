@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "kaa_profile.h"
-
+#include <stddef.h>
 #include <string.h>
+#include "platform/stdio.h"
+#include "platform/kaa_sha.h"
+#include "kaa_profile.h"
 
 #include "avro_src/avro/io.h"
 
