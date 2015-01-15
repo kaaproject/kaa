@@ -28,22 +28,29 @@
 extern "C" {
 #endif
 
-typedef struct kaa_status_t             kaa_status_t;
+#include "utilities/kaa_log.h"
+#include "kaa_status.h"
+#include "kaa_event.h"
+#include "kaa_profile.h"
+#include "kaa_logging.h"
+#include "kaa_user.h"
+
+//typedef struct kaa_status_t             kaa_status_t;
 typedef struct kaa_platform_protocol_t  kaa_platform_protocol_t;
 typedef struct kaa_bootstrap_manager_t  kaa_bootstrap_manager_t;
 typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
-typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
-typedef struct kaa_user_manager_t       kaa_user_manager_t;
+//typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
+//typedef struct kaa_user_manager_t       kaa_user_manager_t;
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-typedef struct kaa_event_manager_t      kaa_event_manager_t;
+//typedef struct kaa_event_manager_t      kaa_event_manager_t;
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-typedef struct kaa_log_collector        kaa_log_collector_t;
+//typedef struct kaa_log_collector        kaa_log_collector_t;
 #endif
 
-typedef struct kaa_logger_t             kaa_logger_t;
+//typedef struct kaa_logger_t             kaa_logger_t;
 
 
 

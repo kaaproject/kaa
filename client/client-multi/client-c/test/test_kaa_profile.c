@@ -15,7 +15,9 @@
  */
 
 #include <string.h>
-
+#include <stdbool.h>
+#include <stdint.h>
+#include "platform/kaa_sha.h"
 #include "kaa_status.h"
 #include "kaa_test.h"
 #include "utilities/kaa_mem.h"

@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "platform/stdio.h"
 
 #include "kaa_bootstrap.h"
 
-#include <stdlib.h>
-#include <string.h>
 
 #include "collections/kaa_list.h"
 #include "utilities/kaa_mem.h"

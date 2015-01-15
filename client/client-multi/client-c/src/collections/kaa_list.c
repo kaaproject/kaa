@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-#include "collections/kaa_list.h"
-#include "utilities/kaa_mem.h"
+#include "kaa_list.h"
+#include "../utilities/kaa_mem.h"
 
 struct kaa_list_t {
     void              *data;

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+#include <stdio.h>
+#include <string.h>
+#include "platform/kaa_sha.h"
+
 #include "kaa_logging.h"
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-
-#include <stdio.h>
-#include <string.h>
 
 #include "kaa_test.h"
 #include "kaa_platform_protocol.h"

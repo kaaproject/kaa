@@ -18,7 +18,7 @@
 #define KAA_COLLECTIONS_KAA_DEQUE_H_
 
 #include <sys/types.h>
-#include "kaa_error.h"
+#include "../kaa_error.h"
 
 /**
  * @brief Iterator to access the data stored in kaa_deque_t.

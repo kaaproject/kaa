@@ -15,6 +15,10 @@
  */
 
 #include <string.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 #include "kaa_test.h"
 #include "kaa_bootstrap.h"

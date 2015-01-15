@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
+//#include <stdint.h>
 
 #include "avro_src/avro/io.h"
 

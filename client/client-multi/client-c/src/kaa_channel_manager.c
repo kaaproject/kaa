@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "platform/stdio.h"
+
 #include "kaa_channel_manager.h"
 #include "collections/kaa_list.h"
 #include "utilities/kaa_log.h"

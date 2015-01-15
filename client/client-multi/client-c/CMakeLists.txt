@@ -67,7 +67,6 @@ set (KAA_SOURCE_FILES
                        src/kaa_bootstrap.c
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
-                       src/kaa_common.c
                        src/kaa_event.c
                        src/kaa_logging.c
                        src/kaa_platform_protocol.c
@@ -79,6 +78,8 @@ set (KAA_SOURCE_FILES
                        src/utilities/kaa_mem.c
                        src/kaa_platform_utils.c
                        src/platform-impl/ext_log_storage_memory.c
+                       src/platform-impl/posix/logger.c
+                       src/platform-impl/posix/kaa_sha.c
                        src/platform-impl/ext_log_upload_strategy_by_volume.c
 )
 

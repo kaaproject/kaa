@@ -22,10 +22,6 @@
 #ifndef KAA_COMMON_H_
 #define KAA_COMMON_H_
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-
 #include "kaa_error.h"
 
 #ifdef __cplusplus
@@ -65,17 +61,6 @@ typedef enum {
     KAA_SERVICE_EVENT = 3,
     KAA_SERVICE_LOGGING = 4,
 } kaa_service_t;
-
-
-
-/*
- * SHA1 hash
- */
-#define SHA_1_DIGEST_LENGTH 20
-typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
-typedef const unsigned char* kaa_digest_p;
-
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
 
 

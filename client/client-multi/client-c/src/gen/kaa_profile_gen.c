@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-# include "kaa_profile_gen.h"
-
-# include <stdio.h>
+#include <stddef.h>
 # include <string.h>
 
-# include "avro_src/avro/io.h"
-# include "avro_src/encoding.h"
+# include "kaa_profile_gen.h"
 
-# include "utilities/kaa_mem.h"
+//# include <stdio.h>
+
+# include "../avro_src/avro/io.h"
+# include "../avro_src/encoding.h"
+
+# include "../utilities/kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE
