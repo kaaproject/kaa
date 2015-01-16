@@ -45,16 +45,23 @@ typedef struct kaa_${event_family_name}_ {
 #set ($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
     unsigned char is_${e_name}_callback_added;
 #end
+
 } kaa_${event_family_name};
 
 #set ($eventsCount = $incomingEventFqns.size())
 static kaa_${event_family_name} listeners = {
+
+#foreach ($event in $incomingEventFqns)
+    NULL, NULL,
+#end
+
 #foreach ($event in $incomingEventFqns)
 #set ($eventsCount = $eventsCount - 1)
-    NULL, NULL, 0
+    0
 #if ($eventsCount > 0),
 #end
 #end
+
 };
 
 #foreach ($event in $incomingEventFqns)
