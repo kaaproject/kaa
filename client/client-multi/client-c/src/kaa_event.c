@@ -782,7 +782,7 @@ static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, 
         }
         kaa_event_listeners_request_t *request = (kaa_event_listeners_request_t *) kaa_list_get_data(request_node);
         if (listeners_result == EVENT_LISTENERS_SUCCESS) {
-            request->callback.on_event_listeners(request->callback.context, (kaa_endpoint_id *) reader->current, listeners_count);
+            request->callback.on_event_listeners(request->callback.context, (const kaa_endpoint_id *) reader->current, listeners_count);
             KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Success event listeners response for request id %u", request_id);
         } else {
             request->callback.on_event_listeners_failed(request->callback.context);
