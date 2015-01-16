@@ -44,13 +44,27 @@ typedef size_t kaa_event_block_id;
 
 typedef struct kaa_event_manager_t kaa_event_manager_t;
 
+/**
+ * Interface for the event listeners response receiver.
+ */
 typedef struct kaa_event_listeners_callback_t
 {
-    void *context;
-    kaa_error_t (*event_listeners_callback_t) (const kaa_endpoint_id listeners[], size_t listeners_count, void *context);
-    kaa_error_t (*event_listeners_request_failed_t) (void *context);
+    void *context;                                                                                                          /**< Context to pass to all functions below. */
+    kaa_error_t (*event_listeners_callback_t) (const kaa_endpoint_id listeners[], size_t listeners_count, void *context);   /**< Called on successful listeners response. */
+    kaa_error_t (*event_listeners_request_failed_t) (void *context);                                                        /**< Called on failures. */
 } kaa_event_listeners_callback_t;
 
+/**
+ * @brief Initiates search of available event listeners by given FQNs.
+ *
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       fqns                List of FQN strings.
+ * @param[in]       fqns_count          Number of FQNs in the list.
+ * @param[in]       callback            Pointer to callback structure.
+ *
+ * @return Error code.
+ */
 kaa_error_t kaa_event_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback);
 
 /**

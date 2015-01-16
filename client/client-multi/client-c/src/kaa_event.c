@@ -590,7 +590,7 @@ static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *se
             int i = 0;
             for (; i < request->fqns_count; ++i) {
                 size_t fqn_length = strlen(request->fqns[i]);
-                *((uint16_t *) writer->current) = (uint16_t) fqn_length;
+                *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) fqn_length);
                 writer->current += sizeof(uint32_t); // fqn length + reserved
                 kaa_error_t error_code = kaa_platform_message_write_aligned(writer, request->fqns[i], fqn_length);
                 if (error_code) {

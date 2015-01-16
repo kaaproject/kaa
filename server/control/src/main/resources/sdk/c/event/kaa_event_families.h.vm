@@ -29,7 +29,7 @@
 /**
  * @brief Listener of ${e_name} events.
  */
-typedef void (* on_${prefix}_${e_name})(${prefix}_${e_name}_t *event, kaa_endpoint_id_p source);
+typedef void (* on_${prefix}_${e_name})(${prefix}_${e_name}_t *event, kaa_endpoint_id_p source, void *context);
 #end
 
 #foreach ($event in $incomingEventFqns)
@@ -42,7 +42,7 @@ typedef void (* on_${prefix}_${e_name})(${prefix}_${e_name}_t *event, kaa_endpoi
  * @param[in]       listener    Listener callback.
  * @return Error code.
  */
-kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager_t *self, on_${prefix}_${e_name} listener);
+kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager_t *self, on_${prefix}_${e_name} listener, void *context);
 #end
 
 #foreach ($event in $outgoingEventFqns)
