@@ -30,7 +30,7 @@ public class HttpTransportConfig implements TransportConfig {
 
     private static final int HTTP_TRANSPORT_ID = 0xfb9a3cf0;
     private static final String HTTP_TRANSPORT_NAME = "org.kaaproject.kaa.server.transport.http";
-    private static final String HTTP_TRANSPORT_CLASS = "org.kaaproject.kaa.server.transport.http.transport.HttpTransport";
+    private static final String HTTP_TRANSPORT_CLASS = "org.kaaproject.kaa.server.transports.http.transport.HttpTransport";
     private static final String HTTP_TRANSPORT_CONFIG = "http-transport.config";
 
     public HttpTransportConfig() {

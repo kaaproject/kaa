@@ -54,7 +54,7 @@ public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
     private static final String BIND_INTERFACE_PROP_NAME = "transport.bindInterface";
     private static final String LOCALHOST = "localhost";
     private static final int SUPPORTED_VERSION = 1;
-    private SpecificTransportContext<AvroHttpConfig> context;
+    
     private AbstractNettyServer netty;
 
     @Override
@@ -62,14 +62,13 @@ public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
         AvroHttpConfig configuration = context.getConfiguration();
         configuration.setBindInterface(replaceProperty(configuration.getBindInterface(), BIND_INTERFACE_PROP_NAME,
                 context.getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)));
-
         List<KaaCommandProcessorFactory<HttpRequest, HttpResponse>> processors = new ArrayList<KaaCommandProcessorFactory<HttpRequest,HttpResponse>>();
         processors.add(new SyncCommandFactory());
         processors.add(new LongSyncCommandFactory());
         final CommandFactory<HttpRequest, HttpResponse> factory = new CommandFactory<>(processors);
         final int maxBodySize = configuration.getMaxBodySize();
 
-        this.netty = new AbstractNettyServer(configuration.getBindInterface(), configuration.getBindPort()) {
+        this.netty = new AbstractNettyServer("localhost", configuration.getBindPort()) {
 
             @Override
             protected ChannelInitializer<SocketChannel> configureInitializer() throws Exception {

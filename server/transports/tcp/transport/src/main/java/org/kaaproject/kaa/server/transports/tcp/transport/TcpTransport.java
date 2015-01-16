@@ -45,7 +45,6 @@ public class TcpTransport extends AbstractKaaTransport<AvroTcpConfig> {
     private static final String BIND_INTERFACE_PROP_NAME = "transport.bindInterface";
     private static final String LOCALHOST = "localhost";
     private static final int SUPPORTED_VERSION = 1;
-    private SpecificTransportContext<AvroTcpConfig> context;
     private AbstractNettyServer netty;
 
     @Override

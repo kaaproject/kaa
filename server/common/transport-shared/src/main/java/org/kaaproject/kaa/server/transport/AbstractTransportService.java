@@ -113,7 +113,7 @@ public abstract class AbstractTransportService implements TransportService {
     public void start() {
         LOG.info("Starting {} available transports.", transports.size());
         for (Entry<Integer, Transport> entry : transports.entrySet()) {
-            LOG.info("Starting transport {}.", configs.get(entry).getName());
+            LOG.info("Starting transport {}.", configs.get(entry.getKey()).getName());
             entry.getValue().start();
         }
         notifyListeners();
@@ -123,7 +123,7 @@ public abstract class AbstractTransportService implements TransportService {
     public void stop() {
         LOG.info("Stoping {} available transports.", transports.size());
         for (Entry<Integer, Transport> entry : transports.entrySet()) {
-            LOG.info("Stoping transport {}.", configs.get(entry).getName());
+            LOG.info("Stoping transport {}.", configs.get(entry.getKey()).getName());
             entry.getValue().stop();
         }
     }

@@ -67,12 +67,6 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
     @Value("#{properties[thrift_port]}")
     private int thriftPort;
 
-    @Value("#{properties[netty_host]}")
-    private String nettyHost;
-
-    @Value("#{properties[netty_port]}")
-    private int nettyPort;
-
     @Value("#{properties[zk_enabled]}")
     private boolean zkEnabled;
 
@@ -130,7 +124,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             if (operationsServerListService == null) {
                 throw new Exception("Error initializing OperationsServerListService()"); // NOSONAR
             }
-            
+
             transportService.lookupAndInit();
 
             final CountDownLatch thriftStartupLatch = new CountDownLatch(1);
@@ -147,7 +141,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             if (zkEnabled) {
                 startZK();
             }
-            
+
             operationsServerListService.init(bootstrapNode);
 
             transportService.addListener(new TransportUpdateListener() {
@@ -265,7 +259,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
             ByteBuffer keyData = ByteBuffer.wrap(keyStoreService.getPublicKey().getEncoded());
             LOG.trace("Bootstrap server: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}", thriftHost,
-                    thriftPort, nettyHost, nettyPort);
+                    thriftPort);
             nodeInfo.setConnectionInfo(new ConnectionInfo(thriftHost, thriftPort, keyData));
             nodeInfo.setTransports(new ArrayList<TransportMetaData>());
             bootstrapNode = new BootstrapNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(zkMaxRetryTime, zkSleepTime));

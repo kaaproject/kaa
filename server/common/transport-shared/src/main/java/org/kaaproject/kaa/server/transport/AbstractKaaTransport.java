@@ -46,6 +46,8 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
      */
     protected MessageHandler handler;
     
+    protected SpecificTransportContext<T> context;
+    
     /*
      * (non-Javadoc)
      * 
@@ -58,7 +60,8 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
         try {
             T config = converter.fromByteArray(context.getConfiguration());
             LOG.info("Initializing transport {} with {}", getClassName(), config);
-            init(new SpecificTransportContext<T>(context, config));
+            this.context = new SpecificTransportContext<T>(context, config); 
+            init(this.context);
         } catch (IOException e) {
             LOG.error(MessageFormat.format("Failed to initialize transport {0}", getClassName()), e);
             throw new TransportLifecycleException(e);

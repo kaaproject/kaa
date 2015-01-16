@@ -29,7 +29,7 @@ import org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig;
 public class TcpTransportConfig implements TransportConfig {
     private static final int TCP_TRANSPORT_ID = 0x56c8ff92;
     private static final String TCP_TRANSPORT_NAME = "org.kaaproject.kaa.server.transport.tcp";
-    private static final String TCP_TRANSPORT_CLASS = "org.kaaproject.kaa.server.transport.tcp.transport.TcpTransport";
+    private static final String TCP_TRANSPORT_CLASS = "org.kaaproject.kaa.server.transports.tcp.transport.TcpTransport";
     private static final String TCP_TRANSPORT_CONFIG = "tcp-transport.config";
 
     public TcpTransportConfig() {
