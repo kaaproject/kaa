@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.channel.ServerInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportId;
-import org.kaaproject.kaa.client.channel.impl.channels.TransportIdConstants;
+import org.kaaproject.kaa.client.channel.TransportIdConstants;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 

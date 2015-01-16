@@ -450,6 +450,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/bin/**</exclude>
                         <exclude>**/thirdparty/**</exclude>
                         <exclude>**/security.policy</exclude>
+                        <exclude>**/*-transport.config</exclude>
                     </excludes>
                 </configuration>
             </plugin>
