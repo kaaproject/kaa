@@ -905,9 +905,10 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_event_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback)
+kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback)
 {
     KAA_RETURN_IF_NIL3(self, fqns_count, callback, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(callback->event_listeners_callback_t, callback->event_listeners_request_failed_t, KAA_ERR_BADPARAM);
 
     kaa_event_listeners_request_t *subscriber = create_event_listener_request(++self->event_listeners_request_id
                                                                                , fqns, fqns_count

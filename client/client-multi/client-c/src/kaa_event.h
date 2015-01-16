@@ -65,7 +65,7 @@ typedef struct kaa_event_listeners_callback_t
  *
  * @return Error code.
  */
-kaa_error_t kaa_event_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback);
+kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback);
 
 /**
  * @brief Start a new event block.
