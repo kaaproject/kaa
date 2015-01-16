@@ -726,6 +726,11 @@
                     <artifactId>transport</artifactId>
                     <classifier>http</classifier>
                 </dependency>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+                    <artifactId>config</artifactId>
+                    <classifier>http</classifier>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -737,6 +742,11 @@
                 <dependency>
                     <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
                     <artifactId>transport</artifactId>
+                    <classifier>tcp</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+                    <artifactId>config</artifactId>
                     <classifier>tcp</classifier>
                 </dependency>
             </dependencies>

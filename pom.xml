@@ -521,8 +521,20 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+                <artifactId>config</artifactId>
+                <classifier>http</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
                 <artifactId>transport</artifactId>
+                <classifier>tcp</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+                <artifactId>config</artifactId>
                 <classifier>tcp</classifier>
                 <version>${project.version}</version>
             </dependency>
