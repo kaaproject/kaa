@@ -29,7 +29,7 @@
 /**
  * @brief Listener of ${e_name} events.
  */
-typedef void (* on_${prefix}_${e_name})(${prefix}_${e_name}_t *event, kaa_endpoint_id_p source, void *context);
+typedef void (* on_${prefix}_${e_name})(void *context, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p source);
 #end
 
 #foreach ($event in $incomingEventFqns)

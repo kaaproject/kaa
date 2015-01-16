@@ -67,6 +67,13 @@ typedef enum {
 } kaa_service_t;
 
 
+/**
+ * Endpoint ID
+ */
+#define KAA_ENDPOINT_ID_LENGTH 20
+typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
+typedef const uint8_t* kaa_endpoint_id_p;
+
 
 /*
  * SHA1 hash

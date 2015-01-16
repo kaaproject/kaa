@@ -82,7 +82,7 @@ static kaa_endpoint_id endpoint_id1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1
 static kaa_endpoint_id endpoint_id2 = { 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 };
 static bool is_event_listeners_cb_called = false;
 
-static kaa_error_t event_listeners_callback_t(const kaa_endpoint_id listeners[], size_t listeners_count, void *context)
+static kaa_error_t event_listeners_callback(void *context, const kaa_endpoint_id listeners[], size_t listeners_count)
 {
     ASSERT_EQUAL(listeners_count, 2);
     ASSERT_EQUAL(memcmp(listeners[0], endpoint_id1, KAA_ENDPOINT_ID_LENGTH), 0);
@@ -91,7 +91,7 @@ static kaa_error_t event_listeners_callback_t(const kaa_endpoint_id listeners[],
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t event_listeners_request_failed_t(void *context)
+static kaa_error_t event_listeners_request_failed(void *context)
 {
     return KAA_ERR_NONE;
 }
@@ -113,7 +113,7 @@ void test_kaa_event_listeners_serialize_request()
     kaa_event_listeners_callback_t callback = { NULL, NULL, NULL };
     ASSERT_NOT_EQUAL(kaa_event_manager_find_event_listeners(event_manager, fqns, 2, &callback), KAA_ERR_NONE);
 
-    callback = (kaa_event_listeners_callback_t) { NULL, &event_listeners_callback_t, &event_listeners_request_failed_t };
+    callback = (kaa_event_listeners_callback_t) { NULL, &event_listeners_callback, &event_listeners_request_failed };
     ASSERT_EQUAL(kaa_event_manager_find_event_listeners(event_manager, fqns, 2, &callback), KAA_ERR_NONE);
 
     size_t actual_size = 0;

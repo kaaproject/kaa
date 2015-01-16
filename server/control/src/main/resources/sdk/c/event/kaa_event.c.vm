@@ -782,10 +782,10 @@ static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, 
         }
         kaa_event_listeners_request_t *request = (kaa_event_listeners_request_t *) kaa_list_get_data(request_node);
         if (listeners_result == EVENT_LISTENERS_SUCCESS) {
-            request->callback.event_listeners_callback_t((kaa_endpoint_id *) reader->current, listeners_count, request->callback.context);
+            request->callback.on_event_listeners(request->callback.context, (kaa_endpoint_id *) reader->current, listeners_count);
             KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Success event listeners response for request id %u", request_id);
         } else {
-            request->callback.event_listeners_request_failed_t(request->callback.context);
+            request->callback.on_event_listeners_failed(request->callback.context);
             KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Failed to find event listeners, request id %u", request_id);
         }
         kaa_list_remove_at(&self->event_listeners_requests, request_node, &destroy_event_listener_request);
@@ -908,7 +908,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
 kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback)
 {
     KAA_RETURN_IF_NIL3(self, fqns_count, callback, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL2(callback->event_listeners_callback_t, callback->event_listeners_request_failed_t, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(callback->on_event_listeners, callback->on_event_listeners_failed, KAA_ERR_BADPARAM);
 
     kaa_event_listeners_request_t *subscriber = create_event_listener_request(++self->event_listeners_request_id
                                                                                , fqns, fqns_count
@@ -929,6 +929,7 @@ kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, co
             return KAA_ERR_NOMEM;
         }
     }
+
     kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
     if (sync)
         (*sync)(event_sync_services, 1);

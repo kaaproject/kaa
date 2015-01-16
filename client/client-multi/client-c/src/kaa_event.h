@@ -33,26 +33,13 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 #include "kaa_error.h"
-
-#define KAA_ENDPOINT_ID_LENGTH 20
-
-typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
-typedef const uint8_t* kaa_endpoint_id_p;
+#include "platform/ext_event_listeners.h"
 
 typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p event_source);
 typedef size_t kaa_event_block_id;
 
 typedef struct kaa_event_manager_t kaa_event_manager_t;
 
-/**
- * Interface for the event listeners response receiver.
- */
-typedef struct kaa_event_listeners_callback_t
-{
-    void *context;                                                                                                          /**< Context to pass to all functions below. */
-    kaa_error_t (*event_listeners_callback_t) (const kaa_endpoint_id listeners[], size_t listeners_count, void *context);   /**< Called on successful listeners response. */
-    kaa_error_t (*event_listeners_request_failed_t) (void *context);                                                        /**< Called on failures. */
-} kaa_event_listeners_callback_t;
 
 /**
  * @brief Initiates search of available event listeners by given FQNs.
@@ -67,6 +54,7 @@ typedef struct kaa_event_listeners_callback_t
  */
 kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback);
 
+
 /**
  * @brief Start a new event block.
  *
@@ -79,6 +67,7 @@ kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, co
  */
 kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_block_id *trx_id);
 
+
 /**
  * @brief Send all the events from the event block at once.
  *
@@ -90,6 +79,7 @@ kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_bl
  * @return Error code.
  */
 kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id);
+
 
 /**
  * @brief Removes the event block without sending events.

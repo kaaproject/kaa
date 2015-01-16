@@ -73,7 +73,7 @@ static void kaa_event_manager_${e_name}_listener(const char * event_fqn, const c
         avro_reader_t reader = avro_reader_memory(data, size);
         ${prefix}_${e_name}_t * event = ${prefix}_${e_name}_deserialize(reader);
         avro_reader_free(reader);
-        listeners.${e_name}_listener(event, event_source, listeners.${e_name}_context);
+        listeners.${e_name}_listener(listeners.${e_name}_context, event, event_source);
     }
 }
 
