@@ -31,10 +31,10 @@ import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportId;
-import org.kaaproject.kaa.client.channel.TransportIdConstants;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableCommandRunnable;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableRunnable;
@@ -198,7 +198,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
-    public void onServerError(ServerInfo info) {
+    public void onServerError(TransportConnectionInfo info) {
         if (!stopped) {
             LOG.debug("Channel [{}] connection failed", getId());
             synchronized (this) {
@@ -267,8 +267,8 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
-    public TransportId getTransportId() {
-        return TransportIdConstants.HTTP_TRANSPORT_ID;
+    public TransportProtocolId getTransportProtocolId() {
+        return TransportProtocolIdConstants.HTTP_TRANSPORT_ID;
     }
 
     @Override
@@ -291,7 +291,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
-    public synchronized void setServer(ServerInfo server) {
+    public synchronized void setServer(TransportConnectionInfo server) {
         if (isShutdown) {
             LOG.info("Can't set server. Channel [{}] is down", getId());
             return;

@@ -42,8 +42,8 @@ import org.kaaproject.kaa.client.channel.MetaDataTransport;
 import org.kaaproject.kaa.client.channel.NotificationTransport;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.RedirectionTransport;
-import org.kaaproject.kaa.client.channel.ServerInfo;
-import org.kaaproject.kaa.client.channel.TransportId;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.UserTransport;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
@@ -149,7 +149,7 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     private final EndpointObjectHash publicKeyHash;
 
-    private final Map<TransportId, KaaDataChannel> defaultChannels = new HashMap<TransportId, KaaDataChannel>();
+    private final Map<TransportProtocolId, KaaDataChannel> defaultChannels = new HashMap<TransportProtocolId, KaaDataChannel>();
 
     AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         this(new KaaClientProperties());
@@ -158,12 +158,12 @@ public abstract class AbstractKaaClient implements KaaClient {
     AbstractKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         this.properties = properties;
 
-        Map<TransportId, List<ServerInfo>> bootstrapServers = properties.getBootstrapServers();
+        Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
             throw new RuntimeException("Unable to obtain list of bootstrap servers."); //NOSONAR
         }
 
-        for (Map.Entry<TransportId, List<ServerInfo>> cursor : bootstrapServers.entrySet()) {
+        for (Map.Entry<TransportProtocolId, List<TransportConnectionInfo>> cursor : bootstrapServers.entrySet()) {
             Collections.shuffle(cursor.getValue());
         }
 
@@ -211,8 +211,8 @@ public abstract class AbstractKaaClient implements KaaClient {
         operationsChannel.setMultiplexer(operationsDataProcessor);
         operationsChannel.setDemultiplexer(operationsDataProcessor);
         channelManager.addChannel(operationsChannel);
-        defaultChannels.put(operationsChannel.getTransportId(), operationsChannel);
-        defaultChannels.put(bootstrapChannel.getTransportId(), bootstrapChannel);
+        defaultChannels.put(operationsChannel.getTransportProtocolId(), operationsChannel);
+        defaultChannels.put(bootstrapChannel.getTransportProtocolId(), bootstrapChannel);
 
         bootstrapManager.setChannelManager(channelManager);
 
@@ -408,7 +408,7 @@ public abstract class AbstractKaaClient implements KaaClient {
     }
 
     @Override
-    public KaaDataChannel getDefaultChannel(TransportId type) {
+    public KaaDataChannel getDefaultChannel(TransportProtocolId type) {
         throw new RuntimeException("not implemented!");
 //        return defaultChannels.get(type);
     }

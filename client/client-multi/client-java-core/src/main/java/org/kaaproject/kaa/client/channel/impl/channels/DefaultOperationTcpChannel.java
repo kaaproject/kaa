@@ -36,10 +36,10 @@ import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportId;
-import org.kaaproject.kaa.client.channel.TransportIdConstants;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.Constants;
@@ -471,7 +471,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     @Override
-    public synchronized void setServer(ServerInfo server) {
+    public synchronized void setServer(TransportConnectionInfo server) {
         if (server == null) {
             LOG.warn("Server is null for Channel [{}].", getId());
             return;
@@ -536,8 +536,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     @Override
-    public TransportId getTransportId() {
-        return TransportIdConstants.TCP_TRANSPORT_ID;
+    public TransportProtocolId getTransportProtocolId() {
+        return TransportProtocolIdConstants.TCP_TRANSPORT_ID;
     }
 
     @Override

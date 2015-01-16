@@ -36,21 +36,21 @@ public class IPTransportInfoTest {
 
     @Test
     public void testInit() throws NoSuchAlgorithmException {
-        IPTransportInfo info = new IPTransportInfo(createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.TCP_TRANSPORT_ID,
+        IPTransportInfo info = new IPTransportInfo(createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID,
                 "localhost", 80, KeyUtil.generateKeyPair().getPublic()));
         
         Assert.assertEquals(ServerType.OPERATIONS, info.getServerType());
-        Assert.assertEquals(TransportIdConstants.TCP_TRANSPORT_ID, info.getTransportId());
+        Assert.assertEquals(TransportProtocolIdConstants.TCP_TRANSPORT_ID, info.getTransportId());
         Assert.assertEquals("localhost", info.getHost());
         Assert.assertEquals(80, info.getPort());
     }
 
-    public static ServerInfo createTestServerInfo(ServerType serverType, TransportId id, String host, int port, PublicKey key) {
+    public static TransportConnectionInfo createTestServerInfo(ServerType serverType, TransportProtocolId id, String host, int port, PublicKey key) {
         ProtocolMetaData md = buildMetaData(id, host, port, key);
         return new GenericTransportInfo(serverType, md);
     }
 
-    public static ProtocolMetaData buildMetaData(TransportId id, String host, int port, PublicKey key) {
+    public static ProtocolMetaData buildMetaData(TransportProtocolId id, String host, int port, PublicKey key) {
         ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT * 3 + host.getBytes(UTF8).length + key.getEncoded().length]);
         buf.putInt(key.getEncoded().length);
         buf.put(key.getEncoded());

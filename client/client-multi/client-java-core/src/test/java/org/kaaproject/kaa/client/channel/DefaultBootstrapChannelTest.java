@@ -64,7 +64,7 @@ public class DefaultBootstrapChannelTest {
         KaaDataChannel channel = new DefaultBootstrapChannel(client, state);
 
         Assert.assertEquals(ChannelDirection.BIDIRECTIONAL, channel.getSupportedTransportTypes().get(TransportType.BOOTSTRAP));
-        Assert.assertEquals(TransportIdConstants.HTTP_TRANSPORT_ID, channel.getTransportId());
+        Assert.assertEquals(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, channel.getTransportProtocolId());
         Assert.assertEquals("default_bootstrap_channel", channel.getId());
     }
 
@@ -87,7 +87,7 @@ public class DefaultBootstrapChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, 2);
 
-        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportIdConstants.HTTP_TRANSPORT_ID,
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.setServer(server);
@@ -125,7 +125,7 @@ public class DefaultBootstrapChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, 1);
 
-        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportIdConstants.HTTP_TRANSPORT_ID,
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.sync(TransportType.BOOTSTRAP);
@@ -138,7 +138,7 @@ public class DefaultBootstrapChannelTest {
 
         channel.setServer(server);
 
-        Mockito.verify(manager, Mockito.times(1)).onServerFailed(Mockito.any(ServerInfo.class));
+        Mockito.verify(manager, Mockito.times(1)).onServerFailed(Mockito.any(TransportConnectionInfo.class));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class DefaultBootstrapChannelTest {
         channel.setMultiplexer(multiplexer);
         channel.shutdown();
 
-        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportIdConstants.HTTP_TRANSPORT_ID,
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 

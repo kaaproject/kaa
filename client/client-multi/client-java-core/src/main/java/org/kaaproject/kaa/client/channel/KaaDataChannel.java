@@ -68,7 +68,7 @@ public interface KaaDataChannel {
      * @see ChannelType
      *
      */
-    TransportId getTransportId();
+    TransportProtocolId getTransportProtocolId();
 
     /**
      * Retrieves the channel's server type (i.e. OPERATIONS or BOOTSTRAP).
@@ -101,10 +101,10 @@ public interface KaaDataChannel {
      * Sets the server's parameters for the current channel.
      *
      * @param server server's parameters.
-     * @see ServerInfo
+     * @see TransportConnectionInfo
      *
      */
-    void setServer(ServerInfo server);
+    void setServer(TransportConnectionInfo server);
 
     /**
      * Sets connectivity checker to the current channel.

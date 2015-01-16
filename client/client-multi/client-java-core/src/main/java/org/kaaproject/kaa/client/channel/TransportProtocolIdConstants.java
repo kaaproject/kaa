@@ -23,7 +23,7 @@ package org.kaaproject.kaa.client.channel;
  * @author Andrew Shvayka
  *
  */
-public class TransportIdConstants {
+public class TransportProtocolIdConstants {
 
     private static final int HTTP_TRANSPORT_PROTOCOL_ID = 0xfb9a3cf0;
     private static final int HTTP_TRANSPORT_PROTOCOL_VERSION = 1;
@@ -31,6 +31,6 @@ public class TransportIdConstants {
     private static final int TCP_TRANSPORT_PROTOCOL_ID = 0x56c8ff92;
     private static final int TCP_TRANSPORT_PROTOCOL_VERSION = 1;
     
-    public static final TransportId HTTP_TRANSPORT_ID = new TransportId(HTTP_TRANSPORT_PROTOCOL_ID, HTTP_TRANSPORT_PROTOCOL_VERSION);
-    public static final TransportId TCP_TRANSPORT_ID = new TransportId(TCP_TRANSPORT_PROTOCOL_ID, TCP_TRANSPORT_PROTOCOL_VERSION);
+    public static final TransportProtocolId HTTP_TRANSPORT_ID = new TransportProtocolId(HTTP_TRANSPORT_PROTOCOL_ID, HTTP_TRANSPORT_PROTOCOL_VERSION);
+    public static final TransportProtocolId TCP_TRANSPORT_ID = new TransportProtocolId(TCP_TRANSPORT_PROTOCOL_ID, TCP_TRANSPORT_PROTOCOL_VERSION);
 }

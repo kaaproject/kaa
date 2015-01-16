@@ -16,14 +16,16 @@
 
 package org.kaaproject.kaa.client.channel;
 
-
 /**
  * Interface for server information. Used by {@link KaaDataChannel} and
  * {@link KaaChannelManager}
  */
-public interface ServerInfo {
+public interface TransportConnectionInfo {
     ServerType getServerType();
-    TransportId getTransportId();
+
+    TransportProtocolId getTransportId();
+
     int getAccessPointId();
+
     byte[] getConnectionInfo();
 }

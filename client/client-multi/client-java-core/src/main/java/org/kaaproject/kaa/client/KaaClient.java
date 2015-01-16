@@ -23,7 +23,7 @@ import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.TransportId;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
 import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
@@ -220,5 +220,5 @@ public interface KaaClient {
      * @return KaaDataChannel default implementation for the specified {@link ChannelType}
      */
     //TODO: refactor this
-    KaaDataChannel getDefaultChannel(TransportId type);
+    KaaDataChannel getDefaultChannel(TransportProtocolId type);
 }

@@ -37,8 +37,8 @@ import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
-import org.kaaproject.kaa.client.channel.ServerInfo;
-import org.kaaproject.kaa.client.channel.TransportIdConstants;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
@@ -94,12 +94,12 @@ public class DefaultBootstrapManagerTest {
         }
 
         @Override
-        public void onServerFailed(ServerInfo server) {
+        public void onServerFailed(TransportConnectionInfo server) {
 
         }
 
         @Override
-        public void onServerUpdated(ServerInfo newServer) {
+        public void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
             receivedUrl = new IPTransportInfo(newServer).getURL();
             serverUpdated = true;
         }
@@ -144,7 +144,7 @@ public class DefaultBootstrapManagerTest {
         boolean exception = false;
         try {
             manager.receiveOperationsServerList();
-            manager.useNextOperationsServer(TransportIdConstants.HTTP_TRANSPORT_ID);
+            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         } catch (BootstrapRuntimeException e) {
             exception = true;
         }
@@ -161,7 +161,7 @@ public class DefaultBootstrapManagerTest {
 
         boolean exception = false;
         try {
-            manager.useNextOperationsServer(TransportIdConstants.HTTP_TRANSPORT_ID);
+            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         } catch (BootstrapRuntimeException e) {
             exception = true;
         }
@@ -175,7 +175,7 @@ public class DefaultBootstrapManagerTest {
         KeyPair keyPair = keyGen.genKeyPair();
 
         List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
-        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, keyPair.getPublic());
+        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, keyPair.getPublic());
         list.add(md);
 
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
@@ -183,12 +183,12 @@ public class DefaultBootstrapManagerTest {
         manager.setChannelManager(channelManager);
         manager.setTransport(transport);
         manager.onProtocolListUpdated(list);
-        manager.useNextOperationsServer(TransportIdConstants.HTTP_TRANSPORT_ID);
+        manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         assertTrue(channelManager.isServerUpdated());
         assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 
         manager.useNextOperationsServerByAccessPointId("some.name".hashCode());
-        verify(channelManager, times(1)).onServerUpdated(Mockito.any(ServerInfo.class));
+        verify(channelManager, times(1)).onTransportConnectionInfoUpdated(Mockito.any(TransportConnectionInfo.class));
     }
 
     @Test
@@ -207,7 +207,7 @@ public class DefaultBootstrapManagerTest {
         KeyPair keyPair = keyGen.genKeyPair();
 
         List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
-        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, keyPair.getPublic());
+        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, keyPair.getPublic());
         list.add(md);
 
         manager.onProtocolListUpdated(list);
@@ -217,7 +217,7 @@ public class DefaultBootstrapManagerTest {
         Mockito.verify(transport, Mockito.times(1)).sync();
 
         list = new ArrayList<ProtocolMetaData>();
-        md = IPTransportInfoTest.buildMetaData(TransportIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, keyPair.getPublic());
+        md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, keyPair.getPublic());
         list.add(md);
 
         manager.onProtocolListUpdated(list);

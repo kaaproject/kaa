@@ -31,9 +31,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.utils.Charsets;
 import org.kaaproject.kaa.client.channel.GenericTransportInfo;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportId;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
@@ -160,7 +160,7 @@ public class KaaClientProperties extends Properties {
                 getSupportedSystemNTVersion(), getSupportedUserNTVersion(), getEventFamilyVersions(), getLogSchemaVersion());
     }
 
-    public Map<TransportId, List<ServerInfo>> getBootstrapServers() throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public Map<TransportProtocolId, List<TransportConnectionInfo>> getBootstrapServers() throws InvalidKeySpecException, NoSuchAlgorithmException {
         return parseBootstrapServers(getProperty(KaaClientProperties.BOOTSTRAP_SERVERS));
     }
 
@@ -184,8 +184,8 @@ public class KaaClientProperties extends Properties {
         return parseEventClassFamilyVersions(getProperty(KaaClientProperties.EVENT_CLASS_FAMILY_VERSION));
     }
 
-    private Map<TransportId, List<ServerInfo>> parseBootstrapServers(String serversStr) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        Map<TransportId, List<ServerInfo>> servers = new HashMap<>();
+    private Map<TransportProtocolId, List<TransportConnectionInfo>> parseBootstrapServers(String serversStr) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        Map<TransportProtocolId, List<TransportConnectionInfo>> servers = new HashMap<>();
         String[] serversSplit = serversStr.split(";");
 
         for (String server : serversSplit) {
@@ -196,10 +196,10 @@ public class KaaClientProperties extends Properties {
                 md.setProtocolId(Integer.valueOf(tokens[1]));
                 md.setProtocolVersion(Integer.valueOf(tokens[2]));
                 md.setConnectionInfo(ByteBuffer.wrap(Base64.decodeBase64(tokens[3])));
-                TransportId key = new TransportId(md.getProtocolId(), md.getProtocolVersion());
-                List<ServerInfo> serverList = servers.get(key);
+                TransportProtocolId key = new TransportProtocolId(md.getProtocolId(), md.getProtocolVersion());
+                List<TransportConnectionInfo> serverList = servers.get(key);
                 if(serverList == null){
-                    serverList = new ArrayList<ServerInfo>();
+                    serverList = new ArrayList<TransportConnectionInfo>();
                     servers.put(key, serverList);
                 }
                 serverList.add(new GenericTransportInfo(ServerType.BOOTSTRAP, md));

@@ -36,7 +36,7 @@ public class IPTransportInfo extends GenericTransportInfo {
     private final int port;
     private final PublicKey publicKey;
 
-    public IPTransportInfo(ServerInfo parent) {
+    public IPTransportInfo(TransportConnectionInfo parent) {
         super(parent.getServerType(), new ProtocolMetaData(parent.getAccessPointId(), parent.getTransportId().getProtocolId(), parent
                 .getTransportId().getProtocolVersion(), ByteBuffer.wrap(parent.getConnectionInfo())));
         ByteBuffer buf = md.getConnectionInfo().duplicate();

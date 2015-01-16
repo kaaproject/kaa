@@ -108,7 +108,7 @@ public class DefaultOperationTcpChannelTest {
         tcpChannel.sync(TransportType.USER);        // will cause call to KaaDataMultiplexer.compileRequest(...) after "CONNECT" messsage
         tcpChannel.sync(TransportType.PROFILE);
 
-        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.TCP_TRANSPORT_ID,
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID,
                 "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
 
         tcpChannel.setServer(server); // causes call to KaaDataMultiplexer.compileRequest(...) for "CONNECT" messsage
@@ -148,7 +148,7 @@ public class DefaultOperationTcpChannelTest {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         DefaultOperationTcpChannel channel = new DefaultOperationTcpChannel(clientState, channelManager);
 
-        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.TCP_TRANSPORT_ID,
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID,
                 "www.test.fake", 999, KeyUtil.generateKeyPair().getPublic());
         
         ConnectivityChecker checker = Mockito.mock(ConnectivityChecker.class);
@@ -157,6 +157,6 @@ public class DefaultOperationTcpChannelTest {
         channel.setConnectivityChecker(checker);
         channel.setServer(server);
 
-        Mockito.verify(channelManager, Mockito.times(0)).onServerFailed(Mockito.any(ServerInfo.class));
+        Mockito.verify(channelManager, Mockito.times(0)).onServerFailed(Mockito.any(TransportConnectionInfo.class));
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
-import org.kaaproject.kaa.client.channel.TransportId;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 
@@ -44,7 +44,7 @@ public interface BootstrapManager {
      * @param type the channel's type (i.e. HTTP channel, HTTP long poll channel, etc.).
      * @see ChannelType
      */
-    void useNextOperationsServer(TransportId type);
+    void useNextOperationsServer(TransportProtocolId type);
 
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.

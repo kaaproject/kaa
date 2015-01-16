@@ -86,7 +86,7 @@ import org.kaaproject.kaa.common.TransportType;
  * <br>
  * Call to {@link #clearChannelList()} removes <b>all</b> existing channels.<br>
  * <br>
- * If physical connection to remote server failed, call {@link #onServerFailed(ServerInfo)}
+ * If physical connection to remote server failed, call {@link #onServerFailed(TransportConnectionInfo)}
  * to switch to another available server.
  *
  * @author Yaroslav Zeygerman
@@ -171,19 +171,19 @@ public interface KaaChannelManager {
      * Reports to Channel Manager in case link with server was not established.
      *
      * @param server the parameters of server that was not connected.
-     * @see ServerInfo
+     * @see TransportConnectionInfo
      *
      */
-    void onServerFailed(ServerInfo server);
+    void onServerFailed(TransportConnectionInfo server);
 
     /**
      * Reports to Channel Manager about the new server.
      *
      * @param newServer the parameters of the new server.
-     * @see ServerInfo
+     * @see TransportConnectionInfo
      *
      */
-    void onServerUpdated(ServerInfo newServer);
+    void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer);
 
     /**
      * Clears the list of channels.

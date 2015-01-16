@@ -27,9 +27,9 @@ import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportId;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.connectivity.PingServerStorage;
 import org.kaaproject.kaa.common.TransportType;
@@ -44,16 +44,16 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
     private final List<KaaDataChannel> channels = new LinkedList<>();
     private final Map<TransportType, KaaDataChannel> upChannels = new HashMap<TransportType, KaaDataChannel>();
     private final BootstrapManager bootstrapManager;
-    private final Map<TransportId, ServerInfo> lastServers = new HashMap<>();
+    private final Map<TransportProtocolId, TransportConnectionInfo> lastServers = new HashMap<>();
 
-    private final Map<TransportId, List<ServerInfo>> bootststrapServers;
-    private final Map<TransportId, ServerInfo> lastBSServers = new HashMap<>();
+    private final Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers;
+    private final Map<TransportProtocolId, TransportConnectionInfo> lastBSServers = new HashMap<>();
 
     private ConnectivityChecker connectivityChecker;
     private boolean isShutdown = false;
     private boolean isPaused = false;
 
-    public DefaultChannelManager(BootstrapManager manager, Map<TransportId, List<ServerInfo>> bootststrapServers) {
+    public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers) {
         if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
             throw new ChannelRuntimeException("Failed to create channel manager");
         }
@@ -100,20 +100,20 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
         if (!channels.contains(channel)) {
             channel.setConnectivityChecker(connectivityChecker);
             channels.add(channel);
-            ServerInfo server;
+            TransportConnectionInfo server;
             if (channel.getServerType() == ServerType.BOOTSTRAP) {
-                server = getCurrentBootstrapServer(channel.getTransportId());
+                server = getCurrentBootstrapServer(channel.getTransportProtocolId());
             } else {
-                server = lastServers.get(channel.getTransportId());
+                server = lastServers.get(channel.getTransportProtocolId());
             }
             if (server != null) {
-                LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportId());
+                LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportProtocolId());
                 channel.setServer(server);
             } else {
                 if (lastServers != null && lastServers.isEmpty()) {
-                    LOG.warn("Failed to find server for channel [{}] type {}", channel.getId(), channel.getTransportId());
+                    LOG.warn("Failed to find server for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
                 } else {
-                    LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getTransportId());
+                    LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
                 }
             }
         }
@@ -190,7 +190,7 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
     }
 
     @Override
-    public synchronized void onServerUpdated(ServerInfo newServer) {
+    public synchronized void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
         if (isShutdown) {
             LOG.warn("Can't process server update. Channel manager is down");
             return;
@@ -201,23 +201,23 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
 
         for (KaaDataChannel channel : channels) {
             if (channel.getServerType() == newServer.getServerType()
-                    && channel.getTransportId().equals(newServer.getTransportId()))
+                    && channel.getTransportProtocolId().equals(newServer.getTransportId()))
             {
                 LOG.debug("Applying server {} for channel [{}] type {}"
-                        , newServer, channel.getId(), channel.getTransportId());
+                        , newServer, channel.getId(), channel.getTransportProtocolId());
                 channel.setServer(newServer);
             }
         }
     }
 
     @Override
-    public synchronized void onServerFailed(ServerInfo server) {
+    public synchronized void onServerFailed(TransportConnectionInfo server) {
         if (isShutdown) {
             LOG.warn("Can't process server failure. Channel manager is down");
             return;
         }
         if (server.getServerType() == ServerType.BOOTSTRAP) {
-            onServerUpdated(getNextBootstrapServer(server));
+            onTransportConnectionInfoUpdated(getNextBootstrapServer(server));
         } else {
             bootstrapManager.useNextOperationsServer(server.getTransportId());
         }
@@ -229,10 +229,10 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
         upChannels.clear();
     }
 
-    private ServerInfo getCurrentBootstrapServer(TransportId type) {
-        ServerInfo bsi = lastBSServers.get(type);
+    private TransportConnectionInfo getCurrentBootstrapServer(TransportProtocolId type) {
+        TransportConnectionInfo bsi = lastBSServers.get(type);
         if (bsi == null) {
-            List<ServerInfo> serverList = bootststrapServers.get(type);
+            List<TransportConnectionInfo> serverList = bootststrapServers.get(type);
             if (serverList != null && !serverList.isEmpty()) {
                 bsi = serverList.get(0);
                 lastBSServers.put(type, bsi);
@@ -242,10 +242,10 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
         return bsi;
     }
 
-    private ServerInfo getNextBootstrapServer(ServerInfo currentServer) {
-        ServerInfo bsi = null;
+    private TransportConnectionInfo getNextBootstrapServer(TransportConnectionInfo currentServer) {
+        TransportConnectionInfo bsi = null;
 
-        List<ServerInfo> serverList =
+        List<TransportConnectionInfo> serverList =
                 bootststrapServers.get(currentServer.getTransportId());
         int serverIndex = serverList.indexOf(currentServer);
 

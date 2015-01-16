@@ -20,7 +20,7 @@ import java.security.PublicKey;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
 
 /**
- * A context for transport initialization parameters.
+ * A context for transport initialization parameters and {@link MessageHandler}.
  * 
  * @author Andrew Shvayka
  *

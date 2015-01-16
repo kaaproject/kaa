@@ -73,7 +73,7 @@ public class DefaultOperationHttpChannelTest {
         KaaDataChannel channel = new DefaultOperationHttpChannel(client, state);
 
         Assert.assertEquals(SUPPORTED_TYPES, channel.getSupportedTransportTypes());
-        Assert.assertEquals(TransportIdConstants.HTTP_TRANSPORT_ID, channel.getTransportId());
+        Assert.assertEquals(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, channel.getTransportProtocolId());
         Assert.assertEquals("default_operations_http_channel", channel.getId());
     }
 
@@ -103,7 +103,7 @@ public class DefaultOperationHttpChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultOperationHttpChannelFake channel = new DefaultOperationHttpChannelFake(client, state, 2);
 
-        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID,
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.setServer(server);
@@ -146,7 +146,7 @@ public class DefaultOperationHttpChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultOperationHttpChannelFake channel = new DefaultOperationHttpChannelFake(client, state, 1);
 
-        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID,
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.sync(TransportType.EVENT);
@@ -159,7 +159,7 @@ public class DefaultOperationHttpChannelTest {
 
         channel.setServer(server);
 
-        Mockito.verify(manager, Mockito.times(1)).onServerFailed(Mockito.any(ServerInfo.class));
+        Mockito.verify(manager, Mockito.times(1)).onServerFailed(Mockito.any(TransportConnectionInfo.class));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class DefaultOperationHttpChannelTest {
         channel.setMultiplexer(multiplexer);
         channel.shutdown();
 
-        ServerInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportIdConstants.HTTP_TRANSPORT_ID,
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 

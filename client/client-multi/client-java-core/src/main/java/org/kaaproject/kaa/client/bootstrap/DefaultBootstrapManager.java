@@ -27,9 +27,9 @@ import java.util.Map;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.GenericTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportId;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.slf4j.Logger;
@@ -50,8 +50,8 @@ public class DefaultBootstrapManager implements BootstrapManager {
     private List<ProtocolMetaData> operationsServerList;
     private KaaChannelManager channelManager;
     private Integer serverToApply;
-    private final Map<TransportId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<TransportId, List<ProtocolMetaData>>();
-    private final Map<TransportId, Iterator<ProtocolMetaData>> mappedIterators = new HashMap<>();
+    private final Map<TransportProtocolId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<TransportProtocolId, List<ProtocolMetaData>>();
+    private final Map<TransportProtocolId, Iterator<ProtocolMetaData>> mappedIterators = new HashMap<>();
 
     public DefaultBootstrapManager(BootstrapTransport transport) {
         this.transport = transport;
@@ -64,12 +64,12 @@ public class DefaultBootstrapManager implements BootstrapManager {
     }
 
     @Override
-    public void useNextOperationsServer(TransportId transportId) {
+    public void useNextOperationsServer(TransportProtocolId transportId) {
         if (mappedOperationServerList != null && !mappedOperationServerList.isEmpty()) {
             if (!mappedIterators.get(transportId).hasNext()) {
                 transport.sync();
             } else {
-                channelManager.onServerUpdated(new GenericTransportInfo(ServerType.OPERATIONS, mappedIterators.get(transportId).next()));
+                channelManager.onTransportConnectionInfoUpdated(new GenericTransportInfo(ServerType.OPERATIONS, mappedIterators.get(transportId).next()));
             }
         } else {
             throw new BootstrapRuntimeException("Operations Server list is empty");
@@ -95,7 +95,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     private void notifyChannelManangerAboutServer(List<ProtocolMetaData> transports) {
         for (ProtocolMetaData transport : transports) {
             LOG.debug("Applying new transport {}", transports);
-            channelManager.onServerUpdated(new GenericTransportInfo(ServerType.OPERATIONS, transport));
+            channelManager.onTransportConnectionInfoUpdated(new GenericTransportInfo(ServerType.OPERATIONS, transport));
         }
     }
 
@@ -124,7 +124,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
         mappedIterators.clear();
         if (operationsServerList != null && !operationsServerList.isEmpty()) {
             for (ProtocolMetaData server : operationsServerList) {
-                TransportId transportId = new TransportId(server.getProtocolId(), server.getProtocolVersion());
+                TransportProtocolId transportId = new TransportProtocolId(server.getProtocolId(), server.getProtocolVersion());
                 List<ProtocolMetaData> servers = mappedOperationServerList.get(transportId);
                 if (servers == null) {
                     servers = new LinkedList<>();
@@ -132,7 +132,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
                 }
                 servers.add(server);
             }
-            for (Map.Entry<TransportId, List<ProtocolMetaData>> entry : mappedOperationServerList.entrySet()) {
+            for (Map.Entry<TransportProtocolId, List<ProtocolMetaData>> entry : mappedOperationServerList.entrySet()) {
                 Collections.shuffle(entry.getValue());
                 mappedIterators.put(entry.getKey(), entry.getValue().iterator());
             }
@@ -143,9 +143,9 @@ public class DefaultBootstrapManager implements BootstrapManager {
                     serverToApply = null;
                 }
             } else {
-                for (Map.Entry<TransportId, Iterator<ProtocolMetaData>> entry : mappedIterators.entrySet()) {
-                    ServerInfo info = new GenericTransportInfo(ServerType.OPERATIONS, entry.getValue().next());
-                    channelManager.onServerUpdated(info);
+                for (Map.Entry<TransportProtocolId, Iterator<ProtocolMetaData>> entry : mappedIterators.entrySet()) {
+                    TransportConnectionInfo info = new GenericTransportInfo(ServerType.OPERATIONS, entry.getValue().next());
+                    channelManager.onTransportConnectionInfoUpdated(info);
                 }
             }
         } else {

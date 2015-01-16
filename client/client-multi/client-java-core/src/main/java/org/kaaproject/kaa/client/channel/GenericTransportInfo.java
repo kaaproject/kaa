@@ -18,21 +18,21 @@ package org.kaaproject.kaa.client.channel;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 
 /**
- * Generic implementation of {@link ServerInfo} that is based on {@link ProtocolMetaData}
+ * Generic implementation of {@link TransportConnectionInfo} that is based on {@link ProtocolMetaData}
  * @author Andrew Shvayka
  *
  */
-public class GenericTransportInfo implements ServerInfo {
+public class GenericTransportInfo implements TransportConnectionInfo {
 
     protected final ServerType serverType;
-    protected final TransportId transportId;
+    protected final TransportProtocolId transportId;
     protected final ProtocolMetaData md;
     
     public GenericTransportInfo(ServerType serverType, ProtocolMetaData md) {
         super();
         this.serverType = serverType;
         this.md = md;
-        this.transportId = new TransportId(md.getProtocolId(), md.getProtocolVersion());
+        this.transportId = new TransportProtocolId(md.getProtocolId(), md.getProtocolVersion());
     }
 
     @Override
@@ -41,7 +41,7 @@ public class GenericTransportInfo implements ServerInfo {
     }
 
     @Override
-    public TransportId getTransportId() {
+    public TransportProtocolId getTransportId() {
         return transportId;
     }
     

@@ -22,31 +22,31 @@ package org.kaaproject.kaa.client.channel;
  * @author Andrew Shvayka
  *
  */
-public final class TransportId {
+public final class TransportProtocolId {
 
-    private final int protocolId;
-    private final int protocolVersion;
+    private final int id;
+    private final int version;
 
-    public TransportId(int protocolId, int protocolVersion) {
+    public TransportProtocolId(int protocolId, int protocolVersion) {
         super();
-        this.protocolId = protocolId;
-        this.protocolVersion = protocolVersion;
+        this.id = protocolId;
+        this.version = protocolVersion;
     }
 
     public int getProtocolId() {
-        return protocolId;
+        return id;
     }
 
     public int getProtocolVersion() {
-        return protocolVersion;
+        return version;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + protocolId;
-        result = prime * result + protocolVersion;
+        result = prime * result + id;
+        result = prime * result + version;
         return result;
     }
 
@@ -58,17 +58,16 @@ public final class TransportId {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        TransportId other = (TransportId) obj;
-        if (protocolId != other.protocolId)
+        TransportProtocolId other = (TransportProtocolId) obj;
+        if (id != other.id)
             return false;
-        if (protocolVersion != other.protocolVersion)
+        if (version != other.version)
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "TransportId [protocolId=" + protocolId + ", protocolVersion=" + protocolVersion + "]";
+        return "TransportProtocolId [id=" + id + ", version=" + version + "]";
     }
-
 }
