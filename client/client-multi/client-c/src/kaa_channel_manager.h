@@ -18,7 +18,9 @@
  * @file kaa_channel_manager.h
  * @brief User defined channels manager for Kaa C SDK.
  *
- * Manages sync request handler functions for Kaa services that are used by Kaa SDK to indicate to user defined protocol
+ * Manages client transport channels.
+ *
+ * Notifies about new access points and indicates to user defined protocol
  * implementations that Kaa services have data to sync with Operations server.
  */
 
@@ -26,84 +28,51 @@
 #define KAA_CHANNEL_MANAGER_H_
 
 #include "kaa_common.h"
+#include "platform/ext_transport_channel.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * Kaa channel manager structure.
+ * @brief Kaa channel manager structure.
  */
 typedef struct kaa_channel_manager_t kaa_channel_manager_t;
 
-/**
- * Kaa sync request handler function for specific services.
- */
-typedef void (*kaa_sync_handler_fn)(const kaa_service_t services[], size_t service_count);
-
-/**
- * General Kaa sync request handler function for all available services.
- */
-typedef void (*kaa_sync_all_handler_fn)();
-
-/**
- * @brief Adds user-defined transport channel implementation as a sync request handler for the given list of services.
- *
- * Kaa library will call the supplied @c handler when there is data to be sent to Operations server for one of the
- * specified services.
- *
- * @b NOTE: It is possible to register more than one sync handler for the same service. In such event Kaa library will
- * use the last registered one.
- *
- * @b NOTE: Channel manager does not check if the handler was already registered. Calling this functions more than once
- * with the same @c handler will lead to several instances registered in the channel manager.
- *
- * @param[in]   self                Valid pointer to the channel manager instance.
- * @param[in]   handler             Pointer to a sync handler function.
- * @param[in]   supported_services  Array of services to use sync handler for.
- * @param[in]   services_count      Size of the @c supported_services array.
- *
- * @return      Error code.
- */
-kaa_error_t kaa_channel_manager_add_sync_handler(kaa_channel_manager_t *self
-        , kaa_sync_handler_fn handler, const kaa_service_t *supported_services, size_t services_count);
 
 
 /**
- * @brief Removes sync request handler from the currently registered list.
+ * @brief Adds user-defined transport channel implementation as a sync request
+ * handler for the given list of services.
  *
- * @b NOTE: If the @c handler was registered more than once, only the @b last registered instance will be removed.
+ * Kaa library will call the channel's callback when there is data to be sent to
+ * Operations server for one of the specified services.
  *
- * @param[in]   self                Valid pointer to the channel manager instance.
- * @param[in]   handler             Pointer to a sync handler function.
+ * @b NOTE: It is possible to register more than one channel for the same service.
+ * In such event Kaa library will use the last registered one.
  *
- * @return      Error code.
+ * @param[in]   self       Channel manager.
+ * @param[in]   channel    Client transport channel.
+ *
+ * @return                 Error code.
  */
-kaa_error_t kaa_channel_manager_remove_sync_handler(kaa_channel_manager_t *self, kaa_sync_handler_fn handler);
-
+kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *self
+                                                    , kaa_transport_channel_interface_t *channel);
 
 /**
- * @brief Sets general sync request handler for all services.
+ * @brief Removes user-defined transport channel implementation from
+ * the currently registered list.
  *
- * Only one general sync request handler is allowed at the time. Second invocation of this function will override
- * the previously set handler.
+ * @b NOTE: The channel manager is responsible to release all resources related
+ * to this channel.
  *
- * @param[in]   self                Valid pointer to the channel manager instance.
- * @param[in]   handler             Pointer to a sync handler function. NULL unsets the value.
+ * @param[in]   self       Channel manager.
+ * @param[in]   channel    Client transport channel.
  *
- * @return      Error code.
+ * @return                 Error code.
  */
-kaa_error_t kaa_channel_manager_set_sync_all_handler(kaa_channel_manager_t *self, kaa_sync_all_handler_fn handler);
-
-
-/**
- * @brief Returns general sync request handler for all services.
- *
- * @param[in]   self                Valid pointer to the channel manager instance.
- *
- * @return      Pointer to the general sync request handler. @c NULL if @c this is @c NULL.
- */
-kaa_sync_all_handler_fn kaa_channel_manager_get_sync_all_handler(kaa_channel_manager_t *self);
+kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *self
+                                                       , kaa_transport_channel_interface_t *channel);
 
 #ifdef __cplusplus
 }      /* extern "C" */

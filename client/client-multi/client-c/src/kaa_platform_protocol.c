@@ -34,6 +34,18 @@
 
 
 
+/** External channel manager API */
+extern kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self
+                                                                , size_t *expected_size);
+extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self
+                                                                 , kaa_platform_message_writer_t* writer);
+
+/** External bootstrap manager API */
+extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
+                                                          , kaa_platform_message_reader_t *reader
+                                                          , uint32_t extension_options
+                                                          , size_t extension_length);
+
 /** External user manager API */
 extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
@@ -181,6 +193,12 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
         *expected_size += extension_size;
 
         switch (services[services_count]) {
+        case KAA_SERVICE_BOOTSTRAP: {
+            err_code = kaa_channel_manager_bootstrap_request_get_size(self->kaa_context->channel_manager
+                                                                    , &extension_size);
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated bootstrap extension size %u", extension_size);
+            break;
+        }
         case KAA_SERVICE_PROFILE: {
             bool need_resync = false;
             err_code = kaa_profile_need_profile_resync(self->kaa_context->profile_manager
@@ -258,6 +276,13 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
 
     for (;!error_code && services_count--;) {
         switch (services[services_count]) {
+        case KAA_SERVICE_BOOTSTRAP: {
+            error_code = kaa_channel_manager_bootstrap_request_serialize(self->kaa_context->channel_manager
+                                                                     , writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the bootstrap extension");
+            break;
+        }
         case KAA_SERVICE_PROFILE: {
             bool need_resync = false;
             error_code = kaa_profile_need_profile_resync(self->kaa_context->profile_manager
@@ -385,6 +410,13 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
         KAA_RETURN_IF_ERR(error_code);
 
         switch (extension_type) {
+        case KAA_BOOTSTRAP_EXTENSION_TYPE: {
+            error_code = kaa_bootstrap_manager_handle_server_sync(self->kaa_context->bootstrap_manager
+                                                                , reader
+                                                                , extension_options
+                                                                , extension_length);
+            break;
+        }
         case KAA_META_DATA_EXTENSION_TYPE: {
             error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
             request_id = KAA_NTOHL(request_id);
