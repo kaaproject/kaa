@@ -531,6 +531,7 @@ void test_kaa_server_sync_with_event_callbacks()
 
      kaa_platform_message_reader_destroy(server_sync_reader);
      kaa_platform_message_writer_destroy(server_sync_writer);
+     KAA_FREE((void *) event_data);
 }
 #endif
 

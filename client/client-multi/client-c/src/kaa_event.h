@@ -33,7 +33,7 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 #include "kaa_error.h"
-#include "platform/ext_event_listeners.h"
+#include "platform/ext_event_listeners_callback.h"
 
 typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p event_source);
 typedef size_t kaa_event_block_id;
@@ -42,7 +42,7 @@ typedef struct kaa_event_manager_t kaa_event_manager_t;
 
 
 /**
- * @brief Initiates search of available event listeners by given FQNs.
+ * @brief Initiates a request to the server to search for available event listeners by given FQNs.
  *
  *
  * @param[in]       self                Valid pointer to the event manager instance.

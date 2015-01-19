@@ -87,7 +87,7 @@ typedef enum {
 typedef struct {
     uint16_t                        request_id;
     bool                            is_sent;
-    char                          **fqns;
+    kaa_bytes_t                   **fqns;
     size_t                          fqns_count;
     kaa_event_listeners_callback_t  callback;
 } kaa_event_listeners_request_t;
@@ -122,19 +122,18 @@ extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_mana
 
 static void destroy_event_listener_request(void *request_p)
 {
-    if (request_p) {
-        kaa_event_listeners_request_t *subscriber = (kaa_event_listeners_request_t *) request_p;
-        if (subscriber->fqns) {
-            size_t i = 0;
-            for (; i < subscriber->fqns_count; ++i) {
-                if (subscriber->fqns[i]) {
-                    KAA_FREE(subscriber->fqns[i]);
-                }
+    KAA_RETURN_IF_NIL(request_p,);
+    kaa_event_listeners_request_t *subscriber = (kaa_event_listeners_request_t *) request_p;
+    if (subscriber->fqns) {
+        size_t i = 0;
+        for (; i < subscriber->fqns_count; ++i) {
+            if (subscriber->fqns[i]) {
+                kaa_bytes_destroy(subscriber->fqns[i]);
             }
-            KAA_FREE(subscriber->fqns);
         }
-        KAA_FREE(subscriber);
+        KAA_FREE(subscriber->fqns);
     }
+    KAA_FREE(subscriber);
 }
 
 static kaa_event_listeners_request_t *create_event_listener_request(uint16_t request_id, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback)
@@ -142,7 +141,7 @@ static kaa_event_listeners_request_t *create_event_listener_request(uint16_t req
     kaa_event_listeners_request_t *result = (kaa_event_listeners_request_t *) KAA_MALLOC(sizeof(kaa_event_listeners_request_t));
     KAA_RETURN_IF_NIL(result, NULL);
 
-    result->fqns = (char **) KAA_CALLOC(fqns_count, sizeof(char *));
+    result->fqns = (kaa_bytes_t **) KAA_CALLOC(fqns_count, sizeof(kaa_bytes_t *));
     if (!result->fqns) {
         destroy_event_listener_request(result);
         return NULL;
@@ -151,12 +150,11 @@ static kaa_event_listeners_request_t *create_event_listener_request(uint16_t req
 
     size_t i = 0;
     for (; i < fqns_count; ++i) {
-        result->fqns[i] = (char *) KAA_MALLOC(strlen(fqns[i]) + 1);
+        result->fqns[i] = kaa_bytes_copy_create((const uint8_t *) fqns[i], strlen(fqns[i]));
         if (!result->fqns[i]) {
             destroy_event_listener_request(result);
             return NULL;
         }
-        strcpy(result->fqns[i], fqns[i]);
     }
 
     result->callback = *callback;
@@ -170,7 +168,7 @@ static bool find_listeners_request_by_id(void *request_p, void *context)
 {
     kaa_event_listeners_request_t *request = (kaa_event_listeners_request_t *) request_p;
     uint16_t *request_id = (uint16_t *) context;
-    return (request && request_id) ? ((*request_id) == request->request_id) : false;
+    return (request && request_id && ((*request_id) == request->request_id));
 }
 
 static void kaa_event_destroy(void* data)
@@ -303,11 +301,8 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
 
     event->seq_num = sequence_number;
     event->event_class_fqn = kaa_bytes_copy_create((const uint8_t *)fqn
-                                                 , strlen(fqn) + 1 /* Additional byte to copy null symbol */
-                                                 , &kaa_data_destroy);
+                                                 , strlen(fqn));
     KAA_RETURN_IF_NIL(event->event_class_fqn, KAA_ERR_NOMEM);
-
-    --event->event_class_fqn->size; /* Exclude the null symbol from size */
 
     if (event_data && event_data_size > 0) {
         event->event_data = kaa_bytes_move_create((const uint8_t *) event_data
@@ -317,7 +312,7 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
     }
 
     if (target) {
-        event->target = kaa_bytes_copy_create(target, KAA_ENDPOINT_ID_LENGTH, &kaa_data_destroy);
+        event->target = kaa_bytes_copy_create(target, KAA_ENDPOINT_ID_LENGTH);
         KAA_RETURN_IF_NIL(event->target, KAA_ERR_NOMEM);
     }
 
@@ -378,16 +373,16 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event target = %s", target_string);
     }
 # endif
-    kaa_error_t error_code = kaa_fill_event_structure(event
+    kaa_error_t error = kaa_fill_event_structure(event
                                                     , new_sequence_number
                                                     , fqn
                                                     , event_data
                                                     , event_data_size
                                                     , target);
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to fill a new event (size=%u)", event_data_size);
+    if (error) {
+        KAA_LOG_ERROR(self->logger, error, "Failed to fill a new event (size=%u)", event_data_size);
         kaa_event_destroy(event);
-        return error_code;
+        return error;
     }
 
     if (self->pending_events) {
@@ -467,7 +462,7 @@ static kaa_error_t kaa_event_request_get_size_no_header(kaa_event_manager_t *sel
                 *expected_size += sizeof(uint32_t) * request->fqns_count; // fqn length + reserved
                 int i = 0;
                 for (; i < request->fqns_count; ++i) {
-                    *expected_size += kaa_aligned_size_get(strlen(request->fqns[i]));
+                    *expected_size += kaa_aligned_size_get(request->fqns[i]->size);
                 }
             }
             cursor = kaa_list_next(cursor);
@@ -480,11 +475,11 @@ kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expect
 {
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = kaa_event_request_get_size_no_header(self, expected_size);
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to get event extension length");
+    kaa_error_t error = kaa_event_request_get_size_no_header(self, expected_size);
+    if (error) {
+        KAA_LOG_ERROR(self->logger, error, "Failed to get event extension length");
         *expected_size = 0;
-        return error_code;
+        return error;
     }
 
     self->extension_payload_size = *expected_size;
@@ -496,7 +491,7 @@ kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expect
 static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_t *events, kaa_platform_message_writer_t *writer)
 {
     kaa_event_t * event = (kaa_event_t *) kaa_list_get_data(events);
-    kaa_error_t error_code = KAA_ERR_NONE;
+    kaa_error_t error = KAA_ERR_NONE;
 
     uint16_t temp_network_order_16 = 0;
     uint32_t temp_network_order_32 = 0;
@@ -507,10 +502,10 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
         }
 
         temp_network_order_32 = KAA_HTONL(event->seq_num);
-        error_code = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event sequence number");
-            return error_code;
+        error = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to write event sequence number");
+            return error;
         }
 
         /**
@@ -520,53 +515,53 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
                               | (event->event_data ? KAA_EVENT_OPTION_EVENT_HAS_DATA : 0);
         temp_network_order_16 = KAA_HTONS(temp_network_order_16);
 
-        error_code = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event options");
-            return error_code;
+        error = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to write event options");
+            return error;
         }
 
         temp_network_order_16 = KAA_HTONS(event->event_class_fqn->size);
-        error_code = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event class fqn length");
-            return error_code;
+        error = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to write event class fqn length");
+            return error;
         }
 
         if (event->event_data) {
             temp_network_order_32 = KAA_HTONL(event->event_data->size);
-            error_code = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data size");
-                return error_code;
+            error = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
+            if (error) {
+                KAA_LOG_ERROR(self->logger, error, "Failed to write event data size");
+                return error;
             }
         }
 
         if (event->target) {
-            error_code = kaa_platform_message_write_aligned(writer,
+            error = kaa_platform_message_write_aligned(writer,
                                                             event->target->buffer
                                                           , KAA_ENDPOINT_ID_LENGTH);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event target id");
-                return error_code;
+            if (error) {
+                KAA_LOG_ERROR(self->logger, error, "Failed to write event target id");
+                return error;
             }
         }
 
-        error_code = kaa_platform_message_write_aligned(writer
+        error = kaa_platform_message_write_aligned(writer
                                                       , event->event_class_fqn->buffer
                                                       , event->event_class_fqn->size);
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event class fqn aligned");
-            return error_code;
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to write event class fqn aligned");
+            return error;
         }
 
         if (event->event_data) {
-            error_code = kaa_platform_message_write_aligned(writer
+            error = kaa_platform_message_write_aligned(writer
                                                           , event->event_data->buffer
                                                           , event->event_data->size);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data aligned");
-                return error_code;
+            if (error) {
+                KAA_LOG_ERROR(self->logger, error, "Failed to write event data aligned");
+                return error;
             }
         }
 
@@ -589,13 +584,13 @@ static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *se
             writer->current += sizeof(uint16_t);
             int i = 0;
             for (; i < request->fqns_count; ++i) {
-                size_t fqn_length = strlen(request->fqns[i]);
+                size_t fqn_length = request->fqns[i]->size;
                 *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) fqn_length);
                 writer->current += sizeof(uint32_t); // fqn length + reserved
-                kaa_error_t error_code = kaa_platform_message_write_aligned(writer, request->fqns[i], fqn_length);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code, "Failed to write event listener request");
-                    return error_code;
+                kaa_error_t error = kaa_platform_message_write_aligned(writer, request->fqns[i]->buffer, fqn_length);
+                if (error) {
+                    KAA_LOG_ERROR(self->logger, error, "Failed to write event listener request");
+                    return error;
                 }
             }
             ++count;
@@ -621,14 +616,14 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
         extension_options |= KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_RECEIVE_EVENTS;
     }
 
-    kaa_error_t error_code = kaa_platform_message_write_extension_header(writer
+    kaa_error_t error = kaa_platform_message_write_extension_header(writer
                                                            , KAA_EVENT_EXTENSION_TYPE
                                                            , extension_options
                                                            , self->extension_payload_size);
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to write event extension header (ext type %u, options %X, payload size %u)"
+    if (error) {
+        KAA_LOG_ERROR(self->logger, error, "Failed to write event extension header (ext type %u, options %X, payload size %u)"
                                         , KAA_EVENT_EXTENSION_TYPE, extension_options, self->extension_payload_size);
-        return error_code;
+        return error;
     }
 
     /* write events */
@@ -649,16 +644,16 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
             *((uint16_t *) writer->current) = KAA_HTONS(events_count);
             writer->current += sizeof(uint16_t);
 
-            error_code = kaa_event_list_serialize(self, resending_events, writer);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to write events");
-                return error_code;
+            error = kaa_event_list_serialize(self, resending_events, writer);
+            if (error) {
+                KAA_LOG_ERROR(self->logger, error, "Failed to write events");
+                return error;
             }
 
-            error_code = kaa_event_list_serialize(self, pending_events, writer);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to write events");
-                return error_code;
+            error = kaa_event_list_serialize(self, pending_events, writer);
+            if (error) {
+                KAA_LOG_ERROR(self->logger, error, "Failed to write events");
+                return error;
             }
 
             self->events_awaiting_response.request_id = request_id;
@@ -673,10 +668,10 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
             writer->current += sizeof(uint16_t);
 
             uint16_t listeners_count = 0;
-            error_code = kaa_event_listeners_request_serialize(self, writer, &listeners_count);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize event listeners request");
-                return error_code;
+            error = kaa_event_listeners_request_serialize(self, writer, &listeners_count);
+            if (error) {
+                KAA_LOG_ERROR(self->logger, error, "Failed to serialize event listeners request");
+                return error;
             }
             *((uint16_t *) listeners_count_p) = KAA_HTONS(listeners_count);
         }
@@ -691,36 +686,36 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event received");
 
     uint16_t event_options = 0;
-    kaa_error_t error_code = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event options field");
-        return error_code;
+    kaa_error_t error = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
+    if (error) {
+        KAA_LOG_ERROR(self->logger, error, "Failed to read event options field");
+        return error;
     }
     event_options = KAA_NTOHS(event_options);
 
     uint16_t event_class_fqn_length = 0;
-    error_code = kaa_platform_message_read(reader, &event_class_fqn_length, sizeof(uint16_t));
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event class fqn length field");
-        return error_code;
+    error = kaa_platform_message_read(reader, &event_class_fqn_length, sizeof(uint16_t));
+    if (error) {
+        KAA_LOG_ERROR(self->logger, error, "Failed to read event class fqn length field");
+        return error;
     }
     event_class_fqn_length = KAA_NTOHS(event_class_fqn_length);
 
     uint32_t event_data_size = 0;
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
-        error_code = kaa_platform_message_read(reader, &event_data_size, sizeof(uint32_t));
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data size field");
-            return error_code;
+        error = kaa_platform_message_read(reader, &event_data_size, sizeof(uint32_t));
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to read event data size field");
+            return error;
         }
         event_data_size = KAA_NTOHL(event_data_size);
     }
 
     kaa_endpoint_id event_source;
-    error_code = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH);
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event source endpoint id field");
-        return error_code;
+    error = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH);
+    if (error) {
+        KAA_LOG_ERROR(self->logger, error, "Failed to read event source endpoint id field");
+        return error;
     }
 
     bool is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_class_fqn_length));
@@ -729,10 +724,10 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         return KAA_ERR_READ_FAILED;
     }
     char event_fqn[event_class_fqn_length + 1];
-    error_code = kaa_platform_message_read_aligned(reader, event_fqn, event_class_fqn_length);
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event class fqn field");
-        return error_code;
+    error = kaa_platform_message_read_aligned(reader, event_fqn, event_class_fqn_length);
+    if (error) {
+        KAA_LOG_ERROR(self->logger, error, "Failed to read event class fqn field");
+        return error;
     }
     event_fqn[event_class_fqn_length] = '\0';
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Processing event with FQN=\"%s\"", event_fqn);
@@ -749,10 +744,10 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         }
 
         char event_data[event_data_size];
-        error_code = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data field");
-            return error_code;
+        error = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to read event data field");
+            return error;
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
         if (callback)
@@ -808,10 +803,10 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
 
     if (extension_options & KAA_EVENT_SERVER_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_PRESENT) {
         uint32_t event_sequence_number = 0;
-        kaa_error_t error_code = kaa_platform_message_read(reader, &event_sequence_number, sizeof(uint32_t));
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to read event_sequence number field");
-            return error_code;
+        kaa_error_t error = kaa_platform_message_read(reader, &event_sequence_number, sizeof(uint32_t));
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to read event_sequence number field");
+            return error;
         }
 
         event_sequence_number = KAA_HTONL(event_sequence_number);
@@ -848,49 +843,49 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
 
     if (extension_length > 0) {
         uint8_t field_id = 0;
-        kaa_error_t error_code = kaa_platform_message_read(reader, &field_id, sizeof(uint8_t)); //read field id
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to read field id in Event server sync message");
-            return error_code;
+        kaa_error_t error = kaa_platform_message_read(reader, &field_id, sizeof(uint8_t)); //read field id
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to read field id in Event server sync message");
+            return error;
         }
 
-        error_code = kaa_platform_message_skip(reader, sizeof(uint8_t)); // skip reserved
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Failed to skip reserved field in Event server sync message");
-            return error_code;
+        error = kaa_platform_message_skip(reader, sizeof(uint8_t)); // skip reserved
+        if (error) {
+            KAA_LOG_ERROR(self->logger, error, "Failed to skip reserved field in Event server sync message");
+            return error;
         }
         switch (field_id) {
             case EVENTS_FIELD: {
                 uint16_t events_count = 0;
-                error_code = kaa_platform_message_read(reader, &events_count, sizeof(uint16_t)); // read events count
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code, "Failed to read field id in Event server sync message");
-                    return error_code;
+                error = kaa_platform_message_read(reader, &events_count, sizeof(uint16_t)); // read events count
+                if (error) {
+                    KAA_LOG_ERROR(self->logger, error, "Failed to read field id in Event server sync message");
+                    return error;
                 }
 
                 events_count = KAA_NTOHS(events_count);
                 while (events_count--) {
-                    error_code = kaa_event_read_event(self, reader);
-                    if (error_code) {
-                        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event from server sync");
-                        return error_code;
+                    error = kaa_event_read_event(self, reader);
+                    if (error) {
+                        KAA_LOG_ERROR(self->logger, error, "Failed to read event from server sync");
+                        return error;
                     }
                 }
                 break;
             }
             case EVENT_LISTENERS_FIELD: {
                 uint16_t event_listeners_responses_count = 0;
-                error_code = kaa_platform_message_read(reader, &event_listeners_responses_count, sizeof(uint16_t)); // read events count
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code, "Failed to read event listener response in Event server sync message");
-                    return error_code;
+                error = kaa_platform_message_read(reader, &event_listeners_responses_count, sizeof(uint16_t)); // read events count
+                if (error) {
+                    KAA_LOG_ERROR(self->logger, error, "Failed to read event listener response in Event server sync message");
+                    return error;
                 }
                 event_listeners_responses_count = KAA_HTONS(event_listeners_responses_count);
                 while (event_listeners_responses_count--) {
-                    error_code = kaa_event_read_listeners_response(self, reader);
-                    if (error_code) {
-                       KAA_LOG_ERROR(self->logger, error_code, "Failed to read event listeners response");
-                       return error_code;
+                    error = kaa_event_read_listeners_response(self, reader);
+                    if (error) {
+                       KAA_LOG_ERROR(self->logger, error, "Failed to read event listeners response");
+                       return error;
                    }
                 }
                 break;
@@ -907,28 +902,23 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
 
 kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback)
 {
-    KAA_RETURN_IF_NIL3(self, fqns_count, callback, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL2(callback->on_event_listeners, callback->on_event_listeners_failed, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL5(self, fqns_count, callback, callback->on_event_listeners, callback->on_event_listeners_failed, KAA_ERR_BADPARAM);
 
     kaa_event_listeners_request_t *subscriber = create_event_listener_request(++self->event_listeners_request_id
                                                                                , fqns, fqns_count
                                                                                , callback);
     KAA_RETURN_IF_NIL(subscriber, KAA_ERR_NOMEM);
 
-    if (!self->event_listeners_requests) {
-        self->event_listeners_requests = kaa_list_create(subscriber);
-        if (!self->event_listeners_requests) {
-            destroy_event_listener_request(subscriber);
-            --self->event_listeners_request_id;
-            return KAA_ERR_NOMEM;
-        }
-    } else {
-        if (!kaa_list_push_back(self->event_listeners_requests, subscriber)) {
-            destroy_event_listener_request(subscriber);
-            --self->event_listeners_request_id;
-            return KAA_ERR_NOMEM;
-        }
+    kaa_list_t *request_it = self->event_listeners_requests ?
+                             kaa_list_push_front(self->event_listeners_requests, subscriber) :
+                             kaa_list_create(subscriber);
+
+    if (!request_it) {
+        destroy_event_listener_request(subscriber);
+        --self->event_listeners_request_id;
+        return KAA_ERR_NOMEM;
     }
+    self->event_listeners_requests = request_it;
 
     kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
     if (sync)
@@ -1112,15 +1102,15 @@ kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self
             kaa_event_t *event = (kaa_event_t*)KAA_CALLOC(1, sizeof(kaa_event_t));
             KAA_RETURN_IF_NIL(event, KAA_ERR_NOMEM);
 
-            kaa_error_t error_code = kaa_fill_event_structure(event
+            kaa_error_t error = kaa_fill_event_structure(event
                                                             , (size_t)-1
                                                             , fqn
                                                             , event_data
                                                             , event_data_size
                                                             , target);
-            if (error_code) {
+            if (error) {
                 kaa_event_destroy(event);
-                return error_code;
+                return error;
             }
 
             event_transaction_t *trx = kaa_list_get_data(it);

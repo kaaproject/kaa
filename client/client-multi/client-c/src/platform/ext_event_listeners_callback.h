@@ -15,12 +15,14 @@
  */
 
 /**
- * @file ext_event_listeners.h
- * @brief External interface for receiving event listeners responses.
+ * @file ext_event_listeners_callback.h
+ * @brief External interface for receiving event listeners responses used by Kaa Event subsystem.
+ * Should be implemented to receive the list of available event listeners.
+ * See @link kaa_event_manager_find_event_listeners @endlink for further information.
  */
 
-#ifndef EXT_EVENT_LISTENERS_H_
-#define EXT_EVENT_LISTENERS_H_
+#ifndef EXT_EVENT_LISTENERS_CALLBACK_H_
+#define EXT_EVENT_LISTENERS_CALLBACK_H_
 
 #include <stdint.h>
 #include "kaa_common.h"
@@ -36,11 +38,12 @@ extern "C" {
  *
  *  @param[in]      context             Callback's context.
  *  @param[in]      listeners           List of available event listeners (endpoint ids).
+ *                                      This list is a temporary object, don't use it outside of the callback.
  *  @param[in]      listeners_count     Size of the listeners list.
  *
  *  @return Error code.
  */
-typedef kaa_error_t (*on_event_listeners_t) (void *context, const kaa_endpoint_id listeners[], size_t listeners_count);
+typedef kaa_error_t (*on_event_listeners_fn) (void *context, const kaa_endpoint_id listeners[], size_t listeners_count);
 
 
 /**
@@ -50,17 +53,17 @@ typedef kaa_error_t (*on_event_listeners_t) (void *context, const kaa_endpoint_i
  *
  * @return Error code.
  */
-typedef kaa_error_t (*on_event_listeners_failed_t) (void *context);
+typedef kaa_error_t (*on_event_listeners_failed_fn) (void *context);
 
 
 /**
  * Interface for the event listeners response receiver.
  */
-typedef struct kaa_event_listeners_callback_t
+typedef struct
 {
-    void *context;                                              /**< Context to pass to all functions below. */
-    on_event_listeners_t on_event_listeners;                    /**< Called on successful listeners response. */
-    on_event_listeners_failed_t on_event_listeners_failed;      /**< Called on failures. */
+    void *context;                                               /**< Context to pass to all functions below. */
+    on_event_listeners_fn on_event_listeners;                    /**< Called on successful listeners response. */
+    on_event_listeners_failed_fn on_event_listeners_failed;      /**< Called on failures. */
 } kaa_event_listeners_callback_t;
 
 
@@ -68,4 +71,4 @@ typedef struct kaa_event_listeners_callback_t
 }      /* extern "C" */
 #endif
 
-#endif /* EXT_EVENT_LISTENERS_H_ */
+#endif /* EXT_EVENT_LISTENERS_CALLBACK_H_ */

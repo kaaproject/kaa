@@ -67,7 +67,7 @@ typedef enum {
 } kaa_service_t;
 
 
-/**
+/*
  * Endpoint ID
  */
 #define KAA_ENDPOINT_ID_LENGTH 20
