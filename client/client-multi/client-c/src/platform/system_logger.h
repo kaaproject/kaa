@@ -47,3 +47,4 @@ int kaa_snpintf(char * buffer, size_t buffer_size, const char * format, ...);
 int kaa_logger_sprintf(char * buffer, size_t buffer_size, const char * format, va_list args);
 
 #endif /* SYSTEM_LOGGER_H_ */
+

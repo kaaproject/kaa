@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,20 @@
  * limitations under the License.
  */
 
-# ifndef KAA_LOGGING_GEN_H_
-# define KAA_LOGGING_GEN_H_
+/*
+sock.h
+ Created on: Jan 15, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
 
-# include "../kaa_common_schema.h"
-# include "../collections/kaa_list.h"
+#ifndef SRC_KAA_PLATFORM_IMPL_POSIX_SOCK_H_
+#define SRC_KAA_PLATFORM_IMPL_POSIX_SOCK_H_
 
-# ifdef __cplusplus
-extern "C" {
-# endif
+#include <arpa/inet.h>
+#define KAA_HTONS(hostshort)    htons((hostshort))
+#define KAA_HTONL(hostlong)     htonl((hostlong))
 
+#define KAA_NTOHS(netshort)     ntohs((netshort))
+#define KAA_NTOHL(netlong)      ntohl((netlong))
 
-typedef struct {
-    kaa_string_t* data;
-
-    serialize_fn serialize;
-    get_size_fn  get_size;
-    destroy_fn   destroy;
-} kaa_test_log_record_t;
-
-kaa_test_log_record_t* kaa_test_log_record_create();
-kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader);
-
-#ifdef __cplusplus
-}      /* extern "C" */
-#endif
-#endif
+#endif /* SRC_KAA_PLATFORM_IMPL_POSIX_SOCK_H_ */

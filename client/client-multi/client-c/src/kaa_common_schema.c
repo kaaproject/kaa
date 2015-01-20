@@ -19,6 +19,9 @@
 #include "kaa_common_schema.h"
 
 
+#include "kaa_common_schema.h"
+
+
 #include "avro_src/avro/io.h"
 #include "avro_src/encoding.h"
 
