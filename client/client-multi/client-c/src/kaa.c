@@ -182,8 +182,8 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     bool need_deallocation = false;
 
     kaa_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
-    kaa_digest d;
-    error = kaa_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, d);
+    kaa_digest pub_key_hash;
+    error = kaa_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, pub_key_hash);
 
     if (need_deallocation && pub_key_buffer_size > 0) {
         KAA_FREE(pub_key_buffer);
@@ -197,7 +197,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
         return error;
     }
 
-    error = kaa_status_set_endpoint_public_key_hash((*kaa_context_p)->status->status_instance, d);
+    error = kaa_copy_sha_hash((*kaa_context_p)->status->status_instance->endpoint_public_key_hash, pub_key_hash);
     if (error) {
         KAA_LOG_FATAL(logger, error, "Failed to set Endpoint public key");
         kaa_context_destroy(*kaa_context_p);

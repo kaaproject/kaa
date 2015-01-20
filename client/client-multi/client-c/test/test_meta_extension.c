@@ -106,10 +106,10 @@ void test_meta_extension_serialize()
     kaa_digest expected_public_key_hash = {0x74, 0xc7, 0x51, 0x43, 0x00, 0xf7, 0xb8, 0x21, 0x2c, 0xc3, 0x6b, 0xa5, 0x9c, 0xb4, 0x03, 0xef, 0xc2, 0x5c, 0x65, 0x6c};
     kaa_digest expected_profile_hash = {0xfa, 0x71, 0xb5, 0x02, 0xe7, 0xdf, 0x96, 0x86, 0x6c, 0xdc, 0xe1, 0x4a, 0x17, 0x35, 0x7f, 0xd9, 0xa8, 0xfb, 0x71, 0x09};
 
-    error_code = kaa_status_set_endpoint_public_key_hash(status, expected_public_key_hash);
+    error_code = kaa_copy_sha_hash(status->endpoint_public_key_hash, expected_public_key_hash);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_status_set_profile_hash(status, expected_profile_hash);
+    error_code = kaa_copy_sha_hash(status->profile_hash, expected_profile_hash);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_meta_data_request_serialize(status, writer, 1);

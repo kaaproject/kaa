@@ -59,6 +59,8 @@ extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_
 extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
 #endif
 
+/** External status API */
+extern kaa_error_t kaa_status_save(kaa_status_t *self);
 
 
 struct kaa_platform_protocol_t
@@ -118,18 +120,10 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_m
     err_code = kaa_platform_message_write(writer, &timeout, sizeof(timeout));
     KAA_RETURN_IF_ERR(err_code);
 
-    kaa_digest_p pub_key_hash = NULL;
-    err_code = kaa_status_get_endpoint_public_key_hash(status, &pub_key_hash);
-    KAA_RETURN_IF_ERR(err_code);
-    KAA_RETURN_IF_NIL(pub_key_hash, err_code);
-    err_code = kaa_platform_message_write_aligned(writer, pub_key_hash, SHA_1_DIGEST_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
-    kaa_digest_p profile_hash = NULL;
-    err_code = kaa_status_get_profile_hash(status, &profile_hash);
-    KAA_RETURN_IF_ERR(err_code);
-    KAA_RETURN_IF_NIL(profile_hash, err_code);
-    err_code = kaa_platform_message_write_aligned(writer, profile_hash, SHA_1_DIGEST_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, status->profile_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
     err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);

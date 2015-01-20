@@ -214,8 +214,8 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         return KAA_ERR_WRITE_FAILED;
     }
 
-    if (!self->log_bucket_id && kaa_status_get_log_bucket_id(self->status, &self->log_bucket_id))
-        return KAA_ERR_BAD_STATE;
+    if (!self->log_bucket_id)
+        self->log_bucket_id = self->status->log_bucket_id;
     ++self->log_bucket_id;
 
     *((uint16_t *) tmp_writer.current) = KAA_HTONS(self->log_bucket_id);

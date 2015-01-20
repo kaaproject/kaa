@@ -80,11 +80,11 @@ typedef const uint8_t* kaa_endpoint_id_p;
  */
 #define SHA_1_DIGEST_LENGTH 20
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
-typedef const unsigned char* kaa_digest_p;
+typedef unsigned char* kaa_digest_p;
 
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
-
+kaa_error_t kaa_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src);
 
 // TODO: Channel types must be represented as a list managed in runtime by the channel_manager
 #define KAA_CHANNEL_TYPE_COUNT 3
