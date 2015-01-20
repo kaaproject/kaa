@@ -16,18 +16,28 @@
 
 package org.kaaproject.kaa.client.channel.impl.transports;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultBootstrapTransport extends AbstractKaaTransport implements BootstrapTransport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
+    
     private BootstrapManager manager;
     private final String applicationToken;
     private final AtomicInteger increment = new AtomicInteger();
@@ -42,8 +52,14 @@ public class DefaultBootstrapTransport extends AbstractKaaTransport implements B
             SyncRequest request = new SyncRequest();
             request.setRequestId(increment.incrementAndGet());
             BootstrapSyncRequest resolveRequest = new BootstrapSyncRequest();
-            //TODO: add transport ids(_versions) to resolve request here;
-            
+            List<KaaDataChannel> channels = channelManager.getChannels();
+            List<ProtocolVersionPair> pairs = new ArrayList<ProtocolVersionPair>(channels.size());
+            for(KaaDataChannel channel : channels){
+                TransportProtocolId channelTransportId = channel.getTransportProtocolId();
+                pairs.add(new ProtocolVersionPair(channelTransportId.getProtocolId(), channelTransportId.getProtocolVersion()));
+                LOG.debug("Adding transport with id {} and version {} to resolve request", channelTransportId.getProtocolId(), channelTransportId.getProtocolVersion());
+            }
+            resolveRequest.setSupportedProtocols(pairs);
             resolveRequest.setRequestId(increment.get());
             request.setSyncRequestMetaData(new SyncRequestMetaData(applicationToken, null, null, null));
             request.setBootstrapSyncRequest(resolveRequest);

@@ -186,7 +186,10 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
             stopZK();
         }
 
-        // Thrift stop
+        if (transportService != null) {
+            transportService.stop();
+        }
+
         if (server != null) {
             server.stop();
         }
@@ -276,9 +279,6 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
         try {
             if (bootstrapNode != null) {
                 bootstrapNode.close();
-            }
-            if (transportService != null) {
-                transportService.stop();
             }
         } catch (IOException e) {
             LOG.warn("Exception when closing ZK node", e);

@@ -62,7 +62,7 @@ public class BootstrapTransportService extends AbstractTransportService implemen
 
     /** Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapTransportService.class);
-    
+
     private static final int DEFAULT_THREAD_POOL_SIZE = 1;
 
     @Value("#{properties[worker_thread_pool]}")
@@ -80,7 +80,7 @@ public class BootstrapTransportService extends AbstractTransportService implemen
     @Autowired
     private Properties properties;
 
-    private MessageHandler handler;
+    private BootstrapMessageHandler handler;
 
     public BootstrapTransportService() {
         super();
@@ -93,22 +93,28 @@ public class BootstrapTransportService extends AbstractTransportService implemen
 
     @Override
     public void lookupAndInit() {
-        super.lookupAndInit();
         LOG.info("Lookup platform protocols");
         Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
         LOG.info("Initializing message handler with {} worker threads", threadPoolSize);
-        handler = new BootstrapMessageHandler(operationsServerListService, Executors.newFixedThreadPool(threadPoolSize), platformProtocols, new KeyPair(
-                keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()), supportUnencryptedConnection);
+        handler = new BootstrapMessageHandler(operationsServerListService, Executors.newFixedThreadPool(threadPoolSize), platformProtocols,
+                new KeyPair(keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()), supportUnencryptedConnection);
+        super.lookupAndInit();
     }
 
     @Override
     protected MessageHandler getMessageHandler() {
         return handler;
     }
-    
+
     @Override
     protected PublicKey getPublicKey() {
         return keyStoreService.getPublicKey();
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        handler.stop();
     }
 
     public static class BootstrapMessageHandler implements MessageHandler {
@@ -157,7 +163,7 @@ public class BootstrapTransportService extends AbstractTransportService implemen
                         response.setBootstrapSync(bsResponse);
                         LOG.trace("Response {}", response);
                         encodeAndForward(message, crypt, platformEncDecMap, response);
-                        LOG.trace("Response forwarded to specific transport", response);
+                        LOG.trace("Response forwarded to specific transport {}", response);
                     } catch (Exception e) {
                         processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
                     }
@@ -166,10 +172,27 @@ public class BootstrapTransportService extends AbstractTransportService implemen
                 private void encodeAndForward(final SessionInitMessage message, MessageEncoderDecoder crypt,
                         Map<Integer, PlatformEncDec> platformEncDecMap, ServerSync response) throws PlatformEncDecException,
                         GeneralSecurityException {
-                    byte[] responseData = encodePlatformLevelData(platformEncDecMap, message.getPlatformId(), response);
-                    byte[] responseSignature = crypt.sign(responseData);
                     MessageBuilder converter = message.getMessageBuilder();
-                    converter.build(responseData, responseSignature, message.isEncrypted());
+                    byte[] responseData = encodePlatformLevelData(platformEncDecMap, message.getPlatformId(), response);
+                    Object[] objects;
+                    if (message.isEncrypted()) {
+                        byte[] responseSignature = crypt.sign(responseData);
+                        responseData = crypt.encodeData(responseData);
+                        LOG.trace("Response signature {}", responseSignature);
+                        LOG.trace("Response data {}", responseData);
+                        objects = converter.build(responseData, responseSignature, message.isEncrypted());
+                    } else {
+                        LOG.trace("Response data {}", responseData);
+                        objects = converter.build(responseData, message.isEncrypted());
+                    }
+
+                    ChannelContext context = message.getChannelContext();
+                    if (objects != null && objects.length > 0) {
+                        for (Object object : objects) {
+                            context.write(object);
+                        }
+                        context.flush();
+                    }
                 }
 
                 private void processErrors(ChannelContext ctx, ErrorBuilder converter, Exception e) {
@@ -256,5 +279,11 @@ public class BootstrapTransportService extends AbstractTransportService implemen
                 }
             });
         }
+
+        public void stop() {
+            executor.shutdown();
+        }
+
     }
+
 }

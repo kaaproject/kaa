@@ -68,7 +68,7 @@ public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
         final CommandFactory<HttpRequest, HttpResponse> factory = new CommandFactory<>(processors);
         final int maxBodySize = configuration.getMaxBodySize();
 
-        this.netty = new AbstractNettyServer("localhost", configuration.getBindPort()) {
+        this.netty = new AbstractNettyServer(configuration.getBindInterface(), configuration.getBindPort()) {
 
             @Override
             protected ChannelInitializer<SocketChannel> configureInitializer() throws Exception {
