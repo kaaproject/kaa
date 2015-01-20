@@ -20,18 +20,7 @@
 #include "utilities/kaa_mem.h"
 #include <string.h>
 
-struct kaa_status_t
-{
 
-    bool            is_registered;
-    bool            is_attached;
-    uint32_t        event_seq_n;
-    uint16_t        log_bucket_id;
-    kaa_digest      endpoint_public_key_hash;
-    kaa_digest      profile_hash;
-
-    char *          endpoint_access_token;
-};
 #define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH*sizeof(char) + SHA_1_DIGEST_LENGTH*sizeof(char))
 
 #define READ_BUFFER(FROM, TO, SIZE) \

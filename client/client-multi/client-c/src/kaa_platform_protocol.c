@@ -64,8 +64,9 @@ extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa
 struct kaa_platform_protocol_t
 {
     kaa_context_t *kaa_context;
-    uint32_t       request_id;
+    kaa_status_t  *status;
     kaa_logger_t  *logger;
+    uint32_t       request_id;
 };
 
 
@@ -92,9 +93,9 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
 
 
 
-kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_platform_message_writer_t* writer, uint32_t request_id)
+kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_message_writer_t* writer, uint32_t request_id)
 {
-    KAA_RETURN_IF_NIL2(context, writer, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(status, writer, KAA_ERR_BADPARAM);
 
     uint32_t options = TIMEOUT_VALUE | PUBLIC_KEY_HASH_VALUE | PROFILE_HASH_VALUE | APP_TOKEN_VALUE;
 
@@ -118,14 +119,14 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_platform
     KAA_RETURN_IF_ERR(err_code);
 
     kaa_digest_p pub_key_hash = NULL;
-    err_code = kaa_status_get_endpoint_public_key_hash(context->status, &pub_key_hash);
+    err_code = kaa_status_get_endpoint_public_key_hash(status, &pub_key_hash);
     KAA_RETURN_IF_ERR(err_code);
     KAA_RETURN_IF_NIL(pub_key_hash, err_code);
     err_code = kaa_platform_message_write_aligned(writer, pub_key_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
     kaa_digest_p profile_hash = NULL;
-    err_code = kaa_status_get_profile_hash(context->status, &profile_hash);
+    err_code = kaa_status_get_profile_hash(status, &profile_hash);
     KAA_RETURN_IF_ERR(err_code);
     KAA_RETURN_IF_NIL(profile_hash, err_code);
     err_code = kaa_platform_message_write_aligned(writer, profile_hash, SHA_1_DIGEST_LENGTH);
@@ -140,6 +141,7 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context, kaa_platform
 
 kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
                                        , kaa_context_t *context
+                                       , kaa_status_t *status
                                        , kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL3(platform_protocol_p, context, logger, KAA_ERR_BADPARAM);
@@ -149,6 +151,7 @@ kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_prot
 
     (*platform_protocol_p)->request_id = 0;
     (*platform_protocol_p)->kaa_context = context;
+    (*platform_protocol_p)->status = status;
     (*platform_protocol_p)->logger = logger;
     return KAA_ERR_NONE;
 }
@@ -254,9 +257,9 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     char *extension_count_p = writer->current;
     writer->current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
 
-    error_code = kaa_meta_data_request_serialize(self->kaa_context, writer, self->request_id);
+    error_code = kaa_meta_data_request_serialize(self->status, writer, self->request_id);
 
-    for (;!error_code && services_count--;) {
+    while (!error_code && services_count--) {
         switch (services[services_count]) {
         case KAA_SERVICE_PROFILE: {
             bool need_resync = false;
@@ -433,7 +436,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     kaa_platform_message_reader_destroy(reader);
 
     if (!error_code) {
-        error_code = kaa_status_save(self->kaa_context->status);
+        error_code = kaa_status_save(self->status);
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync successfully processed");
     } else {
         KAA_LOG_ERROR(self->logger, error_code,

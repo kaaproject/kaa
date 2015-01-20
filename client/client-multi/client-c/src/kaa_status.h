@@ -24,7 +24,18 @@ extern "C" {
 #include "kaa_error.h"
 #include "kaa_common.h"
 
-typedef struct kaa_status_t kaa_status_t;
+typedef struct
+{
+
+    bool            is_registered;
+    bool            is_attached;
+    uint32_t        event_seq_n;
+    uint16_t        log_bucket_id;
+    kaa_digest      endpoint_public_key_hash;
+    kaa_digest      profile_hash;
+
+    char *          endpoint_access_token;
+} kaa_status_t;
 
 kaa_error_t kaa_is_endpoint_registered(kaa_status_t *self, bool *result);
 kaa_error_t kaa_set_endpoint_registered(kaa_status_t *self, bool is_registered);

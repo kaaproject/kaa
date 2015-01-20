@@ -66,6 +66,11 @@ extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platfo
 extern void        kaa_platform_protocol_destroy(kaa_platform_protocol_t *self);
 
 
+struct kaa_status_holder_t
+{
+    kaa_status_t *status_instance;
+};
+
 /* Forward declaration */
 static kaa_error_t kaa_context_destroy(kaa_context_t *context);
 
@@ -80,19 +85,25 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
 
     (*context_p)->logger = logger;
 
-    kaa_error_t error = kaa_status_create(&((*context_p)->status));
+    kaa_error_t error = KAA_ERR_NONE;
+    (*context_p)->status = (kaa_status_holder_t *) KAA_MALLOC(sizeof(kaa_status_holder_t));
+    if (!(*context_p)->status)
+        error = KAA_ERR_NOMEM;
+
+    if (!error)
+        error = kaa_status_create(&((*context_p)->status->status_instance));
 
     if (!error)
         error = kaa_channel_manager_create(&((*context_p)->channel_manager), logger);
 
     if (!error)
-        error = kaa_profile_manager_create(&((*context_p)->profile_manager), (*context_p)->status
+        error = kaa_profile_manager_create(&((*context_p)->profile_manager), (*context_p)->status->status_instance
                 , (*context_p)->channel_manager, (*context_p)->logger);
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     if (!error)
         error = kaa_event_manager_create(&((*context_p)->event_manager)
-                , (*context_p)->status, (*context_p)->channel_manager, (*context_p)->logger);
+                , (*context_p)->status->status_instance, (*context_p)->channel_manager, (*context_p)->logger);
 #endif
 
     if (!error)
@@ -101,12 +112,12 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     if (!error)
         error = kaa_log_collector_create(&((*context_p)->log_collector)
-                , (*context_p)->status, (*context_p)->channel_manager, (*context_p)->logger);
+                , (*context_p)->status->status_instance, (*context_p)->channel_manager, (*context_p)->logger);
 #endif
 
     if (!error)
         error = kaa_user_manager_create(&((*context_p)->user_manager)
-                , (*context_p)->status, (*context_p)->channel_manager, (*context_p)->logger);
+                , (*context_p)->status->status_instance, (*context_p)->channel_manager, (*context_p)->logger);
 
     if (!error)
         error = kaa_platform_protocol_create(&((*context_p)->platfrom_protocol), *context_p, (*context_p)->logger);
@@ -132,7 +143,8 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
     kaa_profile_manager_destroy(context->profile_manager);
     kaa_bootstrap_manager_destroy(context->bootstrap_manager);
     kaa_channel_manager_destroy(context->channel_manager);
-    kaa_status_destroy(context->status);
+    kaa_status_destroy(context->status->status_instance);
+    KAA_FREE(context->status);
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     kaa_log_collector_destroy(context->log_collector);
 #endif
@@ -185,7 +197,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
         return error;
     }
 
-    error = kaa_status_set_endpoint_public_key_hash((*kaa_context_p)->status, d);
+    error = kaa_status_set_endpoint_public_key_hash((*kaa_context_p)->status->status_instance, d);
     if (error) {
         KAA_LOG_FATAL(logger, error, "Failed to set Endpoint public key");
         kaa_context_destroy(*kaa_context_p);

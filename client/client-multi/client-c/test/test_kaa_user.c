@@ -23,6 +23,7 @@
 #include "kaa.h"
 #include "kaa_platform_protocol.h"
 #include "kaa_channel_manager.h"
+#include "kaa_status.h"
 #include "kaa_profile.h"
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
