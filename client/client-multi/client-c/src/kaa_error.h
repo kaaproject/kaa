@@ -45,6 +45,7 @@ typedef enum {
     KAA_ERR_UNSUPPORTED             = -11,
     KAA_ERR_BAD_PROTOCOL_ID         = -12,
     KAA_ERR_BAD_PROTOCOL_VERSION    = -13,
+    KAA_ERR_INSUFFICIENT_BUFFER     = -14,
 
     KAA_ERR_EVENT_NOT_ATTACHED      = -41,
     KAA_ERR_EVENT_BAD_FQN           = -42,

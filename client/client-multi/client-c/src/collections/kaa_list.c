@@ -182,7 +182,7 @@ kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred, void *con
     return NULL;
 }
 
-kaa_list_t *kaa_list_find_last_occurance(kaa_list_t *from, match_predicate pred, void *context)
+kaa_list_t *kaa_list_find_last(kaa_list_t *from, match_predicate pred, void *context)
 {
     KAA_RETURN_IF_NIL2(from, pred, NULL);
     kaa_list_t *it = NULL;
