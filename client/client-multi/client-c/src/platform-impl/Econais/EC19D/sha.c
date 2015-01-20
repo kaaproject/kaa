@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-/*
-platform.h
- Created on: Jan 15, 2015
-     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
-*/
 
-#ifndef SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_PLATFORM_H_
-#define SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_PLATFORM_H_
+#include <sndc_sdk_api.h>
+#include <sndc_crypto_api.h>
+#include "../../../platform/sha.h"
+#include "../../../kaa_common.h"
 
-#include "sndc_sdk_api.h"
+kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
+{
+    KAA_RETURN_IF_NIL3(data, data_size, digest, KAA_ERR_BADPARAM);
 
-#endif /* SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_PLATFORM_H_ */
+    sndc_crypto_sha1(1, (uint8_t **)&data, &data_size, digest);
+
+    return KAA_ERR_NONE;
+}

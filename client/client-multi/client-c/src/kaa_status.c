@@ -16,7 +16,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-# include "platform/kaa_sha.h"
+#include "platform/stdio.h"
+#include "platform/sha.h"
 #include "kaa_status.h"
 #include "kaa_common.h"
 #include "kaa_external.h"

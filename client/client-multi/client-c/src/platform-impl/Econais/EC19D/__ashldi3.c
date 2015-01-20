@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-/*
-kaa_sha.h
- Created on: Jan 15, 2015
-     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
-*/
+#include <inttypes.h>
 
-#ifndef SRC_KAA_PLATFORM_KAA_SHA_H_
-#define SRC_KAA_PLATFORM_KAA_SHA_H_
+uint64_t __ashldi3(uint64_t a, int b)
+{
+    if (b <= 0 ) {
+        return a;
+    }
+    if (b >= 64) {
+        return 0;
+    }
+    uint32_t aLow = (uint32_t) a;
+    uint32_t aHigh = (uint32_t) (a >> 32);
+    if (b >= 32) {
+        aHigh = (aLow << b);
+        aLow = 0;
+    } else {
+        aHigh = (aHigh << b) + (aLow >> (32 - b));
+        aLow = (aLow << b);
+    }
+    return ((uint64_t) aHigh << 32) + aLow;
+}
 
-#include "../kaa_error.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-/*
- * SHA1 hash
- */
-#define SHA_1_DIGEST_LENGTH 20
-typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
-typedef const unsigned char* kaa_digest_p;
-
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
-
-#ifdef __cplusplus
-}      /* extern "C" */
-#endif
-#endif /* SRC_KAA_PLATFORM_KAA_SHA_H_ */

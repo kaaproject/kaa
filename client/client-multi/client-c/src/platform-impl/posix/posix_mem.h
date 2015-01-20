@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-/*
-stdio.h
- Created on: Jan 15, 2015
-     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
-*/
+#ifndef SRC_KAA_PLATFORM_IMPL_POSIX_MEM_H_
+#define SRC_KAA_PLATFORM_IMPL_POSIX_MEM_H_
 
-#ifndef SRC_KAA_PLATFORM_IMPL_POSIX_STDIO_H_
-#define SRC_KAA_PLATFORM_IMPL_POSIX_STDIO_H_
+#include <stdlib.h>
 
-#include <stdio.h>
+#ifndef __KAA_MALLOC
+#define __KAA_MALLOC(S)           malloc(S)
+#endif
 
-#endif /* SRC_KAA_PLATFORM_IMPL_POSIX_STDIO_H_ */
+#ifndef __KAA_CALLOC
+#define __KAA_CALLOC(N,S)         calloc(N, S)
+#endif
+
+#ifndef __KAA_FREE
+#define __KAA_FREE(P)             free(P)
+#endif
+
+#endif /* SRC_KAA_PLATFORM_IMPL_POSIX_MEM_H_ */

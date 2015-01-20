@@ -17,12 +17,11 @@
 # ifndef KAA_DISABLE_FEATURE_EVENTS
 
 # include <stdbool.h>
-# include <stddef.h>
 # include <stdint.h>
 # include <string.h>
 # include <stdarg.h>
 # include "platform/stdio.h"
-# include "platform/kaa_sha.h"
+# include "platform/sha.h"
 # include "kaa_event.h"
 # include "kaa_status.h"
 # include "kaa_channel_manager.h"

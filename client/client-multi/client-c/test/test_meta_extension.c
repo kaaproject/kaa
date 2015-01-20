@@ -18,7 +18,7 @@
 #include "kaa_test.h"
 #include <stddef.h>
 #include <string.h>
-#include "platform/kaa_sha.h"
+#include "platform/sha.h"
 #include "kaa_error.h"
 #include "kaa_common.h"
 #include "kaa_defaults.h"

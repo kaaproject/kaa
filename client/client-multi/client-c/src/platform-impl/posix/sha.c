@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-# include <string.h>
-# include "../platform/stdio.h"
-# include "${headerName}.h"
-# include "../avro_src/avro/io.h"
-# include "../avro_src/encoding.h"
-# include "../utilities/kaa_mem.h"
+#include <openssl/sha.h>
 
-/*
- * AUTO-GENERATED CODE
- */
+#include "../../platform/sha.h"
+#include "../../kaa_common.h"
 
+kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
+{
+    KAA_RETURN_IF_NIL3(data, data_size, digest, KAA_ERR_BADPARAM);
+
+    SHA1((const unsigned char *)data, data_size, digest);
+    return KAA_ERR_NONE;
+}

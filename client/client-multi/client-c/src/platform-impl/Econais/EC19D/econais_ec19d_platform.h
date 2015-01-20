@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-# include <string.h>
-# include "../platform/stdio.h"
-# include "${headerName}.h"
-# include "../avro_src/avro/io.h"
-# include "../avro_src/encoding.h"
-# include "../utilities/kaa_mem.h"
-
 /*
- * AUTO-GENERATED CODE
- */
+ econais_ec19d_platform.h
+ Created on: Jan 15, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
 
+#ifndef ECONAIS_EC19D_PLATFORM_H_
+#define ECONAIS_EC19D_PLATFORM_H_
+
+#include "sndc_sdk_api.h"
+
+#endif /* ECONAIS_EC19D_PLATFORM_H_ */

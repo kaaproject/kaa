@@ -44,8 +44,11 @@ typedef kaa_test_log_record_t    kaa_user_log_record_t;
 /**
  * Private log collector structure.
  */
-typedef struct kaa_log_collector kaa_log_collector_t;
 
+#ifndef KAA_LOG_COLLECTOR_T
+    #define KAA_LOG_COLLECTOR_T
+    typedef struct kaa_log_collector        kaa_log_collector_t;
+#endif
 
 
 /**

@@ -15,20 +15,31 @@
  */
 
 /*
-sock.h
+sha.h
  Created on: Jan 15, 2015
      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
 */
 
-#ifndef SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_SOCK_H_
-#define SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_SOCK_H_
+#ifndef SHA_H_
+#define SHA_H_
 
-#include <sys/types.h>
-#include <sndc_sock_api.h>
-#define KAA_HTONS(hostshort)    sndc_htons((hostshort))
-#define KAA_HTONL(hostlong)     sndc_htonl((hostlong))
+#include "../kaa_error.h"
 
-#define KAA_NTOHS(netshort)     sndc_ntohs((netshort))
-#define KAA_NTOHL(netlong)      sndc_ntohl((netlong))
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#endif /* SRC_KAA_PLATFORM_IMPL_ECONAISEC19D_SOCK_H_ */
+
+/*
+ * SHA1 hash
+ */
+#define SHA_1_DIGEST_LENGTH 20
+typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
+typedef const unsigned char* kaa_digest_p;
+
+kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
+#endif /* SHA_H_ */

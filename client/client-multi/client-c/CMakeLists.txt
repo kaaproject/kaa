@@ -54,6 +54,7 @@ else()
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
 endif()
 
+
 find_package (OpenSSL REQUIRED)
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -79,7 +80,7 @@ set (KAA_SOURCE_FILES
                        src/kaa_platform_utils.c
                        src/platform-impl/ext_log_storage_memory.c
                        src/platform-impl/posix/logger.c
-                       src/platform-impl/posix/kaa_sha.c
+                       src/platform-impl/posix/sha.c
                        src/platform-impl/ext_log_upload_strategy_by_volume.c
 )
 

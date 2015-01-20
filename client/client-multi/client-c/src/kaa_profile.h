@@ -44,7 +44,10 @@ typedef kaa_profile_basic_endpoint_profile_test_t kaa_profile_t;
 /**
  * Private profile manager data structure
  */
-typedef struct kaa_profile_manager_t kaa_profile_manager_t;
+#ifndef KAA_PROFILE_MANAGER_T
+    #define KAA_PROFILE_MANAGER_T
+    typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
+#endif
 
 
 

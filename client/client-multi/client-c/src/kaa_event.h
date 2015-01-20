@@ -41,7 +41,10 @@ typedef const uint8_t* kaa_endpoint_id_p;
 typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p event_source);
 typedef size_t kaa_event_block_id;
 
-typedef struct kaa_event_manager_t kaa_event_manager_t;
+#ifndef KAA_EVENT_MANAGER_T
+    #define KAA_EVENT_MANAGER_T
+    typedef struct kaa_event_manager_t      kaa_event_manager_t;
+#endif
 
 /**
  * @brief Start a new event block.

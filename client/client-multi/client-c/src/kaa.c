@@ -16,10 +16,9 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-#include <string.h>
 #include <stdint.h>
-#include <stdio.h>
-#include "platform/kaa_sha.h"
+#include "platform/stdio.h"
+#include "platform/sha.h"
 
 #include "kaa.h"
 #include "utilities/kaa_mem.h"

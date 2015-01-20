@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-#include <stddef.h>
 # include <string.h>
-
+# include "../platform/stdio.h"
 # include "kaa_profile_gen.h"
-
-//# include <stdio.h>
-
 # include "../avro_src/avro/io.h"
 # include "../avro_src/encoding.h"
-
 # include "../utilities/kaa_mem.h"
 
 /*
@@ -66,13 +61,29 @@ static size_t kaa_profile_basic_endpoint_profile_test_get_size(void* data)
 
 kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create()
 {
-    kaa_profile_basic_endpoint_profile_test_t* record =
+    kaa_profile_basic_endpoint_profile_test_t* record = 
             (kaa_profile_basic_endpoint_profile_test_t*)KAA_CALLOC(1, sizeof(kaa_profile_basic_endpoint_profile_test_t));
 
     if (record) {
         record->serialize = kaa_profile_basic_endpoint_profile_test_serialize;
         record->get_size = kaa_profile_basic_endpoint_profile_test_get_size;
         record->destroy = kaa_profile_basic_endpoint_profile_test_destroy;
+    }
+
+    return record;
+}
+
+kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_deserialize(avro_reader_t reader)
+{
+    kaa_profile_basic_endpoint_profile_test_t* record = 
+            (kaa_profile_basic_endpoint_profile_test_t*)KAA_MALLOC(sizeof(kaa_profile_basic_endpoint_profile_test_t));
+
+    if (record) {
+        record->serialize = kaa_profile_basic_endpoint_profile_test_serialize;
+        record->get_size = kaa_profile_basic_endpoint_profile_test_get_size;
+        record->destroy = kaa_profile_basic_endpoint_profile_test_destroy;
+
+        record->profile_body = kaa_string_deserialize(reader);
     }
 
     return record;

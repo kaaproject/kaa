@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
+#ifndef ECONAIS_EC19D_STDIO_H_
+#define ECONAIS_EC19D_STDIO_H_
 
-#include <sndc_sdk_api.h>
-#include <sndc_crypto_api.h>
-#include "../../platform/kaa_sha.h"
-#include "../../kaa_common.h"
+typedef void* FILE;
 
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
-{
-    KAA_RETURN_IF_NIL3(data, data_size, digest, KAA_ERR_BADPARAM);
 
-    sndc_crypto_sha1(1, (uint8_t **)&data, &data_size, digest);
-
-    return KAA_ERR_NONE;
-}
+#endif /* ECONAIS_EC19D_STDIO_H_ */

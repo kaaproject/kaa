@@ -17,10 +17,9 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <stddef.h>
 #include <string.h>
 #include "platform/stdio.h"
-#include "platform/kaa_sha.h"
+#include "platform/sha.h"
 #include "kaa_platform_protocol.h"
 
 

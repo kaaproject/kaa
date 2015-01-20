@@ -17,8 +17,6 @@
 #include <stdbool.h>
 #include "kaa_platform_utils.h"
 
-#include <string.h>
-
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"
 

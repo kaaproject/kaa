@@ -18,7 +18,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "platform/kaa_sha.h"
+#include "platform/sha.h"
 #include "kaa_event.h"
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 

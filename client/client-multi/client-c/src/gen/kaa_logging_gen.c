@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <stddef.h>
 
-//# include <stdio.h>
-//# include <string.h>
-
+# include <string.h>
+# include "../platform/stdio.h"
 # include "kaa_logging_gen.h"
 # include "../avro_src/avro/io.h"
 # include "../avro_src/encoding.h"
-
 # include "../utilities/kaa_mem.h"
 
 /*

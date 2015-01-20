@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "../platform/platform.h"
 #include "kaa_deque.h"
 
-#include <stddef.h>
 #include "../kaa_common.h"
 #include "../utilities/kaa_mem.h"
 

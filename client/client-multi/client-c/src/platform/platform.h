@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef SRC_KAA_PLATFORM_PLATFORM_H_
-#define SRC_KAA_PLATFORM_PLATFORM_H_
+#ifndef PLATFORM_H_
+#define PLATFORM_H_
 
 #ifdef ECONAIS_PLATFORM
-#include "../platform-impl/EconaisEC19D/platform.h"
+#include "../platform-impl/Econais/EC19D/econais_ec19d_platform.h"
 #else
-#include "../platform-impl/posix/platform.h"
+#include "../platform-impl/posix/posix_platform.h"
 #endif
 
-#endif /* SRC_KAA_PLATFORM_PLATFORM_H_ */
+#endif /* PLATFORM_H_ */

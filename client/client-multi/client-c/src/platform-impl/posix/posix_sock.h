@@ -15,13 +15,13 @@
  */
 
 /*
-sock.h
+posix_sock.h
  Created on: Jan 15, 2015
      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
 */
 
-#ifndef SRC_KAA_PLATFORM_IMPL_POSIX_SOCK_H_
-#define SRC_KAA_PLATFORM_IMPL_POSIX_SOCK_H_
+#ifndef POSIX_SOCK_H_
+#define POSIX_SOCK_H_
 
 #include <arpa/inet.h>
 #define KAA_HTONS(hostshort)    htons((hostshort))
@@ -30,4 +30,4 @@ sock.h
 #define KAA_NTOHS(netshort)     ntohs((netshort))
 #define KAA_NTOHL(netlong)      ntohl((netlong))
 
-#endif /* SRC_KAA_PLATFORM_IMPL_POSIX_SOCK_H_ */
+#endif /* POSIX_SOCK_H_ */

@@ -65,7 +65,10 @@ extern "C" {
 /**
  * @brief Kaa logger type
  */
-typedef struct kaa_logger_t kaa_logger_t;
+#ifndef KAA_LOGGER_T
+    #define KAA_LOGGER_T
+    typedef struct kaa_logger_t             kaa_logger_t;
+#endif
 
 /**
  * @brief Log level type

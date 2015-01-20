@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-# include <string.h>
-# include "../platform/stdio.h"
-# include "${headerName}.h"
-# include "../avro_src/avro/io.h"
-# include "../avro_src/encoding.h"
-# include "../utilities/kaa_mem.h"
+#ifndef ECONAIS_EC19D_MEM_H_
+#define ECONAIS_EC19D_MEM_H_
 
-/*
- * AUTO-GENERATED CODE
- */
+#include <sndc_mem_api.h>
 
+#ifndef __KAA_MALLOC
+#define __KAA_MALLOC(S)           sndc_mem_malloc(S)
+#endif
+
+#ifndef __KAA_CALLOC
+#define __KAA_CALLOC(N,S)         sndc_mem_calloc(N, S)
+#endif
+
+#ifndef __KAA_FREE
+#define __KAA_FREE(P)             sndc_mem_free(P)
+#endif
+
+#endif /* ECONAIS_EC19D_MEM_H_ */

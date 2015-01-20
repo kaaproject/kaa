@@ -15,13 +15,13 @@
  */
 
 /*
-platform.h
+posix_platform.h
  Created on: Jan 15, 2015
      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
 */
 
-#ifndef SRC_KAA_PLATFORM_IMPL_POSIX_PLATFORM_H_
-#define SRC_KAA_PLATFORM_IMPL_POSIX_PLATFORM_H_
+#ifndef POSIX_PLATFORM_H_
+#define POSIX_PLATFORM_H_
 
 #include <time.h>
 #include <stdarg.h>
@@ -29,4 +29,4 @@ platform.h
 #include <stdio.h>
 #include <stdint.h>
 
-#endif /* SRC_KAA_PLATFORM_IMPL_POSIX_PLATFORM_H_ */
+#endif /* POSIX_PLATFORM_H_ */

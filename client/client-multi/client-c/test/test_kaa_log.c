@@ -16,7 +16,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "platform/kaa_sha.h"
+#include "platform/sha.h"
 
 #include "kaa_logging.h"
 
