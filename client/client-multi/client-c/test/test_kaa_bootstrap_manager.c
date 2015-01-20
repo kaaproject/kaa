@@ -85,7 +85,7 @@ static kaa_access_point_t *create_access_point()
 
     access_point->id = rand();
     access_point->connection_data_len = 1 + rand() % MAX_CONNECTION_DATA_SIZE;
-    access_point->connection_data = (uint8_t *)KAA_MALLOC(access_point->connection_data_len);
+    access_point->connection_data = (char *)KAA_MALLOC(access_point->connection_data_len);
 
     ASSERT_NOT_NULL(access_point->connection_data);
 

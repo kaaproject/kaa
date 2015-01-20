@@ -17,17 +17,11 @@
 #ifndef SRC_PLATFORM_EXT_TRANSPORT_CHANNEL_H_
 #define SRC_PLATFORM_EXT_TRANSPORT_CHANNEL_H_
 
+#include "kaa_common.h"
+
 # ifdef __cplusplus
 extern "C" {
 # endif
-
-/**
- * Uses to uniquely identify client transport channel implementations.
- */
-typedef struct {
-    uint32_t id;
-    uint16_t version;
-} kaa_transport_protocol_info_t;
 
 /**
  * @brief Retrieves a transport protocol info.

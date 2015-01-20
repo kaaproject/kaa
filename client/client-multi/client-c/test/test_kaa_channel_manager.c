@@ -335,14 +335,6 @@ void test_get_bootstrap_client_sync_size()
     kaa_channel_manager_destroy(channel_manager);
 }
 
-static void print_bytes(const char* bytes, size_t size)
-{
-    for (size_t i = 0; i < size; ++i) {
-        printf("%X ", (int)bytes[i]);
-    }
-    printf("\n");
-}
-
 void test_get_bootstrap_client_sync_serialize()
 {
     KAA_TRACE_IN(logger);

@@ -37,18 +37,6 @@ typedef struct kaa_bootstrap_manager_t kaa_bootstrap_manager_t;
 
 
 /**
- * @brief Connection parameters used by transport channels to establish
- * connection to Operations servers.
- */
-typedef struct {
-    uint32_t    id;
-    uint16_t    connection_data_len;
-    uint8_t     *connection_data;
-} kaa_access_point_t;
-
-
-
-/**
  * @brief Retrieves connection parameters currently used by specified
  * transport protocol.
  *

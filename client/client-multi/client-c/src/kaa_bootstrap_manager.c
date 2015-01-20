@@ -269,7 +269,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
             return KAA_ERR_BADDATA;
         }
 
-        uint8_t *connection_data = (uint8_t *)KAA_MALLOC(connection_data_len);
+        char *connection_data = (char *)KAA_MALLOC(connection_data_len);
         KAA_RETURN_IF_NIL(connection_data, KAA_ERR_NOMEM);
 
         kaa_access_point_t *new_access_point =

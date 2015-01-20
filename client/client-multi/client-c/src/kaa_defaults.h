@@ -52,7 +52,8 @@ typedef struct kaa_events_schema_version_ {
 
 # define KAA_EVENT_SCHEMA_VERSIONS_SIZE    2
 
-static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
+static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] =
+{
     {
           /* .name = */   "1ecf"
         , /* .version = */3
@@ -60,45 +61,36 @@ static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEM
     {
           /* .name = */   "2ecf"
         , /* .version = */2
-    }};
+    }
+};
+
+
 
 /**
- * Bootstrap server info
+ * @brief Uses to represent transport-specific connection data to establish
+ * connection to Bootstrap servers.
+ *
+ * @see kaa_transport_protocol_info_t
+ * @see kaa_access_point_t
  */
+typedef struct {
+    kaa_transport_protocol_info_t    protocol_info;
+    kaa_access_point_t               access_point; /*!< Connection data of Bootstrap servers is Base64-encoded. */
+} kaa_bootstrap_server_connection_data_t;
 
-typedef struct kaa_channel_info_t {
-    char*              host;
-    uint16_t           port;
-} kaa_channel_info_t;
+# define KAA_BOOTSTRAP_SERVER_COUNT    1
 
-typedef struct
- {
-    const char *   encoded_public_key; /* Base 64 encoded */
-    uint16_t       encoded_public_key_len;
-    kaa_channel_info_t channels[KAA_CHANNEL_TYPE_COUNT];
-} kaa_bootstrap_server_info_t;
-
-# define KAA_BOOTSTRAP_SERVER_COUNT    2
-
-static kaa_bootstrap_server_info_t KAA_BOOTSTRAP_SERVERS[KAA_BOOTSTRAP_SERVER_COUNT] = {
+static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_SERVERS[KAA_BOOTSTRAP_SERVER_COUNT] =
+{
     {
-          /* .encoded_public_key = */    "AQID"
-        , /* .encoded_public_key_len = */4
-        , /* .channels = */              {
-                                            { "http1.com", 80 },
-                                            { NULL, 0},
-                                            { "kaatcp1.com", 9999 }
-                                         }
-    },
-    {
-            /* .encoded_public_key = */    "AQID"
-          , /* .encoded_public_key_len = */4
-          , /* .channels = */              {
-                                              { NULL, 0 },
-                                              { "http_lp.com", 80 },
-                                              { "kaatcp2.com", 8888 }
-                                           }
-}};
+        { 1, 2 },
+        {
+            12345,
+            4,
+            "ABCD"
+        }
+    }
+};
 
 # ifdef __cplusplus
 } // extern "C"
