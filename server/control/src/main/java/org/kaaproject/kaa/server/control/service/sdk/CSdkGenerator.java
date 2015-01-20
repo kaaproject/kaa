@@ -278,6 +278,7 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("bootstrapNodes", bootstrapNodes);
 
         context.put("Base64", Base64.class);
+        context.put("Integer", Integer.class);
         context.put("ServerNameUtil", ServerNameUtil.class);
 
         StringWriter writer = new StringWriter();

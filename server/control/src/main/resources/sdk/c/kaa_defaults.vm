@@ -91,16 +91,17 @@ static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_SERVERS[KAA_BO
 {
 #foreach ($node in $bootstrapNodes)
 #set($supportedChannels = $node.getTransports())
-#set($accessPointId = $ServerNameUtil.crc32($node.getConnectionInfo()))
+#set($accessPointId = $Integer.toHexString($ServerNameUtil.crc32($node.getConnectionInfo())))
 #foreach ($transport in $supportedChannels)
+#set($protocolId = $Integer.toHexString($transport.getId())))
 #foreach ($connectionInfo in $transport.getConnectionInfo())
 #set($connectionData = $Base64.encodeBase64String($connectionInfo.getConenctionInfo().array()))
     {
-        { $transport.getId(), $connectionInfo.getVersion() },
+        { 0x${protocolId}, $connectionInfo.getVersion() },
         {
-            $accessPointId,
+            0x${accessPointId},
             $connectionData.length(),
-            $connectionData
+            "$connectionData"
         }
     }
 #set($nodeCounter = $nodeCounter - 1)
