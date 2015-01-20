@@ -24,7 +24,9 @@ import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdminConstants;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
 import org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages;
+import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.MessageDialog;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.UnauthorizedSessionDialog;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 
@@ -32,6 +34,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
 public class Utils {
@@ -68,14 +71,24 @@ public class Utils {
             if (sce.getStatusCode() == Response.SC_UNAUTHORIZED) {
                 onUnauthorized();
                 handled = true;
+            } else if (sce.getStatusCode() == 0) {
+                handleNetworkConnectionError();
+                handled = true;
             }
-        }
+        } else if (caught instanceof IncompatibleRemoteServiceException) {
+            MessageDialog.showMessageDialog(AlertPanel.Type.ERROR, constants.incompatibleRemoteService(), messages.incompatibleRemoteService());
+            handled = true;
+        } 
         if (!handled) {
             String message = parseErrorMessage(caught, errorMessageCustomizer);
             hasErrorMessage.setErrorMessage(message);
         }
     }
-
+    
+    public static void handleNetworkConnectionError() {
+        MessageDialog.showMessageDialog(AlertPanel.Type.ERROR, constants.serverIsUnreachable(), messages.serverIsUnreacheableMessage());
+    }
+ 
     public static String parseErrorMessage(Throwable caught) {
         return parseErrorMessage(caught, null);
     }
@@ -87,13 +100,13 @@ public class Utils {
                     .getErrorCode();
             String message = constants.getString(errorCode.getResKey());
             if (errorCode.showErrorMessage()) {
-                message += caught.getMessage();
+                message += caught.getLocalizedMessage();
             }
             return message;
         } else if (errorMessageCustomizer != null) {
             return errorMessageCustomizer.customizeErrorMessage(caught);
         } else {
-            return caught.getMessage();
+            return caught.getLocalizedMessage();
         }
     }
 

@@ -330,7 +330,7 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
-        buildExtensionHeader(buf, USER_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
         buf.putShort((short) Integer.valueOf(logSync.getRequestId()).intValue());
         buf.put(logSync.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
         buf.put(NOTHING);

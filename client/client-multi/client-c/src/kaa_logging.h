@@ -26,7 +26,6 @@
 
 # ifndef KAA_DISABLE_FEATURE_LOGGING
 
-# include <stddef.h>
 # include "gen/kaa_logging_gen.h"
 # include "platform/ext_log_storage.h"
 # include "platform/ext_log_upload_strategy.h"
@@ -52,16 +51,13 @@ typedef struct kaa_log_collector kaa_log_collector_t;
 /**
  * @brief Initializes data collection module with the storage interface, upload strategy, and other settings.
  *
- * @param[in] self              Pointer to a @link kaa_log_collector_t @endlink instance.
- * @param[in] storage           Log storage interface.
- * @param[in] upload_strategy   Log upload strategy interface.
- * @param[in] properties        Log upload properties structure.
+ * @param[in] self                          Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in] log_storage_context           Log storage context.
+ * @param[in] log_upload_strategy_context   Log upload strategy context.
  *
- * @return      Error code.
+ * @return  Error code.
  */
-kaa_error_t kaa_logging_init(kaa_log_collector_t *self
-                           , ext_log_storage_t *storage
-                           , ext_log_upload_strategy_t *upload_strategy);
+kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context);
 
 
 
@@ -69,9 +65,9 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self
  * @brief Serializes and adds a log record to the log storage.
  *
  * @param[in] self    Pointer to a @link kaa_log_collector_t @endlink instance.
- * @param[in] entry   Valid pointer to log entry to be added to the storage.
+ * @param[in] entry   Pointer to log entry to be added to the storage.
  *
- * @return      Error code.
+ * @return  Error code.
  *
  */
 kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
