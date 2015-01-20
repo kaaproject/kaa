@@ -83,6 +83,7 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
                 LOG.info("Stopping Bootstrap Server Application...");
                 bootstrapInitializationService.stop();
                 ThriftExecutor.shutdown();
+                LOG.info("Stopped Bootstrap Server Application...");
             }
         };
 

@@ -62,6 +62,8 @@ public class DefaultBootstrapTransportTest {
     public void testCreateRequest() {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         BootstrapTransport transport = new DefaultBootstrapTransport("Some token");
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        transport.setChannelManager(channelManager);
         transport.createResolveRequest();
         transport.setClientState(clientState);
         transport.createResolveRequest();

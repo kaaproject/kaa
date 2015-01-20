@@ -52,5 +52,4 @@ public interface BootstrapTransport extends KaaTransport {
      *
      */
     void setBootstrapManager(BootstrapManager manager);
-
 }

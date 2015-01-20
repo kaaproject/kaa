@@ -172,7 +172,7 @@ public abstract class AbstractKaaClient implements KaaClient {
         configurationPersistenceManager = new DefaultConfigurationPersistenceManager(
                                             kaaClientState, configurationProcessor);
 
-        BootstrapTransport bootstratpTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
+        BootstrapTransport bootstrapTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
         ProfileTransport profileTransport = new DefaultProfileTransport();
         EventTransport eventTransport = new DefaultEventTransport(kaaClientState);
         NotificationTransport notificationTransport = new DefaultNotificationTransport();
@@ -190,10 +190,10 @@ public abstract class AbstractKaaClient implements KaaClient {
         operationsDataProcessor.setUserTransport(userTransport);
         operationsDataProcessor.setLogTransport(logTransport);
 
-        bootstrapDataProcessor.setBootstrapTransport(bootstratpTransport);
+        bootstrapDataProcessor.setBootstrapTransport(bootstrapTransport);
 
         profileManager = new DefaultProfileManager(profileTransport);
-        bootstrapManager = new DefaultBootstrapManager(bootstratpTransport);
+        bootstrapManager = new DefaultBootstrapManager(bootstrapTransport);
         notificationManager = new DefaultNotificationManager(this.kaaClientState, notificationTransport);
         eventManager = new DefaultEventManager(this.kaaClientState, eventTransport);
         eventFamilyFactory = new EventFamilyFactory(this.eventManager);
@@ -221,8 +221,10 @@ public abstract class AbstractKaaClient implements KaaClient {
         metaDataTransport.setClientState(kaaClientState);
         metaDataTransport.setEndpointPublicKeyhash(publicKeyHash);
         metaDataTransport.setTimeout(LONG_POLL_TIMEOUT);
-        bootstratpTransport.setBootstrapManager(bootstrapManager);
-        transports.put(TransportType.BOOTSTRAP, bootstratpTransport);
+        
+        bootstrapTransport.setBootstrapManager(bootstrapManager);
+        
+        transports.put(TransportType.BOOTSTRAP, bootstrapTransport);
         profileTransport.setProfileManager(profileManager);
         profileTransport.setClientProperties(properties);
         transports.put(TransportType.PROFILE, profileTransport);

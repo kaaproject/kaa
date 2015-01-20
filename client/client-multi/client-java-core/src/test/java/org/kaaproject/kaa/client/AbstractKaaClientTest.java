@@ -31,11 +31,13 @@ import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AbstractKaaClientTest extends AbstractKaaClient {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClientTest.class);
 
-    public AbstractKaaClientTest() throws IOException, InvalidKeySpecException,
-            NoSuchAlgorithmException {
+    public AbstractKaaClientTest() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         super();
     }
 
@@ -125,9 +127,7 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     }
 
     @Override
-    public AbstractHttpClient createHttpClient(String url,
-            PrivateKey privateKey, PublicKey publicKey,
-            PublicKey remotePublicKey) {
+    public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
         return mock(AbstractHttpClient.class);
     }
 
@@ -143,7 +143,7 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     }
 
     @Test
-    public void testInit(){
+    public void testInit() {
         try {
             start();
             init();
@@ -160,6 +160,7 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
             start();
             stop();
         } catch (Exception e) {
+            LOG.error("Start failure", e);
             assertTrue("Exception was caught during testStart test: " + e.getMessage(), false);
         }
     }
