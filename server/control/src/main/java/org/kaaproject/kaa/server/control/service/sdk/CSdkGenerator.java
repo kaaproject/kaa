@@ -46,8 +46,6 @@ import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
-import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.kaaproject.kaa.server.control.service.sdk.event.CEventSourcesGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -126,8 +124,7 @@ public class CSdkGenerator extends SdkGenerator {
             List<EventFamilyMetadata> eventFamilies,
             String logSchemaBody) throws Exception {
 
-        //String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
-        String sdkTemplateLocation = "/home/dyosick/projects/github_kaa/kaa/client/client-multi/client-c/target/client-c-0.6.3-SNAPSHOT-c-sdk.tar.gz";
+        String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
 
         LOG.debug("Lookup C SDK template: {}", sdkTemplateLocation);
 
@@ -266,37 +263,7 @@ public class CSdkGenerator extends SdkGenerator {
 
         VelocityContext context = new VelocityContext();
 
-        LOG.info("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
-
-
-        final String SEPARATOR = ":";
-        String bootstrapServers = new String();
-        for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
-            if (nodeIndex > 0) {
-                bootstrapServers += ";";
-            }
-
-            BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
-            List<TransportMetaData> supportedChannels = node.getTransports();
-
-            int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
-
-            for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
-                TransportMetaData transport = supportedChannels.get(chIndex);
-                for(VersionConnectionInfoPair pair : transport.getConnectionInfo()){
-                    bootstrapServers += accessPointId;
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += transport.getId();
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += pair.getVersion();
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += Base64.encodeBase64String(pair.getConenctionInfo().array());
-                    bootstrapServers += "\n";
-                }
-            }
-        }
-
-        LOG.info("MY  TEST: {}", bootstrapServers);
+        LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
 
         context.put("build_version", Version.PROJECT_VERSION);
         context.put("build_commit_hash", Version.COMMIT_HASH);
