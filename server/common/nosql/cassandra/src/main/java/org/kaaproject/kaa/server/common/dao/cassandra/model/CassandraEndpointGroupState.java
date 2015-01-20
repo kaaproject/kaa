@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
+import com.datastax.driver.mapping.annotations.Field;
 import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
@@ -35,11 +35,11 @@ public final class CassandraEndpointGroupState implements ToDto<EndpointGroupSta
     @Transient
     private static final long serialVersionUID = -1658174097110691624L;
 
-    @Field(ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY)
+    @Field(name = ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY)
     private String endpointGroupId;
-    @Field(ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY)
+    @Field(name = ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY)
     private String profileFilterId;
-    @Field(ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY)
+    @Field(name = ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY)
     private String configurationId;
 
     public CassandraEndpointGroupState() {

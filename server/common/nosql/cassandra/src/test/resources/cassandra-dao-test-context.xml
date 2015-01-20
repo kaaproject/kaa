@@ -18,6 +18,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -25,38 +26,28 @@
             http://www.springframework.org/schema/context/spring-context-4.0.xsd
             http://www.springframework.org/schema/tx
             http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd
             http://www.springframework.org/schema/util
             http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <context:annotation-config/>
+    <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
 
-    <context:component-scan base-package="org.kaaproject.kaa.server.common.dao">
-        <context:exclude-filter type="regex" expression="org.kaaproject.kaa.server.common.dao.mongo.*"/>
-        <context:exclude-filter type="regex" expression="org.kaaproject.kaa.server.common.dao.cassandra.*"/>
-    </context:component-scan>
+    <util:properties id="dao" location="classpath:cassandra-test.properties"/>
 
-    <util:properties id="dao" location="classpath:dao.properties" />
-
-    <import resource="classpath:common-dao-sql-context.xml" />
-    <import resource="classpath:common-dao-${nosql_db_provider_name}-context.xml" />
-
-    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <import resource="classpath:cassandra-dao-sql-test-context.xml" />
+    <import resource="classpath:cassandra-client-test-context.xml" />
 
     <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
 
-    <bean id="overrideAlgorithmFactory"
-        class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory" />
+    <bean id="overrideAlgorithmFactory" class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory"/>
 
-    <bean id="eventSchemaProcessor"
-        class="org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessorImpl" />
+    <bean id="eventSchemaProcessor" class="org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessorImpl" />
 
-    <bean id="dummyEndpointUserVerifier"
-        class="org.kaaproject.kaa.server.common.dao.DummyEndpointUserVerifier" />
+    <bean id="dummyEndpointUserVerifier" class="org.kaaproject.kaa.server.common.dao.DummyEndpointUserVerifier"/>
 
-    <bean id="endpointUserVerifierResolver"
-        class="org.kaaproject.kaa.server.common.dao.DefaultEndpointUserVerifierResolver">
-        <constructor-arg name="verifierMap" ref="verifierMap"></constructor-arg>
-    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl">
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
@@ -76,8 +67,13 @@
 
     <alias name="endpointUserDao" alias="kaaEndpointUserVerifier" />
 
-    <util:map id="verifierMap">
-        <entry key="dummyEndpointUserVerifier" value-ref="dummyEndpointUserVerifier" />
-        <entry key="kaaEndpointUserVerifier" value-ref="kaaEndpointUserVerifier" />
-    </util:map>
+    <bean id="endpointUserVerifierResolver" class="org.kaaproject.kaa.server.common.dao.DefaultEndpointUserVerifierResolver">
+        <constructor-arg>
+            <util:map>
+                <entry key="dummyEndpointUserVerifier" value-ref="dummyEndpointUserVerifier"/>
+                <entry key="kaaEndpointUserVerifier" value-ref="kaaEndpointUserVerifier"/>
+            </util:map>
+        </constructor-arg>
+    </bean>
+
 </beans>

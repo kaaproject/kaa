@@ -45,6 +45,7 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
+import com.mongodb.DB;
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
@@ -108,8 +109,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.mongodb.DB;
 
 public class AbstractTest {
 

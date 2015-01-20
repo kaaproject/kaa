@@ -15,9 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.mongo;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
@@ -26,7 +23,9 @@ import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.mongo.model.MongoEndpointProfile;
 import org.springframework.beans.factory.annotation.Autowired;
-import sun.plugin.util.UIUtil;
+
+import java.util.List;
+import java.util.UUID;
 
 public class AbstractMongoTest extends AbstractTest {
 

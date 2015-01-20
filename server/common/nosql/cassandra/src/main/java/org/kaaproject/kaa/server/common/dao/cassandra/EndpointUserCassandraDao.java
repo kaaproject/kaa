@@ -2,6 +2,7 @@ package org.kaaproject.kaa.server.common.dao.cassandra;
 
 import com.datastax.driver.core.querybuilder.Update;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.slf4j.Logger;
@@ -23,8 +24,8 @@ import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraMode
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.KEY_DELIMITER;
 
-@Repository("endpointUserDao")
-public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser> {
+@Repository
+public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser>, EndpointUserVerifier {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserCassandraDao.class);
 

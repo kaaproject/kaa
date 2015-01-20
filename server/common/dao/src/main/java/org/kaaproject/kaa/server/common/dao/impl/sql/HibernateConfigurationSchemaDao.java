@@ -37,7 +37,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HibernateConfigurationSchemaDao extends HibernateAbstractDao<ConfigurationSchema> implements ConfigurationSchemaDao<ConfigurationSchema> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateConfigurationDao.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateConfigurationSchemaDao.class);
 
     @Override
     public List<ConfigurationSchema> findByApplicationId(String applicationId) {

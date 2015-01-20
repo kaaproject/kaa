@@ -28,9 +28,9 @@ public abstract class AbstractCassandraDao<T, K> {
      */
     @Autowired
     private CassandraClient cassandraClient;
-    @Value("#{properties[read_consistency_level]}")
+    @Value("#{cassandra_properties[read_consistency_level]}")
     private Integer readConsistencyLevel;
-    @Value("#{properties[write_consistency_level]}")
+    @Value("#{cassandra_properties[write_consistency_level]}")
     private Integer writeConsistencyLevel;
 
     private Session session;

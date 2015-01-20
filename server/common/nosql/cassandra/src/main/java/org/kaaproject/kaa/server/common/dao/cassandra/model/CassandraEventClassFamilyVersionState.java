@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.common.dao.cassandra.model;
 
+import com.datastax.driver.mapping.annotations.Field;
 import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
@@ -34,9 +34,9 @@ public final class CassandraEventClassFamilyVersionState implements ToDto<EventC
     @Transient
     private static final long serialVersionUID = 3766947955702551264L;
 
-    @Field(EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY)
+    @Field(name = EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY)
     private String ecfId;
-    @Field(EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY)
+    @Field(name = EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY)
     private int version;
 
     public CassandraEventClassFamilyVersionState() {

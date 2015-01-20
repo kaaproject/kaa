@@ -26,25 +26,25 @@ public class CassandraClient implements Closeable {
     private static final String COLON = ":";
 
     /* Main cassandra parameters */
-    @Value("#{properties[cluster_name]}")
+    @Value("#{cassandra_properties[cluster_name]}")
     private String clusterName;
-    @Value("#{properties[keyspace_name]}")
+    @Value("#{cassandra_properties[keyspace_name]}")
     private String keyspaceName;
-    @Value("#{properties[node_list]}")
+    @Value("#{cassandra_properties[node_list]}")
     private String nodeList;
-    @Value("#{properties[compression]}")
+    @Value("#{cassandra_properties[compression]}")
     private String compression;
-    @Value("#{properties[use_ssl]}")
+    @Value("#{cassandra_properties[use_ssl]}")
     private Boolean useSSL;
-    @Value("#{properties[use_jmx]}")
+    @Value("#{cassandra_properties[use_jmx]}")
     private Boolean useJMX;
-    @Value("#{properties[use_credentials]}")
+    @Value("#{cassandra_properties[use_credentials]}")
     private Boolean useCredentials;
-    @Value("#{properties[username]}")
+    @Value("#{cassandra_properties[username]}")
     private String username;
-    @Value("#{properties[password]}")
+    @Value("#{cassandra_properties[password]}")
     private String password;
-    @Value("#{properties[disable_metrics]}")
+    @Value("#{cassandra_properties[disable_metrics]}")
     private Boolean disableMetrics;
 
     @Autowired

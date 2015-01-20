@@ -15,25 +15,24 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.sql.JoinType;
-import org.kaaproject.kaa.server.common.dao.impl.Dao;
 import org.kaaproject.kaa.server.common.dao.impl.SqlDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements SqlDao<T> {
 
@@ -96,7 +95,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         String className = getSimpleClassName();
         LOG.debug("Find {} entities by criterion [{}] ", className, criterion);
         Criteria criteria = getCriteria();
-        if(type == null) {
+        if (type == null) {
             criteria.createAlias(path, alias);
         } else {
             criteria.createAlias(path, alias, type);

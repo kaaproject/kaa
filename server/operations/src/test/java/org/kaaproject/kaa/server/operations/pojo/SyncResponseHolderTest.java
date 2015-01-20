@@ -15,14 +15,8 @@
  */
 package org.kaaproject.kaa.server.operations.pojo;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-
-import java.util.ArrayList;
-
 import org.junit.Test;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
@@ -35,6 +29,11 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SyncResponseHolderTest {
 

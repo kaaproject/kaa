@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -209,7 +208,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     public void saveFilterObjectWithIncorrectSchemaIdTest() {
         ProfileFilterDto filterDto = generateFilter(null, null, 1, false).get(0);
         filterDto.setId(null);
-        filterDto.setSchemaId(new ObjectId().toString());
+        filterDto.setSchemaId("Incorrect Id");
         Assert.assertNotNull(filterDto);
         filterDto.setId(null);
         filterDto.setSchemaId(filterDto.getApplicationId());

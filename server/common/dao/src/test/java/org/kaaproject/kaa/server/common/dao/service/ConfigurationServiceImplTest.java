@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.avro.generic.GenericContainer;
-import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -360,7 +359,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     @Test(expected = IncorrectParameterException.class)
     public void validateConfigurationWithoutGroupIdTest() {
         ConfigurationDto configuration = new ConfigurationDto();
-        configuration.setSchemaId(new ObjectId().toString());
+        configuration.setSchemaId("Incorrect Id");
         configurationService.saveConfiguration(configuration);
     }
 

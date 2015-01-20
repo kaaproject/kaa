@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 
 import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getByteBuffer;
 
-@Repository("endpointConfigurationDao")
+@Repository
 public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointConfiguration, ByteBuffer> implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);

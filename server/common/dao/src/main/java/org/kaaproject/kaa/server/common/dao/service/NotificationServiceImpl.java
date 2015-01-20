@@ -98,7 +98,8 @@ public class NotificationServiceImpl implements NotificationService {
                 throw new IncorrectParameterException("Invalid Notification type in Notification Schema object.");
             }
             if (foundSchema != null) {
-                notificationSchemaDto.setMajorVersion(foundSchema.incrementVersion());
+                int lastSchemaVersion = foundSchema.getMajorVersion();
+                notificationSchemaDto.setMajorVersion(++lastSchemaVersion);
             } else {
                 notificationSchemaDto.incrementVersion();
             }
@@ -353,9 +354,5 @@ public class NotificationServiceImpl implements NotificationService {
 
     public void setUnicastNotificationDao(EndpointNotificationDao<EndpointNotification> unicastNotificationDao) {
         this.unicastNotificationDao = unicastNotificationDao;
-    }
-
-    public void setNotificationSchemaDao(NotificationSchemaDao<NotificationSchema> notificationSchemaDao) {
-        this.notificationSchemaDao = notificationSchemaDao;
     }
 }

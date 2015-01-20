@@ -25,7 +25,7 @@ import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraMode
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_VERSION_PROPERTY;
 
 
-@Repository("notificationDao")
+@Repository
 public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNotification, String> implements NotificationDao<CassandraNotification> {
 
     @Override

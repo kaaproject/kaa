@@ -40,7 +40,6 @@
 
     <bean id="notificationDao" class="org.kaaproject.kaa.server.common.dao.mongo.NotificationMongoDao"/>
     <bean id="unicastNotificationDao" class="org.kaaproject.kaa.server.common.dao.mongo.EndpointNotificationMongoDao"/>
-    <bean id="notificationSchemaDao" class="org.kaaproject.kaa.server.common.dao.mongo.NotificationSchemaMongoDao"/>
     <bean id="endpointProfileDao" class="org.kaaproject.kaa.server.common.dao.mongo.EndpointProfileMongoDao"/>
     <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.dao.mongo.EndpointConfigurationMongoDao"/>
     <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.dao.mongo.EndpointUserMongoDao"/>

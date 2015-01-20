@@ -13,29 +13,29 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class CassandraClientOptions {
 
     /* Socket parameters */
-    @Value("#{properties[socket_connect_timeout]}")
+    @Value("#{cassandra_properties[socket_connect_timeout]}")
     private int connectTimeoutMillis;
-    @Value("#{properties[socket_read_timeout]}")
+    @Value("#{cassandra_properties[socket_read_timeout]}")
     private int readTimeoutMillis;
-    @Value("#{properties[socket_keep_alive]}")
+    @Value("#{cassandra_properties[socket_keep_alive]}")
     private Boolean keepAlive;
-    @Value("#{properties[socket_reuse_address]}")
+    @Value("#{cassandra_properties[socket_reuse_address]}")
     private Boolean reuseAddress;
-    @Value("#{properties[socket_so_linger]}")
+    @Value("#{cassandra_properties[socket_so_linger]}")
     private Integer soLinger;
-    @Value("#{properties[socket_tcp_no_delay]}")
+    @Value("#{cassandra_properties[socket_tcp_no_delay]}")
     private Boolean tcpNoDelay;
-    @Value("#{properties[socket_receive_buffer_size]}")
+    @Value("#{cassandra_properties[socket_receive_buffer_size]}")
     private Integer receiveBufferSize;
-    @Value("#{properties[socket_send_buffer_size]}")
+    @Value("#{cassandra_properties[socket_send_buffer_size]}")
     private Integer sendBufferSize;
 
     private SocketOptions socketOptions;
 
     /* Query parameters */
-    @Value("#{properties[query_consistency_level]}")
+    @Value("#{cassandra_properties[query_consistency_level]}")
     private String consistencyLevel;
-    @Value("#{properties[query_default_fetch_size]}")
+    @Value("#{cassandra_properties[query_default_fetch_size]}")
     private Integer defaultFetchSize;
 
     private QueryOptions queryOptions;
