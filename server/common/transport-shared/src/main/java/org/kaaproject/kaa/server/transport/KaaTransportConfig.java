@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An marker annotation for {@link TransportConfig}.
+ * Provide a marker annotation for {@link TransportConfig}.
  * 
  * @author Andrew Shvayka
  *

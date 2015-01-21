@@ -43,8 +43,8 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
- * Responsible for classpath scan and initialization of {@link Transport} implementations.
- * Provides ability to add/remove listeners to transports startup.
+ * Responsible for a classpath scan and initialization of {@link Transport} implementations.
+ * Provides a capability to add/remove listeners on the transports start-up events.
  * 
  * @author Andrew Shvayka
  *

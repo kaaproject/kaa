@@ -37,6 +37,7 @@ import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ public class KaaClientProperties extends Properties {
         super(properties);
     }
 
-    public KaaClientProperties() throws IOException{
+    public KaaClientProperties() throws IOException {
         super(loadProperties());
     }
 
@@ -85,10 +86,8 @@ public class KaaClientProperties extends Properties {
             propertiesLocation = System.getProperty(KAA_CLIENT_PROPERTIES_FILE);
         }
         properties = new Properties();
-        ClassLoader classLoader = Thread.currentThread()
-                .getContextClassLoader();
-        properties
-                .load(classLoader.getResourceAsStream(propertiesLocation));
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        properties.load(classLoader.getResourceAsStream(propertiesLocation));
         return properties;
     }
 
@@ -155,12 +154,13 @@ public class KaaClientProperties extends Properties {
         return Integer.parseInt(getProperty(KaaClientProperties.LOG_SCHEMA_VERSION));
     }
 
-    public EndpointVersionInfo getVersionInfo(){
-        return new EndpointVersionInfo(getSupportedConfigVersion(), getSupportedProfileVersion(),
-                getSupportedSystemNTVersion(), getSupportedUserNTVersion(), getEventFamilyVersions(), getLogSchemaVersion());
+    public EndpointVersionInfo getVersionInfo() {
+        return new EndpointVersionInfo(getSupportedConfigVersion(), getSupportedProfileVersion(), getSupportedSystemNTVersion(),
+                getSupportedUserNTVersion(), getEventFamilyVersions(), getLogSchemaVersion());
     }
 
-    public Map<TransportProtocolId, List<TransportConnectionInfo>> getBootstrapServers() throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public Map<TransportProtocolId, List<TransportConnectionInfo>> getBootstrapServers() throws InvalidKeySpecException,
+            NoSuchAlgorithmException {
         return parseBootstrapServers(getProperty(KaaClientProperties.BOOTSTRAP_SERVERS));
     }
 
@@ -184,7 +184,8 @@ public class KaaClientProperties extends Properties {
         return parseEventClassFamilyVersions(getProperty(KaaClientProperties.EVENT_CLASS_FAMILY_VERSION));
     }
 
-    private Map<TransportProtocolId, List<TransportConnectionInfo>> parseBootstrapServers(String serversStr) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    private Map<TransportProtocolId, List<TransportConnectionInfo>> parseBootstrapServers(String serversStr)
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
         Map<TransportProtocolId, List<TransportConnectionInfo>> servers = new HashMap<>();
         String[] serversSplit = serversStr.split(";");
 
@@ -193,12 +194,12 @@ public class KaaClientProperties extends Properties {
                 String[] tokens = server.split(":");
                 ProtocolMetaData md = new ProtocolMetaData();
                 md.setAccessPointId(Integer.valueOf(tokens[0]));
-                md.setProtocolId(Integer.valueOf(tokens[1]));
-                md.setProtocolVersion(Integer.valueOf(tokens[2]));
+                md.setProtocolVersionInfo(new ProtocolVersionPair(Integer.valueOf(tokens[1]), Integer.valueOf(tokens[2])));
                 md.setConnectionInfo(ByteBuffer.wrap(Base64.decodeBase64(tokens[3])));
-                TransportProtocolId key = new TransportProtocolId(md.getProtocolId(), md.getProtocolVersion());
+                TransportProtocolId key = new TransportProtocolId(md.getProtocolVersionInfo().getId(), md.getProtocolVersionInfo()
+                        .getVersion());
                 List<TransportConnectionInfo> serverList = servers.get(key);
-                if(serverList == null){
+                if (serverList == null) {
                     serverList = new ArrayList<TransportConnectionInfo>();
                     servers.put(key, serverList);
                 }
@@ -226,12 +227,12 @@ public class KaaClientProperties extends Properties {
         return result;
     }
 
-    public byte [] getDefaultConfigData() {
+    public byte[] getDefaultConfigData() {
         String config = getProperty(KaaClientProperties.CONFIG_DATA_DEFAULT);
         return (config != null) ? Base64.decodeBase64(config.getBytes(Charsets.UTF_8)) : null;
     }
 
-    public byte [] getDefaultConfigSchema() {
+    public byte[] getDefaultConfigSchema() {
         String schema = getProperty(KaaClientProperties.CONFIG_SCHEMA_DEFAULT);
         return (schema != null) ? schema.getBytes(Charsets.UTF_8) : null;
     }

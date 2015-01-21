@@ -25,7 +25,7 @@ public interface ErrorBuilder {
     /**
      * Convert exception into objects specific to corresponding transport channel
      * @param e - exception to convert
-     * @return result of convertion
+     * @return result of conversion
      */
     Object[] build(Exception e);
 }

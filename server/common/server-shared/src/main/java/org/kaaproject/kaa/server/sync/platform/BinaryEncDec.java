@@ -65,7 +65,7 @@ import org.kaaproject.kaa.server.sync.UserServerSync;
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapClientSync;
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapServerSync;
 import org.kaaproject.kaa.server.sync.bootstrap.ProtocolConnectionData;
-import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionKey;
+import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -565,9 +565,9 @@ public class BinaryEncDec implements PlatformEncDec {
     private void parseBootstrapClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
         int requestId = buf.getShort();
         int protocolCount = buf.getShort();
-        List<ProtocolVersionKey> keys = new ArrayList<>(protocolCount);
+        List<ProtocolVersionId> keys = new ArrayList<>(protocolCount);
         for(int i = 0; i < protocolCount; i++){
-            keys.add(new ProtocolVersionKey(buf.getInt(), buf.getShort()));
+            keys.add(new ProtocolVersionId(buf.getInt(), buf.getShort()));
             //reserved
             buf.getShort();
         }

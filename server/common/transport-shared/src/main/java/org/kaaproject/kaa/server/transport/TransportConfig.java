@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.transport;
 import org.apache.avro.Schema;
 
 /**
- * A configuration of particular {@link Transport}.
+ * Represents configuration of particular {@link Transport}.
  * 
  * @author Andrew Shvayka
  *
@@ -26,14 +26,14 @@ import org.apache.avro.Schema;
 public interface TransportConfig {
 
     /**
-     * Returns id of the transport. Transport id must be unique.
+     * Returns the transport id. The transport id must be unique.
      * 
      * @return id of the transport
      */
     int getId();
 
     /**
-     * Returns name of the transport. There is not strict restriction for this
+     * Returns the transport name. There is no strict rule for this
      * name to be unique.
      * 
      * @return name of the transport
@@ -41,23 +41,23 @@ public interface TransportConfig {
     String getName();
 
     /**
-     * Returns class name of the {@link Transport} implementation.
+     * Returns the class name of the {@link Transport} implementation..
      * 
      * @return class name of the {@link Transport} implementation
      */
     String getTransportClass();
 
     /**
-     * Returns avro schema of the {@link Transport} configuration.
+     * Returns the avro schema of the {@link Transport} configuration.
      * 
      * @return avro schema of the {@link Transport} configuration
      */
     Schema getConfigSchema();
 
     /**
-     * Returns file name of the configuration file. This configuration file may
-     * be used by {@link TransportService} in order to initialize and configure
-     * corresponding {@link Transport}
+     * Returns the configuration file name. This configuration file may
+     * be used by {@link TransportService} to initialize and configure
+     * the corresponding {@link Transport}
      * 
      * @return file name of the configuration file
      */

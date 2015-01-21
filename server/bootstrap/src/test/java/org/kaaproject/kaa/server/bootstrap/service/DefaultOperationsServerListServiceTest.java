@@ -31,7 +31,7 @@ import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.sync.bootstrap.ProtocolConnectionData;
-import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionKey;
+import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionId;
 import org.mockito.Mockito;
 
 /**
@@ -65,7 +65,7 @@ public class DefaultOperationsServerListServiceTest {
 
     @Test
     public void testFilterOneResult() {
-        Set<ProtocolConnectionData> result = service.filter(Collections.singletonList(new ProtocolVersionKey(1, 42)));
+        Set<ProtocolConnectionData> result = service.filter(Collections.singletonList(new ProtocolVersionId(1, 42)));
         Assert.assertNotNull(result);
         Assert.assertEquals(1, result.size());
         Assert.assertNotNull(result.iterator().next());
@@ -75,7 +75,7 @@ public class DefaultOperationsServerListServiceTest {
 
     @Test
     public void testFilterResultDeduplication() {
-        Set<ProtocolConnectionData> result = service.filter(Arrays.asList(new ProtocolVersionKey(3, 1), new ProtocolVersionKey(3, 1)));
+        Set<ProtocolConnectionData> result = service.filter(Arrays.asList(new ProtocolVersionId(3, 1), new ProtocolVersionId(3, 1)));
         Assert.assertNotNull(result);
         Assert.assertEquals(1, result.size());
         Assert.assertNotNull(result.iterator().next());
@@ -85,14 +85,14 @@ public class DefaultOperationsServerListServiceTest {
 
     @Test
     public void testFilterMultipleResults() {
-        Set<ProtocolConnectionData> result = service.filter(Arrays.asList(new ProtocolVersionKey(1, 42), new ProtocolVersionKey(2, 73)));
+        Set<ProtocolConnectionData> result = service.filter(Arrays.asList(new ProtocolVersionId(1, 42), new ProtocolVersionId(2, 73)));
         Assert.assertNotNull(result);
         Assert.assertEquals(2, result.size());
     }
 
     @Test
     public void testFilterNoResults() {
-        Set<ProtocolConnectionData> result = service.filter(Arrays.asList(new ProtocolVersionKey(2, 42), new ProtocolVersionKey(1, 73)));
+        Set<ProtocolConnectionData> result = service.filter(Arrays.asList(new ProtocolVersionId(2, 42), new ProtocolVersionId(1, 73)));
         Assert.assertNotNull(result);
         Assert.assertEquals(0, result.size());
     }

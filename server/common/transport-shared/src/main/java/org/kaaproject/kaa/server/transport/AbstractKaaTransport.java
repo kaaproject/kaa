@@ -77,10 +77,10 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
     }
 
     /**
-     * Initializes transport with specific configuration object.
+     * Initializes the transport with specified context.
      *
-     * @param configuration
-     *            the configuration
+     * @param context
+     *            initialization context
      * @throws TransportLifecycleException
      */
     protected abstract void init(SpecificTransportContext<T> context) throws TransportLifecycleException;

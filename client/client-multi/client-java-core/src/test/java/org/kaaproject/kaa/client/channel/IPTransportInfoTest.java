@@ -23,6 +23,7 @@ import java.security.PublicKey;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 
 /**
@@ -57,7 +58,7 @@ public class IPTransportInfoTest {
         buf.putInt(host.getBytes(UTF8).length);
         buf.put(host.getBytes(UTF8));
         buf.putInt(port);
-        ProtocolMetaData md = new ProtocolMetaData((host + ":" + port).hashCode(), id.getProtocolId(), id.getProtocolVersion(), buf);
+        ProtocolMetaData md = new ProtocolMetaData((host + ":" + port).hashCode(), new ProtocolVersionPair(id.getProtocolId(), id.getProtocolVersion()), buf);
         return md;
     }
 

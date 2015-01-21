@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.sync.bootstrap.ProtocolConnectionData;
-import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionKey;
+import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionId;
 
 /**
  * Maintains list of active operation servers and allow to filter
@@ -33,6 +33,6 @@ public interface OperationsServerListService {
 
     void init(BootstrapNode bootstrapNode);
     
-    Set<ProtocolConnectionData> filter(List<ProtocolVersionKey> keys);
+    Set<ProtocolConnectionData> filter(List<ProtocolVersionId> keys);
 
 }

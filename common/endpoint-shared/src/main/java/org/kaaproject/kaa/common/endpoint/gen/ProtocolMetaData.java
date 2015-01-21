@@ -7,11 +7,10 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProtocolMetaData\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"},{\"name\":\"protocolId\",\"type\":\"int\"},{\"name\":\"protocolVersion\",\"type\":\"int\"},{\"name\":\"connectionInfo\",\"type\":\"bytes\"}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProtocolMetaData\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"},{\"name\":\"protocolVersionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}],\"direction\":\"out\"}},{\"name\":\"connectionInfo\",\"type\":\"bytes\"}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private int accessPointId;
-   private int protocolId;
-   private int protocolVersion;
+   private org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair protocolVersionInfo;
    private java.nio.ByteBuffer connectionInfo;
 
   /**
@@ -24,10 +23,9 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
   /**
    * All-args constructor.
    */
-  public ProtocolMetaData(java.lang.Integer accessPointId, java.lang.Integer protocolId, java.lang.Integer protocolVersion, java.nio.ByteBuffer connectionInfo) {
+  public ProtocolMetaData(java.lang.Integer accessPointId, org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair protocolVersionInfo, java.nio.ByteBuffer connectionInfo) {
     this.accessPointId = accessPointId;
-    this.protocolId = protocolId;
-    this.protocolVersion = protocolVersion;
+    this.protocolVersionInfo = protocolVersionInfo;
     this.connectionInfo = connectionInfo;
   }
 
@@ -36,9 +34,8 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return accessPointId;
-    case 1: return protocolId;
-    case 2: return protocolVersion;
-    case 3: return connectionInfo;
+    case 1: return protocolVersionInfo;
+    case 2: return connectionInfo;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -47,9 +44,8 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: accessPointId = (java.lang.Integer)value$; break;
-    case 1: protocolId = (java.lang.Integer)value$; break;
-    case 2: protocolVersion = (java.lang.Integer)value$; break;
-    case 3: connectionInfo = (java.nio.ByteBuffer)value$; break;
+    case 1: protocolVersionInfo = (org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair)value$; break;
+    case 2: connectionInfo = (java.nio.ByteBuffer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -70,33 +66,18 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
   }
 
   /**
-   * Gets the value of the 'protocolId' field.
+   * Gets the value of the 'protocolVersionInfo' field.
    */
-  public java.lang.Integer getProtocolId() {
-    return protocolId;
+  public org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair getProtocolVersionInfo() {
+    return protocolVersionInfo;
   }
 
   /**
-   * Sets the value of the 'protocolId' field.
+   * Sets the value of the 'protocolVersionInfo' field.
    * @param value the value to set.
    */
-  public void setProtocolId(java.lang.Integer value) {
-    this.protocolId = value;
-  }
-
-  /**
-   * Gets the value of the 'protocolVersion' field.
-   */
-  public java.lang.Integer getProtocolVersion() {
-    return protocolVersion;
-  }
-
-  /**
-   * Sets the value of the 'protocolVersion' field.
-   * @param value the value to set.
-   */
-  public void setProtocolVersion(java.lang.Integer value) {
-    this.protocolVersion = value;
+  public void setProtocolVersionInfo(org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair value) {
+    this.protocolVersionInfo = value;
   }
 
   /**
@@ -136,8 +117,7 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
     implements org.apache.avro.data.RecordBuilder<ProtocolMetaData> {
 
     private int accessPointId;
-    private int protocolId;
-    private int protocolVersion;
+    private org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair protocolVersionInfo;
     private java.nio.ByteBuffer connectionInfo;
 
     /** Creates a new Builder */
@@ -152,17 +132,13 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
         this.accessPointId = data().deepCopy(fields()[0].schema(), other.accessPointId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.protocolId)) {
-        this.protocolId = data().deepCopy(fields()[1].schema(), other.protocolId);
+      if (isValidValue(fields()[1], other.protocolVersionInfo)) {
+        this.protocolVersionInfo = data().deepCopy(fields()[1].schema(), other.protocolVersionInfo);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.protocolVersion)) {
-        this.protocolVersion = data().deepCopy(fields()[2].schema(), other.protocolVersion);
+      if (isValidValue(fields()[2], other.connectionInfo)) {
+        this.connectionInfo = data().deepCopy(fields()[2].schema(), other.connectionInfo);
         fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.connectionInfo)) {
-        this.connectionInfo = data().deepCopy(fields()[3].schema(), other.connectionInfo);
-        fieldSetFlags()[3] = true;
       }
     }
     
@@ -173,17 +149,13 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
         this.accessPointId = data().deepCopy(fields()[0].schema(), other.accessPointId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.protocolId)) {
-        this.protocolId = data().deepCopy(fields()[1].schema(), other.protocolId);
+      if (isValidValue(fields()[1], other.protocolVersionInfo)) {
+        this.protocolVersionInfo = data().deepCopy(fields()[1].schema(), other.protocolVersionInfo);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.protocolVersion)) {
-        this.protocolVersion = data().deepCopy(fields()[2].schema(), other.protocolVersion);
+      if (isValidValue(fields()[2], other.connectionInfo)) {
+        this.connectionInfo = data().deepCopy(fields()[2].schema(), other.connectionInfo);
         fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.connectionInfo)) {
-        this.connectionInfo = data().deepCopy(fields()[3].schema(), other.connectionInfo);
-        fieldSetFlags()[3] = true;
       }
     }
 
@@ -211,51 +183,28 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
-    /** Gets the value of the 'protocolId' field */
-    public java.lang.Integer getProtocolId() {
-      return protocolId;
+    /** Gets the value of the 'protocolVersionInfo' field */
+    public org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair getProtocolVersionInfo() {
+      return protocolVersionInfo;
     }
     
-    /** Sets the value of the 'protocolId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData.Builder setProtocolId(int value) {
+    /** Sets the value of the 'protocolVersionInfo' field */
+    public org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData.Builder setProtocolVersionInfo(org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair value) {
       validate(fields()[1], value);
-      this.protocolId = value;
+      this.protocolVersionInfo = value;
       fieldSetFlags()[1] = true;
       return this; 
     }
     
-    /** Checks whether the 'protocolId' field has been set */
-    public boolean hasProtocolId() {
+    /** Checks whether the 'protocolVersionInfo' field has been set */
+    public boolean hasProtocolVersionInfo() {
       return fieldSetFlags()[1];
     }
     
-    /** Clears the value of the 'protocolId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData.Builder clearProtocolId() {
+    /** Clears the value of the 'protocolVersionInfo' field */
+    public org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData.Builder clearProtocolVersionInfo() {
+      protocolVersionInfo = null;
       fieldSetFlags()[1] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'protocolVersion' field */
-    public java.lang.Integer getProtocolVersion() {
-      return protocolVersion;
-    }
-    
-    /** Sets the value of the 'protocolVersion' field */
-    public org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData.Builder setProtocolVersion(int value) {
-      validate(fields()[2], value);
-      this.protocolVersion = value;
-      fieldSetFlags()[2] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'protocolVersion' field has been set */
-    public boolean hasProtocolVersion() {
-      return fieldSetFlags()[2];
-    }
-    
-    /** Clears the value of the 'protocolVersion' field */
-    public org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData.Builder clearProtocolVersion() {
-      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -266,21 +215,21 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
     
     /** Sets the value of the 'connectionInfo' field */
     public org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData.Builder setConnectionInfo(java.nio.ByteBuffer value) {
-      validate(fields()[3], value);
+      validate(fields()[2], value);
       this.connectionInfo = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'connectionInfo' field has been set */
     public boolean hasConnectionInfo() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'connectionInfo' field */
     public org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData.Builder clearConnectionInfo() {
       connectionInfo = null;
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -289,9 +238,8 @@ public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBas
       try {
         ProtocolMetaData record = new ProtocolMetaData();
         record.accessPointId = fieldSetFlags()[0] ? this.accessPointId : (java.lang.Integer) defaultValue(fields()[0]);
-        record.protocolId = fieldSetFlags()[1] ? this.protocolId : (java.lang.Integer) defaultValue(fields()[1]);
-        record.protocolVersion = fieldSetFlags()[2] ? this.protocolVersion : (java.lang.Integer) defaultValue(fields()[2]);
-        record.connectionInfo = fieldSetFlags()[3] ? this.connectionInfo : (java.nio.ByteBuffer) defaultValue(fields()[3]);
+        record.protocolVersionInfo = fieldSetFlags()[1] ? this.protocolVersionInfo : (org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair) defaultValue(fields()[1]);
+        record.connectionInfo = fieldSetFlags()[2] ? this.connectionInfo : (java.nio.ByteBuffer) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

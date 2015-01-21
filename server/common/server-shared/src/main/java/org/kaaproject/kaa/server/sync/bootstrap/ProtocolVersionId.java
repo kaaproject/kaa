@@ -20,12 +20,12 @@ package org.kaaproject.kaa.server.sync.bootstrap;
  * @author Andrey Shvayka
  *
  */
-public final class ProtocolVersionKey {
+public final class ProtocolVersionId {
 
     private final int protocolId;
     private final int version;
 
-    public ProtocolVersionKey(int protocolId, int version) {
+    public ProtocolVersionId(int protocolId, int version) {
         super();
         this.protocolId = protocolId;
         this.version = version;
@@ -56,7 +56,7 @@ public final class ProtocolVersionKey {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ProtocolVersionKey other = (ProtocolVersionKey) obj;
+        ProtocolVersionId other = (ProtocolVersionId) obj;
         if (protocolId != other.protocolId)
             return false;
         if (version != other.version)

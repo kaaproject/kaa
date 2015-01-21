@@ -37,7 +37,7 @@ import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.sync.bootstrap.ProtocolConnectionData;
-import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionKey;
+import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -53,7 +53,7 @@ import org.springframework.stereotype.Service;
 public class DefaultOperationsServerListService implements OperationsServerListService, OperationsNodeListener {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationsServerListService.class);
     private Map<String, OperationsNodeInfo> opsMap;
-    private Memorizer<List<ProtocolVersionKey>, Set<ProtocolConnectionData>> cache;
+    private Memorizer<List<ProtocolVersionId>, Set<ProtocolConnectionData>> cache;
     private Object listenerLock = new Object();
 
     /**
@@ -61,11 +61,11 @@ public class DefaultOperationsServerListService implements OperationsServerListS
      */
     public DefaultOperationsServerListService() {
         opsMap = new ConcurrentHashMap<String, OperationsNodeInfo>();
-        cache = new Memorizer<List<ProtocolVersionKey>, Set<ProtocolConnectionData>>(
-                new Computable<List<ProtocolVersionKey>, Set<ProtocolConnectionData>>() {
+        cache = new Memorizer<List<ProtocolVersionId>, Set<ProtocolConnectionData>>(
+                new Computable<List<ProtocolVersionId>, Set<ProtocolConnectionData>>() {
 
                     @Override
-                    public Set<ProtocolConnectionData> compute(List<ProtocolVersionKey> arg) throws InterruptedException {
+                    public Set<ProtocolConnectionData> compute(List<ProtocolVersionId> arg) throws InterruptedException {
                         return filterProtocolInstances(arg);
                     }
 
@@ -87,7 +87,7 @@ public class DefaultOperationsServerListService implements OperationsServerListS
     }
 
     @Override
-    public Set<ProtocolConnectionData> filter(List<ProtocolVersionKey> keys) {
+    public Set<ProtocolConnectionData> filter(List<ProtocolVersionId> keys) {
         try {
             return cache.compute(keys);
         } catch (InterruptedException e) {
@@ -134,9 +134,9 @@ public class DefaultOperationsServerListService implements OperationsServerListS
         cache.clear();
     }
     
-    protected Set<ProtocolConnectionData> filterProtocolInstances(List<ProtocolVersionKey> keys) {
+    protected Set<ProtocolConnectionData> filterProtocolInstances(List<ProtocolVersionId> keys) {
         Set<ProtocolConnectionData> result = new HashSet<ProtocolConnectionData>();
-        for (ProtocolVersionKey key : keys) {
+        for (ProtocolVersionId key : keys) {
             for (OperationsNodeInfo node : opsMap.values()) {
                 for (TransportMetaData md : node.getTransports()) {
                     if (md.getId() == key.getProtocolId() && md.getMinSupportedVersion() <= key.getVersion()
@@ -156,7 +156,7 @@ public class DefaultOperationsServerListService implements OperationsServerListS
                 connectionData = pair.getConenctionInfo().array();
             }
         }
-        return new ProtocolConnectionData(ServerNameUtil.crc32(node.getConnectionInfo()), md.getId(), version, connectionData);
+        return new ProtocolConnectionData(ServerNameUtil.crc32(node.getConnectionInfo()), new ProtocolVersionId(md.getId(), version), connectionData);
     }
 
 
