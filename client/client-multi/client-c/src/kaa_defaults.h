@@ -78,7 +78,9 @@ typedef struct {
     kaa_access_point_t               access_point; /*!< Connection data of Bootstrap servers is Base64-encoded. */
 } kaa_bootstrap_server_connection_data_t;
 
-static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_ACCESS_POINTS[] =
+# define KAA_BOOTSTRAP_ACCESS_POINT_COUNT    1
+
+static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_ACCESS_POINTS[KAA_BOOTSTRAP_ACCESS_POINT_COUNT] =
 {
     {
         { 1, 2 },
@@ -89,8 +91,6 @@ static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_ACCESS_POINTS[
         }
     }
 };
-
-# define KAA_BOOTSTRAP_ACCESS_POINT_COUNT    1
 
 # ifdef __cplusplus
 } // extern "C"
