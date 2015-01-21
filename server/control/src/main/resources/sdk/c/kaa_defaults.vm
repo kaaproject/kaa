@@ -84,17 +84,18 @@ typedef struct {
     kaa_access_point_t               access_point; /*!< Connection data of Bootstrap servers is Base64-encoded. */
 } kaa_bootstrap_server_connection_data_t;
 
-#set ($nodeCounter = $bootstrapNodes.size())
-# define KAA_BOOTSTRAP_SERVER_COUNT    $nodeCounter
-
-static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_SERVERS[KAA_BOOTSTRAP_SERVER_COUNT] =
+#set ($accessPointCounter = 0)
+static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_ACCESS_POINTS[] =
 {
 #foreach ($node in $bootstrapNodes)
 #set($supportedChannels = $node.getTransports())
 #set($accessPointId = $Integer.toHexString($ServerNameUtil.crc32($node.getConnectionInfo())))
 #foreach ($transport in $supportedChannels)
-#set($protocolId = $Integer.toHexString($transport.getId())))
+#set($protocolId = $Integer.toHexString($transport.getId()))
+#set ($connectionInfoCounter = $transport.getConnectionInfo().size())
 #foreach ($connectionInfo in $transport.getConnectionInfo())
+#set($accessPointCounter = $accessPointCounter + 1)
+#set($connectionInfoCounter = $connectionInfoCounter - 1)
 #set($connectionData = $Base64.encodeBase64String($connectionInfo.getConenctionInfo().array()))
     {
         { 0x${protocolId}, $connectionInfo.getVersion() },
@@ -103,14 +104,14 @@ static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_SERVERS[KAA_BO
             $connectionData.length(),
             "$connectionData"
         }
-    }
-#set($nodeCounter = $nodeCounter - 1)
-#if($nodeCounter > 0),
+    }#if($connectionInfoCounter > 0),
 #end
 #end
 #end
 #end
 };
+
+# define KAA_BOOTSTRAP_ACCESS_POINT_COUNT    $accessPointCounter
 
 # ifdef __cplusplus
 } // extern "C"
