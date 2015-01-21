@@ -46,10 +46,20 @@ public class TransportContext {
         return commonProperties;
     }
 
+    /**
+     * Returns {@link PublicKey} that is used during encode/decode of the
+     * messages that are dispatched by this {@link Transport}.
+     * 
+     * @return public key
+     */
     public PublicKey getServerKey() {
         return serverKey;
     }
 
+    /**
+     * Returns {@link MessageHandler} for this {@link Transport}
+     * @return message handler
+     */
     public MessageHandler getHandler() {
         return handler;
     }

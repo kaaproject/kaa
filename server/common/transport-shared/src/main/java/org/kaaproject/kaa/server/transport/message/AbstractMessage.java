@@ -21,8 +21,15 @@ import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.platform.PlatformAware;
 
-
-public abstract class AbstractMessage implements PlatformAware{
+/**
+ * Abstract class to represent platform aware message. Holds references to
+ * response and error converters that are used to convert objects into channel
+ * specific data.
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public abstract class AbstractMessage implements PlatformAware {
     private final UUID uuid;
     private final int platformId;
     private final ChannelContext channelContext;
@@ -30,8 +37,8 @@ public abstract class AbstractMessage implements PlatformAware{
     private final MessageBuilder responseConverter;
     private final ErrorBuilder errorConverter;
 
-    protected AbstractMessage(UUID uuid, Integer platformId, ChannelContext channelContext, ChannelType channelType, MessageBuilder responseConverter,
-            ErrorBuilder errorConverter) {
+    protected AbstractMessage(UUID uuid, Integer platformId, ChannelContext channelContext, ChannelType channelType,
+            MessageBuilder responseConverter, ErrorBuilder errorConverter) {
         super();
         this.uuid = uuid;
         this.platformId = platformId;

@@ -17,9 +17,18 @@ package org.kaaproject.kaa.server.transport.message;
 
 import org.kaaproject.kaa.server.transport.session.SessionAware;
 
-
+/**
+ * Represents {@link SessionAware} {@link Message}
+ * 
+ * @author Andrew Shvayka
+ *
+ */
 public interface SessionAwareMessage extends Message, SessionAware{
 
+    /**
+     * Return encoded message data
+     * @return encoded message data
+     */
     byte[] getEncodedMessageData();
 
 }

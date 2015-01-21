@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.transport;
 import org.apache.avro.specific.SpecificRecordBase;
 
 /**
- * A context for transport initialization parameters with specific decoded configuration.
+ * A context for transport initialization parameters with specific avro decoded configuration.
  * 
  * @author Andrew Shvayka
  *
@@ -35,5 +35,4 @@ public class SpecificTransportContext<T extends SpecificRecordBase> extends Tran
     public T getConfiguration() {
         return configuration;
     }
-
 }

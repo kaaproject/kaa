@@ -44,7 +44,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
  * Responsible for classpath scan and initialization of {@link Transport} implementations.
- * Provides ability to add/remove listeners to transports statup.
+ * Provides ability to add/remove listeners to transports startup.
  * 
  * @author Andrew Shvayka
  *

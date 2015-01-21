@@ -30,6 +30,10 @@ public class GenericTransportContext extends TransportContext{
         this.configuration = configuration;
     }
 
+    /**
+     * Returns serialized configuration of this specific {@link Transport}.
+     * @return serialized configuration
+     */
     public byte[] getConfiguration() {
         return configuration;
     }

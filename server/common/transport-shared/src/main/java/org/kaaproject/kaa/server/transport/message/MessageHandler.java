@@ -18,8 +18,7 @@ package org.kaaproject.kaa.server.transport.message;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
 
 /**
- * Represents handler of messages from transport layer
- * connection info.
+ * Represents handler of messages from transport layer connection info.
  * 
  * @author Andrew Shvayka
  *

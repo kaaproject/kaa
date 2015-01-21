@@ -15,7 +15,6 @@
  */
 package org.kaaproject.kaa.server.transport;
 
-
 /**
  * Responsible for lookup, initialization and life-cycle management of available
  * transport implementations
@@ -25,14 +24,29 @@ package org.kaaproject.kaa.server.transport;
  */
 public interface TransportService {
 
+    /**
+     * Lookup available transport implementations and initialize them
+     */
     void lookupAndInit();
 
+    /**
+     * Start all initialized.
+     */
     void start();
 
+    /**
+     * Stop all initialized.
+     */
     void stop();
-    
+
+    /**
+     * Adds listener to updates of the {@link Transport} states
+     */
     boolean addListener(TransportUpdateListener listener);
-    
+
+    /**
+     * Removes listener to updates of the {@link Transport} states
+     */
     boolean removeListener(TransportUpdateListener listener);
 
 }

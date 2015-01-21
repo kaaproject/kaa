@@ -59,19 +59,36 @@ public class TransportMetaData implements Serializable {
     public void setConnectionInfo(int version, byte[] connectionInfo) {
         this.versionSpecificConnectionInfo.put(version, connectionInfo);
     }
-    
-    public byte[] getConnectionInfo(int version){
-        if(versionSpecificConnectionInfo.containsKey(version)){
+
+    /**
+     * Returns serialized connection info for specified transport versions.
+     * Returns default connection info if there is no overridden configuration
+     * info for specified version of the transport.
+     * 
+     * @param version
+     *            - specific version of the transport
+     * @return serialized connection info for the specified version
+     */
+    public byte[] getConnectionInfo(int version) {
+        if (versionSpecificConnectionInfo.containsKey(version)) {
             return versionSpecificConnectionInfo.get(version);
-        }else{
+        } else {
             return defaultConnectionInfo;
         }
     }
 
+    /**
+     * Returns minimum supported version of this transport.
+     * @return minimum supported version.
+     */
     public int getMinSupportedVersion() {
         return minSupportedVersion;
     }
 
+    /**
+     * Returns maximum supported version of this transport.
+     * @return maximum supported version.
+     */
     public int getMaxSupportedVersion() {
         return maxSupportedVersion;
     }
@@ -88,5 +105,4 @@ public class TransportMetaData implements Serializable {
         builder.append("]");
         return builder.toString();
     };
-
 }

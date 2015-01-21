@@ -18,10 +18,31 @@ package org.kaaproject.kaa.server.transport.message;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.kaaproject.kaa.server.transport.platform.PlatformAware;
 
-public interface Message extends ChannelAware, PlatformAware{
+/**
+ * Represents channel and platform aware message that is produced by transport
+ * channels
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public interface Message extends ChannelAware, PlatformAware {
 
+    /**
+     * Returns message builder
+     * @return message builder
+     */
     MessageBuilder getMessageBuilder();
+
+    /**
+     * Returns error builder
+     * @return error builder
+     */
     ErrorBuilder getErrorBuilder();
+
+    /**
+     * Identifies that message is encrypted
+     * @return true if message is encrypted, false otherwise.
+     */
     boolean isEncrypted();
 
 }

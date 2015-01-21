@@ -25,14 +25,42 @@ import org.apache.avro.Schema;
  */
 public interface TransportConfig {
 
+    /**
+     * Returns id of the transport. Transport id must be unique.
+     * 
+     * @return id of the transport
+     */
     int getId();
 
+    /**
+     * Returns name of the transport. There is not strict restriction for this
+     * name to be unique.
+     * 
+     * @return name of the transport
+     */
     String getName();
 
+    /**
+     * Returns class name of the {@link Transport} implementation.
+     * 
+     * @return class name of the {@link Transport} implementation
+     */
     String getTransportClass();
 
+    /**
+     * Returns avro schema of the {@link Transport} configuration.
+     * 
+     * @return avro schema of the {@link Transport} configuration
+     */
     Schema getConfigSchema();
-    
+
+    /**
+     * Returns file name of the configuration file. This configuration file may
+     * be used by {@link TransportService} in order to initialize and configure
+     * corresponding {@link Transport}
+     * 
+     * @return file name of the configuration file
+     */
     String getConfigFileName();
 
 }

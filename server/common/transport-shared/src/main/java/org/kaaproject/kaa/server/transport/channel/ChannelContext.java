@@ -24,12 +24,31 @@ package org.kaaproject.kaa.server.transport.channel;
  */
 public interface ChannelContext {
 
+    /**
+     * Writes and flushes given object
+     * 
+     * @param response
+     *            - object to write
+     */
     void writeAndFlush(Object response);
-
-    void fireExceptionCaught(Exception e);
-
+    
+    /**
+     * Writes given object but don't flush it
+     * @param object
+     */
     void write(Object object);
 
+    /**
+     * Sends flush command to given channel
+     */
     void flush();
+    
+    /**
+     * Notifies channel context about exceptions related to processing messages
+     * for this channel
+     * 
+     * @param e  exception caught
+     */
+    void fireExceptionCaught(Exception e);
 
 }

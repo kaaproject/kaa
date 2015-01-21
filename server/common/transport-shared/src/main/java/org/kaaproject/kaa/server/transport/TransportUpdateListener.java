@@ -26,6 +26,10 @@ import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
  */
 public interface TransportUpdateListener {
 
+    /**
+     * Notify about initialized transports.
+     * @param msList - list of initialized transport meta data
+     */
     void onTransportsStarted(List<TransportMetaData> mdList);
 
 }

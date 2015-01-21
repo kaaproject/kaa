@@ -26,7 +26,6 @@ import java.lang.annotation.Target;
  * @author Andrew Shvayka
  *
  */
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE) 
 public @interface KaaTransportConfig {

@@ -39,12 +39,12 @@ public interface BootstrapManager {
     void receiveOperationsServerList() throws TransportException;
 
     /**
-     * Notifies Channel manager about new server meets given parameters. 
+     * Force switch to the next operations server that support given {@link TransportProtocolId}
      *
-     * @param type the channel's type (i.e. HTTP channel, HTTP long poll channel, etc.).
-     * @see ChannelType
+     * @param transportId of the transport protocol.
+     * @see TransportProtocolId
      */
-    void useNextOperationsServer(TransportProtocolId type);
+    void useNextOperationsServer(TransportProtocolId transportId);
 
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.

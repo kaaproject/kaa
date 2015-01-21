@@ -15,9 +15,36 @@
  */
 package org.kaaproject.kaa.server.transport.message;
 
+/**
+ * Converts message data into objects specific to corresponding transport
+ * channel
+ * 
+ * @author Andrew Shvayka
+ *
+ */
 public interface MessageBuilder {
 
+    /**
+     * Convert message into objects specific to corresponding transport channel
+     * 
+     * @param messageData
+     *            - data to convert
+     * @param isEncrypted
+     *            - information about encryption
+     * @return result of conversion
+     */
     Object[] build(byte[] messageData, boolean isEncrypted);
-    
+
+    /**
+     * Convert message into objects specific to corresponding transport channel
+     * 
+     * @param messageData
+     *            - data to convert
+     * @param messageSignature
+     *            - data signature
+     * @param isEncrypted
+     *            - information about encryption
+     * @return result of conversion
+     */
     Object[] build(byte[] messageData, byte[] messageSignature, boolean isEncrypted);
 }
