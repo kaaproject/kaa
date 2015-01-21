@@ -24,12 +24,6 @@
 #include "kaa_logging.h"
 
 
-#include "platform/stdio.h"
-# include "platform/kaa_sha.h"
-
-#include "kaa_logging.h"
-
-
 #include "collections/kaa_list.h"
 #include "kaa_common.h"
 #include "kaa_status.h"
