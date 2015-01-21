@@ -43,30 +43,31 @@ kaa_string_t* kaa_string_move_create(const char* data, destroy_fn destroy)
     kaa_string_t* str = NULL;
     if (data) {
         str = (kaa_string_t*)KAA_MALLOC(sizeof(kaa_string_t));
-        if (str) {
-            str->data = (char*)data;
-            str->destroy = destroy;
-        }
+        KAA_RETURN_IF_NIL(str, NULL);
+
+        str->data = (char*)data;
+        str->destroy = destroy;
     }
 
     return str;
 }
 
-kaa_string_t* kaa_string_copy_create(const char* data, destroy_fn destroy)
+kaa_string_t* kaa_string_copy_create(const char* data)
 {
     kaa_string_t* str = NULL;
     if (data) {
         str = (kaa_string_t*)KAA_MALLOC(sizeof(kaa_string_t));
-        if (str) {
-            size_t len = strlen(data) + 1;
-            str->data = (char*)KAA_MALLOC(len * sizeof(char));
-            if (str->data) {
-                memcpy(str->data, data, len);
-                str->destroy = destroy;
-            } else {
-                KAA_FREE(str);
-            }
+        KAA_RETURN_IF_NIL(str, NULL);
+
+        size_t len = strlen(data) + 1;
+        str->data = (char*)KAA_MALLOC(len * sizeof(char));
+        if (!str->data) {
+            KAA_FREE(str);
+            return NULL;
         }
+
+        memcpy(str->data, data, len);
+        str->destroy = &kaa_data_destroy;
     }
 
     return str;
@@ -110,32 +111,32 @@ kaa_bytes_t* kaa_bytes_move_create(const uint8_t* data, size_t data_len, destroy
     kaa_bytes_t* bytes_array = NULL;
     if (data && data_len > 0) {
         bytes_array = (kaa_bytes_t*)KAA_MALLOC(sizeof(kaa_bytes_t));
-        if (bytes_array) {
-            bytes_array->buffer = (uint8_t*)data;
-            bytes_array->size = data_len;
-            bytes_array->destroy = destroy;
-        }
+        KAA_RETURN_IF_NIL(bytes_array, NULL);
+
+        bytes_array->buffer = (uint8_t*)data;
+        bytes_array->size = data_len;
+        bytes_array->destroy = destroy;
     }
 
     return bytes_array;
 }
 
-kaa_bytes_t* kaa_bytes_copy_create(const uint8_t* data, size_t data_len, destroy_fn destroy)
+kaa_bytes_t* kaa_bytes_copy_create(const uint8_t* data, size_t data_len)
 {
     kaa_bytes_t* bytes_array = NULL;
     if (data && data_len > 0) {
         bytes_array = (kaa_bytes_t*)KAA_MALLOC(sizeof(kaa_bytes_t));
-        if (bytes_array) {
-            bytes_array->buffer = (uint8_t*)KAA_MALLOC(sizeof(uint8_t) * data_len);
+        KAA_RETURN_IF_NIL(bytes_array, NULL);
+
+        bytes_array->buffer = (uint8_t*)KAA_MALLOC(sizeof(uint8_t) * data_len);
+        if (!bytes_array->buffer) {
+            KAA_FREE(bytes_array);
+            return NULL;
         }
 
-        if (bytes_array && bytes_array->buffer) {
-            memcpy(bytes_array->buffer, data, data_len);
-            bytes_array->size = data_len;
-            bytes_array->destroy = destroy;
-        } else {
-            KAA_FREE(bytes_array);
-        }
+        memcpy(bytes_array->buffer, data, data_len);
+        bytes_array->size = data_len;
+        bytes_array->destroy = &kaa_data_destroy;
     }
 
     return bytes_array;

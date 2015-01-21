@@ -87,7 +87,7 @@ void test_profile_update()
     KAA_TRACE_IN(logger);
 
     kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
-    profile1->profile_body = kaa_string_copy_create("dummy", kaa_data_destroy);
+    profile1->profile_body = kaa_string_copy_create("dummy");
     kaa_error_t error = kaa_profile_update_profile(profile_manager, profile1);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
 
@@ -106,7 +106,7 @@ void test_profile_update()
     profile1->destroy(profile1);
 
     kaa_profile_t *profile2 = kaa_profile_basic_endpoint_profile_test_create();
-    profile2->profile_body = kaa_string_copy_create("new_dummy", kaa_data_destroy);
+    profile2->profile_body = kaa_string_copy_create("new_dummy");
     error = kaa_profile_update_profile(profile_manager, profile2);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
 
@@ -123,7 +123,7 @@ void test_profile_sync_get_size()
 
     kaa_error_t error_code = KAA_ERR_NONE;
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
-    profile->profile_body = kaa_string_copy_create("dummy", kaa_data_destroy);
+    profile->profile_body = kaa_string_copy_create("dummy");
 
     size_t serialized_profile_size = profile->get_size(profile);
     char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
@@ -199,7 +199,7 @@ void test_profile_sync_serialize()
     const char *access_token = "access token";
     const size_t access_token_size = strlen(access_token);
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
-    profile->profile_body = kaa_string_copy_create("dummy", kaa_data_destroy);
+    profile->profile_body = kaa_string_copy_create("dummy");
     size_t serialized_profile_size = profile->get_size(profile);
     char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
     avro_writer_t avro_writer = avro_writer_memory(serialized_profile, serialized_profile_size);
