@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-#include "kaa_user.h"
-
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "platform/sha.h"
+#include "kaa_user.h"
 
 #include "kaa_test.h"
 #include "kaa.h"

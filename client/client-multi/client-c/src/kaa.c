@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-#include <string.h>
+#include <stddef.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include "platform/stdio.h"
+#include "platform/sha.h"
 
 #include "kaa.h"
 #include "utilities/kaa_mem.h"

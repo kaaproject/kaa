@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-#include "kaa_common.h"
+#include "../kaa_common.h"
 #include <stdbool.h>
 #include <sys/types.h> // For ssize_t
 

@@ -15,8 +15,9 @@
  */
 
 #include <openssl/sha.h>
-
-#include "kaa_common.h"
+#include <stdint.h>
+#include "../../platform/sha.h"
+#include "../../kaa_common.h"
 
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
 {

@@ -24,7 +24,10 @@ extern "C" {
 #include "kaa_error.h"
 #include "kaa_common.h"
 
+#ifndef KAA_STATUS_T
+#define KAA_STATUS_T
 typedef struct kaa_status_t kaa_status_t;
+#endif
 
 kaa_error_t kaa_is_endpoint_registered(kaa_status_t *self, bool *result);
 kaa_error_t kaa_set_endpoint_registered(kaa_status_t *self, bool is_registered);

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+#include <string.h>
+#include "platform/stdio.h"
 #include "kaa_common_schema.h"
 
-#include <string.h>
-#include <stdlib.h>
+
+#include "kaa_common_schema.h"
+
 
 #include "avro_src/avro/io.h"
 #include "avro_src/encoding.h"
