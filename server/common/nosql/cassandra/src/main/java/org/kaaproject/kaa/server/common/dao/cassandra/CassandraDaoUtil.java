@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.KEY_DELIMITER;
+
 public class CassandraDaoUtil {
 
     /**
@@ -78,5 +81,13 @@ public class CassandraDaoUtil {
             array = Bytes.getArray(byteBuffer);
         }
         return array;
+    }
+
+    public static String[] parseId(String id) {
+        String[] ids = null;
+        if (isNotBlank(id) && id.contains(KEY_DELIMITER)) {
+            ids = id.split(KEY_DELIMITER);
+        }
+        return ids;
     }
 }

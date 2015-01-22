@@ -1,8 +1,16 @@
 CREATE TABLE IF NOT EXISTS kaa.ep_nfs (
     ep_key_hash blob,
+    seq_num int,
     nf_id text,
-    PRIMARY KEY (ep_key_hash, nf_id)
-);
+    nf_type text,
+    app_id text,
+    schema_id text,
+    version int,
+    last_mod_time timestamp,
+    body blob,
+    expired_at timestamp,
+    PRIMARY KEY (ep_key_hash, seq_num)
+) WITH CLUSTERING ORDER BY (seq_num DESC);
 
 CREATE TABLE IF NOT EXISTS kaa.notification (
     topic_id text,

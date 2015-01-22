@@ -34,13 +34,13 @@ public class AbstractCassandraTest {
     public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
 
     @Autowired
-    protected EndpointNotificationDao<CassandraEndpointNotification> endpointNotificationDao;
+    protected EndpointNotificationDao<CassandraEndpointNotification> unicastNotificationDao;
     @Autowired
     protected EndpointConfigurationDao<CassandraEndpointConfiguration> endpointConfigurationDao;
     @Autowired
     protected EndpointProfileDao<CassandraEndpointProfile> endpointProfileDao;
     @Autowired
-    protected EndpointUserDao<CassandraEndpointUser> userEndpointUserDao;
+    protected EndpointUserDao<CassandraEndpointUser> endpointUserDao;
     @Autowired
     protected NotificationDao<CassandraNotification> notificationDao;
 
@@ -50,15 +50,15 @@ public class AbstractCassandraTest {
         if (endpointKeyHash == null) {
             endpointKeyHash = ByteBuffer.wrap(generateEndpointProfile(appId, null, null).getEndpointKeyHash());
         }
-        String topicId = generateStringId();
         String schemaId = generateStringId();
         for (int i = 0; i < count; i++) {
             CassandraEndpointNotification endpointNotification = new CassandraEndpointNotification();
             endpointNotification.setEndpointKeyHash(endpointKeyHash);
-            NotificationDto notificationDto = generateNotifications(topicId, appId, schemaId, 1, NotificationTypeDto.USER).get(0);
-            endpointNotification.setId(notificationDto.getId());
-            endpointNotification.setNotification(new CassandraNotification(notificationDto));
-            savedNotifications.add(endpointNotificationDao.save(endpointNotification));
+            endpointNotification.setApplicationId(appId);
+            endpointNotification.setSchemaId(schemaId);
+            endpointNotification.setType(NotificationTypeDto.USER);
+            endpointNotification.setSeqNum(100 + i);
+            savedNotifications.add(unicastNotificationDao.save(endpointNotification));
         }
         return savedNotifications;
     }
@@ -117,7 +117,7 @@ public class AbstractCassandraTest {
         endpointUserDto.setExternalId(UUID.randomUUID().toString());
         endpointUserDto.setUsername("Test username");
         endpointUserDto.setTenantId(UUID.randomUUID().toString());
-        return userEndpointUserDao.save(new CassandraEndpointUser(endpointUserDto)).toDto();
+        return endpointUserDao.save(new CassandraEndpointUser(endpointUserDto)).toDto();
     }
 
     protected byte[] generateBytes() {
