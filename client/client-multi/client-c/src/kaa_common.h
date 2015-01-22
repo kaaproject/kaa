@@ -67,12 +67,12 @@ typedef enum {
 } kaa_service_t;
 
 /**
- * @brief Unique identifier used to represent client transport channel implementations.
+ * @brief Identifier used to uniquely represent transport protocol.
  */
 typedef struct {
     uint32_t id;
     uint16_t version;
-} kaa_transport_protocol_info_t;
+} kaa_transport_protocol_id_t;
 
 /**
  * @brief Connection parameters used by transport channels to establish

@@ -102,8 +102,8 @@ void test_handle_server_sync()
     error_code = kaa_bootstrap_manager_create(&manager, channel_manager, logger);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    kaa_transport_protocol_info_t protocol1 = { 1, 1 };
-    kaa_transport_protocol_info_t protocol2 = { 2, 1 };
+    kaa_transport_protocol_id_t protocol1 = { 1, 1 };
+    kaa_transport_protocol_id_t protocol2 = { 2, 1 };
 
     uint16_t server_sync_payload_size = 0;
 
@@ -150,7 +150,7 @@ void test_handle_server_sync()
                                           , access_point2_protocol1
                                           , access_point1_protocol2 };
 
-    kaa_transport_protocol_info_t *protoco_infos[] = { &protocol1
+    kaa_transport_protocol_id_t *protoco_infos[] = { &protocol1
                                                      , &protocol1
                                                      , &protocol2 };
 
@@ -188,7 +188,7 @@ void test_handle_server_sync()
      * TEST
      */
     kaa_access_point_t *test_access_point;
-    kaa_transport_protocol_info_t unknown_protocol = { 456, 456 };
+    kaa_transport_protocol_id_t unknown_protocol = { 456, 456 };
     test_access_point = kaa_bootstrap_manager_get_current_access_point(manager, &unknown_protocol);
     ASSERT_NULL(test_access_point);
 

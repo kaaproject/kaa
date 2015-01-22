@@ -34,45 +34,35 @@ typedef struct {
 } kaa_sync_info_t;
 
 struct kaa_channel_manager_t {
-    kaa_list_t                 *transport_channels;
-    kaa_logger_t               *logger;
-    kaa_sync_info_t            sync_info;
+    kaa_list_t         *transport_channels;
+    kaa_logger_t       *logger;
+    kaa_sync_info_t    sync_info;
 };
 
-
+typedef struct {
+    uint32_t                             channel_id;
+    kaa_transport_channel_interface_t    channel;
+} kaa_transport_channel_wrapper_t;;
 
 static void destroy_channel(void *data)
 {
     KAA_RETURN_IF_NIL(data,);
 
-    kaa_transport_channel_interface_t *channel =
-            (kaa_transport_channel_interface_t *)data;
+    kaa_transport_channel_wrapper_t *channel_wrapper =
+            (kaa_transport_channel_wrapper_t *)data;
 
-    if (channel->release_context) {
-        channel->release_context(channel->context);
+    if (channel_wrapper->channel.release_context) {
+        channel_wrapper->channel.release_context(channel_wrapper->channel.context);
     }
 
-    KAA_FREE(channel);
+    KAA_FREE(channel_wrapper);
 }
 
 
 static bool find_channel(/* current channel */void *data, /* channel-matcher */void *context)
 {
     KAA_RETURN_IF_NIL2(data, context, false);
-
-    kaa_error_t error_code;
-    kaa_transport_protocol_info_t info1;
-    kaa_transport_protocol_info_t info2;
-
-    kaa_transport_channel_interface_t *channel = (kaa_transport_channel_interface_t *)data;
-    kaa_transport_channel_interface_t *matcher = (kaa_transport_channel_interface_t *)context;
-
-    error_code = channel->get_protocol_info(channel->context, &info1);
-    KAA_RETURN_IF_ERR(error_code);
-    error_code = matcher->get_protocol_info(matcher->context, &info2);
-    KAA_RETURN_IF_ERR(error_code);
-
-    return (0 == memcmp(&info1, &info2, sizeof(kaa_transport_protocol_info_t)));
+    return (((kaa_transport_channel_wrapper_t *)data)->channel_id == *((uint32_t *)context));
 }
 
 kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
@@ -92,6 +82,23 @@ kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t *channel
+                                             , uint32_t *channel_id)
+{
+    KAA_RETURN_IF_NIL2(channel, channel_id, KAA_ERR_BADPARAM);
+
+    const uint32_t prime = 31;
+
+    *channel_id = 1;
+    *channel_id = prime * *channel_id + (ptrdiff_t)channel->context;
+    *channel_id = prime * *channel_id + (ptrdiff_t)channel->get_protocol_id;
+    *channel_id = prime * *channel_id + (ptrdiff_t)channel->get_supported_services;
+    *channel_id = prime * *channel_id + (ptrdiff_t)channel->sync_handler;
+    *channel_id = prime * *channel_id + (ptrdiff_t)channel->release_context;
+
+    return KAA_ERR_NONE;
+}
+
 void kaa_channel_manager_destroy(kaa_channel_manager_t *self)
 {
     if (self) {
@@ -101,34 +108,38 @@ void kaa_channel_manager_destroy(kaa_channel_manager_t *self)
 }
 
 kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *self
-                                                    , kaa_transport_channel_interface_t *channel)
+                                                    , kaa_transport_channel_interface_t *channel
+                                                    , uint32_t *channel_id)
 {
     KAA_RETURN_IF_NIL2(self, channel, KAA_ERR_BADPARAM);
 
-    kaa_transport_protocol_info_t protocol_info;
-    channel->get_protocol_info(channel->context, &protocol_info);
+    uint32_t id;
+    kaa_transport_channel_id_calculate(channel, &id);
 
-    kaa_list_t *it = kaa_list_find_next(self->transport_channels, &find_channel, channel);
+    kaa_list_t *it = kaa_list_find_next(self->transport_channels, &find_channel, &id);
     if (it) {
         KAA_LOG_WARN(self->logger, KAA_ERR_ALREADY_EXISTS,
-                "Failed to add transport channel (id=0x%X, version=%u): already exists"
-                                                 , protocol_info.id, protocol_info.version);
+                "Transport channel (id=0x%X) already exists", id);
         return KAA_ERR_ALREADY_EXISTS;
     }
 
-    kaa_transport_channel_interface_t *copy =
-            (kaa_transport_channel_interface_t *)KAA_MALLOC(sizeof(kaa_transport_channel_interface_t));
+    kaa_transport_channel_wrapper_t *copy =
+            (kaa_transport_channel_wrapper_t *)KAA_MALLOC(sizeof(kaa_transport_channel_wrapper_t));
     KAA_RETURN_IF_NIL(copy, KAA_ERR_NOMEM);
 
-    *copy = *channel;
+    copy->channel_id = id;
+    copy->channel = *channel;
+
+    if (channel_id) {
+        *channel_id = id;
+    }
 
     it = self->transport_channels ?
                  kaa_list_push_front(self->transport_channels, copy) :
                  kaa_list_create(copy);
     if (!it) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM,
-                "Failed to add new transport channel (id=0x%X, version=%u)"
-                                                     , protocol_info.id, protocol_info.version);
+                "Failed to add new transport channel (id=0x%X)", id);
         KAA_FREE(copy);
         return KAA_ERR_NOMEM;
     }
@@ -136,36 +147,28 @@ kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *sel
     self->transport_channels = it;
     self->sync_info.is_up_to_date = false;
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "New transport channel (id=0x%X, version=%u) added"
-                                                                        , protocol_info.id, protocol_info.version);
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "New transport channel (id=0x%X) added", id);
 
     return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *self
-                                                       , kaa_transport_channel_interface_t *channel)
+                                                       , uint32_t channel_id)
 {
-    KAA_RETURN_IF_NIL2(self, channel, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code;
-    kaa_transport_protocol_info_t protocol_info;
-
-    channel->get_protocol_info(channel->context, &protocol_info);
-
-    error_code = kaa_list_remove_first(&self->transport_channels
-                                     , &find_channel
-                                     , channel
-                                     , destroy_channel);
+    kaa_error_t error_code = kaa_list_remove_first(&self->transport_channels
+                                                 , &find_channel
+                                                 , &channel_id
+                                                 , destroy_channel);
 
     if (!error_code) {
         self->sync_info.is_up_to_date = false;
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Transport channel (id=0x%X, version=%u) removed"
-                                                            , protocol_info.id, protocol_info.version);
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Transport channel (id=0x%X) was removed", channel_id);
         return KAA_ERR_NONE;
     }
 
-    KAA_LOG_WARN(self->logger, error_code, "Transport channel (id=0x%X, version=%u) was not found"
-                                                          , protocol_info.id, protocol_info.version);
+    KAA_LOG_WARN(self->logger, error_code, "Transport channel (id=0x%X) was not found", channel_id);
 
     return error_code;
 }
@@ -178,34 +181,33 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
     kaa_error_t error_code = KAA_ERR_NONE;
 
     kaa_list_t *it = self->transport_channels;
-    kaa_transport_channel_interface_t *channel =
-            (kaa_transport_channel_interface_t *) kaa_list_get_data(it);
+    kaa_transport_channel_wrapper_t *channel_wrapper;
 
     kaa_service_t *services;
     size_t service_count;
 
-    while (channel) {
-        error_code = channel->get_supported_services(channel->context
-                                                   , &services
-                                                   , &service_count);
+    while (it) {
+        channel_wrapper = (kaa_transport_channel_wrapper_t *) kaa_list_get_data(it);
+
+        error_code = channel_wrapper->channel.get_supported_services(channel_wrapper->channel.context
+                                                                   , &services
+                                                                   , &service_count);
         if (error_code || !services || !service_count) {
-            KAA_LOG_WARN(self->logger, error_code, "Failed to retrieve list of supported services", error_code);
+            KAA_LOG_WARN(self->logger, error_code, "Failed to retrieve list of supported services "
+                                        "for transport channel (id=0x%X)", channel_wrapper->channel_id);
             continue;
         }
 
-        for (; service_count--;) {
+        while (service_count--) {
             if (*services++ == service_type) {
-                kaa_transport_protocol_info_t protocol_info;
-                channel->get_protocol_info(channel->context, &protocol_info);
-
                 KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Transport channel "
-                        "(id=0x%X, version=%u) for service %u was found"
-                        , service_type, protocol_info.id, protocol_info.version);
-                return channel;
+                        "(id=0x%X) for service %u was found"
+                        , service_type, channel_wrapper->channel_id);
+                return &channel_wrapper->channel;
             }
         }
+
         it = kaa_list_next(it);
-        channel = (kaa_transport_channel_interface_t *) kaa_list_get_data(it);
     }
 
     KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to find transport channel for service %u", service_type);
@@ -264,15 +266,16 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
         error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 
-        kaa_transport_channel_interface_t *channel;
-        kaa_transport_protocol_info_t protocol_info;
+        kaa_transport_channel_wrapper_t *channel_wrapper;
+        kaa_transport_protocol_id_t protocol_info;
 
         kaa_list_t *it = self->transport_channels;
 
         while (it) {
-            channel = (kaa_transport_channel_interface_t *)kaa_list_get_data(it);
-            if (channel) {
-                error_code = channel->get_protocol_info(channel->context, &protocol_info);
+            channel_wrapper = (kaa_transport_channel_wrapper_t *)kaa_list_get_data(it);
+            if (channel_wrapper) {
+                error_code = channel_wrapper->channel.get_protocol_id(channel_wrapper->channel.context
+                                                                    , &protocol_info);
                 KAA_RETURN_IF_ERR(error_code);
 
                 network_order_32 = KAA_HTONL(protocol_info.id);

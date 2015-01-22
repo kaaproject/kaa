@@ -45,10 +45,10 @@ typedef struct kaa_bootstrap_manager_t kaa_bootstrap_manager_t;
  * @return                       Connection parameters or NULL.
  *
  * @see kaa_access_point_t
- * @see kaa_transport_protocol_info_t
+ * @see kaa_transport_protocol_id_t
  */
 kaa_access_point_t *kaa_bootstrap_manager_get_current_access_point(kaa_bootstrap_manager_t *self
-                                                                 , kaa_transport_protocol_info_t *protocol_info);
+                                                                 , kaa_transport_protocol_id_t *protocol_info);
 
 /**
  * @brief Retrieves next connection parameters used by specified transport protocol.
@@ -58,10 +58,10 @@ kaa_access_point_t *kaa_bootstrap_manager_get_current_access_point(kaa_bootstrap
  * @return                       Connection parameters or NULL.
  *
  * @see kaa_access_point_t
- * @see kaa_transport_protocol_info_t
+ * @see kaa_transport_protocol_id_t
  */
 kaa_access_point_t *kaa_bootstrap_manager_get_next_access_point(kaa_bootstrap_manager_t *self
-                                                              , kaa_transport_protocol_info_t *protocol_info);
+                                                              , kaa_transport_protocol_id_t *protocol_info);
 
 #ifdef __cplusplus
 }      /* extern "C" */

@@ -42,6 +42,17 @@ typedef struct kaa_channel_manager_t kaa_channel_manager_t;
 
 
 /**
+ * @brief Calculates the unique id for the transport channel implementations.
+ *
+ * @param[in]       channel       Interface of the transport channel implementations.
+ * @param[in,out]   channel_id    Pointer to calculated channel id.
+ *
+ * @return                        Error code.
+ */
+kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t *channel
+                                             , uint32_t *channel_id);
+
+/**
  * @brief Adds user-defined transport channel implementation as a sync request
  * handler for the given list of services.
  *
@@ -51,13 +62,16 @@ typedef struct kaa_channel_manager_t kaa_channel_manager_t;
  * @b NOTE: It is possible to register more than one channel for the same service.
  * In such event Kaa library will use the last registered one.
  *
- * @param[in]   self       Channel manager.
- * @param[in]   channel    Client transport channel.
+ * @param[in]       self          Channel manager.
+ * @param[in]       channel       Transport channel implementations.
+ * @param[in,out]   channel_id    Pointer to calculate channel id.
+ *                                May be NULL if id isn't needed.
  *
- * @return                 Error code.
+ * @return                        Error code.
  */
 kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *self
-                                                    , kaa_transport_channel_interface_t *channel);
+                                                    , kaa_transport_channel_interface_t *channel
+                                                    , uint32_t *channel_id);
 
 /**
  * @brief Removes user-defined transport channel implementation from
@@ -66,13 +80,13 @@ kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *sel
  * @b NOTE: The channel manager is responsible to release all resources related
  * to this channel.
  *
- * @param[in]   self       Channel manager.
- * @param[in]   channel    Client transport channel.
+ * @param[in]   self          Channel manager.
+ * @param[in]   channel_id    Channel id.
  *
- * @return                 Error code.
+ * @return                    Error code.
  */
 kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *self
-                                                       , kaa_transport_channel_interface_t *channel);
+                                                       , uint32_t channel_id);
 
 #ifdef __cplusplus
 }      /* extern "C" */

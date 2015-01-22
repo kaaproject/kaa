@@ -28,7 +28,7 @@
 
 
 typedef struct {
-    kaa_transport_protocol_info_t    protocol_info;
+    kaa_transport_protocol_id_t    protocol_info;
     kaa_list_t                       *access_points;
     kaa_list_t                       *current_access_points;
 } kaa_channel_access_points_t;
@@ -72,8 +72,8 @@ static bool find_channel_access_points(void *data, void *context)
 {
     KAA_RETURN_IF_NIL2(data, context, false);
     return (0 == memcmp(&((kaa_channel_access_points_t *)data)->protocol_info
-                      , (kaa_transport_protocol_info_t *)context
-                      , sizeof(kaa_transport_protocol_info_t)));
+                      , (kaa_transport_protocol_id_t *)context
+                      , sizeof(kaa_transport_protocol_id_t)));
 }
 
 kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
@@ -100,7 +100,7 @@ void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self)
 }
 
 kaa_access_point_t *kaa_bootstrap_manager_get_current_access_point(kaa_bootstrap_manager_t *self
-                                                                 , kaa_transport_protocol_info_t *protocol_info)
+                                                                 , kaa_transport_protocol_id_t *protocol_info)
 {
     KAA_RETURN_IF_NIL2(self, protocol_info, NULL);
 
@@ -132,7 +132,7 @@ static kaa_error_t do_sync(kaa_bootstrap_manager_t *self)
 }
 
 kaa_access_point_t *kaa_bootstrap_manager_get_next_access_point(kaa_bootstrap_manager_t *self
-                                                              , kaa_transport_protocol_info_t *protocol_info)
+                                                              , kaa_transport_protocol_id_t *protocol_info)
 {
     KAA_RETURN_IF_NIL2(self, protocol_info, NULL);
 
@@ -161,7 +161,7 @@ kaa_access_point_t *kaa_bootstrap_manager_get_next_access_point(kaa_bootstrap_ma
 }
 
 static kaa_error_t add_access_point(kaa_bootstrap_manager_t *self
-                                  , kaa_transport_protocol_info_t *protocol_info
+                                  , kaa_transport_protocol_id_t *protocol_info
                                   , kaa_access_point_t *access_point)
 {
     KAA_RETURN_IF_NIL2(protocol_info, access_point, KAA_ERR_BADPARAM);
@@ -244,7 +244,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
                                                         , access_point_count, request_id);
 
     uint32_t access_point_id;
-    kaa_transport_protocol_info_t protocol_info;
+    kaa_transport_protocol_id_t protocol_info;
     uint16_t connection_data_len;
 
     while (access_point_count--) {

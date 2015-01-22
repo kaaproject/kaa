@@ -76,12 +76,12 @@ static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEM
  * @brief Uses to represent transport-specific connection data to establish
  * connection to Bootstrap servers.
  *
- * @see kaa_transport_protocol_info_t
+ * @see kaa_transport_protocol_id_t
  * @see kaa_access_point_t
  */
 typedef struct {
-    kaa_transport_protocol_info_t    protocol_info;
-    kaa_access_point_t               access_point; /*!< Connection data of Bootstrap servers is Base64-encoded. */
+    kaa_transport_protocol_id_t    protocol_id;
+    kaa_access_point_t             access_point; /*!< Connection data of Bootstrap servers is Base64-encoded. */
 } kaa_bootstrap_server_connection_data_t;
 
 #set ($accessPointCounter = 0)

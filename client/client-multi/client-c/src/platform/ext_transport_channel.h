@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-#ifndef SRC_PLATFORM_EXT_TRANSPORT_CHANNEL_H_
-#define SRC_PLATFORM_EXT_TRANSPORT_CHANNEL_H_
+#ifndef EXT_TRANSPORT_CHANNEL_H_
+#define EXT_TRANSPORT_CHANNEL_H_
 
 #include "kaa_common.h"
 
-# ifdef __cplusplus
+#ifdef __cplusplus
 extern "C" {
-# endif
+#endif
 
 /**
- * @brief Retrieves a transport protocol info.
+ * @brief Retrieves a transport protocol id supported by a transport channel implementation.
  *
  * @param[in]       context          Channel context.
- * @param[in,out]   protocol_info    Transport protocol info instance to be filled in.
+ * @param[in,out]   protocol_info    Transport protocol id instance to be filled in.
  * @return                           Error code.
  *
- * @see kaa_transport_protocol_info_t
+ * @see kaa_transport_protocol_id_t
  */
-typedef kaa_error_t (*kaa_get_protocol_info_fn)(void *context
-                                              , kaa_transport_protocol_info_t *protocol_info);
+typedef kaa_error_t (*kaa_get_protocol_id_fn)(void *context
+                                            , kaa_transport_protocol_id_t *protocol_info);
 
 /**
  * @brief Retrieves the list of the supported services.
@@ -79,14 +79,14 @@ typedef kaa_error_t (*kaa_release_channel_context_fn)(void *context);
  */
 typedef struct {
     void                              *context;
-    kaa_get_protocol_info_fn          get_protocol_info;
+    kaa_get_protocol_id_fn            get_protocol_id;
     kaa_get_supported_services_fn     get_supported_services;
     kaa_sync_handler_fn               sync_handler;
     kaa_release_channel_context_fn    release_context; /**< May be NULL */
 } kaa_transport_channel_interface_t;
 
-# ifdef __cplusplus
+#ifdef __cplusplus
 }      /* extern "C" */
-# endif
+#endif
 
-#endif /* SRC_PLATFORM_EXT_TRANSPORT_CHANNEL_H_ */
+#endif /* EXT_TRANSPORT_CHANNEL_H_ */
