@@ -19,60 +19,77 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include <stdint.h>
 
 #include "avro_src/avro/io.h"
 
-#include "kaa_list.h"
+#include "collections/kaa_list.h"
 
-typedef void (*serialize)(avro_writer_t writer, void *data);
-typedef void* (*deserialize)(avro_reader_t reader);
-typedef size_t (*get_size)(void *data);
-typedef void (*destruct)(void *data);
+typedef void (*serialize_fn)(avro_writer_t writer, void *data);
+typedef void* (*deserialize_fn)(avro_reader_t reader);
+typedef size_t (*get_size_fn)(void *data);
+typedef void (*destroy_fn)(void *data);
 
-typedef struct kaa_bytes_t_ {
+typedef struct {
     uint8_t* buffer;
     int32_t  size;
+
+    destroy_fn  destroy;
 } kaa_bytes_t;
 
-typedef struct kaa_union_t_ {
+typedef struct {
+    char* data;
+
+    destroy_fn  destroy;
+} kaa_string_t;
+
+typedef struct {
     uint8_t type;
     void   *data;
 
-    serialize serialize;
-    get_size  get_size;
-    destruct  destruct;
+    serialize_fn serialize;
+    get_size_fn  get_size;
+    destroy_fn   destroy;
 } kaa_union_t;
 
-void kaa_serialize_string(avro_writer_t writer, void* data);
-char* kaa_deserialize_string(avro_reader_t reader);
-size_t kaa_get_size_string(void *data);
+kaa_string_t* kaa_string_move_create(const char* data, destroy_fn destroy);
+kaa_string_t* kaa_string_copy_create(const char* data, destroy_fn destroy);
+void kaa_string_destroy(void *data);
+void kaa_string_serialize(avro_writer_t writer, void* data);
+kaa_string_t* kaa_string_deserialize(avro_reader_t reader);
+size_t kaa_string_get_size(void *data);
 
-kaa_bytes_t* kaa_deserialize_bytes(avro_reader_t reader);
-void kaa_serialize_bytes(avro_writer_t writer, void* data);
-void kaa_destroy_bytes(void *data);
-size_t kaa_get_size_bytes(void *data);
+kaa_bytes_t* kaa_bytes_move_create(const uint8_t* data, size_t data_len, destroy_fn destroy);
+kaa_bytes_t* kaa_bytes_copy_create(const uint8_t* data, size_t data_len, destroy_fn destroy);
+void kaa_bytes_destroy(void *data);
+void kaa_bytes_serialize(avro_writer_t writer, void* data);
+kaa_bytes_t* kaa_bytes_deserialize(avro_reader_t reader);
+size_t kaa_bytes_get_size(void *data);
 
-void kaa_serialize_boolean(avro_writer_t writer, void* data);
-int8_t* kaa_deserialize_boolean(avro_reader_t reader);
+void kaa_boolean_serialize(avro_writer_t writer, void* data);
+int8_t* kaa_boolean_deserialize(avro_reader_t reader);
 
-void kaa_serialize_int(avro_writer_t writer, void* data);
-int32_t* kaa_deserialize_int(avro_reader_t reader);
+void kaa_int_serialize(avro_writer_t writer, void* data);
+int32_t* kaa_int_deserialize(avro_reader_t reader);
 
-void kaa_serialize_long(avro_writer_t writer, void* data);
-int64_t* kaa_deserialize_long(avro_reader_t reader);
-size_t size_long(int64_t l);
+void kaa_long_serialize(avro_writer_t writer, void* data);
+int64_t* kaa_long_deserialize(avro_reader_t reader);
+size_t kaa_long_get_size(int64_t l);
 
-void kaa_serialize_array(avro_writer_t writer, kaa_list_t* array, serialize s);
-kaa_list_t *kaa_deserialize_array(avro_reader_t reader, deserialize ds);
-size_t kaa_array_size(kaa_list_t* array, get_size s);
+void kaa_array_serialize(avro_writer_t writer, kaa_list_t* array, serialize_fn serialize);
+kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deserialize);
+size_t kaa_array_get_size(kaa_list_t* array, get_size_fn get_size);
 
-void kaa_destroy_null(void *data);
+void kaa_null_serialize(avro_writer_t writer, void*);
+void* kaa_null_deserialize(avro_reader_t reader);
+void kaa_null_destroy(void *data);
+size_t kaa_null_get_size();
 
-CLOSE_EXTERN
+void kaa_data_destroy(void *data);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* KAA_COMMON_SCHEMA_H_ */

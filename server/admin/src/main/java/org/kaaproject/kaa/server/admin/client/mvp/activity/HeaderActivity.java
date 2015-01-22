@@ -19,8 +19,11 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.MailPropertiesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.ChangePasswordDialog;
@@ -94,6 +97,21 @@ public class HeaderActivity extends AbstractActivity implements
                 showChangePasswordDialog();
             }
         });
+        KaaAuthorityDto autority = KaaAdmin.getAuthInfo().getAuthority();
+        if (autority == KaaAuthorityDto.KAA_ADMIN) {
+            headerView.getSettingsLabel().addMenuItem(Utils.constants.generalSettings(), new ActionMenuItemListener() {
+                @Override
+                public void onMenuItemSelected() {
+                    goTo(new GeneralPropertiesPlace());
+                }
+            });
+            headerView.getSettingsLabel().addMenuItem(Utils.constants.outgoingMailSettings(), new ActionMenuItemListener() {
+                @Override
+                public void onMenuItemSelected() {
+                    goTo(new MailPropertiesPlace());
+                }
+            });
+        }
     }
 
     private void showChangePasswordDialog() {

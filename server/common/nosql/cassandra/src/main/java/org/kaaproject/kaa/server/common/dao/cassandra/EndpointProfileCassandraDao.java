@@ -61,7 +61,9 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     @Override
     public CassandraEndpointProfile save(CassandraEndpointProfile profile) {
         LOG.debug("Saving endpoint profile...");
-        profile.setId(getStringId());
+        if (profile.getId() == null) {
+            profile.setId(getStringId());
+        }
         ByteBuffer epKeyHash = profile.getEndpointKeyHash();
         Statement saveByAppId = cassandraEPByAppIdDao.getSaveQuery(new CassandraEPByAppId(profile.getApplicationId(), epKeyHash));
         String accessToken = profile.getAccessToken();
@@ -81,12 +83,16 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     @Override
     public CassandraEndpointProfile findByKeyHash(byte[] endpointKeyHash) {
-        LOG.debug("Try to find endpoint profile by key hash {}", endpointKeyHash);
-        return (CassandraEndpointProfile) getMapper().get(getByteBuffer(endpointKeyHash));
+        LOG.debug("Try to find endpoint profile by key hash [{}]", endpointKeyHash);
+        CassandraEndpointProfile endpointProfile = (CassandraEndpointProfile) getMapper().get(getByteBuffer(endpointKeyHash));
+        LOG.debug("{} endpoint profile by key hash [{}]", endpointKeyHash, endpointProfile != null ? "Found" : "No found");
+        LOG.trace("Found endpoint profile {} by key hash [{}]", endpointKeyHash, endpointProfile);
+        return endpointProfile;
     }
 
     @Override
     public long getCountByKeyHash(byte[] endpointKeyHash) {
+        LOG.debug("Try to check if endpoint profile exists with key hash [{}]", endpointKeyHash);
         long count = 0;
         ResultSet resultSet = execute(select().countAll().from(getColumnFamilyName())
                 .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
@@ -94,19 +100,23 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         if (row != null) {
             count = row.getLong(0);
         }
+        LOG.debug("{} endpoint profile exists with key hash [{}]", count);
         return count;
     }
 
     @Override
     public void removeByKeyHash(byte[] endpointKeyHash) {
+        LOG.debug("Remove endpoint profile by key hash [{}]", endpointKeyHash);
         getMapper().delete(getByteBuffer(endpointKeyHash));
     }
 
     @Override
     public void removeByAppId(String appId) {
+        LOG.debug("Remove endpoint profile by application id [{}]", appId);
         Statement deleteEps = delete().from(getColumnFamilyName()).where(in(EP_EP_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
         Statement deleteEpsByAppId = delete().from(EP_BY_APP_ID_COLUMN_FAMILY_NAME).where(eq(EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId));
         executeBatch(BatchStatement.Type.UNLOGGED, deleteEps, deleteEpsByAppId);
+        LOG.trace("Execute statements {}, {} like batch", deleteEps, deleteEpsByAppId);
     }
 
     @Override

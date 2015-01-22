@@ -16,15 +16,19 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
+import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.LogSchemasDataProvider;
+import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
+import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -46,9 +50,8 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
     @Override
     protected AbstractDataProvider<LogSchemaDto> getDataProvider(
-            MultiSelectionModel<LogSchemaDto> selectionModel,
-            AsyncCallback<List<LogSchemaDto>> asyncCallback) {
-        return new LogSchemasDataProvider(selectionModel, asyncCallback, applicationId);
+            MultiSelectionModel<LogSchemaDto> selectionModel) {
+        return new LogSchemasDataProvider(selectionModel, listView, applicationId);
     }
 
     @Override
@@ -66,4 +69,31 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
         callback.onSuccess((Void)null);
     }
 
+    @Override
+    protected void onCustomRowAction(RowActionEvent<String> event) {
+        Integer logSchemaVersion = Integer.valueOf(event.getClickedId());
+        final RowAction action = event.getAction();
+
+        AsyncCallback<String> callback = new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, listView);
+            }
+            @Override
+            public void onSuccess(String key) {
+                ServletHelper.downloadRecordLibrary(key);
+            }
+        };
+
+        switch (action) {
+            case DOWNLOAD_LIBRARY:
+                KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.LIBRARY, callback);
+                break;
+            case DOWNLOAD_SCHEMA:
+                KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.SCHEMA, callback);
+                break;
+            default:
+                break;
+        }
+    }
 }

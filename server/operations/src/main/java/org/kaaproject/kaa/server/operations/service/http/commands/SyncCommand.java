@@ -50,4 +50,5 @@ public class SyncCommand extends AbstractHttpSyncCommand implements CommonEPCons
     public static String getCommandName() {
         return SYNC_COMMAND;
     }
+
 }

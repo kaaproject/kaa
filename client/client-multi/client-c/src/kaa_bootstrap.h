@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_bootstrap.h
+ * @brief Management of the Operations servers connection parameters.
+ *
+ * Manages connection parameters to Operations servers that are received from Bootstrap servers.
+ */
+
 #ifndef KAA_BOOTSTRAP_H_
 #define KAA_BOOTSTRAP_H_
 
-#ifdef __cplusplus
-extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
-
 #include "kaa_error.h"
 #include "kaa_common.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct kaa_bootstrap_manager_t kaa_bootstrap_manager_t;
 
@@ -35,6 +39,9 @@ typedef struct kaa_ops_t {
     char                data[7]; //FIXME
 } kaa_ops_t;
 
+// TODO: This structure is specific to the KaaTCP implementation of the transport protocol layer, and must be moved to
+// the corresponding source files. Bootstrap manager must have no knowledge of the specific to the concrete protocol
+// implementation destination structures.
 typedef struct kaa_ops_ip_t {
     kaa_channel_type_t  channel_type;
     uint32_t            priority;
@@ -45,13 +52,13 @@ typedef struct kaa_ops_ip_t {
     uint16_t            public_key_length;
 } kaa_ops_ip_t;
 
-kaa_error_t kaa_create_bootstrap_manager(kaa_bootstrap_manager_t **);
-void kaa_destroy_bootstrap_manager(kaa_bootstrap_manager_t *);
 
-kaa_error_t kaa_add_operation_server(kaa_bootstrap_manager_t *bm, kaa_ops_t* s);
+kaa_error_t kaa_bootstrap_manager_add_operations_server(kaa_bootstrap_manager_t *self, kaa_ops_t *server);
 
-kaa_ops_t* kaa_get_current_operation_server(kaa_bootstrap_manager_t *bm, kaa_channel_type_t channel_type);
-kaa_ops_t* kaa_get_next_operation_server(kaa_bootstrap_manager_t *bm, kaa_channel_type_t channel_type);
+kaa_ops_t* kaa_bootstrap_manager_get_current_operations_server(kaa_bootstrap_manager_t *self, kaa_channel_type_t channel_type);
+kaa_ops_t* kaa_bootstrap_manager_get_next_operations_server(kaa_bootstrap_manager_t *self, kaa_channel_type_t channel_type);
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_BOOTSTRAP_H_ */

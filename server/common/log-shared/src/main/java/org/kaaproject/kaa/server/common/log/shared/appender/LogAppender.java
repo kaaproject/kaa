@@ -67,6 +67,14 @@ public interface LogAppender {
      * @param logEventPack the log event pack
      */
     void doAppend(LogEventPack logEventPack);
+    
+    /**
+     * Check if appender support schema version 
+     *
+     * @param version the version of schema
+     * @return true if appender supports specified schema version, false otherwise.
+     */
+    boolean isSchemaVersionSupported(int version);
 
     /**
      * Release any resources allocated within the appender such as file handles, network connections, etc.

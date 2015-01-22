@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -43,9 +41,8 @@ public class EcfsActivity extends AbstractListActivity<EventClassFamilyDto, Ecfs
 
     @Override
     protected AbstractDataProvider<EventClassFamilyDto> getDataProvider(
-            MultiSelectionModel<EventClassFamilyDto> selectionModel,
-            AsyncCallback<List<EventClassFamilyDto>> asyncCallback) {
-        return new EcfsDataProvider(selectionModel, asyncCallback);
+            MultiSelectionModel<EventClassFamilyDto> selectionModel) {
+        return new EcfsDataProvider(selectionModel, listView);
     }
 
     @Override

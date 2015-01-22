@@ -29,15 +29,18 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppendersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.MailPropertiesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
@@ -67,6 +70,12 @@ public class AppActivityMapper implements ActivityMapper {
 
             if (clazz == UserProfilePlace.class) {
                 return new UserProfileActivity((UserProfilePlace)place, clientFactory);
+            }
+            else if (clazz == GeneralPropertiesPlace.class) {
+                return new GeneralPropertiesActivity((GeneralPropertiesPlace)place, clientFactory);
+            }
+            else if (clazz == MailPropertiesPlace.class) {
+                return new MailPropertiesActivity((MailPropertiesPlace)place, clientFactory);
             }
             else if (clazz == TenantsPlace.class) {
                 return new TenantsActivity((TenantsPlace)place, clientFactory);
@@ -147,6 +156,10 @@ public class AppActivityMapper implements ActivityMapper {
             }
             else if (clazz == TopicPlace.class) {
                 return new TopicActivity((TopicPlace) place, clientFactory);
+            }
+            
+            else if (clazz == SendNotificationPlace.class) {
+                return new SendNotificationActivity((SendNotificationPlace) place, clientFactory);
             }
 
             else if (clazz == AefMapsPlace.class) {

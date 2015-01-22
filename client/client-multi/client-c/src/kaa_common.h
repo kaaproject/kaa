@@ -14,36 +14,50 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_common.h
+ * @brief Common C EP SDK definitions and small utilities
+ */
+
 #ifndef KAA_COMMON_H_
 #define KAA_COMMON_H_
 
-#ifdef __cplusplus
-extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
-
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "kaa_error.h"
 
-typedef enum kaa_server_response_result_t {
-    KAA_SUCCESS,
-    KAA_FAILURE
-} kaa_server_response_result_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#define KAA_NON_VOID(p, E) \
-    if ((void *)0 == p) { return E; }
 
-#define KAA_BOOL                int8_t
-#define KAA_INT32T              int32_t
-#define KAA_INT64T              int64_t
+/*
+ * Standard error handling macros
+ */
+#define KAA_RETURN_IF_ERR(E) \
+    { if (E) return E; }
 
-typedef void (* user_response_handler_t)(KAA_BOOL is_attached);
-typedef void (* event_callback_t)(const char * event_fqn, const char * event_data, size_t event_data_size);
+#define KAA_RETURN_IF_NIL(p, E) \
+    { if (!(p)) return E; }
 
+#define KAA_RETURN_IF_NIL2(p1, p2, E) \
+    { if (!(p1) || !(p2)) return E; }
+
+#define KAA_RETURN_IF_NIL3(p1, p2, p3, E) \
+    { if (!(p1) || !(p2) || !(p3)) return E; }
+
+#define KAA_RETURN_IF_NIL4(p1, p2, p3, p4, E) \
+    { if (!(p1) || !(p2) || !(p3) || !(p4)) return E; }
+
+#define KAA_RETURN_IF_NIL5(p1, p2, p3, p4, p5,E) \
+    { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; }
+
+
+/**
+ * Types of Kaa platform services
+ */
 typedef enum {
     KAA_SERVICE_BOOTSTRAP = 0,
     KAA_SERVICE_PROFILE = 1,
@@ -52,32 +66,30 @@ typedef enum {
     KAA_SERVICE_LOGGING = 4,
 } kaa_service_t;
 
-typedef void (*kaa_sync_t)(size_t service_count, const kaa_service_t services[]);
-typedef void (*kaa_sync_all_t)();
 
-/**
- * Hash calculating stuff
+
+/*
+ * SHA1 hash
  */
 #define SHA_1_DIGEST_LENGTH 20
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
-/**
- * A size of a hash buffer must be not less than SHA_1_DIGEST_LENGTH
- */
+typedef const unsigned char* kaa_digest_p;
+
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
-typedef enum kaa_channel_type_t {
+
+
+// TODO: Channel types must be represented as a list managed in runtime by the channel_manager
+#define KAA_CHANNEL_TYPE_COUNT 3
+typedef enum {
     HTTP,
     HTTP_LP,
     KAATCP
 } kaa_channel_type_t;
 
-/**
- * Define's value should be equal to a number of
- * elements in kaa_channel_type_t enumeration
- */
-#define KAA_CHANNEL_TYPE_COUNT   3
 
-typedef size_t kaa_trx_id;
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_COMMON_H_ */

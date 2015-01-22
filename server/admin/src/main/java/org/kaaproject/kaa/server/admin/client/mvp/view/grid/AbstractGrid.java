@@ -58,7 +58,9 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public abstract class AbstractGrid<T, K> extends DockLayoutPanel implements HasRowActionEventHandlers<K> {
-
+    
+    protected static final int ACTION_COLUMN_WIDTH = 40;
+    
     private static KaaAdminGridResources gridResources = GWT.create(KaaAdminGridResources.class);
     private static KaaAdminGridResourcesSmall gridResourcesSmall = GWT.create(KaaAdminGridResourcesSmall.class);
 
@@ -266,8 +268,8 @@ public abstract class AbstractGrid<T, K> extends DockLayoutPanel implements HasR
 
                 deleteColumn = constructDeleteColumn("");
                 table.addColumn(deleteColumn, deleteHeader);
-                table.setColumnWidth(deleteColumn, 40, Unit.PX);
-                return 40;
+                table.setColumnWidth(deleteColumn, ACTION_COLUMN_WIDTH, Unit.PX);
+                return ACTION_COLUMN_WIDTH;
             }
             else {
                 return 0;
@@ -282,7 +284,7 @@ public abstract class AbstractGrid<T, K> extends DockLayoutPanel implements HasR
         int index = table.getColumnIndex(deleteColumn);
         if (index > -1) {
             table.removeColumn(deleteColumn);
-            return 40;
+            return ACTION_COLUMN_WIDTH;
         }
         return 0;
     }

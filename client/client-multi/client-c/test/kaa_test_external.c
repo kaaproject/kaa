@@ -14,26 +14,34 @@
  * limitations under the License.
  */
 
-#include <stddef.h>
-#include "kaa_test_external.h"
+#include "kaa_external.h"
 
-#ifndef NO_kaa_store_status_ext
-void    kaa_read_status_ext(char **buffer, size_t *buffer_size, int *needs_deallocation)
+#include <string.h>
+#include "utilities/kaa_mem.h"
+
+static const char test_ep_key[20] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
+
+
+void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
 
 }
-#endif
 
-#ifndef NO_kaa_store_status_ext
 void    kaa_store_status_ext(const char *buffer, size_t buffer_size)
 {
 
 }
-#endif
 
-#ifndef NO_kaa_store_status_ext
-void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size)
+void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-
+    *buffer = (char *) KAA_MALLOC(20 * sizeof(char));
+    if (*buffer != NULL) {
+        memcpy(*buffer, test_ep_key, 20);
+        *buffer_size = 20;
+        *needs_deallocation = true;
+    } else {
+        *buffer_size = 0;
+        *needs_deallocation = false;
+    }
 }
-#endif
+

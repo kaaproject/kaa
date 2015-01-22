@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-#include "kaa_context.h"
 #include "kaa_test.h"
+#include "utilities/kaa_log.h"
 
-void test_create_bootstrap_manager()
+/* All right, we are testing static functions here */
+#include "kaa.c"
+
+
+static kaa_logger_t *logger = NULL;
+
+void test_create_context()
 {
+    KAA_TRACE_IN(logger);
+
     kaa_context_t * context = NULL;
 
-    kaa_error_t err_code = kaa_create_context(&context);
+    kaa_error_t err_code = kaa_context_create(&context, logger);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(context);
     ASSERT_NOT_NULL(context->bootstrap_manager);
@@ -33,11 +41,21 @@ void test_create_bootstrap_manager()
     ASSERT_NOT_NULL(context->status);
     ASSERT_NOT_NULL(context->user_manager);
 
-    kaa_destroy_context(context);
+    kaa_context_destroy(context);
 }
 
-int main(int argc, char ** argv)
+int test_init(void)
 {
-    test_create_bootstrap_manager();
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     return 0;
 }
+
+int test_deinit(void)
+{
+    kaa_log_destroy(logger);
+    return 0;
+}
+
+KAA_SUITE_MAIN(Context, test_init, test_deinit
+        , KAA_TEST_CASE(create_context, test_create_context)
+)

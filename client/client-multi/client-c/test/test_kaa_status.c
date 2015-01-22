@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-#include "kaa_status.h"
 #include "kaa_test.h"
-#include "kaa_mem.h"
+#include "kaa_status.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
+
 
 #include <string.h>
 #include <stdio.h>
@@ -27,12 +29,17 @@ kaa_digest test_profile_hash= {0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0
 #define KAA_STATUS_STORAGE "status.conf"
 
 #include "kaa_external.h"
-void    kaa_read_status_ext(char **buffer, size_t *buffer_size, int *needs_deallocation)
+
+extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
+extern void        kaa_status_destroy(kaa_status_t *self);
+
+static kaa_logger_t *logger = NULL;
+
+void kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;
-    //FIXME: memory leak in case of status file exists
-    *needs_deallocation = 0;
+    *needs_deallocation = true;
 
     FILE* status_file = fopen(KAA_STATUS_STORAGE, "rb");
 
@@ -42,22 +49,24 @@ void    kaa_read_status_ext(char **buffer, size_t *buffer_size, int *needs_deall
 
     fseek(status_file, 0, SEEK_END);
     *buffer_size = ftell(status_file);
-    *buffer = (char*)calloc(*buffer_size, sizeof(char));
+    *buffer = (char *) KAA_MALLOC((*buffer_size) * sizeof(char));
 
     if (*buffer == NULL) {
+        *buffer_size = 0;
         fclose(status_file);
         return;
     }
 
     fseek(status_file, 0, SEEK_SET);
     if (fread(*buffer, *buffer_size, 1, status_file) == 0) {
-        free(*buffer);
+        *buffer_size = 0;
+        KAA_FREE(*buffer);
     }
-
+    *needs_deallocation = true;
     fclose(status_file);
 }
 
-void    kaa_store_status_ext(const char *buffer, size_t buffer_size)
+void kaa_store_status_ext(const char *buffer, size_t buffer_size)
 {
     if (!buffer || buffer_size == 0) {
         return;
@@ -71,95 +80,133 @@ void    kaa_store_status_ext(const char *buffer, size_t buffer_size)
     }
 }
 
-void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size)
+void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *need_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;
+    *need_deallocation = false;
 }
 
 void test_create_status()
 {
+    KAA_TRACE_IN(logger);
+
     kaa_status_t *status;
-    kaa_error_t err_code = kaa_create_status(&status);
+    kaa_error_t err_code = kaa_status_create(&status);
 
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(status);
 
-    kaa_destroy_status(status);
+    kaa_status_destroy(status);
 }
 
 void test_status_persistense()
 {
-    kaa_status_t *status;
-    kaa_error_t err_code = kaa_create_status(&status);
+    KAA_TRACE_IN(logger);
 
-    ASSERT_NULL(kaa_status_get_endpoint_access_token(status));
-    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status), 0);
-    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status), 0);
-    ASSERT_EQUAL(kaa_is_endpoint_registered(status), 0);
-    ASSERT_NOT_NULL(kaa_status_get_endpoint_public_key_hash(status));
-    ASSERT_NOT_NULL(kaa_status_get_profile_hash(status));
+    kaa_status_t *status;
+    kaa_error_t err_code = kaa_status_create(&status);
+
+    const char * token = NULL;
+    ASSERT_EQUAL(kaa_status_get_endpoint_access_token(status, &token), KAA_ERR_NONE);
+    ASSERT_NULL(token);
+
+    uint32_t event_seq_num = 0;
+    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status, &event_seq_num), KAA_ERR_NONE);
+    ASSERT_EQUAL(event_seq_num, 0);
+
+    bool is_attached = false;
+    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status, &is_attached), KAA_ERR_NONE);
+    ASSERT_FALSE(is_attached);
+
+    bool is_registered = true;
+    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
+    ASSERT_FALSE(is_registered);
+
+    kaa_digest_p ep_hash = NULL;
+    ASSERT_EQUAL(kaa_status_get_endpoint_public_key_hash(status, &ep_hash), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(ep_hash);
+
+    kaa_digest_p profile_hash = NULL;
+    ASSERT_EQUAL(kaa_status_get_profile_hash(status, &profile_hash), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(profile_hash);
 
     kaa_status_set_endpoint_access_token(status, "my_token");
-    char *token = kaa_status_get_endpoint_access_token(status);
+    ASSERT_EQUAL(kaa_status_get_endpoint_access_token(status, &token), KAA_ERR_NONE);
     ASSERT_EQUAL(strcmp("my_token", token), 0);
 
     kaa_status_set_endpoint_public_key_hash(status, test_ep_key_hash);
-    kaa_digest *ep_hash = kaa_status_get_endpoint_public_key_hash(status);
+
+    ASSERT_EQUAL(kaa_status_get_endpoint_public_key_hash(status, &ep_hash), KAA_ERR_NONE);
     ASSERT_NOT_NULL(ep_hash);
-    ASSERT_EQUAL(memcmp(test_ep_key_hash, *ep_hash, SHA_1_DIGEST_LENGTH), 0);
+    ASSERT_EQUAL(memcmp(test_ep_key_hash, ep_hash, SHA_1_DIGEST_LENGTH), 0);
 
     kaa_status_set_profile_hash(status, test_profile_hash);
-    kaa_digest *profile_hash = kaa_status_get_profile_hash(status);
+    ASSERT_EQUAL(kaa_status_get_profile_hash(status, &profile_hash), KAA_ERR_NONE);
     ASSERT_NOT_NULL(profile_hash);
-    ASSERT_EQUAL(memcmp(test_profile_hash, *profile_hash, SHA_1_DIGEST_LENGTH), 0);
+    ASSERT_EQUAL(memcmp(test_profile_hash, profile_hash, SHA_1_DIGEST_LENGTH), 0);
 
-    kaa_set_endpoint_registered(status, 1);
-    ASSERT_EQUAL(kaa_is_endpoint_registered(status), 1);
+    ASSERT_EQUAL(kaa_set_endpoint_registered(status, 1), KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
+    ASSERT_TRUE(is_registered);
 
     kaa_set_endpoint_attached_to_user(status, 1);
-    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status), 1);
+    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status, &is_attached), KAA_ERR_NONE);
+    ASSERT_TRUE(is_attached);
 
-    kaa_status_set_event_sequence_number(status, 10);
-    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status), 10);
+    ASSERT_EQUAL(kaa_status_set_event_sequence_number(status, 10), KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status, &event_seq_num), KAA_ERR_NONE);
+    ASSERT_EQUAL(event_seq_num, 10);
 
-    kaa_status_set_event_sequence_number(status, 5);
-    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status), 10);
+    ASSERT_NOT_EQUAL(kaa_status_set_event_sequence_number(status, 5), KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status, &event_seq_num), KAA_ERR_NONE);
+    ASSERT_EQUAL(event_seq_num, 10);
 
     err_code = kaa_status_save(status);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
 
-    kaa_destroy_status(status);
+    kaa_status_destroy(status);
     status = NULL;
 
 
-    err_code = kaa_create_status(&status);
+    err_code = kaa_status_create(&status);
 
-    char * r_token = kaa_status_get_endpoint_access_token(status);
-    ASSERT_NOT_NULL(r_token);
-    ASSERT_EQUAL(strcmp("my_token", r_token), 0);
+    ASSERT_EQUAL(kaa_status_get_endpoint_access_token(status, &token), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(token);
+    ASSERT_EQUAL(strcmp("my_token", token), 0);
 
-    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status), 10);
-    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status), 1);
-    ASSERT_EQUAL(kaa_is_endpoint_registered(status), 1);
+    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status, &event_seq_num), KAA_ERR_NONE);
+    ASSERT_EQUAL(event_seq_num, 10);
+    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status, &is_attached), KAA_ERR_NONE);
+    ASSERT_TRUE(is_attached);
+    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
+    ASSERT_TRUE(is_registered);
 
-    kaa_digest *r_ep_hash = kaa_status_get_endpoint_public_key_hash(status);
-    ASSERT_NOT_NULL(r_ep_hash);
-    ASSERT_EQUAL(memcmp(test_ep_key_hash, *r_ep_hash, SHA_1_DIGEST_LENGTH), 0);
+    ASSERT_EQUAL(kaa_status_get_endpoint_public_key_hash(status, &ep_hash), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(ep_hash);
+    ASSERT_EQUAL(memcmp(test_ep_key_hash, ep_hash, SHA_1_DIGEST_LENGTH), 0);
 
-    kaa_digest *r_profile_hash = kaa_status_get_profile_hash(status);
-    ASSERT_NOT_NULL(r_profile_hash);
-    ASSERT_EQUAL(memcmp(test_profile_hash, *r_profile_hash, SHA_1_DIGEST_LENGTH), 0);
+    ASSERT_EQUAL(kaa_status_get_profile_hash(status, &profile_hash), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(profile_hash);
+    ASSERT_EQUAL(memcmp(test_profile_hash, profile_hash, SHA_1_DIGEST_LENGTH), 0);
 
-    kaa_destroy_status(status);
+    kaa_status_destroy(status);
 }
 
-int main(int argc, char **argv)
+int status_test_init(void)
 {
+    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     remove(KAA_STATUS_STORAGE);
-    test_create_status();
-    test_status_persistense();
-
     return 0;
 }
 
+int test_deinit(void)
+{
+    kaa_log_destroy(logger);
+    return 0;
+}
+
+KAA_SUITE_MAIN(Status, status_test_init, test_deinit,
+        KAA_TEST_CASE(create, test_create_status)
+        KAA_TEST_CASE(persistence, test_status_persistense)
+)

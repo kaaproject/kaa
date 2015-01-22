@@ -18,8 +18,20 @@
 
 # include "avro_src/avro/io.h"
 
-# include "kaa.h"
-# include "kaa_mem.h"
+# include "kaa_common.h"
+# include "kaa_event.h"
+# include "kaa_error.h"
+# include "utilities/kaa_mem.h"
+
+extern kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
+extern kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback);
+extern kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
+# ifdef kaa_broadcast_event
+# undef kaa_broadcast_event
+# endif
+# define kaa_broadcast_event(context, fqn, fqn_length, event_data, event_data_size) \
+    kaa_event_manager_send_event((context), (fqn), (fqn_length), (event_data), (event_data_size), NULL, 0)
+
 
 typedef struct kaa_${event_family_name}_ {
 #foreach ($event in $incomingEventFqns)
@@ -32,51 +44,64 @@ static kaa_${event_family_name} listeners;
 
 #foreach ($event in $incomingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-static void kaa_event_manager_${e_name}_listener(const char * event_fqn, const char *data, size_t size)
+static void kaa_event_manager_${e_name}_listener(const char * event_fqn, const char *data, size_t size, kaa_endpoint_id_p event_source)
 {
     (void)event_fqn;
     avro_reader_t reader = avro_reader_memory(data, size);
-    ${prefix}_${e_name}_t * event = ${prefix}_deserialize_${e_name}(reader);
+    ${prefix}_${e_name}_t * event = ${prefix}_${e_name}_deserialize(reader);
     avro_reader_free(reader);
-    listeners.${e_name}_listener(event);
+    listeners.${e_name}_listener(event, event_source);
 }
 
-void set_${prefix}_${e_name}_listener(on_${prefix}_${e_name} listener)
+kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager_t *self, on_${prefix}_${e_name} listener)
 {
-    if (listener != NULL) {
-        listeners.${e_name}_listener = listener;
-        kaa_register_event_listener("${event}", ${event.length()}, kaa_event_manager_${e_name}_listener);
-    }
-}
-
-#end
-
-#foreach ($event in $outgoingEventFqns)
-#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-void kaa_send_${prefix}_${e_name}(${prefix}_${e_name}_t *event, const char *target, size_t target_len)
-{
-    size_t event_size = event->get_size(event);
-    char *buffer = KAA_CALLOC(event_size, sizeof(char));
-    avro_writer_t writer = avro_writer_memory(buffer, event_size);
-    event->serialize(writer, event);
-    kaa_send_event("${event}", ${event.length()}, writer->buf, writer->written, target, target_len);
-    avro_writer_free(writer);
-    KAA_FREE(buffer);
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    listeners.${e_name}_listener = listener;
+    return kaa_event_manager_add_on_event_callback(self, "${event}", kaa_event_manager_${e_name}_listener);
 }
 
 #end
 
 #foreach ($event in $outgoingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-void kaa_add_${prefix}_${e_name}_event_to_block(${prefix}_${e_name}_t *event, const char *target, size_t target_len, kaa_trx_id trx_id)
+kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target)
 {
+    KAA_RETURN_IF_NIL2(self, event, KAA_ERR_BADPARAM);
+#if(!$emptyRecords.contains($event))
     size_t event_size = event->get_size(event);
-    char *buffer = KAA_CALLOC(event_size, sizeof(char));
+    char *buffer = (char *)KAA_MALLOC((event_size) * sizeof(char));
+    KAA_RETURN_IF_NIL(buffer, KAA_ERR_NOMEM);
     avro_writer_t writer = avro_writer_memory(buffer, event_size);
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_NOMEM);
     event->serialize(writer, event);
-    kaa_event_add_to_transaction(trx_id, "${event}", ${event.length()}, writer->buf, writer->written, target, target_len);
+    kaa_error_t result = kaa_event_manager_send_event(self, "${event}", writer->buf, writer->written, target);
     avro_writer_free(writer);
-    KAA_FREE(buffer);
+    return result;
+#else
+    return kaa_event_manager_send_event(self, "${event}", NULL, 0, target);
+#end
+}
+
+#end
+
+#foreach ($event in $outgoingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target, kaa_event_block_id trx_id)
+{
+    KAA_RETURN_IF_NIL2(self, event, KAA_ERR_BADPARAM);
+#if(!$emptyRecords.contains($event))
+    size_t event_size = event->get_size(event);
+    char *buffer = (char *)KAA_MALLOC((event_size) * sizeof(char));
+    KAA_RETURN_IF_NIL(buffer, KAA_ERR_NOMEM);
+    avro_writer_t writer = avro_writer_memory(buffer, event_size);
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_NOMEM);
+    event->serialize(writer, event);
+    kaa_error_t result = kaa_event_manager_add_event_to_transaction(self, trx_id, "${event}", writer->buf, writer->written, target);
+    avro_writer_free(writer);
+    return result;
+#else
+    return kaa_event_manager_add_event_to_transaction(self, trx_id, "${event}", NULL, 0, target);
+#end
 }
 
 #end

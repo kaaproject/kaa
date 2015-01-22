@@ -29,8 +29,5 @@ public class TempCredentialsException extends AccountStatusException {
     public TempCredentialsException(String msg, Throwable t) {
         super(msg, t);
     }
-
-    public TempCredentialsException(String msg, Object extraInformation) {
-        super(msg, extraInformation);
-    }
+    
 }

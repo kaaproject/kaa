@@ -29,6 +29,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractRecordPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseDetailsView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
+import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.activity.shared.AbstractActivity;
@@ -40,7 +41,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V extends BaseRecordView<T>, P extends AbstractRecordPlace> extends AbstractActivity implements BaseDetailsView.Presenter {
+public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V extends BaseRecordView<T>, P extends AbstractRecordPlace> extends AbstractActivity implements BaseDetailsView.Presenter, ErrorMessageCustomizer {
 
     protected final ClientFactory clientFactory;
     protected final String applicationId;
@@ -82,8 +83,6 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
     protected abstract void deactivateStruct(String id, AsyncCallback<T> callback);
 
     protected abstract P getRecordPlaceImpl(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random);
-
-    protected abstract String customizeErrorMessage(Throwable caught);
 
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
@@ -145,7 +144,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    recordView.setErrorMessage(Utils.getErrorMessage(caught));
+                    Utils.handleException(caught, recordView);
                 }
 
                 @Override
@@ -154,7 +153,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
                     getRecord(schemaId, endpointGroupId, new AsyncCallback<StructureRecordDto<T>>() {
                         @Override
                         public void onFailure(Throwable caught) {
-                            recordView.setErrorMessage(Utils.getErrorMessage(caught));
+                            Utils.handleException(caught, recordView);
                         }
 
                         @Override
@@ -181,7 +180,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
             getVacantSchemas(endpointGroupId, new AsyncCallback<List<SchemaDto>>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    recordView.setErrorMessage(Utils.getErrorMessage(caught));
+                    Utils.handleException(caught, recordView);
                 }
 
                 @Override
@@ -236,7 +235,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
                     }
 
                     public void onFailure(Throwable caught) {
-                        recordView.setErrorMessage(customizeErrorMessage(caught));
+                        Utils.handleException(caught, recordView, AbstractRecordActivity.this);
                     }
         });
     }
@@ -250,7 +249,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
             }
 
             public void onFailure(Throwable caught) {
-                recordView.setErrorMessage(Utils.getErrorMessage(caught));
+                Utils.handleException(caught, recordView);
             }
         });
     }
@@ -264,7 +263,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
             }
 
             public void onFailure(Throwable caught) {
-                recordView.setErrorMessage(Utils.getErrorMessage(caught));
+                Utils.handleException(caught, recordView);
             }
         });
     }

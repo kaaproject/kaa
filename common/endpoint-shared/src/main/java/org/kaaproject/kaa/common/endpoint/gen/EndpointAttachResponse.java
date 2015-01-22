@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EndpointAttachResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointKeyHash\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}],\"direction\":\"in\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EndpointAttachResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"endpointKeyHash\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String requestId;
+   private int requestId;
    private java.lang.String endpointKeyHash;
    private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
 
@@ -23,7 +23,7 @@ public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRec
   /**
    * All-args constructor.
    */
-  public EndpointAttachResponse(java.lang.String requestId, java.lang.String endpointKeyHash, org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result) {
+  public EndpointAttachResponse(java.lang.Integer requestId, java.lang.String endpointKeyHash, org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result) {
     this.requestId = requestId;
     this.endpointKeyHash = endpointKeyHash;
     this.result = result;
@@ -43,7 +43,7 @@ public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRec
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: requestId = (java.lang.String)value$; break;
+    case 0: requestId = (java.lang.Integer)value$; break;
     case 1: endpointKeyHash = (java.lang.String)value$; break;
     case 2: result = (org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -53,7 +53,7 @@ public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRec
   /**
    * Gets the value of the 'requestId' field.
    */
-  public java.lang.String getRequestId() {
+  public java.lang.Integer getRequestId() {
     return requestId;
   }
 
@@ -61,7 +61,7 @@ public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRec
    * Sets the value of the 'requestId' field.
    * @param value the value to set.
    */
-  public void setRequestId(java.lang.String value) {
+  public void setRequestId(java.lang.Integer value) {
     this.requestId = value;
   }
 
@@ -116,7 +116,7 @@ public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRec
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<EndpointAttachResponse>
     implements org.apache.avro.data.RecordBuilder<EndpointAttachResponse> {
 
-    private java.lang.String requestId;
+    private int requestId;
     private java.lang.String endpointKeyHash;
     private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
 
@@ -160,12 +160,12 @@ public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRec
     }
 
     /** Gets the value of the 'requestId' field */
-    public java.lang.String getRequestId() {
+    public java.lang.Integer getRequestId() {
       return requestId;
     }
     
     /** Sets the value of the 'requestId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse.Builder setRequestId(java.lang.String value) {
+    public org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
       fieldSetFlags()[0] = true;
@@ -179,7 +179,6 @@ public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRec
     
     /** Clears the value of the 'requestId' field */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse.Builder clearRequestId() {
-      requestId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -238,7 +237,7 @@ public class EndpointAttachResponse extends org.apache.avro.specific.SpecificRec
     public EndpointAttachResponse build() {
       try {
         EndpointAttachResponse record = new EndpointAttachResponse();
-        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.String) defaultValue(fields()[0]);
+        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.Integer) defaultValue(fields()[0]);
         record.endpointKeyHash = fieldSetFlags()[1] ? this.endpointKeyHash : (java.lang.String) defaultValue(fields()[1]);
         record.result = fieldSetFlags()[2] ? this.result : (org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType) defaultValue(fields()[2]);
         return record;

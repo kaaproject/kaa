@@ -23,6 +23,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
@@ -34,9 +35,9 @@ public class TopicsDataProvider extends AbstractDataProvider<TopicDto>{
     private String endpointGroupId;
 
     public TopicsDataProvider(MultiSelectionModel<TopicDto> selectionModel,
-                                    AsyncCallback<List<TopicDto>> asyncCallback,
-                                    String applicationId, String endpointGroupId) {
-        super(selectionModel, asyncCallback);
+                              HasErrorMessage hasErrorMessage,
+                              String applicationId, String endpointGroupId) {
+        super(selectionModel, hasErrorMessage);
         this.applicationId = applicationId;
         this.endpointGroupId = endpointGroupId;
     }

@@ -14,49 +14,60 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_context.h
+ * @brief Kaa endpoint context definition
+ *
+ * Defines the general Kaa endpoint context.
+ */
+
 #ifndef KAA_CONTEXT_H_
 #define KAA_CONTEXT_H_
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
-#include "kaa_error.h"
-#include "kaa_user.h"
-#include "kaa_event.h"
-#include "kaa_profile.h"
-#include "kaa_bootstrap.h"
-#include "kaa_status.h"
-#include "kaa_logging.h"
-#include "kaa_channel_manager.h"
+typedef struct kaa_status_t             kaa_status_t;
+typedef struct kaa_platform_protocol_t  kaa_platform_protocol_t;
+typedef struct kaa_bootstrap_manager_t  kaa_bootstrap_manager_t;
+typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
+typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
+typedef struct kaa_user_manager_t       kaa_user_manager_t;
 
-typedef struct kaa_context_t {
-    kaa_profile_manager_t   *   profile_manager;
-    kaa_user_manager_t      *   user_manager;
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    kaa_event_manager_t     *   event_manager;
+typedef struct kaa_event_manager_t      kaa_event_manager_t;
 #endif
-    kaa_bootstrap_manager_t *   bootstrap_manager;
-    kaa_status_t            *   status;
-    kaa_channel_manager_t   *   channel_manager;
+
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-    kaa_log_collector_t     *   log_collector;
+typedef struct kaa_log_collector        kaa_log_collector_t;
 #endif
+
+typedef struct kaa_logger_t             kaa_logger_t;
+
+
+
+/**
+ * General Kaa endpoint context. Contains private structures of all Kaa endpoint SDK subsystems that can be used
+ * independently to perform API calls to specific subsystems.
+ */
+typedef struct {
+    kaa_status_t               *status;             /**< See @link kaa_status.h @endlink. */
+    kaa_platform_protocol_t    *platfrom_protocol;  /**< See @link kaa_platform_protocol.h @endlink. */
+    kaa_bootstrap_manager_t    *bootstrap_manager;  /**< See @link kaa_bootstrap.h @endlink. */
+    kaa_channel_manager_t      *channel_manager;    /**< See @link kaa_channel_manager.h @endlink. */
+    kaa_profile_manager_t      *profile_manager;    /**< See @link kaa_profile.h @endlink. */
+    kaa_user_manager_t         *user_manager;       /**< See @link kaa_user.h @endlink. */
+#ifndef KAA_DISABLE_FEATURE_EVENTS
+    kaa_event_manager_t        *event_manager;      /**< See @link kaa_event.h @endlink. */
+#endif
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    kaa_log_collector_t        *log_collector;      /**< See @link kaa_logging.h @endlink. */
+#endif
+    kaa_logger_t               *logger;             /**< See @link kaa_log.h @endlink. */
 } kaa_context_t;
 
-kaa_error_t kaa_create_context(kaa_context_t ** context);
-kaa_error_t kaa_destroy_context(kaa_context_t * context);
-
-// Kaa channel manager API
-kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **);
-void kaa_channel_manager_destroy(kaa_context_t *context);
-void kaa_channel_manager_set_sync_handler(kaa_context_t *context, kaa_sync_t handler, size_t services_count, const kaa_service_t supported_services[]);
-void kaa_channel_manager_set_sync_all_handler(kaa_context_t *context, kaa_sync_all_t handler);
-kaa_sync_t kaa_channel_manager_get_sync_handler(kaa_context_t *context, kaa_service_t service);
-kaa_sync_all_t kaa_channel_manager_get_sync_all_handler(kaa_context_t *context);
-
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_CONTEXT_H_ */

@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-#set( $workaround = '#endif' )
 #set ($headerGuard = $headerName.toUpperCase())
-#ifndef ${headerGuard}_H_
-\#define ${headerGuard}_H_
+# ifndef ${headerGuard}_H_
+# define ${headerGuard}_H_
 
-#ifdef __cplusplus
+# include "kaa_common_schema.h"
+# include "collections/kaa_list.h"
+
+# ifdef __cplusplus
 extern "C" {
-\#define CLOSE_EXTERN }
-\#else
-\#define CLOSE_EXTERN
-${workaround}
-
-\#include "kaa_common_schema.h"
-\#include "kaa_list.h"
+# endif
 

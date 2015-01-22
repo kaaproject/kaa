@@ -232,7 +232,7 @@ public class TenantActor extends UntypedActor{
 
     private ActorRef getOrCreateUserActor(String userId) {
         ActorRef userActor = users.get(userId);
-        if (userActor == null) {
+        if (userActor == null && userId != null) {
             userActor = context().actorOf(Props.create(new UserActor.ActorCreator(cacheService, eventService, userId, tenantId)), userId);
             LOG.debug("Create user actor with id {}", userId);
             users.put(userId, userActor);

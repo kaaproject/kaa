@@ -19,14 +19,23 @@ cmake_minimum_required(VERSION 2.8.8)
 project (Kaa-c)
 enable_language(C)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
+
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c1x -Wall")
+#SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TRACE_MEMORY_ALLOCATIONS")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
 endif()
 
 if (CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
+# TODO: add switch for Debug/Release versions
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+if (KAA_COLLECT_COVERAGE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+endif ()
+
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
 endif ()
 
 if (KAA_WITHOUT_EVENTS)
@@ -37,6 +46,14 @@ if (KAA_WITHOUT_LOGGING)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
 endif()
 
+# set max log level
+# TODO: add switch for Debug/Release versions
+if(DEFINED KAA_MAX_LOG_LEVEL)
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
+else()
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
+endif()
+
 find_package (OpenSSL REQUIRED)
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -45,23 +62,24 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src
 set (KAA_SOURCE_FILES
                        src/avro_src/io.c
                        src/avro_src/encoding_binary.c
-                       src/kaa_log.c
-                       src/kaa.c
-                       src/kaa_context.c
-                       src/kaa_profile.c
-                       src/kaa_user.c
-                       src/kaa_event.c
+                       src/collections/kaa_deque.c
+                       src/collections/kaa_list.c
                        src/kaa_bootstrap.c
-                       src/kaa_status.c
-                       src/kaa_list.c
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
-                       src/kaa_mem.c
-                       src/kaa_uuid_int.c
                        src/kaa_common.c
-                       src/gen/kaa_endpoint_gen.c
+                       src/kaa_event.c
                        src/kaa_logging.c
+                       src/kaa_platform_protocol.c
+                       src/kaa_profile.c
+                       src/kaa_status.c
+                       src/kaa_user.c
+                       src/kaa.c
                        src/log/kaa_memory_log_storage.c
+                       src/utilities/kaa_log.c
+                       src/utilities/kaa_mem.c
+                       src/kaa_platform_utils.c
+
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
@@ -76,48 +94,84 @@ add_library (kaac_s STATIC ./src $<TARGET_OBJECTS:kaac_o>)
 
 if (KAA_UNITTESTS_COMPILE)
 
+set (CUNIT_LIB_NAME "")
+find_package (CUnit)
+
+if (CUNIT_FOUND)
+    set (CUNIT_LIB_NAME ${CUNIT_LIBRARIES})
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TEST_CUNIT_ENABLED")
+endif()
+
+configure_file (
+                    "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties.in"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties"
+)
+
+add_executable  (test_user_extension
+                    test/test_kaa_user.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_user_extension kaac crypto ${CUNIT_LIB_NAME})
+
+add_executable  (test_meta_extension
+                    test/test_meta_extension.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_meta_extension kaac crypto ${CUNIT_LIB_NAME})
+
+add_executable  (test_platform_utils
+                    test/test_platform_utils.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_platform_utils kaac crypto ${CUNIT_LIB_NAME})
+
 add_executable  (test_context
                     test/test_kaa_context.c
                     test/kaa_test_external.c
                 )
-target_link_libraries(test_context kaac crypto)
+target_link_libraries(test_context kaac crypto ${CUNIT_LIB_NAME})
 
 add_executable  (test_event
                     test/test_kaa_event.c
                     test/kaa_test_external.c
                 )
-target_link_libraries(test_event kaac crypto)
+target_link_libraries(test_event kaac crypto ${CUNIT_LIB_NAME})
 
 add_executable  (test_status
                     test/test_kaa_status.c
                 )
-target_link_libraries(test_status kaac crypto)
+target_link_libraries(test_status kaac crypto ${CUNIT_LIB_NAME})
 
 add_executable  (test_bootstrap
                     test/test_kaa_bootstrap.c
                     test/kaa_test_external.c
                 )
-target_link_libraries(test_bootstrap kaac crypto)
+target_link_libraries(test_bootstrap kaac crypto ${CUNIT_LIB_NAME})
 
 add_executable  (test_profile
                     src/gen/kaa_profile_gen.c
                     test/test_kaa_profile.c
-                    test/kaa_test_external.c
                 )
-target_link_libraries(test_profile kaac crypto)
+target_link_libraries(test_profile kaac crypto ${CUNIT_LIB_NAME})
 
 add_executable  (test_common
                     test/test_kaa_common.c
                     test/kaa_test_external.c
                 )
-target_link_libraries(test_common kaac crypto)
+target_link_libraries(test_common kaac crypto ${CUNIT_LIB_NAME})
 
 add_executable  (test_log
                     src/gen/kaa_logging_gen.c
                     test/test_kaa_log.c
                     test/kaa_test_external.c
                 )
-target_link_libraries(test_log kaac crypto)
+target_link_libraries(test_log kaac crypto ${CUNIT_LIB_NAME})
+
+add_executable  (test_deque
+                    test/test_kaa_deque.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_deque kaac crypto ${CUNIT_LIB_NAME})
 
 endif ()
 

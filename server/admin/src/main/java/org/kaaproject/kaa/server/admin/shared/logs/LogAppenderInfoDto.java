@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.admin.shared.logs;
 
 import java.io.Serializable;
 
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
+import org.kaaproject.avro.ui.shared.RecordField;
 
 public class LogAppenderInfoDto implements Serializable {
 

@@ -20,10 +20,10 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
+import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
 import org.kaaproject.kaa.server.operations.service.security.PublicKeyAware;
 
 
@@ -42,7 +42,7 @@ public interface OperationsService extends PublicKeyAware{
      * @return the sync response
      * @throws GetDeltaException the get delta exception
      */
-    SyncResponseHolder sync(SyncRequest request) throws GetDeltaException;
+    SyncResponseHolder sync(ClientSync request) throws GetDeltaException;
 
     /**
      * Sync endpoint state.
@@ -51,7 +51,7 @@ public interface OperationsService extends PublicKeyAware{
      * @return the sync response
      * @throws GetDeltaException the get delta exception
      */
-    SyncResponseHolder sync(SyncRequest request, EndpointProfileDto profile) throws GetDeltaException;    
+    SyncResponseHolder sync(ClientSync request, EndpointProfileDto profile) throws GetDeltaException;    
     
     /**
      * Update sync response.
@@ -61,5 +61,5 @@ public interface OperationsService extends PublicKeyAware{
      * @param unicastNotificationId the unicast notification id
      * @return the sync response
      */
-    SyncResponse updateSyncResponse(SyncResponse response, List<NotificationDto> notifications, String unicastNotificationId);
+    ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId);
 }

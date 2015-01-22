@@ -18,6 +18,9 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
         xmlns:gwt="urn:import:com.google.gwt.user.client.ui"
         xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client">
+        
+        <ui:with field='kaaAdminStyle' type='org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle'/>  
+        <ui:with field='fieldWidgetStyle' type='org.kaaproject.avro.ui.gwt.client.widget.AbstractFieldWidget.Style'/>  
 
         <gwt:DockLayoutPanel unit="PX" ui:field="dockPanel">
                 <gwt:north size="175">
@@ -28,18 +31,18 @@
                                     <gwt:FlowPanel width="100%" height="100%">
                                         <gwt:HorizontalPanel height="100%">
                                             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                <gwt:HorizontalPanel height="100%" visible="false" ui:field="backButtonPanel" styleName="b-app-padded-panel">
+                                                <gwt:HorizontalPanel height="100%" visible="false" ui:field="backButtonPanel" styleName="{kaaAdminStyle.bAppPaddedPanel}">
                                                     <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                        <gwt:Button ui:field="backButton" addStyleNames="b-app-back-button"></gwt:Button>
+                                                        <gwt:Button ui:field="backButton" addStyleNames="{kaaAdminStyle.bAppBackButton}"></gwt:Button>
                                                     </gwt:cell>
                                                 </gwt:HorizontalPanel>
                                             </gwt:cell>
                                             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                <gwt:Label ui:field="titleLabel" styleName="b-app-content-title">
+                                                <gwt:Label ui:field="titleLabel" styleName="{kaaAdminStyle.bAppContentTitle}">
                                                 </gwt:Label>
                                             </gwt:cell>
                                             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                <gwt:HorizontalPanel height="100%" styleName="b-app-buttons-panel">
+                                                <gwt:HorizontalPanel height="100%" styleName="{fieldWidgetStyle.buttonsPanel}">
                                                     <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
                                                         <gwt:Button ui:field="saveButton"></gwt:Button>
                                                     </gwt:cell>
@@ -59,11 +62,11 @@
                                     <gwt:FlowPanel width="100%" height="100%">
                                         <gwt:VerticalPanel width="100%" height="100%">
                                             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="30px">
-                                                <gwt:Label ui:field="subTitleLabel" styleName="b-app-content-sub-title">
+                                                <gwt:Label ui:field="subTitleLabel" styleName="{kaaAdminStyle.bAppContentSubTitle}">
                                                 </gwt:Label>
                                             </gwt:cell>
                                             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="23px">
-                                                <gwt:HTMLPanel ui:field="requiredFieldsNoteLabel" styleName="b-app-content-notes"></gwt:HTMLPanel>
+                                                <gwt:HTMLPanel ui:field="requiredFieldsNoteLabel" styleName="{kaaAdminStyle.bAppContentNotes}"></gwt:HTMLPanel>
                                             </gwt:cell>
                                             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="42px">
                                                 <kaa:mvp.view.widget.AlertPanel ui:field="errorPanel"/>
@@ -78,7 +81,7 @@
                 <gwt:center>
                     <gwt:ScrollPanel>
                         <gwt:FlowPanel>
-                            <gwt:FlexTable styleName="b-app-content-details-table" ui:field="detailsTable"/>
+                            <gwt:FlexTable addStyleNames="{kaaAdminStyle.bAppContentDetailsTable} {fieldWidgetStyle.fieldWidget}" ui:field="detailsTable"/>
                             <gwt:FlowPanel ui:field="footer"/>
                         </gwt:FlowPanel>
                     </gwt:ScrollPanel>

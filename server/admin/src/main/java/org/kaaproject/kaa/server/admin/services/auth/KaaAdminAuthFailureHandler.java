@@ -70,8 +70,6 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
 
                 request.getRequestDispatcher(targetUrl).forward(request, response);
             } else {
-                //logger.debug("Redirecting to " + targetUrl);
-                //redirectStrategy.sendRedirect(request, response, targetUrl);
                 response.addHeader("Error", exception.getLocalizedMessage());
                 if (exception instanceof TempCredentialsException) {
                     response.addHeader("ErrorType", "TempCredentials");
@@ -92,15 +90,7 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
      * will be created. Otherwise the exception will not be stored.
      */
     protected final void saveException(HttpServletRequest request, AuthenticationException exception) {
-//        if (forwardToDestination) {
-//            request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);
-//        } else {
-//            HttpSession session = request.getSession(false);
-//
-//            if (session != null || allowSessionCreation) {
-//                request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);
-//            }
-//        }
+
     }
 
     /**

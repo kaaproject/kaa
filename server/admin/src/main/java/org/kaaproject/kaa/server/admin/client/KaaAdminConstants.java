@@ -44,6 +44,12 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("There is no registered user with specified email")
     String user_email_not_found();
 
+    @DefaultStringValue("There is no registered user with specified username or email")
+    String user_or_email_not_found();
+    
+    @DefaultStringValue("Requested user doesn't have email")
+    String user_email_not_defined();
+    
     @DefaultStringValue("Current password is invalid")
     String old_password_mismatch();
 
@@ -61,6 +67,24 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
 
     @DefaultStringValue("Change password")
     String change_password();
+    
+    @DefaultStringValue("Reset password")
+    String reset_password();
+    
+    @DefaultStringValue("Username or email")
+    String usernameOrEmail();
+
+    @DefaultStringValue("Send reset password link")
+    String sendResetPasswordLink();
+    
+    @DefaultStringValue("Forgot password?")
+    String forgotPassword();
+    
+    @DefaultStringValue("Reset link has been sent")
+    String resetLinkWasSent();
+    
+    @DefaultStringValue("Password has been reset")
+    String passwordWasReset();
 
     @DefaultStringValue("Cancel")
     String cancel();
@@ -356,6 +380,12 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Version")
     String version();
 
+    @DefaultStringValue("Min schema version")
+    String minVersion();
+
+    @DefaultStringValue("Max schema version")
+    String maxVersion();
+
     @DefaultStringValue("Schema")
     String schema();
 
@@ -589,4 +619,44 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
 
     @DefaultStringValue("Schema")
     String downloadRecordSchema();
+    
+    @DefaultStringValue("Infinite")
+    String infinite();
+    
+    @DefaultStringValue("Session Expired")
+    String sessionExpired();
+    
+    @DefaultStringValue("Log in again")
+    String logInAgain();
+
+    @DefaultStringValue("Ignore")
+    String ignore();
+
+    @DefaultStringValue("General Settings")
+    String generalSettings();
+    
+    @DefaultStringValue("General Settings Details")
+    String generalSettingsDetails();
+
+    @DefaultStringValue("Outgoing Mail")
+    String outgoingMail();
+    
+    @DefaultStringValue("Outgoing Mail Settings")
+    String outgoingMailSettings();
+
+    @DefaultStringValue("SMTP Mail Server Details")
+    String smtpMailServerDetails();
+    
+    @DefaultStringValue("Upload from file")
+    String uploadFromFile();
+    
+    @DefaultStringValue("Upload")
+    String upload();
+    
+    @DefaultStringValue("Notification body")
+    String notificationBody();
+    
+    @DefaultStringValue("Notification details")
+    String notificationDetails();
+    
 }

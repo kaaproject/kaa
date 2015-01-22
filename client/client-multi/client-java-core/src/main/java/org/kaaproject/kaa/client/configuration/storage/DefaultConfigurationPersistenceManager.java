@@ -29,6 +29,7 @@ import org.kaaproject.kaa.client.configuration.ConfigurationHashContainer;
 import org.kaaproject.kaa.client.configuration.ConfigurationProcessor;
 import org.kaaproject.kaa.client.configuration.ConfigurationRuntimeException;
 import org.kaaproject.kaa.client.configuration.manager.ConfigurationReceiver;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.schema.SchemaUpdatesReceiver;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -52,6 +53,7 @@ public class DefaultConfigurationPersistenceManager implements
     private ConfigurationProcessor  processor;
     private boolean ignoreNextUpdate = false;
     private EndpointObjectHash configurationHash;
+    private KaaClientState state;
 
     public DefaultConfigurationPersistenceManager() {
 
@@ -62,12 +64,17 @@ public class DefaultConfigurationPersistenceManager implements
         this.schema = schema;
     }
 
-    public DefaultConfigurationPersistenceManager(ConfigurationProcessor processor) {
+    public DefaultConfigurationPersistenceManager(KaaClientState state, ConfigurationProcessor processor) {
         this.processor = processor;
+        this.state = state;
     }
 
-
     private void loadConfigurationFromStorage() throws IOException {
+        if (state != null && state.isConfigurationVersionUpdated()) {
+            LOG.info("Ignore loading configuration from storage: configuration version updated");
+            return;
+        }
+
         if (configurationHash == null) {
             ByteBuffer byteBuffer = storage.loadConfiguration();
             if (byteBuffer != null) {
@@ -86,7 +93,8 @@ public class DefaultConfigurationPersistenceManager implements
             deltaT.put("delta", CommonToGeneric.createRecord(configuration));
             deltaArray.add(deltaT);
 
-            GenericAvroConverter<GenericArray<GenericRecord>> converter = new GenericAvroConverter<GenericArray<GenericRecord>>(schema);
+            GenericAvroConverter<GenericArray<GenericRecord>> converter =
+                    new GenericAvroConverter<GenericArray<GenericRecord>>(schema);
 
             byte[] byteArray = null;
             try {

@@ -36,6 +36,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -54,7 +55,9 @@ import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class GenerateSdkDialog extends KaaDialog {
+public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
+
+    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
 
     private AlertPanel errorPanel;
 
@@ -135,7 +138,7 @@ public class GenerateSdkDialog extends KaaDialog {
         };
 
         Widget label = new Label(Utils.constants.configurationSchemaVersion());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         configurationSchemaVersion = new SchemaListBox();
         configurationSchemaVersion.setWidth("80px");
         List<SchemaDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
@@ -149,7 +152,7 @@ public class GenerateSdkDialog extends KaaDialog {
         row++;
 
         label = new Label(Utils.constants.profileSchemaVersion());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         profileSchemaVersion = new SchemaListBox();
         profileSchemaVersion.setWidth("80px");
         List<SchemaDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
@@ -163,7 +166,7 @@ public class GenerateSdkDialog extends KaaDialog {
         row++;
 
         label = new Label(Utils.constants.notificationSchemaVersion());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         notificationSchemaVersion = new SchemaListBox();
         notificationSchemaVersion.setWidth("80px");
         List<SchemaDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
@@ -177,7 +180,7 @@ public class GenerateSdkDialog extends KaaDialog {
         row++;
 
         label = new Label(Utils.constants.logSchemaVersion());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         logSchemaVersion = new SchemaListBox();
         logSchemaVersion.setWidth("80px");
         List<SchemaDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
@@ -191,7 +194,7 @@ public class GenerateSdkDialog extends KaaDialog {
         row++;
 
         label = new Label(Utils.constants.targetPlatform());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
 
         Renderer<SdkPlatform> targetPlatformRenderer = new Renderer<SdkPlatform>() {
             @Override
@@ -267,8 +270,8 @@ public class GenerateSdkDialog extends KaaDialog {
 
         availableAefMaps.setAcceptableValues(aefMaps);
 
-        addAefMapButton.addStyleName("b-app-button-small");
-        removeAefMapButton.addStyleName("b-app-button-small");
+        addAefMapButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
+        removeAefMapButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
         addAefMapButton.setEnabled(false);
         removeAefMapButton.setEnabled(false);
@@ -416,11 +419,12 @@ public class GenerateSdkDialog extends KaaDialog {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        setError(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, GenerateSdkDialog.this);
                     }
 
                     @Override
                     public void onSuccess(String key) {
+                        clearError();
                         ServletHelper.downloadSdk(key);
                     }
                 });
@@ -435,14 +439,16 @@ public class GenerateSdkDialog extends KaaDialog {
         return result;
     }
 
-    private void setError(String error) {
-        if (error != null) {
-            errorPanel.setText(error);
-            errorPanel.setVisible(true);
-        } else {
-            errorPanel.setText("");
-            errorPanel.setVisible(false);
-        }
+    @Override
+    public void clearError() {
+        errorPanel.setMessage("");
+        errorPanel.setVisible(false);
+    }
+
+    @Override
+    public void setErrorMessage(String message) {
+        errorPanel.setMessage(message);
+        errorPanel.setVisible(true);
     }
 
 }

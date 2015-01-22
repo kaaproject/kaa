@@ -39,13 +39,14 @@ class MemoryLogStorage : public ILogStorage, public ILogStorageStatus {
 private:
     typedef struct __MemoryLogStorage__LogBlock__ {
         __MemoryLogStorage__LogBlock__(size_t blockSize)
-                : actualSize_(0)
+                : blockId(0)
+        		, actualSize_(0)
                 , blockSize_(blockSize)
                 , finalized_(false)
         {
         }
 
-        std::string                 blockId;
+        std::int32_t                blockId;
         ILogStorage::container_type logs_;
         std::size_t                 actualSize_;
         std::size_t                 blockSize_;
@@ -65,9 +66,9 @@ public:
      * \c ILogStorage public interface implementation
      */
     void            addLogRecord(const LogRecord & record);
-    container_type  getRecordBlock(std::size_t blockSize, const std::string& blockId);
-    void            removeRecordBlock(const std::string& blockId);
-    void            notifyUploadFailed(const std::string& blockId);
+    container_type  getRecordBlock(std::size_t blockSize, std::int32_t blockId);
+    void            removeRecordBlock(std::int32_t blockId);
+    void            notifyUploadFailed(std::int32_t blockId);
     void            removeOldestRecords(std::size_t allowedVolume);
 
     /**
@@ -82,7 +83,7 @@ private:
 private:
     std::size_t          blockSize_;
     std::size_t          occupiedSize_;
-    std::list<LogBlock> logBlocks_;
+    std::list<LogBlock>  logBlocks_;
 };
 
 }  // namespace kaa

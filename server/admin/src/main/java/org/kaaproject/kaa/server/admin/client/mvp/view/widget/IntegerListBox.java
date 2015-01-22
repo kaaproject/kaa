@@ -17,6 +17,10 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.ValueListBox;
@@ -26,12 +30,28 @@ public class IntegerListBox extends ValueListBox<Integer> {
     public IntegerListBox() {
         super(new IntegerRenderer());
     }
+    
+    public void reset() {
+        List<Integer> emptyList = Collections.emptyList();
+        setValue(null);
+        setAcceptableValues(emptyList);
+    }
 
     static class IntegerRenderer implements Renderer<Integer> {
 
         @Override
         public String render(Integer object) {
-            return object != null ? object.toString() : "";
+            if (object != null) {
+                if (object==Integer.MAX_VALUE) {
+                    return Utils.constants.infinite();
+                }
+                else {
+                    return object.toString();
+                }
+            }
+            else {
+                return "";
+            }
         }
 
         @Override

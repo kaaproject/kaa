@@ -14,460 +14,939 @@
  * limitations under the License.
  */
 
-#include "kaa_event.h"
+# ifndef KAA_DISABLE_FEATURE_EVENTS
 
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-#include <stddef.h>
-#include <string.h>
+# include "kaa_event.h"
 
-#include "kaa_list.h"
-#include "kaa_context.h"
-#include "kaa_mem.h"
+# include <stdbool.h>
+# include <stddef.h>
+# include <stdint.h>
+# include <string.h>
 
-static KAA_INT32T event_sequence_number = 0;
+# include "kaa_status.h"
+# include "kaa_channel_manager.h"
+# include "kaa_platform_utils.h"
+# include "kaa_platform_common.h"
+# include "kaa_common_schema.h"
+# include "collections/kaa_list.h"
+# include "utilities/kaa_mem.h"
+# include "utilities/kaa_log.h"
 
-typedef struct event_t {
-    size_t      seq_number;
-    char *      fqn;
-    size_t      fqn_size;
-    char *      data;
-    size_t      data_size;
-    char *      target;
-    size_t      target_size;
-} event_t;
 
-static event_t * create_event(size_t seq_n, const char *FQN, size_t fqn_len, const char *DATA, size_t data_len, const char *TARGET, size_t target_len)
-{
-    event_t * event = KAA_MALLOC(event_t);
-    event->seq_number = seq_n;
-    if (fqn_len > 0) {
-        event->fqn_size = fqn_len;
-        event->fqn = KAA_CALLOC(sizeof(char), fqn_len);
-        memcpy(event->fqn, FQN, fqn_len);
-    } else {
-        event->fqn_size = 0;
-        event->fqn  = NULL;
-    }
-    if (data_len > 0) {
-        event->data_size = data_len;
-        event->data = KAA_CALLOC(sizeof(char), data_len);
-        memcpy(event->data, DATA, data_len);
-    } else {
-        event->data_size = 0;
-        event->data  = NULL;
-    }
-    if (target_len > 0) {
-        event->target_size = target_len;
-        event->target = KAA_CALLOC(sizeof(char), target_len);
-        memcpy(event->target, TARGET, target_len);
-    } else {
-        event->target_size = 0;
-        event->target  = NULL;
-    }
 
-    return event;
-}
+# define KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_RECEIVE_EVENTS         0x1
+# define KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_SYNC   0x2
 
-static void destroy_event(void *event_t_ptr)
-{
-    event_t * event = (event_t *)event_t_ptr;
-    if (event->fqn_size > 0) {
-        KAA_FREE(event->fqn);
-    }
-    if (event->data_size > 0) {
-        KAA_FREE(event->data);
-    }
-    if (event->target_size > 0) {
-        KAA_FREE(event->target);
-    }
-}
-static kaa_service_t event_sync_services[1] = {KAA_SERVICE_EVENT};
+# define KAA_EVENT_SERVER_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_PRESENT   0x1
 
-typedef struct sent_events_tuple_t {
-    size_t request_id;
-    kaa_list_t *sent_events;
+# define KAA_EVENT_OPTION_TARGET_ID_PRESENT    0x1
+# define KAA_EVENT_OPTION_EVENT_HAS_DATA       0x2
+
+typedef enum {
+    EVENTS_FIELD = 0x01,
+} event_server_sync_field_t;
+
+typedef struct {
+    int32_t          seq_num;
+    /**
+     * Use kaa_bytes_t for the fqn parameter (string type) to reduce strlen overhead.
+     * The kaa_bytes_t buffer will be null terminated.
+     */
+    kaa_bytes_t*    event_class_fqn;
+    kaa_bytes_t*    event_data;
+    kaa_bytes_t*    target;
+} kaa_event_t;
+
+typedef struct {
+    size_t        request_id;
+    kaa_list_t    *sent_events;
 } sent_events_tuple_t;
 
-static sent_events_tuple_t * create_events_tuple(size_t id, kaa_list_t *events_head)
-{
-    sent_events_tuple_t * tuple = KAA_MALLOC(sent_events_tuple_t);
-    tuple->request_id = id;
-    tuple->sent_events = events_head;
-
-    return tuple;
-}
-
-static void destroy_events_tuple(void * tuple_p)
-{
-    sent_events_tuple_t * tuple = (sent_events_tuple_t *)tuple_p;
-    kaa_list_destroy(tuple->sent_events, &destroy_event);
-}
-
-typedef struct event_callback_pair_t_ {
+typedef struct {
     char *fqn;
-    event_callback_t cb;
+    kaa_event_callback_t  cb;
 } event_callback_pair_t;
 
-static event_callback_pair_t * create_event_callback_pair(const char * fqn, size_t fqn_length, event_callback_t callback)
-{
-    event_callback_pair_t * pair = KAA_MALLOC(event_callback_pair_t);
-    pair->fqn = KAA_CALLOC(fqn_length + 1, sizeof(char));
-    memcpy(pair->fqn, fqn, fqn_length);
-    pair->cb = callback;
-    return pair;
-}
+typedef struct {
+    kaa_event_block_id    id;
+    kaa_list_t            *events;
+} event_transaction_t;
 
-static void destroy_event_callback_pair(void *pair_p)
-{
-    event_callback_pair_t * pair = (event_callback_pair_t *)pair_p;
-    KAA_FREE(pair->fqn);
-}
-
-static event_callback_t find_event_callback(kaa_list_t *head, const char * fqn)
-{
-    while (head) {
-        event_callback_pair_t *pair = (event_callback_pair_t *)kaa_list_get_data(head);
-        if (strcmp(fqn, pair->fqn) == 0) {
-            return pair->cb;
-        }
-        head = kaa_list_next(head);
-    }
-    return NULL;
-}
-
-typedef enum kaa_event_sequence_number_status_t {
+typedef enum {
     KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED,
     KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS,
     KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED
 } kaa_event_sequence_number_status_t;
 
-typedef struct event_transaction_t_ {
-    kaa_trx_id      id;
-    kaa_list_t *    events;
-} event_transaction_t;
+/* Public stuff */
+struct kaa_event_manager_t {
+    sent_events_tuple_t         events_awaiting_response;
+    kaa_list_t                 *pending_events;
+    kaa_list_t                 *event_callbacks;
+    kaa_list_t                 *transactions;
+    kaa_event_block_id          trx_counter;
+    kaa_event_callback_t        global_event_callback;
+    size_t                      event_sequence_number;
+    size_t                      extension_payload_size;
+    kaa_event_sequence_number_status_t sequence_number_status;
 
-static event_transaction_t * create_transaction(kaa_trx_id id)
+    kaa_status_t                *status;
+    kaa_channel_manager_t       *channel_manager;
+    kaa_logger_t                *logger;
+};
+
+/*
+ * Not supported yet
+ * static const uint8_t KAA_EVENT_FIELD_EVENT_LISTENERS_LIST    = 0;
+ */
+static const uint8_t KAA_EVENT_FIELD_ID_EVENT_LIST           = 1;
+static kaa_service_t event_sync_services[1] = { KAA_SERVICE_EVENT };
+
+
+
+extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self
+                                                              , kaa_service_t service_type);
+
+
+
+static void kaa_event_destroy(void* data)
 {
-    event_transaction_t * trx = KAA_MALLOC(event_transaction_t);
-    trx->id = id;
-    trx->events = NULL;
+    if (data) {
+        kaa_event_t* record = (kaa_event_t*)data;
+
+        kaa_bytes_destroy(record->event_class_fqn);
+        kaa_bytes_destroy(record->event_data);
+        kaa_bytes_destroy(record->target);
+
+        KAA_FREE(record);
+    }
+}
+
+static event_callback_pair_t *create_event_callback_pair(const char *fqn
+                                                       , kaa_event_callback_t callback)
+{
+    event_callback_pair_t *pair = (event_callback_pair_t *) KAA_MALLOC(sizeof(event_callback_pair_t));
+    KAA_RETURN_IF_NIL(pair, NULL);
+
+    size_t fqn_length = strlen(fqn);
+    pair->fqn = (char *) KAA_MALLOC((fqn_length + 1) * sizeof(char));
+    if (!pair->fqn) {
+        KAA_FREE(pair);
+        return NULL;
+    }
+    strcpy(pair->fqn, fqn);
+    pair->cb = callback;
+    return pair;
+}
+
+static void kaa_event_destroy_callback_pair(void *pair_p)
+{
+    event_callback_pair_t *pair = (event_callback_pair_t *) pair_p;
+    KAA_FREE(pair->fqn);
+    KAA_FREE(pair);
+}
+
+static kaa_event_callback_t find_event_callback(kaa_list_t *head, const char *fqn)
+{
+    while (head) {
+        event_callback_pair_t *pair = (event_callback_pair_t *) kaa_list_get_data(head);
+        if (strcmp(fqn, pair->fqn) == 0)
+            return pair->cb;
+        head = kaa_list_next(head);
+    }
+    return NULL;
+}
+
+static event_transaction_t *create_transaction(kaa_event_block_id id)
+{
+    event_transaction_t *trx = (event_transaction_t *) KAA_MALLOC(sizeof(event_transaction_t));
+    if (trx) {
+        trx->id = id;
+        trx->events = NULL;
+    }
     return trx;
 }
 
-static void destroy_transaction(void * trx_p)
+static void destroy_transaction(void *trx_p)
 {
-    event_transaction_t * trx = (event_transaction_t *)trx_p;
-    kaa_list_destroy(trx->events, &destroy_event);
-}
-
-static kaa_trx_id trx_counter = 0;
-
-static kaa_trx_id trx_search_arg0 = 0;
-static int transaction_search_by_id_predicate(void *trx_p)
-{
-    event_transaction_t * trx = (event_transaction_t *)trx_p;
-    return trx_search_arg0 == trx->id ? 1 : 0;
-}
-
-/* Public stuff */
-struct kaa_event_manager_t {
-    kaa_list_t *        sent_events;
-    kaa_list_t *        pending_events;
-    kaa_list_t *        event_callbacks;
-    kaa_list_t *        transactions;
-    event_callback_t    global_event_callback;
-    kaa_event_sequence_number_status_t sequence_number_status;
-};
-
-kaa_error_t kaa_create_event_manager(kaa_event_manager_t ** event_manager_p)
-{
-    kaa_event_manager_t * event_manager = KAA_MALLOC(kaa_event_manager_t);
-    if (event_manager == NULL) {
-        return KAA_ERR_NOMEM;
+    if (trx_p) {
+        event_transaction_t *trx = (event_transaction_t *) trx_p;
+        kaa_list_destroy(trx->events, &kaa_event_destroy);
+        KAA_FREE(trx);
     }
-    event_manager->pending_events = NULL;
-    event_manager->sent_events = NULL;
-    event_manager->event_callbacks = NULL;
-    event_manager->transactions = NULL;
-    event_manager->global_event_callback = NULL;
-    event_manager->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED;
-    *event_manager_p = event_manager;
+}
+
+static bool transaction_search_by_id_predicate(void *trx_p, void *context)
+{
+    event_transaction_t *trx = (event_transaction_t *) trx_p;
+    kaa_event_block_id *matcher = (kaa_event_block_id *) context;
+    return (matcher && trx) ? ((*matcher) == trx->id) : false;
+}
+
+kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p
+                                   , kaa_status_t *status
+                                   , kaa_channel_manager_t *channel_manager
+                                   , kaa_logger_t *logger)
+{
+    KAA_RETURN_IF_NIL(event_manager_p, KAA_ERR_BADPARAM)
+
+    *event_manager_p = (kaa_event_manager_t *) KAA_MALLOC(sizeof(kaa_event_manager_t));
+    KAA_RETURN_IF_NIL(*event_manager_p, KAA_ERR_NOMEM);
+
+    (*event_manager_p)->pending_events = NULL;
+    (*event_manager_p)->events_awaiting_response.sent_events = NULL;
+    (*event_manager_p)->events_awaiting_response.request_id =  (size_t) -1;
+    (*event_manager_p)->event_callbacks = NULL;
+    (*event_manager_p)->transactions = NULL;
+    (*event_manager_p)->trx_counter = 0;
+    (*event_manager_p)->global_event_callback = NULL;
+    (*event_manager_p)->event_sequence_number = 0;
+
+    if (kaa_status_get_event_sequence_number(status, (uint32_t *) &(*event_manager_p)->event_sequence_number)) {
+        KAA_FREE(*event_manager_p);
+        return KAA_ERR_BAD_STATE;
+    }
+
+    (*event_manager_p)->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED;
+
+    (*event_manager_p)->status = status;
+    (*event_manager_p)->channel_manager = channel_manager;
+    (*event_manager_p)->logger = logger;
     return KAA_ERR_NONE;
 }
 
-void kaa_destroy_event_manager(kaa_event_manager_t *event_manager)
+void kaa_event_manager_destroy(kaa_event_manager_t *self)
 {
-    kaa_list_destroy(event_manager->sent_events, &destroy_events_tuple);
-    kaa_list_destroy(event_manager->pending_events, &destroy_event);
-    kaa_list_destroy(event_manager->event_callbacks, &destroy_event_callback_pair);
-    kaa_list_destroy(event_manager->transactions, &destroy_transaction);
-    KAA_FREE(event_manager);
-}
-
-void kaa_add_event(void *ctx, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size)
-{
-    if (ctx == NULL || fqn == NULL || fqn_length == 0) {
-        return;
-    }
-
-    event_t *event = create_event(++event_sequence_number, fqn, fqn_length, event_data, event_data_size, target, target_size);
-
-    kaa_context_t * context = (kaa_context_t*)ctx;
-    kaa_event_manager_t * event_manager = context->event_manager;
-
-    if (event_manager->pending_events != NULL) {
-        kaa_list_push_back(event_manager->pending_events, event);
-    } else {
-        event_manager->pending_events = kaa_list_create(event);
-    }
-    kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context, event_sync_services[0]);
-    if (sync) {
-        (*sync)(1, event_sync_services);
+    if (self) {
+        kaa_list_destroy(self->events_awaiting_response.sent_events, &kaa_event_destroy);
+        kaa_list_destroy(self->pending_events, &kaa_event_destroy);
+        kaa_list_destroy(self->event_callbacks, &kaa_event_destroy_callback_pair);
+        kaa_list_destroy(self->transactions, &destroy_transaction);
+        KAA_FREE(self);
     }
 }
 
-kaa_event_sync_request_t* kaa_event_compile_request(void *ctx, size_t requestId)
+static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
+                                          , size_t sequence_number
+                                          , const char *fqn
+                                          , const char *event_data
+                                          , size_t event_data_size
+                                          , kaa_endpoint_id_p target)
 {
-    kaa_context_t * context = (kaa_context_t *)ctx;
-    kaa_event_manager_t * event_manager = context->event_manager;
+    KAA_RETURN_IF_NIL2(event, fqn, KAA_ERR_BADPARAM);
 
-    kaa_event_sync_request_t* request = kaa_create_event_sync_request();
-    request->event_listeners_requests = kaa_create_array_event_listeners_request_null_union_null_branch();
+    event->seq_num = sequence_number;
+    event->event_class_fqn = kaa_bytes_copy_create((const uint8_t *)fqn
+                                                 , strlen(fqn) + 1 /* Additional byte to copy null symbol */
+                                                 , &kaa_data_destroy);
+    KAA_RETURN_IF_NIL(event->event_class_fqn, KAA_ERR_NOMEM);
 
-    if (event_manager->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED) {
-        request->event_sequence_number_request = kaa_create_record_event_sequence_number_request_null_union_event_sequence_number_request_branch();
-        request->event_sequence_number_request->data = kaa_create_event_sequence_number_request();
-        request->events = kaa_create_array_event_null_union_null_branch();
-        event_manager->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS;
-        return request;
-    } else {
-        request->event_sequence_number_request = kaa_create_record_event_sequence_number_request_null_union_null_branch();
-        if (event_manager->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS) {
-            request->events = kaa_create_array_event_null_union_null_branch();
-            return request;
-        }
+    --event->event_class_fqn->size; /* Exclude the null symbol from size */
+
+    if (event_data && event_data_size > 0) {
+        event->event_data = kaa_bytes_move_create((const uint8_t *) event_data
+                                                , event_data_size
+                                                , &kaa_data_destroy);
+        KAA_RETURN_IF_NIL(event->event_data, KAA_ERR_NOMEM);
     }
 
-    kaa_list_t *events_to_resend_head = event_manager->sent_events;
-    event_manager->sent_events = NULL;
-    kaa_list_t *events_to_resend = events_to_resend_head;
-
-    kaa_list_t *new_events = event_manager->pending_events;
-    event_manager->pending_events = NULL;
-
-    while (events_to_resend) {
-        sent_events_tuple_t * tuple = (sent_events_tuple_t *)kaa_list_get_data(events_to_resend);
-
-        if (tuple) {
-            new_events = kaa_lists_merge(new_events, tuple->sent_events);
-            tuple->sent_events = NULL;
-        }
-
-        events_to_resend = kaa_list_next(events_to_resend);
-    }
-    kaa_list_destroy(events_to_resend_head, &destroy_events_tuple);
-
-    event_manager->sent_events = kaa_list_create(create_events_tuple(requestId, new_events));
-
-    kaa_list_t *new_events_copy = NULL;
-    while (new_events) {
-        event_t * event_source = (event_t *)kaa_list_get_data(new_events);
-        kaa_event_t * event_copy = kaa_create_event();
-
-        if (event_source->seq_number == (size_t)-1) {
-            event_source->seq_number = ++event_sequence_number;
-        }
-
-        event_copy->seq_num = event_source->seq_number;
-        event_copy->event_class_fqn = KAA_CALLOC(event_source->fqn_size + 1, sizeof(char));
-        memcpy(event_copy->event_class_fqn, event_source->fqn, event_source->fqn_size);
-        event_copy->event_data = KAA_MALLOC(kaa_bytes_t);
-        event_copy->event_data->size = event_source->data_size;
-        event_copy->event_data->buffer = KAA_CALLOC(event_source->data_size, sizeof(char));
-        memcpy(event_copy->event_data->buffer, event_source->data, event_source->data_size);
-
-        if (event_source->target_size > 0) {
-            event_copy->target = kaa_create_string_null_union_string_branch();
-            event_copy->target->data = KAA_CALLOC(event_source->target_size + 1, sizeof(char));
-            memcpy(event_copy->target->data, event_source->target, event_source->target_size);
-        } else {
-            event_copy->target = kaa_create_string_null_union_null_branch();
-        }
-        event_copy->source = kaa_create_string_null_union_null_branch();
-
-        if (new_events_copy == NULL) {
-            new_events_copy = kaa_list_create(event_copy);
-        } else {
-            kaa_list_push_back(new_events_copy, event_copy);
-        }
-        new_events = kaa_list_next(new_events);
+    if (target) {
+        event->target = kaa_bytes_copy_create(target, KAA_ENDPOINT_ID_LENGTH, &kaa_data_destroy);
+        KAA_RETURN_IF_NIL(event->target, KAA_ERR_NOMEM);
     }
 
-    if (new_events_copy == NULL) {
-        request->events = kaa_create_array_event_null_union_null_branch();
-        request->events->data = NULL;
-    } else {
-        request->events = kaa_create_array_event_null_union_array_branch();
-        request->events->data = new_events_copy;
-    }
-    return request;
+    return KAA_ERR_NONE;
 }
 
-void kaa_event_handle_sync(void *ctx, size_t request_id, kaa_event_sequence_number_response_t *event_sn_response, kaa_list_t *events)
+/*
+ * @brief Sends raw event
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ * @param[in]       event_data          Serialized event object.
+ * @param[in]       event_data_size     Size of data in event_data parameter.
+ * @param[in]       target              The target endpoint of the event (null-terminated string). The size of
+ *                                      the target parameter should be equal to @link KAA_ENDPOINT_ID_LENGTH @endlink .
+ *                                      If @code NULL @endcode event will be broadcasted.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
+                                       , const char *fqn
+                                       , const char *event_data
+                                       , size_t event_data_size
+                                       , kaa_endpoint_id_p target)
 {
-    kaa_context_t * context = (kaa_context_t *)ctx;
-    kaa_event_manager_t * event_manager = context->event_manager;
+    /**
+     * Both the event data + its size and the target may be left unspecified (null).
+     */
+    KAA_RETURN_IF_NIL(self, KAA_ERR_NOT_INITIALIZED);
+    KAA_RETURN_IF_NIL(fqn, KAA_ERR_EVENT_BAD_FQN);
 
-    if (event_manager->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNC_IN_PROGRESS
-            && event_sn_response != NULL) {
-        int32_t server_sn = event_sn_response->seq_num > 0 ? event_sn_response->seq_num : 0;
-        kaa_list_t *pending_events = event_manager->pending_events;
-        size_t events_count = kaa_list_get_size(pending_events);
-        if (event_sequence_number - events_count != server_sn) {
-            event_sequence_number = server_sn;
-            while (pending_events) {
-                event_t *event = kaa_list_get_data(pending_events);
-                event->seq_number = ++event_sequence_number;
-                pending_events = kaa_list_next(pending_events);
-            }
-        }
-        event_manager->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED;
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding a new event \"%s\"", fqn);
+
+    /**
+     * KAA_CALLOC is really needed there.
+     */
+    kaa_event_t *event = (kaa_event_t*)KAA_CALLOC(1, sizeof(kaa_event_t));
+    if (!event) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to allocate a new event structure");
+        return KAA_ERR_NOMEM;
     }
 
+    size_t new_sequence_number = (self->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED ?
+                                        ++self->event_sequence_number :
+                                        (size_t) -1);
 
-    kaa_list_t * sent_events = event_manager->sent_events;
-    while (sent_events) {
-        sent_events_tuple_t * tuple = (sent_events_tuple_t *)kaa_list_get_data(sent_events);
-        if (tuple->request_id == request_id) {
-            kaa_list_remove_at(&event_manager->sent_events, sent_events, &destroy_events_tuple);
-            break;
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Filling a new event with data size %u", event_data_size);
+# ifdef KAA_LOG_LEVEL_TRACE_ENABLED
+    if (target) {
+        char target_string[2 * KAA_ENDPOINT_ID_LENGTH + 1];
+        int i = 0;
+        for (; i < KAA_ENDPOINT_ID_LENGTH; ++i) {
+            snprintf(&target_string[2 * i], 3, "%02X", target[i]);
         }
-        sent_events = kaa_list_next(sent_events);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event target = %s", target_string);
+    }
+# endif
+    kaa_error_t error_code = kaa_fill_event_structure(event
+                                                    , new_sequence_number
+                                                    , fqn
+                                                    , event_data
+                                                    , event_data_size
+                                                    , target);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to fill a new event (size=%u)", event_data_size);
+        kaa_event_destroy(event);
+        return error_code;
     }
 
-    kaa_event_t * event = (kaa_event_t *)kaa_list_get_data(events);
+    if (self->pending_events) {
+        if (!kaa_list_push_back(self->pending_events, event)) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to save a new event");
+            kaa_event_destroy(event);
+            return KAA_ERR_NOMEM;
+        }
+    } else {
+        self->pending_events = kaa_list_create(event);
+        if (!self->pending_events) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to save a new event");
+            kaa_event_destroy(event);
+            return KAA_ERR_NOMEM;
+        }
+    }
+
+    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
+    if (sync)
+        (*sync)(event_sync_services, 1);
+
+    return KAA_ERR_NONE;
+}
+
+static size_t kaa_event_list_get_request_size(kaa_list_t *events)
+{
+    size_t expected_size = 0;
+    kaa_event_t *event = (kaa_event_t *)kaa_list_get_data(events);
     while (event) {
-        event_callback_t cb = find_event_callback(event_manager->event_callbacks, event->event_class_fqn);
-        if (cb) {
-            (*cb)((const char *)(event->event_class_fqn), (const char *)(event->event_data->buffer), event->event_data->size);
-        } else if (event_manager->global_event_callback != NULL) {
-            (*event_manager->global_event_callback)((const char *)(event->event_class_fqn), (const char *)(event->event_data->buffer), event->event_data->size);
+        expected_size  += sizeof(uint32_t) /*Event sequence number*/
+                        + sizeof(uint16_t) /*Event options*/
+                        + sizeof(uint16_t); /*Event class FQN length */
+
+        if (event->event_data) {
+            expected_size  += sizeof(uint32_t); /*Event data size*/
+        }
+
+        if (event->target /*have Target Endpoint ID*/) {
+            expected_size += KAA_ENDPOINT_ID_LENGTH; /*Target Endpoint ID*/
+        }
+
+        expected_size += kaa_aligned_size_get(event->event_class_fqn->size); /*Event class FQN + padding */
+
+        if (event->event_data) {
+            expected_size += kaa_aligned_size_get(event->event_data->size);/*Event data + padding*/
         }
 
         events = kaa_list_next(events);
-        event = (kaa_event_t *)kaa_list_get_data(events);
+        event = (kaa_event_t *) kaa_list_get_data(events);
     }
-
+    return expected_size;
 }
 
-void kaa_add_on_event_callback(kaa_event_manager_t *event_manager, const char *fqn, size_t fqn_length, event_callback_t callback)
+static kaa_error_t kaa_event_request_get_size_no_header(kaa_event_manager_t *self, size_t *expected_size)
 {
-    if (event_manager != NULL && callback != NULL) {
-        if (fqn != NULL && fqn_length > 0) {
-            event_callback_pair_t * pair = create_event_callback_pair(fqn, fqn_length, callback);
-            if (event_manager->event_callbacks == NULL) {
-                event_manager->event_callbacks = kaa_list_create(pair);
-            } else {
-                kaa_list_t * head = event_manager->event_callbacks;
-                while (head) {
-                    event_callback_pair_t *data = (event_callback_pair_t *)kaa_list_get_data(head);
-                    if (strcmp(fqn, data->fqn) == 0) {
-                        kaa_list_set_data_at(head, pair, destroy_event_callback_pair);
-                        return;
-                    }
-                    head = kaa_list_next(head);
+    KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
+
+    *expected_size = 0;
+    if (self->sequence_number_status == KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
+        kaa_list_t *pending_events = self->pending_events;
+        kaa_list_t *resending_events = self->events_awaiting_response.sent_events;
+        bool have_events = (kaa_list_get_size(pending_events) > 0) || (kaa_list_get_size(resending_events) > 0);
+        if (have_events) {
+            *expected_size += sizeof(uint8_t) /*field id(1)*/
+                            + sizeof(uint8_t) /*reserved*/
+                            + sizeof(uint16_t) /* events count */;
+            *expected_size += kaa_event_list_get_request_size(pending_events);
+            *expected_size += kaa_event_list_get_request_size(resending_events);
+        }
+    }
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size)
+{
+    KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = kaa_event_request_get_size_no_header(self, expected_size);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to get event extension length");
+        *expected_size = 0;
+        return error_code;
+    }
+
+    self->extension_payload_size = *expected_size;
+    *expected_size += KAA_EXTENSION_HEADER_SIZE;
+
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_t *events, kaa_platform_message_writer_t *writer)
+{
+    kaa_event_t * event = (kaa_event_t *) kaa_list_get_data(events);
+    kaa_error_t error_code = KAA_ERR_NONE;
+
+    uint16_t temp_network_order_16 = 0;
+    uint32_t temp_network_order_32 = 0;
+
+    while (event) {
+        if (event->seq_num == -1) {
+            event->seq_num = ++self->event_sequence_number;
+        }
+
+        temp_network_order_32 = KAA_HTONL(event->seq_num);
+        error_code = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event sequence number");
+            return error_code;
+        }
+
+        /**
+         * Event options
+         */
+        temp_network_order_16 = (!event->target ? 0 : KAA_EVENT_OPTION_TARGET_ID_PRESENT)
+                              | (event->event_data ? KAA_EVENT_OPTION_EVENT_HAS_DATA : 0);
+        temp_network_order_16 = KAA_HTONS(temp_network_order_16);
+
+        error_code = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event options");
+            return error_code;
+        }
+
+        temp_network_order_16 = KAA_HTONS(event->event_class_fqn->size);
+        error_code = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event class fqn length");
+            return error_code;
+        }
+
+        if (event->event_data) {
+            temp_network_order_32 = KAA_HTONL(event->event_data->size);
+            error_code = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data size");
+                return error_code;
+            }
+        }
+
+        if (event->target) {
+            error_code = kaa_platform_message_write_aligned(writer,
+                                                            event->target->buffer
+                                                          , KAA_ENDPOINT_ID_LENGTH);
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event target id");
+                return error_code;
+            }
+        }
+
+        error_code = kaa_platform_message_write_aligned(writer
+                                                      , event->event_class_fqn->buffer
+                                                      , event->event_class_fqn->size);
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to write event class fqn aligned");
+            return error_code;
+        }
+
+        if (event->event_data) {
+            error_code = kaa_platform_message_write_aligned(writer
+                                                          , event->event_data->buffer
+                                                          , event->event_data->size);
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event data aligned");
+                return error_code;
+            }
+        }
+
+        events = kaa_list_next(events);
+        event = (kaa_event_t *) kaa_list_get_data(events);
+    }
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer)
+{
+    KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile event client sync");
+
+    /* write extension header */
+    uint32_t extension_options = 0;
+    if (self->sequence_number_status != KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
+        extension_options |= KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_SYNC;
+    } else {
+        extension_options |= KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_RECEIVE_EVENTS;
+    }
+
+    kaa_error_t error_code = kaa_platform_message_write_extension_header(writer
+                                                           , KAA_EVENT_EXTENSION_TYPE
+                                                           , extension_options
+                                                           , self->extension_payload_size);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to write event extension header (ext type %u, options %X, payload size %u)"
+                                        , KAA_EVENT_EXTENSION_TYPE, extension_options, self->extension_payload_size);
+        return error_code;
+    }
+
+    /* write events */
+    if (self->extension_payload_size) {
+        uint16_t events_count = 0;
+        kaa_list_t *pending_events = self->pending_events;
+        kaa_list_t *resending_events = self->events_awaiting_response.sent_events;
+
+        ssize_t pending_events_count = kaa_list_get_size(pending_events);
+        ssize_t sent_events_count = kaa_list_get_size(resending_events);
+
+        events_count +=  pending_events_count > 0 ? pending_events_count : 0;
+        events_count +=  sent_events_count > 0 ? sent_events_count : 0;
+
+        if (events_count) {
+            uint32_t events_list_field_header = (KAA_HTONS(events_count) << 16) | KAA_EVENT_FIELD_ID_EVENT_LIST;
+
+            error_code = kaa_platform_message_write(writer, &events_list_field_header, sizeof(uint32_t));
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write event list command field and events count");
+                return error_code;
+            }
+
+            error_code = kaa_event_list_serialize(self, resending_events, writer);
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write events");
+                return error_code;
+            }
+
+            error_code = kaa_event_list_serialize(self, pending_events, writer);
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write events");
+                return error_code;
+            }
+
+            self->events_awaiting_response.request_id = request_id;
+            self->events_awaiting_response.sent_events = kaa_lists_merge(self->events_awaiting_response.sent_events
+                                                                       , self->pending_events);
+            self->pending_events = NULL;
+        }
+    }
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader)
+{
+    KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event received");
+
+    uint16_t event_options = 0;
+    kaa_error_t error_code = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event options field");
+        return error_code;
+    }
+    event_options = KAA_NTOHS(event_options);
+
+    uint16_t event_class_fqn_length = 0;
+    error_code = kaa_platform_message_read(reader, &event_class_fqn_length, sizeof(uint16_t));
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event class fqn length field");
+        return error_code;
+    }
+    event_class_fqn_length = KAA_NTOHS(event_class_fqn_length);
+
+    uint32_t event_data_size = 0;
+    if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
+        error_code = kaa_platform_message_read(reader, &event_data_size, sizeof(uint32_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data size field");
+            return error_code;
+        }
+        event_data_size = KAA_NTOHL(event_data_size);
+    }
+
+    kaa_endpoint_id event_source;
+    error_code = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event source endpoint id field");
+        return error_code;
+    }
+
+    bool is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_class_fqn_length));
+    if (!is_enough) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event class fqn length value");
+        return KAA_ERR_READ_FAILED;
+    }
+    char event_fqn[event_class_fqn_length + 1];
+    error_code = kaa_platform_message_read_aligned(reader, event_fqn, event_class_fqn_length);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event class fqn field");
+        return error_code;
+    }
+    event_fqn[event_class_fqn_length] = '\0';
+    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Processing event with FQN=\"%s\"", event_fqn);
+
+    kaa_event_callback_t callback = find_event_callback(self->event_callbacks, event_fqn);
+    if (!callback)
+        callback = self->global_event_callback;
+
+    if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
+        is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_data_size));
+        if (!is_enough) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event data size value");
+            return KAA_ERR_READ_FAILED;
+        }
+
+        char event_data[event_data_size];
+        error_code = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to read event data field");
+            return error_code;
+        }
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
+        if (callback)
+           (*callback)(event_fqn, event_data, event_data_size, event_source);
+    } else if (callback) {
+       (*callback)(event_fqn, NULL, 0, event_source);
+    }
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
+                                       , kaa_platform_message_reader_t *reader
+                                       , uint32_t extension_options
+                                       , size_t extension_length
+                                       , size_t request_id)
+{
+    KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received event server sync");
+
+    if (extension_options & KAA_EVENT_SERVER_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_PRESENT) {
+        uint32_t event_sequence_number = 0;
+        kaa_error_t error_code = kaa_platform_message_read(reader, &event_sequence_number, sizeof(uint32_t));
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to read event_sequence number field");
+            return error_code;
+        }
+
+        event_sequence_number = KAA_HTONL(event_sequence_number);
+        extension_length -= sizeof(uint32_t);
+
+        if (self->sequence_number_status != KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
+            self->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED;
+
+            if (self->event_sequence_number != event_sequence_number) {
+                KAA_LOG_WARN(self->logger, KAA_ERR_BAD_STATE, "Stored event sequence number is not correct (stored %u, received %u).", self->event_sequence_number, event_sequence_number);
+                self->event_sequence_number = event_sequence_number;
+                kaa_list_t *events = self->pending_events;
+                kaa_event_t *event = (kaa_event_t *)kaa_list_get_data(events);
+                while (event) {
+                    event->seq_num = ++self->event_sequence_number;
+                    events = kaa_list_next(events);
+                    event = (kaa_event_t *)kaa_list_get_data(events);
                 }
-                kaa_list_push_back(event_manager->event_callbacks, pair);
+            }
+        }
+        if (kaa_list_get_size(self->pending_events) > 0) {
+            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
+                                            self->channel_manager, event_sync_services[0]);
+            if (sync)
+                (*sync)(event_sync_services, 1);
+        }
+    }
+
+    if (request_id == self->events_awaiting_response.request_id) {
+        kaa_list_destroy(self->events_awaiting_response.sent_events, &kaa_event_destroy);
+        self->events_awaiting_response.sent_events = NULL;
+        self->events_awaiting_response.request_id = (size_t) -1;
+    }
+
+    if (extension_length > 0) {
+        uint8_t field_id = 0;
+        kaa_error_t error_code = kaa_platform_message_read(reader, &field_id, sizeof(uint8_t)); //read field id
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to read field id in Event server sync message");
+            return error_code;
+        }
+
+        error_code = kaa_platform_message_skip(reader, sizeof(uint8_t)); // skip reserved
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to skip reserved field in Event server sync message");
+            return error_code;
+        }
+        switch (field_id) {
+            case EVENTS_FIELD: {
+                uint16_t events_count = 0;
+                error_code = kaa_platform_message_read(reader, &events_count, sizeof(uint16_t)); // read events count
+                if (error_code) {
+                    KAA_LOG_ERROR(self->logger, error_code, "Failed to read field id in Event server sync message");
+                    return error_code;
+                }
+
+                events_count = KAA_NTOHS(events_count);
+                while (events_count--) {
+                    error_code = kaa_event_read_event(self, reader);
+                    if (error_code) {
+                        KAA_LOG_ERROR(self->logger, error_code, "Failed to read event from server sync");
+                        return error_code;
+                    }
+                }
+                break;
+            }
+            default:
+                KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Unexpected field id %u", field_id);
+                return KAA_ERR_BADDATA;
+        }
+
+    }
+
+    return KAA_ERR_NONE;
+}
+
+/*
+ * @brief Register listener to an event.
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (placed at src/event/)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ *                                      If @code NULL @endcode, this callback will be invoked for
+ *                                      all events which do not have registered specific callback.
+ * @param[in]       callback            Event callback function.
+ *
+ * @return  Error code.
+ */
+kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback)
+{
+    KAA_RETURN_IF_NIL2(self, callback, KAA_ERR_BADPARAM);
+    if (fqn) {
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding callback for events with fqn '%s'", fqn);
+        event_callback_pair_t *pair = create_event_callback_pair(fqn, callback);
+        KAA_RETURN_IF_NIL(pair, KAA_ERR_NOMEM);
+        if (!self->event_callbacks) {
+            self->event_callbacks = kaa_list_create(pair);
+            if (!self->event_callbacks) {
+                kaa_event_destroy_callback_pair(pair);
+                return KAA_ERR_NOMEM;
             }
         } else {
-            event_manager->global_event_callback = callback;
+            kaa_list_t *head = self->event_callbacks;
+            while (head) {
+                event_callback_pair_t *data = (event_callback_pair_t *) kaa_list_get_data(head);
+                if (strcmp(fqn, data->fqn) == 0) {
+                    kaa_list_set_data_at(head, pair, &kaa_event_destroy_callback_pair);
+                    return KAA_ERR_NONE;
+                }
+                head = kaa_list_next(head);
+            }
+            if (!kaa_list_push_back(self->event_callbacks, pair)) {
+                kaa_event_destroy_callback_pair(pair);
+                return KAA_ERR_NOMEM;
+            }
+        }
+    } else {
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding global event callback");
+        self->global_event_callback = callback;
+    }
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_block_id *trx_id)
+{
+    KAA_RETURN_IF_NIL2(self, trx_id, KAA_ERR_NOT_INITIALIZED);
+
+    kaa_event_block_id new_id = ++self->trx_counter;
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Creating new events batch with id %zu", new_id);
+
+    event_transaction_t *new_transaction = create_transaction(new_id);
+    if (!new_transaction) {
+        --self->trx_counter;
+        return KAA_ERR_NOMEM;
+    }
+
+    if (!self->transactions) {
+        self->transactions = kaa_list_create(new_transaction);
+        if (!self->transactions) {
+            destroy_transaction(new_transaction);
+            --self->trx_counter;
+            return KAA_ERR_NOMEM;
+        }
+    } else {
+        if (!kaa_list_push_back(self->transactions, new_transaction)) {
+            destroy_transaction(new_transaction);
+            --self->trx_counter;
+            return KAA_ERR_NOMEM;
         }
     }
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Created new events batch with id %zu", new_id);
+
+    *trx_id = new_id;
+    return KAA_ERR_NONE;
 }
 
-kaa_trx_id kaa_event_create_transaction(void *ctx)
+kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id)
 {
-    kaa_context_t * context = (kaa_context_t *)ctx;
-    kaa_event_manager_t * event_manager = context->event_manager;
+    KAA_RETURN_IF_NIL(self, KAA_ERR_NOT_INITIALIZED);
 
-    kaa_trx_id new_id = ++trx_counter;
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to send events from event batch with id %zu", trx_id);
 
-    if (event_manager->transactions == NULL) {
-        event_manager->transactions = kaa_list_create(create_transaction(new_id));
-    } else {
-        kaa_list_push_back(event_manager->transactions, create_transaction(new_id));
-    }
-
-    return new_id;
-}
-
-void kaa_event_finish_transaction(void *ctx, kaa_trx_id trx_id)
-{
-    kaa_context_t * context = (kaa_context_t *)ctx;
-    kaa_event_manager_t * event_manager = context->event_manager;
-    if (event_manager->transactions != NULL) {
-        trx_search_arg0 = trx_id;
-        kaa_list_t * it = kaa_list_find_next(event_manager->transactions, transaction_search_by_id_predicate);
-        if (it != NULL) {
-            event_transaction_t * trx = kaa_list_get_data(it);
-            KAA_BOOL need_sync = 0;
-            if (trx->events != NULL && kaa_list_get_size(trx->events) > 0) {
-                kaa_lists_merge(event_manager->pending_events, trx->events);
-                need_sync = 1;
+    if (self->transactions) {
+        kaa_list_t *it = kaa_list_find_next(self->transactions, &transaction_search_by_id_predicate, &trx_id);
+        if (it) {
+            event_transaction_t *trx = kaa_list_get_data(it);
+            bool need_sync = false;
+            if (kaa_get_max_log_level(self->logger) >= KAA_LOG_LEVEL_TRACE) {
+                size_t events_count = kaa_list_get_size(trx->events);
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Events batch with id %zu has %zu events", trx_id, events_count);
+            }
+            if (trx->events && kaa_list_get_size(trx->events) > 0) {
+                kaa_lists_merge(self->pending_events, trx->events);
+                need_sync = true;
                 trx->events = NULL;
             }
-            kaa_list_remove_at(&event_manager->transactions, it, &destroy_transaction);
-            kaa_sync_t sync = kaa_channel_manager_get_sync_handler(context, event_sync_services[0]);
-            if (need_sync && sync) {
-                (*sync)(1, event_sync_services);
+            kaa_list_remove_at(&self->transactions, it, &destroy_transaction);
+            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
+            if (need_sync && sync)
+                (*sync)(event_sync_services, 1);
+
+            return KAA_ERR_NONE;
+        }
+    }
+
+    KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Events batch with id %zu was not created before", trx_id);
+
+    return KAA_ERR_NOT_FOUND;
+}
+
+kaa_error_t kaa_event_remove_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id)
+{
+    KAA_RETURN_IF_NIL(self, KAA_ERR_NOT_INITIALIZED);
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to remove events batch with id %zu", trx_id);
+
+    if (self->transactions) {
+        kaa_list_t *it = kaa_list_find_next(self->transactions, &transaction_search_by_id_predicate, &trx_id);
+        if (it) {
+            kaa_list_remove_at(&self->transactions, it, &destroy_transaction);
+            return KAA_ERR_NONE;
+        }
+    }
+
+    KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Events batch with id %zu was not created before", trx_id);
+
+    return KAA_ERR_NOT_FOUND;
+}
+
+/*
+ * @brief Adds a raw event to the transaction.
+ *
+ * It is not recommended to use this function directly. Instead you should use
+ * functions contained in EventClassFamily auto-generated headers (@code kaa_event_manager_add_*_event_to_block(...) @endcode)
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       trx_id              The ID of the event block to be sent.
+ * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
+ * @param[in]       event_data          Serialized event object.
+ * @param[in]       event_data_size     Size of data in event_data parameter.
+ * @param[in]       target              The target endpoint of the event. If @code NULL @endcode event will be broadcasted.
+ * @param[in]       target_size         Size of data in target parameter.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self
+                                                     , kaa_event_block_id trx_id
+                                                     , const char *fqn
+                                                     , const char *event_data
+                                                     , size_t event_data_size
+                                                     , kaa_endpoint_id_p target)
+{
+    KAA_RETURN_IF_NIL(self, KAA_ERR_NOT_INITIALIZED);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to add event to events batch with id %zu", trx_id);
+
+    KAA_RETURN_IF_NIL(fqn, KAA_ERR_EVENT_BAD_FQN);
+
+    if (self->transactions) {
+        kaa_list_t *it = kaa_list_find_next(self->transactions, &transaction_search_by_id_predicate, &trx_id);
+        if (it) {
+            /**
+             * KAA_CALLOC is really needed there.
+             */
+            kaa_event_t *event = (kaa_event_t*)KAA_CALLOC(1, sizeof(kaa_event_t));
+            KAA_RETURN_IF_NIL(event, KAA_ERR_NOMEM);
+
+            kaa_error_t error_code = kaa_fill_event_structure(event
+                                                            , (size_t)-1
+                                                            , fqn
+                                                            , event_data
+                                                            , event_data_size
+                                                            , target);
+            if (error_code) {
+                kaa_event_destroy(event);
+                return error_code;
             }
-        }
-    }
-}
 
-void kaa_event_remove_transaction(void *ctx, kaa_trx_id trx_id)
-{
-    kaa_context_t * context = (kaa_context_t *)ctx;
-    kaa_event_manager_t * event_manager = context->event_manager;
-    if (event_manager->transactions != NULL) {
-        trx_search_arg0 = trx_id;
-        kaa_list_t * it = kaa_list_find_next(event_manager->transactions, transaction_search_by_id_predicate);
-        if (it != NULL) {
-            kaa_list_remove_at(&event_manager->transactions, it, &destroy_transaction);
-        }
-    }
-}
-
-void kaa_add_event_to_transaction(void *ctx, kaa_trx_id trx_id, const char * fqn, size_t fqn_length, const char * event_data, size_t event_data_size, const char * target, size_t target_size)
-{
-    if (ctx == NULL || fqn == NULL || fqn_length == 0) {
-        return;
-    }
-
-    kaa_context_t * context = (kaa_context_t *)ctx;
-    kaa_event_manager_t * event_manager = context->event_manager;
-    if (event_manager->transactions != NULL) {
-        trx_search_arg0 = trx_id;
-        kaa_list_t * it = kaa_list_find_next(event_manager->transactions, transaction_search_by_id_predicate);
-        if (it != NULL) {
-            event_transaction_t * trx = kaa_list_get_data(it);
-            event_t * event = create_event((size_t)-1, fqn, fqn_length, event_data, event_data_size, target, target_size);
-            if (trx->events == NULL) {
+            event_transaction_t *trx = kaa_list_get_data(it);
+            if (!trx->events) {
                 trx->events = kaa_list_create(event);
-            } else {
-                kaa_list_push_back(trx->events, event);
+                if (!trx->events) {
+                    kaa_event_destroy(event);
+                    return KAA_ERR_NOMEM;
+                }
+            } else if (!kaa_list_push_back(trx->events, event)) {
+                kaa_event_destroy(event);
+                return KAA_ERR_NOMEM;
             }
+
+            return KAA_ERR_NONE;
         }
     }
+
+    KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Can not add event to events batch with id %zu.", trx_id);
+
+    return KAA_ERR_EVENT_TRX_NOT_FOUND;
 }
 
-typedef struct event_class_family_t {
-    char *      ecf_name;
+
+
+typedef struct {
+    char       *ecf_name;
     size_t      supported_incoming_fqns_count;
-    char **      supported_incoming_fqns;
+    char      **supported_incoming_fqns;
 } event_class_family_t;
 
-# define SUPPORTED_EVENT_CLASS_FAMILIES_SIZE 1
 static const char *TestEventFamilyFQNS[8] = {
         "org.kaaproject.kaa.example.audio.PlayCommand",
         "org.kaaproject.kaa.example.audio.RewindCommand",
@@ -478,6 +957,9 @@ static const char *TestEventFamilyFQNS[8] = {
         "org.kaaproject.kaa.example.audio.BatteryStatus",
         "org.kaaproject.kaa.example.audio.StatusEvent"
 };
+
+# define SUPPORTED_EVENT_CLASS_FAMILIES_SIZE 1
+
 static const event_class_family_t SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT_CLASS_FAMILIES_SIZE] =
 {
     {
@@ -487,17 +969,14 @@ static const event_class_family_t SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT
     }
 };
 
-const char * kaa_find_class_family_name(const char *fqn)
+const char *kaa_find_class_family_name(const char *fqn)
 {
     size_t i = 0;
-    for (;SUPPORTED_EVENT_CLASS_FAMILIES_SIZE - i++;)
-    {
+    while (SUPPORTED_EVENT_CLASS_FAMILIES_SIZE - i++) {
         size_t fqn_count = SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT_CLASS_FAMILIES_SIZE - i].supported_incoming_fqns_count;
         char **fqns = SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT_CLASS_FAMILIES_SIZE - i].supported_incoming_fqns;
-        for (;fqn_count--;)
-        {
-            if (strcmp(fqn, fqns[fqn_count]) == 0)
-            {
+        while (fqn_count--) {
+            if (strcmp(fqn, fqns[fqn_count]) == 0) {
                 return SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT_CLASS_FAMILIES_SIZE - i].ecf_name;
             }
         }
@@ -505,4 +984,4 @@ const char * kaa_find_class_family_name(const char *fqn)
     return NULL;
 }
 
-#endif
+# endif

@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.login;
 
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel.Type;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -42,20 +43,23 @@ public class LoginView extends Composite {
     interface LoginViewUiBinder extends UiBinder<Widget, LoginView> {
     }
 
-    @UiField (provided=true) AlertPanel errorPanel;
-    @UiField (provided=true) AlertPanel infoPanel;
+    @UiField (provided=true) final AlertPanel errorPanel;
+    @UiField (provided=true) final AlertPanel infoPanel;
     @UiField HTMLPanel loginTitle;
     @UiField FormPanel loginForm;
     @UiField FlexTable loginTable;
+    @UiField(provided=true) final KaaAdminStyle kaaAdminStyle;
 
     private TextBox usernameBox;
     private PasswordTextBox passwordBox;
     private Button loginButton;
+    private Label forgotPasswordLabel;
 
     public LoginView() {
 
         errorPanel = new AlertPanel(Type.ERROR);
         infoPanel = new AlertPanel(Type.INFO);
+        kaaAdminStyle = Utils.kaaAdminStyle;
 
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -75,6 +79,10 @@ public class LoginView extends Composite {
         loginTable.setWidget(0, 1, usernameBox);
         loginTable.setWidget(1, 0, passwordLabel);
         loginTable.setWidget(1, 1, passwordBox);
+        
+        forgotPasswordLabel = new Label(Utils.constants.forgotPassword());
+        forgotPasswordLabel.addStyleName(Utils.kaaAdminStyle.linkLabel());
+        loginTable.setWidget(2, 0, forgotPasswordLabel);
 
         loginTable.getFlexCellFormatter().setWidth(0, 0, "130px");
         loginTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -83,8 +91,8 @@ public class LoginView extends Composite {
         loginTable.getFlexCellFormatter().setColSpan(2, 0, 2);
 
         loginButton = new Button(Utils.constants.login());
-        loginButton.addStyleName("loginButton");
-        loginTable.setWidget(2, 2, loginButton);
+        loginButton.addStyleName(Utils.kaaAdminStyle.loginButton());
+        loginTable.setWidget(3, 2, loginButton);
         loginButton.getElement().getStyle().setMarginTop(15, Unit.PX);
 
         loginForm.setWidget(loginTable);
@@ -102,6 +110,10 @@ public class LoginView extends Composite {
 
     public PasswordTextBox getPasswordBox() {
         return passwordBox;
+    }
+    
+    public Label getForgotPasswordLabel() {
+        return forgotPasswordLabel;
     }
 
     public void clearMessages() {

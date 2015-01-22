@@ -15,10 +15,12 @@
  */
 package org.kaaproject.kaa.sandbox.web.services;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +54,7 @@ import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.demo.projects.ProjectsConfig;
 import org.kaaproject.kaa.sandbox.web.services.cache.CacheService;
 import org.kaaproject.kaa.sandbox.web.services.util.Utils;
+import org.kaaproject.kaa.sandbox.web.shared.dto.BuildOutputData;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataType;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxService;
@@ -95,8 +98,8 @@ interceptors = {
 })
 public class SandboxServiceImpl implements SandboxService, InitializingBean {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(SandboxServiceImpl.class);
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(SandboxServiceImpl.class);
     
     private static final String DEMO_PROJECTS_FOLDER = "demo_projects";
    
@@ -123,9 +126,9 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     public void afterPropertiesSet() throws Exception {
         try {
             
-            logger.info("Initializing Sandbox Service...");
-            logger.info("sandboxHome [{}]", sandboxHome);
-            logger.info("guiChangeHostEnabled [{}]", guiChangeHostEnabled);
+            LOG.info("Initializing Sandbox Service...");
+            LOG.info("sandboxHome [{}]", sandboxHome);
+            LOG.info("guiChangeHostEnabled [{}]", guiChangeHostEnabled);
             
             JAXBContext jc = JAXBContext.newInstance("org.kaaproject.kaa.sandbox.demo.projects");
             Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -135,7 +138,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             ProjectsConfig projectsConfig = (ProjectsConfig) unmarshaller.unmarshal(new File(demoProkectsXmlFile));
             for (Project project : projectsConfig.getProjects()) {
                 projectsMap.put(project.getId(), project);
-                logger.info("Demo project: id [{}] name [{}]", project.getId(), project.getName());
+                LOG.info("Demo project: id [{}] name [{}]", project.getId(), project.getName());
             }
             
             if (sandboxEnv == null) {
@@ -147,19 +150,19 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                 for (Object key : sandboxEnvProperties.keySet()) {
                     String keyValue = key + "=" + sandboxEnvProperties.getProperty(key.toString());
                     sandboxEnv[i++] = keyValue;
-                    logger.info("Sandbox env: [{}]", keyValue);
+                    LOG.info("Sandbox env: [{}]", keyValue);
                 }
             }
-            logger.info("Initialized Sandbox Service.");
+            LOG.info("Initialized Sandbox Service.");
         } catch (JAXBException e) {
-            logger.error("Unable to initialize Sandbox Service", e);
+            LOG.error("Unable to initialize Sandbox Service", e);
             throw e;
         }
     }
     
     @Ready
     public void onReady(final AtmosphereResource r) {
-    	logger.info("Received RPC GET, uuid: {}", r.uuid());
+    	LOG.info("Received RPC GET, uuid: {}", r.uuid());
     	r.getBroadcaster().broadcast(r.uuid(), r);
     }
     
@@ -172,15 +175,14 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     public void changeKaaHost(String uuid, String host) throws SandboxServiceException {
     	AtmosphereResource res = AtmosphereResourceFactory.getDefault().find(uuid);
         try {
-        	ClientMessageOutputStream outStream = new ClientMessageOutputStream(res);
+        	ClientMessageOutputStream outStream = new ClientMessageOutputStream(res, null);
         	if (guiChangeHostEnabled) {
         	    executeCommand(outStream, new String[]{"sudo",sandboxHome + "/change_kaa_host.sh",host}, null);
-        	}
-        	else {
+        	    cacheService.flushAllCaches();
+        	} else {
         	    outStream.println("WARNING: change host from GUI is disabled!");
         	}
-        } 
-        finally {
+        } finally {
             res.getBroadcaster().broadcast(uuid + " finished", res);
         }
     }
@@ -199,10 +201,18 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     }
 
     @Override
-    public void buildProjectData(String uuid, String projectId, ProjectDataType dataType) throws SandboxServiceException {
-        AtmosphereResource res = AtmosphereResourceFactory.getDefault().find(uuid);
+    public void buildProjectData(String uuid, BuildOutputData outputData, String projectId, ProjectDataType dataType) throws SandboxServiceException {
+        AtmosphereResource res = null;
+        PrintStream outPrint = null;
+        ByteArrayOutputStream byteOutStream = null;
+        if (uuid != null) {
+            res = AtmosphereResourceFactory.getDefault().find(uuid);
+        } else if (outputData != null) {
+            byteOutStream = new ByteArrayOutputStream();
+            outPrint = new PrintStream(byteOutStream);
+        }
         try {
-            ClientMessageOutputStream outStream = new ClientMessageOutputStream(res);
+            ClientMessageOutputStream outStream = new ClientMessageOutputStream(res, outPrint);
             Project project = projectsMap.get(projectId);
             if (project != null) {
                 String sdkKeyBase64 = project.getSdkKeyBase64();
@@ -244,8 +254,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                             sourceFileData.setFileData(sourceFileBytes);
                             sourceFileData.setContentType("application/x-compressed");
                             cacheService.putProjectFile(dataKey, sourceFileData);
-                        }
-                        else {
+                        } else {
                             outStream.println("Building binary file...");
                             File projectFolder = rootDir;
                             if (project.getProjectFolder() != null && !project.getProjectFolder().trim().isEmpty()) {
@@ -266,30 +275,32 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                             binaryFileData.setFileData(binaryFileBytes);
                             if (project.getPlatform()==Platform.ANDROID) {
                                 binaryFileData.setContentType("application/vnd.android.package-archive");
-                            }
-                            else if (project.getPlatform()==Platform.JAVA) {
+                            } else if (project.getPlatform()==Platform.JAVA) {
                                 binaryFileData.setContentType("application/x-compressed");
                             }
                             cacheService.putProjectFile(dataKey, binaryFileData);
                         }
-                    }
-                    finally {
+                    } finally {
                         FileUtils.deleteDirectory(rootDir);
                     }
-                }
-                else {
+                } else {
                     outStream.println("Unable to get/create SDK for requested project!");
                 }
-            }
-            else {
+            } else {
                 outStream.println("No project configuration found!");
             }
             
         } catch (Exception e) {
             throw Utils.handleException(e);
-        }
-        finally {
-            res.getBroadcaster().broadcast(uuid + " finished", res);
+        } finally {
+            if (res != null) {
+                res.getBroadcaster().broadcast(uuid + " finished", res);
+            }
+            if (outPrint != null) {
+                outPrint.flush();
+                outPrint.close();
+                outputData.setOutputData(byteOutStream.toByteArray());
+            }
         }
     }
     
@@ -328,9 +339,11 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     class ClientMessageOutputStream extends OutputStream {
 
     	private AtmosphereResource res;
+    	private PrintStream out;
     	
-    	ClientMessageOutputStream(AtmosphereResource res) {
+    	ClientMessageOutputStream(AtmosphereResource res, PrintStream out) {
     		this.res = res;
+    		this.out = out;
     	}
     	
 		@Override
@@ -342,13 +355,22 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
 			byte[] data = new byte[len];
 			System.arraycopy(b, off, data, 0, len);
 			String message = new String(data);
-			res.getBroadcaster().broadcast(message, res);
+			if (res != null) {
+			    res.getBroadcaster().broadcast(message, res);
+			}
+			if (out != null) {
+			    out.print(message);
+			}
 		}
 		
 		public void println(String text) {
-		    res.getBroadcaster().broadcast((text+"\n"), res);
+		    if (res != null) {
+		        res.getBroadcaster().broadcast((text+"\n"), res);
+		    }
+	        if (out != null) {
+	            out.println(text);
+	        }
 		}
-    	
     }
 
 }

@@ -116,7 +116,7 @@ void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAt
                 }
             } else {
                 KAA_LOG_ERROR(boost::format("Failed to attach endpoint. Attach endpoint request id: %1%")
-                    % LoggingUtils::ByteArrayToString(endpoint.requestId));
+                    % endpoint.requestId);
                 if (requestIt->second.listener_) {
                     requestIt->second.listener_->onAttachFailure();
                 }
@@ -124,7 +124,7 @@ void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAt
             attachingEndpoints_.erase(requestIt);
         } else {
                 KAA_LOG_ERROR(boost::format("Failed to find endpoint attach request by id: %1%")
-                    % LoggingUtils::ByteArrayToString(endpoint.requestId));
+                    % endpoint.requestId);
         }
     }
 
@@ -158,7 +158,7 @@ void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDe
                 }
             } else {
                 KAA_LOG_ERROR(boost::format("Failed to detach endpoint. Detach endpoint request id: %1%")
-                    % LoggingUtils::ByteArrayToString(endpoint.requestId));
+                    % endpoint.requestId);
                 if (requestIt->second.listener_) {
                     requestIt->second.listener_->onDetachFailure();
                 }
@@ -166,7 +166,7 @@ void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDe
             detachingEndpoints_.erase(endpoint.requestId);
         } else {
                 KAA_LOG_ERROR(boost::format("Failed to find endpoint detach request by id: %1%")
-                    % LoggingUtils::ByteArrayToString(endpoint.requestId));
+                    % endpoint.requestId);
         }
     }
 
@@ -228,8 +228,7 @@ void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAcce
     }
 
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
-    std::string requestId;
-    UuidGenerator::generateUuid(requestId, endpointAccessToken);
+    std::int32_t requestId = UuidGenerator::generateRandomInt();
 
     EndpointOperationInfo info;
     info.endpointData_ = endpointAccessToken;
@@ -239,7 +238,7 @@ void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAcce
 
     if (result.second) {
         KAA_LOG_INFO(boost::format("Going to attach Endpoint by access token: %1% (requestId: %2%)")
-            % endpointAccessToken % LoggingUtils::ByteArrayToString(requestId));
+            % endpointAccessToken % requestId);
         if (userTransport_ != nullptr) {
             userTransport_->sync();
         } else {
@@ -262,8 +261,7 @@ void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyH
 
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
 
-    std::string requestId;
-    UuidGenerator::generateUuid(requestId, endpointKeyHash);
+    std::int32_t requestId = UuidGenerator::generateRandomInt();
 
     EndpointOperationInfo info;
     info.endpointData_ = endpointKeyHash;
@@ -273,7 +271,7 @@ void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyH
 
     if (result.second) {
         KAA_LOG_INFO(boost::format("Going to detach Endpoint by keyHash: %1% (requestId: %2%)")
-            % endpointKeyHash % LoggingUtils::ByteArrayToString(requestId));
+            % endpointKeyHash % requestId);
         if (userTransport_ != nullptr) {
             userTransport_->sync();
         } else {
@@ -322,20 +320,20 @@ void EndpointRegistrationManager::onEndpointAccessTokenChanged(const std::string
     }
 }
 
-std::map<std::string, std::string>  EndpointRegistrationManager::getEndpointsToAttach()
+std::map<std::int32_t, std::string>  EndpointRegistrationManager::getEndpointsToAttach()
 {
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
-    std::map<std::string, std::string> resultingMap;
+    std::map<std::int32_t, std::string> resultingMap;
     for (const auto& idToTokenPair : attachingEndpoints_) {
         resultingMap.insert(std::make_pair(idToTokenPair.first, idToTokenPair.second.endpointData_));
     }
     return resultingMap;
 }
 
-std::map<std::string, std::string>  EndpointRegistrationManager::getEndpointsToDetach()
+std::map<std::int32_t, std::string>  EndpointRegistrationManager::getEndpointsToDetach()
 {
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
-    std::map<std::string, std::string> resultingMap;
+    std::map<std::int32_t, std::string> resultingMap;
     for (const auto& idToHashPair : detachingEndpoints_) {
         resultingMap.insert(std::make_pair(idToHashPair.first, idToHashPair.second.endpointData_));
     }

@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.log;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class LogSchemasViewImpl extends BaseListViewImpl<LogSchemaDto> {
@@ -30,7 +29,7 @@ public class LogSchemasViewImpl extends BaseListViewImpl<LogSchemaDto> {
 
     @Override
     protected AbstractGrid<LogSchemaDto, String> createGrid() {
-        return new BaseSchemasGrid<LogSchemaDto>();
+        return new LogSchemaGrid();
     }
 
     @Override

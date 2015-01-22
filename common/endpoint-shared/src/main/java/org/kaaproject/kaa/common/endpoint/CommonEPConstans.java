@@ -71,4 +71,7 @@ public interface CommonEPConstans  extends Constants { //NOSONAR
 
     /** The Constant REQUEST_DATA_ATTR_NAME. */
     public static final String REQUEST_DATA_ATTR_NAME = "requestData"; //NOSONAR
+    
+    /** The Constant NEXT_PROTOCOL_ATTR_NAME. */
+    public static final String NEXT_PROTOCOL_ATTR_NAME = "nextProtocol"; //NOSONAR
 }

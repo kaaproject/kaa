@@ -16,27 +16,28 @@
 
 #set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
+#set ($UNION_NAME = $TypeConverter.generateUnionName($PREFIX, $schema))
+#set ($union_name = $UNION_NAME.toLowerCase())
+#set ($branch_number = 0)
+# ifndef ${UNION_NAME}_H_
+# define ${UNION_NAME}_H_
 
-#set ($unionName = $TypeConverter.generateUnionName($schema))
-#set ($counter = 0)
-# ifndef ${PREFIX}_${unionName}_H_
-# define ${PREFIX}_${unionName}_H_
-
-#foreach ($branchSchema in $schema.getTypes())
-# define ${PREFIX}_${unionName}_${StyleUtils.toUpperUnderScore($branchSchema.getName())}_BRANCH $counter
-#set ($counter = $counter + 1) 
+#foreach ($branch_schema in $schema.getTypes())
+# define ${UNION_NAME}_BRANCH_${branch_number} ${branch_number}
+#set ($branch_number = $branch_number + 1)
 #end
 
-#set ($unionName = $unionName.toLowerCase())
+#set ($branch_number = 0)
 #if ($generationContext.isTypeOut())
-#foreach ($branchSchema in $schema.getTypes())
-kaa_union_t* ${prefix}_create_${unionName}_${StyleUtils.toLowerUnderScore($branchSchema.getName())}_branch();
+#foreach ($branch_schema in $schema.getTypes())
+kaa_union_t* ${union_name}_branch_${branch_number}_create();
+#set ($branch_number = $branch_number + 1)
 #end
 
 #end
 #if ($generationContext.isTypeIn())
-kaa_union_t* ${prefix}_deserialize_${unionName}(avro_reader_t reader);
+kaa_union_t* ${union_name}_deserialize(avro_reader_t reader);
 
 #end
-# endif // KAA_${unionName}_H_
+# endif // ${UNION_NAME}_H_
 

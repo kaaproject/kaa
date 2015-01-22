@@ -14,27 +14,44 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_error.h
+ * @brief Kaa error codes
+ *
+ * Defines @c kaa_error_t enumeration type for standard error codes used across the C Endpoint SDK.
+ */
+
 #ifndef KAA_ERROR_H_
 #define KAA_ERROR_H_
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
-typedef enum kaa_error_t {
-    KAA_ERR_NONE                = 0,
+typedef enum {
+    KAA_ERR_NONE                    = 0,
 
     /* General errors */
-    KAA_ERR_NOMEM               = -1,
-    KAA_ERR_BADDATA             = -2,
-    KAA_ERR_BADPARAM            = -3,
-    KAA_ERR_READ_FAILED         = -4,
-    KAA_ERR_WRITE_FAILED        = -5,
-    KAA_ERR_NOT_FOUND           = -6,
+    KAA_ERR_NOMEM                   = -1,
+    KAA_ERR_BADDATA                 = -2,
+    KAA_ERR_BADPARAM                = -3,
+    KAA_ERR_READ_FAILED             = -4,
+    KAA_ERR_WRITE_FAILED            = -5,
+    KAA_ERR_NOT_FOUND               = -6,
+    KAA_ERR_NOT_INITIALIZED         = -7,
+    KAA_ERR_BAD_STATE               = -8,
+    KAA_ERR_INVALID_PUB_KEY         = -9,
+    KAA_ERR_INVALID_BUFFER_SIZE     = -10,
+    KAA_ERR_UNSUPPORTED             = -11,
+    KAA_ERR_BAD_PROTOCOL_ID         = -12,
+    KAA_ERR_BAD_PROTOCOL_VERSION    = -13,
+
+    KAA_ERR_EVENT_NOT_ATTACHED      = -41,
+    KAA_ERR_EVENT_BAD_FQN           = -42,
+    KAA_ERR_EVENT_TRX_NOT_FOUND     = -43,
 } kaa_error_t;
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAA_ERROR_H_ */

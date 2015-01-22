@@ -13,6 +13,9 @@
 
 package org.kaaproject.kaa.server.admin.client.layout;
 
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -48,8 +51,11 @@ public class AppLayout extends Composite {
     @UiField
     SimpleWidgetPanel appContent;
     CustomDeckLayoutPanel navContent;
+    @UiField(provided=true) 
+    final KaaAdminStyle kaaAdminStyle;
 
     public AppLayout() {
+        kaaAdminStyle = Utils.kaaAdminStyle;
         initWidget(uiBinder.createAndBindUi(this));
         init();
     }
@@ -76,18 +82,18 @@ public class AppLayout extends Composite {
         navContent.setAnimationVertical(false);
 
         navContent.setAnimationDuration(0);
-        navContent.setStyleName("b-nav-content");
+        navContent.setStyleName(kaaAdminStyle.bNavContent());
         navContent.setSize("200px", "100%");
 
         navPanel.add(navContent);
         final Label back = new Label(OPEN);
-        back.setStyleName("b-nav-label");
+        back.setStyleName(kaaAdminStyle.bNavLabel());
 
         navPanel.add(back);
         appHeader.setSize("100%", "60px");
 
-        appContent.setStyleName("b-app-content");
-        navPanel.setStyleName("b-nav-panel");
+        appContent.setStyleName(kaaAdminStyle.bAppContent());
+        navPanel.setStyleName(kaaAdminStyle.bNavPanel());
 
         back.addClickHandler(new ClickHandler() {
 

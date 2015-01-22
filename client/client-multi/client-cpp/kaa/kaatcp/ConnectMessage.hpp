@@ -30,6 +30,7 @@ class ConnectMessage : public IKaaTcpRequest
 public:
     template<class T, class U, class V>
     ConnectMessage(std::uint16_t timer,
+            std::uint32_t nextProtocolId,
             const T& signature,
             const U& sessionKey,
             const V& payload) : message_(0)
@@ -49,7 +50,7 @@ public:
 
         std::uint16_t nameLengthNetworkOrder = htons(KaaTcpCommon::KAA_TCP_NAME_LENGTH);
         std::copy(reinterpret_cast<std::uint8_t *>(&nameLengthNetworkOrder), reinterpret_cast<std::uint8_t *>(&nameLengthNetworkOrder) + 2, messageIt);
-        messageIt += 2;
+        messageIt += sizeof(std::uint16_t);
 
         std::copy((const std::uint8_t * const ) KaaTcpCommon::KAA_TCP_NAME,
                 (const std::uint8_t * const ) (KaaTcpCommon::KAA_TCP_NAME + KaaTcpCommon::KAA_TCP_NAME_LENGTH), messageIt);
@@ -57,12 +58,17 @@ public:
 
         *(messageIt++) = KaaTcpCommon::PROTOCOL_VERSION;
         *(messageIt++) = 0x02;
+
+        std::uint32_t nextProtocolIdNetworkOrder = htonl(nextProtocolId);
+        std::copy(reinterpret_cast<std::uint8_t *>(&nextProtocolIdNetworkOrder), reinterpret_cast<std::uint8_t *>(&nextProtocolIdNetworkOrder) + 4, messageIt);
+        messageIt += sizeof(std::uint32_t);
+
         *(messageIt++) = sessionKey.size() > 0 ? KaaTcpCommon::KAA_CONNECT_SESSION_KEY_FLAGS : 0;
         *(messageIt++) = signature.size() > 0 ? KaaTcpCommon::KAA_CONNECT_SIGNATURE_FLAGS : 0;
 
         std::uint16_t timerNetworkOrder = htons(timer);
         std::copy(reinterpret_cast<std::uint8_t *>(&timerNetworkOrder), reinterpret_cast<std::uint8_t *>(&timerNetworkOrder) + 2, messageIt);
-        messageIt += 2;
+        messageIt += sizeof(std::uint16_t);
 
         std::copy(sessionKey.begin(), sessionKey.end(), messageIt);
         messageIt += sessionKey.size();

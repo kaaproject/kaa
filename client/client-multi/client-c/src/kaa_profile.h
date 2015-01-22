@@ -14,29 +14,57 @@
  * limitations under the License.
  */
 
-#ifndef KAA_PROFILE_H_
-#define KAA_PROFILE_H_
+/**
+ * @file kaa_profile.h
+ * @brief Kaa profile reporting API
+ *
+ * Supplies API to report endpoint profile to Operations server.
+ */
 
-#ifdef __cplusplus
+# ifndef KAA_PROFILE_H_
+# define KAA_PROFILE_H_
+
+# ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
+# endif
 
-#include "kaa_error.h"
-#include "gen/kaa_profile_gen.h"
-#include "gen/kaa_endpoint_gen.h"
+# include <stdbool.h>
+# include "kaa_error.h"
+# include "gen/kaa_profile_gen.h"
 
+
+
+/**
+ * User defined endpoint profile structure
+ */
 typedef kaa_profile_basic_endpoint_profile_test_t kaa_profile_t;
+
+
+
+/**
+ * Private profile manager data structure
+ */
 typedef struct kaa_profile_manager_t kaa_profile_manager_t;
 
-kaa_error_t                     kaa_create_profile_manager(kaa_profile_manager_t **);
-void                            kaa_destroy_profile_manager(kaa_profile_manager_t *);
 
-kaa_error_t                     kaa_profile_update_profile(void *, kaa_profile_t *);
-int                             kaa_profile_need_profile_resync(void *);
-kaa_profile_sync_request_t *    kaa_profile_compile_request(void *);
-void                            kaa_profile_handle_sync(void *, kaa_profile_sync_response_t *);
-CLOSE_EXTERN
-#endif /* KAA_PROFILE_H_ */
+
+/**
+ * @brief Updates user profile.
+ *
+ * After a new profile is set a sync request to Operations server will be sent.
+ * The profile must be set prior to the endpoint registration.
+ *
+ * @param[in] self      Profile manager instance.
+ * @param[in] profile   Filled in user-defined profile data structure.
+ *
+ * @return      Error code.
+ */
+kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile);
+
+
+
+# ifdef __cplusplus
+}      /* extern "C" */
+# endif
+
+# endif /* KAA_PROFILE_H_ */

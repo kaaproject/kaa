@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
@@ -49,8 +47,7 @@ public class EcfSchemaActivity
         super.start(containerWidget, eventBus);
             AbstractGrid<EventClassDto, String> eventClassesGrid = detailsView.getEventClassesGrid();
             eventClassesDataProvider = new EventClassesDataProvider(eventClassesGrid.getSelectionModel(),
-                            new DataLoadCallback<EventClassDto>(detailsView), entityId, place.getVersion());
-
+                    detailsView, entityId, place.getVersion());
             eventClassesDataProvider.addDataDisplay(eventClassesGrid.getDisplay());
     }
 
@@ -101,25 +98,6 @@ public class EcfSchemaActivity
     protected void editEntity(EventClassFamilyDto entity,
             AsyncCallback<EventClassFamilyDto> callback) {
         callback.onSuccess(null);
-    }
-
-    class DataLoadCallback<T> implements AsyncCallback<List<T>> {
-
-        private EcfSchemaView view;
-
-        DataLoadCallback(EcfSchemaView view) {
-            this.view = view;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            view.setErrorMessage(Utils.getErrorMessage(caught));
-        }
-
-        @Override
-        public void onSuccess(List<T> result) {
-            view.clearError();
-        }
     }
  
 }

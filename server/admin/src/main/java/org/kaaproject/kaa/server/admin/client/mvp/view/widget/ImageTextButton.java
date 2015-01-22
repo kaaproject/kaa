@@ -45,7 +45,6 @@ public class ImageTextButton extends Button {
           int spacing;
           if (this.text == null || this.text.trim().equals("")) {
                   spacing = 0;
-                  //getElement().getStyle().setProperty("padding", "2px 5px");
           }
           else {
                   spacing = 16;
@@ -69,7 +68,6 @@ public class ImageTextButton extends Button {
          imageSpan.getStyle().setProperty("background", style);
          imageSpan.getStyle().setPropertyPx("width", width);
          imageSpan.getStyle().setPropertyPx("height", height);
-         //imageSpan.getStyle().setPropertyPx("fontSize", height-4);
          imageSpan.getStyle().setPropertyPx("paddingRight", paddingRight);
      }
 

@@ -150,4 +150,21 @@ public class KaaClientPropertiesStateTest {
 
         Assert.assertFalse(newState.isRegistered());
     }
+
+    @Test
+    public void testConfigVersionUpdates() throws Exception {
+        KaaClientProperties props = getProperties();
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), props);
+
+        Assert.assertFalse(state.isConfigurationVersionUpdated());
+
+        state.persist();
+
+        KaaClientProperties newProps = getProperties();
+        newProps.setProperty(KaaClientProperties.CONFIG_VERSION, Integer.toString(100500));
+
+        KaaClientState newState = new KaaClientPropertiesState(new FilePersistentStorage(), newProps);
+
+        Assert.assertTrue(newState.isConfigurationVersionUpdated());
+    }
 }

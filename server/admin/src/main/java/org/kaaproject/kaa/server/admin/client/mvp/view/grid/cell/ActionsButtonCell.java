@@ -23,6 +23,8 @@ import static com.google.gwt.dom.client.BrowserEvents.KEYUP;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -135,7 +137,7 @@ public class ActionsButtonCell<T> extends AbstractCell<T> {
     this.actionsButtonHtmlDown = template.actionsButtonDown(text, style);
 
       actionsPopup = new PopupPanel(true, false);
-      actionsPopup.addStyleName("actionPopup");
+      actionsPopup.addStyleName(Utils.kaaAdminStyle.actionPopup());
       actionsPopup.setWidget(menu);
 
   }

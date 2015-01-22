@@ -20,21 +20,21 @@ package org.kaaproject.kaa.server.common.dao;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
 public interface LogAppendersService {
-
-    /**
-     * @param logAppenderId
-     * @return
-     */
-    List<LogSchemaDto> findVacantLogSchemasByLogAppenderId(String logAppenderId);
 
     /**
      * @param appId
      * @return
      */
     List<LogAppenderDto> findRegisteredLogAppendersByAppId(String appId);
+    
+    /**
+     * @param appId
+     * @param schemaVersion
+     * @return
+     */
+    List<LogAppenderDto> findRegisteredLogAppendersByAppIdAndSchemaVersion(String appId, int schemaVersion);
 
     /**
      * @param appId

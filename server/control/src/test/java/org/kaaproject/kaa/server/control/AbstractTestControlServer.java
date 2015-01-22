@@ -843,7 +843,8 @@ public abstract class AbstractTestControlServer {
         if (schema == null) {
             schema = createLogSchema(application.getId());
         }
-        appender.setSchema(schema);
+        appender.setMinLogSchemaVersion(schema.getMajorVersion());
+        appender.setMaxLogSchemaVersion(schema.getMajorVersion());
         appender.setStatus(LogAppenderStatusDto.REGISTERED);
 
         LogAppenderDto savedLogAppender = toDto(client.editLogAppender(toDataStruct(appender)));

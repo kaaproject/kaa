@@ -20,7 +20,9 @@
         xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
         xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client">
        
-        <gwt:HTMLPanel styleName="b-app-navigator">
+        <ui:with field='kaaAdminStyle' type='org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle'/>  
+    
+        <gwt:HTMLPanel styleName="{kaaAdminStyle.bAppNavigator}">
                 <cell:CellTree ui:field="menuTree"></cell:CellTree>
         </gwt:HTMLPanel>
 

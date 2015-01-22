@@ -20,6 +20,8 @@ import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import static com.google.gwt.dom.client.BrowserEvents.KEYDOWN;
 import static com.google.gwt.dom.client.BrowserEvents.KEYUP;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -32,7 +34,6 @@ import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -41,17 +42,17 @@ import com.google.gwt.safehtml.shared.SafeUri;
 public class ActionButtonCell<T> extends AbstractCell<T> {
 
     interface Template extends SafeHtmlTemplates {
-        @Template("<div class=\"gwt-Button b-app-cell-button\" tabindex=\"-1\" role=\"button\" style=\"; vertical-align:middle;\">"+
-                  "<span>{0} </span>"+
-                  "<span style='{1}'></span>"+
+        @Template("<div class=\"gwt-Button {0}\" tabindex=\"-1\" role=\"button\" style=\"; vertical-align:middle;\">"+
+                  "<span>{1} </span>"+
+                  "<span style='{2}'></span>"+
                   "</div>")
-        SafeHtml actionButton(String text, SafeStyles style);
+        SafeHtml actionButton(String cellButtonClass, String text, SafeStyles style);
 
-      @Template("<div class=\"gwt-Button b-app-cell-button b-app-cell-button-small\" tabindex=\"-1\" role=\"button\" style=\"; vertical-align:middle;\">"+
-                "<span>{0} </span>"+
-                "<span style='{1}'></span>"+
+      @Template("<div class=\"gwt-Button {0} {1}\" tabindex=\"-1\" role=\"button\" style=\"; vertical-align:middle;\">"+
+                "<span>{2} </span>"+
+                "<span style='{3}'></span>"+
                 "</div>")
-      SafeHtml actionButtonSmall(String text, SafeStyles style);
+      SafeHtml actionButtonSmall(String cellButtonClass, String smallCellButtonClass, String text, SafeStyles style);
 
     }
 
@@ -78,9 +79,6 @@ public class ActionButtonCell<T> extends AbstractCell<T> {
         int width = imageResource.getWidth();
         int height = imageResource.getHeight();
         int paddingLeft = width;
-        //if (!small) {
-        //    paddingLeft+=16;
-        //}
 
         String background = "url(\"" + uri.asString() + "\") no-repeat scroll right center";
 
@@ -93,10 +91,10 @@ public class ActionButtonCell<T> extends AbstractCell<T> {
 
         SafeStyles style = SafeStylesUtils.fromTrustedString(builder.toSafeStyles().asString());
         if (small) {
-            this.actionButtonHtml = template.actionButtonSmall(text, style);
-        }
-        else {
-            this.actionButtonHtml = template.actionButton(text, style);
+            this.actionButtonHtml = template.actionButtonSmall(Utils.kaaAdminStyle.bAppCellButton(), 
+                    Utils.kaaAdminStyle.bAppCellButtonSmall(), text, style);
+        } else {
+            this.actionButtonHtml = template.actionButton(Utils.kaaAdminStyle.bAppCellButton(), text, style);
         }
     }
 

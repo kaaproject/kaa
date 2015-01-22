@@ -28,12 +28,132 @@ then
     help
 fi
 
-function prepare_plain_build {
-    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=0 ..; cd ..
+COLLECT_COVERAGE=0
+MAX_LOG_LEVEL=6
+
+function prepare_build {
+    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=1 -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL ..; cd ..
 }
 
-function prepare_test_build {
-    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=1 ..; cd ..
+function build {
+    cd build && make && cd ..
+}
+
+function execute_tests {
+    cd build
+    FAILUTE_COUNTER=0
+    FAILED_TESTS=""
+    for test in test_*
+    do
+        echo -e "Starting test $test"
+        ./$test
+        TEST_RESULT=$?
+        echo -e "Test $test finished"
+        if [ $TEST_RESULT -ne 0 ]
+        then
+            FAILUTE_COUNTER=$((FAILUTE_COUNTER + 1))
+            FAILED_TESTS="$test\n$FAILED_TESTS"
+        fi
+    done
+    if [[ -f ../gcovr ]]
+    then
+        chmod +x ../gcovr
+        ../gcovr -d -x -f ".*" -e ".*(test|avro|gen).*" -o ./gcovr-report.xml -v > ./gcovr.log
+    fi
+    if [ "$FAILUTE_COUNTER" -ne "0" ]
+    then
+        echo -e "\n$FAILUTE_COUNTER TEST(S) FAILED:\n$FAILED_TESTS"
+    else
+        echo -e "\nTESTS WERE SUCCESSFULLY PASSED\n"
+    fi
+    cd ..
+    
+}
+
+function check_installed_software {
+    RATS_VERSION="$(rats -h)"
+    if [[ $RATS_VERSION = RATS* ]] 
+    then
+        RATS_INSTALLED=1
+    else
+        RATS_INSTALLED=0
+    fi
+    
+    CPPCHECK_VERSION="$(cppcheck --version)"
+    if [[ $CPPCHECK_VERSION = Cppcheck* ]] 
+    then
+        CPPCHECK_INTSALLED=1
+    else
+        CPPCHECK_INSTALLED=0
+    fi
+    
+    VALGRIND_VERSION="$(valgrind --version)"
+    if [[ $VALGRIND_VERSION = valgrind* ]] 
+    then
+        VALGRIND_INSTALLED=1
+    else
+        VALGRIND_INSTALLED=0
+    fi
+}
+
+function run_valgrind {
+    echo "Starting valgrind..." 
+    cd build
+    if [[ ! -d valgrindReports ]]
+    then
+        mkdir valgrindReports
+    fi
+    for test in test_*
+    do
+        valgrind --leak-check=full --show-reachable=yes --trace-children=yes -v --log-file=./valgrind.log --xml=yes --xml-file=./valgrindReports/$test.memreport.xml ./$test
+        chmod 0666 ./valgrindReports/$test.memreport.xml
+    done
+    cd ..
+    echo "Valgrind analysis finished."
+}
+
+function run_cppcheck {
+    echo "Starting Cppcheck..."
+    cppcheck --enable=all --std=c99 --xml --suppress=unusedFunction src/ test/ 2>build/cppcheck_.xml > build/cppcheck.log
+    sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build/cppcheck_.xml > build/cppcheck.xml
+    rm build/cppcheck_.xml
+    echo "Cppcheck analysis finished."
+}
+
+function run_rats {
+    echo "Starting RATS..."
+    rats --xml `find src/ -name *.[ch]` > build/rats-report.xml
+    echo "RATS analysis finished."
+}
+
+function run_analysis {
+    check_installed_software
+    if [[ VALGRIND_INSTALLED -eq 1 ]]
+    then
+        run_valgrind
+    fi
+    
+    if [[ CPPCHECK_INTSALLED -eq 1 ]]
+    then
+        run_cppcheck
+    fi
+    
+    if [[ RATS_INSTALLED -eq 1 ]]
+    then
+        run_rats
+    fi
+} 
+
+function clean {
+    if [[ -d build ]]
+    then
+        cd build
+        if [[ -f Makefile ]]
+        then 
+            make clean
+        fi
+        cd .. && rm -r build
+    fi
 }
 
 for cmd in $@
@@ -41,44 +161,30 @@ do
 
 case "$cmd" in
     build)
-    prepare_plain_build
-    cd build && make && cd ..
+        COLLECT_COVERAGE=0
+        prepare_build &&
+        build &&
+        execute_tests
     ;;
 
     install)
-    cd build && make install && cd ..
+        cd build && make install && cd ..
     ;;
 
     test)
-    prepare_test_build
-    cd build && make
-    FAILUTE_COUNTER=0
-    FAILED_TESTS=""
-    for test in test_*
-    do
-        echo -e "Starting test $test"
-        ./$test
-        echo -e "Test $test finished"
-        if [ "$?" -ne "0" ]
-        then
-            FAILUTE_COUNTER=$((FAILUTE_COUNTER + 1))
-            FAILED_TESTS="$test\n$FAILED_TESTS"
-        fi
-    done
-    if [ "$FAILUTE_COUNTER" -ne "0" ]
-    then
-        echo -e "\n$FAILUTE_COUNTER TEST(S) FAILED:\n$FAILED_TESTS"
-    else
-        echo -e "\nTESTS WERE SUCCESSFULLY PASSED\n"
-    fi
+        COLLECT_COVERAGE=1
+        prepare_build &&
+        build &&
+        execute_tests &&
+        run_analysis
     ;;
 
     clean)
-        cd build && make clean && cd .. && rm -r build
+        clean
     ;;
     
     *)
-    help
+        help
     ;;
 esac
 

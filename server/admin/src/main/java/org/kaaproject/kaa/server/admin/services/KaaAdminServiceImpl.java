@@ -36,6 +36,8 @@ import net.iharder.Base64;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
+import org.kaaproject.avro.ui.converter.FormAvroConverter;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -69,23 +71,28 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
+import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
+import org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties;
+import org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties;
 import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
+import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
-import org.kaaproject.kaa.server.common.avro.ui.converter.FormAvroConverter;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
 import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -93,7 +100,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -102,13 +109,16 @@ import org.springframework.stereotype.Service;
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
 
     @Autowired
     private ControlThriftClientProvider clientProvider;
 
     @Autowired
     private UserFacade userFacade;
+    
+    @Autowired
+    private PropertiesFacade propertiesFacade;
 
     @Autowired
     private MessagingService messagingService;
@@ -284,6 +294,54 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public PropertiesDto getMailProperties() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            return propertiesFacade.getPropertiesDto(SmtpMailProperties.class);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public PropertiesDto editMailProperties(PropertiesDto mailPropertiesDto)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            PropertiesDto storedPropertiesDto = propertiesFacade.editPropertiesDto(mailPropertiesDto, 
+                    SmtpMailProperties.class);
+            messagingService.configureMailSender();
+            return storedPropertiesDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public PropertiesDto getGeneralProperties() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            return propertiesFacade.getPropertiesDto(GeneralProperties.class);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public PropertiesDto editGeneralProperties(PropertiesDto generalPropertiesDto)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            PropertiesDto storedPropertiesDto = propertiesFacade.editPropertiesDto(generalPropertiesDto, 
+                    GeneralProperties.class);
+            messagingService.configureMailSender();
+            return storedPropertiesDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUser(
             org.kaaproject.kaa.common.dto.admin.UserDto user)
             throws KaaAdminServiceException {
@@ -406,6 +464,37 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkApplicationId(applicationId);
             SdkKey sdkKey = new SdkKey(applicationId, configurationSchemaVersion, profileSchemaVersion, notificationSchemaVersion, logSchemaVersion, targetPlatform, aefMapIds);
             return Base64.encodeObject(sdkKey, Base64.URL_SAFE);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public FileData getSdk(SdkKey key) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(key.getApplicationId());
+            Sdk sdk = cacheService.getSdk(key);
+            FileData data = new FileData();
+            data.setFileName(sdk.getFileName());
+            data.setContentType(key.getTargetPlatform().getContentType());
+            data.setFileData(sdk.getData());
+            return data;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public void flushSdkCache() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            List<ApplicationDto> applications = getApplications();
+            for (ApplicationDto application : applications) {
+                for (SdkKey key : cacheService.getCachedSdkKeys(application.getId())) {
+                    cacheService.flushSdk(key);
+                }
+            }
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -570,6 +659,28 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkApplicationId(applicationId);
             return toDtoList(clientProvider.getClient().getUserNotificationSchemasByAppId(applicationId));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public List<SchemaInfoDto> getUserNotificationSchemaInfosByApplicationId(
+            String applicationId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(applicationId);            
+            List<NotificationSchemaDto> notificationSchemas = toDtoList(clientProvider.getClient().findNotificationSchemasByAppIdAndType(applicationId,
+                    toGenericDataStruct(NotificationTypeDto.USER)));
+            List<SchemaInfoDto> schemaInfos = new ArrayList<>(notificationSchemas.size());
+            for (NotificationSchemaDto notificationSchema : notificationSchemas) {
+                SchemaInfoDto schemaInfo = new SchemaInfoDto(notificationSchema);
+                Schema schema = new Schema.Parser().parse(notificationSchema.getSchema());
+                RecordField schemaForm = FormAvroConverter.createRecordFieldFromSchema(schema);
+                schemaInfo.setSchemaForm(schemaForm);
+                schemaInfos.add(schemaInfo);
+            }
+            return schemaInfos;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1180,9 +1291,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException {
         LogAppenderDto logAppender = wrapper.getLogAppender();
         try {
-            Schema schema = appenderConfigSchemas.get(logAppender.getAppenderClassName());
-            GenericRecord record = FormAvroConverter.createGenericRecordFormRecordField(wrapper.getConfiguration(), schema);
-            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+            GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(wrapper.getConfiguration());
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
             byte[] rawConfiguration = converter.encode(record);
             logAppender.setRawConfiguration(rawConfiguration);
             LogAppenderDto saved = editLogAppender(logAppender);
@@ -1244,11 +1354,28 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void sendNotification(NotificationDto notification, String fileItemName)
+    public RecordField getRecordDataFromFile(String schema, String fileItemName)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             byte[] body = getFileContent(fileItemName);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+            GenericRecord record = converter.decodeJson(body);
+            RecordField recordData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
+            return recordData;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public void sendNotification(NotificationDto notification,
+            RecordField notificationData) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(notificationData);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+            byte[] body = converter.encodeToJsonBytes(record);
             notification.setBody(body);
             checkApplicationId(notification.getApplicationId());
             TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
@@ -1259,7 +1386,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-
+    
     @Override
     public void sendNotification(NotificationDto notification, byte[] body)
             throws KaaAdminServiceException {
@@ -1462,7 +1589,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     private TenantUserDto toTenantUser(TenantAdminDto tenantAdmin) {
         User user = userFacade.findById(Long.valueOf(tenantAdmin.getExternalUid()));
-        logger.debug("Convert tenant admin to tenant user {}.", user);
+        LOG.debug("Convert tenant admin to tenant user {}.", user);
         TenantUserDto tenantUser = null;
         if (user != null) {
             tenantUser = new TenantUserDto(user.getId().toString(),
@@ -1475,7 +1602,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             tenantUser.setTenantId(tenantAdmin.getTenant().getId());
             tenantUser.setTenantName(tenantAdmin.getTenant().getName());
         } else {
-            logger.debug("Can't find tenant user by external id {}.", tenantAdmin.getExternalUid());
+            LOG.debug("Can't find tenant user by external id {}.", tenantAdmin.getExternalUid());
         }
         return tenantUser;
     }
@@ -1606,6 +1733,5 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw new KaaAdminServiceException(ServiceErrorCode.NOT_AUTHORIZED);
         }
     }
-
 
 }

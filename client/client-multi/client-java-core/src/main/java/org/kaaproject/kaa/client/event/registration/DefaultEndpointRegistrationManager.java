@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,11 +51,11 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
 
     private final KaaClientState state;
     private final Set<AttachedEndpointListChangedListener> attachedListChangedListeners = new HashSet<AttachedEndpointListChangedListener>();
-    private final Map<String, EndpointOperationResultListener> endpointAttachListeners = new HashMap<String, EndpointOperationResultListener>();
-    private final Map<String, EndpointOperationResultListener> endpointDetachListeners = new HashMap<String, EndpointOperationResultListener>();
+    private final Map<Integer, EndpointOperationResultListener> endpointAttachListeners = new HashMap<Integer, EndpointOperationResultListener>();
+    private final Map<Integer, EndpointOperationResultListener> endpointDetachListeners = new HashMap<Integer, EndpointOperationResultListener>();
 
-    private final Map<String, EndpointAccessToken> attachEndpointRequests = new HashMap<String, EndpointAccessToken>();
-    private final Map<String, EndpointKeyHash> detachEndpointRequests = new HashMap<String, EndpointKeyHash>();
+    private final Map<Integer, EndpointAccessToken> attachEndpointRequests = new HashMap<Integer, EndpointAccessToken>();
+    private final Map<Integer, EndpointKeyHash> detachEndpointRequests = new HashMap<Integer, EndpointKeyHash>();
 
     private UserAttachRequest userAttachRequest;
     private UserAuthResultListener userAuthResultListener;
@@ -101,13 +102,13 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
 
     @Override
     public void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationResultListener resultListener) {
-        String requestId;
+        int requestId;
         synchronized (attachEndpointRequests) {
-            requestId = UUID.nameUUIDFromBytes(endpointAccessToken.getToken().getBytes()).toString();
+            requestId = new Random().nextInt();
             LOG.info("Going to attach Endpoint by access token: {}", endpointAccessToken);
             attachEndpointRequests.put(requestId, endpointAccessToken);
         }
-        if (resultListener != null && requestId != null) {
+        if (resultListener != null) {
             endpointAttachListeners.put(requestId, resultListener);
         }
         if (userTransport != null) {
@@ -117,13 +118,13 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
 
     @Override
     public void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationResultListener resultListener) {
-        String requestId;
+        int requestId;
         synchronized (detachEndpointRequests) {
-            requestId = UUID.nameUUIDFromBytes(endpointKeyHash.getKeyHash().getBytes()).toString();
+            requestId = new Random().nextInt();
             LOG.info("Going to detach Endpoint by endpoint key hash: {}", endpointKeyHash);
             detachEndpointRequests.put(requestId, endpointKeyHash);
         }
-        if (resultListener != null && requestId != null) {
+        if (resultListener != null) {
             endpointDetachListeners.put(requestId, resultListener);
         }
         if (userTransport != null) {
@@ -251,8 +252,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public Map<String, EndpointAccessToken> getAttachEndpointRequests() {
-        Map<String, EndpointAccessToken> result = new HashMap<>();
+    public Map<Integer, EndpointAccessToken> getAttachEndpointRequests() {
+        Map<Integer, EndpointAccessToken> result = new HashMap<>();
         synchronized (attachEndpointRequests) {
             result.putAll(attachEndpointRequests);
         }
@@ -260,8 +261,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public Map<String, EndpointKeyHash> getDetachEndpointRequests() {
-        Map<String, EndpointKeyHash> result = new HashMap<>();
+    public Map<Integer, EndpointKeyHash> getDetachEndpointRequests() {
+        Map<Integer, EndpointKeyHash> result = new HashMap<>();
         synchronized (detachEndpointRequests) {
             result.putAll(detachEndpointRequests);
         }

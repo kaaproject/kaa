@@ -45,7 +45,7 @@ public:
     static const std::uint8_t KAA_SYNC_ENCRYPTED_BIT = 0x04;
     static const std::uint8_t KAA_SYNC_REQUEST_BIT = 0x01;
 
-    static const std::uint8_t KAA_CONNECT_HEADER_LENGTH = 14;
+    static const std::uint8_t KAA_CONNECT_HEADER_LENGTH = 18;
     static const std::uint8_t KAA_CONNECT_SESSION_KEY_FLAGS = 0x11;
     static const std::uint8_t KAA_CONNECT_SIGNATURE_FLAGS = 0x01;
 

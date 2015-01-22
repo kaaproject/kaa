@@ -21,6 +21,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
@@ -31,9 +32,9 @@ public class NotificationSchemasDataProvider extends AbstractDataProvider<Notifi
     private String applicationId;
 
     public NotificationSchemasDataProvider(MultiSelectionModel<NotificationSchemaDto> selectionModel,
-                                    AsyncCallback<List<NotificationSchemaDto>> asyncCallback,
-                                    String applicationId) {
-        super(selectionModel, asyncCallback);
+                                           HasErrorMessage hasErrorMessage,
+                                           String applicationId) {
+        super(selectionModel, hasErrorMessage);
         this.applicationId = applicationId;
     }
 

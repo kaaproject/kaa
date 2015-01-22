@@ -19,9 +19,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include <stdint.h>
@@ -46,7 +43,7 @@ extern "C" {
 #define KAA_BOOTSTRAP_CHANNEL_KAATCP    0x03
 
 #define KAA_CONNECT_FLAGS          0x02
-#define KAA_CONNECT_HEADER_LENGTH  14
+#define KAA_CONNECT_HEADER_LENGTH  18
 
 #define KAA_CONNECT_KEY_AES_RSA    0x11
 #define KAA_CONNECT_SIGNATURE_SHA1 0x01
@@ -73,6 +70,9 @@ typedef struct kaatcp_connect_t
     uint8_t protocol_version;
 
     uint8_t connect_flags;
+
+    uint32_t next_ptorocol_id;
+
     uint8_t session_key_flags;
     uint8_t signature_flags;
 
@@ -180,8 +180,12 @@ typedef enum
     KAATCP_ERR_NONE = 0,
     KAATCP_ERR_NOMEM = -1,
     KAATCP_ERR_BUFFER_NOT_ENOUGH = -2,
-    KAATCP_ERR_BAD_PARAM = -3
+    KAATCP_ERR_BAD_PARAM = -3,
+    KAATCP_ERR_INVALID_STATE = -4,
+    KAATCP_ERR_INVALID_PROTOCOL = -5
 } kaatcp_error_t;
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* KAATCP_COMMON_H_ */

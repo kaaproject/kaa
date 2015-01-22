@@ -40,7 +40,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
@@ -58,6 +60,10 @@ public interface ClientFactory {
     NavigationView getNavigationView();
 
     UserProfileView getUserProfileView();
+    
+    BasePropertiesView getGeneralPropertiesView();
+    
+    BasePropertiesView getMailPropertiesView();
 
     BaseListView<TenantUserDto> getTenantsView();
     TenantView getCreateTenantView();
@@ -100,6 +106,8 @@ public interface ClientFactory {
     BaseListView<TopicDto> getTopicsView();
     TopicView getTopicView();
     TopicView getCreateTopicView();
+    
+    SendNotificationView getSendNotificationView();
 
     BaseListView<EventClassFamilyDto> getEcfsView();
     EcfView getEcfView();

@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}],\"direction\":\"in\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String requestId;
+   private int requestId;
    private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
 
   /**
@@ -22,7 +22,7 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
   /**
    * All-args constructor.
    */
-  public LogSyncResponse(java.lang.String requestId, org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result) {
+  public LogSyncResponse(java.lang.Integer requestId, org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result) {
     this.requestId = requestId;
     this.result = result;
   }
@@ -40,7 +40,7 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: requestId = (java.lang.String)value$; break;
+    case 0: requestId = (java.lang.Integer)value$; break;
     case 1: result = (org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -49,7 +49,7 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
   /**
    * Gets the value of the 'requestId' field.
    */
-  public java.lang.String getRequestId() {
+  public java.lang.Integer getRequestId() {
     return requestId;
   }
 
@@ -57,7 +57,7 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
    * Sets the value of the 'requestId' field.
    * @param value the value to set.
    */
-  public void setRequestId(java.lang.String value) {
+  public void setRequestId(java.lang.Integer value) {
     this.requestId = value;
   }
 
@@ -97,7 +97,7 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<LogSyncResponse>
     implements org.apache.avro.data.RecordBuilder<LogSyncResponse> {
 
-    private java.lang.String requestId;
+    private int requestId;
     private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
 
     /** Creates a new Builder */
@@ -132,12 +132,12 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
     }
 
     /** Gets the value of the 'requestId' field */
-    public java.lang.String getRequestId() {
+    public java.lang.Integer getRequestId() {
       return requestId;
     }
     
     /** Sets the value of the 'requestId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder setRequestId(java.lang.String value) {
+    public org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
       fieldSetFlags()[0] = true;
@@ -151,7 +151,6 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
     
     /** Clears the value of the 'requestId' field */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder clearRequestId() {
-      requestId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -185,7 +184,7 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
     public LogSyncResponse build() {
       try {
         LogSyncResponse record = new LogSyncResponse();
-        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.String) defaultValue(fields()[0]);
+        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.Integer) defaultValue(fields()[0]);
         record.result = fieldSetFlags()[1] ? this.result : (org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {

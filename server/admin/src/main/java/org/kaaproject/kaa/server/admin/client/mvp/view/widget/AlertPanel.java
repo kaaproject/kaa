@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import static org.kaaproject.kaa.server.admin.client.util.Utils.kaaAdminStyle;
+
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -26,11 +28,11 @@ public class AlertPanel extends Label {
     private DivElement textNode;
 
     public enum Type {
-        INFO("info", "icon-info"),
-        HINT("hint", "icon-hint"),
-        WARNING("warning", "icon-warning"),
-        ERROR("error", "icon-error"),
-        SUCCESS("success", "icon-success");
+        INFO(kaaAdminStyle.info(), kaaAdminStyle.iconInfo()),
+        HINT(kaaAdminStyle.hint(), kaaAdminStyle.iconHint()),
+        WARNING(kaaAdminStyle.warning(), kaaAdminStyle.iconWarning()),
+        ERROR(kaaAdminStyle.error(), kaaAdminStyle.iconError()),
+        SUCCESS(kaaAdminStyle.success(), kaaAdminStyle.iconSuccess());
 
         String labelStyleName;
 
@@ -43,11 +45,11 @@ public class AlertPanel extends Label {
     }
 
     public AlertPanel(Type type) {
-        setStylePrimaryName("ui-message");
+        setStylePrimaryName(kaaAdminStyle.uiMessage());
         addStyleName(type.labelStyleName);
 
         InlineLabel icon = new InlineLabel();
-        icon.setStylePrimaryName("ui-icon");
+        icon.setStylePrimaryName(kaaAdminStyle.uiIcon());
         icon.addStyleName(type.iconStyleName);
 
         getElement().appendChild(icon.getElement());
