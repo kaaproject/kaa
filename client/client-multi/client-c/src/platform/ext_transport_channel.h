@@ -18,10 +18,48 @@
 #define EXT_TRANSPORT_CHANNEL_H_
 
 #include "kaa_common.h"
+#include "kaa_platform_protocol.h"
+#include "kaa_bootstrap_manager.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+/**
+ * @brief Uses to initialize transport channel implementation with Kaa specific
+ * transport context.
+ */
+typedef struct {
+    kaa_platform_protocol_t    *platform_protocol;
+    kaa_bootstrap_manager_t    *bootstrap_maanger;
+} kaa_transport_context_t;
+
+
+
+/**
+ * @brief Initializes the transport channel implementation.
+ *
+ * @param[in]   channel_context      Channel context.
+ * @param[in]   transport_context    Kaa specific transport context.
+ * @return                           Error code.
+ *
+ */
+typedef kaa_error_t (*kaa_init_channel_fn)(void *channel_context
+                                         , kaa_transport_context_t *transport_context);
+
+/**
+ * @brief Sets new .
+ *
+ * @param[in]   channel_context    Channel context.
+ * @param[in]   access_point       Connection data used to establish connection
+ *                                 to Operations server.
+ * @return                         Error code.
+ *
+ */
+typedef kaa_error_t (*kaa_set_access_point_fn)(void *channel_context
+                                             , kaa_access_point_t *access_point);
 
 /**
  * @brief Retrieves a transport protocol id supported by a transport channel implementation.
@@ -79,10 +117,12 @@ typedef kaa_error_t (*kaa_release_channel_context_fn)(void *context);
  */
 typedef struct {
     void                              *context;
+    kaa_release_channel_context_fn    release_context; /**< May be NULL */
+    kaa_sync_handler_fn               sync_handler;
+    kaa_init_channel_fn               init;
+    kaa_set_access_point_fn           set_access_point;
     kaa_get_protocol_id_fn            get_protocol_id;
     kaa_get_supported_services_fn     get_supported_services;
-    kaa_sync_handler_fn               sync_handler;
-    kaa_release_channel_context_fn    release_context; /**< May be NULL */
 } kaa_transport_channel_interface_t;
 
 #ifdef __cplusplus
