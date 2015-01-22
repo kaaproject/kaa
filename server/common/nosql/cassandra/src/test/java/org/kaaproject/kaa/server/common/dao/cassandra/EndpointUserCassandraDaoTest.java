@@ -1,5 +1,6 @@
 package org.kaaproject.kaa.server.common.dao.cassandra;
 
+import com.datastax.driver.core.utils.Bytes;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,40 +18,40 @@ public class EndpointUserCassandraDaoTest extends AbstractCassandraTest {
     @Test
     public void testSave() throws Exception {
         EndpointUserDto expected = generateEndpointUser();
-        CassandraEndpointUser found = userEndpointUserDao.findById(expected.getId());
+        CassandraEndpointUser found = endpointUserDao.findById(expected.getId());
         Assert.assertEquals(expected, found.toDto());
     }
 
     @Test
     public void testFindByExternalIdAndTenantId() throws Exception {
         EndpointUserDto expected = generateEndpointUser();
-        CassandraEndpointUser found = userEndpointUserDao.findByExternalIdAndTenantId(expected.getExternalId(), expected.getTenantId());
+        CassandraEndpointUser found = endpointUserDao.findByExternalIdAndTenantId(expected.getExternalId(), expected.getTenantId());
         Assert.assertEquals(expected, found.toDto());
     }
 
     @Test
     public void testRemoveByExternalIdAndTenantId() throws Exception {
         EndpointUserDto expected = generateEndpointUser();
-        userEndpointUserDao.removeByExternalIdAndTenantId(expected.getExternalId(), expected.getTenantId());
-        CassandraEndpointUser found = userEndpointUserDao.findByExternalIdAndTenantId(expected.getExternalId(), expected.getTenantId());
+        endpointUserDao.removeByExternalIdAndTenantId(expected.getExternalId(), expected.getTenantId());
+        CassandraEndpointUser found = endpointUserDao.findByExternalIdAndTenantId(expected.getExternalId(), expected.getTenantId());
         Assert.assertNull(found);
     }
 
     @Test
     public void testGenerateAccessToken() throws Exception {
         EndpointUserDto expected = generateEndpointUser();
-        String accessToken = userEndpointUserDao.generateAccessToken(expected.getExternalId(), expected.getTenantId());
-        CassandraEndpointUser found = userEndpointUserDao.findByExternalIdAndTenantId(expected.getExternalId(), expected.getTenantId());
+        String accessToken = endpointUserDao.generateAccessToken(expected.getExternalId(), expected.getTenantId());
+        CassandraEndpointUser found = endpointUserDao.findByExternalIdAndTenantId(expected.getExternalId(), expected.getTenantId());
         Assert.assertEquals(accessToken, found.getAccessToken());
     }
 
     @Test
     public void testCheckAccessToken() throws Exception {
         EndpointUserDto expected = generateEndpointUser();
-        String accessToken = userEndpointUserDao.generateAccessToken(expected.getExternalId(), expected.getTenantId());
-        Boolean result = userEndpointUserDao.checkAccessToken(expected.getExternalId(), expected.getTenantId(), accessToken);
+        String accessToken = endpointUserDao.generateAccessToken(expected.getExternalId(), expected.getTenantId());
+        Boolean result = endpointUserDao.checkAccessToken(expected.getExternalId(), expected.getTenantId(), accessToken);
         Assert.assertTrue(result);
-        result = userEndpointUserDao.checkAccessToken(expected.getExternalId(), expected.getTenantId(), "");
+        result = endpointUserDao.checkAccessToken(expected.getExternalId(), expected.getTenantId(), "");
         Assert.assertFalse(result);
     }
 }

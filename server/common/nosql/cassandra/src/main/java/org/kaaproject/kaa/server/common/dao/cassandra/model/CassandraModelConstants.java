@@ -11,29 +11,46 @@ public class CassandraModelConstants {
     public static final String NOTIFICATION_ID_PROPERTY = "nf_id";
     public static final String ENDPOINT_KEY_HASH_PROPERTY = "ep_key_hash";
     public static final String USER_ID_PROPERTY = "user_id";
+    public static final String NOTIFICATION_TYPE_PROPERTY = "nf_type";
+    public static final String SEQ_NUM_PROPERTY = "seq_num";
+    public static final String BODY_PROPERTY = "body";
+    public static final String EXPIRED_AT_PROPERTY = "expired_at";
+    public static final String VERSION_PROPERTY = "version";
+    public static final String LAST_MOD_TIME_PROPERTY = "last_mod_time";
+    public static final String SCHEMA_ID_PROPERTY = "schema_id";
+
     public static final String KEY_DELIMITER= "::";
 
     /**
      * Cassandra Endpoint Notification constants.
      */
-    public static final String ENDPOINT_NF_COLUMN_FAMILY_NAME = "ep_nfs";
-    public static final String ENDPOINT_NF_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
-    public static final String ENDPOINT_NF_ID_PROPERTY = "nf_id";
+    public static final String ET_NF_COLUMN_FAMILY_NAME = "ep_nfs";
+    public static final String ET_NF_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+    public static final String ET_NF_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
+    public static final String ET_NF_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
+    public static final String ET_NF_NOTIFICATION_TYPE_PROPERTY = NOTIFICATION_TYPE_PROPERTY;
+    public static final String ET_NF_SEQ_NUM_PROPERTY = SEQ_NUM_PROPERTY;
+    public static final String ET_NF_BODY_PROPERTY = BODY_PROPERTY;
+    public static final String ET_NF_EXPIRED_AT_PROPERTY = EXPIRED_AT_PROPERTY;
+    public static final String ET_NF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String ET_NF_LAST_MOD_TIME_PROPERTY = LAST_MOD_TIME_PROPERTY;
+    public static final String ET_NF_SCHEMA_ID_PROPERTY = SCHEMA_ID_PROPERTY;
+    public static final String ET_NF_TOPIC_ID_PROPERTY = "topic_id";
 
     /**
      * Cassandra notification constants.
      */
     public static final String NF_COLUMN_FAMILY_NAME = "notification";
+    public static final String NF_TOPIC_ID_PROPERTY = "topic_id";
     public static final String NF_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
     public static final String NF_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
-    public static final String NF_SCHEMA_ID_PROPERTY = "schema_id";
-    public static final String NF_TOPIC_ID_PROPERTY = "topic_id";
-    public static final String NF_VERSION_PROPERTY = "version";
-    public static final String NF_LAST_MOD_TIME_PROPERTY = "last_mod_time";
-    public static final String NF_NOTIFICATION_TYPE_PROPERTY = "nf_type";
-    public static final String NF_BODY_PROPERTY = "body";
-    public static final String NF_EXPIRED_AT_PROPERTY = "expired_at";
-    public static final String NF_SEQ_NUM_PROPERTY = "seq_num";
+    public static final String NF_SCHEMA_ID_PROPERTY = SCHEMA_ID_PROPERTY;
+    public static final String NF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String NF_LAST_MOD_TIME_PROPERTY = LAST_MOD_TIME_PROPERTY;
+    public static final String NF_NOTIFICATION_TYPE_PROPERTY = NOTIFICATION_TYPE_PROPERTY;
+    public static final String NF_BODY_PROPERTY = BODY_PROPERTY;
+    public static final String NF_EXPIRED_AT_PROPERTY = EXPIRED_AT_PROPERTY;
+    public static final String NF_SEQ_NUM_PROPERTY = SEQ_NUM_PROPERTY;
 
     /**
      * Cassandra endpoint configuration constants.

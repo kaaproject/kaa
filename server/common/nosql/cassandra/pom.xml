@@ -126,5 +126,13 @@
                 </executions>
             </plugin>
         </plugins>
+        <testResources>
+            <testResource>
+                <directory>/home/foo/workspace/reporting/src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>/home/foo/workspace/reporting/src/main/resources</directory>
+            </testResource>
+        </testResources>
     </build>
 </project>

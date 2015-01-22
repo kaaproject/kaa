@@ -6,7 +6,6 @@ import com.datastax.driver.core.querybuilder.Select;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.cassandra.filter.CassandraEPByAppIdDao;
 import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraEndpointNotification;
-import org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraNotification;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +20,9 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static org.kaaproject.kaa.server.common.dao.cassandra.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_NF_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ENDPOINT_NF_ENDPOINT_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ET_NF_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ET_NF_ENDPOINT_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.ET_NF_SEQ_NUM_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_BY_APP_APPLICATION_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.cassandra.model.CassandraModelConstants.NF_BY_APP_COLUMN_FAMILY_NAME;
 
@@ -41,7 +41,7 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
 
     @Override
     protected String getColumnFamilyName() {
-        return ENDPOINT_NF_COLUMN_FAMILY_NAME;
+        return ET_NF_COLUMN_FAMILY_NAME;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
         LOG.debug("Find endpoint notifications by endpoint key hash {}", keyHash);
         List<CassandraEndpointNotification> cassandraEndpointNotifications = Collections.emptyList();
         if (keyHash != null) {
-            Select.Where where = select().from(getColumnFamilyName()).where(eq(ENDPOINT_NF_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(keyHash)));
+            Select.Where where = select().from(getColumnFamilyName()).where(eq(ET_NF_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(keyHash)));
             LOG.debug("Execute query {}:", where);
             cassandraEndpointNotifications = findListByStatement(where);
         }
@@ -59,32 +59,36 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
     @Override
     public void removeNotificationsByKeyHash(byte[] keyHash) {
         LOG.debug("Remove endpoint notifications by endpoint key hash {}", keyHash);
-        Statement delete = delete().from(getColumnFamilyName()).where(eq(ENDPOINT_NF_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(keyHash)));
-        execute(delete);
+        execute(delete().from(getColumnFamilyName()).where(eq(ET_NF_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(keyHash))));
     }
 
     @Override
     public void removeNotificationsByAppId(String appId) {
         LOG.debug("Remove endpoint notifications by app id {}", appId);
-        Statement deleteEPNfs = delete().from(getColumnFamilyName()).where(in(ENDPOINT_NF_ENDPOINT_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
+        Statement deleteEPNfs = delete().from(getColumnFamilyName()).where(in(ET_NF_ENDPOINT_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
         Statement deleteEPNfsByAppId = delete().from(NF_BY_APP_COLUMN_FAMILY_NAME).where(eq(NF_BY_APP_APPLICATION_ID_PROPERTY, appId));
         executeBatch(BatchStatement.Type.UNLOGGED, deleteEPNfs, deleteEPNfsByAppId);
     }
 
     @Override
-    public CassandraEndpointNotification save(CassandraEndpointNotification endpointNotification) {
-        LOG.debug("Save endpoint notification {}", endpointNotification);
-        CassandraNotification notification = endpointNotification.getNotification();
-        String nfId = getStringId();
-        notification.setId(nfId);
-        executeBatch(BatchStatement.Type.UNLOGGED,
-                getSaveQuery(notification, notification.getClass()),
-                getSaveQuery(endpointNotification));
+    public CassandraEndpointNotification save(EndpointNotificationDto dto) {
+        CassandraEndpointNotification endpointNotification = new CassandraEndpointNotification(dto);
+        LOG.debug("Save endpoint notification for endpoint profile {}", endpointNotification.getEndpointKeyHash());
+        save(new CassandraEndpointNotification(dto));
+        LOG.trace("Saved endpoint notification {}", endpointNotification);
         return endpointNotification;
     }
 
     @Override
-    public CassandraEndpointNotification save(EndpointNotificationDto dto) {
-        return save(new CassandraEndpointNotification(dto));
+    public CassandraEndpointNotification findById(String id) {
+        LOG.debug("Try to find endpoint notifications by id {}", id);
+        CassandraEndpointNotification key = new CassandraEndpointNotification(id);
+        Select.Where where = select().from(getColumnFamilyName()).where(eq(ET_NF_ENDPOINT_KEY_HASH_PROPERTY, key.getEndpointKeyHash()))
+                .and(eq(ET_NF_SEQ_NUM_PROPERTY, key.getSeqNum()));
+        LOG.debug("[id] Execute query {}:", id, where);
+        CassandraEndpointNotification endpointNotification = findOneByStatement(where);
+        LOG.debug(" endpoint notification by id {}:", id, endpointNotification != null ? "Found" : "No found");
+        LOG.trace("Found endpoint notification {} by id {}:", endpointNotification, id);
+        return endpointNotification;
     }
 }
