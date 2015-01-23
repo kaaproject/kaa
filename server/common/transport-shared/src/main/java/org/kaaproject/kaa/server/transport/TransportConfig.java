@@ -28,7 +28,7 @@ public interface TransportConfig {
     /**
      * Returns the transport id. The transport id must be unique.
      * 
-     * @return id of the transport
+     * @return the transport id
      */
     int getId();
 
@@ -36,21 +36,21 @@ public interface TransportConfig {
      * Returns the transport name. There is no strict rule for this
      * name to be unique.
      * 
-     * @return name of the transport
+     * @return the transport name
      */
     String getName();
 
     /**
      * Returns the class name of the {@link Transport} implementation..
      * 
-     * @return class name of the {@link Transport} implementation
+     * @return the class name of the {@link Transport} implementation
      */
     String getTransportClass();
 
     /**
      * Returns the avro schema of the {@link Transport} configuration.
      * 
-     * @return avro schema of the {@link Transport} configuration
+     * @return the avro schema of the {@link Transport} configuration
      */
     Schema getConfigSchema();
 
@@ -59,7 +59,7 @@ public interface TransportConfig {
      * be used by {@link TransportService} to initialize and configure
      * the corresponding {@link Transport}
      * 
-     * @return file name of the configuration file
+     * @return the configuration file name
      */
     String getConfigFileName();
 

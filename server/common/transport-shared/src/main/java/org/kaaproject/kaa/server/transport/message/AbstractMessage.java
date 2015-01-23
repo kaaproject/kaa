@@ -22,9 +22,9 @@ import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.platform.PlatformAware;
 
 /**
- * Abstract class to represent platform aware message. Holds references to
- * response and error converters that are used to convert objects into channel
- * specific data.
+ * An abstract class that represents a platform aware message. It includes
+ * references to response and error converters that are used to convert objects
+ * into the channel specific data.
  * 
  * @author Andrew Shvayka
  *

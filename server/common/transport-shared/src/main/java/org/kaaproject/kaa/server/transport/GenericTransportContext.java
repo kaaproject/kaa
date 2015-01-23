@@ -16,7 +16,7 @@
 package org.kaaproject.kaa.server.transport;
 
 /**
- * Represents context for transport initialization parameters with binary configuration.
+ * Represents a context for transport initialization parameters with binary configuration.
  * 
  * @author Andrew Shvayka
  *
@@ -32,7 +32,7 @@ public class GenericTransportContext extends TransportContext{
 
     /**
      * Returns the serialized configuration of this specific {@link Transport}.
-     * @return serialized configuration
+     * @return the serialized configuration
      */
     public byte[] getConfiguration() {
         return configuration;

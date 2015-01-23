@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.transport.message;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 /**
- * Abstract class that identifies session keep-alive message.
+ * Abstract class that identifies the session keep-alive message.
  * 
  * @author Andrew Shvayka
  *

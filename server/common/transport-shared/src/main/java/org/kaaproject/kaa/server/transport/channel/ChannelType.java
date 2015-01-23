@@ -16,9 +16,9 @@
 package org.kaaproject.kaa.server.transport.channel;
 
 /**
- * Represents types of channels supported by Kaa server components. Messages
- * that are dispatched by specific channel may be handled differently based on
- * channel type.
+ * Represents the types of channels supported by Kaa server components. Messages
+ * that are dispatched by a specific channel may be handled differently based on
+ * the channel type.
  * 
  * @author Andrew Shvayka
  *
@@ -26,24 +26,24 @@ package org.kaaproject.kaa.server.transport.channel;
 public enum ChannelType {
 
     /**
-     * Sync channel identifies that messages from this channel require immediate
-     * reply. One of the sync channels is regular http channel
+     * The sync channel indicates that messages from this channel require an
+     * immediate reply. One of the sync channels is a regular http channel.
      */
     SYNC(false, false),
 
     /**
-     * Sync with timeout channel identifies that messages from this channel does
-     * not require immediate reply. Reply to the incoming message may delayed if
-     * and only if there is no updates from Kaa server in the reply. One of the
-     * example channels is http long poll channel
+     * The sync with timeout channel indicates that messages from this channel
+     * does not require an immediate reply. A reply to the incoming message may
+     * delayed if there are no updates from Kaa server in the reply. An example
+     * of the sync with timeout channel is an http long poll channel.
      */
     SYNC_WITH_TIMEOUT(true, false),
 
     /**
-     * Async channel identifies that messages from this channel does not require
-     * reply at all. Incoming and outcoming messages are independent, thus
-     * communication is asynchronous. Server will push updates to this channel
-     * as soon as they arrive.
+     * The async channel indicates that messages from this channel does not
+     * require any reply at all. Incoming and outcoming messages are
+     * independent, thus communication is asynchronous. The server will push
+     * updates to this channel as soon as they arrive.
      */
     ASYNC(false, true);
 

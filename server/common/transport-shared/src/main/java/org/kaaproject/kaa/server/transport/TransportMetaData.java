@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A meta data information about transport that includes supported versions and
+ * Represents a transport meta data that includes supported versions and the
  * connection info.
  * 
  * @author Andrew Shvayka
@@ -47,26 +47,27 @@ public class TransportMetaData implements Serializable {
     }
 
     /**
-     * Populates connection information for each client version. Connection
-     * information is serialized. It is a responsibility of transport developer
-     * to serialize data on server and deserialize on the client
+     * Populates the connection information for each client version. The
+     * connection information is serialized. It is the responsibility of the
+     * transport developer to serialize the data on the server and deserialize
+     * it on the client
      * 
      * @param version
-     *            of the client
+     *            the client version
      * @param connectionInfo
-     *            connection data
+     *            the connection data
      */
     public void setConnectionInfo(int version, byte[] connectionInfo) {
         this.versionSpecificConnectionInfo.put(version, connectionInfo);
     }
 
     /**
-     * Returns serialized connection info for specified transport versions.
-     * Returns default connection info if there is no overridden configuration
-     * info for specified version of the transport.
+     * Returns the serialized connection data for the specified transport
+     * versions. Returns the default connection data if there is no overridden
+     * configuration info for the specified version of the transport.
      * 
      * @param version
-     *            - specific version of the transport
+     *            the serialized connection info for the specified version
      * @return serialized connection info for the specified version
      */
     public byte[] getConnectionInfo(int version) {
@@ -78,16 +79,18 @@ public class TransportMetaData implements Serializable {
     }
 
     /**
-     * Returns minimum supported version of this transport.
-     * @return minimum supported version.
+     * Returns the minimum supported version of this transport.
+     * 
+     * @return the minimum supported version
      */
     public int getMinSupportedVersion() {
         return minSupportedVersion;
     }
 
     /**
-     * Returns maximum supported version of this transport.
-     * @return maximum supported version.
+     * Returns the maximum supported version of this transport.
+     * 
+     * @return the maximum supported version
      */
     public int getMaxSupportedVersion() {
         return maxSupportedVersion;

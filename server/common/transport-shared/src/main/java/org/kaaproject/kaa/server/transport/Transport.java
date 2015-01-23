@@ -30,7 +30,7 @@ public interface Transport {
      * {@link KaaTransportConfig}.
      *
      * @param context
-     *            a transport initialization context
+     *            the transport initialization context
      * @throws TransportLifecycleException
      */
     void init(GenericTransportContext context) throws TransportLifecycleException;

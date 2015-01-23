@@ -18,8 +18,9 @@ package org.kaaproject.kaa.server.transport.channel;
 import java.util.UUID;
 
 /**
- * Marker interface indicating that a class has a basic knowledge about related
- * channel - it's {@link UUID}, {@link ChannelType} and {@link ChannelContext}
+ * A marker interface indicating that the class has a basic knowledge about the
+ * related channel - it's {@link UUID}, {@link ChannelType} and
+ * {@link ChannelContext}.
  * 
  * @author Andrew Shvayka
  */

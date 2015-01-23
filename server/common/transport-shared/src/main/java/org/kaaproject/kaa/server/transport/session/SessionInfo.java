@@ -24,7 +24,7 @@ import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.platform.PlatformAware;
 
 /**
- * Represents information about session.
+ * Represents information about the session.
  * 
  * @author Andrew Shvayka
  *

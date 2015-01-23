@@ -20,7 +20,7 @@ import java.security.PublicKey;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
 
 /**
- * A context for transport initialization parameters and {@link MessageHandler}.
+ * Provides a context for transport initialization parameters and {@link MessageHandler}.
  * 
  * @author Andrew Shvayka
  *
@@ -47,10 +47,10 @@ public class TransportContext {
     }
 
     /**
-     * Returns {@link PublicKey} that is used during encode/decode of the
-     * messages that are dispatched by this {@link Transport}.
+     * Returns {@link PublicKey} that is used during the encoding/decoding 
+     * of the messages that are dispatched by this {@link Transport}.
      * 
-     * @return public key
+     * @return the public key
      */
     public PublicKey getServerKey() {
         return serverKey;
@@ -58,7 +58,7 @@ public class TransportContext {
 
     /**
      * Returns {@link MessageHandler} for this {@link Transport}
-     * @return message handler
+     * @return the message handler
      */
     public MessageHandler getHandler() {
         return handler;

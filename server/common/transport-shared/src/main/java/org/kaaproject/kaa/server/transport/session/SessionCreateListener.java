@@ -16,7 +16,7 @@
 package org.kaaproject.kaa.server.transport.session;
 
 /**
- * Listener to session creation event
+ * Represents a listener for the session creation event.
  * 
  * @author Andrew Shvayka
  *
@@ -24,8 +24,8 @@ package org.kaaproject.kaa.server.transport.session;
 public interface SessionCreateListener {
 
     /**
-     * Notifies about created session
-     * @param session
+     * Notifies about the created session.
+     * @param session the session
      */
     void onSessionCreated(SessionInfo session);
 

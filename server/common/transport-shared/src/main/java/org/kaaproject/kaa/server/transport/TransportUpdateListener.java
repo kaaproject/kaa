@@ -19,7 +19,7 @@ import java.util.List;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 
 /**
- * Listener to transport state updates.
+ * Represents listener to transport state updates.
  * 
  * @author Andrew Shvayka
  *
@@ -27,8 +27,8 @@ import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 public interface TransportUpdateListener {
 
     /**
-     * Notify about initialized transports.
-     * @param msList - list of initialized transport meta data
+     * Notify about the initialized transports.
+     * @param msList a list of the initialized transport meta data
      */
     void onTransportsStarted(List<TransportMetaData> mdList);
 

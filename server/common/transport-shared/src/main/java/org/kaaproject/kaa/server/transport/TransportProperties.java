@@ -19,8 +19,8 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 /**
- * Stores common properties for all transports. Majority of this properties are
- * related to runtime environment or host specific.
+ * Stores common properties for all transports. Majority of these properties are
+ * related to the runtime environment or specific to the host.
  * 
  * @author Andrew Shvayka
  *

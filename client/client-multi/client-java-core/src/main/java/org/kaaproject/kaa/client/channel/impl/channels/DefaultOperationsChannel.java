@@ -290,6 +290,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         }
     }
 
+    //TODO: refactor this as part of KAA-126
     @Override
     public synchronized void setServer(TransportConnectionInfo server) {
         if (isShutdown) {
