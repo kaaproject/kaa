@@ -85,7 +85,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
         email.addInputHandler(this);
 
         Label emailLabel = new Label(Utils.constants.email());
-        emailLabel.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        emailLabel.addStyleName(Utils.avroUiStyle.requiredField());
         detailsTable.setWidget(3, 0, emailLabel);
         detailsTable.setWidget(3, 1, email);
 

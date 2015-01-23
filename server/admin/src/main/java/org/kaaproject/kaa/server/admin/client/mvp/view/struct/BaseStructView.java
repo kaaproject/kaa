@@ -22,14 +22,15 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.AbstractStructureDto;
-import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.kaa.common.dto.AbstractStructureDto;
+import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -42,10 +43,13 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
-public class BaseStructView<T extends AbstractStructureDto> extends FlexTable implements InputEventHandler {
+public abstract class BaseStructView<T extends AbstractStructureDto, V> extends FlexTable implements InputEventHandler {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+    
+    private HasErrorMessage hasErrorMessage;
     
     private Label dateTimeCreatedLabel;
     private SizedTextBox createdDateTime;
@@ -64,7 +68,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     private Label deactivatedByLabel;
     private SizedTextBox deactivatedUsername;
     private SizedTextArea description;
-    private SizedTextArea body;
+    protected HasValue<V> body;
     private Button saveButton;
     private Button activateButton;
     private Button deactivateButton;
@@ -75,7 +79,8 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
-    public BaseStructView() {
+    public BaseStructView(HasErrorMessage hasErrorMessage) {
+        this.hasErrorMessage = hasErrorMessage;
         init();
     }
 
@@ -157,13 +162,17 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
         detailsTable.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
 
-        bodyLabel = new Label(Utils.constants.body());
-        detailsTable.setWidget(1, 0, bodyLabel);
-        body = new SizedTextArea(-1);
-        body.setWidth("500px");
-        body.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 200);
-        detailsTable.setWidget(1, 1, body);
-        detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
+        body = createBody(hasErrorMessage);
+
+        if (hasLabel()) {
+            bodyLabel = new Label(Utils.constants.body());
+            detailsTable.setWidget(1, 0, bodyLabel);
+            detailsTable.setWidget(1, 1, (Widget)body);
+            detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
+        } else {
+            detailsTable.setWidget(1, 0, (Widget)body);
+            detailsTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+        }
 
         HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setSpacing(5);
@@ -188,6 +197,18 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
             }
         });
     }
+    
+    protected abstract HasValue<V> createBody(HasErrorMessage hasErrorMessage);
+    
+    protected abstract boolean hasLabel();
+    
+    protected abstract void setBodyReadOnly(boolean readOnly);
+    
+    protected abstract void setBodyValue(T struct);
+    
+    protected abstract HandlerRegistration addBodyChangeHandler();
+    
+    protected abstract boolean validateBody();
 
     public void reset() {
         dateTimeCreatedLabel.setVisible(false);
@@ -207,13 +228,15 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         deactivatedByLabel.setVisible(false);
         deactivatedUsername.setVisible(false);
         description.setValue("");
-        body.setValue("");
+        body.setValue(null);
         saveButton.setVisible(false);
         activateButton.setVisible(false);
-        deactivateButton.setVisible(false);
-        bodyLabel.removeStyleName(REQUIRED);
+        deactivateButton.setVisible(false);        
+        if (hasLabel()) {
+            bodyLabel.removeStyleName(REQUIRED);
+        }        
         description.getTextArea().setReadOnly(true);
-        body.getTextArea().setReadOnly(true);
+        setBodyReadOnly(true);
 
         updateSaveButton(false, false);
 
@@ -228,7 +251,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         activateButton.setVisible(false);
         deactivateButton.setVisible(false);
         description.getTextArea().setReadOnly(true);
-        body.getTextArea().setReadOnly(true);
+        setBodyReadOnly(true);
 
         for (HandlerRegistration registration : registrations) {
             registration.removeHandler();
@@ -271,7 +294,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
             deactivatedUsername.setValue(struct.getDeactivatedUsername());
         }
         description.setValue(struct.getDescription());
-        body.setValue(struct.getBody());
+        setBodyValue(struct);
 
         if (this.active) {
             if (struct.getStatus()==UpdateStatus.ACTIVE) {
@@ -279,10 +302,12 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
             }
         } else {
             description.getTextArea().setReadOnly(false);
-            body.getTextArea().setReadOnly(false);
-            bodyLabel.addStyleName(REQUIRED);
+            setBodyReadOnly(false);
+            if (hasLabel()) {
+                bodyLabel.addStyleName(REQUIRED);
+            }
             registrations.add(description.addInputHandler(this));
-            registrations.add(body.addInputHandler(this));
+            registrations.add(addBodyChangeHandler());
             saveButton.setVisible(true);
             if (isEmpty(struct.getId())) {
                 saveButton.setText(Utils.constants.save());
@@ -297,14 +322,16 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     }
 
     public void setBodyLabelText(String text) {
-        bodyLabel.setText(text);
+        if (hasLabel()) {
+            bodyLabel.setText(text);
+        }
     }
 
     public HasValue<String> getDescription() {
         return description;
     }
 
-    public HasValue<String> getBody() {
+    public HasValue<V> getBody() {
         return body;
     }
 
@@ -327,7 +354,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
     public void fireChanged() {
         if (!this.active) {
-            boolean valid = body.getValue().length()>0;
+            boolean valid = validateBody();
             updateSaveButton(valid, !valid);
         }
     }

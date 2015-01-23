@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -26,10 +26,11 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationDto, BaseRecordView<ConfigurationDto>, ConfigurationPlace> {
+public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationRecordFormDto, RecordField, BaseRecordView<ConfigurationRecordFormDto, RecordField>, ConfigurationPlace> {
 
     public ConfigurationActivity(ConfigurationPlace place,
             ClientFactory clientFactory) {
@@ -37,7 +38,7 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationD
     }
 
     @Override
-    protected BaseRecordView<ConfigurationDto> getRecordView(boolean create) {
+    protected BaseRecordView<ConfigurationRecordFormDto, RecordField> getRecordView(boolean create) {
         if (create) {
             return clientFactory.getCreateConfigurationView();
         } else {
@@ -46,14 +47,14 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationD
     }
 
     @Override
-    protected ConfigurationDto newStruct() {
-        return new ConfigurationDto();
+    protected ConfigurationRecordFormDto newStruct() {
+        return new ConfigurationRecordFormDto();
     }
 
     @Override
     protected void getRecord(String schemaId, String endpointGroupId,
-            AsyncCallback<StructureRecordDto<ConfigurationDto>> callback) {
-        KaaAdmin.getDataSource().getConfigurationRecord(schemaId, endpointGroupId, callback);
+            AsyncCallback<StructureRecordDto<ConfigurationRecordFormDto>> callback) {
+        KaaAdmin.getDataSource().getConfigurationRecordForm(schemaId, endpointGroupId, callback);
     }
 
     @Override
@@ -63,21 +64,21 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationD
     }
 
     @Override
-    protected void editStruct(ConfigurationDto entity,
-            AsyncCallback<ConfigurationDto> callback) {
-        KaaAdmin.getDataSource().editConfiguration(entity, callback);
+    protected void editStruct(ConfigurationRecordFormDto entity,
+            AsyncCallback<ConfigurationRecordFormDto> callback) {
+        KaaAdmin.getDataSource().editConfigurationRecordForm(entity, callback);
     }
 
     @Override
     protected void activateStruct(String id,
-            AsyncCallback<ConfigurationDto> callback) {
-        KaaAdmin.getDataSource().activateConfiguration(id, callback);
+            AsyncCallback<ConfigurationRecordFormDto> callback) {
+        KaaAdmin.getDataSource().activateConfigurationRecordForm(id, callback);
     }
 
     @Override
     protected void deactivateStruct(String id,
-            AsyncCallback<ConfigurationDto> callback) {
-        KaaAdmin.getDataSource().deactivateConfiguration(id, callback);
+            AsyncCallback<ConfigurationRecordFormDto> callback) {
+        KaaAdmin.getDataSource().deactivateConfigurationRecordForm(id, callback);
     }
 
     @Override
@@ -94,6 +95,18 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationD
             return Utils.messages.incorrectConfiguration();
         }
         return message;
+    }
+
+    @Override
+    protected void updateBody(ConfigurationRecordFormDto struct,
+            RecordField value) {
+        struct.setConfigurationRecord(value);
+    }
+
+    @Override
+    protected void copyBody(ConfigurationRecordFormDto activeStruct,
+            ConfigurationRecordFormDto inactiveStruct) {
+        inactiveStruct.setConfigurationRecord(activeStruct.getConfigurationRecord());
     }
 
 }

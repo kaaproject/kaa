@@ -22,9 +22,21 @@ public interface CommonConstants { //NOSONAR
 
     /** The Constant NAMESPACE_FIELD. */
     static final String NAMESPACE_FIELD = "namespace";
+    
+    /** The Constant DISPLAY_NAME_FIELD. */
+    static final String DISPLAY_NAME_FIELD = "displayName";
+    
+    /** The Constant FIELD_ACCESS_FIELD. */
+    static final String FIELD_ACCESS_FIELD = "fieldAccess";
+    
+    /** The Constant FIELD_ACCESS_READ_ONLY. */
+    static final String FIELD_ACCESS_READ_ONLY = "read_only";
 
     /** The Constant UUID_FIELD. */
     static final String UUID_FIELD = "__uuid";
+    
+    /** The Constant UUID_FIELD_DISPLAY_NAME. */
+    static final String UUID_FIELD_DISPLAY_NAME = "Record Id";
 
     /** The Constant UUID_FIELD. */
     static final String UUID_TYPE = "uuidT";

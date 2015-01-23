@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ChangePasswordDialog extends KaaDialog {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
     private KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
 

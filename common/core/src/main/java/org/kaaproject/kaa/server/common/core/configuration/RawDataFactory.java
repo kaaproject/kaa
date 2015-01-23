@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.view;
+package org.kaaproject.kaa.server.common.core.configuration;
 
-import org.kaaproject.kaa.common.dto.AbstractStructureDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 
-import com.google.gwt.user.client.ui.HasValue;
+public class RawDataFactory implements KaaDataFactory<RawSchema, RawData> {
 
-public interface BaseRecordView<T extends AbstractStructureDto,V> extends BaseDetailsView {
+    @Override
+    public RawData createData(RawSchema schema, String data) {
+        return new RawData(schema, data);
+    }
 
-    public SchemaListBox getSchema();
 
-    public HasValue<String> getSchemaVersion();
-
-    public AbstractRecordPanel<T,V> getRecordPanel();
 
 }

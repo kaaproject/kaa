@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -35,6 +35,7 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
@@ -42,7 +43,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
@@ -82,6 +82,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersViewImpl;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -134,11 +135,11 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EndpointGroupView endpointGroupView = new EndpointGroupViewImpl(false);
     private final EndpointGroupView createEndpointGroupView = new EndpointGroupViewImpl(true);
 
-    private final BaseRecordView<ProfileFilterDto> profileFilterView = new ProfileFilterViewImpl(false);
-    private final BaseRecordView<ProfileFilterDto> createProfileFilterView = new ProfileFilterViewImpl(true);
+    private final BaseRecordView<ProfileFilterDto, String> profileFilterView = new ProfileFilterViewImpl(false);
+    private final BaseRecordView<ProfileFilterDto, String> createProfileFilterView = new ProfileFilterViewImpl(true);
 
-    private final BaseRecordView<ConfigurationDto> configurationView = new ConfigurationViewImpl(false);
-    private final BaseRecordView<ConfigurationDto> createConfigurationView = new ConfigurationViewImpl(true);
+    private final BaseRecordView<ConfigurationRecordFormDto, RecordField> configurationView = new ConfigurationViewImpl(false);
+    private final BaseRecordView<ConfigurationRecordFormDto, RecordField> createConfigurationView = new ConfigurationViewImpl(true);
 
     private final BaseListView<TopicDto> topicsView = new TopicsViewImpl();
     private final TopicView topicView = new TopicViewImpl(false);
@@ -318,22 +319,22 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseRecordView<ProfileFilterDto> getProfileFilterView() {
+    public BaseRecordView<ProfileFilterDto, String> getProfileFilterView() {
         return profileFilterView;
     }
 
     @Override
-    public BaseRecordView<ProfileFilterDto> getCreateProfileFilterView() {
+    public BaseRecordView<ProfileFilterDto, String> getCreateProfileFilterView() {
         return createProfileFilterView;
     }
 
     @Override
-    public BaseRecordView<ConfigurationDto> getConfigurationView() {
+    public BaseRecordView<ConfigurationRecordFormDto, RecordField> getConfigurationView() {
         return configurationView;
     }
 
     @Override
-    public BaseRecordView<ConfigurationDto> getCreateConfigurationView() {
+    public BaseRecordView<ConfigurationRecordFormDto, RecordField> getCreateConfigurationView() {
         return createConfigurationView;
     }
 

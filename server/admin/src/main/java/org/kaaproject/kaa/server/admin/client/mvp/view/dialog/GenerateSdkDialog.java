@@ -57,7 +57,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
     private AlertPanel errorPanel;
 

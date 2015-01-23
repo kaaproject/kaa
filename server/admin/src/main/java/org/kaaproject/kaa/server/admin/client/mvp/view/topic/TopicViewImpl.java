@@ -69,7 +69,7 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         name.setWidth("100%");
         Label nameLabel = new Label(Utils.constants.name());
-        nameLabel.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        nameLabel.addStyleName(Utils.avroUiStyle.requiredField());
         detailsTable.setWidget(2, 0, nameLabel);
         detailsTable.setWidget(2, 1, name);
         name.addInputHandler(this);

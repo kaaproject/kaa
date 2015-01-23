@@ -20,7 +20,7 @@
         xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client">
         
         <ui:with field='kaaAdminStyle' type='org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle'/>  
-        <ui:with field='fieldWidgetStyle' type='org.kaaproject.avro.ui.gwt.client.widget.AbstractFieldWidget.Style'/>  
+        <ui:with field='avroUiStyle' type='org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle'/>  
 
         <gwt:DockLayoutPanel unit="PX" ui:field="dockPanel">
                 <gwt:north size="175">
@@ -42,7 +42,7 @@
                                                 </gwt:Label>
                                             </gwt:cell>
                                             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                <gwt:HorizontalPanel height="100%" styleName="{fieldWidgetStyle.buttonsPanel}">
+                                                <gwt:HorizontalPanel height="100%" styleName="{avroUiStyle.buttonsPanel}">
                                                     <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
                                                         <gwt:Button ui:field="saveButton"></gwt:Button>
                                                     </gwt:cell>
@@ -81,7 +81,7 @@
                 <gwt:center>
                     <gwt:ScrollPanel>
                         <gwt:FlowPanel>
-                            <gwt:FlexTable addStyleNames="{kaaAdminStyle.bAppContentDetailsTable} {fieldWidgetStyle.fieldWidget}" ui:field="detailsTable"/>
+                            <gwt:FlexTable addStyleNames="{kaaAdminStyle.bAppContentDetailsTable} {avroUiStyle.fieldWidget}" ui:field="detailsTable"/>
                             <gwt:FlowPanel ui:field="footer"/>
                         </gwt:FlowPanel>
                     </gwt:ScrollPanel>

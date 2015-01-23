@@ -79,7 +79,7 @@ public class AddEcfSchemaDialog extends KaaDialog implements ChangeHandler, HasE
         int row=0;
 
         Widget label = new Label(Utils.constants.selectSchemaFile());
-        label.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        label.addStyleName(Utils.avroUiStyle.requiredField());
         schemaFileUpload = new FileUploadForm();
         schemaFileUpload.setWidth("200px");
 

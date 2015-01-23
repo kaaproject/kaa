@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.ValueListBox;
 
 public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
     private SizedTextBox userName;
     private SizedTextBox email;

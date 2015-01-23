@@ -82,7 +82,7 @@ public class ResetPasswordDialog extends KaaDialog implements HasErrorMessage {
 
         int row = 0;
         Widget label = new Label(Utils.constants.usernameOrEmail());
-        label.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        label.addStyleName(Utils.avroUiStyle.requiredField());
         usernameOrEmail = new KaaAdminSizedTextBox(255);
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, usernameOrEmail);

@@ -45,7 +45,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements EndpointGroupView {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
     private Label nameLabel;
     private SizedTextBox name;

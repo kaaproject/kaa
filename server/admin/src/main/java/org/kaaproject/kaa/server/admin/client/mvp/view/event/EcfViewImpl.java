@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
     private SizedTextBox name;
     private SizedTextBox namespace;

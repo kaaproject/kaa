@@ -17,8 +17,11 @@
 package org.kaaproject.kaa.server.common.core.algorithms.schema;
 
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ARRAY_FIELD_VALUE;
+import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.DISPLAY_NAME_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ENUM_FIELD_VALUE;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELDS_FIELD;
+import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELD_ACCESS_FIELD;
+import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELD_ACCESS_READ_ONLY;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIXED_FIELD_VALUE;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ITEMS_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.KAA_NAMESPACE;
@@ -32,6 +35,7 @@ import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.S
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.TYPE_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UNCHANGED;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_FIELD;
+import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_FIELD_DISPLAY_NAME;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_SIZE;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_TYPE;
 
@@ -103,6 +107,8 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
     private Map<String, Object> getUuidField() {
         Map<String, Object> uuidField = new HashMap<String, Object>();
         uuidField.put(NAME_FIELD, UUID_FIELD);
+        uuidField.put(DISPLAY_NAME_FIELD, UUID_FIELD_DISPLAY_NAME);
+        uuidField.put(FIELD_ACCESS_FIELD, FIELD_ACCESS_READ_ONLY);
         if (strategy.isUuidOptional()) {
             List<Object> union = new ArrayList<Object>(2);
             union.add(getUuidType());

@@ -113,7 +113,7 @@ public class AefMapViewImpl extends BaseDetailsViewImpl implements AefMapView {
         createdDateTime.setVisible(!create);
         
         Label ecfLabel = new Label(Utils.constants.ecf());
-        ecfLabel.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        ecfLabel.addStyleName(Utils.avroUiStyle.requiredField());
         ecf = new EcfListBox();
         ecf.setWidth("100%");
         detailsTable.setWidget(2, 0, ecfLabel);

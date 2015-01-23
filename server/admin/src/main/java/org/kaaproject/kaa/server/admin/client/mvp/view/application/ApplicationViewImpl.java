@@ -60,7 +60,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
         applicationName.setWidth("100%");
         Label titleLabel = new Label(Utils.constants.title());
         if (editable) {
-            titleLabel.addStyleName(fieldWidgetStyle.requiredField());
+            titleLabel.addStyleName(avroUiStyle.requiredField());
         }
         detailsTable.setWidget(0, 0, titleLabel);
         detailsTable.setWidget(0, 1, applicationName);

@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.base;
 
+import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseDetailsView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel.Type;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
-import org.kaaproject.avro.ui.gwt.client.widget.AbstractFieldWidget.Style;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -61,7 +61,7 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
     @UiField (provided=true) public final AlertPanel errorPanel;
     @UiField public FlowPanel footer;
     @UiField(provided = true) public final KaaAdminStyle kaaAdminStyle;
-    @UiField(provided = true) public final Style fieldWidgetStyle;
+    @UiField(provided = true) public final AvroUiStyle avroUiStyle;
 
     protected final boolean create;
 
@@ -80,7 +80,7 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
         this.editable = editable;
         errorPanel = new AlertPanel(Type.ERROR);
         kaaAdminStyle = Utils.kaaAdminStyle;
-        fieldWidgetStyle = Utils.fieldWidgetStyle;
+        avroUiStyle = Utils.avroUiStyle;
         initWidget(uiBinder.createAndBindUi(this));
 
         titleLabel.setText(Utils.constants.title());
@@ -88,7 +88,7 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
         cancelButton.setText(Utils.constants.cancel());
         requiredFieldsNoteLabel.getElement().setInnerSafeHtml(
                 SafeHtmlUtils.fromSafeConstant(Utils.messages
-                        .requiredFieldsNote(Utils.fieldWidgetStyle
+                        .requiredFieldsNote(Utils.avroUiStyle
                                 .requiredField())));
 
         if (create) {

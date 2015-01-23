@@ -20,7 +20,7 @@
         xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client">
         
         <ui:with field='kaaAdminStyle' type='org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle'/> 
-        <ui:with field='fieldWidgetStyle' type='org.kaaproject.avro.ui.gwt.client.widget.AbstractFieldWidget.Style'/>
+        <ui:with field='avroUiStyle' type='org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle'/>
 
         <gwt:DockLayoutPanel unit="PX" ui:field="dockPanel" styleName="DockPanel" visible="true">
             <gwt:north size="122">
@@ -41,7 +41,7 @@
                                             <gwt:Label ui:field="titleLabel" styleName="{kaaAdminStyle.bAppSubHeaderTitle}"/>
                                         </gwt:cell>
                                         <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                            <gwt:HorizontalPanel spacing="0" addStyleNames="{fieldWidgetStyle.buttonsPanel}">
+                                            <gwt:HorizontalPanel spacing="0" addStyleNames="{avroUiStyle.buttonsPanel}">
                                                 <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
                                                     <kaa:mvp.view.widget.ImageTextButton ui:field="addButton"/>
                                                 </gwt:cell>
