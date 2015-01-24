@@ -20,7 +20,9 @@
 #include <string.h>
 
 #include "kaa_test.h"
+
 #include "kaa.h"
+#include "kaa_context.h"
 #include "kaa_platform_protocol.h"
 #include "kaa_channel_manager.h"
 #include "kaa_profile.h"
@@ -31,7 +33,7 @@
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
 
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
+extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
 extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
 extern kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status
@@ -46,6 +48,7 @@ extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_pla
 #define USER_EXTERNAL_ID    "user@id"
 #define ACCESS_TOKEN        "token"
 
+static kaa_context_t kaa_context;
 static kaa_user_manager_t *user_manager = NULL;
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
@@ -148,12 +151,14 @@ int test_init(void)
         return error;
     }
 
+    kaa_context.logger = logger;
+
     error = kaa_status_create(&status);
     if (error || !status) {
         return error;
     }
 
-    error = kaa_channel_manager_create(&channel_manager, logger);
+    error = kaa_channel_manager_create(&channel_manager, &kaa_context);
     if (error || !channel_manager) {
         return error;
     }
