@@ -151,10 +151,8 @@ kaa_error_t kaa_list_remove_first(kaa_list_t **head, match_predicate pred, void 
 {
     KAA_RETURN_IF_NIL2(head, pred, KAA_ERR_BADPARAM);
 
-    kaa_list_t *item_to_delete;
-
     if (pred((*head)->data, context)) {
-        item_to_delete = *head;
+        kaa_list_t *item_to_delete = *head;
         *head = (*head)->next;
         kaa_list_destroy_node(item_to_delete, deallocator);
         return KAA_ERR_NONE;
@@ -162,7 +160,7 @@ kaa_error_t kaa_list_remove_first(kaa_list_t **head, match_predicate pred, void 
 
     for (kaa_list_t *curr_head = *head; curr_head->next != NULL; curr_head = curr_head->next) {
         if (pred(curr_head->next->data, context)) {
-            item_to_delete = curr_head->next;
+            kaa_list_t *item_to_delete = curr_head->next;
             curr_head->next = curr_head->next->next;
             kaa_list_destroy_node(item_to_delete, deallocator);
             return KAA_ERR_NONE;

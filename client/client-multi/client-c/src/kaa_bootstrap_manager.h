@@ -21,8 +21,8 @@
  * Manages connection parameters to Operations servers that are received from Bootstrap servers.
  */
 
-#ifndef KAA_BOOTSTRAP_H_
-#define KAA_BOOTSTRAP_H_
+#ifndef KAA_BOOTSTRAP_MANAGER_H_
+#define KAA_BOOTSTRAP_MANAGER_H_
 
 #include "kaa_error.h"
 #include "kaa_common.h"
@@ -36,34 +36,28 @@ typedef struct kaa_bootstrap_manager_t kaa_bootstrap_manager_t;
 
 
 
-/**
- * @brief Retrieves connection parameters currently used by specified
- * transport protocol.
- *
- * @param[in]   self             Bootstrap manager.
- * @param[in]   protocol_info    Transport protocol information.
- * @return                       Connection parameters or NULL.
- *
- * @see kaa_access_point_t
- * @see kaa_transport_protocol_id_t
- */
-kaa_access_point_t *kaa_bootstrap_manager_get_current_access_point(kaa_bootstrap_manager_t *self
-                                                                 , kaa_transport_protocol_id_t *protocol_info);
+typedef enum {
+    KAA_SERVER_BOOTSTRAP  = 0,
+    KAA_SERVER_OPERATIONS = 1
+} kaa_server_type_t;
+
+
 
 /**
- * @brief Retrieves next connection parameters used by specified transport protocol.
+ * @brief Notifies some error has occurred while using an access point.
  *
- * @param[in]   self             Bootstrap manager.
- * @param[in]   protocol_info    Transport protocol information.
- * @return                       Connection parameters or NULL.
+ * @param[in]   self           Bootstrap manager.
+ * @param[in]   protocol_id    Transport protocol id that failed access point belongs to.
+ * @param[in]   type           Server type that failed access point belongs to.
+ * @return                     Error code.
  *
- * @see kaa_access_point_t
  * @see kaa_transport_protocol_id_t
  */
-kaa_access_point_t *kaa_bootstrap_manager_get_next_access_point(kaa_bootstrap_manager_t *self
-                                                              , kaa_transport_protocol_id_t *protocol_info);
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
+                                                       , kaa_transport_protocol_id_t *protocol_id
+                                                       , kaa_server_type_t type);
 
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif
-#endif /* KAA_BOOTSTRAP_H_ */
+#endif /* KAA_BOOTSTRAP_MANAGER_H_ */

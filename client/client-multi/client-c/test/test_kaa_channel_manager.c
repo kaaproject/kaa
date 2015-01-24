@@ -34,16 +34,9 @@
 
 
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
-                                            , kaa_logger_t *logger);
+                                            , kaa_context_t *context);
 
 extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *self
-                                                           , kaa_transport_channel_interface_t *channel
-                                                           , uint32_t *channel_id);
-
-extern kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *self
-                                                              , uint32_t channel_id);
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , kaa_service_t service_type);
@@ -58,13 +51,16 @@ extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_m
 
 typedef struct {
     kaa_transport_protocol_id_t protocol_info;
+    kaa_access_point_t *access_point;
     kaa_service_t* services;
     size_t         services_count;
 } test_channel_context_t;
 
 
 
+static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
+
 static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_BOOTSTRAP
                                             , KAA_SERVICE_PROFILE
                                             , KAA_SERVICE_USER
@@ -73,6 +69,22 @@ static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_BOOTSTRAP
 static const size_t supported_services_count = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_service_t);
 
 
+
+static kaa_error_t test_init_channel(void *channel_context
+                             , kaa_transport_context_t *transport_context)
+{
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t test_set_access_point(void *context
+                                       , kaa_access_point_t *access_point)
+{
+    KAA_RETURN_IF_NIL2(context, access_point, KAA_ERR_BADPARAM);
+    test_channel_context_t *channel_context = (test_channel_context_t *)context;
+    channel_context->access_point = access_point;
+
+    return KAA_ERR_NONE;
+}
 
 static kaa_error_t test_get_protocol_info(void *context, kaa_transport_protocol_id_t *protocol_info)
 {
@@ -113,6 +125,8 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
     channel->get_supported_services = &test_get_supported_services;
     channel->sync_handler = &test_sync_handler;
     channel->release_context = NULL;
+    channel->init = &test_init_channel;
+    channel->set_access_point =&test_set_access_point;
 }
 
 static void compare_channels(kaa_transport_channel_interface_t *actual_channel
@@ -144,13 +158,13 @@ void test_create_channel_manager()
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(NULL, logger);
+    error_code = kaa_channel_manager_create(NULL, &kaa_context);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_channel_manager_create(&channel_manager, NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_channel_manager_create(&channel_manager, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_EQUAL(channel_manager, NULL);
 
@@ -164,12 +178,13 @@ void test_add_channel()
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(&channel_manager, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t protocol_id = 0xAABBCCDD;
     uint16_t protocol_version = 2;
     test_channel_context_t channel_context = { { protocol_id, protocol_version }
+                                              , NULL
                                               , SUPPORTED_SERVICES
                                               , supported_services_count };
 
@@ -184,8 +199,8 @@ void test_add_channel()
     ASSERT_EQUAL(error_code, KAA_ERR_ALREADY_EXISTS);
 
     kaa_transport_channel_interface_t *actual_channel =
-            kaa_channel_manager_get_transport_channel(
-                    channel_manager, rand() % supported_services_count);
+                        kaa_channel_manager_get_transport_channel(
+                                channel_manager, rand() % supported_services_count);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
 
     compare_channels(actual_channel, &expected_channel);
@@ -207,12 +222,13 @@ void test_get_service_specific_channel()
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(&channel_manager, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t global_channel_protocol_id = 0xAABBCCAA;
     uint16_t protocol_version = 2;
     test_channel_context_t global_channel_context = { { global_channel_protocol_id, protocol_version }
+                                                      , NULL
                                                       , SUPPORTED_SERVICES
                                                       , supported_services_count };
 
@@ -226,6 +242,7 @@ void test_get_service_specific_channel()
     uint32_t logging_channel_protocol_id = 0xAABBCCBB;
     kaa_service_t logging_channel_service[] = { KAA_SERVICE_LOGGING };
     test_channel_context_t logging_channel_context = { { logging_channel_protocol_id, protocol_version }
+                                                      , NULL
                                                       , logging_channel_service
                                                       , 1 };
 
@@ -272,7 +289,7 @@ void test_get_bootstrap_client_sync_size()
     size_t expected_size = 0, actual_size = 0;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(&channel_manager, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_channel_manager_bootstrap_request_get_size(channel_manager, &actual_size);
@@ -284,6 +301,7 @@ void test_get_bootstrap_client_sync_size()
     uint32_t channel1_protocol_id = 0xAABBCCAA;
     uint16_t protocol_version = 2;
     test_channel_context_t channel_context1 = { { channel1_protocol_id, protocol_version }
+                                                , NULL
                                                 , SUPPORTED_SERVICES
                                                 , supported_services_count };
 
@@ -293,6 +311,7 @@ void test_get_bootstrap_client_sync_size()
 
     uint32_t channel2_protocol_id = 0xAABBCCBB;
     test_channel_context_t channel_context2 = { { channel2_protocol_id, protocol_version }
+                                                , NULL
                                                 , SUPPORTED_SERVICES
                                                 , supported_services_count };
 
@@ -351,12 +370,13 @@ void test_get_bootstrap_client_sync_serialize()
     size_t sync_size = 0;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(&channel_manager, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t channel1_protocol_id = 0xAABBCCAA;
     uint16_t protocol_version = 2;
     test_channel_context_t channel_context1 = { { channel1_protocol_id, protocol_version }
+                                                , NULL
                                                 , SUPPORTED_SERVICES
                                                 , supported_services_count };
     kaa_transport_channel_interface_t channel1;
@@ -365,6 +385,7 @@ void test_get_bootstrap_client_sync_serialize()
 
     uint32_t channel2_protocol_id = 0xAABBCCBB;
     test_channel_context_t channel_context2 = { { channel2_protocol_id, protocol_version }
+                                                , NULL
                                                 , SUPPORTED_SERVICES
                                                 , supported_services_count };
     kaa_transport_channel_interface_t channel2;
@@ -454,6 +475,10 @@ int test_init(void)
     if (error || !logger)
         return error;
 
+    kaa_context.logger = logger;
+    kaa_context.bootstrap_manager = NULL;
+    kaa_context.platfrom_protocol = NULL;
+
     return 0;
 }
 
@@ -466,12 +491,10 @@ int test_deinit(void)
 
 
 KAA_SUITE_MAIN(Log, test_init, test_deinit
-#ifndef KAA_DISABLE_FEATURE_LOGGING
        ,
        KAA_TEST_CASE(create_channel_manager, test_create_channel_manager)
        KAA_TEST_CASE(add_channel, test_add_channel)
        KAA_TEST_CASE(get_service_specific_channel, test_get_service_specific_channel)
        KAA_TEST_CASE(get_bootstrap_client_sync_size, test_get_bootstrap_client_sync_size)
        KAA_TEST_CASE(get_bootstrap_client_sync_serialize, test_get_bootstrap_client_sync_serialize)
-#endif
        )

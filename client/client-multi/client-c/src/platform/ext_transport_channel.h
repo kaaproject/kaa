@@ -33,7 +33,7 @@ extern "C" {
  */
 typedef struct {
     kaa_platform_protocol_t    *platform_protocol;
-    kaa_bootstrap_manager_t    *bootstrap_maanger;
+    kaa_bootstrap_manager_t    *bootstrap_manager;
 } kaa_transport_context_t;
 
 
@@ -50,7 +50,9 @@ typedef kaa_error_t (*kaa_init_channel_fn)(void *channel_context
                                          , kaa_transport_context_t *transport_context);
 
 /**
- * @brief Sets new .
+ * @brief Sets transport connection data.
+ *
+ * @b NOTE: Copy connection data for the local usage.
  *
  * @param[in]   channel_context    Channel context.
  * @param[in]   access_point       Connection data used to establish connection
