@@ -25,9 +25,9 @@ import java.util.List;
 public class BootstrapClientSync {
 
     private final int requestId;
-    private final List<ProtocolVersionKey> keys;
+    private final List<ProtocolVersionId> keys;
 
-    public BootstrapClientSync(int requestId, List<ProtocolVersionKey> keys) {
+    public BootstrapClientSync(int requestId, List<ProtocolVersionId> keys) {
         super();
         this.requestId = requestId;
         this.keys = keys;
@@ -37,7 +37,7 @@ public class BootstrapClientSync {
         return requestId;
     }
 
-    public List<ProtocolVersionKey> getKeys() {
+    public List<ProtocolVersionId> getKeys() {
         return keys;
     }
 

@@ -21,19 +21,23 @@ import java.util.zip.CRC32;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 
 /**
- *  
+ * 
+ * An util class that provides convenient methods to get server name and hash of {@link ConnectionInfo}
+ * 
  * @author Andrey Shvayka
  *
  */
 public class ServerNameUtil {
-    /** Delimiter in DNS name host:port. */
+    
+    /** A delimiter in the DNS name host:port. */
     private static final String HOST_PORT_DELIMITER = ":";
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
     /**
-     * Builds name based on connection info properties
-     * @param connectionInfo
-     * @return name 
+     * Builds the server name based on the connection info properties.
+     * 
+     * @param connectionInfo the connection info
+     * @return name of the server
      */
     public static String getNameFromConnectionInfo(ConnectionInfo connectionInfo) {
         StringBuilder name = new StringBuilder();
@@ -42,10 +46,16 @@ public class ServerNameUtil {
         name.append(connectionInfo.getThriftPort());
         return name.toString();
     }
-    
-    public static int crc32(ConnectionInfo info) {
+
+    /**
+     * Calculates the crc32 hash based on the connection info properties.
+     * 
+     * @param connectionInfo the connection info
+     * @return crc32 hash
+     */
+    public static int crc32(ConnectionInfo connectionInfo) {
         CRC32 crc32 = new CRC32();
-        crc32.update(getNameFromConnectionInfo(info).getBytes(UTF8));
+        crc32.update(getNameFromConnectionInfo(connectionInfo).getBytes(UTF8));
         return (int) crc32.getValue();
     }
 }

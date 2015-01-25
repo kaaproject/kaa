@@ -15,7 +15,16 @@
  */
 package org.kaaproject.kaa.server.transport.session;
 
-
+/**
+ * A marker interface indicating that a class has a basic knowledge about the related session.
+ * 
+ * @author Andrew Shvayka
+ */
 public interface SessionAware {
+    
+    /**
+     * Returns the {@link SessionInfo} object.
+     * @return session info
+     */
     SessionInfo getSessionInfo();
 }

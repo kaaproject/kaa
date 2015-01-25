@@ -215,7 +215,7 @@ public class BootstrapTransportService extends AbstractTransportService implemen
                     } else if (supportUnencryptedConnection) {
                         syncRequest = decodeUnencryptedRequest(message, crypt, platformEncDecMap);
                     } else {
-                        LOG.warn("Received unencripted init message, but unencrypted connection forbidden by configuration.");
+                        LOG.warn("Received unencrypted init message, but unencrypted connection forbidden by configuration.");
                         throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
                     }
                     if (syncRequest.getBootstrapSync() == null) {

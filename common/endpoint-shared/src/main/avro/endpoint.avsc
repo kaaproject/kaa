@@ -341,8 +341,7 @@
  "direction": "out",
  "fields": [
      {"name": "accessPointId", "type": "int"},
-     {"name": "protocolId", "type": "int"},
-     {"name": "protocolVersion", "type": "int"},
+     {"name": "protocolVersionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"},
      {"name": "connectionInfo", "type": "bytes"}
  ]
 },

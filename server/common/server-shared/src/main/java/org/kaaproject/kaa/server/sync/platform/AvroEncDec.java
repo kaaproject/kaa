@@ -88,7 +88,7 @@ import org.kaaproject.kaa.server.sync.UserServerSync;
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapClientSync;
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapServerSync;
 import org.kaaproject.kaa.server.sync.bootstrap.ProtocolConnectionData;
-import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionKey;
+import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -283,8 +283,8 @@ public class AvroEncDec implements PlatformEncDec {
         }
         List<ProtocolMetaData> result = new ArrayList<ProtocolMetaData>(source.size());
         for (ProtocolConnectionData pcd : source) {
-            result.add(new ProtocolMetaData(pcd.getAccessPointId(), pcd.getProtocolId(), pcd.getProtocolVersion(), ByteBuffer.wrap(pcd
-                    .getConnectionData())));
+            result.add(new ProtocolMetaData(pcd.getAccessPointId(), new ProtocolVersionPair(pcd.getProtocolId(), pcd.getProtocolVersion()),
+                    ByteBuffer.wrap(pcd.getConnectionData())));
         }
         return result;
     }
@@ -467,13 +467,13 @@ public class AvroEncDec implements PlatformEncDec {
         return new BootstrapClientSync(source.getRequestId(), convert(source.getSupportedProtocols()));
     }
 
-    private static List<ProtocolVersionKey> convert(List<ProtocolVersionPair> supportedProtocols) {
+    private static List<ProtocolVersionId> convert(List<ProtocolVersionPair> supportedProtocols) {
         if (supportedProtocols == null) {
             return Collections.emptyList();
         }
-        List<ProtocolVersionKey> result = new ArrayList<ProtocolVersionKey>(supportedProtocols.size());
+        List<ProtocolVersionId> result = new ArrayList<ProtocolVersionId>(supportedProtocols.size());
         for (ProtocolVersionPair pair : supportedProtocols) {
-            result.add(new ProtocolVersionKey(pair.getId(), pair.getVersion()));
+            result.add(new ProtocolVersionId(pair.getId(), pair.getVersion()));
         }
         return result;
     }

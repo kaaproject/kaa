@@ -21,11 +21,35 @@ package org.kaaproject.kaa.client.channel;
  * {@link KaaChannelManager}
  */
 public interface TransportConnectionInfo {
+    
+    /**
+     * Retrieves the channel's server type (i.e. OPERATIONS or BOOTSTRAP).
+     *
+     * @return the channel's server type.
+     * @see ServerType
+     *
+     */
     ServerType getServerType();
 
+    /**
+     * Retrieves the {@link TransportProtocolId}.
+     *
+     * @return the transport protocol id.
+     * @see TransportProtocolId
+     *
+     */
     TransportProtocolId getTransportId();
 
+    /**
+     * Retrieves the access point id (operations/bootstrap server id)
+     * 
+     * @return access point id
+     */
     int getAccessPointId();
 
+    /**
+     * Retrieves serialized connection properties. Serialization may be specific for each transport protocol implementation.
+     * @return serialized connection properties
+     */
     byte[] getConnectionInfo();
 }

@@ -62,10 +62,10 @@ public interface KaaDataChannel {
     String getId();
 
     /**
-     * Retrieves the channel's type (i.e. HTTP, TCP, etc.).
+     * Retrieves the {@link TransportProtocolId}.
      *
-     * @return the channel's type.
-     * @see ChannelType
+     * @return the transport protocol id.
+     * @see TransportProtocolId
      *
      */
     TransportProtocolId getTransportProtocolId();

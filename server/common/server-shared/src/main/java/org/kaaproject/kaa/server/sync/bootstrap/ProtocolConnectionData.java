@@ -24,15 +24,13 @@ import java.util.Arrays;
  */
 public final class ProtocolConnectionData {
     private final int accessPointId;
-    private final int protocolId;
-    private final int protocolVersion;
+    private final ProtocolVersionId protocolVersionId;
     private final byte[] connectionData;
 
-    public ProtocolConnectionData(int accessPointId, int protocolId, int protocolVersion, byte[] connectionData) {
+    public ProtocolConnectionData(int accessPointId, ProtocolVersionId protocolVersionId, byte[] connectionData) {
         super();
         this.accessPointId = accessPointId;
-        this.protocolId = protocolId;
-        this.protocolVersion = protocolVersion;
+        this.protocolVersionId = protocolVersionId;
         this.connectionData = connectionData;
     }
 
@@ -41,11 +39,11 @@ public final class ProtocolConnectionData {
     }
 
     public int getProtocolId() {
-        return protocolId;
+        return protocolVersionId.getProtocolId();
     }
 
     public int getProtocolVersion() {
-        return protocolVersion;
+        return protocolVersionId.getVersion();
     }
 
     public byte[] getConnectionData() {
@@ -58,28 +56,35 @@ public final class ProtocolConnectionData {
         int result = 1;
         result = prime * result + accessPointId;
         result = prime * result + Arrays.hashCode(connectionData);
-        result = prime * result + protocolId;
-        result = prime * result + protocolVersion;
+        result = prime * result + ((protocolVersionId == null) ? 0 : protocolVersionId.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ProtocolConnectionData other = (ProtocolConnectionData) obj;
-        if (accessPointId != other.accessPointId)
+        if (accessPointId != other.accessPointId) {
             return false;
-        if (!Arrays.equals(connectionData, other.connectionData))
+        }
+        if (!Arrays.equals(connectionData, other.connectionData)) {
             return false;
-        if (protocolId != other.protocolId)
+        }
+        if (protocolVersionId == null) {
+            if (other.protocolVersionId != null) {
+                return false;
+            }
+        } else if (!protocolVersionId.equals(other.protocolVersionId)) {
             return false;
-        if (protocolVersion != other.protocolVersion)
-            return false;
+        }
         return true;
     }
 
@@ -88,13 +93,12 @@ public final class ProtocolConnectionData {
         StringBuilder builder = new StringBuilder();
         builder.append("ProtocolConnectionData [accessPointId=");
         builder.append(accessPointId);
-        builder.append(", protocolId=");
-        builder.append(protocolId);
-        builder.append(", protocolVersion=");
-        builder.append(protocolVersion);
+        builder.append(", protocolVersionId=");
+        builder.append(protocolVersionId);
         builder.append(", connectionData=");
         builder.append(Arrays.toString(connectionData));
         builder.append("]");
         return builder.toString();
     }
+
 }

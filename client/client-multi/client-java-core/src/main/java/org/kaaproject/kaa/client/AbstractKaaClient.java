@@ -149,8 +149,6 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     private final EndpointObjectHash publicKeyHash;
 
-    private final Map<TransportProtocolId, KaaDataChannel> defaultChannels = new HashMap<TransportProtocolId, KaaDataChannel>();
-
     AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         this(new KaaClientProperties());
     }
@@ -211,8 +209,6 @@ public abstract class AbstractKaaClient implements KaaClient {
         operationsChannel.setMultiplexer(operationsDataProcessor);
         operationsChannel.setDemultiplexer(operationsDataProcessor);
         channelManager.addChannel(operationsChannel);
-        defaultChannels.put(operationsChannel.getTransportProtocolId(), operationsChannel);
-        defaultChannels.put(bootstrapChannel.getTransportProtocolId(), bootstrapChannel);
 
         bootstrapManager.setChannelManager(channelManager);
 
@@ -407,11 +403,5 @@ public abstract class AbstractKaaClient implements KaaClient {
     @Override
     public LogCollector getLogCollector() {
         return logCollector;
-    }
-
-    @Override
-    public KaaDataChannel getDefaultChannel(TransportProtocolId type) {
-        throw new RuntimeException("not implemented!");
-//        return defaultChannels.get(type);
     }
 }

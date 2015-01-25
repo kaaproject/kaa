@@ -16,7 +16,7 @@
 package org.kaaproject.kaa.server.transport.channel;
 
 /**
- * Represents transport channel context. Provides methods to write data to
+ * Represents a transport channel context and methods to write data to the
  * channel.
  * 
  * @author Andrew Shvayka
@@ -24,12 +24,34 @@ package org.kaaproject.kaa.server.transport.channel;
  */
 public interface ChannelContext {
 
+    /**
+     * Writes and flushes the given object
+     * 
+     * @param response
+     *            the object to write
+     */
     void writeAndFlush(Object response);
 
-    void fireExceptionCaught(Exception e);
-
+    /**
+     * Writes the given object but doesn't flush it
+     * 
+     * @param object
+     *            the object to write
+     */
     void write(Object object);
 
+    /**
+     * Sends the flush command to the given channel
+     */
     void flush();
+
+    /**
+     * Notifies the channel context about exceptions related to message
+     * processing for this channel
+     * 
+     * @param e
+     *            the caught exception
+     */
+    void fireExceptionCaught(Exception e);
 
 }

@@ -23,6 +23,7 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,8 @@ public class IPTransportInfo extends GenericTransportInfo {
     private final PublicKey publicKey;
 
     public IPTransportInfo(TransportConnectionInfo parent) {
-        super(parent.getServerType(), new ProtocolMetaData(parent.getAccessPointId(), parent.getTransportId().getProtocolId(), parent
-                .getTransportId().getProtocolVersion(), ByteBuffer.wrap(parent.getConnectionInfo())));
+        super(parent.getServerType(), new ProtocolMetaData(parent.getAccessPointId(), new ProtocolVersionPair(parent.getTransportId()
+                .getProtocolId(), parent.getTransportId().getProtocolVersion()), ByteBuffer.wrap(parent.getConnectionInfo())));
         ByteBuffer buf = md.getConnectionInfo().duplicate();
         byte[] publicKeyData = new byte[buf.getInt()];
         buf.get(publicKeyData);

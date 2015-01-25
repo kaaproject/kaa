@@ -16,14 +16,14 @@
 package org.kaaproject.kaa.server.transport;
 
 /**
- * Indicates exception during transport lifecycle operations - initialization, startup, shutdown, etc.
+ * Indicates an exception during transport lifecycle operations - initialization, startup, shutdown, etc.
  * 
  * @author Andrew Shvayka
  *
  */
 public class TransportLifecycleException extends Exception {
     /**
-     * Generated value
+     * The generated value.
      */
     private static final long serialVersionUID = 7248305662659836419L;
 

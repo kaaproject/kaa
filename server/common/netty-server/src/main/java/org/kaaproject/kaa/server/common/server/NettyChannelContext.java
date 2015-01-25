@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.transport.channel.ChannelContext;
  * @author Andrew Shvayka
  *
  */
-public class NettyChannelContext implements ChannelContext{
+public class NettyChannelContext implements ChannelContext {
     private final ChannelHandlerContext ctx;
 
     public NettyChannelContext(ChannelHandlerContext ctx) {

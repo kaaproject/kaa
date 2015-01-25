@@ -17,11 +17,36 @@ package org.kaaproject.kaa.server.transport.message;
 
 import org.kaaproject.kaa.server.transport.session.SessionCreateListener;
 
-public interface SessionInitMessage extends Message, SessionCreateListener{
+/**
+ * Represents a message that causes a session creation.
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public interface SessionInitMessage extends Message, SessionCreateListener {
 
+    /**
+     * Return the encoded message data.
+     * @return the encoded message data
+     */
     byte[] getEncodedMessageData();
+
+    /**
+     * Return the encoded session key.
+     * @return the encoded session key
+     */
     byte[] getEncodedSessionKey();
+
+    /**
+     * Return the encoded session key signature.
+     * @return the session key signature
+     */
     byte[] getSessionKeySignature();
+
+    /**
+     * Returns a keep alive interval for this session
+     * @return a keep alive interval
+     */
     int getKeepAlive();
 
 }

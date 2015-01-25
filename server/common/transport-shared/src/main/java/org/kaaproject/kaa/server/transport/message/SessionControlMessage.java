@@ -24,7 +24,8 @@ import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 /**
- * Abstract class to hold common logic/data for session control messages.
+ * An abstract class that holds common logic/data for session control messages.
+ * 
  * @author Andrew Shvayka
  *
  */
@@ -35,7 +36,7 @@ public abstract class SessionControlMessage implements SessionAware, ChannelAwar
     public SessionControlMessage(SessionInfo session) {
         this.session = session;
     }
-    
+
     @Override
     public UUID getChannelUuid() {
         return session.getUuid();

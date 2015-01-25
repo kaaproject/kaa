@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.transport.message;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 /**
- * Abstract class that identifies session disconnect message.
+ * An abstract class that identifies a session disconnect message.
  * 
  * @author Andrew Shvayka
  *

@@ -15,8 +15,19 @@
  */
 package org.kaaproject.kaa.server.transport.platform;
 
+/**
+ * A marker interface indicating that a class has basic knowledge about the
+ * related platform layer that is used to encode/decode messages.
+ * 
+ * @author Andrew Shvayka
+ */
 public interface PlatformAware {
 
+    /**
+     * Returns the platform layer id
+     * 
+     * @return the platform layer id
+     */
     int getPlatformId();
-    
+
 }

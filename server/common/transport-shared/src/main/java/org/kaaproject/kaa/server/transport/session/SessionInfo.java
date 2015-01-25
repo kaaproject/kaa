@@ -23,6 +23,12 @@ import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.platform.PlatformAware;
 
+/**
+ * Represents information about the session.
+ * 
+ * @author Andrew Shvayka
+ *
+ */
 public final class SessionInfo implements PlatformAware{
     private final UUID uuid;
     private final int platformId;
@@ -114,16 +120,16 @@ public final class SessionInfo implements PlatformAware{
         return true;
     }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("NettySessionInfo [uuid=");
-		builder.append(uuid);
-		builder.append(", key=");
-		builder.append(key);
-		builder.append(", applicationToken=");
-		builder.append(applicationToken);
-		builder.append("]");
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("NettySessionInfo [uuid=");
+        builder.append(uuid);
+        builder.append(", key=");
+        builder.append(key);
+        builder.append(", applicationToken=");
+        builder.append(applicationToken);
+        builder.append("]");
+        return builder.toString();
+    }
 }

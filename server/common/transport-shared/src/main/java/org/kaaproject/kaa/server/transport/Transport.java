@@ -15,9 +15,8 @@
  */
 package org.kaaproject.kaa.server.transport;
 
-
 /**
- * A communication transport between Kaa server and endpoint.
+ * Represents a transport for communication between a Kaa server and endpoints.
  * 
  * @author Andrew Shvayka
  *
@@ -25,35 +24,36 @@ package org.kaaproject.kaa.server.transport;
 public interface Transport {
 
     /**
-     * Initialize transport instance with particular configuration and common
-     * transport properties. Configuration is serialized Avro object.
-     * Serialization is done using schema specified in
+     * Initialize a transport instance with a particular configuration and
+     * common transport properties. The configuration is a serialized Avro
+     * object. The serialization is done using the schema specified in
      * {@link KaaTransportConfig}.
      *
      * @param context
-     *            transport initialization context
+     *            the transport initialization context
      * @throws TransportLifecycleException
      */
     void init(GenericTransportContext context) throws TransportLifecycleException;
 
     /**
-     * retrieves serialized connection info data. This data will be used in
-     * endpoint sdk in order to setup connection to this transport instance
+     * Retrieves the serialized connection data. This data will be used in an
+     * endpoint sdk to set up a connection to this transport instance.
      * 
-     * @return serialized data that contains connection info.
+     * @return the serialized connection data.
      */
     TransportMetaData getConnectionInfo();
 
     /**
-     * Starts transport instance. This method should block until transport is
-     * started. This method should not block it's caller thread after startup
-     * sequence successfully completed.
+     * Starts a transport instance. This method should block its caller thread
+     * until the transport is started. This method should not block its caller
+     * thread after startup sequence is successfully completed..
      */
     void start();
 
     /**
-     * Stops transport instance. This method should block until transport is
-     * stopped. Service may be started again after it is stopped.
+     * Stops the transport instance. This method should block its current thread
+     * until transport is stopped. Transport may be started again after it is
+     * stopped.
      */
     void stop();
 }

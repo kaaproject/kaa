@@ -76,9 +76,9 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      * @param zkHostPortList
      *            the zk host port list
      * @param sessionTimeoutMs
-     *            session timeout
+     *            the session timeout
      * @param connectionTimeoutMs
-     *            connection timeout
+     *            the connection timeout
      * @param retryPolicy
      *            the retry policy
      */

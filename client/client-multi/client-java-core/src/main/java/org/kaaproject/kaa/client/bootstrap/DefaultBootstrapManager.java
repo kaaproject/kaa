@@ -124,7 +124,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
         mappedIterators.clear();
         if (operationsServerList != null && !operationsServerList.isEmpty()) {
             for (ProtocolMetaData server : operationsServerList) {
-                TransportProtocolId transportId = new TransportProtocolId(server.getProtocolId(), server.getProtocolVersion());
+                TransportProtocolId transportId = new TransportProtocolId(server.getProtocolVersionInfo().getId(), server.getProtocolVersionInfo().getVersion());
                 List<ProtocolMetaData> servers = mappedOperationServerList.get(transportId);
                 if (servers == null) {
                     servers = new LinkedList<>();
