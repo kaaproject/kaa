@@ -187,11 +187,15 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
 
     size_t extension_size = 0;
     kaa_error_t err_code = kaa_meta_data_request_get_size(&extension_size);
+    if (err_code) {
+        KAA_LOG_ERROR(self->logger, err_code, "Failed to query size for meta extension");
+        return err_code;
+    }
+
+    *expected_size += extension_size;
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated meta extension size %u", extension_size);
 
     for (;!err_code && services_count--;) {
-        *expected_size += extension_size;
-
         switch (services[services_count]) {
         case KAA_SERVICE_BOOTSTRAP: {
             err_code = kaa_channel_manager_bootstrap_request_get_size(self->kaa_context->channel_manager
@@ -240,6 +244,8 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
             extension_size = 0;
             break;
         }
+
+        *expected_size += extension_size;
     }
 
     if (err_code) {
@@ -278,7 +284,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
         switch (services[services_count]) {
         case KAA_SERVICE_BOOTSTRAP: {
             error_code = kaa_channel_manager_bootstrap_request_serialize(self->kaa_context->channel_manager
-                                                                     , writer);
+                                                                       , writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the bootstrap extension");
             break;
@@ -348,6 +354,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     *buffer_size = 0;
     kaa_error_t error = kaa_client_sync_get_size(self, info->services, info->services_count, buffer_size);
     KAA_RETURN_IF_ERR(error)
+
+    KAA_LOG_DEBUG(self->kaa_context->logger, KAA_ERR_NONE, "Going to request sync buffer (size %zu)", *buffer_size);
 
     *buffer = info->allocator(info->allocator_context, *buffer_size);
     if (*buffer) {
