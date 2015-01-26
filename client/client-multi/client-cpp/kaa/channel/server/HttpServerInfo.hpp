@@ -37,7 +37,7 @@ public:
     }
 
     HttpServerInfo(ServerType type, const std::string& host, const std::int32_t& port
-            , const Botan::MemoryVector<std::uint8_t>& publicKey)
+            , const PublicKey& publicKey)
         : AbstractServerInfo(type, host, port, publicKey)
     {
         constructURL(type);

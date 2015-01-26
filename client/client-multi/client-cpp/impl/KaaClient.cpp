@@ -145,9 +145,9 @@ void KaaClient::initKaaTransport()
     bootstrapManager_->setTransport(std::dynamic_pointer_cast<BootstrapTransport, IBootstrapTransport>(bootstrapTransport).get());
     bootstrapManager_->setChannelManager(channelManager_.get());
 
-    EndpointObjectHash publicKeyHash(clientKeys_.first.begin(), clientKeys_.first.size());
+    EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
     IMetaDataTransportPtr metaDataTransport(new MetaDataTransport(status_, publicKeyHash, 60000L));
-    IProfileTransportPtr profileTransport(new ProfileTransport(*channelManager_, clientKeys_.first));
+    IProfileTransportPtr profileTransport(new ProfileTransport(*channelManager_, clientKeys_->getPublicKey()));
 #ifdef KAA_USE_CONFIGURATION
     IConfigurationTransportPtr configurationTransport(new ConfigurationTransport(
             *channelManager_
@@ -214,7 +214,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) {
-        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
+        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_));
         bootstrapChannel_->setDemultiplexer(bootstrapProcessor_.get());
         bootstrapChannel_->setMultiplexer(bootstrapProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
@@ -223,7 +223,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_HTTP_CHANNEL) {
-        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), clientKeys_));
+        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), *clientKeys_));
         opsHttpChannel_->setMultiplexer(operationsProcessor_.get());
         opsHttpChannel_->setDemultiplexer(operationsProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP channel: %1%") % opsHttpChannel_.get());
@@ -232,7 +232,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_LONG_POLL_CHANNEL) {
-        opsLongPollChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), clientKeys_));
+        opsLongPollChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), *clientKeys_));
         opsLongPollChannel_->setMultiplexer(operationsProcessor_.get());
         opsLongPollChannel_->setDemultiplexer(operationsProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP Long Poll channel: %1%") % opsLongPollChannel_.get());
@@ -241,7 +241,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL) {
-        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
+        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_));
         opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
         opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
@@ -263,13 +263,13 @@ void KaaClient::initClientKeys()
     bool exists = key.good();
     key.close();
     if (exists) {
-        clientKeys_ = KeyUtils::loadKeyPair(CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION);
+        clientKeys_.reset(new KeyPair(KeyUtils::loadKeyPair(CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION)));
     } else {
-        clientKeys_ = KeyUtils().generateKeyPair(2048);
-        KeyUtils::saveKeyPair(clientKeys_, CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION);
+        clientKeys_.reset(new KeyPair(KeyUtils().generateKeyPair(2048)));
+        KeyUtils::saveKeyPair(*clientKeys_, CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION);
     }
 
-    EndpointObjectHash publicKeyHash(clientKeys_.first.begin(), clientKeys_.first.size());
+    EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
     publicKeyHash_ = Botan::base64_encode(publicKeyHash.getHash().first.get(), publicKeyHash.getHash().second);
 
     status_->setEndpointKeyHash(publicKeyHash_);

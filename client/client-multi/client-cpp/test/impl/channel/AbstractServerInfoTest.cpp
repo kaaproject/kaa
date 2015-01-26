@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(BadServerInfoTest)
     BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, ":", ""), KaaException);
     BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, ":55", ""), KaaException);
 
-    Botan::MemoryVector<std::uint8_t> emptyDecodedKey;
+    PublicKey emptyDecodedKey;
     BOOST_CHECK_THROW(AbstractServerInfo<HTTP>(ServerType::OPERATIONS, "host", 55, emptyDecodedKey), KaaException);
 }
 

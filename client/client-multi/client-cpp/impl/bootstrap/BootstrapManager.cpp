@@ -53,7 +53,7 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
     switch (channel.channelType) {
         case ChannelType::HTTP: {
             HTTPComunicationParameters params = channel.communicationParameters.get_HTTPComunicationParameters();
-            Botan::MemoryVector<std::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
+            PublicKey pubKey(server.publicKey.data(), server.publicKey.size());
             KAA_LOG_DEBUG(boost::format("Server name: %1%, Parameters: %2%:%3%")
                      % server.name % params.hostName % params.port);
             IServerInfoPtr info(new HttpServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
@@ -61,7 +61,7 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
         }
         case ChannelType::HTTP_LP: {
             HTTPLPComunicationParameters params = channel.communicationParameters.get_HTTPLPComunicationParameters();
-            Botan::MemoryVector<std::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
+            PublicKey pubKey(server.publicKey.data(), server.publicKey.size());
             KAA_LOG_DEBUG(boost::format("Server name: %1%, Parameters: %2%:%3%")
                      % server.name % params.hostName % params.port);
             IServerInfoPtr info(new HttpLPServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
@@ -69,7 +69,7 @@ IServerInfoPtr BootstrapManager::getServerInfoByChannel(const OperationsServer& 
         }
         case ChannelType::KAATCP: {
             KaaTCPComunicationParameters params = channel.communicationParameters.get_KaaTCPComunicationParameters();
-            Botan::MemoryVector<std::uint8_t> pubKey(server.publicKey.data(), server.publicKey.size());
+            PublicKey pubKey(server.publicKey.data(), server.publicKey.size());
             IServerInfoPtr info(new KaaTcpServerInfo(ServerType::OPERATIONS, params.hostName, params.port, pubKey));
             return info;
         }

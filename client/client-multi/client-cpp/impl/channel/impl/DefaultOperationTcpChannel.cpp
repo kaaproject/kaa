@@ -365,7 +365,7 @@ void DefaultOperationTcpChannel::setServer(IServerInfoPtr server)
             firstStart_ = false;
         }
         currentServer_ = std::dynamic_pointer_cast<KaaTcpServerInfo, IServerInfo>(server);
-        encDec_.reset(new RsaEncoderDecoder(clientKeys_.first, clientKeys_.second, currentServer_->getPublicKey()));
+        encDec_.reset(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
 
         if (!isPaused_) {
             KAA_MUTEX_UNLOCKING("channelGuard_");

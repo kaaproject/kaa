@@ -86,7 +86,7 @@ public:
     virtual IEventListenersResolver&            getEventListenersResolver() { return *eventManager_; }
 #endif
     virtual IKaaChannelManager&                 getChannelManager()  { return *channelManager_; }
-    virtual const KeyPair&                      getClientKeyPair() { return clientKeys_; }
+    virtual const KeyPair&                      getClientKeyPair() { return *clientKeys_; }
 #ifdef KAA_USE_LOGGING
     virtual ILogCollector&                      getLogCollector() { return *logCollector_; }
 #endif
@@ -113,7 +113,7 @@ private:
     std::unique_ptr<NotificationManager>            notificationManager_;
 #endif
 
-    KeyPair         clientKeys_;
+    std::unique_ptr<KeyPair> clientKeys_;
     std::string     publicKeyHash_;
 
 #ifdef KAA_USE_CONFIGURATION

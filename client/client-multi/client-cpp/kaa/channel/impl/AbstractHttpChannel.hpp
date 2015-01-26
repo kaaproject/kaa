@@ -206,7 +206,7 @@ void AbstractHttpChannel<Type>::setServer(IServerInfoPtr server)
         KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
         currentServer_ = std::dynamic_pointer_cast<AbstractServerInfo<Type>, IServerInfo>(server);
-        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.first, clientKeys_.second, currentServer_->getPublicKey()));
+        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
         httpDataProcessor_.setEncoderDecoder(encDec);
         if (lastConnectionFailed_) {
             lastConnectionFailed_ = false;

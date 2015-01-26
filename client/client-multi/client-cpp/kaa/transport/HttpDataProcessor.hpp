@@ -42,9 +42,9 @@ namespace kaa {
 
 class HttpDataProcessor : boost::noncopyable {
 public:
-    HttpDataProcessor(const Botan::MemoryVector<std::uint8_t>& pubKey,
-            const std::string& privKey,
-            const Botan::MemoryVector<std::uint8_t>& remoteKey) :
+    HttpDataProcessor(const PublicKey& pubKey,
+            const PrivateKey& privKey,
+            const PublicKey& remoteKey) :
             encDec_(new RsaEncoderDecoder(pubKey, privKey, remoteKey)) { }
     HttpDataProcessor() { }
     ~HttpDataProcessor() { }

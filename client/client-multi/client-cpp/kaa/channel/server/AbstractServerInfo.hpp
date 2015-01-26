@@ -24,12 +24,12 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <botan/botan.h>
 #include <botan/base64.h>
 
 #include "kaa/channel/server/IServerInfo.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/http/HttpUrl.hpp"
+#include "kaa/security/SecurityDefinitions.hpp"
 
 namespace kaa {
 
@@ -42,7 +42,7 @@ public:
     AbstractServerInfo(ServerType type, const std::string& hostPort, const std::string& encodedPublicKey);
 
     AbstractServerInfo(ServerType type, const std::string& host, const std::int32_t& port
-            , const Botan::MemoryVector<std::uint8_t>& publicKey);
+            , const PublicKey& publicKey);
 
     virtual const std::string& getHost() const {
         return host_;
@@ -52,7 +52,7 @@ public:
         return port_;
     }
 
-    virtual const Botan::MemoryVector<std::uint8_t>& getPublicKey() const {
+    virtual const PublicKey& getPublicKey() const {
         return publicKey_;
     }
 
@@ -80,7 +80,7 @@ private:
     void assign(const std::string& host, const std::int32_t& port
                                 , const std::string& encodedPublicKey);
     void assign(const std::string& host, const std::int32_t& port
-                    , const Botan::MemoryVector<std::uint8_t>& decodedPublicKey);
+                    , const PublicKey& decodedPublicKey);
 
 private:
     const ChannelType channelType_;
@@ -89,7 +89,7 @@ private:
     std::string        host_;
     std::uint16_t    port_;
 
-    Botan::MemoryVector<std::uint8_t>    publicKey_;
+    PublicKey   publicKey_;
 };
 
 template<ChannelType Type>
@@ -127,7 +127,7 @@ AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string&
 
 template<ChannelType Type>
 AbstractServerInfo<Type>::AbstractServerInfo(ServerType type, const std::string& host, const std::int32_t& port
-        , const Botan::MemoryVector<std::uint8_t>& publicKey) : channelType_(Type), serverType_(type)
+        , const PublicKey& publicKey) : channelType_(Type), serverType_(type)
 {
     verify(host, port, publicKey);
     assign(host, port, publicKey);
@@ -159,7 +159,7 @@ void AbstractServerInfo<Type>::assign(const std::string& host, const std::int32_
 }
 
 template<ChannelType Type>
-void AbstractServerInfo<Type>::assign(const std::string& host, const std::int32_t& port, const Botan::MemoryVector<std::uint8_t>& decodedPublicKey)
+void AbstractServerInfo<Type>::assign(const std::string& host, const std::int32_t& port, const PublicKey& decodedPublicKey)
 {
     host_ = host;
     port_ = port;
