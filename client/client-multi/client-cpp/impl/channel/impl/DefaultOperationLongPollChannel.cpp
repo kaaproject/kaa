@@ -241,7 +241,7 @@ void DefaultOperationLongPollChannel::setServer(IServerInfoPtr server)
             stopPoll();
         }
         currentServer_ = std::dynamic_pointer_cast<HttpLPServerInfo, IServerInfo>(server);
-        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.first, clientKeys_.second, currentServer_->getPublicKey()));
+        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
         httpDataProcessor_.setEncoderDecoder(encDec);
         if (!isPaused_) {
             startPoll();

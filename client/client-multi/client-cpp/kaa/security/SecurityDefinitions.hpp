@@ -22,28 +22,6 @@
 
 namespace kaa {
 
-//class PublicKeyHolder
-//{
-//public:
-//    PublicKeyHolder(const Botan::MemoryVector<std::uint8_t>& key) : key_(key) { }
-//    PublicKeyHolder(const PublicKeyHolder& other) : key_(other.key_) { }
-//    PublicKeyHolder& operator=(const PublicKeyHolder& other)  { key_ = other.key_; return *this; }
-//    ~PublicKeyHolder() { }
-//
-//    operator Botan::MemoryVector<std::uint8_t> () const { return key_; }
-//
-//    std::uint8_t *begin() { return key_.begin(); }
-//    std::uint8_t *end() { return key_.end(); }
-//
-//    const std::uint8_t *begin() const { return key_.begin(); }
-//    const std::uint8_t *end()  const { return key_.end(); }
-//
-//    size_t size() const { return key_.size(); }
-//
-//private:
-//    Botan::MemoryVector<std::uint8_t> key_;
-//};
-
 typedef Botan::MemoryVector<std::uint8_t> PublicKey;
 typedef std::string PrivateKey;
 

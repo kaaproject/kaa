@@ -29,6 +29,7 @@
 #include "kaa/transport/HttpDataProcessor.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/KaaThread.hpp"
+#include "kaa/security/SecurityDefinitions.hpp"
 
 #include <cstdint>
 #include <thread>
