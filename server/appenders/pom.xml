@@ -51,5 +51,11 @@
                 <module>oracle-nosql</module>
             </modules>
         </profile>
+        <profile>
+            <id>cassandra</id>
+            <modules>
+                <module>cassandra</module>
+            </modules>
+        </profile>
     </profiles>
 </project>
