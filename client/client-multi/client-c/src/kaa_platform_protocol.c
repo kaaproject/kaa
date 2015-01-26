@@ -200,7 +200,8 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
         case KAA_SERVICE_BOOTSTRAP: {
             err_code = kaa_channel_manager_bootstrap_request_get_size(self->kaa_context->channel_manager
                                                                     , &extension_size);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated bootstrap extension size %u", extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated bootstrap extension size %u", extension_size);
             break;
         }
         case KAA_SERVICE_PROFILE: {
@@ -221,14 +222,16 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
         case KAA_SERVICE_USER: {
             err_code = kaa_user_request_get_size(self->kaa_context->user_manager
                                                , &extension_size);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated user extension size %u", extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated user extension size %u", extension_size);
             break;
         }
 #ifndef KAA_DISABLE_FEATURE_EVENTS
         case KAA_SERVICE_EVENT: {
             err_code = kaa_event_request_get_size(self->kaa_context->event_manager
                                                 , &extension_size);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated event extension size %u", extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated event extension size %u", extension_size);
             break;
         }
 #endif
@@ -236,7 +239,8 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
         case KAA_SERVICE_LOGGING: {
             err_code = kaa_logging_request_get_size(self->kaa_context->log_collector
                                                 , &extension_size);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated logging extension size %u", extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated logging extension size %u", extension_size);
             break;
         }
 #endif
@@ -268,7 +272,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
     KAA_RETURN_IF_ERR(error_code);
 
-    uint16_t total_services_count = services_count;
+    uint16_t total_services_count = services_count + 1 /* Meta extension */;
 
     error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION);
     if (error_code) {
