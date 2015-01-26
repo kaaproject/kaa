@@ -395,6 +395,12 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
     KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
+    if (!serialized_profile_size) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to update profile: serialize profile size is null."
+                                                                                "Maybe profile schema is empty")
+        return KAA_ERR_BADDATA;
+    }
+
     char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
     KAA_RETURN_IF_NIL(serialized_profile, KAA_ERR_NOMEM);
 
