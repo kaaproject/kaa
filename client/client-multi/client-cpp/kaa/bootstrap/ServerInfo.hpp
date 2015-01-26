@@ -20,10 +20,10 @@
 #include <string>
 #include <cstdint>
 
-#include <botan/botan.h>
 #include <botan/base64.h>
 
 #include "kaa/http/HttpUrl.hpp"
+#include "kaa/security/SecurityDefinitions.hpp"
 
 namespace kaa {
 
