@@ -58,4 +58,16 @@ public class ServerNameUtil {
         crc32.update(getNameFromConnectionInfo(connectionInfo).getBytes(UTF8));
         return (int) crc32.getValue();
     }
+    
+    /**
+     * Calculates the crc32 hash based on the name parameter.
+     * 
+     * @param name the name parameter
+     * @return crc32 hash
+     */
+    public static int crc32(String name) {
+        CRC32 crc32 = new CRC32();
+        crc32.update(name.getBytes(UTF8));
+        return (int) crc32.getValue();
+    }
 }
