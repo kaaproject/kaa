@@ -59,7 +59,7 @@ public class TcpHandlerTest {
             response = message.getErrorBuilder().build(Mockito.mock(GeneralSecurityException.class));
             Assert.assertTrue(response[0] instanceof ConnAck);
             ConnAck connAck = (ConnAck) response[0];
-            Assert.assertEquals(ReturnCode.REFUSE_BAD_CREDETIALS, connAck.getReturnCode());
+            Assert.assertEquals(ReturnCode.REFUSE_BAD_CREDENTIALS, connAck.getReturnCode());
         }
 
         @Override

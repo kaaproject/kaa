@@ -46,7 +46,7 @@ public interface Transport {
     /**
      * Starts a transport instance. This method should block its caller thread
      * until the transport is started. This method should not block its caller
-     * thread after startup sequence is successfully completed..
+     * thread after startup sequence is successfully completed.
      */
     void start();
 

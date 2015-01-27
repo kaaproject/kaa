@@ -63,7 +63,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];
             if (e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException) {
-                responses[0] = new ConnAck(ReturnCode.REFUSE_BAD_CREDETIALS);
+                responses[0] = new ConnAck(ReturnCode.REFUSE_BAD_CREDENTIALS);
             } else {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_SERVER_UNAVAILABLE);
             }

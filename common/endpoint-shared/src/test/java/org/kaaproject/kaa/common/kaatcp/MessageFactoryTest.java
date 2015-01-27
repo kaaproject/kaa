@@ -101,7 +101,7 @@ public class MessageFactoryTest {
         ConnAckListener badCredentialsListener = new ConnAckListener() {
             @Override
             public void onMessage(ConnAck message) {
-                Assert.assertEquals(ReturnCode.REFUSE_BAD_CREDETIALS, message.getReturnCode());
+                Assert.assertEquals(ReturnCode.REFUSE_BAD_CREDENTIALS, message.getReturnCode());
             }
         };
         factory.registerMessageListener(badCredentialsListener);
