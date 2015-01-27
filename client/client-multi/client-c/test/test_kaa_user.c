@@ -23,6 +23,7 @@
 #include "kaa.h"
 #include "kaa_platform_protocol.h"
 #include "kaa_channel_manager.h"
+#include "kaa_status.h"
 #include "kaa_profile.h"
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
@@ -56,23 +57,26 @@ static bool is_on_detached_invoked = false;
 static bool is_on_response_invoked = false;
 static bool last_is_attached_result = false;
 
-static void on_attached(const char *user_external_id, const char *endpoint_access_token)
+static kaa_error_t on_attached(void *context, const char *user_external_id, const char *endpoint_access_token)
 {
     ASSERT_EQUAL(strcmp(ACCESS_TOKEN, endpoint_access_token), 0);
     ASSERT_EQUAL(strcmp(USER_EXTERNAL_ID, user_external_id), 0);
     is_on_attached_invoked = true;
+    return KAA_ERR_NONE;
 }
 
-static void on_detached(const char *endpoint_access_token)
+static kaa_error_t on_detached(void *context, const char *endpoint_access_token)
 {
     ASSERT_EQUAL(strcmp(ACCESS_TOKEN, endpoint_access_token), 0);
     is_on_detached_invoked = true;
+    return KAA_ERR_NONE;
 }
 
-static void on_response(bool is_attached)
+static kaa_error_t on_response(void *context, bool is_attached)
 {
     last_is_attached_result = is_attached;
     is_on_response_invoked = true;
+    return KAA_ERR_NONE;
 }
 
 void test_create_request()
@@ -163,7 +167,7 @@ int test_init(void)
         return error;
     }
 
-    kaa_attachment_status_listeners_t listeners = { &on_attached, &on_detached, &on_response };
+    kaa_attachment_status_listeners_t listeners = { NULL, &on_attached, &on_detached, &on_response };
     error = kaa_user_manager_set_attachment_listeners(user_manager, &listeners);
     if (error) {
         return error;
