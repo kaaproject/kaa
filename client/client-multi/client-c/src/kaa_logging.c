@@ -146,9 +146,13 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Adding new log record {%p}", entry);
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Record size is %zu", record.size);
-    if (!record.size)
+    if (!record.size) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
+                                                                                "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
+    }
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Record size is %zu", record.size);
 
     kaa_error_t error = ext_log_storage_allocate_log_record_buffer(self->log_storage_context, &record);
     if (error)
