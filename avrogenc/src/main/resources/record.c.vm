@@ -170,6 +170,9 @@ ${prefix}_${record_name}_t* ${prefix}_${record_name}_create()
 #if ($schema.getFields().size() > 0)
         record->serialize = ${prefix}_${record_name}_serialize;
         record->get_size = ${prefix}_${record_name}_get_size;
+#else
+        record->serialize = kaa_null_serialize;
+        record->get_size = kaa_null_get_size;
 #end
 #if ($is_destructor_needed)
         record->destroy = ${prefix}_${record_name}_destroy;
@@ -189,9 +192,14 @@ ${prefix}_${record_name}_t* ${prefix}_${record_name}_deserialize(avro_reader_t r
             (${prefix}_${record_name}_t*)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
 
     if (record) {
-#if ($TypeConverter.isTypeOut($schema) && $schema.getFields().size() > 0)
+#if ($TypeConverter.isTypeOut($schema))
+#if ($schema.getFields().size() > 0)
         record->serialize = ${prefix}_${record_name}_serialize;
         record->get_size = ${prefix}_${record_name}_get_size;
+#else
+        record->serialize = kaa_null_serialize;
+        record->get_size = kaa_null_get_size;
+#end
 #end
 #if ($is_destructor_needed)
         record->destroy = ${prefix}_${record_name}_destroy;

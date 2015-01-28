@@ -88,8 +88,8 @@ void test_profile_update()
     KAA_TRACE_IN(logger);
 
     kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
-    profile1->profile_body = kaa_string_copy_create("dummy", kaa_data_destroy);
-    kaa_error_t error = kaa_profile_update_profile(profile_manager, profile1);
+    profile1->profile_body = kaa_string_copy_create("dummy");
+    kaa_error_t error = kaa_profile_manager_update_profile(profile_manager, profile1);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
 
     bool need_resync = false;
@@ -97,7 +97,7 @@ void test_profile_update()
     ASSERT_EQUAL(error, KAA_ERR_NONE);
     ASSERT_TRUE(need_resync);
 
-    error = kaa_profile_update_profile(profile_manager, profile1);
+    error = kaa_profile_manager_update_profile(profile_manager, profile1);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
 
     error = kaa_profile_need_profile_resync(profile_manager, &need_resync);
@@ -107,8 +107,8 @@ void test_profile_update()
     profile1->destroy(profile1);
 
     kaa_profile_t *profile2 = kaa_profile_basic_endpoint_profile_test_create();
-    profile2->profile_body = kaa_string_copy_create("new_dummy", kaa_data_destroy);
-    error = kaa_profile_update_profile(profile_manager, profile2);
+    profile2->profile_body = kaa_string_copy_create("new_dummy");
+    error = kaa_profile_manager_update_profile(profile_manager, profile2);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
 
     error = kaa_profile_need_profile_resync(profile_manager, &need_resync);
@@ -124,7 +124,7 @@ void test_profile_sync_get_size()
 
     kaa_error_t error_code = KAA_ERR_NONE;
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
-    profile->profile_body = kaa_string_copy_create("dummy", kaa_data_destroy);
+    profile->profile_body = kaa_string_copy_create("dummy");
 
     size_t serialized_profile_size = profile->get_size(profile);
     char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
@@ -154,18 +154,16 @@ void test_profile_sync_get_size()
 
     size_t profile_sync_size = 0;
 
-    error_code = kaa_profile_update_profile(profile_manager, profile);
+    error_code = kaa_profile_manager_update_profile(profile_manager, profile);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_set_endpoint_registered(status, true);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    status->is_registered = true;
 
     error_code = kaa_profile_request_get_size(profile_manager, &profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_EQUAL(expected_size, profile_sync_size);
 
-    error_code = kaa_set_endpoint_registered(status, false);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    status->is_registered = false;
 
     expected_size += sizeof(uint32_t)
                    + TEST_PUB_KEY_SIZE;
@@ -175,7 +173,7 @@ void test_profile_sync_get_size()
     ASSERT_EQUAL(expected_size, profile_sync_size);
 
     const char *access_token = "access token";
-    error_code = kaa_status_set_endpoint_access_token(status, access_token);
+    error_code = kaa_profile_manager_set_endpoint_access_token(profile_manager, access_token);
 
     expected_size += sizeof(uint32_t)
                    + strlen(access_token);
@@ -200,18 +198,17 @@ void test_profile_sync_serialize()
     const char *access_token = "access token";
     const size_t access_token_size = strlen(access_token);
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
-    profile->profile_body = kaa_string_copy_create("dummy", kaa_data_destroy);
+    profile->profile_body = kaa_string_copy_create("dummy");
     size_t serialized_profile_size = profile->get_size(profile);
     char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
     avro_writer_t avro_writer = avro_writer_memory(serialized_profile, serialized_profile_size);
 
     profile->serialize(avro_writer, profile);
 
-    error_code = kaa_profile_update_profile(profile_manager, profile);
+    error_code = kaa_profile_manager_update_profile(profile_manager, profile);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    error_code = kaa_set_endpoint_registered(status, false);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    error_code = kaa_status_set_endpoint_access_token(status, access_token);
+    status->is_registered = false;
+    error_code = kaa_profile_manager_set_endpoint_access_token(profile_manager, access_token);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t profile_sync_size;

@@ -84,9 +84,21 @@ typedef struct {
     char        *connection_data;
 } kaa_access_point_t;
 
+/*
+ * Endpoint ID
+ */
+#define KAA_ENDPOINT_ID_LENGTH 20
+typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
+typedef const uint8_t* kaa_endpoint_id_p;
 
 
+/*
+ * SHA1 hash
+ */
 #define SHA_1_DIGEST_LENGTH    20
+typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
+typedef unsigned char* kaa_digest_p;
+
 
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
 typedef const unsigned char* kaa_digest_p;
@@ -96,6 +108,7 @@ typedef const unsigned char* kaa_digest_p;
  */
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
+kaa_error_t kaa_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src);
 
 
 #ifdef __cplusplus

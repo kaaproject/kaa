@@ -160,12 +160,8 @@ kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
 
     self->attachment_listeners = *listeners;
 
-    if (listeners->on_response_callback) {
-        bool is_attached = false;
-        if (kaa_is_endpoint_attached_to_user(self->status, &is_attached))
-            return KAA_ERR_BAD_STATE;
-        (*listeners->on_response_callback)(is_attached);
-    }
+    if (listeners->on_response_callback)
+        (listeners->on_response_callback)(listeners->context, self->status->is_attached);
     return KAA_ERR_NONE;
 }
 
@@ -248,10 +244,9 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
                 self->is_waiting_user_attach_response = false;
                 if (result == USER_RESULT_SUCCESS) {
                     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
-                    if (kaa_set_endpoint_attached_to_user(self->status, true))
-                        return KAA_ERR_BAD_STATE;
+                    self->status->is_attached = true;
                     if (self->attachment_listeners.on_response_callback)
-                        (*self->attachment_listeners.on_response_callback)(true);
+                        (self->attachment_listeners.on_response_callback)(self->attachment_listeners.context, true);
                 } else {
                     KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_STATE, "Failed to attach endpoint to user");
                 }
@@ -280,10 +275,10 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
                 access_token[access_token_length] = '\0';
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
-                if (kaa_set_endpoint_attached_to_user(self->status, true))
-                    return KAA_ERR_BAD_STATE;
+                self->status->is_attached = true;
+
                 if (self->attachment_listeners.on_attached_callback)
-                    (*self->attachment_listeners.on_attached_callback)(external_id, access_token);
+                    (self->attachment_listeners.on_attached_callback)(self->attachment_listeners.context, external_id, access_token);
                 break;
             }
             case USER_DETACH_NOTIFICATION_FIELD: {
@@ -299,10 +294,10 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
                 access_token[access_token_length] = '\0';
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
-                if (kaa_set_endpoint_attached_to_user(self->status, false))
-                    return KAA_ERR_BAD_STATE;
+                self->status->is_attached = false;
+
                 if (self->attachment_listeners.on_detached_callback)
-                    (*self->attachment_listeners.on_detached_callback)(access_token);
+                    (self->attachment_listeners.on_detached_callback)(self->attachment_listeners.context, access_token);
                 break;
             }
             default:
