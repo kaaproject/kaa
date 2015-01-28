@@ -450,8 +450,6 @@ public class TestDynamicLoadManagerIT {
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl());
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap());
 
-        assertEquals(1, bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
-
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200"));
 
         assertEquals(DEFAULT_PRIORITY, bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200")
