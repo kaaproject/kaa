@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS kaa.ep_nfs (
     body blob,
     expired_at timestamp,
     topic_id text,
-    PRIMARY KEY (ep_key_hash, seq_num)
-) WITH CLUSTERING ORDER BY (seq_num DESC);
+    PRIMARY KEY (ep_key_hash, last_mod_time)
+) WITH CLUSTERING ORDER BY (last_mod_time DESC);
 
 CREATE TABLE IF NOT EXISTS kaa.notification (
     topic_id text,

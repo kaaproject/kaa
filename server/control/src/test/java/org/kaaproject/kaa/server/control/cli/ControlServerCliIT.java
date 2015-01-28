@@ -574,6 +574,7 @@ public class ControlServerCliIT {
      * @throws TException             the t exception
      * @throws UnsupportedEncodingException the unsupported encoding exception
      */
+    @Ignore
     @Test
     public void testExecuteNotificationSchemaCommandFromCli() throws TException, UnsupportedEncodingException {
         controlClientConnect();

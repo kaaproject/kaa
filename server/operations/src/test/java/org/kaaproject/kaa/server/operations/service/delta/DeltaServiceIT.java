@@ -68,6 +68,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -228,6 +229,7 @@ public class DeltaServiceIT {
         egs.setProfileFilterId(pfAllId);
 
         endpointProfile = new EndpointProfileDto();
+        endpointProfile.setEndpointKeyHash(UUID.randomUUID().toString().getBytes());
         endpointProfile.setProfile(PROFILE_JSON);
         endpointProfile.setProfileHash(EndpointObjectHash.fromSHA1(PROFILE_BYTES).getData());
         endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());

@@ -34,14 +34,16 @@
             http://www.springframework.org/schema/util
             http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <util:properties id="cassandra_properties" location="classpath:cassandra-client-test.properties" />
-    <context:component-scan base-package="org.kaaproject.kaa.server.common.dao.cassandra" />
-    <context:annotation-config />
+    <util:properties id="cassandra_properties" location="classpath:cassandra-client-test.properties"/>
+    <context:component-scan base-package="org.kaaproject.kaa.server.common.nosql.cassandra.dao"/>
+    <context:annotation-config/>
 
-    <bean id="unicastNotificationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointNotificationCassandraDao" />
-    <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointConfigurationCassandraDao"/>
-    <bean id="endpointProfileDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointProfileCassandraDao"/>
-    <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.dao.cassandra.EndpointUserCassandraDao"/>
-    <bean id="notificationDao" class="org.kaaproject.kaa.server.common.dao.cassandra.NotificationCassandraDao"/>
+    <bean id="unicastNotificationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointNotificationCassandraDao"/>
+    <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointConfigurationCassandraDao"/>
+    <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointUserCassandraDao"/>
+    <bean id="endpointProfileDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointProfileCassandraDao">
+        <property name="endpointUserDao" ref="endpointUserDao"/>
+    </bean>
+    <bean id="notificationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.NotificationCassandraDao"/>
 
 </beans>

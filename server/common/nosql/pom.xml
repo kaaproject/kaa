@@ -63,18 +63,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.cassandraunit</groupId>
-                <artifactId>cassandra-unit-spring</artifactId>
-                <version>${cassandra-unit-spring.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <!--<dependency>-->
-                <!--<groupId>org.apache.cassandra</groupId>-->
-                <!--<artifactId>cassandra-all</artifactId>-->
-                <!--<version>${cassandra-all.version}</version>-->
-                <!--<scope>test</scope>-->
-            <!--</dependency>-->
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
