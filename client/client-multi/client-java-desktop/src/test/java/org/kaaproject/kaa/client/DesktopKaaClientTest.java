@@ -17,15 +17,11 @@
 package org.kaaproject.kaa.client;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
 import org.mockito.Mockito;
 
 public class DesktopKaaClientTest {
@@ -44,11 +40,6 @@ public class DesktopKaaClientTest {
 
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         DesktopKaaClient clientSpy = Mockito.spy(new DesktopKaaClient());
-
-        OperationsServerList opsList = new OperationsServerList();
-
-        List<OperationsServer> opsListBody = new ArrayList<>();
-        opsList.setOperationsServerArray(opsListBody);
 
         clientSpy.init();
 
@@ -83,11 +74,6 @@ public class DesktopKaaClientTest {
 
         DesktopKaaClient clientSpy = Mockito.spy(new DesktopKaaClient());
         ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
-
-        OperationsServerList opsList = new OperationsServerList();
-
-        List<OperationsServer> opsListBody = new ArrayList<>();
-        opsList.setOperationsServerArray(opsListBody);
 
         clientSpy.init();
 

@@ -28,7 +28,6 @@ import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.mockito.Mockito;
 
@@ -40,8 +39,7 @@ public class DefaultBootstrapChannelTest {
 
         private final int wantedNumberOfInvocations;
 
-        public DefaultBootstrapChannelFake(AbstractKaaClient client,
-                KaaClientState state, int wantedNumberOfInvocations) {
+        public DefaultBootstrapChannelFake(AbstractKaaClient client, KaaClientState state, int wantedNumberOfInvocations) {
             super(client, state);
             this.wantedNumberOfInvocations = wantedNumberOfInvocations;
         }
@@ -54,7 +52,8 @@ public class DefaultBootstrapChannelTest {
 
         public void verify() throws Exception {
             Mockito.verify(getMultiplexer(), Mockito.times(wantedNumberOfInvocations)).compileRequest(Mockito.anyMap());
-            Mockito.verify(getDemultiplexer(), Mockito.times(wantedNumberOfInvocations)).processResponse(Mockito.eq(new byte[] { 5, 5, 5 }));
+            Mockito.verify(getDemultiplexer(), Mockito.times(wantedNumberOfInvocations))
+                    .processResponse(Mockito.eq(new byte[] { 5, 5, 5 }));
         }
     }
 
@@ -65,7 +64,7 @@ public class DefaultBootstrapChannelTest {
         KaaDataChannel channel = new DefaultBootstrapChannel(client, state);
 
         Assert.assertEquals(ChannelDirection.BIDIRECTIONAL, channel.getSupportedTransportTypes().get(TransportType.BOOTSTRAP));
-        Assert.assertEquals(ChannelType.HTTP, channel.getType());
+        Assert.assertEquals(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, channel.getTransportProtocolId());
         Assert.assertEquals("default_bootstrap_channel", channel.getId());
     }
 
@@ -73,16 +72,12 @@ public class DefaultBootstrapChannelTest {
     public void testChannelSync() throws Exception {
         KaaChannelManager manager = Mockito.mock(KaaChannelManager.class);
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
-        Mockito.when(
-                httpClient.executeHttpRequest(Mockito.anyString(),
-                        Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenReturn(
-                new byte[] { 5, 5, 5 });
+        Mockito.when(httpClient.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean()))
+                .thenReturn(new byte[] { 5, 5, 5 });
 
         AbstractKaaClient client = Mockito.mock(AbstractKaaClient.class);
         Mockito.when(
-                client.createHttpClient(Mockito.anyString(),
-                        Mockito.any(PrivateKey.class),
-                        Mockito.any(PublicKey.class),
+                client.createHttpClient(Mockito.anyString(), Mockito.any(PrivateKey.class), Mockito.any(PublicKey.class),
                         Mockito.any(PublicKey.class))).thenReturn(httpClient);
 
         Mockito.when(client.getChannelMananager()).thenReturn(manager);
@@ -92,8 +87,8 @@ public class DefaultBootstrapChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, 2);
 
-        ServerInfo server = new HttpServerInfo(ServerType.BOOTSTRAP
-                , "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
+                "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.setServer(server);
 
@@ -115,15 +110,12 @@ public class DefaultBootstrapChannelTest {
     public void testServerFailed() throws Exception {
         KaaChannelManager manager = Mockito.mock(KaaChannelManager.class);
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
-        Mockito.when(
-                httpClient.executeHttpRequest(Mockito.anyString(),
-                        Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(new Exception());
+        Mockito.when(httpClient.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(
+                new Exception());
 
         AbstractKaaClient client = Mockito.mock(AbstractKaaClient.class);
         Mockito.when(
-                client.createHttpClient(Mockito.anyString(),
-                        Mockito.any(PrivateKey.class),
-                        Mockito.any(PublicKey.class),
+                client.createHttpClient(Mockito.anyString(), Mockito.any(PrivateKey.class), Mockito.any(PublicKey.class),
                         Mockito.any(PublicKey.class))).thenReturn(httpClient);
 
         Mockito.when(client.getChannelMananager()).thenReturn(manager);
@@ -133,8 +125,8 @@ public class DefaultBootstrapChannelTest {
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, 1);
 
-        ServerInfo server = new HttpServerInfo(ServerType.BOOTSTRAP
-                , "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
+                "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
         channel.sync(TransportType.BOOTSTRAP);
         channel.setDemultiplexer(demultiplexer);
@@ -146,22 +138,19 @@ public class DefaultBootstrapChannelTest {
 
         channel.setServer(server);
 
-        Mockito.verify(manager, Mockito.times(1)).onServerFailed(server);
+        Mockito.verify(manager, Mockito.times(1)).onServerFailed(Mockito.any(TransportConnectionInfo.class));
     }
 
     @Test
     public void testShutdown() throws Exception {
         KaaChannelManager manager = Mockito.mock(KaaChannelManager.class);
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
-        Mockito.when(
-                httpClient.executeHttpRequest(Mockito.anyString(),
-                        Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(new Exception());
+        Mockito.when(httpClient.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(
+                new Exception());
 
         AbstractKaaClient client = Mockito.mock(AbstractKaaClient.class);
         Mockito.when(
-                client.createHttpClient(Mockito.anyString(),
-                        Mockito.any(PrivateKey.class),
-                        Mockito.any(PublicKey.class),
+                client.createHttpClient(Mockito.anyString(), Mockito.any(PrivateKey.class), Mockito.any(PublicKey.class),
                         Mockito.any(PublicKey.class))).thenReturn(httpClient);
 
         Mockito.when(client.getChannelMananager()).thenReturn(manager);
@@ -174,8 +163,8 @@ public class DefaultBootstrapChannelTest {
         channel.setMultiplexer(multiplexer);
         channel.shutdown();
 
-        ServerInfo server = new HttpServerInfo(ServerType.BOOTSTRAP
-                , "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+        TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
+                "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
         channel.sync(TransportType.BOOTSTRAP);

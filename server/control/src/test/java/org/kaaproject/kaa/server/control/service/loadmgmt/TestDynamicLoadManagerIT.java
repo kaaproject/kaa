@@ -15,8 +15,8 @@
  */
 package org.kaaproject.kaa.server.control.service.loadmgmt;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -24,8 +24,6 @@ import static org.mockito.Mockito.when;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -44,35 +42,26 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
-import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
-import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * DynamicLoadManager Integration test, emulates new Bootstrap node adding.
+ * 
  * @author Andrey Panasenko
  *
  */
 public class TestDynamicLoadManagerIT {
-    /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(TestDynamicLoadManagerIT.class);
+    private static final int DEFAULT_PRIORITY = 10;
 
+    /** The Constant logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(TestDynamicLoadManagerIT.class);
 
     /** Thrift host for Bootstrap test service */
     private static final String thriftHost = "localhost";
@@ -80,11 +69,10 @@ public class TestDynamicLoadManagerIT {
     /** Thrift port for Bootstrap test service */
     private static final int thriftPort = 9819;
 
-
     /** Thread executor */
     private static ExecutorService executor = null;
 
-    /** Bootstrap thrift test service runner*/
+    /** Bootstrap thrift test service runner */
     private ThriftRunner bootstrapThrift;
 
     private static LoadDistributionService ldServiceMock;
@@ -117,28 +105,30 @@ public class TestDynamicLoadManagerIT {
             bootstrapThriftService = new BootstrapThriftServiceImpl();
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.lang.Runnable#run()
          */
         @Override
         public void run() {
             LOG.info("Initializing Thrift Service for Bootstrap Server....");
-            LOG.info("thrift host: {}",thriftHost);
-            LOG.info("thrift port: {}",thriftPort);
+            LOG.info("thrift host: {}", thriftHost);
+            LOG.info("thrift port: {}", thriftPort);
             try {
-                BootstrapThriftService.Processor<BootstrapThriftService.Iface> processor
-                        = new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(bootstrapThriftService);
+                BootstrapThriftService.Processor<BootstrapThriftService.Iface> processor = new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(
+                        bootstrapThriftService);
                 TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(thriftHost, thriftPort));
                 server = new TThreadPoolServer(new Args(serverTransport).processor(processor));
 
-                LOG.info("Bootstrap test Server {}:{} Started.",thriftHost,thriftPort);
+                LOG.info("Bootstrap test Server {}:{} Started.", thriftHost, thriftPort);
                 synchronized (startSync) {
                     startComplete = true;
                     startSync.notify();
                 }
                 server.serve();
 
-                LOG.info("Bootstrap test Server {}:{} Stopped.",thriftHost,thriftPort);
+                LOG.info("Bootstrap test Server {}:{} Stopped.", thriftHost, thriftPort);
             } catch (TTransportException e) {
                 LOG.error("TTransportException", e);
             } finally {
@@ -151,7 +141,7 @@ public class TestDynamicLoadManagerIT {
         }
 
         public void waitStart() {
-            LOG.info("Bootstrap test Server {}:{} waitStart()",thriftHost,thriftPort);
+            LOG.info("Bootstrap test Server {}:{} waitStart()", thriftHost, thriftPort);
             synchronized (startSync) {
                 if (!startComplete) {
                     try {
@@ -167,9 +157,9 @@ public class TestDynamicLoadManagerIT {
                 LOG.error("Interupted ThiftRunner startWait() in sleep", e);
             }
         }
-        
+
         public void shutdown() {
-            LOG.info("Bootstrap test Server {}:{} shutdown()",thriftHost,thriftPort);
+            LOG.info("Bootstrap test Server {}:{} shutdown()", thriftHost, thriftPort);
             server.stop();
             synchronized (stopSync) {
                 if (!stopComplete) {
@@ -189,6 +179,7 @@ public class TestDynamicLoadManagerIT {
 
     /**
      * Initialize mock objects and necessary test services
+     * 
      * @throws Exception
      */
     @BeforeClass
@@ -198,13 +189,15 @@ public class TestDynamicLoadManagerIT {
         zkServiceMock = mock(ControlZkService.class);
         pNodeMock = mock(ControlNode.class);
         when(ldServiceMock.getOpsServerHistoryTTL()).thenReturn(300);
-        when(ldServiceMock.getDynamicMgmtClass()).thenReturn("org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.DefaultRebalancer");
+        when(ldServiceMock.getDynamicMgmtClass()).thenReturn(
+                "org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.DefaultRebalancer");
         when(ldServiceMock.getZkService()).thenReturn(zkServiceMock);
         when(zkServiceMock.getControlZKNode()).thenReturn(pNodeMock);
     }
 
     /**
      * Stops services.
+     * 
      * @throws Exception
      */
     @AfterClass
@@ -215,6 +208,7 @@ public class TestDynamicLoadManagerIT {
 
     /**
      * Start Bootstrap thrift service
+     * 
      * @throws Exception
      */
     @Before
@@ -226,6 +220,7 @@ public class TestDynamicLoadManagerIT {
 
     /**
      * Stop bootstrap hrift service
+     * 
      * @throws Exception
      */
     @After
@@ -239,14 +234,11 @@ public class TestDynamicLoadManagerIT {
     @Test
     public void bootstrapNodeAddTest() {
         LOG.info("bootstrapNodeAddTest started");
-        
+
         DynamicLoadManager dm = getDynamicLoadManager();
 
-        ConnectionInfo bsConnectionInfo = new ConnectionInfo(
-                thriftHost,
-                thriftPort,
-                ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo , "localhost", 9897, 0);
+        ConnectionInfo bsConnectionInfo = new ConnectionInfo(thriftHost, thriftPort, ByteBuffer.wrap("Just array".getBytes()));
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo);
         dm.onNodeAdded(bsNode);
 
         checkBSNode();
@@ -260,12 +252,8 @@ public class TestDynamicLoadManagerIT {
         LOG.info("BootstrapNodeUpdateTest started");
         DynamicLoadManager dm = getDynamicLoadManager();
 
-
-        ConnectionInfo bsErrConnectionInfo = new ConnectionInfo(
-                thriftHost,
-                thriftPort+1,
-                ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsErrNode = getBootstrapNodeInfo(bsErrConnectionInfo ,"localhost", 9898, 0);
+        ConnectionInfo bsErrConnectionInfo = new ConnectionInfo(thriftHost, thriftPort + 1, ByteBuffer.wrap("Just array".getBytes()));
+        BootstrapNodeInfo bsErrNode = getBootstrapNodeInfo(bsErrConnectionInfo);
 
         dm.onNodeAdded(bsErrNode);
 
@@ -275,11 +263,8 @@ public class TestDynamicLoadManagerIT {
             fail(e.toString());
         }
 
-        ConnectionInfo bsConnectionInfo = new ConnectionInfo(
-                thriftHost,
-                thriftPort,
-                ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
+        ConnectionInfo bsConnectionInfo = new ConnectionInfo(thriftHost, thriftPort, ByteBuffer.wrap("Just array".getBytes()));
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo);
 
         dm.onNodeUpdated(bsNode);
 
@@ -297,20 +282,13 @@ public class TestDynamicLoadManagerIT {
         LOG.info("BootstrapNodeUpdateTest started");
         DynamicLoadManager dm = getDynamicLoadManager();
 
-
-        ConnectionInfo bsErrConnectionInfo = new ConnectionInfo(
-                thriftHost,
-                thriftPort+1,
-                ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsErrNode = getBootstrapNodeInfo(bsErrConnectionInfo ,"localhost", 9897, 0);
+        ConnectionInfo bsErrConnectionInfo = new ConnectionInfo(thriftHost, thriftPort + 1, ByteBuffer.wrap("Just array".getBytes()));
+        BootstrapNodeInfo bsErrNode = getBootstrapNodeInfo(bsErrConnectionInfo);
 
         dm.onNodeAdded(bsErrNode);
 
-        ConnectionInfo bsConnectionInfo = new ConnectionInfo(
-                thriftHost,
-                thriftPort,
-                ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo , "localhost", 9898, 0);
+        ConnectionInfo bsConnectionInfo = new ConnectionInfo(thriftHost, thriftPort, ByteBuffer.wrap("Just array".getBytes()));
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo);
 
         dm.onNodeAdded(bsNode);
 
@@ -328,52 +306,43 @@ public class TestDynamicLoadManagerIT {
     }
 
     /**
-     * Test Operations Node Update
-     * Update with two phases,
-     *  one with same ConnectionInfo DNS Name,
-     *  second with changed ConnectionInfo DNS Name
+     * Test Operations Node Update Update with two phases, one with same
+     * ConnectionInfo DNS Name, second with changed ConnectionInfo DNS Name
      */
     @Test
     public void operationsNodeUpdateTest() {
         LOG.info("BootstrapNodeUpdateTest started");
-        
+
         DynamicLoadManager dm = getDynamicLoadManager();
 
-        OperationsNodeInfo nodeInfo = generateOperationsNodeInfo("localhost",1200,9898,ByteBuffer.wrap("Just array modified".getBytes()));
+        OperationsNodeInfo nodeInfo = generateOperationsNodeInfo("localhost", 1200, 9898, ByteBuffer.wrap("Just array modified".getBytes()), 1);
 
         dm.onNodeUpdated(nodeInfo);
         LOG.info("BootstrapNodeTest Operations Node {} updated.", nodeInfo.toString());
 
-
-        OperationsNodeInfo nodeInfo2 = generateOperationsNodeInfo("localhost",1201,9899,ByteBuffer.wrap("Just array modified".getBytes()));
+        OperationsNodeInfo nodeInfo2 = generateOperationsNodeInfo("localhost", 1201, 9899,
+                ByteBuffer.wrap("Just array modified".getBytes()), 1);
 
         dm.onNodeUpdated(nodeInfo2);
         LOG.info("BootstrapNodeTest Operations Node {} updated.", nodeInfo.toString());
 
-        ConnectionInfo bsConnectionInfo = new ConnectionInfo(
-                thriftHost,
-                thriftPort,
-                ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
+        ConnectionInfo bsConnectionInfo = new ConnectionInfo(thriftHost, thriftPort, ByteBuffer.wrap("Just array".getBytes()));
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo);
 
         dm.onNodeAdded(bsNode);
 
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl());
-        assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap() );
+        assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap());
 
-        assertEquals(2,bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
+        assertEquals(2, bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
 
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200"));
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1201"));
 
-        assertEquals((long)10,(long)bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200").getPriority());
-        assertEquals((long)10,(long)bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1201").getPriority());
-
-        byte[] pk = bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200").getPublicKey().array();
-        assertEquals("Just array modified".getBytes().length,pk.length);
-        for (int i = 0; i < pk.length; i++) {
-            assertEquals("Just array modified".getBytes()[i],pk[i]);
-        }
+        assertEquals((long) 10, (long) bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200")
+                .getPriority());
+        assertEquals((long) 10, (long) bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1201")
+                .getPriority());
     }
 
     /**
@@ -383,21 +352,17 @@ public class TestDynamicLoadManagerIT {
     public void operationsNodeRemoveTest() {
         LOG.info("BootstrapNodeRemoveTest started");
         bootstrapThrift.getBootstrapThriftServiceImpl().reset();
-        
+
         DynamicLoadManager dm = getDynamicLoadManager();
 
-        ConnectionInfo bsConnectionInfo = new ConnectionInfo(
-                thriftHost,
-                thriftPort,
-                ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
+        ConnectionInfo bsConnectionInfo = new ConnectionInfo(thriftHost, thriftPort, ByteBuffer.wrap("Just array".getBytes()));
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo);
 
         dm.onNodeAdded(bsNode);
 
         checkBSNode();
 
-        
-        OperationsNodeInfo nodeInfo = generateOperationsNodeInfo("localhost",1201,9899,ByteBuffer.wrap("Just".getBytes()));
+        OperationsNodeInfo nodeInfo = generateOperationsNodeInfo("localhost", 1201, 9899, ByteBuffer.wrap("Just".getBytes()), 1);
 
         bootstrapThrift.getBootstrapThriftServiceImpl().reset();
 
@@ -405,7 +370,7 @@ public class TestDynamicLoadManagerIT {
 
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap());
 
-        assertEquals(2,bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
+        assertEquals(2, bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
 
         bootstrapThrift.getBootstrapThriftServiceImpl().reset();
 
@@ -421,37 +386,33 @@ public class TestDynamicLoadManagerIT {
         DynamicLoadManager dm = getDynamicLoadManager();
         long timeStarted = System.currentTimeMillis();
 
-        OperationsNodeInfo nodeInfo1 = getUpdatedOperationsNode(9898,10,timeStarted);
-        OperationsNodeInfo nodeInfo2 = getUpdatedOperationsNode(9899,0,timeStarted);
+        OperationsNodeInfo nodeInfo1 = getUpdatedOperationsNode(9898, 10, timeStarted);
+        OperationsNodeInfo nodeInfo2 = getUpdatedOperationsNode(9899, 0, timeStarted);
         LOG.info("BootstrapNodeTest Operations Node {} updated. 1", nodeInfo1.toString());
         dm.onNodeUpdated(nodeInfo1);
         dm.onNodeUpdated(nodeInfo2);
 
-        nodeInfo1 = getUpdatedOperationsNode(9898,30,timeStarted+300000);
-        nodeInfo2 = getUpdatedOperationsNode(9899,0,timeStarted+300000);
+        nodeInfo1 = getUpdatedOperationsNode(9898, 30, timeStarted + 300000);
+        nodeInfo2 = getUpdatedOperationsNode(9899, 0, timeStarted + 300000);
         LOG.info("BootstrapNodeTest Operations Node {} updated. 2", nodeInfo1.toString());
         dm.onNodeUpdated(nodeInfo1);
         dm.onNodeUpdated(nodeInfo2);
 
-        nodeInfo1 = getUpdatedOperationsNode(9898,55,timeStarted+600000);
-        nodeInfo2 = getUpdatedOperationsNode(9899,0,timeStarted+600000);
+        nodeInfo1 = getUpdatedOperationsNode(9898, 55, timeStarted + 600000);
+        nodeInfo2 = getUpdatedOperationsNode(9899, 0, timeStarted + 600000);
         LOG.info("BootstrapNodeTest Operations Node {} updated. 3", nodeInfo1.toString());
         dm.onNodeUpdated(nodeInfo1);
         dm.onNodeUpdated(nodeInfo2);
 
-        ConnectionInfo bsConnectionInfo = new ConnectionInfo(
-                thriftHost,
-                thriftPort,
-                ByteBuffer.wrap("Just array".getBytes()));
-        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo ,"localhost", 9898, 0);
+        ConnectionInfo bsConnectionInfo = new ConnectionInfo(thriftHost, thriftPort, ByteBuffer.wrap("Just array".getBytes()));
+        BootstrapNodeInfo bsNode = getBootstrapNodeInfo(bsConnectionInfo);
 
         dm.onNodeAdded(bsNode);
 
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl());
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap());
 
-        assertEquals(2,bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
-
+        assertEquals(2, bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
 
         bootstrapThrift.getBootstrapThriftServiceImpl().reset();
 
@@ -464,14 +425,11 @@ public class TestDynamicLoadManagerIT {
         }
     }
 
-
     private OperationsNodeInfo getUpdatedOperationsNode(int httpPort, int processRequestCount, long timeStart) {
-        Long timeStarted = new Long(timeStart);
-        Integer deltaCalculationCount = new Integer(0);
-        Integer registeredUsersCount = new Integer(0);
         Integer processedRequestCount = new Integer(processRequestCount);
 
-        OperationsNodeInfo nodeInfo = generateOperationsNodeInfo("localhost",1200,httpPort,ByteBuffer.wrap("Just array".getBytes()));
+        OperationsNodeInfo nodeInfo = generateOperationsNodeInfo("localhost", 1200, httpPort, ByteBuffer.wrap("Just array".getBytes()),
+                processedRequestCount);
 
         return nodeInfo;
     }
@@ -479,12 +437,10 @@ public class TestDynamicLoadManagerIT {
     private DynamicLoadManager getDynamicLoadManager() {
         DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
         assertNotNull(dm);
-        Long timeStarted = new Long(0);
-        Integer deltaCalculationCount = new Integer(0);
-        Integer registeredUsersCount = new Integer(0);
         Integer processedRequestCount = new Integer(0);
 
-        OperationsNodeInfo nodeInfo = generateOperationsNodeInfo("localhost",1200,9898,ByteBuffer.wrap("Just array".getBytes()));
+        OperationsNodeInfo nodeInfo = generateOperationsNodeInfo("localhost", 1200, 9898, ByteBuffer.wrap("Just array".getBytes()),
+                processedRequestCount);
         dm.onNodeAdded(nodeInfo);
         LOG.info("BootstrapNodeTest Operations Node {} added.", nodeInfo.toString());
         return dm;
@@ -494,71 +450,25 @@ public class TestDynamicLoadManagerIT {
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl());
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap());
 
-        assertEquals(1,bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
+        assertEquals(1, bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().size());
 
         assertNotNull(bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200"));
 
-
-        assertEquals((long)10,(long)bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200").getPriority());
-        byte[] pk = bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200").getPublicKey().array();
-        assertEquals("Just array".getBytes().length,pk.length);
-        for (int i = 0; i < pk.length; i++) {
-            assertEquals("Just array".getBytes()[i],pk[i]);
-        }
+        assertEquals(DEFAULT_PRIORITY, bootstrapThrift.getBootstrapThriftServiceImpl().getOperatonsServerMap().get("localhost:1200")
+                .getPriority());
     }
 
-    private OperationsNodeInfo generateOperationsNodeInfo(String thriftHost, int thriftPort, int httpPort, ByteBuffer publicKey) {
+    private OperationsNodeInfo generateOperationsNodeInfo(String thriftHost, int thriftPort, int httpPort, ByteBuffer publicKey,
+            int loadInfo) {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         nodeInfo.setTimeStarted(System.currentTimeMillis());
-        List<SupportedChannel> supportedChannels = new ArrayList<>();
-        ZkHttpComunicationParameters httpCommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters("localhost", httpPort));
-        BaseStatistics statistics = new BaseStatistics(0, 0, 0, System.currentTimeMillis());
-        ZkHttpStatistics httpChannelStatistics = new ZkHttpStatistics(statistics );
-        SupportedChannel channelHttp = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.HTTP, true, httpCommunicationParameters, httpChannelStatistics));
-        supportedChannels.add(channelHttp);
-        
-        ZkHttpLpComunicationParameters httpLpCommunicationParameters = new ZkHttpLpComunicationParameters(new IpComunicationParameters("localhost", httpPort+1));
-        ZkHttpLpStatistics httpLpChannelStatistics = new ZkHttpLpStatistics(statistics );
-        SupportedChannel channelHttpLp = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.HTTP_LP, true, httpLpCommunicationParameters, httpLpChannelStatistics));
-        supportedChannels.add(channelHttpLp);
-        
-        ZkKaaTcpComunicationParameters kaaCommunicationParameters = new ZkKaaTcpComunicationParameters(new IpComunicationParameters("localhost", httpPort+2));
-        ZkKaaTcpStatistics kaaChannelStatistics = new ZkKaaTcpStatistics(statistics );
-        SupportedChannel channelKaa = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.KAATCP, true, kaaCommunicationParameters, kaaChannelStatistics));
-        supportedChannels.add(channelKaa);
-        
-        nodeInfo.setSupportedChannelsArray(supportedChannels );
+        nodeInfo.setTransports(new ArrayList<TransportMetaData>());
+        nodeInfo.setLoadInfo(new LoadInfo(loadInfo));
         nodeInfo.setConnectionInfo(new ConnectionInfo(thriftHost, thriftPort, publicKey));
         return nodeInfo;
     }
-    
-    private BootstrapNodeInfo getBootstrapNodeInfo(ConnectionInfo bsConnectionInfo, String host, int port, int stat) {
-        List<BootstrapSupportedChannel> chList = new LinkedList<>();
-        ZkHttpComunicationParameters CommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(host, port));
-        ZkHttpStatistics ChannelStatistics = new ZkHttpStatistics(new BaseStatistics(
-                Integer.valueOf(0), 
-                Integer.valueOf(0), 
-                Integer.valueOf(0), 
-                Long.valueOf(0)));
-        chList.add(new BootstrapSupportedChannel(new ZkSupportedChannel(
-                ZkChannelType.HTTP, 
-                true, 
-                CommunicationParameters, 
-                ChannelStatistics)));
-        
-        ZkKaaTcpComunicationParameters kaaCommunicationParameters = new ZkKaaTcpComunicationParameters(new IpComunicationParameters(host, port+1));
-        ZkKaaTcpStatistics kaaChannelStatistics = new ZkKaaTcpStatistics(new BaseStatistics(
-                Integer.valueOf(0), 
-                Integer.valueOf(0), 
-                Integer.valueOf(0), 
-                Long.valueOf(0)));
-        chList.add(new BootstrapSupportedChannel(new ZkSupportedChannel(
-                ZkChannelType.KAATCP, 
-                true, 
-                kaaCommunicationParameters, 
-                kaaChannelStatistics)));
-        
-        return new BootstrapNodeInfo(bsConnectionInfo, chList );
+
+    private BootstrapNodeInfo getBootstrapNodeInfo(ConnectionInfo bsConnectionInfo) {
+        return new BootstrapNodeInfo(bsConnectionInfo, new ArrayList<TransportMetaData>());
     }
 }
-

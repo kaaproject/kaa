@@ -19,13 +19,10 @@ package org.kaaproject.kaa.server.bootstrap.service.thrift;
 import java.util.List;
 
 import org.apache.thrift.TException;
-import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
 import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
-import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftCommunicationParameters;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
-import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftSupportedChannel;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +42,6 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
 
     @Autowired
     BootstrapInitializationService bootstrapInitializationService;
-
-    @Autowired
-    OperationsServerListService operationsServerListService;
 
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapThriftServiceImpl.class);
 
@@ -75,40 +69,8 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
      */
     @Override
     public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList) throws TException {
-        // TODO Auto-generated method stub
         LOG.info("Operations server list update recived: now {} servers online:", operationsServersList.size());
-        for (ThriftOperationsServer server : operationsServersList) {
-            LOG.trace("Operations Server {}", server.getName());
-            for(ThriftSupportedChannel channel: server.getSupportedChannels()) {
-                LOG.trace("SupportedChannel {}", channel.getType().toString());
-                switch (channel.getType()) { //NOSONAR
-                case HTTP:
-                    ThriftCommunicationParameters httpParams = channel.getCommunicationParams();
-                    LOG.trace("HostName: {}, port {}",
-                            httpParams.getHttpParams().getHostName(),
-                            httpParams.getHttpParams().getPort());
-                    break;
-                case HTTP_LP:
-                    ThriftCommunicationParameters httpLpParams = channel.getCommunicationParams();
-                    LOG.trace("HostName: {}, port {}",
-                            httpLpParams.getHttpLpParams().getHostName(),
-                            httpLpParams.getHttpLpParams().getPort());
-                    break;
-                case KAATCP:
-                    ThriftCommunicationParameters kaaTcpParams = channel.getCommunicationParams();
-                    LOG.trace("HostName: {}, port {}",
-                            kaaTcpParams.getKaaTcpParams().getHostName(),
-                            kaaTcpParams.getKaaTcpParams().getPort());
-                    break;
-                }
-            }
-        }
-        if (operationsServerListService != null) {
-            LOG.trace("Updating OperationsServerListService");
-            operationsServerListService.updateList(operationsServersList);
-        } else {
-            throw new TException("Bootstrap server not initialized properly, config not set");
-        }
+        //TODO: add usage of ops list priority in future releases.
     }
 
     @Override
@@ -121,6 +83,7 @@ public class BootstrapThriftServiceImpl extends BaseCliThriftService implements
                 LOG.info("Stopping Bootstrap Server Application...");
                 bootstrapInitializationService.stop();
                 ThriftExecutor.shutdown();
+                LOG.info("Stopped Bootstrap Server Application...");
             }
         };
 

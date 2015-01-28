@@ -28,34 +28,11 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
-import org.kaaproject.kaa.server.operations.pojo.Base64Util;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.Event;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventSequenceNumberResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.LogClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.LogEntry;
-import org.kaaproject.kaa.server.operations.pojo.sync.LogServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.RedirectServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachNotification;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserDetachNotification;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
@@ -77,11 +54,33 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDetachMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SyncStatistics;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.NettySessionResponseMessage;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
-import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
+import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
+import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
+import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
+import org.kaaproject.kaa.server.sync.Event;
+import org.kaaproject.kaa.server.sync.EventClientSync;
+import org.kaaproject.kaa.server.sync.EventSequenceNumberResponse;
+import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.LogClientSync;
+import org.kaaproject.kaa.server.sync.LogEntry;
+import org.kaaproject.kaa.server.sync.LogServerSync;
+import org.kaaproject.kaa.server.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.sync.RedirectServerSync;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.sync.SyncStatus;
+import org.kaaproject.kaa.server.sync.UserAttachNotification;
+import org.kaaproject.kaa.server.sync.UserAttachResponse;
+import org.kaaproject.kaa.server.sync.UserDetachNotification;
+import org.kaaproject.kaa.server.sync.UserServerSync;
+import org.kaaproject.kaa.server.transport.channel.ChannelAware;
+import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,9 +112,6 @@ public class EndpointActorMessageProcessor {
 
     /** The actor key. */
     private final String endpointKey;
-
-    /** The sync time. */
-    private long syncTime;
 
     private long lastActivityTime;
 
@@ -278,7 +274,6 @@ public class EndpointActorMessageProcessor {
                 LOG.warn("[{}][{}] Endpoint profile is not set after request processing!", endpointKey, actorKey);
             }
 
-            this.syncTime += System.currentTimeMillis() - start;
             LOG.debug("[{}][{}] SyncResponseHolder {}", endpointKey, actorKey, responseHolder);
 
             if (channelType.isAsync()) {
@@ -561,15 +556,10 @@ public class EndpointActorMessageProcessor {
             ServerSync syncResponse) {
         LOG.debug("[{}] response: {}", actorKey, syncResponse);
 
-        SyncStatistics stats = request.getCommand().getSyncStatistics();
-        if (stats != null) {
-            stats.reportSyncTime(syncTime);
-        }
-
         ServerSync copy = deepCopy(syncResponse);
         
         NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, request
-                .getCommand().getResponseBuilder(), request.getCommand().getErrorBuilder());
+                .getCommand().getMessageBuilder(), request.getCommand().getErrorBuilder());
 
         tellActor(context, request.getOriginator(), response);
         scheduleActorTimeout(context);
@@ -655,7 +645,7 @@ public class EndpointActorMessageProcessor {
         if (source == null) {
             return null;
         }
-        return new RedirectServerSync(source.getDnsName());
+        return new RedirectServerSync(source.getAccessPointId());
     }
 
     private UserServerSync deepCopy(UserServerSync source) {

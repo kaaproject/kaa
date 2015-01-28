@@ -27,7 +27,17 @@ extern "C" {
 
 typedef struct kaa_list_t kaa_list_t;
 
+/**
+ * Return 0 if data doesn't match search criteria.
+ */
+typedef bool (*match_predicate)(void *data, void *context);
+
+/**
+ * Use to deallocate list node data.
+ */
 typedef void (*deallocate_list_data)(void *);
+
+
 
 /**
  * Adds new element to the end of the list.
@@ -90,6 +100,12 @@ void kaa_list_destroy_no_data_cleanup(void *head);
 kaa_list_t *kaa_list_remove_at(kaa_list_t **head, kaa_list_t *position, deallocate_list_data deallocator);
 
 /**
+ * Removes first element that is matched by predicate.
+ * Returns KAA_ERR_NONE if element was found.
+ */
+kaa_error_t kaa_list_remove_first(kaa_list_t **head, match_predicate pred, void *context, deallocate_list_data deallocator);
+
+/**
  * Inserts data into the given position. Deallocates memory occupied by previous
  * data using given deallocator.
  */
@@ -101,10 +117,6 @@ void kaa_list_set_data_at(kaa_list_t *position, void *data, deallocate_list_data
  */
 kaa_list_t *kaa_list_insert_after(kaa_list_t *position, void *data);
 
-/**
- * Return 0 if data doesn't match search criteria
- */
-typedef bool (*match_predicate)(void *data, void *context);
 /**
  * Returns first element in list from given position where ((*pred)(data, context) != 0).
  * If nothing matched given criteria or list is empty NULL is returned.

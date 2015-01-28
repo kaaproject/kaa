@@ -37,7 +37,8 @@
 extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 
 
@@ -359,10 +360,10 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     self->need_resync = false;
     if (extension_options & KAA_PROFILE_RESYNC_OPTION) {
         self->need_resync = true;
-        kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
-                                      self->channel_manager, profile_sync_services[0]);
-        if (sync)
-            (*sync)(profile_sync_services, 1);
+        kaa_transport_channel_interface_t *channel =
+                kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
+        if (channel)
+            channel->sync_handler(channel->context, profile_sync_services, 1);
     }
 
 
@@ -421,10 +422,10 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
 
     self->need_resync = true;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
-                                    self->channel_manager, profile_sync_services[0]);
-    if (sync)
-        (*sync)(profile_sync_services, 1);
+    kaa_transport_channel_interface_t *channel =
+            kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, profile_sync_services, 1);
 
     return KAA_ERR_NONE;
 }

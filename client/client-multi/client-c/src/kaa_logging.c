@@ -37,7 +37,8 @@
 
 
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 
 
@@ -126,9 +127,10 @@ static void update_storage(kaa_log_collector_t *self)
         case UPLOAD:
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Initiating log upload...");
             self->max_log_bucket_size = volume;
-            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, logging_sync_services[0]);
-            if (sync)
-                (*sync)(logging_sync_services, 1);
+            kaa_transport_channel_interface_t *channel =
+                    kaa_channel_manager_get_transport_channel(self->channel_manager, logging_sync_services[0]);
+            if (channel)
+                channel->sync_handler(channel->context, logging_sync_services, 1);
             break;
         default:
             KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Upload will not be triggered now.");

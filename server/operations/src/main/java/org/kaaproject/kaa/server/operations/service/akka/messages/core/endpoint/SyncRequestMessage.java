@@ -16,22 +16,21 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import java.util.Arrays;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request;
-import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
-import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
+import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.sync.EventClientSync;
+import org.kaaproject.kaa.server.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.sync.UserClientSync;
+import org.kaaproject.kaa.server.transport.channel.ChannelAware;
+import org.kaaproject.kaa.server.transport.channel.ChannelContext;
+import org.kaaproject.kaa.server.transport.channel.ChannelType;
+import org.kaaproject.kaa.server.transport.message.Message;
+import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +44,13 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     private static final Logger LOG = LoggerFactory.getLogger(SyncRequestMessage.class);
 
     /** The command. */
-    private final Request command;
+    private final Message command;
 
     /** The request. */
     private final ClientSync request;
 
     /** The session. */
-    private final NettySessionInfo session;
+    private final SessionInfo session;
 
     /**
      * Instantiates a new sync request message.
@@ -65,7 +64,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
      * @param originator
      *            the originator
      */
-    public SyncRequestMessage(NettySessionInfo session, ClientSync request, Request requestMessage, ActorRef originator) {
+    public SyncRequestMessage(SessionInfo session, ClientSync request, Message requestMessage, ActorRef originator) {
         super(session.getApplicationToken(), session.getKey(), originator);
         this.command = requestMessage;
         this.request = request;
@@ -92,15 +91,15 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     }
 
     @Override
-    public ChannelHandlerContext getChannelContext() {
+    public ChannelContext getChannelContext() {
         return session.getCtx();
     }
 
-    public NettySessionInfo getSession() {
+    public SessionInfo getSession() {
         return session;
     }
 
-    public Request getCommand() {
+    public Message getCommand() {
         return command;
     }
 

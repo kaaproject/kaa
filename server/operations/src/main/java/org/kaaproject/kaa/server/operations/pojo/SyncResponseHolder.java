@@ -20,14 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.NotificationServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ProfileServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserServerSync;
+import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.sync.SyncStatus;
+import org.kaaproject.kaa.server.sync.UserServerSync;
 
 
 /**

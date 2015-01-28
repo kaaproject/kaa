@@ -34,6 +34,18 @@
 
 
 
+/** External channel manager API */
+extern kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self
+                                                                , size_t *expected_size);
+extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self
+                                                                 , kaa_platform_message_writer_t* writer);
+
+/** External bootstrap manager API */
+extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
+                                                          , kaa_platform_message_reader_t *reader
+                                                          , uint32_t extension_options
+                                                          , size_t extension_length);
+
 /** External user manager API */
 extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
@@ -172,12 +184,23 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
 
     size_t extension_size = 0;
     kaa_error_t err_code = kaa_meta_data_request_get_size(&extension_size);
+    if (err_code) {
+        KAA_LOG_ERROR(self->logger, err_code, "Failed to query size for meta extension");
+        return err_code;
+    }
+
+    *expected_size += extension_size;
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated meta extension size %u", extension_size);
 
     for (;!err_code && services_count--;) {
-        *expected_size += extension_size;
-
         switch (services[services_count]) {
+        case KAA_SERVICE_BOOTSTRAP: {
+            err_code = kaa_channel_manager_bootstrap_request_get_size(self->kaa_context->channel_manager
+                                                                    , &extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated bootstrap extension size %u", extension_size);
+            break;
+        }
         case KAA_SERVICE_PROFILE: {
             bool need_resync = false;
             err_code = kaa_profile_need_profile_resync(self->kaa_context->profile_manager
@@ -196,14 +219,16 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
         case KAA_SERVICE_USER: {
             err_code = kaa_user_request_get_size(self->kaa_context->user_manager
                                                , &extension_size);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated user extension size %u", extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated user extension size %u", extension_size);
             break;
         }
 #ifndef KAA_DISABLE_FEATURE_EVENTS
         case KAA_SERVICE_EVENT: {
             err_code = kaa_event_request_get_size(self->kaa_context->event_manager
                                                 , &extension_size);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated event extension size %u", extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated event extension size %u", extension_size);
             break;
         }
 #endif
@@ -211,7 +236,8 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
         case KAA_SERVICE_LOGGING: {
             err_code = kaa_logging_request_get_size(self->kaa_context->log_collector
                                                 , &extension_size);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated logging extension size %u", extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated logging extension size %u", extension_size);
             break;
         }
 #endif
@@ -219,6 +245,8 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
             extension_size = 0;
             break;
         }
+
+        *expected_size += extension_size;
     }
 
     if (err_code) {
@@ -241,7 +269,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
     KAA_RETURN_IF_ERR(error_code);
 
-    uint16_t total_services_count = services_count;
+    uint16_t total_services_count = services_count + 1 /* Meta extension */;
 
     error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION);
     if (error_code) {
@@ -255,6 +283,13 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
 
     while (!error_code && services_count--) {
         switch (services[services_count]) {
+        case KAA_SERVICE_BOOTSTRAP: {
+            error_code = kaa_channel_manager_bootstrap_request_serialize(self->kaa_context->channel_manager
+                                                                       , writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the bootstrap extension");
+            break;
+        }
         case KAA_SERVICE_PROFILE: {
             bool need_resync = false;
             error_code = kaa_profile_need_profile_resync(self->kaa_context->profile_manager
@@ -321,6 +356,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     kaa_error_t error = kaa_client_sync_get_size(self, info->services, info->services_count, buffer_size);
     KAA_RETURN_IF_ERR(error)
 
+    KAA_LOG_DEBUG(self->kaa_context->logger, KAA_ERR_NONE, "Going to request sync buffer (size %zu)", *buffer_size);
+
     *buffer = info->allocator(info->allocator_context, *buffer_size);
     if (*buffer) {
         self->request_id++;
@@ -382,6 +419,13 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
         KAA_RETURN_IF_ERR(error_code);
 
         switch (extension_type) {
+        case KAA_BOOTSTRAP_EXTENSION_TYPE: {
+            error_code = kaa_bootstrap_manager_handle_server_sync(self->kaa_context->bootstrap_manager
+                                                                , reader
+                                                                , extension_options
+                                                                , extension_length);
+            break;
+        }
         case KAA_META_DATA_EXTENSION_TYPE: {
             error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
             request_id = KAA_NTOHL(request_id);

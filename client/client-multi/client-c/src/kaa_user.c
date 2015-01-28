@@ -29,8 +29,8 @@
 
 #define EXTERNAL_SYSTEM_AUTH_FIELD      0x00
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self
-                                                              , kaa_service_t service_type);
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 typedef struct {
     size_t  user_external_id_len;
@@ -145,10 +145,11 @@ kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
     if (!self->user_info)
         return KAA_ERR_NOMEM;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
-                                    self->channel_manager, user_sync_services[0]);
-    if (sync)
-        (*sync)(user_sync_services, 1);
+    kaa_transport_channel_interface_t *channel =
+            kaa_channel_manager_get_transport_channel(self->channel_manager, user_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, user_sync_services, 1);
+
     return KAA_ERR_NONE;
 }
 
