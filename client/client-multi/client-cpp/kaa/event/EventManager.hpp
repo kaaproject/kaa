@@ -62,31 +62,23 @@ public:
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners);
 
     virtual std::list<Event> getPendingEvents();
+    virtual bool hasPendingEvents() const;
 
-    virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests() {
-        std::map<std::int32_t, std::list<std::string> > result;
-        for (const auto& idToFqnList : eventListenersRequests_) {
-            result.insert(std::make_pair(idToFqnList.first, idToFqnList.second->eventFQNs_));
-        }
-        return result;
-    }
+    virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests();
 
     virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener);
 
-    virtual void setTransport(EventTransport *transport) {
-        eventTransport_ = transport;
-        if (eventTransport_ != nullptr && (!pendingEvents_.empty() || !eventListenersRequests_.empty())) {
-            eventTransport_->sync();
-        }
-    }
+    virtual void setTransport(EventTransport *transport);
 
-    virtual TransactionIdPtr beginTransaction() {
+    virtual TransactionIdPtr beginTransaction()
+    {
         return AbstractTransactable::beginTransaction();
     }
 
     virtual void commit(TransactionIdPtr trxId);
 
-    virtual void rollback(TransactionIdPtr trxId) {
+    virtual void rollback(TransactionIdPtr trxId)
+    {
         AbstractTransactable::rollback(trxId);
     }
 private:
@@ -103,7 +95,7 @@ private:
 private:
     std::set<IEventFamily*>   eventFamilies_;
     std::list<Event>          pendingEvents_;
-    KAA_MUTEX_DECLARE(pendingEventsGuard_);
+    KAA_MUTEX_MUTABLE_DECLARE(pendingEventsGuard_);
 
     std::int32_t            eventSequenceNumber_;
     KAA_MUTEX_DECLARE(sequenceGuard_);

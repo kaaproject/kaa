@@ -39,7 +39,6 @@ EventTransport::EventTransport(IEventDataProcessor& processor
 std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_t requestId)
 {
     auto resolveRequests = eventDataProcessor_.getPendingListenerRequests();
-    auto pendingEvents(eventDataProcessor_.getPendingEvents());
     std::shared_ptr<EventSyncRequest> request(new EventSyncRequest);
 
     if (resolveRequests.empty()) {
@@ -56,6 +55,7 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
     }
 
     if (isEventSNSynchronized_) {
+        auto pendingEvents(eventDataProcessor_.getPendingEvents());
         KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
         for (auto it = events_.begin(); it != events_.end(); ++it) {
             pendingEvents.insert(pendingEvents.end(), it->second.begin(), it->second.end());
@@ -122,7 +122,7 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
         }
 
         isEventSNSynchronized_ = true;
-        needResync = !eventDataProcessor_.getPendingEvents().empty();
+        needResync = eventDataProcessor_.hasPendingEvents();
     }
 
     if (!response.events.is_null()) {

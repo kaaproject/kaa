@@ -90,8 +90,23 @@ void EventManager::produceEvent(const std::string& fqn
 
 std::list<Event> EventManager::getPendingEvents()
 {
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
     return std::list<Event>(std::move(pendingEvents_));
+}
+
+bool EventManager::hasPendingEvents() const
+{
+    KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
+    return !pendingEvents_.empty();
+}
+
+std::map<std::int32_t, std::list<std::string> > EventManager::getPendingListenerRequests()
+{
+    std::map<std::int32_t, std::list<std::string> > result;
+    for (const auto& idToFqnList : eventListenersRequests_) {
+        result.insert(std::make_pair(idToFqnList.first, idToFqnList.second->eventFQNs_));
+    }
+    return result;
 }
 
 void EventManager::onEventFromServer(const std::string& eventClassFQN
@@ -188,6 +203,14 @@ std::int32_t EventManager::findEventListeners(const std::list<std::string>& even
     }
 
     return requestId;
+}
+
+void EventManager::setTransport(EventTransport *transport)
+{
+    eventTransport_ = transport;
+    if (eventTransport_ && (!pendingEvents_.empty() || !eventListenersRequests_.empty())) {
+        eventTransport_->sync();
+    }
 }
 
 void EventManager::commit(TransactionIdPtr trxId)
