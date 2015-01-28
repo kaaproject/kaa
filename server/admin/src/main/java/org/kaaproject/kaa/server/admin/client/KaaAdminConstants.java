@@ -658,5 +658,11 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     
     @DefaultStringValue("Notification details")
     String notificationDetails();
+
+    @DefaultStringValue("Incompatible Server Version")
+    String incompatibleRemoteService();
+    
+    @DefaultStringValue("Server is unreachable")
+    String serverIsUnreachable();
     
 }

@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.HttpLongPollServerInfo;
+import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
@@ -33,10 +33,10 @@ public class PollCommand implements Command {
     private final AbstractHttpClient httpClient;
     private final RawDataProcessor processor;
     private final Map<TransportType, ChannelDirection> transportTypes;
-    private final HttpLongPollServerInfo serverInfo;
+    private final IPTransportInfo serverInfo;
     private volatile boolean canceled = false;
 
-    public PollCommand(AbstractHttpClient client, RawDataProcessor processor, Map<TransportType, ChannelDirection> transportTypes, HttpLongPollServerInfo serverInfo) {
+    public PollCommand(AbstractHttpClient client, RawDataProcessor processor, Map<TransportType, ChannelDirection> transportTypes, IPTransportInfo serverInfo) {
         this.httpClient = client;
         this.serverInfo = serverInfo;
         this.processor = processor;

@@ -174,6 +174,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
                 eventService.shutdown();
                 operationsBootstrapService.stop();
                 ThriftExecutor.shutdown();
+                LOG.info("Stopped Operations Server Application...");
             }
         };
 

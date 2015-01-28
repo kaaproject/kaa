@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule, RedirectionRule._Fields>, java.io.Serializable, Cloneable, Comparable<RedirectionRule> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("RedirectionRule");
 
-  private static final org.apache.thrift.protocol.TField DNS_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("dnsName", org.apache.thrift.protocol.TType.STRING, (short)1);
+  private static final org.apache.thrift.protocol.TField ACCESS_POINT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("accessPointId", org.apache.thrift.protocol.TType.I32, (short)1);
   private static final org.apache.thrift.protocol.TField RULE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("ruleId", org.apache.thrift.protocol.TType.I64, (short)2);
   private static final org.apache.thrift.protocol.TField REDIRECTION_PROBABILITY_FIELD_DESC = new org.apache.thrift.protocol.TField("redirectionProbability", org.apache.thrift.protocol.TType.DOUBLE, (short)3);
   private static final org.apache.thrift.protocol.TField RULE_TTL_FIELD_DESC = new org.apache.thrift.protocol.TField("ruleTTL", org.apache.thrift.protocol.TType.I64, (short)4);
@@ -47,14 +47,14 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     schemes.put(TupleScheme.class, new RedirectionRuleTupleSchemeFactory());
   }
 
-  public String dnsName; // required
+  public int accessPointId; // required
   public long ruleId; // required
   public double redirectionProbability; // required
   public long ruleTTL; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    DNS_NAME((short)1, "dnsName"),
+    ACCESS_POINT_ID((short)1, "accessPointId"),
     RULE_ID((short)2, "ruleId"),
     REDIRECTION_PROBABILITY((short)3, "redirectionProbability"),
     RULE_TTL((short)4, "ruleTTL");
@@ -72,8 +72,8 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // DNS_NAME
-          return DNS_NAME;
+        case 1: // ACCESS_POINT_ID
+          return ACCESS_POINT_ID;
         case 2: // RULE_ID
           return RULE_ID;
         case 3: // REDIRECTION_PROBABILITY
@@ -120,15 +120,16 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
   }
 
   // isset id assignments
-  private static final int __RULEID_ISSET_ID = 0;
-  private static final int __REDIRECTIONPROBABILITY_ISSET_ID = 1;
-  private static final int __RULETTL_ISSET_ID = 2;
+  private static final int __ACCESSPOINTID_ISSET_ID = 0;
+  private static final int __RULEID_ISSET_ID = 1;
+  private static final int __REDIRECTIONPROBABILITY_ISSET_ID = 2;
+  private static final int __RULETTL_ISSET_ID = 3;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.DNS_NAME, new org.apache.thrift.meta_data.FieldMetaData("dnsName", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "uri")));
+    tmpMap.put(_Fields.ACCESS_POINT_ID, new org.apache.thrift.meta_data.FieldMetaData("accessPointId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32        , "Integer")));
     tmpMap.put(_Fields.RULE_ID, new org.apache.thrift.meta_data.FieldMetaData("ruleId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64        , "Long")));
     tmpMap.put(_Fields.REDIRECTION_PROBABILITY, new org.apache.thrift.meta_data.FieldMetaData("redirectionProbability", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -143,13 +144,14 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
   }
 
   public RedirectionRule(
-    String dnsName,
+    int accessPointId,
     long ruleId,
     double redirectionProbability,
     long ruleTTL)
   {
     this();
-    this.dnsName = dnsName;
+    this.accessPointId = accessPointId;
+    setAccessPointIdIsSet(true);
     this.ruleId = ruleId;
     setRuleIdIsSet(true);
     this.redirectionProbability = redirectionProbability;
@@ -163,9 +165,7 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
    */
   public RedirectionRule(RedirectionRule other) {
     __isset_bitfield = other.__isset_bitfield;
-    if (other.isSetDnsName()) {
-      this.dnsName = other.dnsName;
-    }
+    this.accessPointId = other.accessPointId;
     this.ruleId = other.ruleId;
     this.redirectionProbability = other.redirectionProbability;
     this.ruleTTL = other.ruleTTL;
@@ -177,7 +177,8 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
 
   @Override
   public void clear() {
-    this.dnsName = null;
+    setAccessPointIdIsSet(false);
+    this.accessPointId = 0;
     setRuleIdIsSet(false);
     this.ruleId = 0;
     setRedirectionProbabilityIsSet(false);
@@ -186,28 +187,27 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     this.ruleTTL = 0;
   }
 
-  public String getDnsName() {
-    return this.dnsName;
+  public int getAccessPointId() {
+    return this.accessPointId;
   }
 
-  public RedirectionRule setDnsName(String dnsName) {
-    this.dnsName = dnsName;
+  public RedirectionRule setAccessPointId(int accessPointId) {
+    this.accessPointId = accessPointId;
+    setAccessPointIdIsSet(true);
     return this;
   }
 
-  public void unsetDnsName() {
-    this.dnsName = null;
+  public void unsetAccessPointId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __ACCESSPOINTID_ISSET_ID);
   }
 
-  /** Returns true if field dnsName is set (has been assigned a value) and false otherwise */
-  public boolean isSetDnsName() {
-    return this.dnsName != null;
+  /** Returns true if field accessPointId is set (has been assigned a value) and false otherwise */
+  public boolean isSetAccessPointId() {
+    return EncodingUtils.testBit(__isset_bitfield, __ACCESSPOINTID_ISSET_ID);
   }
 
-  public void setDnsNameIsSet(boolean value) {
-    if (!value) {
-      this.dnsName = null;
-    }
+  public void setAccessPointIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ACCESSPOINTID_ISSET_ID, value);
   }
 
   public long getRuleId() {
@@ -281,11 +281,11 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case DNS_NAME:
+    case ACCESS_POINT_ID:
       if (value == null) {
-        unsetDnsName();
+        unsetAccessPointId();
       } else {
-        setDnsName((String)value);
+        setAccessPointId((Integer)value);
       }
       break;
 
@@ -318,8 +318,8 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case DNS_NAME:
-      return getDnsName();
+    case ACCESS_POINT_ID:
+      return Integer.valueOf(getAccessPointId());
 
     case RULE_ID:
       return Long.valueOf(getRuleId());
@@ -341,8 +341,8 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     }
 
     switch (field) {
-    case DNS_NAME:
-      return isSetDnsName();
+    case ACCESS_POINT_ID:
+      return isSetAccessPointId();
     case RULE_ID:
       return isSetRuleId();
     case REDIRECTION_PROBABILITY:
@@ -366,12 +366,12 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     if (that == null)
       return false;
 
-    boolean this_present_dnsName = true && this.isSetDnsName();
-    boolean that_present_dnsName = true && that.isSetDnsName();
-    if (this_present_dnsName || that_present_dnsName) {
-      if (!(this_present_dnsName && that_present_dnsName))
+    boolean this_present_accessPointId = true;
+    boolean that_present_accessPointId = true;
+    if (this_present_accessPointId || that_present_accessPointId) {
+      if (!(this_present_accessPointId && that_present_accessPointId))
         return false;
-      if (!this.dnsName.equals(that.dnsName))
+      if (this.accessPointId != that.accessPointId)
         return false;
     }
 
@@ -409,10 +409,10 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
 
-    boolean present_dnsName = true && (isSetDnsName());
-    builder.append(present_dnsName);
-    if (present_dnsName)
-      builder.append(dnsName);
+    boolean present_accessPointId = true;
+    builder.append(present_accessPointId);
+    if (present_accessPointId)
+      builder.append(accessPointId);
 
     boolean present_ruleId = true;
     builder.append(present_ruleId);
@@ -440,12 +440,12 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetDnsName()).compareTo(other.isSetDnsName());
+    lastComparison = Boolean.valueOf(isSetAccessPointId()).compareTo(other.isSetAccessPointId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetDnsName()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.dnsName, other.dnsName);
+    if (isSetAccessPointId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.accessPointId, other.accessPointId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -500,12 +500,8 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     StringBuilder sb = new StringBuilder("RedirectionRule(");
     boolean first = true;
 
-    sb.append("dnsName:");
-    if (this.dnsName == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.dnsName);
-    }
+    sb.append("accessPointId:");
+    sb.append(this.accessPointId);
     first = false;
     if (!first) sb.append(", ");
     sb.append("ruleId:");
@@ -564,10 +560,10 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
           break;
         }
         switch (schemeField.id) {
-          case 1: // DNS_NAME
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.dnsName = iprot.readString();
-              struct.setDnsNameIsSet(true);
+          case 1: // ACCESS_POINT_ID
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.accessPointId = iprot.readI32();
+              struct.setAccessPointIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -611,11 +607,9 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      if (struct.dnsName != null) {
-        oprot.writeFieldBegin(DNS_NAME_FIELD_DESC);
-        oprot.writeString(struct.dnsName);
-        oprot.writeFieldEnd();
-      }
+      oprot.writeFieldBegin(ACCESS_POINT_ID_FIELD_DESC);
+      oprot.writeI32(struct.accessPointId);
+      oprot.writeFieldEnd();
       oprot.writeFieldBegin(RULE_ID_FIELD_DESC);
       oprot.writeI64(struct.ruleId);
       oprot.writeFieldEnd();
@@ -643,7 +637,7 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     public void write(org.apache.thrift.protocol.TProtocol prot, RedirectionRule struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetDnsName()) {
+      if (struct.isSetAccessPointId()) {
         optionals.set(0);
       }
       if (struct.isSetRuleId()) {
@@ -656,8 +650,8 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
         optionals.set(3);
       }
       oprot.writeBitSet(optionals, 4);
-      if (struct.isSetDnsName()) {
-        oprot.writeString(struct.dnsName);
+      if (struct.isSetAccessPointId()) {
+        oprot.writeI32(struct.accessPointId);
       }
       if (struct.isSetRuleId()) {
         oprot.writeI64(struct.ruleId);
@@ -675,8 +669,8 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(4);
       if (incoming.get(0)) {
-        struct.dnsName = iprot.readString();
-        struct.setDnsNameIsSet(true);
+        struct.accessPointId = iprot.readI32();
+        struct.setAccessPointIdIsSet(true);
       }
       if (incoming.get(1)) {
         struct.ruleId = iprot.readI64();

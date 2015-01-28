@@ -25,8 +25,8 @@ import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
-import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +34,8 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapDataProcessor.class);
 
-    private final AvroByteArrayConverter<Resolve> requestConverter = new AvroByteArrayConverter<>(Resolve.class);
-    private final AvroByteArrayConverter<OperationsServerList> responseConverter = new AvroByteArrayConverter<>(OperationsServerList.class);
+    private final AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
+    private final AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
     private BootstrapTransport transport;
 
     public void setBootstrapTransport(BootstrapTransport transport) {
@@ -45,7 +45,7 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
     @Override
     public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws IOException {
         if (transport != null) {
-            Resolve request = transport.createResolveRequest();
+            SyncRequest request = transport.createResolveRequest();
             LOG.trace("Created Resolve request {}", request);
             return requestConverter.toByteArray(request);
         }
@@ -55,7 +55,7 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
     @Override
     public synchronized void processResponse(byte[] response) throws IOException {
         if (transport != null && response != null) {
-            OperationsServerList list = responseConverter.fromByteArray(response);
+            SyncResponse list = responseConverter.fromByteArray(response);
             LOG.trace("Received OperationssServerList response {}", list);
             transport.onResolveResponse(list);
         }

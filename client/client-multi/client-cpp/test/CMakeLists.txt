@@ -72,10 +72,6 @@ set ( KAA_TEST_SOURCES
         ../impl/transport/HttpDataProcessor.cpp
         ../impl/bootstrap/BootstrapManager.cpp
         ../impl/bootstrap/BootstrapTransport.cpp
-#        ../impl/update/PollingStrategy.cpp
-#        ../impl/update/LongPollStrategy.cpp
-#        ../impl/update/ExternalUpdateManager.cpp
-#        ../impl/update/RequestFactory.cpp
         ../impl/common/CommonTypesFactory.cpp
         ../impl/common/AvroGenericUtils.cpp
         ../impl/common/types/CommonArray.cpp
@@ -122,8 +118,6 @@ set ( KAA_TEST_SOURCES
         impl/common/AvroByteArrayConverterTest.cpp
         impl/common/AvroDatumsComparatorTest.cpp
         impl/common/CommonTypesFactoryTest.cpp
-##        impl/profile/UpdateProfileTest.cpp
-##        impl/update/EndpointCommandsTest.cpp
         impl/schema/SchemaProcessorTest.cpp
         impl/schema/SchemaPersistenceTest.cpp
         impl/configuration/ConfigurationTests.cpp
@@ -135,15 +129,11 @@ set ( KAA_TEST_SOURCES
         impl/http/HttpUrlTest.cpp
         impl/http/HttpResponseTest.cpp
         impl/http/HttpRequestTest.cpp
-#        impl/http/HttpExternalTransportManagerTest.cpp
         impl/ClientStatusTest.cpp
         impl/event/EndpointRegistrationManagerTest.cpp
         impl/bootstrap/ServerInfoTest.cpp
         impl/channel/HttpServerInfoTest.cpp
-##        impl/bootstrap/BootstrapManagerTest.cpp
         impl/security/KeyUtilsTest.cpp
-##        impl/event/EventFamilyFactoryTest.cpp
-##        impl/event/EventListenersResolverTest.cpp
         impl/event/EventTransportTest.cpp
         impl/channel/AbstractServerInfoTest.cpp
         impl/channel/KaaChannelManagerTest.cpp

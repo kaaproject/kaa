@@ -560,6 +560,46 @@ button::-moz-focus-inner
     width: 0;
     height: 0;
   }
+  
+  @sprite .gwt-DialogBox .dialogTopLeft {
+    gwt-image:'circles';
+    background-position: -20px 0;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-color: transparent;
+    width: 0;
+    height: 0;
+  }
+
+  @sprite .gwt-DialogBox .dialogTopRight {
+    gwt-image:'circles';
+    background-position: -28px 0;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-color: transparent;
+    width: 0;
+    height: 0;
+  }
+  
+  @sprite .gwt-DialogBox .dialogMiddleLeft {
+    gwt-image:'vborder';
+    background-position: -31px 0;
+    background-repeat: repeat-y;
+    background-attachment: scroll;
+    background-color: transparent;
+    width: 0;
+    height: 0;
+  }
+
+  @sprite .gwt-DialogBox .dialogMiddleRight {
+    gwt-image:'vborder';
+    background-position: -32px 0;
+    background-repeat: repeat-y;
+    background-attachment: scroll;
+    background-color: transparent;
+    width: 0;
+    height: 0;
+  }
 }
 @else {
   @sprite .gwt-DialogBox .dialogBottomLeft {
@@ -588,6 +628,46 @@ button::-moz-focus-inner
     -ms-transform: rotate(180deg);
     -o-transform: rotate(180deg);
     transform: rotate(180deg);
+    width: 0;
+    height: 0;
+  }
+  
+  @sprite .gwt-DialogBox .dialogTopLeft {
+    gwt-image:'circles_ie6';
+    background-position: -20px 0;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-color: transparent;
+    width: 0;
+    height: 0;
+  }
+
+  @sprite .gwt-DialogBox .dialogTopRight {
+    gwt-image:'circles_ie6';
+    background-position: -28px 0;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-color: transparent;
+    width: 0;
+    height: 0;
+  }
+  
+  @sprite .gwt-DialogBox .dialogMiddleLeft {
+    gwt-image:'vborder_ie6';
+    background-position: -31px 0;
+    background-repeat: repeat-y;
+    background-attachment: scroll;
+    background-color: transparent;
+    width: 0;
+    height: 0;
+  }
+
+  @sprite .gwt-DialogBox .dialogMiddleRight {
+    gwt-image:'vborder_ie6';
+    background-position: -32px 0;
+    background-repeat: repeat-y;
+    background-attachment: scroll;
+    background-color: transparent;
     width: 0;
     height: 0;
   }

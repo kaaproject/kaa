@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import org.kaaproject.kaa.client.channel.AbstractServerInfo;
+import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.connectivity.PingServerStorage;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
@@ -41,7 +41,7 @@ public class PingConnectivityChecker implements ConnectivityChecker {
 
     @Override
     public boolean checkConnectivity() {
-        AbstractServerInfo si = serverStorage.getCurrentPingServer();
+        IPTransportInfo si = serverStorage.getCurrentPingServer();
         LOG.info("Connectivity check will be performed on {}:{}", si.getHost(), si.getPort());
         InetSocketAddress addr = new InetSocketAddress(si.getHost(), si.getPort());
 

@@ -16,13 +16,19 @@
 
 package org.kaaproject.kaa.client.channel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultBootstrapTransport;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
+import org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.mockito.Mockito;
 
 public class DefaultBootstrapTransportTest {
@@ -56,6 +62,8 @@ public class DefaultBootstrapTransportTest {
     public void testCreateRequest() {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         BootstrapTransport transport = new DefaultBootstrapTransport("Some token");
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        transport.setChannelManager(channelManager);
         transport.createResolveRequest();
         transport.setClientState(clientState);
         transport.createResolveRequest();
@@ -66,11 +74,16 @@ public class DefaultBootstrapTransportTest {
     public void onBootstrapResponse() throws Exception {
         BootstrapTransport transport = new DefaultBootstrapTransport("Some token");
         BootstrapManager manager = Mockito.mock(BootstrapManager.class);
-        OperationsServerList response = new OperationsServerList();
+        
+        SyncResponse response = new SyncResponse();
+        response.setStatus(SyncResponseResultType.SUCCESS);
+        List<ProtocolMetaData> mdList = new ArrayList<ProtocolMetaData>();
+        response.setBootstrapSyncResponse(new BootstrapSyncResponse(1, mdList));
+
         transport.onResolveResponse(response);
         transport.setBootstrapManager(manager);
         transport.onResolveResponse(response);
-        Mockito.verify(manager, Mockito.times(1)).onServerListUpdated(response);
+        Mockito.verify(manager, Mockito.times(1)).onProtocolListUpdated(mdList);
     }
 
 }

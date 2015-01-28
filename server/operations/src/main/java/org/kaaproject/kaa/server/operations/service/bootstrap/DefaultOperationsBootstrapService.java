@@ -32,10 +32,10 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
-import org.kaaproject.kaa.server.common.zk.ZkChannelException;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
+import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
@@ -44,6 +44,8 @@ import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfi
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
+import org.kaaproject.kaa.server.operations.service.transport.OperationsTransportService;
+import org.kaaproject.kaa.server.transport.TransportUpdateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DefaultOperationsBootstrapService implements OperationsBootstrapService {
+
+    private static final int DEFAULT_LOAD_INDEX = 1;
 
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationsBootstrapService.class);
@@ -82,6 +86,9 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     /** The Akka service. */
     @Autowired
     private AkkaService akkaService;
+    
+    @Autowired
+    private OperationsTransportService transportService;
 
     /** The cache service. */
     @Autowired
@@ -90,9 +97,6 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     /** The operations server config. */
     @Autowired
     private OperationsServerConfig operationsServerConfig;
-
-    @Autowired
-    private List<ServiceChannel> nettyServersList;
 
     /** The event service */
     @Autowired
@@ -152,35 +156,46 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
         operationsThriftService.setEventService(eventService);
 
-        for (ServiceChannel server : nettyServersList) {
-            LOG.info("Channel {} initializing....", server.getChannelType());
-            server.start();
+        transportService.lookupAndInit();
+        
+        final CountDownLatch thriftStartupLatch = new CountDownLatch(1);
+        final CountDownLatch thriftShutdownLatch = new CountDownLatch(1);
+
+        startThrift(thriftStartupLatch, thriftShutdownLatch);
+
+        try {
+            thriftStartupLatch.await();
+        } catch (InterruptedException e) {
+            LOG.error("Interrupted while waiting for thrift to start...", e);
         }
 
-        if (!nettyServersList.isEmpty()) {
+        if (getConfig().isZkEnabled()) {
+            startZK();
+        }
+        
+        transportService.addListener(new TransportUpdateListener() {
 
-            final CountDownLatch thriftStartupLatch = new CountDownLatch(1);
-            final CountDownLatch thriftShutdownLatch = new CountDownLatch(1);
-
-            startThrift(thriftStartupLatch, thriftShutdownLatch);
-
-            try {
-                thriftStartupLatch.await();
-            } catch (InterruptedException e) {
-                LOG.error("Interrupted while waiting for thrift to start...", e);
+            @Override
+            public void onTransportsStarted(List<TransportMetaData> mdList) {
+                if(operationsNode != null){
+                    OperationsNodeInfo info = operationsNode.getNodeInfo();
+                    info.setTransports(mdList);
+                    try {
+                        operationsNode.updateNodeData(info);
+                    } catch (IOException e) {
+                        LOG.error("Failed to update bootstrap node info", e);
+                    }
+                }
             }
 
-            if (getConfig().isZkEnabled()) {
-                startZK();
-            }
+        });
+        
+        transportService.start();
 
-            try {
-                thriftShutdownLatch.await();
-            } catch (InterruptedException e) {
-                LOG.error("Interrupted while waiting for thrift to stop...", e);
-            }
-        } else {
-            LOG.error("Operations start failed, No one Service Channels started...");
+        try {
+            thriftShutdownLatch.await();
+        } catch (InterruptedException e) {
+            LOG.error("Interrupted while waiting for thrift to stop...", e);
         }
     }
 
@@ -192,10 +207,9 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
      */
     @Override
     public void stop() {
-        for (ServiceChannel server : nettyServersList) {
-            server.stop();
+        if(transportService != null){
+            transportService.stop();
         }
-        nettyServersList.clear();
         if (akkaService != null) {
             akkaService.getActorSystem().shutdown();
         }
@@ -274,17 +288,9 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     private void startZK() {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer keyData = ByteBuffer.wrap(keyStoreService.getPublicKey().getEncoded());
-        ConnectionInfo connectionInfo = new ConnectionInfo(getConfig().getThriftHost(), getConfig().getThriftPort(), keyData);
-        nodeInfo.setConnectionInfo(connectionInfo);
-        List<SupportedChannel> suppChannels = new ArrayList<>();
-        for (ServiceChannel sc : nettyServersList) {
-            try {
-                suppChannels.add(sc.getZkSupportedChannel());
-            } catch (ZkChannelException e) {
-                LOG.error("Error advertize Channel ", e);
-            }
-        }
-        nodeInfo.setSupportedChannelsArray(suppChannels);
+        nodeInfo.setConnectionInfo(new ConnectionInfo(getConfig().getThriftHost(), getConfig().getThriftPort(), keyData));
+        nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX));
+        nodeInfo.setTransports(new ArrayList<TransportMetaData>());
         operationsNode = new OperationsNode(nodeInfo, getConfig().getZkHostPortList(), new RetryUntilElapsed(getConfig().getZkMaxRetryTime(), getConfig()
                 .getZkSleepTime()));
         try {

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -36,15 +37,13 @@ import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * The Class WorkerNodeTracker.
  */
 public abstract class WorkerNodeTracker extends ControlNodeTracker {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(WorkerNodeTracker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WorkerNodeTracker.class);
 
     /** The endpoint cache. */
     private PathChildrenCache endpointCache;
@@ -61,8 +60,10 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Instantiates a new worker node tracker.
      *
-     * @param zkHostPortList the zk host port list
-     * @param retryPolicy the retry policy
+     * @param zkHostPortList
+     *            the zk host port list
+     * @param retryPolicy
+     *            the retry policy
      */
     public WorkerNodeTracker(String zkHostPortList, RetryPolicy retryPolicy) {
         super(zkHostPortList, retryPolicy);
@@ -72,10 +73,14 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Instantiates a new worker node tracker.
      *
-     * @param zkHostPortList the zk host port list
-     * @param sessionTimeoutMs session timeout
-     * @param connectionTimeoutMs connection timeout
-     * @param retryPolicy the retry policy
+     * @param zkHostPortList
+     *            the zk host port list
+     * @param sessionTimeoutMs
+     *            the session timeout
+     * @param connectionTimeoutMs
+     *            the connection timeout
+     * @param retryPolicy
+     *            the retry policy
      */
     public WorkerNodeTracker(String zkHostPortList, int sessionTimeoutMs, int connectionTimeoutMs, RetryPolicy retryPolicy) {
         super(zkHostPortList, sessionTimeoutMs, connectionTimeoutMs, retryPolicy);
@@ -83,62 +88,58 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     }
 
     private void init() {
-        endpointCache = new PathChildrenCache(client,
-                OPERATIONS_SERVER_NODE_PATH, true);
-        endpointListeners = new ArrayList<OperationsNodeListener>();
-        bootstrapCache = new PathChildrenCache(client,
-                BOOTSTRAP_SERVER_NODE_PATH, true);
-        bootstrapListeners = new ArrayList<BootstrapNodeListener>();
+        endpointCache = new PathChildrenCache(client, OPERATIONS_SERVER_NODE_PATH, true);
+        bootstrapCache = new PathChildrenCache(client, BOOTSTRAP_SERVER_NODE_PATH, true);
+        endpointListeners = new CopyOnWriteArrayList<OperationsNodeListener>();
+        bootstrapListeners = new CopyOnWriteArrayList<BootstrapNodeListener>();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.kaaproject.kaa.server.common.zk.ControlNodeTracker#start()
      */
     @Override
     public void start() throws Exception {
         super.start();
-        endpointCache.getListenable().addListener(
-                new PathChildrenCacheListener() {
-                    @Override
-                    public void childEvent(CuratorFramework client,
-                            PathChildrenCacheEvent event) throws Exception {
-                        switch (event.getType()) {
-                        case CHILD_ADDED:
-                            endpointAdded(event.getData());
-                            break;
-                        case CHILD_UPDATED:
-                            endpointUpdated(event.getData());
-                            break;
-                        case CHILD_REMOVED:
-                            endpointRemoved(event.getData());
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                });
+        endpointCache.getListenable().addListener(new PathChildrenCacheListener() {
+            @Override
+            public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+                switch (event.getType()) {
+                case CHILD_ADDED:
+                    endpointAdded(event.getData());
+                    break;
+                case CHILD_UPDATED:
+                    endpointUpdated(event.getData());
+                    break;
+                case CHILD_REMOVED:
+                    endpointRemoved(event.getData());
+                    break;
+                default:
+                    break;
+                }
+            }
+        });
         endpointCache.start(StartMode.NORMAL);
 
-        bootstrapCache.getListenable().addListener(
-                new PathChildrenCacheListener() {
-                    @Override
-                    public void childEvent(CuratorFramework client,
-                            PathChildrenCacheEvent event) throws Exception {
-                        switch (event.getType()) {
-                        case CHILD_ADDED:
-                            bootstrapAdded(event.getData());
-                            break;
-                        case CHILD_UPDATED:
-                            bootstrapUpdated(event.getData());
-                            break;
-                        case CHILD_REMOVED:
-                            bootstrapRemoved(event.getData());
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                });
+        bootstrapCache.getListenable().addListener(new PathChildrenCacheListener() {
+            @Override
+            public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+                switch (event.getType()) {
+                case CHILD_ADDED:
+                    bootstrapAdded(event.getData());
+                    break;
+                case CHILD_UPDATED:
+                    bootstrapUpdated(event.getData());
+                    break;
+                case CHILD_REMOVED:
+                    bootstrapRemoved(event.getData());
+                    break;
+                default:
+                    break;
+                }
+            }
+        });
         bootstrapCache.start(StartMode.NORMAL);
     }
 
@@ -147,24 +148,24 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      *
      * @return the current endpoint nodes
      */
-    public List<OperationsNodeInfo> getCurrentOperationServerNodes(){
-    	List<ChildData> nodesData = endpointCache != null ? endpointCache.getCurrentData() : new ArrayList<ChildData>();
-    	Map<ConnectionInfoKey, OperationsNodeInfo> uniqueMap = new HashMap<>();
+    public List<OperationsNodeInfo> getCurrentOperationServerNodes() {
+        List<ChildData> nodesData = endpointCache != null ? endpointCache.getCurrentData() : new ArrayList<ChildData>();
+        Map<ConnectionInfoKey, OperationsNodeInfo> uniqueMap = new HashMap<>();
 
-    	for(ChildData data : nodesData){
-    		OperationsNodeInfo newNodeInfo = extractOperationServerInfo(data);
-    		ConnectionInfoKey key = new ConnectionInfoKey(newNodeInfo.getConnectionInfo());
-    		OperationsNodeInfo oldNodeInfo = uniqueMap.get(key);
-    		if(oldNodeInfo != null){
-    			if(newNodeInfo.getTimeStarted() >= oldNodeInfo.getTimeStarted()){
-    				uniqueMap.put(key, newNodeInfo);
-    			}
-    		}else{
-    			uniqueMap.put(key, newNodeInfo);
-    		}
-    	}
+        for (ChildData data : nodesData) {
+            OperationsNodeInfo newNodeInfo = extractOperationServerInfo(data);
+            ConnectionInfoKey key = new ConnectionInfoKey(newNodeInfo.getConnectionInfo());
+            OperationsNodeInfo oldNodeInfo = uniqueMap.get(key);
+            if (oldNodeInfo != null) {
+                if (newNodeInfo.getTimeStarted() >= oldNodeInfo.getTimeStarted()) {
+                    uniqueMap.put(key, newNodeInfo);
+                }
+            } else {
+                uniqueMap.put(key, newNodeInfo);
+            }
+        }
 
-    	return new ArrayList<>(uniqueMap.values());
+        return new ArrayList<>(uniqueMap.values());
     }
 
     /**
@@ -172,19 +173,20 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      *
      * @return the current bootstrap nodes
      */
-    public List<BootstrapNodeInfo> getCurrentBootstrapNodes(){
-    	List<ChildData> nodesData = bootstrapCache != null ? bootstrapCache.getCurrentData() : new ArrayList<ChildData>();
-    	List<BootstrapNodeInfo> result = new ArrayList<>(nodesData.size());
-    	for(ChildData data : nodesData){
-    		result.add(extractBootstrapServerInfo(data));
-    	}
-    	return result;
+    public List<BootstrapNodeInfo> getCurrentBootstrapNodes() {
+        List<ChildData> nodesData = bootstrapCache != null ? bootstrapCache.getCurrentData() : new ArrayList<ChildData>();
+        List<BootstrapNodeInfo> result = new ArrayList<>(nodesData.size());
+        for (ChildData data : nodesData) {
+            result.add(extractBootstrapServerInfo(data));
+        }
+        return result;
     }
 
     /**
      * Operations Node added.
      *
-     * @param data the data
+     * @param data
+     *            the data
      */
     protected void endpointAdded(ChildData data) {
         OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
@@ -196,7 +198,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Operations Node updated.
      *
-     * @param data the data
+     * @param data
+     *            the data
      */
     protected void endpointUpdated(ChildData data) {
         OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
@@ -208,7 +211,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Operations Node removed.
      *
-     * @param data the data
+     * @param data
+     *            the data
      */
     protected void endpointRemoved(ChildData data) {
         OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
@@ -220,7 +224,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Bootstrap added.
      *
-     * @param data the data
+     * @param data
+     *            the data
      */
     protected void bootstrapAdded(ChildData data) {
         BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
@@ -232,7 +237,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Bootstrap updated.
      *
-     * @param data the data
+     * @param data
+     *            the data
      */
     protected void bootstrapUpdated(ChildData data) {
         BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
@@ -244,7 +250,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Bootstrap removed.
      *
-     * @param data the data
+     * @param data
+     *            the data
      */
     protected void bootstrapRemoved(ChildData data) {
         BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
@@ -256,7 +263,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Adds the listener.
      *
-     * @param listener the listener
+     * @param listener
+     *            the listener
      */
     public void addListener(OperationsNodeListener listener) {
         LOG.debug("Listener registered: " + listener);
@@ -266,7 +274,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Removes the listener.
      *
-     * @param listener the listener
+     * @param listener
+     *            the listener
      * @return true, if successful
      */
     public boolean removeListener(OperationsNodeListener listener) {
@@ -282,7 +291,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Adds the listener.
      *
-     * @param listener the listener
+     * @param listener
+     *            the listener
      */
     public void addListener(BootstrapNodeListener listener) {
         LOG.debug("Listener registered: " + listener);
@@ -292,7 +302,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Removes the listener.
      *
-     * @param listener the listener
+     * @param listener
+     *            the listener
      * @return true, if successful
      */
     public boolean removeListener(BootstrapNodeListener listener) {
@@ -308,14 +319,14 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Extract endpoint server info.
      *
-     * @param currentData the current data
+     * @param currentData
+     *            the current data
      * @return the endpoint node info
      */
     private OperationsNodeInfo extractOperationServerInfo(ChildData currentData) {
         OperationsNodeInfo endpointServerInfo = null;
         try {
-            endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(
-                    currentData.getData(), null);
+            endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
         } catch (IOException e) {
             LOG.error("error reading control server info", e);
         }
@@ -325,21 +336,23 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Extract bootstrap server info.
      *
-     * @param currentData the current data
+     * @param currentData
+     *            the current data
      * @return the bootstrap node info
      */
     private BootstrapNodeInfo extractBootstrapServerInfo(ChildData currentData) {
         BootstrapNodeInfo bootstrapServerInfo = null;
         try {
-            bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(
-                    currentData.getData(), null);
+            bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
         } catch (IOException e) {
             LOG.error("error reading control server info", e);
         }
         return bootstrapServerInfo;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.io.Closeable#close()
      */
     @Override
