@@ -29,7 +29,6 @@ import org.kaaproject.kaa.server.sync.SyncResponseStatus;
 import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.UserServerSync;
 
-
 /**
  * The Class SyncResponseHolder.
  */
@@ -49,7 +48,7 @@ public class SyncResponseHolder {
     /** The user nf version. */
     private int userNfVersion;
 
-    public static SyncResponseHolder failure(Integer requestId){
+    public static SyncResponseHolder failure(Integer requestId) {
         ServerSync response = new ServerSync();
         response.setRequestId(requestId);
         response.setStatus(SyncStatus.FAILURE);
@@ -59,9 +58,10 @@ public class SyncResponseHolder {
     /**
      * Instantiates a new sync response holder.
      *
-     * @param response the response
+     * @param response
+     *            the response
      */
-    public SyncResponseHolder(ServerSync response){
+    public SyncResponseHolder(ServerSync response) {
         super();
         this.response = response;
         this.subscriptionStates = new HashMap<>();
@@ -149,7 +149,9 @@ public class SyncResponseHolder {
         this.response.setRequestId(value);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -182,13 +184,14 @@ public class SyncResponseHolder {
             return true;
         }
         if (response.getEventSync() != null) {
-            if(response.getEventSync().getEventSequenceNumberResponse() != null){
+            if (response.getEventSync().getEventSequenceNumberResponse() != null) {
                 return true;
             }
-            if(response.getEventSync().getEvents() != null && !response.getEventSync().getEvents().isEmpty()){
+            if (response.getEventSync().getEvents() != null && !response.getEventSync().getEvents().isEmpty()) {
                 return true;
             }
-            if(response.getEventSync().getEventListenersResponses() != null && !response.getEventSync().getEventListenersResponses().isEmpty()){
+            if (response.getEventSync().getEventListenersResponses() != null
+                    && !response.getEventSync().getEventListenersResponses().isEmpty()) {
                 return true;
             }
         }
@@ -201,6 +204,12 @@ public class SyncResponseHolder {
                 return true;
             }
             if (userResponse.getUserAttachResponse() != null) {
+                return true;
+            }
+            if (userResponse.getUserAttachNotification() != null) {
+                return true;
+            }
+            if (userResponse.getUserDetachNotification() != null) {
                 return true;
             }
         }
