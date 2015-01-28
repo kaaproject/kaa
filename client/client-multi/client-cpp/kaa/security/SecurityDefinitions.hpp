@@ -23,7 +23,7 @@
 namespace kaa {
 
 typedef Botan::MemoryVector<std::uint8_t> PublicKey;
-typedef std::string PrivateKey;
+typedef std::string                       PrivateKey;
 
 typedef Botan::SymmetricKey               SessionKey;
 typedef Botan::SecureVector<std::uint8_t> EncodedSessionKey;

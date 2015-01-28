@@ -38,8 +38,8 @@ EventTransport::EventTransport(IEventDataProcessor& processor
 
 std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_t requestId)
 {
-    std::map<std::int32_t, std::list<std::string> > resolveRequests = eventDataProcessor_.getPendingListenerRequests();
-    std::list<Event> pendingEvents(eventDataProcessor_.getPendingEvents());
+    auto resolveRequests = eventDataProcessor_.getPendingListenerRequests();
+    auto pendingEvents(eventDataProcessor_.getPendingEvents());
     std::shared_ptr<EventSyncRequest> request(new EventSyncRequest);
 
     if (resolveRequests.empty()) {
@@ -104,6 +104,7 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
 
 void EventTransport::onEventResponse(const EventSyncResponse& response)
 {
+    bool needResync = false;
     if (!isEventSNSynchronized_ && !response.eventSequenceNumberResponse.is_null()) {
         std::int32_t lastEventSN = response.eventSequenceNumberResponse
                                     .get_EventSequenceNumberResponse().seqNum;
@@ -121,6 +122,7 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
         }
 
         isEventSNSynchronized_ = true;
+        needResync = !eventDataProcessor_.getPendingEvents().empty();
     }
 
     if (!response.events.is_null()) {
@@ -129,6 +131,9 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
 
     if (!response.eventListenersResponses.is_null()) {
         eventDataProcessor_.onEventListenersReceived(response.eventListenersResponses);
+    }
+    if (needResync) {
+        sync();
     }
 }
 
