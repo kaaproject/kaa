@@ -17,13 +17,13 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class EndpointGroupGrid extends AbstractGrid<EndpointGroupDto, String> {
+public class EndpointGroupGrid extends AbstractKaaGrid<EndpointGroupDto, String> {
 
     public EndpointGroupGrid() {
         super(Unit.PX, true);

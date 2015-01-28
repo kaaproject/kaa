@@ -18,9 +18,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 
 import com.google.gwt.user.client.ui.HasValue;
 

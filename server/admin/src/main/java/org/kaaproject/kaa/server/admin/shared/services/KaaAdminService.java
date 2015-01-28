@@ -170,6 +170,8 @@ public interface KaaAdminService extends RemoteService {
 
     public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
 
+    public List<SchemaInfoDto> getVacantConfigurationSchemaInfosByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
+    
     public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws KaaAdminServiceException;
 
     public ConfigurationRecordFormDto editConfigurationRecordForm(ConfigurationRecordFormDto configuration) throws KaaAdminServiceException;

@@ -83,6 +83,8 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
     protected abstract void deactivateStruct(String id, AsyncCallback<T> callback);
 
     protected abstract P getRecordPlaceImpl(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random);
+    
+    protected void schemaSelected(SchemaDto schema) {}
 
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
@@ -185,9 +187,11 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
 
                 @Override
                 public void onSuccess(List<SchemaDto> result) {
-                    recordView.getSchema().setValue(Utils.getMaxSchemaVersions(result));
+                    SchemaDto schema = Utils.getMaxSchemaVersions(result);
+                    recordView.getSchema().setValue(schema);
                     recordView.getSchema().setAcceptableValues(result);
                     recordView.getRecordPanel().setData(record);
+                    schemaSelected(schema);
                     recordView.getRecordPanel().openDraft();
                 }
             });

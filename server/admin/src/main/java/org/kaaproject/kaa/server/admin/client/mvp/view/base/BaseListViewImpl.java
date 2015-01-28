@@ -17,13 +17,13 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.base;
 
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel.Type;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.HasRowActionEventHandlers;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.HasRowActionEventHandlers;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel.Type;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ImageTextButton;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
@@ -25,7 +26,6 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseStructGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
@@ -87,7 +87,9 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
 
     @Override
     protected void initDetailsTable() {
-
+        if (!create) {
+            detailsTable.getColumnFormatter().setWidth(2, "200px");
+        }
         Label authorLabel = new Label(Utils.constants.author());
         createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");

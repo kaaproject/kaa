@@ -71,6 +71,7 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
         
         notificationData = new RecordPanel(Utils.constants.notificationBody(), this, false, false);
         notificationData.addValueChangeHandler(this);
+        getFooter().setWidth("800px");
         getFooter().add(notificationData);
     }
     

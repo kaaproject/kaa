@@ -160,13 +160,6 @@ button::-moz-focus-inner
     background-color: #EFEFEF;
 }
 
-.b-app-content {
-    background-color: #FFFFFF;
-    box-shadow: 0px 0px 8px rgba(0,0,0,0.5) inset;
-    height: 100%;
-	display: flex;
-}
-
 .b-app-content-close {
     background-color: #FFFFFF;
     box-shadow: 0px 0px 8px rgba(0,0,0,0.5) inset;
@@ -251,33 +244,6 @@ button::-moz-focus-inner
 
 .b-app-content-details-table .secondary {
     font-weight: normal;
-}
-
-.LinkCell {
-    overflow:visible; /* Shrinkwrap the text in IE7- */
-    margin:0;
-    padding:0;
-    border:0;
-/*    color:#666666; /* Match your link colour */
-    background:transparent;
-    font:inherit; /* Inherit font settings (doesn’t work in IE7-) */
-    line-height:normal; /* Override line-height to avoid spacing issues */
-    text-decoration:none; /* Make it look linky */
-    cursor:pointer; /* Buttons don’t make the cursor change in all browsers */
-    -moz-user-select:text; /* Make button text selectable in Gecko */
-    text-decoration: none;
-}
-/* Make sure keyboard users get visual feedback */
-.LinkCell:hover,
-.LinkCell:focus {
-    text-decoration:none;
-}
-/* Remove mystery padding in Gecko browsers.
- * See https://bugzilla.mozilla.org/show_bug.cgi?id=140562
- */
-.LinkCell::-moz-focus-inner {
-    padding:0;
-    border:0;
 }
 
 .linkLabel {
@@ -599,87 +565,6 @@ button::-moz-focus-inner
 
 .gwt-DialogBox .dialogContent {
     padding: 20px;
-}
-
-.ui-message {
-    background: none repeat scroll 0 0 #FCFCFC;
-    border: 1px solid #CCCCCC;
-    border-radius: 5px 5px 5px 5px;
-    color: #333333;
-    margin: 10px 0 0;
-    padding: 10px 10px 10px 36px;
-    position: relative;
-}
-
-.b-app-content .ui-message {
-    margin: 0 35px 0;
-}
-
-.ui-message.info {
-    background: none repeat scroll 0 0 #FCFCFC;
-    border-color: #8C9FB2;
-}
-
-.ui-message.warning {
-    background: none repeat scroll 0 0 #FFFDF6;
-    border-color: #FFEAAE;
-}
-
-.ui-message.error {
-    background: none repeat scroll 0 0 #D04437;
-    border-color: #D04437;
-    color: #FFFFFF;
-}
-
-.ui-message.success {
-    background: none repeat scroll 0 0 #F3F9F4;
-    border-color: #91C89C;
-}
-.ui-message.hint {
-    background: none repeat scroll 0 0 #FCFCFC;
-    border-color: #AAB8C6;
-}
-
-
-.ui-message .ui-icon {
-    left: 10px;
-    position: absolute;
-    top: 12px;
-}
-
-.ui-message .icon-hint, .ui-icon-hint, .ui-message .icon-info, .ui-icon-info {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA1klEQVR42qWTUQqCQBCGfdKCuogu+qBeoot0kl7TBwU9S3QLyega9ZBh1L/wLyyDLGkLHzj/vzPM7o6eXLv9IQRH0IMnuVAL7b0y0QcVeIPPFPQasJ5KPlkbW5CDFcmpGf8MfLtATeMGEqObBCuOwJV6ZYsjxVhrsoDQEuojiLRQmLa9H5d1nEIHPYOMvrMD6hm9XgcDg2BGgYDesLTAlt596RFSep3jEp0FWnqlDtTMZ4ytZ1SuQZJLDlLtGuUGpNQ3/G7kKP/5M7nbLNnqCzxAR03J/V+HSh9XtOsatQAAAABJRU5ErkJggg==");
-}
-
-.ui-message .icon-warning, .ui-icon-warning {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABA0lEQVR42p2QP0tCURiH7zdQRA3u4OJUiyDY4CDtTuEXuXs0JEQ4uDk5C0EuKoEu+SWcg5baLCS7tNTx98IzyMWjXoeHe95/z3vODdzi2kdTvIo30fL1+YbLIhYOfsV5GsFAOL59zsNjBRfij60lEXKbf1E5RvDExl4URYGwXJfc6JCgwqZYhBp2hs5n4odadZ9gzKYu2x1YrUPt2SeosWEtijsEBfGN5HKXYErxweKkAMk9PbOkoE5hJXI+AbUVvfVtwZzkHTECAGptel8cgisSnyJDk+8GRlZ8MdOwxITghoa9ArhlZmzB+/abDjwh+c8+LBgRnMLEBHnxKJYpBpfMFDbGjWcGPFD11gAAAABJRU5ErkJggg==");
-}
-
-.ui-message .icon-error, .ui-icon-error {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAzUlEQVR42q2T3QqCQBBGvcqCehETvVBfM71QsGeJ3kIyeo260DC2b+CThoVdsFo44JzdGfZnDIwxNhE4gB4M5EIX2et1sAI1eBnH4FwLNnOeTj6phUdQgDUp6OZxlhxdoOHEDaSAnuMT78GVrhY3y4kyEekqQFK6SXJFlGrbgbcAUccpJegZ5AsK5PS9BCODcEGBkH78tsCO/u4+gp+MOd2vl1hJEC98xkQ9Y+xvJOJopMbXyi3I6Lf8bu1W/uvPZG+z4laf4AE6uthe/wbkrGRlM25n9wAAAABJRU5ErkJggg==");
-}
-
-.ui-message .icon-success, .ui-icon-success {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA9klEQVR42qWTPQrCQBSErfwBhRQewDoGFYyHtDEWCSSVR8gBRDxCGjFi4xEstFBR4jyYYnmuK5LAB/vmzexuNpuGfvrzwAcLUIIb2VPzTa8ONkEMXqCywV4KOrbw2jBmYAbaZEatIhvJmBMkbBzB2LHLITjQG5vik+Ko8eORBeh9SlaEiELmCHmgACvWGTORFCWL8Et4IGF6TtRC1qUUdxYtNiOB4wk4s18Aj3qL2v1jAiOQ28L09Khf1CuoVS1heqbs7ayHyEm2INdhdYhLKYI/P+PI+IxBnYuUuK5yCqbUuxyn+irX/Jnc21xyqw9wBTtqgfa/Af067eG0xhemAAAAAElFTkSuQmCC");
-}
-
-.ui-icon {
-    background-position: 0 0;
-    background-repeat: no-repeat;
-    border: medium none;
-    display: inline-block;
-    height: 16px;
-    margin: 0;
-    padding: 0;
-    text-align: left;
-    text-indent: -999em;
-    vertical-align: text-bottom;
-    width: 16px;
-}
-
-.icon-required, .ui-icon-required {
-    position: absolute;
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXklEQVR42u3MsQ2AIBSEYZnHAVjACZzkNUxA6yCOY2HhNnoXn6EggVxjRfHnQh75pmOJX/e7JTPrxo8JRQK+SQUyugj4ZhUIaCPgG1RgRida0c63ClQpQOs4gAH8Bzy5KFqGk8PBaQAAAABJRU5ErkJggg==");
 }
 
 .loginPanel {

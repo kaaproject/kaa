@@ -797,13 +797,13 @@ public class DataSource {
             }
         });
     }
-
-    public void getVacantConfigurationSchemas(String endpointGroupId,
-            final AsyncCallback<List<SchemaDto>> callback) {
-        rpcService.getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId,
-                new DataCallback<List<SchemaDto>>(callback) {
+    
+    public void getVacantConfigurationSchemaInfos(String endpointGroupId,
+            final AsyncCallback<List<SchemaInfoDto>> callback) {
+        rpcService.getVacantConfigurationSchemaInfosByEndpointGroupId(endpointGroupId,
+                new DataCallback<List<SchemaInfoDto>>(callback) {
             @Override
-            protected void onResult(List<SchemaDto> result) {
+            protected void onResult(List<SchemaInfoDto> result) {
             }
         });
     }

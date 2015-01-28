@@ -1222,6 +1222,35 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
+    
+    @Override
+    public List<SchemaInfoDto> getVacantConfigurationSchemaInfosByEndpointGroupId(
+            String endpointGroupId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointGroupDto endpointGroup = checkEndpointGroupId(endpointGroupId);
+            List<SchemaDto> schemas = getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
+            return toConfigurationSchemaInfos(schemas, endpointGroup);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    private List<SchemaInfoDto> toConfigurationSchemaInfos (List<SchemaDto> schemas, EndpointGroupDto endpointGroup) 
+            throws KaaAdminServiceException, IOException {
+        List<SchemaInfoDto> schemaInfos = new ArrayList<>();
+        for (SchemaDto schemaDto : schemas) {
+            ConfigurationSchemaDto configSchema = this.getConfigurationSchema(schemaDto.getId());
+            String rawSchema = endpointGroup.getWeight() == 0 ? configSchema.getBaseSchema() : 
+                configSchema.getOverrideSchema();
+            Schema schema = new Schema.Parser().parse(rawSchema);
+            SchemaInfoDto schemaInfo = new SchemaInfoDto(schemaDto);
+            RecordField schemaForm = FormAvroConverter.createRecordFieldFromSchema(schema);
+            schemaInfo.setSchemaForm(schemaForm);
+            schemaInfos.add(schemaInfo);
+        }
+        return schemaInfos;
+    }
 
     @Override
     public void deleteConfigurationRecord(String schemaId, String endpointGroupId)

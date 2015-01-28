@@ -54,6 +54,14 @@ public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> ext
             inactivePanel.setData(record.getInactiveStructureDto());
         }
     }
+    
+    public void setActiveBodyValue(T struct) {
+        activePanel.setBodyValue(struct);
+    }
+    
+    public void setInactiveBodyValue(T struct) {
+        inactivePanel.setBodyValue(struct);
+    }
 
     public void openActive() {
         this.selectTab(0);

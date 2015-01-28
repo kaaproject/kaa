@@ -85,6 +85,11 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
     }
 
     private void init() {
+        
+        getColumnFormatter().setWidth(0, "400px");
+        getColumnFormatter().setWidth(1, "400px");
+        getColumnFormatter().setWidth(2, "0px");
+        
         FlexTable dateTable = new FlexTable();
         FlexTable userTable = new FlexTable();
 
@@ -95,50 +100,58 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
         userTable.getColumnFormatter().setWidth(1, "200px");
 
         dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
+        dateTimeCreatedLabel.setWidth("200px");
         createdDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        createdDateTime.setWidth("100%");
+        createdDateTime.setWidth("200px");
         dateTable.setWidget(0, 0, dateTimeCreatedLabel);
         dateTable.setWidget(0, 1, createdDateTime);
 
         dateTimeModifiedLabel = new Label(Utils.constants.dateTimeModified());
+        dateTimeModifiedLabel.setWidth("200px");
         modifiedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        modifiedDateTime.setWidth("100%");
+        modifiedDateTime.setWidth("200px");
         dateTable.setWidget(1, 0, dateTimeModifiedLabel);
         dateTable.setWidget(1, 1, modifiedDateTime);
 
         dateTimeActivatedLabel = new Label(Utils.constants.dateTimeActivated());
+        dateTimeActivatedLabel.setWidth("200px");
         activatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        activatedDateTime.setWidth("100%");
+        activatedDateTime.setWidth("200px");
         dateTable.setWidget(2, 0, dateTimeActivatedLabel);
         dateTable.setWidget(2, 1, activatedDateTime);
 
         dateTimeDeactivatedLabel = new Label(Utils.constants.dateTimeDectivated());
+        dateTimeDeactivatedLabel.setWidth("200px");
         deactivatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        deactivatedDateTime.setWidth("100%");
+        deactivatedDateTime.setWidth("200px");
         dateTable.setWidget(3, 0, dateTimeDeactivatedLabel);
         dateTable.setWidget(3, 1, deactivatedDateTime);
 
         authorLabel = new Label(Utils.constants.author());
+        authorLabel.setWidth("200px");
         createdUsername = new KaaAdminSizedTextBox(-1, false, false);
-        createdUsername.setWidth("100%");
+        createdUsername.setWidth("200px");
         userTable.setWidget(0, 0, authorLabel);
         userTable.setWidget(0, 1, createdUsername);
 
         modifiedByLabel = new Label(Utils.constants.lastModifiedBy());
+        modifiedByLabel.setWidth("200px");
         modifiedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        modifiedUsername.setWidth("100%");
+        modifiedUsername.setWidth("200px");
         userTable.setWidget(1, 0, modifiedByLabel);
         userTable.setWidget(1, 1, modifiedUsername);
 
         activatedByLabel = new Label(Utils.constants.activatedBy());
+        activatedByLabel.setWidth("200px");
         activatedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        activatedUsername.setWidth("100%");
+        activatedUsername.setWidth("200px");
         userTable.setWidget(2, 0, activatedByLabel);
         userTable.setWidget(2, 1, activatedUsername);
 
         deactivatedByLabel = new Label(Utils.constants.deactivatedBy());
+        deactivatedByLabel.setWidth("200px");
         deactivatedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        deactivatedUsername.setWidth("100%");
+        deactivatedUsername.setWidth("200px");
         userTable.setWidget(3, 0, deactivatedByLabel);
         userTable.setWidget(3, 1, deactivatedUsername);
 
@@ -147,16 +160,17 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
 
         FlexTable detailsTable = new FlexTable();
         setWidget(1, 0, detailsTable);
-        getFlexCellFormatter().setColSpan(1, 0, 2);
+        getFlexCellFormatter().setColSpan(1, 0, 3);
 
         detailsTable.getColumnFormatter().setWidth(0, "200px");
-        detailsTable.getColumnFormatter().setWidth(1, "300px");
-
+        detailsTable.getColumnFormatter().setWidth(1, "600px");
+        detailsTable.getColumnFormatter().setWidth(2, "0px");
 
         description = new SizedTextArea(1024);
-        description.setWidth("500px");
+        description.setWidth("600px");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
+        descriptionLabel.setWidth("200px");
         detailsTable.setWidget(0, 0, descriptionLabel);
         detailsTable.setWidget(0, 1, description);
 
@@ -166,12 +180,14 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
 
         if (hasLabel()) {
             bodyLabel = new Label(Utils.constants.body());
+            bodyLabel.setWidth("200px");
+            ((Widget)body).setWidth("600px");
             detailsTable.setWidget(1, 0, bodyLabel);
-            detailsTable.setWidget(1, 1, (Widget)body);
+            detailsTable.setWidget(1, 1, (Widget)body);            
             detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
         } else {
             detailsTable.setWidget(1, 0, (Widget)body);
-            detailsTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+            detailsTable.getFlexCellFormatter().setColSpan(1, 0, 3);
         }
 
         HorizontalPanel buttonsPanel = new HorizontalPanel();

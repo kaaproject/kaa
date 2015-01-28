@@ -58,6 +58,7 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         this.readOnly = readOnly;
         this.hasErrorMessage = hasErrorMessage;
         FlexTable table = new FlexTable();
+        table.setWidth("100%");
         recordCaption = new CaptionPanel();
         if (optional) {
             recordCaption.setCaptionText(title);
@@ -70,7 +71,6 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         }        
         recordFieldWidget = new RecordFieldWidget(readOnly);
         recordCaption.setContentWidget(recordFieldWidget);
-        recordCaption.setWidth("100%");
         table.setWidget(0, 0, recordCaption);
         Label uploadLabel = new Label(Utils.constants.uploadFromFile());
         recordFileUpload = new FileUploadForm();
@@ -101,21 +101,10 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         setUploadVisible(!readOnly);
     }
     
-    
-    
-    @Override
-    public void setWidth(String width) {
-        super.setWidth(width);
-        recordCaption.setWidth(width);
+    public void setMinHeightPx(int height) {
+        recordCaption.getElement().getStyle().setPropertyPx("minHeight", height);
     }
     
-    @Override
-    public void setHeight(String height) {
-        super.setHeight(height);
-        int heightInt = Integer.valueOf(height.substring(0, height.length()-2));
-        recordCaption.setHeight((heightInt-60)+"px");
-    }
-
     public RecordFieldWidget getRecordWidget() {
         return recordFieldWidget;
     }
