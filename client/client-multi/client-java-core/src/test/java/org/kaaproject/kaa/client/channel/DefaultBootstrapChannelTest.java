@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.client.channel;
 
+import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.LinkedHashMap;
@@ -29,6 +30,7 @@ import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.mockito.Mockito;
 
 public class DefaultBootstrapChannelTest {
@@ -55,7 +57,31 @@ public class DefaultBootstrapChannelTest {
             Mockito.verify(getDemultiplexer(), Mockito.times(wantedNumberOfInvocations))
                     .processResponse(Mockito.eq(new byte[] { 5, 5, 5 }));
         }
+        
+
     }
+    
+    class DefaultBootstrapChannelMock extends DefaultBootstrapChannelFake {
+        
+        public DefaultBootstrapChannelMock(AbstractKaaClient client, KaaClientState state, int wantedNumberOfInvocations) {
+            super(client, state, wantedNumberOfInvocations);
+        }
+        
+        protected AbstractHttpClient getHttpClient() {
+            AbstractHttpClient client = Mockito.mock(AbstractHttpClient.class);
+            MessageEncoderDecoder crypt = Mockito.mock(MessageEncoderDecoder.class);
+            try {
+                Mockito.when(crypt.decodeData(Mockito.any(byte[].class))).thenReturn(new byte[] { 5, 5, 5 });
+            } catch (GeneralSecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            Mockito.when(client.getEncoderDecoder()).thenReturn(crypt);
+            
+            return client;
+        }
+    }
+    
 
     @Test
     public void testChannelGetters() {
@@ -85,7 +111,7 @@ public class DefaultBootstrapChannelTest {
         KaaClientState state = Mockito.mock(KaaClientState.class);
         KaaDataMultiplexer multiplexer = Mockito.mock(KaaDataMultiplexer.class);
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
-        DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, 2);
+        DefaultBootstrapChannelMock channel = new DefaultBootstrapChannelMock(client, state, 2);
 
         TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
