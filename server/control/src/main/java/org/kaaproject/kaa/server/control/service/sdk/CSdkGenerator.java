@@ -44,6 +44,7 @@ import org.kaaproject.kaa.avro.avrogenc.Compiler;
 import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
+import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.kaaproject.kaa.server.control.service.sdk.event.CEventSourcesGenerator;
@@ -277,7 +278,8 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("bootstrapNodes", bootstrapNodes);
 
         context.put("Base64", Base64.class);
-        context.put("Utils", CSdkGenerator.class);
+        context.put("Integer", Integer.class);
+        context.put("ServerNameUtil", ServerNameUtil.class);
 
         StringWriter writer = new StringWriter();
         velocityEngine.getTemplate("sdk/c/kaa_defaults.vm").merge(context, writer);
