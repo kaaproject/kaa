@@ -131,7 +131,7 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
 
     @Override
     public String customizeErrorMessage(Throwable caught) {
-        String message = caught.getMessage();
+        String message = caught.getLocalizedMessage();
         if (message != null && message.contains("uuid")) {
             return Utils.messages.incorrectConfiguration();
         }

@@ -28,7 +28,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.server.operations.pojo.Base64Util;
+import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;

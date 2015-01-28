@@ -82,7 +82,7 @@ public class Login implements EntryPoint {
             public void onFailure(Throwable caught) {
                 authResult = Result.ERROR;
                 showLogin();
-                view.setErrorMessage(caught.toString() + ": " + caught.getMessage());
+                Utils.handleException(caught, view);
             }
 
             @Override
@@ -214,7 +214,7 @@ public class Login implements EntryPoint {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    view.setErrorMessage(caught.toString() + ": " + caught.getMessage());
+                    Utils.handleException(caught, view);
                 }
 
                 @Override
@@ -235,37 +235,39 @@ public class Login implements EntryPoint {
         try {
             builder.sendRequest(null, new RequestCallback() {
                 public void onError(Request request, Throwable exception) {
-                    view.setErrorMessage(exception.getLocalizedMessage());
+                    Utils.handleException(exception, view);
                 }
 
                 public void onResponseReceived(Request request, Response response) {
-                    String error = response.getHeader("Error");
-                    String errorType = response.getHeader("ErrorType");
-                    if (!isEmpty(errorType) && "TempCredentials".equals(errorType)) {
-                        //change password
-                        ChangePasswordDialog.Listener listener = new ChangePasswordDialog.Listener() {
-                            @Override
-                            public void onChangePassword() {
-                                view.clearMessages();
-                            }
-                            @Override
-                            public void onCancel() {}
-                        };
-                        ChangePasswordDialog.showChangePasswordDialog(listener,
-                                userName,
-                                Utils.messages.tempCredentials());
-                    }
-                    else if (!isEmpty(error)) {
-                        view.setErrorMessage(error);
-                    }
-                    else {
-                        view.clearMessages();
-                        redirectToModule("kaaAdmin");
+                    if (response.getStatusCode() == 0) {
+                        Utils.handleNetworkConnectionError();
+                    } else {
+                        String error = response.getHeader("Error");
+                        String errorType = response.getHeader("ErrorType");
+                        if (!isEmpty(errorType) && "TempCredentials".equals(errorType)) {
+                            //change password
+                            ChangePasswordDialog.Listener listener = new ChangePasswordDialog.Listener() {
+                                @Override
+                                public void onChangePassword() {
+                                    view.clearMessages();
+                                }
+                                @Override
+                                public void onCancel() {}
+                            };
+                            ChangePasswordDialog.showChangePasswordDialog(listener,
+                                    userName,
+                                    Utils.messages.tempCredentials());
+                        } else if (!isEmpty(error)) {
+                            view.setErrorMessage(error);
+                        } else {
+                            view.clearMessages();
+                            redirectToModule("kaaAdmin");
+                        }
                     }
                 }
             });
         } catch (RequestException e) {
-            view.setErrorMessage(Utils.constants.general_error() + e.getMessage());
+            Utils.handleException(e, view);
         }
     }
     

@@ -164,7 +164,7 @@ public class Neighbors implements OperationsNodeListener {
      * Initialize ZooKeeper registration.
      */
     private void initZK() {
-        selfId = getOperationsServerID(zkNode.getSelfNodeInfo().getConnectionInfo());
+        selfId = getOperationsServerID(zkNode.getNodeInfo().getConnectionInfo());
         zkNode.addListener(this);
         updateOperationsServersList();
         LOG.debug("OperationsServer {} Nighbors({}) ZooKeeper initialization comlete. Now {} neighbors.",selfId, uniqId, neigbors.size());

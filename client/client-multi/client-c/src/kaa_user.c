@@ -29,8 +29,8 @@
 
 #define EXTERNAL_SYSTEM_AUTH_FIELD      0x00
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self
-                                                              , kaa_service_t service_type);
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 typedef struct {
     size_t  user_external_id_len;
@@ -145,10 +145,11 @@ kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
     if (!self->user_info)
         return KAA_ERR_NOMEM;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
-                                    self->channel_manager, user_sync_services[0]);
-    if (sync)
-        (*sync)(user_sync_services, 1);
+    kaa_transport_channel_interface_t *channel =
+            kaa_channel_manager_get_transport_channel(self->channel_manager, user_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, user_sync_services, 1);
+
     return KAA_ERR_NONE;
 }
 
@@ -159,12 +160,8 @@ kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
 
     self->attachment_listeners = *listeners;
 
-    if (listeners->on_response_callback) {
-        bool is_attached = false;
-        if (kaa_is_endpoint_attached_to_user(self->status, &is_attached))
-            return KAA_ERR_BAD_STATE;
-        (*listeners->on_response_callback)(is_attached);
-    }
+    if (listeners->on_response_callback)
+        (listeners->on_response_callback)(listeners->context, self->status->is_attached);
     return KAA_ERR_NONE;
 }
 
@@ -247,10 +244,9 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
                 self->is_waiting_user_attach_response = false;
                 if (result == USER_RESULT_SUCCESS) {
                     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
-                    if (kaa_set_endpoint_attached_to_user(self->status, true))
-                        return KAA_ERR_BAD_STATE;
+                    self->status->is_attached = true;
                     if (self->attachment_listeners.on_response_callback)
-                        (*self->attachment_listeners.on_response_callback)(true);
+                        (self->attachment_listeners.on_response_callback)(self->attachment_listeners.context, true);
                 } else {
                     KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_STATE, "Failed to attach endpoint to user");
                 }
@@ -279,10 +275,10 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
                 access_token[access_token_length] = '\0';
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
-                if (kaa_set_endpoint_attached_to_user(self->status, true))
-                    return KAA_ERR_BAD_STATE;
+                self->status->is_attached = true;
+
                 if (self->attachment_listeners.on_attached_callback)
-                    (*self->attachment_listeners.on_attached_callback)(external_id, access_token);
+                    (self->attachment_listeners.on_attached_callback)(self->attachment_listeners.context, external_id, access_token);
                 break;
             }
             case USER_DETACH_NOTIFICATION_FIELD: {
@@ -298,10 +294,10 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_m
                 access_token[access_token_length] = '\0';
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
-                if (kaa_set_endpoint_attached_to_user(self->status, false))
-                    return KAA_ERR_BAD_STATE;
+                self->status->is_attached = false;
+
                 if (self->attachment_listeners.on_detached_callback)
-                    (*self->attachment_listeners.on_detached_callback)(access_token);
+                    (self->attachment_listeners.on_detached_callback)(self->attachment_listeners.context, access_token);
                 break;
             }
             default:

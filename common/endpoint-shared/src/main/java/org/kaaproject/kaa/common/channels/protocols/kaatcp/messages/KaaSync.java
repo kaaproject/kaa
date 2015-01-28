@@ -252,8 +252,6 @@ public class KaaSync extends MqttFrame {
         byte kaaSyncType = (byte)((flag >> KAASYNC_MESSAGE_TYPE_SHIFT) & 0x0F);
         if (kaaSyncType == KaaSyncMessageType.SYNC.getType()) {
             kaaSyncMessageType = KaaSyncMessageType.SYNC;
-        } else if (kaaSyncType == KaaSyncMessageType.BOOTSTRAP.getType()) {
-            kaaSyncMessageType = KaaSyncMessageType.BOOTSTRAP;
         } else {
             kaaSyncMessageType = KaaSyncMessageType.UNUSED;
         }
@@ -306,12 +304,6 @@ public class KaaSync extends MqttFrame {
                 return new SyncRequest(this);
             } else {
                 return new SyncResponse(this);
-            }
-        case BOOTSTRAP:
-            if (isRequest()) {
-                return new BootstrapResolve(this);
-            } else {
-                return new BootstrapResponse(this);
             }
         case UNUSED:
             throw new KaaTcpProtocolException("KaaSync Message type is incorrect");

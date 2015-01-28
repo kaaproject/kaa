@@ -173,7 +173,7 @@ public class DefaultOperationDataProcessorTest {
         response.setEventSyncResponse(new EventSyncResponse());
         response.setNotificationSyncResponse(new NotificationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
-        response.setRedirectSyncResponse(new RedirectSyncResponse("abc"));
+        response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
         response.setLogSyncResponse(new LogSyncResponse(REQUEST_ID, SyncResponseResultType.SUCCESS));
 
@@ -199,7 +199,7 @@ public class DefaultOperationDataProcessorTest {
         response.setEventSyncResponse(new EventSyncResponse());
         response.setNotificationSyncResponse(new NotificationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
-        response.setRedirectSyncResponse(new RedirectSyncResponse("abc"));
+        response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
         response.setLogSyncResponse(new LogSyncResponse(REQUEST_ID, SyncResponseResultType.SUCCESS));
 

@@ -27,12 +27,14 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.HttpLongPollServerInfo;
+import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableCommandRunnable;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableRunnable;
@@ -42,7 +44,6 @@ import org.kaaproject.kaa.client.channel.impl.channels.polling.RawDataProcessor;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     private KaaDataDemultiplexer demultiplexer;
     private KaaDataMultiplexer multiplexer;
 
-    private HttpLongPollServerInfo currentServer;
+    private IPTransportInfo currentServer;
     private final AbstractKaaClient client;
     private final KaaClientState state;
 
@@ -197,7 +198,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
-    public void onServerError(ServerInfo info) {
+    public void onServerError(TransportConnectionInfo info) {
         if (!stopped) {
             LOG.debug("Channel [{}] connection failed", getId());
             synchronized (this) {
@@ -266,8 +267,8 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
-    public ChannelType getType() {
-        return ChannelType.HTTP_LP;
+    public TransportProtocolId getTransportProtocolId() {
+        return TransportProtocolIdConstants.HTTP_TRANSPORT_ID;
     }
 
     @Override
@@ -289,8 +290,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         }
     }
 
+    //TODO: refactor this as part of KAA-126
     @Override
-    public synchronized void setServer(ServerInfo server) {
+    public synchronized void setServer(TransportConnectionInfo server) {
         if (isShutdown) {
             LOG.info("Can't set server. Channel [{}] is down", getId());
             return;
@@ -299,10 +301,10 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             if (!isPaused) {
                 stopPoll();
             }
-            this.currentServer = (HttpLongPollServerInfo) server;
+            this.currentServer = new IPTransportInfo(server);
             synchronized (httpClientLock) {
                 LOG.debug("Channel [{}]: creating HTTP client..", getId());
-                this.httpClient = client.createHttpClient(currentServer.getURL(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
+                this.httpClient = client.createHttpClient(currentServer.getURL() + "/EP/LongSync", state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
                 synchronized (httpClientSetLock) {
                     httpClientSetLock.notifyAll();
                 }
