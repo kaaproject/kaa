@@ -4,12 +4,14 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ProtocolOptions;
 import com.datastax.driver.core.RegularStatement;
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.querybuilder.Batch;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression;
@@ -129,14 +131,16 @@ public class CassandraLogEventDao implements LogEventDao {
     }
 
     @Override
-    public List<LogEventDto> save(List<LogEventDto> logEventDtoList, String collectionName) {
-        executeBatch(prepareQuery(logEventDtoList, collectionName));
+    public List<LogEventDto> save(List<LogEventDto> logEventDtoList, String tableName) {
+        LOG.debug("Execute bath request for cassandra table {}", tableName);
+        executeBatch(prepareQuery(logEventDtoList, tableName));
         return logEventDtoList;
     }
 
     @Override
-    public Future saveAsync(List<LogEventDto> logEventDtoList, String collectionName) {
-        return executeBatchAsync(prepareQuery(logEventDtoList, collectionName));
+    public ListenableFuture<ResultSet> saveAsync(List<LogEventDto> logEventDtoList, String tableName) {
+        LOG.debug("Execute async bath request for cassandra table {}", tableName);
+        return executeBatchAsync(prepareQuery(logEventDtoList, tableName));
     }
 
     @Override

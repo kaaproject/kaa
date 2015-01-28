@@ -11,15 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
 
     private static final String LOG_TABLE_PREFIX = "logs_";
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLogAppender.class);
-
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private LogEventDao logEventDao;
     private String tableName;
@@ -82,7 +78,6 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                 logEventDao.close();
                 logEventDao = null;
             }
-            executor.shutdownNow();
         }
         LOG.info("Cassandra log appender stoped.");
     }

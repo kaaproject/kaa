@@ -1,5 +1,7 @@
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
+import com.datastax.driver.core.ResultSet;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 
 import java.util.List;
@@ -11,7 +13,7 @@ public interface LogEventDao {
 
     List<LogEventDto> save(List<LogEventDto> logEventDtoList, String collectionName);
 
-    Future<List<LogEventDto>> saveAsync(List<LogEventDto> logEventDtoList, String collectionName);
+    ListenableFuture<ResultSet> saveAsync(List<LogEventDto> logEventDtoList, String collectionName);
 
     void removeAll(String collectionName);
 
