@@ -917,9 +917,9 @@ kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, co
     }
     self->event_listeners_requests = request_it;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
-    if (sync)
-        (*sync)(event_sync_services, 1);
+    kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager, event_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, event_sync_services, 1);
 
     return KAA_ERR_NONE;
 }
