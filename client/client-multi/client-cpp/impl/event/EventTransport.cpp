@@ -133,6 +133,7 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
         eventDataProcessor_.onEventListenersReceived(response.eventListenersResponses);
     }
     if (needResync) {
+        KAA_LOG_DEBUG("Need to send pending events after sequence number synchronization");
         sync();
     }
 }
