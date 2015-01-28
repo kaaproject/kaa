@@ -731,6 +731,7 @@ public class EndpointActorMessageProcessor {
 
                 UserServerSync userSyncResponse = pendingResponse.getUserSync();
                 if (userSyncResponse != null) {
+                    userSyncResponse.cleanupNotifications();
                     if (message instanceof EndpointUserAttachMessage) {
                         if (endpointProfile != null) {
                             endpointProfile.setEndpointUserId(message.getUserId());

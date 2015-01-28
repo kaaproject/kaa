@@ -39,6 +39,11 @@ public class UserServerSync {
         this.endpointAttachResponses = endpointAttachResponses;
         this.endpointDetachResponses = endpointDetachResponses;
     }
+    
+    public void cleanupNotifications() {
+        this.userAttachNotification = null;
+        this.userDetachNotification = null;
+    }
 
     /**
      * Gets the value of the 'userAttachResponse' field.
