@@ -1451,14 +1451,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException {
         LogAppenderDto logAppender = new LogAppenderDto(wrapper);
         try {
-<<<<<<< HEAD
-            Schema schema = appenderConfigSchemas.get(wrapper.getAppenderClassName());
-            GenericRecord record = FormAvroConverter.createGenericRecordFormRecordField(wrapper.getConfiguration(), schema);
-            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
-=======
             GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(wrapper.getConfiguration());
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
->>>>>>> master
             byte[] rawConfiguration = converter.encode(record);
             logAppender.setRawConfiguration(rawConfiguration);
             LogAppenderDto saved = editLogAppender(logAppender);

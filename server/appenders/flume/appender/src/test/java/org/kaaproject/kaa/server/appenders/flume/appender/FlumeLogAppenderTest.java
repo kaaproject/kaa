@@ -21,7 +21,9 @@ import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
+import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,7 +36,10 @@ import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -93,7 +98,8 @@ public class FlumeLogAppenderTest {
     @Test
     public void appendWithExceptionTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
-        doThrow(new EventDeliveryException()).when(flumeClientManger).sendEventToFlume(null);
+        Mockito.when(flumeEventBuilder.generateEvents(Mockito.any(LogEventPack.class), Mockito.any(RecordHeader.class), Mockito.anyString())).thenReturn(Collections.singletonList(Mockito.mock(Event.class)));
+        doThrow(new EventDeliveryException()).when(flumeClientManger).sendEventsToFlume(Mockito.anyList());
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         appender.doAppend(eventPack, callback);
         Assert.assertTrue(callback.connectionError);
@@ -102,6 +108,7 @@ public class FlumeLogAppenderTest {
     @Test
     public void appendTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
+        Mockito.when(flumeEventBuilder.generateEvents(Mockito.any(LogEventPack.class), Mockito.any(RecordHeader.class), Mockito.anyString())).thenReturn(Collections.singletonList(Mockito.mock(Event.class)));
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         appender.doAppend(eventPack, callback);
         Assert.assertTrue(callback.success);

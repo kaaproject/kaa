@@ -16,19 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.shared.logs;
 
-<<<<<<< HEAD
-import org.kaaproject.kaa.common.dto.logs.LogAppenderBaseDto;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
-=======
-import java.io.Serializable;
-import java.util.List;
-
-import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
-import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.avro.ui.shared.RecordField;
->>>>>>> master
+import org.kaaproject.kaa.common.dto.logs.LogAppenderBaseDto;
 
 public class LogAppenderFormWrapper extends LogAppenderBaseDto {
 
