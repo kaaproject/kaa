@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
+import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,11 +78,15 @@ public class ApplicationActor extends UntypedActor {
 
     private final Map<String, ActorRef> logsSessions;
 
+    private final Map<String, ActorRef> userVerifierSessions;
+
     private final LogAppenderService logAppenderService;
 
     private final ApplicationService applicationService;
 
     private ActorRef applicationLogActor;
+    
+    private ActorRef userVerifierActor;
 
     /**
      * Instantiates a new application actor.
@@ -92,7 +97,7 @@ public class ApplicationActor extends UntypedActor {
      *            the notification delta service
      */
     private ApplicationActor(OperationsService operationsService, NotificationDeltaService notificationDeltaService,
-            ApplicationService applicationService, LogAppenderService logAppenderService, String applicationToken) {
+            ApplicationService applicationService, LogAppenderService logAppenderService, EndpointUserService endpointUserService, String applicationToken) {
         this.operationsService = operationsService;
         this.applicationService = applicationService;
         this.logAppenderService = logAppenderService;
@@ -102,7 +107,9 @@ public class ApplicationActor extends UntypedActor {
         this.endpointActorMap = new HashMap<>();
         this.topicSessions = new HashMap<>();
         this.logsSessions = new HashMap<>();
+        this.userVerifierSessions = new HashMap<>();
         this.applicationLogActor = getOrCreateLogActor(null, logAppenderService, applicationService);
+        this.userVerifierActor = getOrCreateUserVerifierActor(null, endpointUserService, applicationService);
     }
 
     /**
@@ -124,6 +131,9 @@ public class ApplicationActor extends UntypedActor {
 
         /** The log appender service. */
         private final LogAppenderService logAppenderService;
+        
+        /** The endpoint user service. */
+        private final EndpointUserService endpointUserService;
 
         private final String applicationToken;
 
@@ -136,13 +146,14 @@ public class ApplicationActor extends UntypedActor {
          *            the notification delta service
          */
         public ActorCreator(OperationsService operationsService, NotificationDeltaService notificationDeltaService,
-                ApplicationService applicationService, LogAppenderService logAppenderService, String applicationToken) {
+                ApplicationService applicationService, LogAppenderService logAppenderService, EndpointUserService endpointUserService, String applicationToken) {
             super();
             this.operationsService = operationsService;
             this.notificationDeltaService = notificationDeltaService;
             this.applicationToken = applicationToken;
             this.applicationService = applicationService;
             this.logAppenderService = logAppenderService;
+            this.endpointUserService = endpointUserService;
         }
 
         /*
@@ -152,7 +163,7 @@ public class ApplicationActor extends UntypedActor {
          */
         @Override
         public ApplicationActor create() throws Exception {
-            return new ApplicationActor(operationsService, notificationDeltaService, applicationService, logAppenderService,
+            return new ApplicationActor(operationsService, notificationDeltaService, applicationService, logAppenderService, endpointUserService,
                     applicationToken);
         }
     }
@@ -203,8 +214,16 @@ public class ApplicationActor extends UntypedActor {
     }
 
     private void processLogNotificationMessage(ThriftNotificationMessage message) {
-        LOG.debug("[{}] Processing thrift notification message", applicationToken);
-        applicationLogActor.tell(message, self());
+        processThriftNotificationMessage(applicationLogActor, message);
+    }
+    
+    private void processUserVerifierNotificationMessage(ThriftNotificationMessage message) {
+        processThriftNotificationMessage(userVerifierActor, message);
+    }
+    
+    private void processThriftNotificationMessage(ActorRef actor, ThriftNotificationMessage message) {
+        LOG.debug("[{}] Processing thrift notification message {}", applicationToken, message);
+        actor.tell(message, self());
     }
 
     /**
@@ -224,6 +243,9 @@ public class ApplicationActor extends UntypedActor {
         } else if (notification.isSetAppenderId()) {
             LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
             processLogNotificationMessage(message);
+        } else if (notification.isSetUserVerifierId()) {
+            LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
+            processUserVerifierNotificationMessage(message);
         } else {
             LOG.debug("[{}] Broadcasting message to all endpoints", applicationToken);
             broadcastToAllEndpoints(message);
@@ -468,6 +490,18 @@ public class ApplicationActor extends UntypedActor {
         }
         return logActor;
     }
+    
+    private ActorRef getOrCreateUserVerifierActor(String name, EndpointUserService endpointUserService, ApplicationService applicationService) {
+        ActorRef logActor = userVerifierSessions.get(name);
+        if (logActor == null) {
+            logActor = context().actorOf(
+                    Props.create(new ApplicationUserVerifierActor.ActorCreator(endpointUserService, applicationService, applicationToken)));
+            context().watch(logActor);
+            userVerifierSessions.put(logActor.path().name(), logActor);
+        }
+        return logActor;
+    }
+
 
     /**
      * Builds the topic key.

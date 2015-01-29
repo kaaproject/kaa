@@ -41,7 +41,7 @@ public class ApplicationUserVerifierActor extends UntypedActor {
     /**
      * Instantiates a new application log actor.
      *
-     * @param logAppenderService
+     * @param endpointUserService
      *
      *            the log appender service
      */
@@ -59,7 +59,7 @@ public class ApplicationUserVerifierActor extends UntypedActor {
         private static final long serialVersionUID = 1L;
 
         /** The log appender service. */
-        private final EndpointUserService logAppenderService;
+        private final EndpointUserService endpointUserService;
 
         /** The log application service. */
         private final ApplicationService applicationService;
@@ -72,9 +72,9 @@ public class ApplicationUserVerifierActor extends UntypedActor {
          * @param logAppenderService
          *            the log appender service
          */
-        public ActorCreator(EndpointUserService logAppenderService, ApplicationService applicationService, String applicationToken) {
+        public ActorCreator(EndpointUserService endpointUserService, ApplicationService applicationService, String applicationToken) {
             super();
-            this.logAppenderService = logAppenderService;
+            this.endpointUserService = endpointUserService;
             this.applicationService = applicationService;
             this.applicationToken = applicationToken;
         }
@@ -86,7 +86,7 @@ public class ApplicationUserVerifierActor extends UntypedActor {
          */
         @Override
         public ApplicationUserVerifierActor create() throws Exception {
-            return new ApplicationUserVerifierActor(logAppenderService, applicationService, applicationToken);
+            return new ApplicationUserVerifierActor(endpointUserService, applicationService, applicationToken);
         }
     }
 

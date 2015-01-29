@@ -36,6 +36,7 @@ import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
+import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
@@ -106,6 +107,9 @@ public class DefaultAkkaService implements AkkaService {
 
     @Autowired
     private LogAppenderService logAppenderService;
+    
+    @Autowired
+    private EndpointUserService endpointUserService;
 
     private AkkaEventServiceListener listener;
 
@@ -121,7 +125,7 @@ public class DefaultAkkaService implements AkkaService {
         akka = ActorSystem.create(EPS);
         LOG.info("Initializing Akka EPS actor...");
         opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService,
-                notificationDeltaService, eventService, applicationService, logAppenderService)), EPS);
+                notificationDeltaService, eventService, applicationService, logAppenderService, endpointUserService)), EPS);
         LOG.info("Lookup platform protocols");
         Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
         LOG.info("Initializing Akka io router...");
