@@ -50,6 +50,7 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
   private static final org.apache.thrift.protocol.TField KEY_HASH_FIELD_DESC = new org.apache.thrift.protocol.TField("keyHash", org.apache.thrift.protocol.TType.STRING, (short)12);
   private static final org.apache.thrift.protocol.TField OP_FIELD_DESC = new org.apache.thrift.protocol.TField("op", org.apache.thrift.protocol.TType.I32, (short)13);
   private static final org.apache.thrift.protocol.TField APPENDER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("appenderId", org.apache.thrift.protocol.TType.STRING, (short)14);
+  private static final org.apache.thrift.protocol.TField USER_VERIFIER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userVerifierId", org.apache.thrift.protocol.TType.I32, (short)15);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -75,6 +76,7 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
    */
   public Operation op; // required
   public String appenderId; // required
+  public int userVerifierId; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -95,7 +97,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
      * @see Operation
      */
     OP((short)13, "op"),
-    APPENDER_ID((short)14, "appenderId");
+    APPENDER_ID((short)14, "appenderId"),
+    USER_VERIFIER_ID((short)15, "userVerifierId");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -138,6 +141,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
           return OP;
         case 14: // APPENDER_ID
           return APPENDER_ID;
+        case 15: // USER_VERIFIER_ID
+          return USER_VERIFIER_ID;
         default:
           return null;
       }
@@ -182,6 +187,7 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
   private static final int __GROUPSEQNUMBER_ISSET_ID = 1;
   private static final int __PROFILEFILTERSEQNUMBER_ISSET_ID = 2;
   private static final int __CONFIGURATIONSEQNUMBER_ISSET_ID = 3;
+  private static final int __USERVERIFIERID_ISSET_ID = 4;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
@@ -214,6 +220,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, Operation.class)));
     tmpMap.put(_Fields.APPENDER_ID, new org.apache.thrift.meta_data.FieldMetaData("appenderId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "id")));
+    tmpMap.put(_Fields.USER_VERIFIER_ID, new org.apache.thrift.meta_data.FieldMetaData("userVerifierId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32        , "Integer")));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Notification.class, metaDataMap);
   }
@@ -235,7 +243,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     String topicId,
     ByteBuffer keyHash,
     Operation op,
-    String appenderId)
+    String appenderId,
+    int userVerifierId)
   {
     this();
     this.appId = appId;
@@ -256,6 +265,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.keyHash = keyHash;
     this.op = op;
     this.appenderId = appenderId;
+    this.userVerifierId = userVerifierId;
+    setUserVerifierIdIsSet(true);
   }
 
   /**
@@ -298,6 +309,7 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     if (other.isSetAppenderId()) {
       this.appenderId = other.appenderId;
     }
+    this.userVerifierId = other.userVerifierId;
   }
 
   public Notification deepCopy() {
@@ -324,6 +336,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.keyHash = null;
     this.op = null;
     this.appenderId = null;
+    setUserVerifierIdIsSet(false);
+    this.userVerifierId = 0;
   }
 
   public String getAppId() {
@@ -676,6 +690,29 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     }
   }
 
+  public int getUserVerifierId() {
+    return this.userVerifierId;
+  }
+
+  public Notification setUserVerifierId(int userVerifierId) {
+    this.userVerifierId = userVerifierId;
+    setUserVerifierIdIsSet(true);
+    return this;
+  }
+
+  public void unsetUserVerifierId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USERVERIFIERID_ISSET_ID);
+  }
+
+  /** Returns true if field userVerifierId is set (has been assigned a value) and false otherwise */
+  public boolean isSetUserVerifierId() {
+    return EncodingUtils.testBit(__isset_bitfield, __USERVERIFIERID_ISSET_ID);
+  }
+
+  public void setUserVerifierIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERVERIFIERID_ISSET_ID, value);
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case APP_ID:
@@ -790,6 +827,14 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       }
       break;
 
+    case USER_VERIFIER_ID:
+      if (value == null) {
+        unsetUserVerifierId();
+      } else {
+        setUserVerifierId((Integer)value);
+      }
+      break;
+
     }
   }
 
@@ -837,6 +882,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     case APPENDER_ID:
       return getAppenderId();
 
+    case USER_VERIFIER_ID:
+      return Integer.valueOf(getUserVerifierId());
+
     }
     throw new IllegalStateException();
   }
@@ -876,6 +924,8 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       return isSetOp();
     case APPENDER_ID:
       return isSetAppenderId();
+    case USER_VERIFIER_ID:
+      return isSetUserVerifierId();
     }
     throw new IllegalStateException();
   }
@@ -1019,6 +1069,15 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
         return false;
     }
 
+    boolean this_present_userVerifierId = true;
+    boolean that_present_userVerifierId = true;
+    if (this_present_userVerifierId || that_present_userVerifierId) {
+      if (!(this_present_userVerifierId && that_present_userVerifierId))
+        return false;
+      if (this.userVerifierId != that.userVerifierId)
+        return false;
+    }
+
     return true;
   }
 
@@ -1095,6 +1154,11 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     builder.append(present_appenderId);
     if (present_appenderId)
       builder.append(appenderId);
+
+    boolean present_userVerifierId = true;
+    builder.append(present_userVerifierId);
+    if (present_userVerifierId)
+      builder.append(userVerifierId);
 
     return builder.toHashCode();
   }
@@ -1247,6 +1311,16 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetUserVerifierId()).compareTo(other.isSetUserVerifierId());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetUserVerifierId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userVerifierId, other.userVerifierId);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -1361,6 +1435,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     } else {
       sb.append(this.appenderId);
     }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("userVerifierId:");
+    sb.append(this.userVerifierId);
     first = false;
     sb.append(")");
     return sb.toString();
@@ -1519,6 +1597,14 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 15: // USER_VERIFIER_ID
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.userVerifierId = iprot.readI32();
+              struct.setUserVerifierIdIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1596,6 +1682,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
         oprot.writeString(struct.appenderId);
         oprot.writeFieldEnd();
       }
+      oprot.writeFieldBegin(USER_VERIFIER_ID_FIELD_DESC);
+      oprot.writeI32(struct.userVerifierId);
+      oprot.writeFieldEnd();
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1656,7 +1745,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       if (struct.isSetAppenderId()) {
         optionals.set(13);
       }
-      oprot.writeBitSet(optionals, 14);
+      if (struct.isSetUserVerifierId()) {
+        optionals.set(14);
+      }
+      oprot.writeBitSet(optionals, 15);
       if (struct.isSetAppId()) {
         oprot.writeString(struct.appId);
       }
@@ -1699,12 +1791,15 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       if (struct.isSetAppenderId()) {
         oprot.writeString(struct.appenderId);
       }
+      if (struct.isSetUserVerifierId()) {
+        oprot.writeI32(struct.userVerifierId);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Notification struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(14);
+      BitSet incoming = iprot.readBitSet(15);
       if (incoming.get(0)) {
         struct.appId = iprot.readString();
         struct.setAppIdIsSet(true);
@@ -1760,6 +1855,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
       if (incoming.get(13)) {
         struct.appenderId = iprot.readString();
         struct.setAppenderIdIsSet(true);
+      }
+      if (incoming.get(14)) {
+        struct.userVerifierId = iprot.readI32();
+        struct.setUserVerifierIdIsSet(true);
       }
     }
   }
