@@ -69,7 +69,7 @@ extern void        kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
 
 extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
                                               , kaa_context_t *context
-                                              , kaa_logger_t *logger);
+                                              , kaa_status_t *status);
 extern void        kaa_platform_protocol_destroy(kaa_platform_protocol_t *self);
 
 
@@ -101,7 +101,9 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
         error = kaa_status_create(&((*context_p)->status->status_instance));
 
     if (!error)
-        error = kaa_platform_protocol_create(&((*context_p)->platfrom_protocol), *context_p, (*context_p)->logger);
+        error = kaa_platform_protocol_create(&((*context_p)->platfrom_protocol)
+                                           , *context_p
+                                           , (*context_p)->status->status_instance);
 
     if (!error)
         error = kaa_channel_manager_create(&((*context_p)->channel_manager), (*context_p));

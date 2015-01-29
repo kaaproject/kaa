@@ -147,10 +147,9 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_m
 
 kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
                                        , kaa_context_t *context
-                                       , kaa_status_t *status
-                                       , kaa_logger_t *logger)
+                                       , kaa_status_t *status)
 {
-    KAA_RETURN_IF_NIL3(platform_protocol_p, context, logger, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL4(platform_protocol_p, context, context->logger, status, KAA_ERR_BADPARAM);
 
     *platform_protocol_p = KAA_MALLOC(sizeof(kaa_platform_protocol_t));
     KAA_RETURN_IF_NIL(*platform_protocol_p, KAA_ERR_NOMEM);
@@ -158,7 +157,7 @@ kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_prot
     (*platform_protocol_p)->request_id = 0;
     (*platform_protocol_p)->kaa_context = context;
     (*platform_protocol_p)->status = status;
-    (*platform_protocol_p)->logger = logger;
+    (*platform_protocol_p)->logger = context->logger;
     return KAA_ERR_NONE;
 }
 
@@ -356,7 +355,7 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     kaa_error_t error = kaa_client_sync_get_size(self, info->services, info->services_count, buffer_size);
     KAA_RETURN_IF_ERR(error)
 
-    KAA_LOG_DEBUG(self->kaa_context->logger, KAA_ERR_NONE, "Going to request sync buffer (size %zu)", *buffer_size);
+    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Going to request sync buffer (size %zu)", *buffer_size);
 
     *buffer = info->allocator(info->allocator_context, *buffer_size);
     if (*buffer) {
