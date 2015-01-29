@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-#include "platform/sha.h"
+#include "platform/ext_sha.h"
 #include "kaa_test.h"
 #include "kaa_common.h"
 #include "kaa_error.h"
@@ -35,14 +35,14 @@ void test_profile_update()
     char* body = "test";
     kaa_digest calculated_hash;
 
-    err = kaa_calculate_sha_hash(NULL, 50, calculated_hash);
+    err = ext_calculate_sha_hash(NULL, 50, calculated_hash);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
-    err = kaa_calculate_sha_hash(body, 0, calculated_hash);
+    err = ext_calculate_sha_hash(body, 0, calculated_hash);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
-    err = kaa_calculate_sha_hash(body, 4, NULL);
+    err = ext_calculate_sha_hash(body, 4, NULL);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_calculate_sha_hash(body, 4, calculated_hash);
+    err = ext_calculate_sha_hash(body, 4, calculated_hash);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     char buf[SHA_1_DIGEST_LENGTH * 2 + 1];

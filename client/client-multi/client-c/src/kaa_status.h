@@ -25,7 +25,7 @@ extern "C" {
 #include "kaa_common.h"
 
 #ifndef KAA_STATUS_T
-#define KAA_STATUS_T
+# define KAA_STATUS_T
 typedef struct kaa_status_t kaa_status_t;
 #endif
 

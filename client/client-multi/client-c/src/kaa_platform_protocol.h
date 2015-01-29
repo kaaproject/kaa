@@ -37,7 +37,7 @@ extern "C" {
  * Kaa platform protocol state structure
  */
 #ifndef KAA_PLATFORM_PRTOCOL_T
-    #define KAA_PLATFORM_PRTOCOL_T
+# define KAA_PLATFORM_PRTOCOL_T
     typedef struct kaa_platform_protocol_t  kaa_platform_protocol_t;
 #endif
 

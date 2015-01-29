@@ -17,10 +17,12 @@
 
 #include <sndc_sdk_api.h>
 #include <sndc_crypto_api.h>
-#include "../../../platform/sha.h"
 #include "../../../kaa_common.h"
+#include "../../../platform/ext_sha.h"
 
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
+
+
+kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
 {
     KAA_RETURN_IF_NIL3(data, data_size, digest, KAA_ERR_BADPARAM);
 

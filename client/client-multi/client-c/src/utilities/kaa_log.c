@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 #include "../platform/platform.h"
-#include "../platform/system_logger.h"
 #include "kaa_log.h"
-
-
-
 #include "../kaa_common.h"
+#include "../platform/ext_system_logger.h"
 #include "kaa_mem.h"
+
+
 
 #define KAA_LOG_PREFIX_FORMAT   "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
 
@@ -126,7 +125,7 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
     size_t consumed_len = 0;
     // Print log message prefix
 
-    int res_len = kaa_format_sprintf(self->log_buffer, self->buffer_size, KAA_LOG_PREFIX_FORMAT
+    int res_len = ext_format_sprintf(self->log_buffer, self->buffer_size, KAA_LOG_PREFIX_FORMAT
         		, kaa_log_level_name[log_level], truncated_name, lineno, error_code);
 
     if (res_len <= 0)   // Something terrible happened
@@ -140,7 +139,7 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
         // There's buffer space remaining: print log message body
         va_list args;
         va_start(args, format);
-        res_len = kaa_logger_sprintf(self->log_buffer + consumed_len
+        res_len = ext_logger_sprintf(self->log_buffer + consumed_len
 				, self->buffer_size - consumed_len
 				, format
 				, args);
@@ -155,8 +154,8 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
         }
     }
 
-    // Terminate buffer with '\n'. Null-termination is not important because the buffer length is specified in fwrite() below
+    // Terminate buffer with '\n','\0'. Null-termination is used with buffer length specified.
     self->log_buffer[consumed_len++] = '\n';
     self->log_buffer[consumed_len++] = 0;
-    write_log(self->sink, self->log_buffer, consumed_len);
+    ext_write_log(self->sink, self->log_buffer, consumed_len);
 }

@@ -16,13 +16,13 @@
 
 #include <stddef.h>
 #include <stdint.h>
-
 #include "platform/stdio.h"
-
 #include "kaa_channel_manager.h"
 #include "collections/kaa_list.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
+
+
 
 struct kaa_channel_manager_t {
     kaa_list_t                 *sync_handlers;

@@ -15,9 +15,12 @@
  */
 
 #include <sndc_sdk_api.h>
-#include "../../../platform/system_logger.h"
 
-void write_log(FILE * sink, const char * buffer, size_t message_size)
+#include "../../../platform/ext_system_logger.h"
+
+
+
+void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
 {
     if (!buffer) {
         return;
@@ -25,28 +28,28 @@ void write_log(FILE * sink, const char * buffer, size_t message_size)
     sndc_printf(buffer);
 }
 
-time_t get_systime()
+time_t ext_get_systime()
 {
     return (time_t) sndc_sys_getTimestamp_msec();
 }
 
-int kaa_format_sprintf(char * buffer, size_t buffer_size, const char * FORMAT,
-        const char * LOG_LEVEL_NAME, const char * truncated_name, int lineno,
+int ext_format_sprintf(char * buffer, size_t buffer_size, const char * format,
+        const char * log_level_name, const char * truncated_name, int lineno,
         kaa_error_t error_code)
 {
-    time_t t = get_systime();
+    time_t t = ext_get_systime();
     struct tm* tp = gmtime(&t);
 
-    return snprintf(buffer, buffer_size, FORMAT, 1900 + tp->tm_year,
+    return snprintf(buffer, buffer_size, format, 1900 + tp->tm_year,
             tp->tm_mon + 1, tp->tm_mday, tp->tm_hour, tp->tm_min, tp->tm_sec,
-            LOG_LEVEL_NAME, truncated_name, lineno, error_code);
+            log_level_name, truncated_name, lineno, error_code);
 }
 
-int kaa_snpintf(char * buffer, size_t buffer_size, const char * format, ...)
+int ext_snpintf(char * buffer, size_t buffer_size, const char * format, ...)
 {
     va_list args;
     va_start(args, format);
-    int res_len = kaa_logger_sprintf(buffer, buffer_size, format, args);
+    int res_len = ext_logger_sprintf(buffer, buffer_size, format, args);
     va_end(args);
     return res_len;
 }
@@ -103,17 +106,17 @@ typedef long long unsigned int uLongLongInt;
         strncpy(p_format + formated_size, symbols, symbols_size); \
         _INT_SPRINTF(type)
 
-int kaa_logger_sprintf(char * buffer, size_t buffer_size, const char * format, va_list args)
+int ext_logger_sprintf(char * buffer, size_t buffer_size, const char * format, va_list args)
 {
     int format_length = strnlen(format, buffer_size);
     int i = 0, res_len = 0;
-    const char * zu_symbols = "%lu";
-    const char * p_symbols = "0x%08X";
-    char * p = (char *) format;
+    const char *zu_symbols = "%lu";
+    const char *p_symbols = "0x%08X";
+    char *p = (char *) format;
     char ch = *p;
-    char * last_format = p;
-    char * buffer_p = buffer;
-    char * percent_pos = NULL;
+    char *last_format = p;
+    char *buffer_p = buffer;
+    char *percent_pos = NULL;
     size_t buffer_size_l = buffer_size;
     bool_t no_more_space_in_buffer = false;
     sprintfState state = DEFAULT;

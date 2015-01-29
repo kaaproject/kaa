@@ -15,13 +15,12 @@
  */
 
 /*
-sha.h
- Created on: Jan 15, 2015
-     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+* @file ext_sha.h
+* @brief External SHA functions.
 */
 
-#ifndef SHA_H_
-#define SHA_H_
+#ifndef EXT_SHA_H_
+#define EXT_SHA_H_
 
 #include "../kaa_error.h"
 
@@ -30,16 +29,23 @@ extern "C" {
 #endif
 
 
-/*
- * SHA1 hash
- */
+
 #define SHA_1_DIGEST_LENGTH 20
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
 typedef const unsigned char* kaa_digest_p;
 
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
+/*
+ * @brief SHA1 hash calculation function.
+ * SHA1 hash calculation function.
+ * @param[in]   data        Date for which SHA1 calculates.
+ * @param[in]   data_size   Size of data.
+ * @param[out]  digest      SHA1 calculated digest.
+ *
+ * @return kaa_error_t Error code.
+ */
+kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif
-#endif /* SHA_H_ */
+#endif /* EXT_SHA_H_ */

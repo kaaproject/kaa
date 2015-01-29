@@ -21,7 +21,7 @@
 # include <string.h>
 # include <stdarg.h>
 # include "platform/stdio.h"
-# include "platform/sha.h"
+# include "platform/ext_sha.h"
 # include "kaa_event.h"
 # include "kaa_status.h"
 # include "kaa_channel_manager.h"
@@ -31,7 +31,7 @@
 # include "collections/kaa_list.h"
 # include "utilities/kaa_mem.h"
 # include "utilities/kaa_log.h"
-# include "platform/system_logger.h"
+# include "platform/ext_system_logger.h"
 
 
 
@@ -370,7 +370,7 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
         char target_string[2 * KAA_ENDPOINT_ID_LENGTH + 1];
         int i = 0;
         for (; i < KAA_ENDPOINT_ID_LENGTH; ++i) {
-            kaa_snpintf(&target_string[2 * i], 3, "%02X", target[i]);
+            ext_snpintf(&target_string[2 * i], 3, "%02X", target[i]);
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event target = %s", target_string);
     }

@@ -17,9 +17,11 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdarg.h>
-#include "../../platform/system_logger.h"
+#include "../../platform/ext_system_logger.h"
 
-void write_log(FILE * sink, const char * buffer, size_t message_size)
+
+
+void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
 {
     if (!buffer || !sink) {
         return;
@@ -28,24 +30,24 @@ void write_log(FILE * sink, const char * buffer, size_t message_size)
     fflush(sink);
 }
 
-time_t get_systime()
+time_t ext_get_systime()
 {
     return time(NULL);
 }
 
-int kaa_format_sprintf(char * buffer, size_t buffer_size, const char * FORMAT,
-        const char * LOG_LEVEL_NAME, const char * truncated_name, int lineno,
+int ext_format_sprintf(char * buffer, size_t buffer_size, const char * format,
+        const char * log_level_name, const char * truncated_name, int lineno,
         kaa_error_t error_code)
 {
-    time_t t = get_systime();
+    time_t t = ext_get_systime();
     struct tm* tp = gmtime(&t);
 
-    return snprintf(buffer, buffer_size, FORMAT, 1900 + tp->tm_year,
+    return snprintf(buffer, buffer_size, format, 1900 + tp->tm_year,
             tp->tm_mon + 1, tp->tm_mday, tp->tm_hour, tp->tm_min, tp->tm_sec,
-            LOG_LEVEL_NAME, truncated_name, lineno, error_code);
+            log_level_name, truncated_name, lineno, error_code);
 }
 
-int kaa_snpintf(char * buffer, size_t buffer_size, const char * format, ...)
+int ext_snpintf(char * buffer, size_t buffer_size, const char * format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -54,7 +56,7 @@ int kaa_snpintf(char * buffer, size_t buffer_size, const char * format, ...)
     return res_len;
 }
 
-int kaa_logger_sprintf(char * buffer, size_t buffer_size, const char * format,
+int ext_logger_sprintf(char * buffer, size_t buffer_size, const char * format,
         va_list args)
 {
     return vsnprintf(buffer, buffer_size, format, args);

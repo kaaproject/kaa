@@ -16,13 +16,12 @@
 #include <stdint.h>
 #include <string.h>
 #include "platform/stdio.h"
-
 #include "kaa_bootstrap.h"
-
-
 #include "collections/kaa_list.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
+
+
 
 struct kaa_bootstrap_manager_t {
     kaa_list_t     *ops_list[KAA_CHANNEL_TYPE_COUNT];       /*!< Operations servers lists by channel type, sorted by increasing priority */

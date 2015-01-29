@@ -19,10 +19,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include "platform/stdio.h"
-#include "platform/sha.h"
 #include "kaa_platform_protocol.h"
-
-
+#include "platform/ext_sha.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_context.h"

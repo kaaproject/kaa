@@ -38,7 +38,7 @@ typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_da
 typedef size_t kaa_event_block_id;
 
 #ifndef KAA_EVENT_MANAGER_T
-    #define KAA_EVENT_MANAGER_T
+# define KAA_EVENT_MANAGER_T
     typedef struct kaa_event_manager_t      kaa_event_manager_t;
 #endif
 

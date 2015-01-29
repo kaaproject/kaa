@@ -15,11 +15,9 @@
  */
 #include <string.h>
 #include "platform/stdio.h"
-#include "platform/sha.h"
 #include "kaa_profile.h"
-
 #include "avro_src/avro/io.h"
-
+#include "platform/ext_sha.h"
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
@@ -407,7 +405,7 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
     avro_writer_free(writer);
 
     kaa_digest new_hash;
-    kaa_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
+    ext_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
 
     kaa_digest_p old_hash = NULL;
     if (kaa_status_get_profile_hash(self->status, &old_hash)) {
