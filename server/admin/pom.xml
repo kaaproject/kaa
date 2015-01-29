@@ -216,7 +216,7 @@
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-server</artifactId>
 		    <scope>provided</scope>
-		</dependency>        
+		</dependency>
 	    <dependency>
 	        <groupId>org.eclipse.jetty</groupId>
 	        <artifactId>jetty-servlet</artifactId>
@@ -226,32 +226,32 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-deploy</artifactId>
             <scope>provided</scope>
-        </dependency>   	    
+        </dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-runner</artifactId>
 		    <scope>provided</scope>
-		</dependency>	    
+		</dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-start</artifactId>
 		    <scope>provided</scope>
-		</dependency>		
+		</dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-client-impl</artifactId>
             <scope>provided</scope>
-        </dependency>   		
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-server-impl</artifactId>
             <scope>provided</scope>
-        </dependency>           
+        </dependency>
         <dependency>
             <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-api</artifactId>
             <scope>provided</scope>
-        </dependency>       
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
             <artifactId>config</artifactId>
@@ -267,6 +267,7 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>config</artifactId>
+            <version>${project.version}</version>
             <classifier>flume</classifier>
             <scope>runtime</scope>
         </dependency>
