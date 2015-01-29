@@ -104,6 +104,7 @@ private:
     IKaaClientStateStoragePtr status_;
 
     std::map<std::int32_t/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
+    KAA_MUTEX_DECLARE(eventListenersGuard_);
 };
 
 } /* namespace kaa */
