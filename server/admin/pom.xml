@@ -122,17 +122,14 @@
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
         </dependency>
         <dependency>
             <groupId>net.iharder</groupId>
             <artifactId>base64</artifactId>
-            <version>2.3.8</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -141,7 +138,6 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.3.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -166,17 +162,14 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.12</version>
         </dependency>
         <dependency>
             <groupId>com.twitter.common</groupId>
             <artifactId>thrift</artifactId>
-            <version>0.0.64</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -187,7 +180,6 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
@@ -202,104 +194,83 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
             <artifactId>gwt-client</artifactId>
-            <version>${project.version}</version>
         </dependency>        
         <dependency>
             <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
             <artifactId>converter</artifactId>
-            <version>${project.version}</version>
         </dependency>           
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.versly</groupId>
             <artifactId>versly-wsdoc</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-server</artifactId>
-		    <version>${jetty.version}</version>
 		    <scope>provided</scope>
 		</dependency>        
 	    <dependency>
 	        <groupId>org.eclipse.jetty</groupId>
 	        <artifactId>jetty-servlet</artifactId>
-	        <version>${jetty.version}</version>
 	        <scope>provided</scope>
 	    </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-deploy</artifactId>
-            <version>${jetty.version}</version>
             <scope>provided</scope>
         </dependency>   	    
 		<dependency>
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-runner</artifactId>
-		    <version>${jetty.version}</version>
 		    <scope>provided</scope>
 		</dependency>	    
 		<dependency>
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-start</artifactId>
-		    <version>${jetty.version}</version>
 		    <scope>provided</scope>
 		</dependency>		
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-client-impl</artifactId>
-            <version>${jetty.version}</version>
             <scope>provided</scope>
         </dependency>   		
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-server-impl</artifactId>
-            <version>${jetty.version}</version>
             <scope>provided</scope>
         </dependency>           
         <dependency>
             <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-api</artifactId>
-            <version>1.0</version>
             <scope>provided</scope>
         </dependency>       
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>file</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>mongo</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>flume</classifier>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
-
 
     <build>
         <finalName>kaa-admin</finalName>

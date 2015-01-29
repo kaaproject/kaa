@@ -37,16 +37,14 @@
     <spring.version>3.2.10.RELEASE</spring.version>
   </properties>
 
-  <dependencies>
+    <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dto</artifactId>
-            <version>${project.version}</version>
         </dependency>
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpclient</artifactId>
-		    <version>${httpcomponents.version}</version>
 		</dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -64,10 +62,8 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>utils</artifactId>
-            <version>${project.version}</version>
-        </dependency>        
-
-  </dependencies>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
