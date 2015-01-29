@@ -72,8 +72,8 @@
             <artifactId>client-java-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server</groupId>
-            <artifactId>operations</artifactId>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>log-shared</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
