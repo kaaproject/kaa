@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
@@ -41,6 +42,11 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -95,7 +101,7 @@ public class MongoDBLogAppenderTest {
     }
 
     @Before
-    public void beforeTest() throws IOException {
+    public void beforeTest() throws Exception {
         logAppender = new MongoDbLogAppender();
         
         LogAppenderDto appenderDto = new LogAppenderDto();
@@ -112,13 +118,20 @@ public class MongoDBLogAppenderTest {
         }
         List<MongoDBCredential> credentials = new ArrayList<>();
         
-        MongoDbConfig mongoDbConfig = MongoDbConfig.newBuilder().
-                                                    setMongoServers(servers).
-                                                    setMongoCredentials(credentials).
-                                                    setDbName(dbName).build();
+        RawSchema rawSchema = new RawSchema(MongoDbConfig.getClassSchema().toString());
+        DefaultRecordGenerationAlgorithm<RawData> algotithm = 
+                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+        RawData rawData = algotithm.getRootData();
+        AvroJsonConverter<MongoDbConfig> converter = 
+                new AvroJsonConverter<>(MongoDbConfig.getClassSchema(), MongoDbConfig.class);
+        MongoDbConfig mongoDbConfig = converter.decodeJson(rawData.getRawData());
         
-        AvroByteArrayConverter<MongoDbConfig> converter = new AvroByteArrayConverter<>(MongoDbConfig.class);
-        byte[] rawConfiguration = converter.toByteArray(mongoDbConfig);
+        mongoDbConfig.setMongoServers(servers);
+        mongoDbConfig.setMongoCredentials(credentials);
+        mongoDbConfig.setDbName(dbName);
+        
+        AvroByteArrayConverter<MongoDbConfig> byteConverter = new AvroByteArrayConverter<>(MongoDbConfig.class);
+        byte[] rawConfiguration = byteConverter.toByteArray(mongoDbConfig);
         
         appenderDto.setRawConfiguration(rawConfiguration);
         

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.view.grid;
+package org.kaaproject.kaa.server.common.core.schema;
 
-import com.google.gwt.user.cellview.client.DataGrid;
+public class RawSchema extends AbstractKaaSchema {
 
-interface KaaAdminGridResourcesSmall extends DataGrid.Resources {
+    private static final long serialVersionUID = -583443909980529198L;
 
-    @Override
-    @Source({ DataGrid.Style.DEFAULT_CSS,
-            "KaaAdminDataGrid.css",
-            "KaaAdminDataGridSmall.css"})
-    KaaAdminGridSmallStyle dataGridStyle();
+    public RawSchema(String schema) {
+        super(schema);
+    }
+
 }
-
-interface KaaAdminGridSmallStyle extends DataGrid.Style {}

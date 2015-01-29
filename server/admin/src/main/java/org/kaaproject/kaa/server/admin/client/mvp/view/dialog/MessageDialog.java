@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;

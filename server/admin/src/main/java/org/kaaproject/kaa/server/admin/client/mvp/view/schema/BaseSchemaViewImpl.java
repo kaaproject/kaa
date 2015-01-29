@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements BaseSchemaView {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
     private SizedTextBox version;
     private SizedTextBox name;

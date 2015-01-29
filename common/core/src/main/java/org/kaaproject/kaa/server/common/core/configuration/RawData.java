@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.view.grid;
+package org.kaaproject.kaa.server.common.core.configuration;
 
-import com.google.gwt.user.cellview.client.SimplePager;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 
-interface KaaAdminPagerResourcesSmall extends SimplePager.Resources {
+public class RawData extends AbstractKaaData<RawSchema> {
 
-    @Override
-    @Source("KaaAdminPagerSmall.css")
-    KaaAdminPagerSmallStyle simplePagerStyle();
+    private static final long serialVersionUID = 7829004601893588255L;
+
+    public RawData(RawSchema schema, String data) {
+        super(schema, data);
+    }
+
 }
-
-interface KaaAdminPagerSmallStyle extends SimplePager.Style {}

@@ -6,7 +6,7 @@
     [
         {"name": "flumeEventFormat",
          "displayName": "Flume event format",
-         "default": "RECORDS_CONTAINER",
+         "by_default": "RECORDS_CONTAINER",
          "displayNames" : ["Records container", "Generic"],
          "type": {
                   "namespace": "org.kaaproject.kaa.server.appenders.flume.config.gen",
@@ -36,9 +36,9 @@
                         "type": "record",
                         "name": "PrioritizedFlumeNode",
                         "fields": [
-                            {"name": "host", "displayName": "Host", "weight": 0.8, "default": "localhost", "type": "string"},
-                            {"name": "port", "displayName": "Port", "weight": 0.1, "default": 7070, "type": "int"},
-                            {"name": "priority", "displayName": "Priority", "weight": 0.1, "default": 1, "type": "int"}
+                            {"name": "host", "displayName": "Host", "weight": 0.8, "by_default": "localhost", "type": "string"},
+                            {"name": "port", "displayName": "Port", "weight": 0.1, "by_default": 7070, "type": "int"},
+                            {"name": "priority", "displayName": "Priority", "weight": 0.1, "by_default": 1, "type": "int"}
                         ]
                     }
                  }
@@ -62,8 +62,8 @@
                         "type": "record",
                         "name": "FlumeNode",
                         "fields": [
-                            {"name": "host", "displayName": "Host", "weight": 0.75, "default": "localhost", "type": "string"},
-                            {"name": "port", "displayName": "Port", "weight": 0.25, "default": 7070, "type": "int"}
+                            {"name": "host", "displayName": "Host", "weight": 0.75, "by_default": "localhost", "type": "string"},
+                            {"name": "port", "displayName": "Port", "weight": 0.25, "by_default": 7070, "type": "int"}
                         ]
                     }
                  }

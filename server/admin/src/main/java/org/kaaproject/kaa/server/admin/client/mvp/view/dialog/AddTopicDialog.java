@@ -19,9 +19,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.TopicListBox;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -88,7 +88,7 @@ public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List
         int row=0;
 
         Widget label = new Label(Utils.constants.selectNotificationTopics());
-        label.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        label.addStyleName(Utils.avroUiStyle.requiredField());
         topic = new TopicListBox();
         topic.setWidth("200px");
         topic.setAcceptableValues(topics);

@@ -22,12 +22,12 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 
 import com.google.gwt.user.client.ui.HasValue;
 
-public interface BaseRecordView<T extends AbstractStructureDto> extends BaseDetailsView {
+public interface BaseRecordView<T extends AbstractStructureDto,V> extends BaseDetailsView {
 
     public SchemaListBox getSchema();
 
     public HasValue<String> getSchemaVersion();
 
-    public AbstractRecordPanel<T> getRecordPanel();
+    public AbstractRecordPanel<T,V> getRecordPanel();
 
 }

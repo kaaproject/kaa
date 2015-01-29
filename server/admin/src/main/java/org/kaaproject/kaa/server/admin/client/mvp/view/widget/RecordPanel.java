@@ -34,19 +34,20 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 
 public class RecordPanel extends SimplePanel implements HasValue<RecordField>, ChangeHandler {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
+    private CaptionPanel recordCaption;
     private RecordFieldWidget recordFieldWidget;
+    private FlexTable uploadTable;
     private FileUploadForm recordFileUpload;
     private Button uploadButton;    
     private String recordFileItemName;
@@ -57,7 +58,8 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         this.readOnly = readOnly;
         this.hasErrorMessage = hasErrorMessage;
         FlexTable table = new FlexTable();
-        CaptionPanel recordCaption = new CaptionPanel();
+        table.setWidth("100%");
+        recordCaption = new CaptionPanel();
         if (optional) {
             recordCaption.setCaptionText(title);
         } else {
@@ -67,37 +69,56 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
             span.addClassName(REQUIRED);
             recordCaption.setCaptionHTML(span.getString());
         }        
-        recordFieldWidget = new RecordFieldWidget();
+        recordFieldWidget = new RecordFieldWidget(readOnly);
         recordCaption.setContentWidget(recordFieldWidget);
-        recordCaption.setWidth("100%");
         table.setWidget(0, 0, recordCaption);
-        if (!readOnly) {
-            Widget label = new Label(Utils.constants.uploadFromFile());
-            recordFileUpload = new FileUploadForm();
-            recordFileUpload.setWidth("200px");
-            recordFileUpload.addSubmitCompleteHandler(new SubmitCompleteHandler() {
-                @Override
-                public void onSubmitComplete(SubmitCompleteEvent event) {
-                    loadRecordFromFile();
-                }
-            });
-            recordFileUpload.addChangeHandler(this);
-            recordFileItemName = recordFileUpload.getFileItemName();
-            uploadButton = new Button(Utils.constants.upload(), new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    recordFileUpload.submit();
-                }
-            });
-            uploadButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
-            uploadButton.setEnabled(false);
-            table.setWidget(1, 0, label);
-            table.setWidget(1, 1, recordFileUpload);
-            table.setWidget(1, 2, uploadButton);
-            table.getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE);
-            table.getFlexCellFormatter().setColSpan(0, 0, 3);
-        }
+        Label uploadLabel = new Label(Utils.constants.uploadFromFile());
+        recordFileUpload = new FileUploadForm();
+        recordFileUpload.addSubmitCompleteHandler(new SubmitCompleteHandler() {
+            @Override
+            public void onSubmitComplete(SubmitCompleteEvent event) {
+                loadRecordFromFile();
+            }
+        });
+        recordFileUpload.addChangeHandler(this);
+        recordFileItemName = recordFileUpload.getFileItemName();
+        uploadButton = new Button(Utils.constants.upload(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                recordFileUpload.submit();
+            }
+        });
+        uploadButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
+        uploadButton.setEnabled(false);
+        uploadTable = new FlexTable();
+        uploadTable.setWidget(0, 0, uploadLabel);
+        uploadTable.setWidget(0, 1, recordFileUpload);
+        uploadTable.setWidget(0, 2, uploadButton);
+        uploadTable.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
+        uploadTable.getFlexCellFormatter().setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_MIDDLE);
+        table.setWidget(1, 0, uploadTable);
         setWidget(table);
+        setUploadVisible(!readOnly);
+    }
+    
+    public void setMinHeightPx(int height) {
+        recordCaption.getElement().getStyle().setPropertyPx("minHeight", height);
+    }
+    
+    public RecordFieldWidget getRecordWidget() {
+        return recordFieldWidget;
+    }
+    
+    public void setReadOnly(boolean readOnly) {
+        if (this.readOnly != readOnly) {
+            this.readOnly = readOnly;
+            recordFieldWidget.setReadOnly(readOnly);
+            setUploadVisible(!readOnly);
+        }
+    }
+    
+    private void setUploadVisible(boolean visible) {
+        uploadTable.setVisible(visible);
     }
     
     @Override

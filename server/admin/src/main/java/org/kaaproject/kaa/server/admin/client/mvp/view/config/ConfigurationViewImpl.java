@@ -16,20 +16,21 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.config;
 
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseRecordViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
-public class ConfigurationViewImpl extends BaseRecordViewImpl<ConfigurationDto> {
+public class ConfigurationViewImpl extends BaseRecordViewImpl<ConfigurationRecordFormDto, RecordField> {
 
     public ConfigurationViewImpl(boolean create) {
         super(create);
     }
 
     @Override
-    protected AbstractRecordPanel<ConfigurationDto> createRecordPanel() {
-        return new ConfigurationPanel();
+    protected AbstractRecordPanel<ConfigurationRecordFormDto, RecordField> createRecordPanel() {
+        return new ConfigurationPanel(this);
     }
 
     @Override

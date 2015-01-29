@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FileUploadForm;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -79,7 +79,7 @@ public class AddEcfSchemaDialog extends KaaDialog implements ChangeHandler, HasE
         int row=0;
 
         Widget label = new Label(Utils.constants.selectSchemaFile());
-        label.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        label.addStyleName(Utils.avroUiStyle.requiredField());
         schemaFileUpload = new FileUploadForm();
         schemaFileUpload.setWidth("200px");
 

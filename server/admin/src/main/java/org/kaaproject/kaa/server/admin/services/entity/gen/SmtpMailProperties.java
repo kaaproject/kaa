@@ -7,10 +7,10 @@ package org.kaaproject.kaa.server.admin.services.entity.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SmtpMailProperties\",\"namespace\":\"org.kaaproject.kaa.server.admin.services.entity.gen\",\"fields\":[{\"name\":\"mailFrom\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"Kaa <admin@kaaproject.org>\",\"displayName\":\"From address\",\"maxLength\":1000},{\"name\":\"smtpProtocol\",\"type\":{\"type\":\"enum\",\"name\":\"SmtpProtocol\",\"symbols\":[\"SMTP\",\"SMTPS\"]},\"default\":\"SMTP\",\"displayName\":\"SMTP protocol\",\"displayNames\":[\"SMTP\",\"SMTPS\"]},{\"name\":\"smtpHost\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"localhost\",\"displayName\":\"SMTP Host\"},{\"name\":\"smtpPort\",\"type\":\"int\",\"default\":25,\"displayName\":\"SMTP Port\"},{\"name\":\"timeout\",\"type\":[\"int\",\"null\"],\"default\":10000,\"displayName\":\"Timeout\",\"optional\":true},{\"name\":\"enableTls\",\"type\":[\"boolean\",\"null\"],\"default\":false,\"displayName\":\"TLS\",\"optional\":true},{\"name\":\"username\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"\",\"displayName\":\"Username\",\"optional\":true},{\"name\":\"password\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"\",\"displayName\":\"Password\",\"optional\":true,\"inputType\":\"password\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SmtpMailProperties\",\"namespace\":\"org.kaaproject.kaa.server.admin.services.entity.gen\",\"fields\":[{\"name\":\"mailFrom\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"From address\",\"maxLength\":1000,\"by_default\":\"Kaa <admin@kaaproject.org>\"},{\"name\":\"smtpProtocol\",\"type\":{\"type\":\"enum\",\"name\":\"SmtpProtocol\",\"namespace\":\"org.kaaproject.kaa.server.admin.services.entity.gen.smtp\",\"symbols\":[\"SMTP\",\"SMTPS\"]},\"displayName\":\"SMTP protocol\",\"by_default\":\"SMTP\",\"displayNames\":[\"SMTP\",\"SMTPS\"]},{\"name\":\"smtpHost\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"SMTP Host\",\"by_default\":\"localhost\"},{\"name\":\"smtpPort\",\"type\":\"int\",\"displayName\":\"SMTP Port\",\"by_default\":25},{\"name\":\"timeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Timeout\",\"by_default\":10000},{\"name\":\"enableTls\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"TLS\",\"by_default\":false},{\"name\":\"username\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"displayName\":\"Username\",\"by_default\":\"\"},{\"name\":\"password\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"displayName\":\"Password\",\"by_default\":\"\",\"inputType\":\"password\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String mailFrom;
-   private org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol smtpProtocol;
+   private org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol smtpProtocol;
    private java.lang.String smtpHost;
    private int smtpPort;
    private java.lang.Integer timeout;
@@ -28,7 +28,7 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
   /**
    * All-args constructor.
    */
-  public SmtpMailProperties(java.lang.String mailFrom, org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol smtpProtocol, java.lang.String smtpHost, java.lang.Integer smtpPort, java.lang.Integer timeout, java.lang.Boolean enableTls, java.lang.String username, java.lang.String password) {
+  public SmtpMailProperties(java.lang.String mailFrom, org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol smtpProtocol, java.lang.String smtpHost, java.lang.Integer smtpPort, java.lang.Integer timeout, java.lang.Boolean enableTls, java.lang.String username, java.lang.String password) {
     this.mailFrom = mailFrom;
     this.smtpProtocol = smtpProtocol;
     this.smtpHost = smtpHost;
@@ -59,7 +59,7 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: mailFrom = (java.lang.String)value$; break;
-    case 1: smtpProtocol = (org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol)value$; break;
+    case 1: smtpProtocol = (org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol)value$; break;
     case 2: smtpHost = (java.lang.String)value$; break;
     case 3: smtpPort = (java.lang.Integer)value$; break;
     case 4: timeout = (java.lang.Integer)value$; break;
@@ -88,7 +88,7 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
   /**
    * Gets the value of the 'smtpProtocol' field.
    */
-  public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol getSmtpProtocol() {
+  public org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol getSmtpProtocol() {
     return smtpProtocol;
   }
 
@@ -96,7 +96,7 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
    * Sets the value of the 'smtpProtocol' field.
    * @param value the value to set.
    */
-  public void setSmtpProtocol(org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol value) {
+  public void setSmtpProtocol(org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol value) {
     this.smtpProtocol = value;
   }
 
@@ -212,7 +212,7 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
     implements org.apache.avro.data.RecordBuilder<SmtpMailProperties> {
 
     private java.lang.String mailFrom;
-    private org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol smtpProtocol;
+    private org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol smtpProtocol;
     private java.lang.String smtpHost;
     private int smtpPort;
     private java.lang.Integer timeout;
@@ -325,12 +325,12 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
     }
 
     /** Gets the value of the 'smtpProtocol' field */
-    public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol getSmtpProtocol() {
+    public org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol getSmtpProtocol() {
       return smtpProtocol;
     }
     
     /** Sets the value of the 'smtpProtocol' field */
-    public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setSmtpProtocol(org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol value) {
+    public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setSmtpProtocol(org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol value) {
       validate(fields()[1], value);
       this.smtpProtocol = value;
       fieldSetFlags()[1] = true;
@@ -503,7 +503,7 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       try {
         SmtpMailProperties record = new SmtpMailProperties();
         record.mailFrom = fieldSetFlags()[0] ? this.mailFrom : (java.lang.String) defaultValue(fields()[0]);
-        record.smtpProtocol = fieldSetFlags()[1] ? this.smtpProtocol : (org.kaaproject.kaa.server.admin.services.entity.gen.SmtpProtocol) defaultValue(fields()[1]);
+        record.smtpProtocol = fieldSetFlags()[1] ? this.smtpProtocol : (org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol) defaultValue(fields()[1]);
         record.smtpHost = fieldSetFlags()[2] ? this.smtpHost : (java.lang.String) defaultValue(fields()[2]);
         record.smtpPort = fieldSetFlags()[3] ? this.smtpPort : (java.lang.Integer) defaultValue(fields()[3]);
         record.timeout = fieldSetFlags()[4] ? this.timeout : (java.lang.Integer) defaultValue(fields()[4]);

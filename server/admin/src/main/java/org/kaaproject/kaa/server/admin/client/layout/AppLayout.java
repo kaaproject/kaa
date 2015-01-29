@@ -13,6 +13,7 @@
 
 package org.kaaproject.kaa.server.admin.client.layout;
 
+import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -53,9 +54,12 @@ public class AppLayout extends Composite {
     CustomDeckLayoutPanel navContent;
     @UiField(provided=true) 
     final KaaAdminStyle kaaAdminStyle;
+    @UiField(provided=true) 
+    final AvroUiStyle avroUiStyle;
 
     public AppLayout() {
         kaaAdminStyle = Utils.kaaAdminStyle;
+        avroUiStyle = Utils.avroUiStyle;
         initWidget(uiBinder.createAndBindUi(this));
         init();
     }
@@ -92,7 +96,7 @@ public class AppLayout extends Composite {
         navPanel.add(back);
         appHeader.setSize("100%", "60px");
 
-        appContent.setStyleName(kaaAdminStyle.bAppContent());
+        appContent.setStyleName(avroUiStyle.bAppContent());
         navPanel.setStyleName(kaaAdminStyle.bNavPanel());
 
         back.addClickHandler(new ClickHandler() {
