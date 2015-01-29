@@ -36,7 +36,6 @@
         <server.confname>bootstrap-server.properties</server.confname>
         <script.server.name>kaa-bootstrap</script.server.name>
         <script.server.desc>Kaa Bootstrap Server</script.server.desc>
-        <script.server.additional.commands></script.server.additional.commands>
     </properties>
 
     <dependencies>
@@ -189,7 +188,6 @@
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>
-                        <server_log_sufix></server_log_sufix>
                         <server_home_dir>.</server_home_dir>
                     </systemPropertyVariables>
                 </configuration>
