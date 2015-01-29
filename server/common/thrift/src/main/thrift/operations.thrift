@@ -53,6 +53,9 @@ enum Operation {
       ADD_LOG_APPENDER = 15
       REMOVE_LOG_APPENDER = 16
       UPDATE_LOG_APPENDER = 17
+      ADD_USER_VERIFIER = 15
+      REMOVE_USER_VERIFIER = 16
+      UPDATE_USER_VERIFIER = 17
 }
 
 /**
@@ -88,6 +91,7 @@ struct Notification {
   12: binary keyHash
   13: Operation op
   14: id appenderId
+  15: shared.Integer userVerifierId
 }
 
 struct RedirectionRule {

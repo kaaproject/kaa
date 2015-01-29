@@ -26,10 +26,12 @@ import java.util.Set;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -66,10 +68,23 @@ public class DefaultEndpointUserService implements EndpointUserService {
 
     @Autowired
     private ApplicationService applicationService;
+    
+    @Autowired
+    private UserVerifierService userVerifierService;
 
     /** The application service. */
     @Autowired
     private CacheService cacheService;
+    
+    @Override
+    public UserVerifierDto findUserVerifier(String appId, int verifierId) {
+        return userVerifierService.findUserVerifiersByAppIdAndVerifierId(appId, verifierId);
+    }
+
+    @Override
+    public List<UserVerifierDto> findUserVerifiers(String appId) {
+        return userVerifierService.findUserVerifiersByAppId(appId);
+    }
 
     @Override
     public UserAttachResponse attachUser(EndpointProfileDto profile, UserAttachRequest userAttachRequest) {
@@ -225,5 +240,4 @@ public class DefaultEndpointUserService implements EndpointUserService {
         }
         return new EventListenersResponse(request.getRequestId(), result, SyncStatus.SUCCESS);
     }
-
 }
