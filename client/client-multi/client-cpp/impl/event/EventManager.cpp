@@ -88,10 +88,10 @@ void EventManager::produceEvent(const std::string& fqn
     }
 }
 
-std::list<Event> EventManager::getPendingEvents()
+std::list<Event> EventManager::releasePendingEvents()
 {
     KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
-    std::list result(std::move(pendingEvents_));
+    std::list<Event> result(std::move(pendingEvents_));
     pendingEvents_ = std::list<Event>();
     return result;
 }

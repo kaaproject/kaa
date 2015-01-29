@@ -41,8 +41,12 @@ private:
 class TestEventDataProcessor : public IEventDataProcessor
 {
 public:
-    virtual std::list<Event> getPendingEvents() {
+    virtual std::list<Event> releasePendingEvents() {
         return events_;
+    }
+
+    virtual bool hasPendingEvents() const {
+        return !events_.empty();
     }
 
     void setPendingEvents(const std::list<Event>& newEvents) {

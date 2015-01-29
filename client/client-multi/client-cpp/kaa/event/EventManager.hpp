@@ -61,7 +61,7 @@ public:
     virtual void onEventsReceived(const EventSyncResponse::events_t& events);
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners);
 
-    virtual std::list<Event> getPendingEvents();
+    virtual std::list<Event> releasePendingEvents();
     virtual bool hasPendingEvents() const;
 
     virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests();

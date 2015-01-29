@@ -55,7 +55,7 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
     }
 
     if (isEventSNSynchronized_) {
-        auto pendingEvents(eventDataProcessor_.getPendingEvents());
+        auto pendingEvents(eventDataProcessor_.releasePendingEvents());
         KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
         for (auto it = events_.begin(); it != events_.end(); ++it) {
             pendingEvents.insert(pendingEvents.end(), it->second.begin(), it->second.end());
