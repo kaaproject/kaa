@@ -16,35 +16,62 @@
 
 package org.kaaproject.kaa.client.channel.impl.transports;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
-import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
+import org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultBootstrapTransport extends AbstractKaaTransport implements BootstrapTransport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
+    
     private BootstrapManager manager;
     private final String applicationToken;
+    private final AtomicInteger increment = new AtomicInteger();
 
     public DefaultBootstrapTransport(String applicationToken) {
         this.applicationToken = applicationToken;
     }
 
     @Override
-    public Resolve createResolveRequest() {
+    public SyncRequest createResolveRequest() {
         if (clientState != null) {
-            Resolve request = new Resolve();
-            request.setApplicationToken(applicationToken);
+            SyncRequest request = new SyncRequest();
+            request.setRequestId(increment.incrementAndGet());
+            BootstrapSyncRequest resolveRequest = new BootstrapSyncRequest();
+            List<KaaDataChannel> channels = channelManager.getChannels();
+            List<ProtocolVersionPair> pairs = new ArrayList<ProtocolVersionPair>(channels.size());
+            for(KaaDataChannel channel : channels){
+                TransportProtocolId channelTransportId = channel.getTransportProtocolId();
+                pairs.add(new ProtocolVersionPair(channelTransportId.getProtocolId(), channelTransportId.getProtocolVersion()));
+                LOG.debug("Adding transport with id {} and version {} to resolve request", channelTransportId.getProtocolId(), channelTransportId.getProtocolVersion());
+            }
+            resolveRequest.setSupportedProtocols(pairs);
+            resolveRequest.setRequestId(increment.get());
+            request.setSyncRequestMetaData(new SyncRequestMetaData(applicationToken, null, null, null));
+            request.setBootstrapSyncRequest(resolveRequest);
             return request;
         }
         return null;
     }
 
     @Override
-    public void onResolveResponse(OperationsServerList servers) {
-        if (manager != null) {
-            manager.onServerListUpdated(servers);
+    public void onResolveResponse(SyncResponse syncResponse) {
+        if (manager != null && syncResponse != null && syncResponse.getBootstrapSyncResponse() != null) {
+            manager.onProtocolListUpdated(syncResponse.getBootstrapSyncResponse().getSupportedProtocols());
         }
     }
 

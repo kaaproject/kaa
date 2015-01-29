@@ -38,8 +38,8 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.EventRouteUpdateTy
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RouteAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserRouteInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
+import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +148,7 @@ public class DefaultEventService implements EventService {
                 serverId);
         ByteBuffer eventData;
         try {
-            org.kaaproject.kaa.server.operations.pojo.sync.Event eventSource = remoteEndpointEvent.getEvent().getEvent();
+            org.kaaproject.kaa.server.sync.Event eventSource = remoteEndpointEvent.getEvent().getEvent();
             eventData = ByteBuffer.wrap(eventConverter.get().toByteArray(AvroEncDec.convert(eventSource)));
             org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointEvent endpointEvent
                 = new org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointEvent(
@@ -495,7 +495,7 @@ public class DefaultEventService implements EventService {
         LOG.debug("onEvent .... event in {} listeners", listeners.size());
         LOG.debug("Event: {}",event.toString());
         for(EventServiceListener listener : listeners) {
-            org.kaaproject.kaa.server.operations.pojo.sync.Event localEvent;
+            org.kaaproject.kaa.server.sync.Event localEvent;
             try {
                 localEvent = AvroEncDec.convert(eventConverter.get().fromByteArray(event.getEndpointEvent().getEventData()));
                 EndpointEvent endpointEvent = new EndpointEvent(

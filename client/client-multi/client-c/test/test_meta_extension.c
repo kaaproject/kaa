@@ -23,10 +23,11 @@
 #include "kaa_error.h"
 #include "kaa_common.h"
 #include "kaa_defaults.h"
-#include "kaa_context.h"
 #include "kaa_status.h"
+#include "kaa_context.h"
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_log.h"
+#include "utilities/kaa_mem.h"
 
 
 
@@ -34,7 +35,7 @@ extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
 
 extern kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size);
-extern kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context
+extern kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status
                                                  , kaa_platform_message_writer_t* writer
                                                  , uint32_t request_id);
 
@@ -42,7 +43,6 @@ extern kaa_error_t kaa_meta_data_request_serialize(kaa_context_t *context
 
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
-static kaa_context_t kaa_context;
 
 
 void test_meta_extension_get_size_failed()
@@ -75,7 +75,6 @@ void test_meta_extension_serialize_failed()
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
-    kaa_context_t context;
     const size_t buffer_size = 6;
     char buffer[buffer_size];
     kaa_platform_message_writer_t *writer;
@@ -84,9 +83,6 @@ void test_meta_extension_serialize_failed()
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_meta_data_request_serialize(NULL, NULL, 0);
-    ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = kaa_meta_data_request_serialize(&context, NULL, 0);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_meta_data_request_serialize(NULL, (kaa_platform_message_writer_t *)!NULL, 0);
@@ -111,13 +107,13 @@ void test_meta_extension_serialize()
     kaa_digest expected_public_key_hash = {0x74, 0xc7, 0x51, 0x43, 0x00, 0xf7, 0xb8, 0x21, 0x2c, 0xc3, 0x6b, 0xa5, 0x9c, 0xb4, 0x03, 0xef, 0xc2, 0x5c, 0x65, 0x6c};
     kaa_digest expected_profile_hash = {0xfa, 0x71, 0xb5, 0x02, 0xe7, 0xdf, 0x96, 0x86, 0x6c, 0xdc, 0xe1, 0x4a, 0x17, 0x35, 0x7f, 0xd9, 0xa8, 0xfb, 0x71, 0x09};
 
-    error_code = kaa_status_set_endpoint_public_key_hash(kaa_context.status, expected_public_key_hash);
+    error_code = ext_copy_sha_hash(status->endpoint_public_key_hash, expected_public_key_hash);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_status_set_profile_hash(kaa_context.status, expected_profile_hash);
+    error_code = ext_copy_sha_hash(status->profile_hash, expected_profile_hash);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(&kaa_context, writer, 1);
+    error_code = kaa_meta_data_request_serialize(status, writer, 1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_reader_t *reader;
@@ -182,9 +178,6 @@ int test_init()
     if (error || !status) {
         return error;
     }
-
-    kaa_context.logger = logger;
-    kaa_context.status = status;
 
     return 0;
 }

@@ -20,10 +20,9 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.transport.TransportException;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 
 /**
  * Bootstrap manager manages the list of available operation servers.
@@ -40,12 +39,12 @@ public interface BootstrapManager {
     void receiveOperationsServerList() throws TransportException;
 
     /**
-     * Notifies Channel manager about new server meets given parameters. 
+     * Force switch to the next operations server that support given {@link TransportProtocolId}
      *
-     * @param type the channel's type (i.e. HTTP channel, HTTP long poll channel, etc.).
-     * @see ChannelType
+     * @param transportId of the transport protocol.
+     * @see TransportProtocolId
      */
-    void useNextOperationsServer(ChannelType type);
+    void useNextOperationsServer(TransportProtocolId transportId);
 
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.
@@ -53,7 +52,7 @@ public interface BootstrapManager {
      * @param name endpoint's DNS.
      *
      */
-    void useNextOperationsServerByDnsName(String name);
+    void useNextOperationsServerByAccessPointId(int accessPointId);
 
     /**
      * Sets bootstrap transport object.
@@ -77,10 +76,5 @@ public interface BootstrapManager {
      * @param list the operation server list.
      * @see OperationsServerList
      */
-    void onServerListUpdated(OperationsServerList list);
-
-    /**
-     * Retrieves current list of servers.
-     */
-    List<OperationsServer> getOperationsServerList();
+    void onProtocolListUpdated(List<ProtocolMetaData> list);
 }

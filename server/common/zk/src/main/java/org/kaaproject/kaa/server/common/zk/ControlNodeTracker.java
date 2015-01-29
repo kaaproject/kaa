@@ -18,8 +18,8 @@ package org.kaaproject.kaa.server.common.zk;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -31,8 +31,8 @@ import org.apache.curator.framework.recipes.cache.NodeCacheListener;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.server.common.zk.control.ControlNodeListener;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,7 +135,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
         } else {
             this.client = CuratorFrameworkFactory.newClient(zkHostPortList, retryPolicy);
         }
-        this.listeners = new ArrayList<ControlNodeListener>();
+        this.listeners = new CopyOnWriteArrayList<ControlNodeListener>();
     }
 
     /**

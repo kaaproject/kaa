@@ -30,3 +30,10 @@ kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_diges
 
     return KAA_ERR_NONE;
 }
+
+kaa_error_t ext_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src)
+{
+    KAA_RETURN_IF_NIL2(dst, src, KAA_ERR_BADPARAM);
+    memcpy(dst, src, SHA_1_DIGEST_LENGTH);
+    return KAA_ERR_NONE;
+}

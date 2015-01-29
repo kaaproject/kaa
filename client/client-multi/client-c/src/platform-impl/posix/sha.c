@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include "../../kaa_common.h"
 #include "../../platform/ext_sha.h"
+#include <string.h>
 
 
 
@@ -26,5 +27,12 @@ kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_diges
     KAA_RETURN_IF_NIL3(data, data_size, digest, KAA_ERR_BADPARAM);
 
     SHA1((const unsigned char *)data, data_size, digest);
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t ext_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src)
+{
+    KAA_RETURN_IF_NIL2(dst, src, KAA_ERR_BADPARAM);
+    memcpy(dst, src, SHA_1_DIGEST_LENGTH);
     return KAA_ERR_NONE;
 }

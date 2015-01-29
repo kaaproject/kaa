@@ -86,7 +86,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
  * @return Error code.
  */
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
-        , const char *buffer, size_t buffer_size);
+                                                    , const char *buffer
+                                                    , size_t buffer_size);
 
 #ifdef __cplusplus
 }      /* extern "C" */

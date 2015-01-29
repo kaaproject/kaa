@@ -45,7 +45,18 @@ typedef const unsigned char* kaa_digest_p;
  */
 kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
+/*
+ * @brief Copy SHA1 digest.
+ * Copy SHA1 digest from src to dst.
+ * @param[out]  dst     Destination SHA1 digest.
+ * @param[in]   src     Source SHA1 digest.
+ *
+ * @return Error code.
+ */
+kaa_error_t ext_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src);
 #ifdef __cplusplus
+
+
 }      /* extern "C" */
 #endif
 #endif /* EXT_SHA_H_ */

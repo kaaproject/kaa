@@ -65,7 +65,7 @@ set (KAA_SOURCE_FILES
                        src/avro_src/encoding_binary.c
                        src/collections/kaa_deque.c
                        src/collections/kaa_list.c
-                       src/kaa_bootstrap.c
+                       src/kaa_bootstrap_manager.c
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
                        src/kaa_event.c
@@ -144,11 +144,11 @@ add_executable  (test_status
                 )
 target_link_libraries(test_status kaac crypto ${CUNIT_LIB_NAME})
 
-add_executable  (test_bootstrap
-                    test/test_kaa_bootstrap.c
+add_executable  (test_bootstrap_manager
+                    test/test_kaa_bootstrap_manager.c
                     test/kaa_test_external.c
                 )
-target_link_libraries(test_bootstrap kaac crypto ${CUNIT_LIB_NAME})
+target_link_libraries(test_bootstrap_manager kaac crypto ${CUNIT_LIB_NAME})
 
 add_executable  (test_profile
                     src/gen/kaa_profile_gen.c
@@ -174,6 +174,12 @@ add_executable  (test_deque
                     test/kaa_test_external.c
                 )
 target_link_libraries(test_deque kaac crypto ${CUNIT_LIB_NAME})
+
+add_executable  (test_channel_manager
+                    test/test_kaa_channel_manager.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_channel_manager kaac crypto ${CUNIT_LIB_NAME})
 
 endif ()
 

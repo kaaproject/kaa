@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import java.util.Random;
 
 import org.junit.Test;
+import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.OperationsServerLoadHistory;
 
 /**
@@ -45,7 +46,7 @@ public class OperationsServerLoadHistoryTest {
     @Test
     public void testAddOpsServerLoad() {
         OperationsServerLoadHistory hist = new OperationsServerLoadHistory(MAX_HISTORY_TIME_LIVE);
-        hist.addOpsServerLoad(1, 2, 3);
+        hist.addOpsServerLoad(new LoadInfo(2));
         fillOutHistory(hist,1000,5);
         assertNotNull(hist.getHistory());
         if (hist.getHistory().size() >= 5) {
@@ -62,7 +63,7 @@ public class OperationsServerLoadHistoryTest {
         for(int i=0; i<number; i++) {
             try {
                 Thread.sleep(period);
-                hist.addOpsServerLoad(rnd.nextInt(1000), rnd.nextInt(1000), rnd.nextInt(1000));
+                hist.addOpsServerLoad(new LoadInfo(rnd.nextInt(1000)));
             } catch (InterruptedException e) {
                 fail(e.toString());
             }
@@ -76,12 +77,10 @@ public class OperationsServerLoadHistoryTest {
     @Test
     public void testGetHistory() {
         OperationsServerLoadHistory hist = new OperationsServerLoadHistory(MAX_HISTORY_TIME_LIVE);
-        hist.addOpsServerLoad(1, 2, 3);
+        hist.addOpsServerLoad(new LoadInfo(2));
         assertNotNull(hist.getHistory());
         assertEquals(1, hist.getHistory().size());
-        assertEquals(3, hist.getHistory().get(0).getDeltaCalculationCount());
-        assertEquals(2, hist.getHistory().get(0).getProcessedRequestCount());
-        assertEquals(1, hist.getHistory().get(0).getRegisteredUsersCount());
+        assertEquals(2, hist.getHistory().get(0).getLoadInfo().getLoadIndex().intValue());
     }
 
     /**

@@ -27,8 +27,7 @@ package org.kaaproject.kaa.common.channels.protocols.kaatcp.messages;
  */
 public enum KaaSyncMessageType {
     UNUSED((byte)0),
-    SYNC((byte)1),
-    BOOTSTRAP((byte)2);
+    SYNC((byte)1);
     
     private byte type;
     

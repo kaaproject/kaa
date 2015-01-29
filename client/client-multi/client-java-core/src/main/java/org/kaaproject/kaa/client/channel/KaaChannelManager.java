@@ -23,7 +23,6 @@ import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 /**
  * Channel manager establishes/removes channels' links between client and
@@ -87,7 +86,7 @@ import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
  * <br>
  * Call to {@link #clearChannelList()} removes <b>all</b> existing channels.<br>
  * <br>
- * If physical connection to remote server failed, call {@link #onServerFailed(ServerInfo)}
+ * If physical connection to remote server failed, call {@link #onServerFailed(TransportConnectionInfo)}
  * to switch to another available server.
  *
  * @author Yaroslav Zeygerman
@@ -146,18 +145,6 @@ public interface KaaChannelManager {
     List<KaaDataChannel> getChannels();
 
     /**
-     * Retrieves a list of channels by the specific type (HTTP, HTTP_LP etc.).
-     *
-     * @param type type of the channel.
-     * @return a list of channels.
-     *
-     * @see ChannelType
-     * @see KaaDataChannel
-     *
-     */
-    List<KaaDataChannel> getChannelsByType(ChannelType type);
-
-    /**
      * Retrieves a list of channels by the specific transport type.
      *
      * @param type the transport's type.
@@ -184,19 +171,19 @@ public interface KaaChannelManager {
      * Reports to Channel Manager in case link with server was not established.
      *
      * @param server the parameters of server that was not connected.
-     * @see ServerInfo
+     * @see TransportConnectionInfo
      *
      */
-    void onServerFailed(ServerInfo server);
+    void onServerFailed(TransportConnectionInfo server);
 
     /**
      * Reports to Channel Manager about the new server.
      *
      * @param newServer the parameters of the new server.
-     * @see ServerInfo
+     * @see TransportConnectionInfo
      *
      */
-    void onServerUpdated(ServerInfo newServer);
+    void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer);
 
     /**
      * Clears the list of channels.

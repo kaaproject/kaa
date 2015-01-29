@@ -34,6 +34,8 @@ kaa_digest test_profile_hash= {0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
+extern kaa_error_t kaa_status_save(kaa_status_t *self);
+extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
 static kaa_logger_t *logger = NULL;
 
@@ -109,60 +111,17 @@ void test_status_persistense()
     kaa_status_t *status;
     kaa_error_t err_code = kaa_status_create(&status);
 
-    const char * token = NULL;
-    ASSERT_EQUAL(kaa_status_get_endpoint_access_token(status, &token), KAA_ERR_NONE);
-    ASSERT_NULL(token);
+    ASSERT_NULL(status->endpoint_access_token);
+    ASSERT_EQUAL(status->event_seq_n, 0);
+    ASSERT_FALSE(status->is_attached);
+    ASSERT_FALSE(status->is_registered);
 
-    uint32_t event_seq_num = 0;
-    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status, &event_seq_num), KAA_ERR_NONE);
-    ASSERT_EQUAL(event_seq_num, 0);
-
-    bool is_attached = false;
-    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status, &is_attached), KAA_ERR_NONE);
-    ASSERT_FALSE(is_attached);
-
-    bool is_registered = true;
-    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
-    ASSERT_FALSE(is_registered);
-
-    kaa_digest_p ep_hash = NULL;
-    ASSERT_EQUAL(kaa_status_get_endpoint_public_key_hash(status, &ep_hash), KAA_ERR_NONE);
-    ASSERT_NOT_NULL(ep_hash);
-
-    kaa_digest_p profile_hash = NULL;
-    ASSERT_EQUAL(kaa_status_get_profile_hash(status, &profile_hash), KAA_ERR_NONE);
-    ASSERT_NOT_NULL(profile_hash);
-
-    kaa_status_set_endpoint_access_token(status, "my_token");
-    ASSERT_EQUAL(kaa_status_get_endpoint_access_token(status, &token), KAA_ERR_NONE);
-    ASSERT_EQUAL(strcmp("my_token", token), 0);
-
-    kaa_status_set_endpoint_public_key_hash(status, test_ep_key_hash);
-
-    ASSERT_EQUAL(kaa_status_get_endpoint_public_key_hash(status, &ep_hash), KAA_ERR_NONE);
-    ASSERT_NOT_NULL(ep_hash);
-    ASSERT_EQUAL(memcmp(test_ep_key_hash, ep_hash, SHA_1_DIGEST_LENGTH), 0);
-
-    kaa_status_set_profile_hash(status, test_profile_hash);
-    ASSERT_EQUAL(kaa_status_get_profile_hash(status, &profile_hash), KAA_ERR_NONE);
-    ASSERT_NOT_NULL(profile_hash);
-    ASSERT_EQUAL(memcmp(test_profile_hash, profile_hash, SHA_1_DIGEST_LENGTH), 0);
-
-    ASSERT_EQUAL(kaa_set_endpoint_registered(status, 1), KAA_ERR_NONE);
-    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
-    ASSERT_TRUE(is_registered);
-
-    kaa_set_endpoint_attached_to_user(status, 1);
-    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status, &is_attached), KAA_ERR_NONE);
-    ASSERT_TRUE(is_attached);
-
-    ASSERT_EQUAL(kaa_status_set_event_sequence_number(status, 10), KAA_ERR_NONE);
-    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status, &event_seq_num), KAA_ERR_NONE);
-    ASSERT_EQUAL(event_seq_num, 10);
-
-    ASSERT_NOT_EQUAL(kaa_status_set_event_sequence_number(status, 5), KAA_ERR_NONE);
-    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status, &event_seq_num), KAA_ERR_NONE);
-    ASSERT_EQUAL(event_seq_num, 10);
+    ASSERT_EQUAL(kaa_status_set_endpoint_access_token(status, "my_token"), KAA_ERR_NONE);
+    ASSERT_EQUAL(ext_copy_sha_hash(status->endpoint_public_key_hash, test_ep_key_hash), KAA_ERR_NONE);
+    ASSERT_EQUAL(ext_copy_sha_hash(status->profile_hash, test_profile_hash), KAA_ERR_NONE);
+    status->is_attached = true;
+    status->is_registered = true;
+    status->event_seq_n = 10;
 
     err_code = kaa_status_save(status);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
@@ -173,24 +132,15 @@ void test_status_persistense()
 
     err_code = kaa_status_create(&status);
 
-    ASSERT_EQUAL(kaa_status_get_endpoint_access_token(status, &token), KAA_ERR_NONE);
-    ASSERT_NOT_NULL(token);
-    ASSERT_EQUAL(strcmp("my_token", token), 0);
+    ASSERT_NOT_NULL(status->endpoint_access_token);
+    ASSERT_EQUAL(strcmp("my_token", status->endpoint_access_token), 0);
 
-    ASSERT_EQUAL(kaa_status_get_event_sequence_number(status, &event_seq_num), KAA_ERR_NONE);
-    ASSERT_EQUAL(event_seq_num, 10);
-    ASSERT_EQUAL(kaa_is_endpoint_attached_to_user(status, &is_attached), KAA_ERR_NONE);
-    ASSERT_TRUE(is_attached);
-    ASSERT_EQUAL(kaa_is_endpoint_registered(status, &is_registered), KAA_ERR_NONE);
-    ASSERT_TRUE(is_registered);
+    ASSERT_EQUAL(status->event_seq_n, 10);
+    ASSERT_TRUE(status->is_attached);
+    ASSERT_TRUE(status->is_registered);
 
-    ASSERT_EQUAL(kaa_status_get_endpoint_public_key_hash(status, &ep_hash), KAA_ERR_NONE);
-    ASSERT_NOT_NULL(ep_hash);
-    ASSERT_EQUAL(memcmp(test_ep_key_hash, ep_hash, SHA_1_DIGEST_LENGTH), 0);
-
-    ASSERT_EQUAL(kaa_status_get_profile_hash(status, &profile_hash), KAA_ERR_NONE);
-    ASSERT_NOT_NULL(profile_hash);
-    ASSERT_EQUAL(memcmp(test_profile_hash, profile_hash, SHA_1_DIGEST_LENGTH), 0);
+    ASSERT_EQUAL(memcmp(test_ep_key_hash, status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH), 0);
+    ASSERT_EQUAL(memcmp(test_profile_hash, status->profile_hash, SHA_1_DIGEST_LENGTH), 0);
 
     kaa_status_destroy(status);
 }

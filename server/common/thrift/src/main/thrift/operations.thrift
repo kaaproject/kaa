@@ -91,7 +91,7 @@ struct Notification {
 }
 
 struct RedirectionRule {
-  1: uri dnsName
+  1: shared.Integer accessPointId
   2: shared.Long ruleId
   3: probability redirectionProbability
   4: shared.Long ruleTTL

@@ -17,15 +17,15 @@
 package org.kaaproject.kaa.server.operations.service.user;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachResponse;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
+import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
+import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
+import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
+import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
+import org.kaaproject.kaa.server.sync.EventListenersRequest;
+import org.kaaproject.kaa.server.sync.EventListenersResponse;
+import org.kaaproject.kaa.server.sync.UserAttachRequest;
+import org.kaaproject.kaa.server.sync.UserAttachResponse;
 
 public interface EndpointUserService {
 

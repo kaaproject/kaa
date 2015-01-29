@@ -36,7 +36,6 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

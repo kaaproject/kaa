@@ -23,6 +23,8 @@
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 
 #include "kaa_test.h"
+
+#include "kaa_context.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
 #include "kaa_status.h"
@@ -33,7 +35,7 @@
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
 
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_logger_t *logger);
+extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
 extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
 extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status
@@ -54,6 +56,7 @@ extern kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *
 static int global_events_counter = 0;
 static int specific_events_counter = 0;
 
+static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
@@ -547,13 +550,15 @@ static int test_init(void)
         return error;
     }
 
+    kaa_context.logger = logger;
+
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     error = kaa_status_create(&status);
     if (error || !status) {
         return error;
     }
 
-    error = kaa_channel_manager_create(&channel_manager, logger);
+    error = kaa_channel_manager_create(&channel_manager, &kaa_context);
     if (error || !channel_manager) {
         return error;
     }
