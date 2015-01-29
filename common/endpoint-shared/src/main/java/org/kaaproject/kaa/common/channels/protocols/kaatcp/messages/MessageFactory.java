@@ -15,11 +15,8 @@
  */
 package org.kaaproject.kaa.common.channels.protocols.kaatcp.messages;
 
-
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.Framer;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.MqttFramelistener;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.BootstrapResolveListener;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.BootstrapResponseListener;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.ConnAckListener;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.ConnectListener;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.DisconnectListener;
@@ -29,16 +26,15 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.SyncRequest
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.SyncResponseListener;
 
 /**
- * MessageFactory Class.
- * Used to transform byte stream to specific protocol messages.
- * Typical use:
+ * MessageFactory Class. Used to transform byte stream to specific protocol
+ * messages. Typical use:
  * 
- *  MessageFactory factory = new MessageFactory();
- *  factory.registerMessageListener(listener);
- *  factory.getFramer().pushBytes(bytes);
- *  
- * Where listener instance of class which implements one of protocol message listeners.
- * and bytes - byte[] stream received from TCP/IP.
+ * MessageFactory factory = new MessageFactory();
+ * factory.registerMessageListener(listener);
+ * factory.getFramer().pushBytes(bytes);
+ * 
+ * Where listener instance of class which implements one of protocol message
+ * listeners. and bytes - byte[] stream received from TCP/IP.
  * 
  * @author Andrey Panasenko
  *
@@ -51,20 +47,20 @@ public class MessageFactory implements MqttFramelistener {
     private DisconnectListener disconnectListener;
     private PingRequestListener pingRequestListener;
     private PingResponseListener pingResponseListener;
-    private BootstrapResolveListener bootstrapResolveListener;
-    private BootstrapResponseListener bootstrapResponseListener;
     private SyncRequestListener syncRequestListener;
     private SyncResponseListener syncResponseListener;
 
     /**
      * Constructor with externally created Framer.
-     * @param framer Framer
+     * 
+     * @param framer
+     *            Framer
      */
     public MessageFactory(Framer framer) {
         this.setFramer(framer);
         framer.registerFrameListener(this);
     }
-    
+
     /**
      * Default Constructor.
      */
@@ -73,40 +69,45 @@ public class MessageFactory implements MqttFramelistener {
         framer.registerFrameListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.MqttFramelistener#onMqttFrame(org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.kaaproject.kaa.common.channels.protocols.kaatcp.MqttFramelistener
+     * #onMqttFrame
+     * (org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame)
      */
     @Override
     public void onMqttFrame(MqttFrame frame) {
         switch (frame.getMessageType()) {
         case CONNACK:
             if (connAckListener != null) {
-                connAckListener.onMessage((ConnAck)frame);
+                connAckListener.onMessage((ConnAck) frame);
             }
             break;
         case CONNECT:
             if (connectListener != null) {
-                connectListener.onMessage((Connect)frame);
+                connectListener.onMessage((Connect) frame);
             }
             break;
         case DISCONNECT:
             if (disconnectListener != null) {
-                disconnectListener.onMessage((Disconnect)frame);
+                disconnectListener.onMessage((Disconnect) frame);
             }
             break;
         case KAASYNC:
-            
-            onKaaSyncMessage((KaaSync)frame);
-            
+
+            onKaaSyncMessage((KaaSync) frame);
+
             break;
         case PINGREQ:
             if (pingRequestListener != null) {
-                pingRequestListener.onMessage((PingRequest)frame);
+                pingRequestListener.onMessage((PingRequest) frame);
             }
             break;
         case PINGRESP:
             if (pingResponseListener != null) {
-                pingResponseListener.onMessage((PingResponse)frame);
+                pingResponseListener.onMessage((PingResponse) frame);
             }
             break;
         default:
@@ -117,7 +118,9 @@ public class MessageFactory implements MqttFramelistener {
 
     /**
      * Private message processor in case of Mqtt frame is KaaSync Message Type
-     * @param frame KaaSync object
+     * 
+     * @param frame
+     *            KaaSync object
      */
     private void onKaaSyncMessage(KaaSync frame) {
         KaaSyncMessageType type = frame.getKaaSyncMessageType();
@@ -125,105 +128,93 @@ public class MessageFactory implements MqttFramelistener {
         case SYNC:
             if (frame.isRequest()) {
                 if (syncRequestListener != null) {
-                    syncRequestListener.onMessage((SyncRequest)frame);
+                    syncRequestListener.onMessage((SyncRequest) frame);
                 }
             } else {
                 if (syncResponseListener != null) {
-                    syncResponseListener.onMessage((SyncResponse)frame);
-                }
-            }
-            break;
-        case BOOTSTRAP:
-            if (frame.isRequest()) {
-                if (bootstrapResolveListener != null) {
-                    bootstrapResolveListener.onMessage((BootstrapResolve)frame);
-                }
-            } else {
-                if (bootstrapResponseListener != null) {
-                    bootstrapResponseListener.onMessage((BootstrapResponse)frame);
+                    syncResponseListener.onMessage((SyncResponse) frame);
                 }
             }
             break;
         case UNUSED:
-            
+
             break;
         }
     }
 
     /**
      * Register ConnAck message listener.
-     * @param listener ConnAckListener 
+     * 
+     * @param listener
+     *            ConnAckListener
      */
     public void registerMessageListener(ConnAckListener listener) {
         connAckListener = listener;
     }
-    
+
     /**
      * Register Connect message listener.
-     * @param listener ConnectListener 
+     * 
+     * @param listener
+     *            ConnectListener
      */
     public void registerMessageListener(ConnectListener listener) {
         connectListener = listener;
     }
-    
+
     /**
      * Register Disconnect message listener.
-     * @param listener DisconnectListener 
+     * 
+     * @param listener
+     *            DisconnectListener
      */
     public void registerMessageListener(DisconnectListener listener) {
         disconnectListener = listener;
     }
-    
+
     /**
      * Register PingRequest message listener.
-     * @param listener PingRequestListener 
+     * 
+     * @param listener
+     *            PingRequestListener
      */
     public void registerMessageListener(PingRequestListener listener) {
         pingRequestListener = listener;
     }
-    
+
     /**
      * Register PingResponse message listener.
-     * @param listener PingResponseListener 
+     * 
+     * @param listener
+     *            PingResponseListener
      */
     public void registerMessageListener(PingResponseListener listener) {
         pingResponseListener = listener;
     }
 
     /**
-     * Register BootstrapResolve message listener.
-     * @param bootstrapResolveListener BootstrapResolveListener 
-     */
-    public void registerMessageListener(BootstrapResolveListener bootstrapResolveListener) {
-        this.bootstrapResolveListener = bootstrapResolveListener;
-    }
-
-    /**
-     * Register BootstrapResponse message listener.
-     * @param bootstrapResponseListener BootstrapResponseListener 
-     */
-    public void registerMessageListener(BootstrapResponseListener bootstrapResponseListener) {
-        this.bootstrapResponseListener = bootstrapResponseListener;
-    }
-    
-    /**
      * Register SyncRequest message listener.
-     * @param syncRequestListener SyncRequestListener 
+     * 
+     * @param syncRequestListener
+     *            SyncRequestListener
      */
     public void registerMessageListener(SyncRequestListener syncRequestListener) {
         this.syncRequestListener = syncRequestListener;
     }
-    
+
     /**
      * Register SyncResponse message listener.
-     * @param syncResponseListener SyncResponseListener 
+     * 
+     * @param syncResponseListener
+     *            SyncResponseListener
      */
     public void registerMessageListener(SyncResponseListener syncResponseListener) {
         this.syncResponseListener = syncResponseListener;
     }
-    
+
     /**
      * Framer getter.
+     * 
      * @return Framer
      */
     public Framer getFramer() {
@@ -232,7 +223,9 @@ public class MessageFactory implements MqttFramelistener {
 
     /**
      * Framer setter.
-     * @param framer Framer
+     * 
+     * @param framer
+     *            Framer
      */
     public void setFramer(Framer framer) {
         this.framer = framer;

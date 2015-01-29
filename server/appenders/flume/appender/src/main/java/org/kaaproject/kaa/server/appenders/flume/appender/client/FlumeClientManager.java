@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.appenders.flume.appender.client;
 
+import java.util.List;
+
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.apache.flume.api.RpcClient;
@@ -41,6 +43,8 @@ public abstract class FlumeClientManager<T> {
     protected abstract RpcClient initManager(T parameters);
 
     public abstract void sendEventToFlume(Event event) throws EventDeliveryException;
+
+    public abstract void sendEventsToFlume(List<Event> events) throws EventDeliveryException;
 
     public void init(T parameters) {
         if (parameters != null) {

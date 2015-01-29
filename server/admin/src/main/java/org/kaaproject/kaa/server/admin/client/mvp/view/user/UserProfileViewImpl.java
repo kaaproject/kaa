@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.user;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
@@ -85,7 +85,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
         email.addInputHandler(this);
 
         Label emailLabel = new Label(Utils.constants.email());
-        emailLabel.addStyleName("required");
+        emailLabel.addStyleName(Utils.avroUiStyle.requiredField());
         detailsTable.setWidget(3, 0, emailLabel);
         detailsTable.setWidget(3, 1, email);
 

@@ -16,14 +16,13 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FileUploadForm;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -31,6 +30,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements BaseSchemaView {
 
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+    
     private SizedTextBox version;
     private SizedTextBox name;
     private SizedTextArea description;
@@ -86,12 +87,12 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         name.setWidth("100%");
         Label nameLabel = new Label(Utils.constants.name());
-        nameLabel.addStyleName("required");
+        nameLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(4, 0, nameLabel);
         detailsTable.setWidget(4, 1, name);
         name.addInputHandler(this);
 
-        description = new KaaAdminSizedTextArea(1024);
+        description = new SizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
@@ -103,7 +104,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
 
         Label schemaLabel = new Label(create ? Utils.constants.selectSchemaFile() : Utils.constants.schema());
         if (create) {
-            schemaLabel.addStyleName("required");
+            schemaLabel.addStyleName(REQUIRED);
         }
         detailsTable.setWidget(6, 0, schemaLabel);
 
@@ -111,9 +112,8 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
             schemaFileUpload = new FileUploadForm();
             schemaFileUpload.setWidth("500px");
             detailsTable.setWidget(6, 1, schemaFileUpload);
-        }
-        else {
-            schema = new KaaAdminSizedTextArea(524288);
+        } else {
+            schema = new SizedTextArea(-1);
             schema.setWidth("500px");
             schema.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 300);
             schema.getTextArea().setReadOnly(true);

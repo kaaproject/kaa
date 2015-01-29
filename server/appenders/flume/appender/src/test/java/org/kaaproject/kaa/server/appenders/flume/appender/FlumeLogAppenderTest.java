@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.appenders.flume.appender.client.FlumeClientManager;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
@@ -78,7 +79,7 @@ public class FlumeLogAppenderTest {
                         Arrays.asList(new FlumeNode("localhost", 12121),
                                 new FlumeNode("localhost", 12122))).build();
         
-        FlumeConfig flumeConfig = FlumeConfig.newBuilder().setHostsBalancing(nodes).build();
+        FlumeConfig flumeConfig = FlumeConfig.newBuilder().setFlumeEventFormat(FlumeEventFormat.RECORDS_CONTAINER).setHostsBalancing(nodes).build();
         
         AvroByteArrayConverter<FlumeConfig> converter = new AvroByteArrayConverter<>(FlumeConfig.class);
         byte[] rawConfiguration = converter.toByteArray(flumeConfig);

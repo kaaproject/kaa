@@ -1,0 +1,9 @@
+{
+ "namespace": "org.kaaproject.kaa.server.transport.tcp.config.gen",
+ "type": "record",
+ "name": "AvroTcpConfig",
+ "fields": [
+     {"name": "bindInterface", "type": "string"},
+     {"name": "bindPort", "type": "int"}
+ ]
+}

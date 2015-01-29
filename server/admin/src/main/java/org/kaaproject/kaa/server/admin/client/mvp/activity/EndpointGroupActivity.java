@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowAction;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
@@ -31,15 +33,11 @@ import org.kaaproject.kaa.server.admin.client.mvp.data.ProfileFiltersDataProvide
 import org.kaaproject.kaa.server.admin.client.mvp.data.TopicsDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEventHandler;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEventHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.AddTopicDialog;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -72,21 +70,21 @@ public class EndpointGroupActivity
         if (!create) {
             AbstractGrid<StructureRecordDto<ProfileFilterDto>, StructureRecordKey> profileFiltersGrid = detailsView.getProfileFiltersGrid();
             profileFiltersDataProvider = new ProfileFiltersDataProvider(profileFiltersGrid.getSelectionModel(),
-                            new DataLoadCallback<StructureRecordDto<ProfileFilterDto>>(detailsView), entityId);
+                    detailsView, entityId);
             profileFiltersDataProvider.setIncludeDeprecated(place.isIncludeDeprecatedProfileFilters());
 
             profileFiltersDataProvider.addDataDisplay(profileFiltersGrid.getDisplay());
 
             AbstractGrid<StructureRecordDto<ConfigurationDto>, StructureRecordKey> configurationsGrid = detailsView.getConfigurationsGrid();
             configurationsDataProvider = new ConfigurationsDataProvider(configurationsGrid.getSelectionModel(),
-                            new DataLoadCallback<StructureRecordDto<ConfigurationDto>>(detailsView), entityId);
+                    detailsView, entityId);
             configurationsDataProvider.setIncludeDeprecated(place.isIncludeDeprecatedConfigurations());
 
             configurationsDataProvider.addDataDisplay(configurationsGrid.getDisplay());
 
             AbstractGrid<TopicDto, String> topicsGrid = detailsView.getTopicsGrid();
             topicsDataProvider = new TopicsDataProvider(topicsGrid.getSelectionModel(),
-                    new DataLoadCallback<TopicDto>(detailsView), null, entityId);
+                    detailsView, null, entityId);
             topicsDataProvider.addDataDisplay(topicsGrid.getDisplay());
         }
     }
@@ -116,7 +114,7 @@ public class EndpointGroupActivity
                                 new AsyncCallback<Void>() {
                                       @Override
                                       public void onFailure(Throwable caught) {
-                                          detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                                          Utils.handleException(caught, detailsView);
                                       }
 
                                       @Override
@@ -128,14 +126,14 @@ public class EndpointGroupActivity
 
         detailsView.getIncludeDeprecatedProfileFilters().setValue(place.isIncludeDeprecatedProfileFilters());
 
-        detailsView.getIncludeDeprecatedProfileFilters().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+        registrations.add(detailsView.getIncludeDeprecatedProfileFilters().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 place.setIncludeDeprecatedProfileFilters(detailsView.getIncludeDeprecatedProfileFilters().getValue());
                 profileFiltersDataProvider.setIncludeDeprecated(detailsView.getIncludeDeprecatedProfileFilters().getValue());
                 profileFiltersDataProvider.reload(detailsView.getProfileFiltersGrid().getDisplay());
             }
-        });
+        }));
 
         registrations.add(detailsView.getAddConfigurationButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -159,7 +157,7 @@ public class EndpointGroupActivity
                                 new AsyncCallback<Void>() {
                                       @Override
                                       public void onFailure(Throwable caught) {
-                                          detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                                          Utils.handleException(caught, detailsView);
                                       }
 
                                       @Override
@@ -171,14 +169,14 @@ public class EndpointGroupActivity
 
         detailsView.getIncludeDeprecatedConfigurations().setValue(place.isIncludeDeprecatedConfigurations());
 
-        detailsView.getIncludeDeprecatedConfigurations().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+        registrations.add(detailsView.getIncludeDeprecatedConfigurations().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
              @Override
              public void onValueChange(ValueChangeEvent<Boolean> event) {
                  place.setIncludeDeprecatedConfigurations(detailsView.getIncludeDeprecatedConfigurations().getValue());
                  configurationsDataProvider.setIncludeDeprecated(detailsView.getIncludeDeprecatedConfigurations().getValue());
                  configurationsDataProvider.reload(detailsView.getConfigurationsGrid().getDisplay());
              }
-         });
+         }));
 
          registrations.add(detailsView.getAddTopicButton().addClickHandler(new ClickHandler() {
              public void onClick(ClickEvent event) {
@@ -198,7 +196,7 @@ public class EndpointGroupActivity
                                  new AsyncCallback<Void>() {
                                        @Override
                                        public void onFailure(Throwable caught) {
-                                           detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                                           Utils.handleException(caught, detailsView);
                                        }
 
                                        @Override
@@ -285,7 +283,7 @@ public class EndpointGroupActivity
                 }
 
                 public void onFailure(Throwable caught) {
-                    detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                    Utils.handleException(caught, detailsView);
                 }
             });
     }
@@ -301,31 +299,12 @@ public class EndpointGroupActivity
         KaaAdmin.getDataSource().editEndpointGroup(entity, callback);
     }
 
-    class DataLoadCallback<T> implements AsyncCallback<List<T>> {
-
-        private EndpointGroupView view;
-
-        DataLoadCallback(EndpointGroupView view) {
-            this.view = view;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            view.setErrorMessage(Utils.getErrorMessage(caught));
-        }
-
-        @Override
-        public void onSuccess(List<T> result) {
-            view.clearError();
-        }
-    }
-
     private void addTopic() {
         AddTopicDialog.showAddTopicDialog(entityId,
                 new AsyncCallback<AddTopicDialog>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, detailsView);
                     }
 
                     @Override

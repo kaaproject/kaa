@@ -17,183 +17,580 @@
 #include "kaa_event.h"
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 
+#include <string.h>
+
 #include "kaa_test.h"
-#include "kaa_log.h"
 
 #include "kaa_context.h"
-#include "kaa_mem.h"
-#include <string.h>
+#include "utilities/kaa_log.h"
+#include "utilities/kaa_mem.h"
+#include "kaa_status.h"
+#include "kaa_channel_manager.h"
+#include "kaa_platform_utils.h"
+
+
+extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
+extern void        kaa_status_destroy(kaa_status_t *self);
+
+extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
+extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
+
+extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status
+        , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
+extern void        kaa_event_manager_destroy(kaa_event_manager_t *self);
+
+extern kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
+                                              , const char *fqn
+                                              , const char *event_data
+                                              , size_t event_data_size
+                                              , kaa_endpoint_id_p target);
+
+extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
+extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length, size_t request_id);
+extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
+extern kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback);
 
 static int global_events_counter = 0;
 static int specific_events_counter = 0;
 
+static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
+static kaa_status_t *status = NULL;
+static kaa_channel_manager_t *channel_manager = NULL;
+static kaa_event_manager_t *event_manager = NULL;
+
+
+
+static int test_init(void);
+static int test_deinit(void);
+
+
 
 void test_kaa_create_event_manager()
 {
     KAA_TRACE_IN(logger);
 
+    kaa_status_t* status = NULL;
+    kaa_status_create(&status);
     kaa_event_manager_t *event_manager = NULL;
-    kaa_error_t err_code = kaa_create_event_manager(&event_manager);
+    kaa_error_t err_code = kaa_event_manager_create(&event_manager, status, NULL, logger);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(event_manager);
-    kaa_destroy_event_manager(event_manager);
+    kaa_event_manager_destroy(event_manager);
+
+    KAA_FREE(status);
 }
 
-void test_kaa_event_compile_request()
+static kaa_endpoint_id endpoint_id1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+static kaa_endpoint_id endpoint_id2 = { 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 };
+static bool is_event_listeners_cb_called = false;
+
+static kaa_error_t event_listeners_callback(void *context, const kaa_endpoint_id listeners[], size_t listeners_count)
+{
+    ASSERT_EQUAL(listeners_count, 2);
+    ASSERT_EQUAL(memcmp(listeners[0], endpoint_id1, KAA_ENDPOINT_ID_LENGTH), 0);
+    ASSERT_EQUAL(memcmp(listeners[1], endpoint_id2, KAA_ENDPOINT_ID_LENGTH), 0);
+    is_event_listeners_cb_called = true;
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t event_listeners_request_failed(void *context)
+{
+    return KAA_ERR_NONE;
+}
+
+void test_kaa_event_listeners_serialize_request()
 {
     KAA_TRACE_IN(logger);
 
-    kaa_context_t *context;
-    kaa_context_create(&context, logger);
+    size_t expected_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t); // header + field id + reserved + listeners count
+    expected_size += sizeof(uint32_t); // request id + fqns count
+    expected_size += 2 * sizeof(uint32_t); // fqn length + reserved
 
-    kaa_event_sync_request_t* sync_request = NULL;
-    kaa_event_compile_request(context, &sync_request, 100499);
-    sync_request->destroy(sync_request);
-    KAA_FREE(sync_request);
+    const char *fqns[] = { "test.fqn1", "test.fqn2" };
+    const size_t fqn1_len = strlen(fqns[0]);
+    const size_t fqn2_len = strlen(fqns[1]);
 
-    kaa_event_sequence_number_response_t seq_n_resp;
-    seq_n_resp.seq_num = 0;
+    expected_size += kaa_aligned_size_get(fqn1_len) + kaa_aligned_size_get(fqn2_len);
 
-    kaa_event_handle_sync(context, 100499, &seq_n_resp, NULL);
-    kaa_error_t err_code = KAA_ERR_NONE;
-    err_code = kaa_event_compile_request(context, &sync_request, 100500);
-    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
-    ASSERT_NOT_NULL(sync_request);
-    ASSERT_EQUAL(sync_request->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
-    ASSERT_EQUAL(sync_request->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
-    sync_request->destroy(sync_request);
-    KAA_FREE(sync_request);
+    kaa_event_listeners_callback_t callback = { NULL, NULL, NULL };
+    ASSERT_NOT_EQUAL(kaa_event_manager_find_event_listeners(event_manager, fqns, 2, &callback), KAA_ERR_NONE);
 
-    kaa_add_event(context, "fqn", 3, "data", 4, "target", 6);
-    kaa_event_sync_request_t* sync_request1 = NULL;
-    err_code = kaa_event_compile_request(context, &sync_request1, 100501);
-    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
-    ASSERT_NOT_NULL(sync_request1);
-    ASSERT_EQUAL(sync_request1->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
-    ASSERT_EQUAL(sync_request1->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
-    ASSERT_EQUAL(kaa_list_get_size(sync_request1->events->data), 1);
-    sync_request1->destroy(sync_request1);
-    KAA_FREE(sync_request1);
+    callback = (kaa_event_listeners_callback_t) { NULL, &event_listeners_callback, &event_listeners_request_failed };
+    ASSERT_EQUAL(kaa_event_manager_find_event_listeners(event_manager, fqns, 2, &callback), KAA_ERR_NONE);
 
-    kaa_add_event(context, "fqn", 3, "data", 4, "target", 6);
-    kaa_event_sync_request_t* sync_request2 = NULL;
-    err_code = kaa_event_compile_request(context, &sync_request2, 100502);
-    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
-    ASSERT_NOT_NULL(sync_request2);
-    ASSERT_EQUAL(sync_request2->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
-    ASSERT_EQUAL(sync_request2->events->type, KAA_ARRAY_EVENT_NULL_UNION_ARRAY_BRANCH);
-    ASSERT_EQUAL(kaa_list_get_size(sync_request2->events->data), 2);
-    sync_request2->destroy(sync_request2);
-    KAA_FREE(sync_request2);
+    size_t actual_size = 0;
+    ASSERT_EQUAL(kaa_event_request_get_size(event_manager, &actual_size), KAA_ERR_NONE);
+    ASSERT_EQUAL(actual_size, expected_size);
 
-    kaa_event_handle_sync(context, 100502, NULL, NULL);
+    char buffer[actual_size];
+    kaa_platform_message_writer_t *writer;
+    ASSERT_EQUAL(kaa_platform_message_writer_create(&writer, buffer, actual_size), KAA_ERR_NONE);
 
-    kaa_event_sync_request_t* sync_request3 = NULL;
-    err_code = kaa_event_compile_request(context, &sync_request3, 100503);
-    ASSERT_EQUAL(err_code ,KAA_ERR_NONE);
-    ASSERT_NOT_NULL(sync_request3);
-    ASSERT_EQUAL(sync_request3->event_listeners_requests->type, KAA_ARRAY_EVENT_LISTENERS_REQUEST_NULL_UNION_NULL_BRANCH);
-    ASSERT_EQUAL(sync_request3->events->type, KAA_ARRAY_EVENT_NULL_UNION_NULL_BRANCH);
-    sync_request3->destroy(sync_request3);
-    KAA_FREE(sync_request3);
+    ASSERT_EQUAL(kaa_event_request_serialize(event_manager, 1, writer), KAA_ERR_NONE);
 
-    kaa_context_destroy(context);
-    context = NULL;
+    char *cursor = buffer + KAA_EXTENSION_HEADER_SIZE;
+    ASSERT_EQUAL((*(uint8_t *) cursor), 0); // verifying field id 0
+    cursor += sizeof(uint16_t); // skipping field id + reserved
+
+    ASSERT_EQUAL(KAA_NTOHS(*(uint16_t *) cursor), 1); // verifying listeners count = 1
+    cursor += sizeof(uint16_t);
+
+    ASSERT_EQUAL(KAA_NTOHS(*(uint16_t *) cursor), 1); // verifying request id = 1
+    cursor += sizeof(uint16_t);
+
+    ASSERT_EQUAL(KAA_NTOHS(*(uint16_t *) cursor), 2); // verifying FQNs count = 2
+    cursor += sizeof(uint16_t);
+
+    ASSERT_EQUAL(KAA_NTOHS(*(uint16_t *) cursor), fqn1_len); // verifying FQN 1 length
+    cursor += sizeof(uint32_t); // skipping FQN length + reserved
+
+    ASSERT_EQUAL(memcmp(cursor, fqns[0], fqn1_len), 0); // verifying FQN 1
+    cursor += kaa_aligned_size_get(fqn1_len);
+
+    ASSERT_EQUAL(KAA_NTOHS(*(uint16_t *) cursor), fqn2_len); // verifying FQN 2 length
+    cursor += sizeof(uint32_t); // skipping FQN length + reserved
+
+    ASSERT_EQUAL(memcmp(cursor, fqns[1], fqn2_len), 0); // verifying FQN 2
+    cursor += kaa_aligned_size_get(fqn2_len);
+
+    ASSERT_EQUAL(cursor, buffer + actual_size);
+
+    kaa_platform_message_writer_destroy(writer);
 }
 
-void global_event_cb(const char *fqn, const char *data, size_t size)
+void test_kaa_event_listeners_handle_sync()
+{
+    const uint32_t extension_size = 52;
+    char buffer[extension_size];
+
+    char *cursor = buffer;
+    *cursor = 0; // field id (0)
+    cursor += sizeof(uint16_t); // skipping field id + reserved
+
+    *((uint16_t *) cursor) = KAA_HTONS(1); // responses count = 1
+    cursor += sizeof(uint16_t);
+
+    *((uint16_t *) cursor) = KAA_HTONS(1); // request id = 1
+    cursor += sizeof(uint16_t);
+
+    *((uint16_t *) cursor) = KAA_HTONS(0); // listener result = 0 (SUCCESS)
+    cursor += sizeof(uint16_t);
+
+    *((uint32_t *) cursor) = KAA_HTONL(2); // listener count = 2
+    cursor += sizeof(uint32_t);
+
+    memcpy(cursor, endpoint_id1, KAA_ENDPOINT_ID_LENGTH); // copying endpoint id 1
+    cursor += KAA_ENDPOINT_ID_LENGTH;
+
+    memcpy(cursor, endpoint_id2, KAA_ENDPOINT_ID_LENGTH); // copying endpoint id 2
+    cursor += KAA_ENDPOINT_ID_LENGTH;
+
+    ASSERT_EQUAL(cursor, buffer + extension_size);
+
+    kaa_platform_message_reader_t *reader;
+    ASSERT_EQUAL(kaa_platform_message_reader_create(&reader, buffer, extension_size), KAA_ERR_NONE);
+
+    ASSERT_FALSE(is_event_listeners_cb_called);
+    ASSERT_EQUAL(kaa_event_handle_server_sync(event_manager, reader, 0, extension_size, 1), KAA_ERR_NONE);
+    ASSERT_TRUE(is_event_listeners_cb_called);
+    ASSERT_EQUAL(reader->current, reader->end);
+
+    // Verifying that callback was removed from the manager
+    is_event_listeners_cb_called = false;
+    reader->current = reader->begin;
+    ASSERT_EQUAL(kaa_event_handle_server_sync(event_manager, reader, 0, extension_size, 1), KAA_ERR_NONE);
+    ASSERT_FALSE(is_event_listeners_cb_called);
+
+    kaa_platform_message_reader_destroy(reader);
+}
+
+void test_kaa_event_sync_get_size()
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code;
+    size_t expected_size = KAA_EXTENSION_HEADER_SIZE
+                         + sizeof(uint8_t)
+                         + sizeof(uint8_t)
+                         + sizeof(uint16_t);
+
+    const char *fqn = "test fqn";
+    const size_t fqn_len = strlen(fqn);
+
+    const size_t event_data_size = 16;
+    /**
+     * Allocated data will be freed automatically.
+     */
+    const char *event_data = (const char *) KAA_MALLOC(event_data_size);
+
+    kaa_endpoint_id target = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+
+    const size_t buffer_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t);
+    char buffer[buffer_size];
+    kaa_platform_message_writer_t *writer;
+    error_code = kaa_platform_message_writer_create(&writer, buffer, buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    const uint32_t sequence_number = KAA_HTONL(12345);
+    error_code = kaa_platform_message_write(writer, &sequence_number, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    kaa_platform_message_reader_t *reader;
+    error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_event_manager_send_event(event_manager, fqn, event_data, event_data_size, target);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    expected_size += sizeof(uint32_t)
+                   + sizeof(uint16_t)
+                   + sizeof(uint16_t)
+                   + sizeof(uint32_t)
+                   + KAA_ENDPOINT_ID_LENGTH
+                   + kaa_aligned_size_get(fqn_len)
+                   + kaa_aligned_size_get(event_data_size);
+
+    error_code = kaa_event_manager_send_event(event_manager, fqn, NULL, 0, NULL);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    expected_size += sizeof(uint32_t)
+                   + sizeof(uint16_t)
+                   + sizeof(uint16_t)
+                   + kaa_aligned_size_get(fqn_len);
+
+    size_t event_sync_size;
+    error_code = kaa_event_request_get_size(event_manager, &event_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(event_sync_size, KAA_EXTENSION_HEADER_SIZE);
+
+    error_code = kaa_event_handle_server_sync(event_manager, reader, 0x1, sizeof(uint32_t), 1);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_event_request_get_size(event_manager, &event_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(event_sync_size, expected_size);
+
+    kaa_platform_message_writer_destroy(writer);
+    kaa_platform_message_reader_destroy(reader);
+}
+
+static kaa_error_t serialize_event(kaa_platform_message_writer_t *writer
+                                 , const char *fqn
+                                 , const char *event_data
+                                 , size_t event_data_size
+                                 , kaa_endpoint_id_p target
+                                 , size_t sequence_number
+                                 , bool need_sequence_number)
+{
+    KAA_RETURN_IF_NIL2(writer, fqn, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code;
+
+    uint16_t event_options = (event_data ? 0x2 : 0) | (target ? 0x1 : 0);
+    uint16_t fqn_len = strlen(fqn);
+
+    uint16_t network_order_16;
+    uint32_t network_order_32;
+
+    if (need_sequence_number) {
+        network_order_32 = KAA_HTONL(sequence_number);
+        error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
+        KAA_RETURN_IF_ERR(error_code);
+    }
+
+    network_order_16 = KAA_HTONS(event_options);
+    error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
+    KAA_RETURN_IF_ERR(error_code);
+
+    network_order_16 = KAA_HTONS(fqn_len);
+    error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
+    KAA_RETURN_IF_ERR(error_code);
+
+    if (event_data) {
+        network_order_32 = KAA_HTONL(event_data_size);
+        error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
+        KAA_RETURN_IF_ERR(error_code);
+    }
+
+    if (target) {
+        error_code = kaa_platform_message_write_aligned(writer, target, KAA_ENDPOINT_ID_LENGTH);
+        KAA_RETURN_IF_ERR(error_code);
+    }
+
+    error_code = kaa_platform_message_write_aligned(writer, fqn, fqn_len);
+    KAA_RETURN_IF_ERR(error_code);
+
+    if (event_data) {
+        error_code = kaa_platform_message_write_aligned(writer, event_data, event_data_size);
+        KAA_RETURN_IF_ERR(error_code);
+    }
+
+    return error_code;
+}
+
+
+
+void test_event_sync_serialize()
+{
+    test_deinit();
+    test_init();
+
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code;
+
+    const uint8_t event_field = 1;
+    const uint8_t reserved_field = 0;
+    uint16_t event_count = 0;
+
+    const char *fqn = "test fqn";
+    /**
+     * Allocated data will be freed automatically.
+     */
+    const size_t event_data_size = 16;
+    const char *event_data = (const char *) KAA_MALLOC(event_data_size);
+
+    kaa_endpoint_id target = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+
+    const size_t server_sync_buffer_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t);
+    char server_sync_buffer[server_sync_buffer_size];
+    kaa_platform_message_writer_t *server_sync_writer;
+    error_code = kaa_platform_message_writer_create(&server_sync_writer, server_sync_buffer, server_sync_buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    uint32_t sequence_number = KAA_HTONL(12345);
+    error_code = kaa_platform_message_write(server_sync_writer, &sequence_number, sizeof(uint32_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    sequence_number = KAA_NTOHL(sequence_number);
+
+    kaa_platform_message_reader_t *server_sync_reader;
+    error_code = kaa_platform_message_reader_create(&server_sync_reader, server_sync_buffer, server_sync_buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_event_handle_server_sync(event_manager, server_sync_reader, 0x1, sizeof(uint32_t), 1);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_event_manager_send_event(event_manager, fqn, event_data, event_data_size, target);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ++event_count;
+    error_code = kaa_event_manager_send_event(event_manager, fqn, NULL, 0, NULL);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ++event_count;
+
+    size_t event_sync_size;
+    error_code = kaa_event_request_get_size(event_manager, &event_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    char manual_buffer[event_sync_size];
+    char auto_buffer[event_sync_size];
+
+    kaa_platform_message_writer_t *manual_writer;
+    error_code = kaa_platform_message_writer_create(&manual_writer, manual_buffer, event_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    kaa_platform_message_writer_t *auto_writer;
+    error_code = kaa_platform_message_writer_create(&auto_writer, auto_buffer, event_sync_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_platform_message_write_extension_header(manual_writer
+                                                           , KAA_EVENT_EXTENSION_TYPE
+                                                           , 0x1
+                                                           , event_sync_size - KAA_EXTENSION_HEADER_SIZE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_platform_message_write(manual_writer, &event_field, sizeof(uint8_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_platform_message_write(manual_writer, &reserved_field, sizeof(uint8_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    event_count = KAA_HTONS(event_count);
+    error_code = kaa_platform_message_write(manual_writer, &event_count, sizeof(uint16_t));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = serialize_event(manual_writer, fqn, event_data, event_data_size, target, ++sequence_number, true);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = serialize_event(manual_writer, fqn, NULL, 0, NULL, ++sequence_number, true);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_event_request_serialize(event_manager, 1, auto_writer);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = (memcmp(auto_buffer, manual_buffer, event_sync_size) == 0 ? KAA_ERR_NONE : KAA_ERR_BADDATA);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    kaa_platform_message_writer_destroy(manual_writer);
+    kaa_platform_message_writer_destroy(auto_writer);
+    kaa_platform_message_reader_destroy(server_sync_reader);
+    kaa_platform_message_writer_destroy(server_sync_writer);
+}
+
+
+
+void global_event_cb(const char *fqn, const char *data, size_t size, kaa_endpoint_id_p source)
 {
     global_events_counter++;
 }
 
-void specific_event_cb(const char *fqn, const char *data, size_t size)
+
+
+void specific_event_cb(const char *fqn, const char *data, size_t size, kaa_endpoint_id_p source)
 {
     specific_events_counter++;
 }
 
-static void kaa_destroy_event(void* data)
+static size_t event_get_size(const char *fqn
+                           , const char *event_data
+                           , size_t event_data_size
+                           , kaa_endpoint_id_p source)
 {
-    kaa_event_t* record = (kaa_event_t*)data;
+    size_t size = 0;
 
-    KAA_FREE(record->event_class_fqn);
-    kaa_destroy_bytes(record->event_data);
-    KAA_FREE(record->event_data);
-    record->source->destroy(record->source);
-    KAA_FREE(record->source);
-    record->target->destroy(record->target);
-    KAA_FREE(record->target);
+    size += sizeof(uint16_t) /* event options */
+          + sizeof(uint16_t);  /* fqn */
+
+    if (event_data) {
+        size += sizeof(uint32_t);
+    }
+
+    size += KAA_ENDPOINT_ID_LENGTH
+          + kaa_aligned_size_get(strlen(fqn));
+
+    if (event_data) {
+        size += kaa_aligned_size_get(event_data_size);
+    }
+
+    return size;
 }
 
-void test_kaa_add_on_event_callback()
+void test_kaa_server_sync_with_event_callbacks()
 {
     KAA_TRACE_IN(logger);
 
-    kaa_context_t *context;
-    kaa_context_create(&context, logger);
+    test_deinit();
+    test_init();
 
-    kaa_add_on_event_callback(context->event_manager, "fqn", 3, specific_event_cb);
-    kaa_add_on_event_callback(context->event_manager, NULL, 0, global_event_cb);
+    kaa_error_t error_code;
 
-    ASSERT_EQUAL(global_events_counter, 0);
-    ASSERT_EQUAL(specific_events_counter, 0);
+    const uint8_t event_field = 1;
+    const uint8_t reserved_field = 0;
+    uint16_t event_count = 2;
 
-    kaa_event_t * event1 = kaa_create_event();
-    event1->event_class_fqn = KAA_CALLOC(4, sizeof(char));
-    event1->event_data = KAA_CALLOC(1, sizeof(kaa_bytes_t));
-    event1->event_data->buffer = NULL;
-    event1->event_data->size = 0;
-    event1->source = kaa_create_string_null_union_null_branch();
-    event1->target = kaa_create_string_null_union_null_branch();
-    memcpy(event1->event_class_fqn, "fqn", 3);
-    kaa_list_t * list1 = kaa_list_create(event1);
-    kaa_event_handle_sync(context, 1, NULL, list1);
+    const char *important_fqn = "important fqn";
+    const char *unimportant_fqn = "unimportant fqn";
 
-    kaa_list_destroy(list1, &kaa_destroy_event);
-    list1 = NULL;
+    /**
+     * Allocated data will be freed automatically.
+     */
+    const size_t event_data_size = 14;
+    const char *event_data = (const char *) KAA_MALLOC(event_data_size);
 
-    ASSERT_EQUAL(global_events_counter, 0);
-    ASSERT_EQUAL(specific_events_counter, 1);
+    kaa_endpoint_id source = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
 
-    kaa_event_t * event2 = kaa_create_event();
-    event2->event_class_fqn = KAA_CALLOC(5, sizeof(char));
-    event2->event_data = KAA_CALLOC(1, sizeof(kaa_bytes_t));
-    event2->event_data->buffer = NULL;
-    event2->event_data->size = 0;
-    event2->source = kaa_create_string_null_union_null_branch();
-    event2->target = kaa_create_string_null_union_null_branch();
-    memcpy(event2->event_class_fqn, "fqn2", 4);
-    kaa_list_t * list2 = kaa_list_create(event2);
-    kaa_event_handle_sync(context, 2, NULL, list2);
+     error_code = kaa_event_manager_add_on_event_callback(event_manager, important_fqn, specific_event_cb);
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+     error_code = kaa_event_manager_add_on_event_callback(event_manager, NULL, global_event_cb);
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    ASSERT_EQUAL(global_events_counter, 1);
-    ASSERT_EQUAL(specific_events_counter, 1);
+     size_t server_sync_buffer_size = 0;
 
-    kaa_list_destroy(list2, &kaa_destroy_event);
+     server_sync_buffer_size += sizeof(uint32_t)
+                              + sizeof(uint8_t)
+                              + sizeof(uint8_t)
+                              + sizeof(uint16_t)
+                              + event_get_size(unimportant_fqn, NULL, 0, source)
+                              + event_get_size(important_fqn, event_data, event_data_size, source);
 
-    kaa_context_destroy(context);
-    context = NULL;
+     char server_sync_buffer[server_sync_buffer_size];
+     kaa_platform_message_writer_t *server_sync_writer;
+     error_code = kaa_platform_message_writer_create(&server_sync_writer, server_sync_buffer, server_sync_buffer_size);
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+     uint32_t sequence_number = KAA_HTONL(12345);
+     error_code = kaa_platform_message_write(server_sync_writer, &sequence_number, sizeof(uint32_t));
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+     sequence_number = KAA_NTOHL(sequence_number);
+
+     error_code = kaa_platform_message_write(server_sync_writer, &event_field, sizeof(uint8_t));
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+     error_code = kaa_platform_message_write(server_sync_writer, &reserved_field, sizeof(uint8_t));
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+     event_count = KAA_HTONS(event_count);
+     error_code = kaa_platform_message_write(server_sync_writer, &event_count, sizeof(uint16_t));
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+     error_code = serialize_event(server_sync_writer, unimportant_fqn, NULL, 0, source, 0, false);
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+     error_code = serialize_event(server_sync_writer, important_fqn, event_data, event_data_size, source, 0, false);
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+     kaa_platform_message_reader_t *server_sync_reader;
+     error_code = kaa_platform_message_reader_create(&server_sync_reader, server_sync_buffer, server_sync_buffer_size);
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+     error_code = kaa_event_handle_server_sync(event_manager, server_sync_reader, 0x1, server_sync_buffer_size, 1);
+     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+     ASSERT_EQUAL(global_events_counter, 1);
+     ASSERT_EQUAL(specific_events_counter, 1);
+
+     kaa_platform_message_reader_destroy(server_sync_reader);
+     kaa_platform_message_writer_destroy(server_sync_writer);
+     KAA_FREE((void *) event_data);
 }
-
 #endif
 
-int test_init(void)
+
+
+static int test_init(void)
 {
-    kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
+    kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
+    if (error || !logger) {
+        return error;
+    }
+
+    kaa_context.logger = logger;
+
+#ifndef KAA_DISABLE_FEATURE_EVENTS
+    error = kaa_status_create(&status);
+    if (error || !status) {
+        return error;
+    }
+
+    error = kaa_channel_manager_create(&channel_manager, &kaa_context);
+    if (error || !channel_manager) {
+        return error;
+    }
+
+    error = kaa_event_manager_create(&event_manager, status, channel_manager, logger);
+    if (error || !event_manager) {
+        return error;
+    }
+#endif
     return 0;
 }
 
-int test_deinit(void)
+
+
+static int test_deinit(void)
 {
+#ifndef KAA_DISABLE_FEATURE_EVENTS
+    kaa_event_manager_destroy(event_manager);
+    kaa_channel_manager_destroy(channel_manager);
+    kaa_status_destroy(status);
+#endif
     kaa_log_destroy(logger);
     return 0;
 }
+
+
 
 KAA_SUITE_MAIN(Event, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_EVENTS
         ,
           KAA_TEST_CASE(create_event_manager, test_kaa_create_event_manager)
-          KAA_TEST_CASE(compile_event_request, test_kaa_event_compile_request)
-          KAA_TEST_CASE(add_on_event_callback, test_kaa_add_on_event_callback)
+          KAA_TEST_CASE(compile_event_request, test_kaa_event_sync_get_size)
+          KAA_TEST_CASE(event_sync_serialize, test_event_sync_serialize)
+          KAA_TEST_CASE(add_on_event_callback, test_kaa_server_sync_with_event_callbacks)
+          KAA_TEST_CASE(event_listeners_serialize_request, test_kaa_event_listeners_serialize_request)
+          KAA_TEST_CASE(event_listeners_handle_sync, test_kaa_event_listeners_handle_sync)
 #endif
         )

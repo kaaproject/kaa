@@ -33,7 +33,7 @@ public class MultiLogDeliveryCallback extends AbstractActorCallback {
      * @param appendersCount
      *            the count of appenders that need to confirm delivery
      */
-    public MultiLogDeliveryCallback(ActorRef actor, String requestId, int appendersCount) {
+    public MultiLogDeliveryCallback(ActorRef actor, int requestId, int appendersCount) {
         super(actor, requestId);
         this.appendersCount = new AtomicInteger(appendersCount);
     }

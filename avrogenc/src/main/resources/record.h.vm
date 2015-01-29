@@ -14,13 +14,13 @@
 ## limitations under the License.
 ##
 
-#set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
-#set ($recordName = $StyleUtils.toLowerUnderScore($schema.getName()))
-typedef struct ${prefix}_${recordName}_t_ {
+#set ($record_name = $StyleUtils.toLowerUnderScore($schema.getName()))
+typedef struct {
 #foreach ($field in $schema.getFields())
-#set ($fieldName = $StyleUtils.toLowerUnderScore($field.name()))
-    $TypeConverter.convertToCType($field.schema(), $prefix) $fieldName; 
+#set ($field_type = $TypeConverter.convertToCType($prefix, $field.schema()))
+#set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
+    ${field_type} ${field_name};
 #end
 
 #if ($TypeConverter.isTypeOut($schema))
@@ -28,12 +28,12 @@ typedef struct ${prefix}_${recordName}_t_ {
     get_size_fn  get_size;
 #end
     destroy_fn   destroy;
-} ${prefix}_${recordName}_t;
+} ${prefix}_${record_name}_t;
 
 #if ($TypeConverter.isTypeOut($schema))
-${prefix}_${recordName}_t* ${prefix}_create_${recordName}();
+${prefix}_${record_name}_t* ${prefix}_${record_name}_create();
 #end
 #if ($TypeConverter.isTypeIn($schema))
-${prefix}_${recordName}_t* ${prefix}_deserialize_${recordName}(avro_reader_t reader);
+${prefix}_${record_name}_t* ${prefix}_${record_name}_deserialize(avro_reader_t reader);
 #end
 

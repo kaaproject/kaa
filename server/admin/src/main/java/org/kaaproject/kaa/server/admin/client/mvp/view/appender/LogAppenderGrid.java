@@ -17,13 +17,13 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
+public class LogAppenderGrid extends AbstractKaaGrid<LogAppenderDto, String> {
 
     public LogAppenderGrid(boolean embedded) {
         super(Unit.PX, true, embedded);

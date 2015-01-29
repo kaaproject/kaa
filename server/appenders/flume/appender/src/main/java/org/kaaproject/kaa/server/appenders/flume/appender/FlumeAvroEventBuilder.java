@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.avro.generic.GenericDatumWriter;
@@ -27,7 +28,10 @@ import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.flume.Event;
 import org.apache.flume.event.EventBuilder;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
+import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
@@ -37,12 +41,37 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlumeAvroEventBuilder.class);
 
+    private static final String AVRO_SCHEMA_HEADER_LITERAL = "flume.avro.schema.literal";
+
+    private FlumeEventFormat flumeEventFormat;
+    
     @Override
-    public Event generateEvent(String appToken, int schemaVersion, List<LogEvent> logEvents, RecordHeader header) {
-        LOG.debug("Build flume event with appToken [{}], schema version [{}], events: [{}] and header [{}].", appToken, schemaVersion, logEvents, header);
+    public void init(FlumeConfig configuration) {
+        flumeEventFormat = configuration.getFlumeEventFormat();
+    }
+
+    @Override
+    public List<Event> generateEvents(String appToken, LogSchema schema, List<LogEvent> logEvents, RecordHeader header) {
+        LOG.debug("Build flume events with appToken [{}], schema version [{}], events: [{}] and header [{}].", appToken, schema.getVersion(), logEvents, header);
+        List<Event> events = null;
+        switch (flumeEventFormat) {
+        case RECORDS_CONTAINER:
+            Event event = generateRecordsContainerEvent(appToken, schema, logEvents, header);
+            if (event != null) {
+                events = Collections.singletonList(event);
+            }
+            break;
+        case GENERIC:
+            events = generateGenericEvent(schema, logEvents);
+            break;
+        }
+        return events;
+    }
+
+    private Event generateRecordsContainerEvent(String appToken, LogSchema schema, List<LogEvent> logEvents, RecordHeader header) {
         Event event = null;
         RecordData logData = new RecordData();
-        logData.setSchemaVersion(schemaVersion);
+        logData.setSchemaVersion(schema.getVersion());
         logData.setApplicationToken(appToken);
         logData.setRecordHeader(header);
 
@@ -71,5 +100,14 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
         LOG.trace("Build flume event with array body [{}]", baos);
         return event;
     }
-
+    
+    private List<Event> generateGenericEvent(LogSchema schema, List<LogEvent> logEvents) {
+        List<Event> events = new ArrayList<Event>();
+        for (LogEvent logEvent : logEvents) {
+            Event event = EventBuilder.withBody(logEvent.getLogData());
+            event.getHeaders().put(AVRO_SCHEMA_HEADER_LITERAL, schema.getSchema());
+            events.add(event);
+        }
+        return events;
+    }
 }

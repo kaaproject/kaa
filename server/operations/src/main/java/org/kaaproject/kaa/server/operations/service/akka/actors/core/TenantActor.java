@@ -24,7 +24,6 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
@@ -232,7 +231,7 @@ public class TenantActor extends UntypedActor{
 
     private ActorRef getOrCreateUserActor(String userId) {
         ActorRef userActor = users.get(userId);
-        if (userActor == null) {
+        if (userActor == null && userId != null) {
             userActor = context().actorOf(Props.create(new UserActor.ActorCreator(cacheService, eventService, userId, tenantId)), userId);
             LOG.debug("Create user actor with id {}", userId);
             users.put(userId, userActor);

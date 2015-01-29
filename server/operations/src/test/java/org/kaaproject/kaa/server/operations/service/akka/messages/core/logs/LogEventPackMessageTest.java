@@ -30,7 +30,7 @@ import akka.actor.ActorRef;
 
 public class LogEventPackMessageTest {
 
-    private static final String REQUEST_ID = "request1";
+    private static final int REQUEST_ID = 42;
     private static final String ENDPOINT_KEY = "endpointKey";
     private static final long DATE_CREATED = System.currentTimeMillis();
     private static final int LOG_SCHEMA_VERSION = 3;

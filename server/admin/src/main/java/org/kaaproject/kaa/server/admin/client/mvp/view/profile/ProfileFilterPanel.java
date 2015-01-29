@@ -18,9 +18,16 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.profile;
 
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
+import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseStructView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.struct.TextAreaStructView;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ProfileFilterPanel extends AbstractRecordPanel<ProfileFilterDto>{
+public class ProfileFilterPanel extends AbstractRecordPanel<ProfileFilterDto, String>{
+
+    public ProfileFilterPanel(HasErrorMessage hasErrorMessage) {
+        super(hasErrorMessage);
+    }
 
     @Override
     protected String bodyLabelText() {
@@ -31,6 +38,11 @@ public class ProfileFilterPanel extends AbstractRecordPanel<ProfileFilterDto>{
     public void setReadOnly() {
         setActiveReadOnly();
         setInactiveReadOnly();
+    }
+
+    @Override
+    protected BaseStructView<ProfileFilterDto, String> createStructView(HasErrorMessage hasErrorMessage) {
+        return new TextAreaStructView<ProfileFilterDto>(hasErrorMessage);
     }
 
 }

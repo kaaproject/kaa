@@ -14,6 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.6.1//EN" "https://raw.githubusercontent.com/gwtproject/gwt/release/2.6/distro-source/core/src/gwt-module.dtd">
 <module rename-to='login'>
   <!-- Inherit the core Web Toolkit stuff. -->
   <inherits name="com.google.gwt.core.Core"/>
@@ -23,7 +24,7 @@
   <inherits name="com.google.gwt.user.theme.clean.CleanResources"/>
 
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
-  <inherits name="org.kaaproject.kaa.server.common.avro.ui.gwt.client.AvroUIClient"/>
+  <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
   
   <!--  Need for SuperDev mode-->
   <add-linker name="xsiframe"/>
@@ -38,6 +39,9 @@
   <extend-property name="locale" values="en"/>
 
   <set-property-fallback name="locale" value="en"/>
+  
+  <!--  set-property name="locale" value="en"/-->
+  
   <set-configuration-property name="locale.cookie" value="KAA_ADMIN_LOCALE"/>
   <set-configuration-property name="locale.useragent" value="Y"/>
 

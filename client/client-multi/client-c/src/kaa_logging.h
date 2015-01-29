@@ -14,106 +14,68 @@
  * limitations under the License.
  */
 
-#ifndef KAA_LOGGING_H_
-#define KAA_LOGGING_H_
+/**
+ * @file kaa_logging.h
+ * @brief Kaa data logging subsystem API
+ *
+ * Supplies API for Kaa data collection / logging subsystem.
+ */
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-#include <stddef.h>
-#include "gen/kaa_endpoint_gen.h"
-#include "gen/kaa_logging_gen.h"
-#include "kaa_uuid.h"
+# ifndef KAA_LOGGING_H_
+# define KAA_LOGGING_H_
 
-#ifdef __cplusplus
+# ifndef KAA_DISABLE_FEATURE_LOGGING
+
+# include "gen/kaa_logging_gen.h"
+# include "platform/ext_log_storage.h"
+# include "platform/ext_log_upload_strategy.h"
+
+# ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
-#endif
-
-typedef kaa_test_log_record_t               kaa_user_log_record_t;
-typedef struct kaa_log_collector            kaa_log_collector_t;
-
-void                destroy_log_record(void *record_p);
+# endif
 
 /**
- * Interface for log storage.
- * Functions:
- * 1. Add log enrty to log storage.
- *      void add_log_record(kaa_log_entry_t * record);
- * 2. Return kaa_list_t * of record objects total records size should be LESS OR EQUAL than max_size.
- *    Log records list will be further addressed using kaa_uuid_t object.
- *      kaa_list_t * get_records(kaa_uuid_t uuid, size_t max_size);
- * 3. Remove records when upload is successful.
- *      void upload_succeeded(kaa_uuid_t uuid);
- * 4. Notify records block upload failed.
- *      void upload_failed(kaa_uuid_t uuid);
- * 5. Shrink log storage to specified size.
- *      void shrink_to_size(size_t size);
- * 6. Destroy log storage.
- *      void destroy(void);
+ * Log records structure generated based on the specified data schema.
  */
-typedef struct kaa_log_storage_t {
-    void            (* add_log_record)  (kaa_log_entry_t * record);
-    kaa_list_t *    (* get_records)     (kaa_uuid_t uuid, size_t max_size);
-    void            (* upload_succeeded)(kaa_uuid_t uuid);
-    void            (* upload_failed)   (kaa_uuid_t uuid);
-    void            (* shrink_to_size)  (size_t size);
-    void            (* destroy)         (void);
-} kaa_log_storage_t;
+typedef kaa_test_log_record_t    kaa_user_log_record_t;
+
+
 
 /**
- * Interface for accessing log storage actual state information.
- * Functions:
- * 1. Get total size occupied by logs in log storage.
- *      size_t get_total_size(void);
- * 2. Get total log records count.
- *      size_t get_records_count)(void);
+ * Private log collector structure.
  */
-typedef struct kaa_storage_status_t {
-    size_t          (* get_total_size)(void);
-    size_t          (* get_records_count)(void);
-} kaa_storage_status_t;
+typedef struct kaa_log_collector kaa_log_collector_t;
 
-typedef struct kaa_log_upload_properties_t {
-    /**
-     * Maximal amount of logs for single upload request (in bytes).
-     */
-    uint32_t    max_log_block_size;
-    /**
-     * Amount of collected logs (in bytes) when upload should be triggered.
-     */
-    uint32_t    max_log_upload_threshold;
-    /**
-     * Maximal size which can be occupied by log records (in bytes).
-     */
-    uint32_t    max_log_storage_volume;
-} kaa_log_upload_properties_t;
 
-typedef enum kaa_log_upload_decision_t {
-    NOOP        = 0, // No operation should be performed now.
-    UPLOAD      = 1, // Log upload should be triggered.
-    CLEANUP     = 2  // Need to cleanup log storage to fit available space.
-} kaa_log_upload_decision_t;
 
-typedef kaa_log_upload_decision_t (* log_upload_decision_fn)(kaa_storage_status_t *);
+/**
+ * @brief Initializes data collection module with the storage interface, upload strategy, and other settings.
+ *
+ * @param[in] self                          Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in] log_storage_context           Log storage context.
+ * @param[in] log_upload_strategy_context   Log upload strategy context.
+ *
+ * @return  Error code.
+ */
+kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context);
 
-kaa_error_t                 kaa_create_log_collector(kaa_log_collector_t **);
-void                        kaa_destroy_log_collector(kaa_log_collector_t *);
 
-kaa_error_t                 kaa_init_log_collector(
-                                                    kaa_log_collector_t *
-                                                  , kaa_log_storage_t *
-                                                  , kaa_log_upload_properties_t *
-                                                  , kaa_storage_status_t *
-                                                  , log_upload_decision_fn
-                                                  );
 
-kaa_error_t                 kaa_add_log_record(void *ctx, kaa_user_log_record_t *entry);
+/**
+ * @brief Serializes and adds a log record to the log storage.
+ *
+ * @param[in] self    Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in] entry   Pointer to log entry to be added to the storage.
+ *
+ * @return  Error code.
+ *
+ */
+kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
 
-kaa_error_t                 kaa_logging_compile_request(void *ctx, kaa_log_sync_request_t ** request_p);
-kaa_error_t                 kaa_logging_handle_sync(void *ctx, kaa_log_sync_response_t *response);
-CLOSE_EXTERN
+# ifdef __cplusplus
+}      /* extern "C" */
+# endif
 
-#endif
+# endif /* KAA_DISABLE_FEATURE_LOGGING */
 
-#endif /* KAA_LOGGING_H_ */
+# endif /* KAA_LOGGING_H_ */

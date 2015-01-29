@@ -50,8 +50,8 @@ public interface KaaAdminMessages extends Messages {
     @DefaultMessage("Unassign notification topic")
     String removeTopicFromEndpointGroupTitle();
 
-    @DefaultMessage("Fields marked with <span class=\"required\"></span> needs to be filled before saving.")
-    String requiredFieldsNote();
+    @DefaultMessage("Fields marked with <span class=\"{0}\"></span> needs to be filled before saving.")
+    String requiredFieldsNote(String requiredFieldClass);
 
     @DefaultMessage("<h1 title=\"Please login\">Please login</h1>")
     String loginTitle();
@@ -67,5 +67,26 @@ public interface KaaAdminMessages extends Messages {
 
     @DefaultMessage("Remove log appender")
     String removeLogAppenderTitle();
+
+    @DefaultMessage("It looks like your session has timed out, or you have been logged out of site. You will need to log back in to continue.")
+    String sessionExpiredMessage();
+    
+    @DefaultMessage("You have unsaved changes on this form. If you navigate away from this page without first saving, all changes will be lost.")
+    String detailsMayStopMessage();
+    
+    @DefaultMessage("Please enter existing username or email in order to reset password.")
+    String resetPasswordMessage();
+    
+    @DefaultMessage("Email has been sent with further instruction to reset your password.")
+    String resetPasswordLinkWasSent();
+
+    @DefaultMessage("Your password has been reset. You should receive mail with new temporary password.")
+    String passwordWasReset();
+
+    @DefaultMessage("This client is not compatible with the server. Cleanup and refresh the browser.")
+    String incompatibleRemoteService();
+    
+    @DefaultMessage("An error occurred while communicating with the server. Possible causes are:<br>a) Server is not running, or <br>b) Network problem.<br>Check your network connection or try again later.")
+    String serverIsUnreacheableMessage();
 
 }

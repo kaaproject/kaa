@@ -205,21 +205,21 @@ BOOST_AUTO_TEST_CASE(testConnectMessage)
 
     std::string payload = { (char) 0xFF, 0x01, 0x02, 0x03 };
 
-    ConnectMessage message(200, signature, sessionKey, payload);
+    ConnectMessage message(200, 0xf291f2d4, signature, sessionKey, payload);
 
-    unsigned char checkConnectHeader[] = { 0x10, 0x42, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x11, 0x01, 0x00, 0xC8 };
+    unsigned char checkConnectHeader[] = { 0x10, 0x46, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0xF2, 0x91, 0xF2, 0xD4, 0x11, 0x01, 0x00, 0xC8 };
 
     const auto& rawMessage = message.getRawMessage();
-    BOOST_CHECK_EQUAL(68, rawMessage.size());
+    BOOST_CHECK_EQUAL(72, rawMessage.size());
 
-    BOOST_CHECK_EQUAL_COLLECTIONS(checkConnectHeader, checkConnectHeader + 16, rawMessage.begin(), rawMessage.begin() + 16);
+    BOOST_CHECK_EQUAL_COLLECTIONS(checkConnectHeader, checkConnectHeader + 20, rawMessage.begin(), rawMessage.begin() + 20);
 
-    BOOST_CHECK_EQUAL_COLLECTIONS(sessionKey.begin(), sessionKey.end(), rawMessage.begin() + 16, rawMessage.begin() + 32);
-    BOOST_CHECK_EQUAL_COLLECTIONS(signature.begin(), signature.end(), rawMessage.begin() + 32, rawMessage.begin() + 64);
+    BOOST_CHECK_EQUAL_COLLECTIONS(sessionKey.begin(), sessionKey.end(), rawMessage.begin() + 20, rawMessage.begin() + 36);
+    BOOST_CHECK_EQUAL_COLLECTIONS(signature.begin(), signature.end(), rawMessage.begin() + 36, rawMessage.begin() + 68);
     BOOST_CHECK_EQUAL_COLLECTIONS(
             reinterpret_cast<const std::uint8_t*>(payload.data()),
             reinterpret_cast<const std::uint8_t*>(payload.data() + payload.size()),
-            rawMessage.begin() + 64,
+            rawMessage.begin() + 68,
             rawMessage.end());
 }
 
@@ -227,19 +227,19 @@ BOOST_AUTO_TEST_CASE(testConnectMessageWithoutKey)
 {
     std::string payload = { (char) 0xFF, 0x01, 0x02, 0x03 };
 
-    ConnectMessage message(200, std::string(), std::string(), payload);
+    ConnectMessage message(200, 0xf291f2d4, std::string(), std::string(), payload);
 
-    unsigned char checkConnectHeader[] = { 0x10, 0x12, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x00, 0x00, 0x00, 0xC8 };
+    unsigned char checkConnectHeader[] = { 0x10, 0x16, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0xF2, 0x91, 0xF2, 0xD4, 0x00, 0x00, 0x00, 0xC8 };
 
     const auto& rawMessage = message.getRawMessage();
-    BOOST_CHECK_EQUAL(20, rawMessage.size());
+    BOOST_CHECK_EQUAL(24, rawMessage.size());
 
-    BOOST_CHECK_EQUAL_COLLECTIONS(checkConnectHeader, checkConnectHeader + 16, rawMessage.begin(), rawMessage.begin() + 16);
+    BOOST_CHECK_EQUAL_COLLECTIONS(checkConnectHeader, checkConnectHeader + 20, rawMessage.begin(), rawMessage.begin() + 20);
 
     BOOST_CHECK_EQUAL_COLLECTIONS(
             reinterpret_cast<const std::uint8_t*>(payload.data()),
             reinterpret_cast<const std::uint8_t*>(payload.data() + payload.size()),
-            rawMessage.begin() + 16,
+            rawMessage.begin() + 20,
             rawMessage.end());
 }
 

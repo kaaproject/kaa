@@ -20,15 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
-
+import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.sync.ProfileServerSync;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.sync.SyncStatus;
+import org.kaaproject.kaa.server.sync.UserServerSync;
 
 /**
  * The Class SyncResponseHolder.
@@ -36,7 +35,7 @@ import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 public class SyncResponseHolder {
 
     /** The response. */
-    private final SyncResponse response;
+    private final ServerSync response;
 
     private EndpointProfileDto endpointProfile;
 
@@ -49,19 +48,20 @@ public class SyncResponseHolder {
     /** The user nf version. */
     private int userNfVersion;
 
-    public static SyncResponseHolder failure(Integer requestId){
-        SyncResponse response = new SyncResponse();
+    public static SyncResponseHolder failure(Integer requestId) {
+        ServerSync response = new ServerSync();
         response.setRequestId(requestId);
-        response.setStatus(SyncResponseResultType.FAILURE);
+        response.setStatus(SyncStatus.FAILURE);
         return new SyncResponseHolder(response);
     }
 
     /**
      * Instantiates a new sync response holder.
      *
-     * @param response the response
+     * @param response
+     *            the response
      */
-    public SyncResponseHolder(SyncResponse response){
+    public SyncResponseHolder(ServerSync response) {
         super();
         this.response = response;
         this.subscriptionStates = new HashMap<>();
@@ -82,7 +82,7 @@ public class SyncResponseHolder {
      *
      * @return the response
      */
-    public SyncResponse getResponse() {
+    public ServerSync getResponse() {
         return response;
     }
 
@@ -117,39 +117,41 @@ public class SyncResponseHolder {
         return endpointProfile;
     }
 
-    public SyncResponseResultType getStatus() {
+    public SyncStatus getStatus() {
         return response.getStatus();
     }
 
-    public void setStatus(SyncResponseResultType status) {
+    public void setStatus(SyncStatus status) {
         this.response.setStatus(status);
     }
 
-    public void setUserSyncResponse(UserSyncResponse response) {
-        this.response.setUserSyncResponse(response);
+    public void setUserSyncResponse(UserServerSync response) {
+        this.response.setUserSync(response);
     }
 
-    public void setEventSyncResponse(EventSyncResponse response) {
-        this.response.setEventSyncResponse(response);
+    public void setEventSyncResponse(EventServerSync response) {
+        this.response.setEventSync(response);
     }
 
-    public void setConfigurationSyncResponse(ConfigurationSyncResponse response) {
-        this.response.setConfigurationSyncResponse(response);
+    public void setConfigurationSyncResponse(ConfigurationServerSync response) {
+        this.response.setConfigurationSync(response);
     }
 
-    public void setNotificationSyncResponse(NotificationSyncResponse response) {
-        this.response.setNotificationSyncResponse(response);
+    public void setNotificationSyncResponse(NotificationServerSync response) {
+        this.response.setNotificationSync(response);
     }
 
-    public void setProfileSyncResponse(ProfileSyncResponse response) {
-        this.response.setProfileSyncResponse(response);
+    public void setProfileSyncResponse(ProfileServerSync response) {
+        this.response.setProfileSync(response);
     }
 
     public void setRequestId(Integer value) {
         this.response.setRequestId(value);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -171,29 +173,30 @@ public class SyncResponseHolder {
      * @return true, if successful
      */
     public boolean requireImmediateReply() {
-        SyncResponse response = getResponse();
-        if (response.getProfileSyncResponse() != null && response.getProfileSyncResponse().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+        ServerSync response = getResponse();
+        if (response.getProfileSync() != null && response.getProfileSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
             return true;
         }
-        if (response.getConfigurationSyncResponse() != null && response.getConfigurationSyncResponse().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+        if (response.getConfigurationSync() != null && response.getConfigurationSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
             return true;
         }
-        if (response.getNotificationSyncResponse() != null && response.getNotificationSyncResponse().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+        if (response.getNotificationSync() != null && response.getNotificationSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
             return true;
         }
-        if (response.getEventSyncResponse() != null) {
-            if(response.getEventSyncResponse().getEventSequenceNumberResponse() != null){
+        if (response.getEventSync() != null) {
+            if (response.getEventSync().getEventSequenceNumberResponse() != null) {
                 return true;
             }
-            if(response.getEventSyncResponse().getEvents() != null && !response.getEventSyncResponse().getEvents().isEmpty()){
+            if (response.getEventSync().getEvents() != null && !response.getEventSync().getEvents().isEmpty()) {
                 return true;
             }
-            if(response.getEventSyncResponse().getEventListenersResponses() != null && !response.getEventSyncResponse().getEventListenersResponses().isEmpty()){
+            if (response.getEventSync().getEventListenersResponses() != null
+                    && !response.getEventSync().getEventListenersResponses().isEmpty()) {
                 return true;
             }
         }
-        if (response.getUserSyncResponse() != null) {
-            UserSyncResponse userResponse = response.getUserSyncResponse();
+        if (response.getUserSync() != null) {
+            UserServerSync userResponse = response.getUserSync();
             if (userResponse.getEndpointAttachResponses() != null && !userResponse.getEndpointAttachResponses().isEmpty()) {
                 return true;
             }
@@ -203,8 +206,14 @@ public class SyncResponseHolder {
             if (userResponse.getUserAttachResponse() != null) {
                 return true;
             }
+            if (userResponse.getUserAttachNotification() != null) {
+                return true;
+            }
+            if (userResponse.getUserDetachNotification() != null) {
+                return true;
+            }
         }
-        if (response.getLogSyncResponse() != null) {
+        if (response.getLogSync() != null) {
             return true;
         }
         return false;

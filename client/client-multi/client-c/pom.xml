@@ -31,17 +31,20 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../../..</main.dir>
-    </properties>
 
-	<!--dependencies>
-		<dependency>
-			<groupId>org.kaaproject.kaa.common</groupId>
-			<artifactId>endpoint-shared</artifactId>
-			<version>${project.version}</version>
-			<classifier>avro</classifier>
-			<type>zip</type>
-		</dependency>
-	</dependencies-->
+        <sonar.language>c++</sonar.language>
+        <sonar.sources>${basedir}/src</sonar.sources>
+        <sonar.cxx.defines>__cplusplus 1</sonar.cxx.defines>
+        <sonar.cxx.suffixes.sources>.c</sonar.cxx.suffixes.sources>
+        <sonar.cxx.suffixes.headers>.h</sonar.cxx.suffixes.headers>
+        <sonar.cxx.valgrind.reportPath>build/valgrindReports/*.memreport.xml</sonar.cxx.valgrind.reportPath>
+        <sonar.cxx.includeDirectories>${basedir}/src,/usr/include/,/usr/include/linux/,/usr/lib/gcc/x86_64-linux-gnu/4.9/include/</sonar.cxx.includeDirectories>
+        <sonar.cxx.coverage.reportPath>build/gcovr-report.xml</sonar.cxx.coverage.reportPath>
+        <sonar.cxx.other.reportPath>build/*-Results.xml</sonar.cxx.other.reportPath>
+        <sonar.cxx.xunit.xsltURL>cunit-to-junit.xsl</sonar.cxx.xunit.xsltURL>
+        <sonar.cxx.cppcheck.reportPath>build/cppcheck.xml</sonar.cxx.cppcheck.reportPath>
+        <sonar.cxx.rats.reportPath>build/rats-report.xml</sonar.cxx.rats.reportPath>
+    </properties>
 
     <build>
         <plugins>
@@ -68,9 +71,12 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
+                        <exclude>**/gcovr.log</exclude>
+                        <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/.*</exclude>
                         <exclude>**/*.log</exclude>
                         <exclude>**/build/**</exclude>
+                        <exclude>**/gcovr</exclude>
                     </excludes>
                 </configuration>
             </plugin>

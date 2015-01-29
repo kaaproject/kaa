@@ -20,25 +20,63 @@
 # define KAA_${EVENT_FAMILY_NAME}_H
 
 # include "kaa_${event_family_name}_definitions.h" 
+# include "kaa_event.h"
+# include "kaa_error.h"
 
 #foreach ($event in $incomingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-typedef void (* on_${prefix}_${e_name})(${prefix}_${e_name}_t *);
+
+/**
+ * @brief Listener of ${e_name} events.
+ */
+typedef void (* on_${prefix}_${e_name})(void *context, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p source);
 #end
 
 #foreach ($event in $incomingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-void set_${prefix}_${e_name}_listener(on_${prefix}_${e_name});
+
+/**
+ * @brief Set listener for ${e_name} events.
+ * 
+ * @param[in]       self        Valid pointer to event manager.
+ * @param[in]       listener    Listener callback.
+ * @param[in]       context     Listener's context.
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager_t *self, on_${prefix}_${e_name} listener, void *context);
 #end
 
 #foreach ($event in $outgoingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-void kaa_send_${prefix}_${e_name}(${prefix}_${e_name}_t *, const char *, size_t);
+
+/**
+ * @brief Send event of type ${e_name}.
+ * 
+ * @param[in]       self        Valid pointer to event manager.
+ * @param[in]       event       Pointer to the event object.
+ * @param[in]       target      The target endpoint of the event (null-terminated string). The size of
+ *                              the target parameter should be equal to @link KAA_ENDPOINT_ID_LENGTH @endlink .
+ *                              If @code NULL @endcode event will be broadcasted.
+ * 
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target);
 #end
 
 #foreach ($event in $outgoingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
-void kaa_add_${prefix}_${e_name}_event_to_block(${prefix}_${e_name}_t *event, const char *target, size_t target_len, kaa_trx_id trx_id);
+
+/**
+ * @brief Add event of type ${e_name} to the events block.
+ * 
+ * @param[in]       self        Valid pointer to event manager.
+ * @param[in]       event       Pointer to the event object.
+ * @param[in]       target      Target of the event (null-terminated string). If NULL - event will be broadcasted.
+ * @param[in]       trx_id      Event block id.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target, kaa_event_block_id trx_id);
 #end
 
 # endif // KAA_${EVENT_FAMILY_NAME}_H

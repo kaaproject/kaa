@@ -16,34 +16,33 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.io.response;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import java.util.UUID;
 
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ResponseBuilder;
-import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
-import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.transport.channel.ChannelContext;
+import org.kaaproject.kaa.server.transport.channel.ChannelType;
+import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
+import org.kaaproject.kaa.server.transport.message.MessageBuilder;
+import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 /**
  * The Class NettyDecodedResponseMessage.
  */
 public class NettySessionResponseMessage implements SessionResponse{
 
-    private final NettySessionInfo sessionInfo;
-    private final SyncResponse syncResponse;
-    private final ResponseBuilder responseConverter;
+    private final SessionInfo sessionInfo;
+    private final ServerSync syncResponse;
+    private final MessageBuilder responseConverter;
     private final ErrorBuilder errorConverter;
 
-    public NettySessionResponseMessage(NettySessionInfo sessionInfo, SyncResponse syncResponse, ResponseBuilder responseConverter, ErrorBuilder errorConverter){
+    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder responseConverter, ErrorBuilder errorConverter){
         this.sessionInfo = sessionInfo;
         this.syncResponse = syncResponse;
         this.responseConverter = responseConverter;
         this.errorConverter = errorConverter;
     }
 
-    public SyncResponse getSyncResponse() {
+    public ServerSync getSyncResponse() {
         return syncResponse;
     }
 
@@ -63,22 +62,27 @@ public class NettySessionResponseMessage implements SessionResponse{
     }
 
     @Override
-    public ChannelHandlerContext getChannelContext() {
+    public ChannelContext getChannelContext() {
         return sessionInfo.getCtx();
     }
 
     @Override
-    public SyncResponse getResponse() {
+    public ServerSync getResponse() {
         return syncResponse;
     }
 
     @Override
-    public ResponseBuilder getResponseConverter() {
+    public MessageBuilder getMessageBuilder() {
         return responseConverter;
     }
 
     @Override
-    public NettySessionInfo getSessionInfo() {
+    public SessionInfo getSessionInfo() {
         return sessionInfo;
+    }
+
+    @Override
+    public int getPlatformId() {
+        return sessionInfo.getPlatformId();
     }
 }

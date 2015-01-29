@@ -103,7 +103,7 @@ public class ApplicationActivity
                 new AsyncCallback<GenerateSdkDialog>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, detailsView);
                     }
 
                     @Override

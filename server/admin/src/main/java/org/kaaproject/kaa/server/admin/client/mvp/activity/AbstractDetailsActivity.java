@@ -47,6 +47,8 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
 
     protected V detailsView;
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
+    
+    private boolean canceled = false;
 
     public AbstractDetailsActivity(P place, ClientFactory clientFactory) {
         this.place = place;
@@ -104,6 +106,7 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
             detailsView.setCancelEnabled(true);
             registrations.add(detailsView.getCancelButton().addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
+                    canceled = true;
                     goTo(place.getPreviousPlace());
                 }
             }));
@@ -134,7 +137,7 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
         getEntity(entityId, new AsyncCallback<T>() {
             @Override
             public void onFailure(Throwable caught) {
-                detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                Utils.handleException(caught, detailsView);
             }
 
             @Override
@@ -157,10 +160,18 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
                     }
 
                     public void onFailure(Throwable caught) {
-                        detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                        Utils.handleException(caught, detailsView);
                     }
         });
     }
 
+    @Override
+    public String mayStop() {
+        if (detailsView.hasChanged() && !canceled) {
+            return Utils.messages.detailsMayStopMessage();
+        } else {
+            return super.mayStop();
+        }
+    }
 
 }

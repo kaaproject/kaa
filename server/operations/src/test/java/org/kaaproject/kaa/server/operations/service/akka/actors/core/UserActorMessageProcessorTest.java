@@ -17,11 +17,11 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
@@ -32,9 +32,8 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.pojo.Base64Util;
+import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
@@ -55,6 +54,7 @@ import org.kaaproject.kaa.server.operations.service.event.RouteOperation;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableAddress;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
 import org.kaaproject.kaa.server.operations.service.event.UserRouteInfo;
+import org.kaaproject.kaa.server.sync.Event;
 import org.mockito.Mockito;
 import org.springframework.util.ReflectionUtils;
 

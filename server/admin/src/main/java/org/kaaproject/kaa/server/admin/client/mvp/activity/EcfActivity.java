@@ -16,21 +16,19 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowAction;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.data.EcfSchemasDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEventHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.AddEcfSchemaDialog;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -55,9 +53,7 @@ public class EcfActivity
         super.start(containerWidget, eventBus);
         if (!create) {
             AbstractGrid<EventSchemaVersionDto, Integer> ecfSchemasGrid = detailsView.getEcfSchemasGrid();
-            ecfSchemasDataProvider = new EcfSchemasDataProvider(ecfSchemasGrid.getSelectionModel(),
-                            new DataLoadCallback<EventSchemaVersionDto>(detailsView));
-
+            ecfSchemasDataProvider = new EcfSchemasDataProvider(ecfSchemasGrid.getSelectionModel(), detailsView);
             ecfSchemasDataProvider.addDataDisplay(ecfSchemasGrid.getDisplay());
         }
     }
@@ -142,7 +138,7 @@ public class EcfActivity
                 }
 
                 public void onFailure(Throwable caught) {
-                    detailsView.setErrorMessage(Utils.getErrorMessage(caught));
+                    Utils.handleException(caught, detailsView);
                 }
             });
     }
@@ -158,25 +154,6 @@ public class EcfActivity
         KaaAdmin.getDataSource().editEcf(entity, callback);
     }
 
-    class DataLoadCallback<T> implements AsyncCallback<List<T>> {
-
-        private EcfView view;
-
-        DataLoadCallback(EcfView view) {
-            this.view = view;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            view.setErrorMessage(Utils.getErrorMessage(caught));
-        }
-
-        @Override
-        public void onSuccess(List<T> result) {
-            view.clearError();
-        }
-    }
-    
     private void addEcfSchema() {
         AddEcfSchemaDialog.showAddEcfSchemaDialog(entityId, new AddEcfSchemaDialog.Listener() {
             

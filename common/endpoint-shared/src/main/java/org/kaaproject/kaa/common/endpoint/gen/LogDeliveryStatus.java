@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogDeliveryStatus\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}},{\"name\":\"errorCode\",\"type\":[{\"type\":\"enum\",\"name\":\"LogDeliveryErrorCode\",\"symbols\":[\"NO_APPENDERS_CONFIGURED\",\"APPENDER_INTERNAL_ERROR\",\"REMOTE_CONNECTION_ERROR\",\"REMOTE_INTERNAL_ERROR\"]},\"null\"]}],\"direction\":\"in\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogDeliveryStatus\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}},{\"name\":\"errorCode\",\"type\":[{\"type\":\"enum\",\"name\":\"LogDeliveryErrorCode\",\"symbols\":[\"NO_APPENDERS_CONFIGURED\",\"APPENDER_INTERNAL_ERROR\",\"REMOTE_CONNECTION_ERROR\",\"REMOTE_INTERNAL_ERROR\"]},\"null\"]}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String requestId;
+   private int requestId;
    private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
    private org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode errorCode;
 
@@ -23,7 +23,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
   /**
    * All-args constructor.
    */
-  public LogDeliveryStatus(java.lang.String requestId, org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result, org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode errorCode) {
+  public LogDeliveryStatus(java.lang.Integer requestId, org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result, org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode errorCode) {
     this.requestId = requestId;
     this.result = result;
     this.errorCode = errorCode;
@@ -43,7 +43,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: requestId = (java.lang.String)value$; break;
+    case 0: requestId = (java.lang.Integer)value$; break;
     case 1: result = (org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType)value$; break;
     case 2: errorCode = (org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -53,7 +53,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
   /**
    * Gets the value of the 'requestId' field.
    */
-  public java.lang.String getRequestId() {
+  public java.lang.Integer getRequestId() {
     return requestId;
   }
 
@@ -61,7 +61,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
    * Sets the value of the 'requestId' field.
    * @param value the value to set.
    */
-  public void setRequestId(java.lang.String value) {
+  public void setRequestId(java.lang.Integer value) {
     this.requestId = value;
   }
 
@@ -116,7 +116,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<LogDeliveryStatus>
     implements org.apache.avro.data.RecordBuilder<LogDeliveryStatus> {
 
-    private java.lang.String requestId;
+    private int requestId;
     private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
     private org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode errorCode;
 
@@ -160,12 +160,12 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
     }
 
     /** Gets the value of the 'requestId' field */
-    public java.lang.String getRequestId() {
+    public java.lang.Integer getRequestId() {
       return requestId;
     }
     
     /** Sets the value of the 'requestId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder setRequestId(java.lang.String value) {
+    public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
       fieldSetFlags()[0] = true;
@@ -179,7 +179,6 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
     
     /** Clears the value of the 'requestId' field */
     public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder clearRequestId() {
-      requestId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -238,7 +237,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
     public LogDeliveryStatus build() {
       try {
         LogDeliveryStatus record = new LogDeliveryStatus();
-        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.String) defaultValue(fields()[0]);
+        record.requestId = fieldSetFlags()[0] ? this.requestId : (java.lang.Integer) defaultValue(fields()[0]);
         record.result = fieldSetFlags()[1] ? this.result : (org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType) defaultValue(fields()[1]);
         record.errorCode = fieldSetFlags()[2] ? this.errorCode : (org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode) defaultValue(fields()[2]);
         return record;

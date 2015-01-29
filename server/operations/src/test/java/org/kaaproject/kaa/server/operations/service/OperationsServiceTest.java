@@ -34,16 +34,16 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.common.endpoint.gen.Notification;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaServiceIT;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
+import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.Notification;
+import org.kaaproject.kaa.server.sync.NotificationServerSync;
+import org.kaaproject.kaa.server.sync.NotificationType;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,82 +112,82 @@ public class OperationsServiceTest {
 
     @Test
     public void updateSyncResponseEmptyTest(){
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.SUCCESS);
-        SyncResponse result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), null);
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.SUCCESS);
+        ServerSync result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), null);
         assertNull(result);
     }
 
     @Test
     public void updateSyncResponseNotEmptyTest(){
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.SUCCESS);
-        response.setNotificationSyncResponse(new NotificationSyncResponse());
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.SUCCESS);
+        response.setNotificationSync(new NotificationServerSync());
         NotificationDto nfDto = new NotificationDto();
         nfDto.setId("nfId");
         nfDto.setBody("body".getBytes());
         nfDto.setType(NotificationTypeDto.SYSTEM);
-        SyncResponse result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
+        ServerSync result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
         assertNotNull(result);
-        assertNotNull(result.getNotificationSyncResponse());
-        assertNotNull(result.getNotificationSyncResponse().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSyncResponse().getResponseStatus());
+        assertNotNull(result.getNotificationSync());
+        assertNotNull(result.getNotificationSync().getNotifications());
+        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
 
 
-        response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.SUCCESS);
-        NotificationSyncResponse nfResponse = new NotificationSyncResponse();
+        response = new ServerSync();
+        response.setStatus(SyncStatus.SUCCESS);
+        NotificationServerSync nfResponse = new NotificationServerSync();
         nfResponse.setNotifications(new ArrayList<Notification>());
 
-        response.setNotificationSyncResponse(new NotificationSyncResponse());
+        response.setNotificationSync(new NotificationServerSync());
 
         result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
         assertNotNull(result);
-        assertNotNull(result.getNotificationSyncResponse());
-        assertNotNull(result.getNotificationSyncResponse().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSyncResponse().getResponseStatus());
+        assertNotNull(result.getNotificationSync());
+        assertNotNull(result.getNotificationSync().getNotifications());
+        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
     }
 
     @Test
     public void updateSyncResponseUnicastTest(){
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.SUCCESS);
-        response.setNotificationSyncResponse(new NotificationSyncResponse());
-        SyncResponse result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), UNICAST_NF_ID);
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.SUCCESS);
+        response.setNotificationSync(new NotificationServerSync());
+        ServerSync result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), UNICAST_NF_ID);
         assertNotNull(result);
-        assertNotNull(result.getNotificationSyncResponse());
-        assertNotNull(result.getNotificationSyncResponse().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSyncResponse().getResponseStatus());
-        assertEquals(1, result.getNotificationSyncResponse().getNotifications().size());
-        assertEquals(UNICAST_NF_ID, result.getNotificationSyncResponse().getNotifications().get(0).getUid());
-        assertNotNull(result.getNotificationSyncResponse().getNotifications().get(0).getUid());
-        assertNull(result.getNotificationSyncResponse().getNotifications().get(0).getSeqNumber());
+        assertNotNull(result.getNotificationSync());
+        assertNotNull(result.getNotificationSync().getNotifications());
+        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
+        assertEquals(1, result.getNotificationSync().getNotifications().size());
+        assertEquals(UNICAST_NF_ID, result.getNotificationSync().getNotifications().get(0).getUid());
+        assertNotNull(result.getNotificationSync().getNotifications().get(0).getUid());
+        assertNull(result.getNotificationSync().getNotifications().get(0).getSeqNumber());
     }
 
     @Test
     public void updateSyncResponseTopicTest(){
-        SyncResponse response = new SyncResponse();
-        response.setStatus(SyncResponseResultType.SUCCESS);
-        response.setNotificationSyncResponse(new NotificationSyncResponse());
-        SyncResponse result = operationsService.updateSyncResponse(response, Collections.singletonList(systemTopicNfDto), null);
+        ServerSync response = new ServerSync();
+        response.setStatus(SyncStatus.SUCCESS);
+        response.setNotificationSync(new NotificationServerSync());
+        ServerSync result = operationsService.updateSyncResponse(response, Collections.singletonList(systemTopicNfDto), null);
         assertNotNull(result);
-        assertNotNull(result.getNotificationSyncResponse());
-        assertNotNull(result.getNotificationSyncResponse().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSyncResponse().getResponseStatus());
-        assertEquals(1, result.getNotificationSyncResponse().getNotifications().size());
-        assertEquals(SYSTEM_TOPIC_ID, result.getNotificationSyncResponse().getNotifications().get(0).getTopicId());
-        assertEquals(NotificationType.SYSTEM, result.getNotificationSyncResponse().getNotifications().get(0).getType());
-        assertNull(result.getNotificationSyncResponse().getNotifications().get(0).getUid());
-        assertNotNull(result.getNotificationSyncResponse().getNotifications().get(0).getSeqNumber());
+        assertNotNull(result.getNotificationSync());
+        assertNotNull(result.getNotificationSync().getNotifications());
+        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
+        assertEquals(1, result.getNotificationSync().getNotifications().size());
+        assertEquals(SYSTEM_TOPIC_ID, result.getNotificationSync().getNotifications().get(0).getTopicId());
+        assertEquals(NotificationType.SYSTEM, result.getNotificationSync().getNotifications().get(0).getType());
+        assertNull(result.getNotificationSync().getNotifications().get(0).getUid());
+        assertNotNull(result.getNotificationSync().getNotifications().get(0).getSeqNumber());
     }
 
     @Test
     public void buildProfileResyncResponseTest(){
-        SyncRequest syncRequest = new SyncRequest();
+        ClientSync syncRequest = new ClientSync();
         SyncResponseHolder syncResponseHolder = DefaultOperationsService.buildProfileResyncResponse(syncRequest);
         assertNotNull(syncResponseHolder);
         assertNotNull(syncResponseHolder.getResponse());
-        assertEquals(SyncResponseResultType.PROFILE_RESYNC, syncResponseHolder.getResponse().getStatus());
+        assertEquals(SyncStatus.PROFILE_RESYNC, syncResponseHolder.getResponse().getStatus());
     }
 
     @Test

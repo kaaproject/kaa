@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -36,6 +36,8 @@ import com.google.gwt.user.client.ui.ValueListBox;
 
 public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
 
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+    
     private SizedTextBox userName;
     private SizedTextBox email;
     private ValueListBox<KaaAuthorityDto> authority;
@@ -68,7 +70,7 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
 
         Label userLabel = new Label(Utils.constants.userName());
         if (create) {
-            userLabel.addStyleName("required");
+            userLabel.addStyleName(REQUIRED);
         }
         detailsTable.setWidget(0, 0, userLabel);
         detailsTable.setWidget(0, 1, userName);
@@ -78,7 +80,7 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
         email.addInputHandler(this);
 
         Label emailLabel = new Label(Utils.constants.email());
-        emailLabel.addStyleName("required");
+        emailLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(1, 0, emailLabel);
         detailsTable.setWidget(1, 1, email);
 
@@ -116,7 +118,7 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
         authority.setAcceptableValues(possibleAuthorities);
 
         Label authorityLabel = new Label(Utils.constants.accountRole());
-        authorityLabel.addStyleName("required");
+        authorityLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(2, 0, authorityLabel);
         detailsTable.setWidget(2, 1, authority);
 

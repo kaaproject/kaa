@@ -18,17 +18,19 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
 import java.security.KeyPair;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.RuleTimeoutMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAwareRequest;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.SessionResponse;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
+import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
+import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
+import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +45,7 @@ import akka.japi.Creator;
 public class EncDecActor extends UntypedActor {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(EncDecActor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EncDecActor.class);
 
     private final EncDecActorMessageProcessor messageProcessor;
     /** Current redirection rules */
@@ -59,11 +60,11 @@ public class EncDecActor extends UntypedActor {
      *            the eps actor
      * @param supportUnencryptedConnection
      */
-    public EncDecActor(ActorRef epsActor, MetricsService metricsService, CacheService cacheService,
-            KeyPair serverKeys, Boolean supportUnencryptedConnection) {
+    public EncDecActor(ActorRef epsActor, MetricsService metricsService, CacheService cacheService, KeyPair serverKeys,
+            Set<String> platformProtocols, Boolean supportUnencryptedConnection) {
         super();
-        this.messageProcessor = new EncDecActorMessageProcessor(epsActor,
-                metricsService, cacheService, serverKeys, supportUnencryptedConnection);
+        this.messageProcessor = new EncDecActorMessageProcessor(epsActor, metricsService, cacheService, serverKeys, platformProtocols,
+                supportUnencryptedConnection);
         this.redirectionRules = new HashMap<>();
         this.random = new Random();
     }
@@ -107,20 +108,22 @@ public class EncDecActor extends UntypedActor {
 
         private final Boolean supportUnencryptedConnection;
 
+        private final Set<String> platformProtocols;
+
         /**
          * Instantiates a new actor creator.
          * 
          * @param epsActor
          *            the eps actor
          */
-        public ActorCreator(ActorRef epsActor, MetricsService metricsService,
-                CacheService cacheService, KeyPair serverKeys,
-                Boolean supportUnencryptedConnection) {
+        public ActorCreator(ActorRef epsActor, MetricsService metricsService, CacheService cacheService, KeyPair serverKeys,
+                Set<String> platformProtocols, Boolean supportUnencryptedConnection) {
             super();
             this.epsActor = epsActor;
             this.metricsService = metricsService;
             this.cacheService = cacheService;
             this.serverKeys = serverKeys;
+            this.platformProtocols = new HashSet<String>(platformProtocols);
             this.supportUnencryptedConnection = supportUnencryptedConnection;
         }
 
@@ -131,8 +134,11 @@ public class EncDecActor extends UntypedActor {
          */
         @Override
         public EncDecActor create() throws Exception {
-            return new EncDecActor(epsActor, metricsService, cacheService, serverKeys,
-                    supportUnencryptedConnection);
+            return new EncDecActor(epsActor, metricsService, cacheService, serverKeys, platformProtocols, supportUnencryptedConnection);
+        }
+
+        public Set<String> getPlatformProtocols() {
+            return platformProtocols;
         }
     }
 
@@ -144,26 +150,20 @@ public class EncDecActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message.getClass().getName());
-        if (message instanceof SessionInitRequest) {
-            RedirectionRule redirection = checkRedirection(redirectionRules,
-                    random.nextDouble());
+        if (message instanceof SessionInitMessage) {
+            RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
             if (redirection == null) {
-                messageProcessor.decodeAndForward(context(),
-                        (SessionInitRequest) message);
+                messageProcessor.decodeAndForward(context(), (SessionInitMessage) message);
             } else {
-                messageProcessor.redirect(redirection,
-                        (SessionInitRequest) message);
+                messageProcessor.redirect(redirection, (SessionInitMessage) message);
             }
         } else if (message instanceof SessionAware) {
-            if (message instanceof SessionAwareRequest) {
-                RedirectionRule redirection = checkRedirection(
-                        redirectionRules, random.nextDouble());
+            if (message instanceof SessionAwareMessage) {
+                RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
                 if (redirection == null) {
-                    messageProcessor.decodeAndForward(context(),
-                            (SessionAwareRequest) message);
+                    messageProcessor.decodeAndForward(context(), (SessionAwareMessage) message);
                 } else {
-                    messageProcessor.redirect(redirection,
-                            (SessionAwareRequest) message);
+                    messageProcessor.redirect(redirection, (SessionAwareMessage) message);
                 }
             } else {
                 messageProcessor.forward(context(), (SessionAware) message);
@@ -181,9 +181,7 @@ public class EncDecActor extends UntypedActor {
         context()
                 .system()
                 .scheduler()
-                .scheduleOnce(
-                        Duration.create(body.ruleTTL, TimeUnit.MILLISECONDS),
-                        self(), new RuleTimeoutMessage(body.getRuleId()),
+                .scheduleOnce(Duration.create(body.ruleTTL, TimeUnit.MILLISECONDS), self(), new RuleTimeoutMessage(body.getRuleId()),
                         context().dispatcher(), self());
         redirectionRules.put(body.getRuleId(), body);
     }
@@ -194,8 +192,7 @@ public class EncDecActor extends UntypedActor {
         }
     }
 
-    public static RedirectionRule checkRedirection(
-            HashMap<Long, RedirectionRule> redirectionRules, double random) { // NOSONAR
+    public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) { // NOSONAR
         RedirectionRule result = null;
         for (RedirectionRule rule : redirectionRules.values()) {
             if (random <= rule.redirectionProbability) {

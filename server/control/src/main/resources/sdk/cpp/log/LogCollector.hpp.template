@@ -80,7 +80,7 @@ private:
 
     LoggingTransport*              transport_;
 
-    std::map<std::string, LogSyncRequest> requests_;
+    std::map<std::int32_t, LogSyncRequest> requests_;
 
     KAA_MUTEX_DECLARE(storageGuard_);
     KAA_MUTEX_DECLARE(requestsGuard_);

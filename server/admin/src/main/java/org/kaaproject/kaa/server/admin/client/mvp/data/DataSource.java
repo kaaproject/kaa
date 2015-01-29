@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -45,8 +46,11 @@ import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
+import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -88,6 +92,46 @@ public class DataSource {
                 new DataCallback<UserDto>(callback) {
                     @Override
                     protected void onResult(UserDto result) {
+                    }
+                });
+    }
+    
+    public void getMailProperties(
+            final AsyncCallback<PropertiesDto> callback) {
+        rpcService.getMailProperties(
+                new DataCallback<PropertiesDto>(callback) {
+                    @Override
+                    protected void onResult(PropertiesDto result) {
+                    }
+                });
+    }
+
+    public void editMailProperties(PropertiesDto mailProperties,
+            final AsyncCallback<PropertiesDto> callback) {
+        rpcService.editMailProperties(mailProperties,
+                new DataCallback<PropertiesDto>(callback) {
+                    @Override
+                    protected void onResult(PropertiesDto result) {
+                    }
+                });
+    }
+    
+    public void getGeneralProperties(
+            final AsyncCallback<PropertiesDto> callback) {
+        rpcService.getGeneralProperties(
+                new DataCallback<PropertiesDto>(callback) {
+                    @Override
+                    protected void onResult(PropertiesDto result) {
+                    }
+                });
+    }
+
+    public void editGeneralProperties(PropertiesDto mailProperties,
+            final AsyncCallback<PropertiesDto> callback) {
+        rpcService.editGeneralProperties(mailProperties,
+                new DataCallback<PropertiesDto>(callback) {
+                    @Override
+                    protected void onResult(PropertiesDto result) {
                     }
                 });
     }
@@ -689,12 +733,12 @@ public class DataSource {
                 });
     }
 
-    public void getConfigurationRecord(String schemaId, String endpointGroupId,
-            final AsyncCallback<StructureRecordDto<ConfigurationDto>> callback) {
-        rpcService.getConfigurationRecord(schemaId, endpointGroupId,
-                new DataCallback<StructureRecordDto<ConfigurationDto>>(callback) {
+    public void getConfigurationRecordForm(String schemaId, String endpointGroupId,
+            final AsyncCallback<StructureRecordDto<ConfigurationRecordFormDto>> callback) {
+        rpcService.getConfigurationRecordForm(schemaId, endpointGroupId,
+                new DataCallback<StructureRecordDto<ConfigurationRecordFormDto>>(callback) {
             @Override
-            protected void onResult(StructureRecordDto<ConfigurationDto> result) {
+            protected void onResult(StructureRecordDto<ConfigurationRecordFormDto> result) {
             }
         });
     }
@@ -711,35 +755,35 @@ public class DataSource {
         });
     }
 
-    public void editConfiguration(ConfigurationDto configuration,
-            final AsyncCallback<ConfigurationDto> callback) {
-        rpcService.editConfiguration(configuration,
-                new DataCallback<ConfigurationDto>(callback) {
+    public void editConfigurationRecordForm(ConfigurationRecordFormDto configuration,
+            final AsyncCallback<ConfigurationRecordFormDto> callback) {
+        rpcService.editConfigurationRecordForm(configuration,
+                new DataCallback<ConfigurationRecordFormDto>(callback) {
                     @Override
-                    protected void onResult(ConfigurationDto result) {
-                        eventBus.fireEvent(new DataEvent(ConfigurationDto.class));
+                    protected void onResult(ConfigurationRecordFormDto result) {
+                        eventBus.fireEvent(new DataEvent(ConfigurationRecordFormDto.class));
                     }
         });
     }
 
-    public void activateConfiguration(String configurationId,
-            final AsyncCallback<ConfigurationDto> callback) {
-        rpcService.activateConfiguration(configurationId,
-                new DataCallback<ConfigurationDto>(callback) {
+    public void activateConfigurationRecordForm(String configurationId,
+            final AsyncCallback<ConfigurationRecordFormDto> callback) {
+        rpcService.activateConfigurationRecordForm(configurationId,
+                new DataCallback<ConfigurationRecordFormDto>(callback) {
                     @Override
-                    protected void onResult(ConfigurationDto result) {
-                        eventBus.fireEvent(new DataEvent(ConfigurationDto.class));
+                    protected void onResult(ConfigurationRecordFormDto result) {
+                        eventBus.fireEvent(new DataEvent(ConfigurationRecordFormDto.class));
                     }
         });
     }
 
-    public void deactivateConfiguration(String configurationId,
-            final AsyncCallback<ConfigurationDto> callback) {
-        rpcService.deactivateConfiguration(configurationId,
-                new DataCallback<ConfigurationDto>(callback) {
+    public void deactivateConfigurationRecordForm(String configurationId,
+            final AsyncCallback<ConfigurationRecordFormDto> callback) {
+        rpcService.deactivateConfigurationRecordForm(configurationId,
+                new DataCallback<ConfigurationRecordFormDto>(callback) {
                     @Override
-                    protected void onResult(ConfigurationDto result) {
-                        eventBus.fireEvent(new DataEvent(ConfigurationDto.class));
+                    protected void onResult(ConfigurationRecordFormDto result) {
+                        eventBus.fireEvent(new DataEvent(ConfigurationRecordFormDto.class));
                     }
         });
     }
@@ -753,13 +797,13 @@ public class DataSource {
             }
         });
     }
-
-    public void getVacantConfigurationSchemas(String endpointGroupId,
-            final AsyncCallback<List<SchemaDto>> callback) {
-        rpcService.getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId,
-                new DataCallback<List<SchemaDto>>(callback) {
+    
+    public void getVacantConfigurationSchemaInfos(String endpointGroupId,
+            final AsyncCallback<List<SchemaInfoDto>> callback) {
+        rpcService.getVacantConfigurationSchemaInfosByEndpointGroupId(endpointGroupId,
+                new DataCallback<List<SchemaInfoDto>>(callback) {
             @Override
-            protected void onResult(List<SchemaDto> result) {
+            protected void onResult(List<SchemaInfoDto> result) {
             }
         });
     }
@@ -770,6 +814,16 @@ public class DataSource {
                 new DataCallback<List<SchemaDto>>(callback) {
             @Override
             protected void onResult(List<SchemaDto> result) {
+            }
+        });
+    }
+    
+    public void getUserNotificationSchemaInfosByApplicationId(String applicationId,
+            final AsyncCallback<List<SchemaInfoDto>> callback) {
+        rpcService.getUserNotificationSchemaInfosByApplicationId(applicationId,
+                new DataCallback<List<SchemaInfoDto>>(callback) {
+            @Override
+            protected void onResult(List<SchemaInfoDto> result) {
             }
         });
     }
@@ -862,11 +916,21 @@ public class DataSource {
                     }
                 });
     }
-
+    
+    public void getRecordDataFromFile(String schema, String fileItemName,
+                    final AsyncCallback<RecordField> callback) {
+        rpcService.getRecordDataFromFile(schema, fileItemName, 
+                new DataCallback<RecordField>(callback) {
+                    @Override
+                    protected void onResult(RecordField result) {
+                    }
+                });
+    }
+    
     public void sendNotification(
-            NotificationDto notification, String fileItemName,
+            NotificationDto notification, RecordField notificationData,
             final AsyncCallback<Void> callback) {
-        rpcService.sendNotification(notification, fileItemName,
+        rpcService.sendNotification(notification, notificationData,
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {

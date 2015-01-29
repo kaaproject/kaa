@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -33,6 +33,7 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
@@ -41,10 +42,12 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -58,6 +61,10 @@ public interface ClientFactory {
     NavigationView getNavigationView();
 
     UserProfileView getUserProfileView();
+    
+    BasePropertiesView getGeneralPropertiesView();
+    
+    BasePropertiesView getMailPropertiesView();
 
     BaseListView<TenantUserDto> getTenantsView();
     TenantView getCreateTenantView();
@@ -91,15 +98,17 @@ public interface ClientFactory {
     EndpointGroupView getEndpointGroupView();
     EndpointGroupView getCreateEndpointGroupView();
 
-    BaseRecordView<ProfileFilterDto> getProfileFilterView();
-    BaseRecordView<ProfileFilterDto> getCreateProfileFilterView();
+    BaseRecordView<ProfileFilterDto, String> getProfileFilterView();
+    BaseRecordView<ProfileFilterDto, String> getCreateProfileFilterView();
 
-    BaseRecordView<ConfigurationDto> getConfigurationView();
-    BaseRecordView<ConfigurationDto> getCreateConfigurationView();
+    BaseRecordView<ConfigurationRecordFormDto, RecordField> getConfigurationView();
+    BaseRecordView<ConfigurationRecordFormDto, RecordField> getCreateConfigurationView();
 
     BaseListView<TopicDto> getTopicsView();
     TopicView getTopicView();
     TopicView getCreateTopicView();
+    
+    SendNotificationView getSendNotificationView();
 
     BaseListView<EventClassFamilyDto> getEcfsView();
     EcfView getEcfView();

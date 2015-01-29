@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
 
@@ -33,8 +33,8 @@ public class EcfSchemasDataProvider extends AbstractDataProvider<EventSchemaVers
     private List<EventSchemaVersionDto> schemas = new ArrayList<>();
 
     public EcfSchemasDataProvider(MultiSelectionModel<EventSchemaVersionDto> selectionModel,
-                                    AsyncCallback<List<EventSchemaVersionDto>> asyncCallback) {
-        super(selectionModel, asyncCallback);
+                                  HasErrorMessage hasErrorMessage) {
+        super(selectionModel, hasErrorMessage);
     }
 
     public void setSchemas(List<EventSchemaVersionDto> schemas) {

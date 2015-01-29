@@ -11,9 +11,9 @@ public abstract class AbstractActorCallback implements LogDeliveryCallback {
     private final ActorRef actor;
 
     /** The request id. */
-    private final String requestId;
+    private final int requestId;
 
-    protected AbstractActorCallback(ActorRef actor, String requestId) {
+    protected AbstractActorCallback(ActorRef actor, int requestId) {
         super();
         this.actor = actor;
         this.requestId = requestId;

@@ -49,8 +49,8 @@ public:
         events_ = newEvents;
     }
 
-    virtual std::map<std::string, std::list<std::string> > getPendingListenerRequests() {
-        static std::map<std::string, std::list<std::string> > mock;
+    virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests() {
+        static std::map<std::int32_t, std::list<std::string> > mock;
         return mock;
     }
 

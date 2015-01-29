@@ -18,9 +18,6 @@
 #define AVRO_PRIVATE_H
 #ifdef __cplusplus
 extern "C" {
-#define CLOSE_EXTERN }
-#else
-#define CLOSE_EXTERN
 #endif
 
 #include <errno.h>
@@ -90,5 +87,7 @@ extern "C" {
 #define nullstrcmp(s1, s2) \
     (((s1) && (s2)) ? strcmp(s1, s2) : ((s1) || (s2)))
 
-CLOSE_EXTERN
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif

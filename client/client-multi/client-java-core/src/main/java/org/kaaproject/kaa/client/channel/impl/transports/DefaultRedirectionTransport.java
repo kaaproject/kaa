@@ -31,9 +31,8 @@ public class DefaultRedirectionTransport implements RedirectionTransport {
 
     @Override
     public void onRedirectionResponse(RedirectSyncResponse response) {
-        String name = response.getDnsName();
-        if (name != null && !name.isEmpty() && manager != null) {
-            manager.useNextOperationsServerByDnsName(name);
+        if (response != null && manager != null) {
+            manager.useNextOperationsServerByAccessPointId(response.getAccessPointId());
         }
     }
 

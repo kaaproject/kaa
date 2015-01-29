@@ -71,11 +71,12 @@
                         <exclude>**/gcovr.log</exclude>
                         <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/unittest_result.xml</exclude>
-                        <exclude>**/test/resources/kaa_status.file</exclude>
+                        <exclude>**/test/resources/test_kaa_status.file</exclude>
                         <exclude>**/build/**</exclude>
                         <exclude>**/gcovr</exclude>
                         <exclude>**/*.json</exclude>
                         <exclude>**/.cproject</exclude>
+                        <exclude>**/kaa_status.file</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -16,8 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.HasRowActionEventHandlers;
 import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.HasRowActionEventHandlers;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.place.shared.Place;
@@ -25,7 +26,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
 
-public interface BaseListView<T extends HasId> extends IsWidget {
+public interface BaseListView<T extends HasId> extends IsWidget, HasErrorMessage {
 
     HasClickHandlers getAddButton();
     HasClickHandlers getBackButton();

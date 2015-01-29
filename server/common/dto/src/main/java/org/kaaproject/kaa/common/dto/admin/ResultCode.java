@@ -23,6 +23,8 @@ public enum ResultCode {
     EMAIL_EXISTS("email_exists"),
     USER_NOT_FOUND("user_not_found"),
     USER_EMAIL_NOT_FOUND("user_email_not_found"),
+    USER_OR_EMAIL_NOT_FOUND("user_or_email_not_found"),
+    USER_EMAIL_NOT_DEFINED("user_email_not_defined"),
     OLD_PASSWORD_MISMATCH("old_password_mismatch"),
     BAD_PASSWORD_STRENGTH("bad_password_strength");
 

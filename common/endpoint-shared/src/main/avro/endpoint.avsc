@@ -123,7 +123,7 @@
  "name": "EndpointAttachRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "endpointAccessToken", "type": "string"}
  ]
 },
@@ -133,7 +133,7 @@
  "name": "EndpointAttachResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "endpointKeyHash", "type": ["string", "null"]},
      {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
  ]
@@ -144,7 +144,7 @@
  "name": "EndpointDetachRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "endpointKeyHash", "type": "string"}
  ]
 },
@@ -154,7 +154,7 @@
  "name": "EndpointDetachResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
  ]
 },
@@ -176,7 +176,7 @@
  "name": "EventListenersRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "eventClassFQNs", "type": {"type": "array", "items":"string"}}
  ]
 },
@@ -186,7 +186,7 @@
  "name": "EventListenersResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "listeners", "type": [{"type": "array", "items":"string"}, "null"]},
      {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
  ]
@@ -247,9 +247,9 @@
  "direction": "out",
  "fields": [
      {"name": "applicationToken", "type": "string"},
-     {"name": "endpointPublicKeyHash",  "type": "bytes"},
+     {"name": "endpointPublicKeyHash",  "type": ["bytes", "null"]},
      {"name": "profileHash",  "type": ["bytes", "null"]},
-     {"name": "timeout",  "type": "long"}
+     {"name": "timeout",  "type": ["long", "null"]}
   ]
 },
 {
@@ -262,6 +262,26 @@
      {"name": "profileBody", "type": "bytes"},
      {"name": "versionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo"},
      {"name": "endpointAccessToken", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ProtocolVersionPair",
+ "direction": "out",
+ "fields": [
+     {"name": "id", "type": "int"},
+     {"name": "version", "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "BootstrapSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "supportedProtocols", "type": {"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"}}
  ]
 },
 {
@@ -316,8 +336,29 @@
  "name": "LogSyncRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": ["string", "null"]},
+     {"name": "requestId", "type": "int"},
      {"name": "logEntries", "type": [{ "type": "array", "items": "org.kaaproject.kaa.common.endpoint.gen.LogEntry"}, "null"] }
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ProtocolMetaData",
+ "direction": "out",
+ "fields": [
+     {"name": "accessPointId", "type": "int"},
+     {"name": "protocolVersionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"},
+     {"name": "connectionInfo", "type": "bytes"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "BootstrapSyncResponse",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "supportedProtocols", "type": {"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData"}}
  ]
 },
 {
@@ -383,7 +424,7 @@
  "name": "LogDeliveryStatus",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": "string"},
+     {"name": "requestId", "type": "int"},
      {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
      {"name": "errorCode", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode", "null"]}
  ]
@@ -403,7 +444,7 @@
  "name": "RedirectSyncResponse",
  "direction": "in",
  "fields": [
-     {"name": "dnsName", "type": "string"}
+     {"name": "accessPointId", "type": "int"}
  ]
 },
 {
@@ -412,8 +453,9 @@
  "name": "SyncRequest",
  "direction": "out",
  "fields": [
-     {"name": "requestId", "type": ["int", "null"]},
+     {"name": "requestId", "type": "int"},
      {"name": "syncRequestMetaData", "type": ["org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData", "null"]},
+     {"name": "bootstrapSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest", "null"]},
      {"name": "profileSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest", "null"]},
      {"name": "configurationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest", "null"]},
      {"name": "notificationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest", "null"]},
@@ -428,8 +470,9 @@
  "name": "SyncResponse",
  "direction": "in",
  "fields": [
-     {"name": "requestId", "type": ["int", "null"]},
+     {"name": "requestId", "type": "int"},
      {"name": "status", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "bootstrapSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse", "null"]},
      {"name": "profileSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse", "null"]},
      {"name": "configurationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse", "null"]},
      {"name": "notificationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse", "null"]},

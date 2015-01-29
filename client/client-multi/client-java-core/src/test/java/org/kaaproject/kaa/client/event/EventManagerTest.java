@@ -246,8 +246,8 @@ public class EventManagerTest {
         eventFQNs.add("eventFQN1");
 
         FetchEventListeners fetchListener = mock(FetchEventListeners.class);
-        String requestIdOk = eventManager.findEventListeners(eventFQNs, fetchListener);
-        String requestIdBad = eventManager.findEventListeners(eventFQNs, fetchListener);
+        int requestIdOk = eventManager.findEventListeners(eventFQNs, fetchListener);
+        int requestIdBad = eventManager.findEventListeners(eventFQNs, fetchListener);
 
         verify(transport, atLeast(1)).sync();
 

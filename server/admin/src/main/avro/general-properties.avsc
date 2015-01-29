@@ -1,0 +1,9 @@
+{
+    "namespace": "org.kaaproject.kaa.server.admin.services.entity.gen",
+    "type": "record",
+    "name": "GeneralProperties",
+    "fields": [
+            {"name": "appTitle", "displayName": "Application title", "maxLength": 1000, "by_default": "Kaa", "type": "string"},
+            {"name": "baseUrl", "displayName": "Base URL", "by_default": "http://localhost:8080", "type": "string"}
+    ]
+}

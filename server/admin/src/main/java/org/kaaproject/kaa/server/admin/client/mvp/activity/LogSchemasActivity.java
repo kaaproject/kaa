@@ -16,16 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowAction;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.LogSchemasDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
@@ -52,9 +50,8 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
     @Override
     protected AbstractDataProvider<LogSchemaDto> getDataProvider(
-            MultiSelectionModel<LogSchemaDto> selectionModel,
-            AsyncCallback<List<LogSchemaDto>> asyncCallback) {
-        return new LogSchemasDataProvider(selectionModel, asyncCallback, applicationId);
+            MultiSelectionModel<LogSchemaDto> selectionModel) {
+        return new LogSchemasDataProvider(selectionModel, listView, applicationId);
     }
 
     @Override
@@ -80,7 +77,7 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
         AsyncCallback<String> callback = new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
-                listView.setErrorMessage(Utils.getErrorMessage(caught));
+                Utils.handleException(caught, listView);
             }
             @Override
             public void onSuccess(String key) {

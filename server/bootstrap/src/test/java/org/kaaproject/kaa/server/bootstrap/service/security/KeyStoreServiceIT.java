@@ -41,19 +41,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/bootstrapTestContext.xml")
+@ContextConfiguration(locations = "/common-zk-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class KeyStoreServiceIT {
     static {
         System.setProperty("server_home_dir", ".");
     }
     @Autowired
-    public KeyStoreService keyStore;
+    public KeyStoreService keyStoreService;
     
     
     @After
     public void After() {
-        FileKeyStoreService fs = (FileKeyStoreService)keyStore;
+        FileKeyStoreService fs = (FileKeyStoreService)keyStoreService;
         File privFile = new File(fs.getPrivateKeyLocation());
         if (privFile.exists()) {
             privFile.delete();
@@ -69,8 +69,8 @@ public class KeyStoreServiceIT {
      */
     @Test
     public void testGetPrivateKey() {
-        assertNotNull("FileKeyStore service created sucessfully",keyStore);
-        PrivateKey privateKey = keyStore.getPrivateKey();
+        assertNotNull("FileKeyStore service created sucessfully",keyStoreService);
+        PrivateKey privateKey = keyStoreService.getPrivateKey();
         assertNotNull("PrivateKey generated",privateKey);
     }
     
@@ -79,15 +79,15 @@ public class KeyStoreServiceIT {
      */
     @Test
     public void testGetPublicKey() {
-        assertNotNull("FileKeyStore service created sucessfully",keyStore);
-        PublicKey publicKey = keyStore.getPublicKey();
+        assertNotNull("FileKeyStore service created sucessfully",keyStoreService);
+        PublicKey publicKey = keyStoreService.getPublicKey();
         assertNotNull("PrivateKey generated",publicKey);
     }
     
     @Test
     public void testGetLoadKeysPrivateFailed() {
-        assertNotNull("FileKeyStore service created sucessfully",keyStore);
-        FileKeyStoreService fs = (FileKeyStoreService)keyStore;
+        assertNotNull("FileKeyStore service created sucessfully",keyStoreService);
+        FileKeyStoreService fs = (FileKeyStoreService)keyStoreService;
         String privFileName = fs.getPrivateKeyLocation();
         File privFile = new File(privFileName);
         if (privFile.exists() && privFile.canWrite()) {
@@ -107,8 +107,8 @@ public class KeyStoreServiceIT {
     
     @Test
     public void testGetLoadKeysPublicFailed() {
-        assertNotNull("FileKeyStore service created sucessfully",keyStore);
-        FileKeyStoreService fs = (FileKeyStoreService)keyStore;
+        assertNotNull("FileKeyStore service created sucessfully",keyStoreService);
+        FileKeyStoreService fs = (FileKeyStoreService)keyStoreService;
         String pubFileName = fs.getPublicKeyLocation();
         File pubFile = new File(pubFileName);
         if (pubFile.exists() && pubFile.canWrite()) {

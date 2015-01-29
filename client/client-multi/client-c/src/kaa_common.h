@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file kaa_common.h
+ * @brief Common C EP SDK definitions and small utilities
+ */
+
 #ifndef KAA_COMMON_H_
 #define KAA_COMMON_H_
 
@@ -27,22 +32,32 @@
 extern "C" {
 #endif
 
+
+/*
+ * Standard error handling macros
+ */
+#define KAA_RETURN_IF_ERR(E) \
+    { if (E) return E; }
+
 #define KAA_RETURN_IF_NIL(p, E) \
-    { if (!(p)) return (E); }
+    { if (!(p)) return E; }
 
 #define KAA_RETURN_IF_NIL2(p1, p2, E) \
-    { if (!(p1) || !(p2)) return (E); }
+    { if (!(p1) || !(p2)) return E; }
 
 #define KAA_RETURN_IF_NIL3(p1, p2, p3, E) \
-    { if (!(p1) || !(p2) || !(p3)) return (E); }
+    { if (!(p1) || !(p2) || !(p3)) return E; }
 
 #define KAA_RETURN_IF_NIL4(p1, p2, p3, p4, E) \
-    { if (!(p1) || !(p2) || !(p3) || !(p4)) return (E); }
+    { if (!(p1) || !(p2) || !(p3) || !(p4)) return E; }
 
-// TODO: move to kaa_event.h
-typedef void (*event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size);
-typedef size_t kaa_trx_id;
+#define KAA_RETURN_IF_NIL5(p1, p2, p3, p4, p5,E) \
+    { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; }
 
+
+/**
+ * @brief Types of Kaa platform services
+ */
 typedef enum {
     KAA_SERVICE_BOOTSTRAP = 0,
     KAA_SERVICE_PROFILE = 1,
@@ -52,19 +67,46 @@ typedef enum {
 } kaa_service_t;
 
 /**
+ * @brief Identifier used to uniquely represent transport protocol.
+ */
+typedef struct {
+    uint32_t id;
+    uint16_t version;
+} kaa_transport_protocol_id_t;
+
+/**
+ * @brief Connection parameters used by transport channels to establish
+ * connection both to Bootstrap and Operations servers.
+ */
+typedef struct {
+    uint32_t    id;
+    uint16_t    connection_data_len;
+    char        *connection_data;
+} kaa_access_point_t;
+
+/*
+ * Endpoint ID
+ */
+#define KAA_ENDPOINT_ID_LENGTH 20
+typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
+typedef const uint8_t* kaa_endpoint_id_p;
+
+
+/*
  * SHA1 hash
  */
-#define SHA_1_DIGEST_LENGTH 20
+#define SHA_1_DIGEST_LENGTH    20
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
+typedef unsigned char* kaa_digest_p;
+
+
+/*
+ * @brief SHA-1 hash calculation routine.
+ */
 kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
 
-// TODO: move to kaa_channel_manager.h and do something about the kaa_defaults.h
-#define KAA_CHANNEL_TYPE_COUNT 3
-typedef enum {
-    HTTP,
-    HTTP_LP,
-    KAATCP
-} kaa_channel_type_t;
+kaa_error_t kaa_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src);
+
 
 #ifdef __cplusplus
 }      /* extern "C" */

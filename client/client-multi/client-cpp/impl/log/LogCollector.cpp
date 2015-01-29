@@ -165,10 +165,8 @@ void LogCollector::doUpload()
     size_t blockSize = configuration_->getBlockSize();
     while (status_->getConsumedVolume() > 0) {
         LogSyncRequest request;
-        std::string requestId;
-        UuidGenerator::generateUuid(requestId);
-        request.requestId.set_string(requestId);
-        ILogStorage::container_type recordsBlock = storage_->getRecordBlock(blockSize, request.requestId.get_string());
+        request.requestId = UuidGenerator::generateRandomInt();
+        ILogStorage::container_type recordsBlock = storage_->getRecordBlock(blockSize, request.requestId);
         if (recordsBlock.empty()) {
             break;
         }
@@ -178,8 +176,8 @@ void LogCollector::doUpload()
             request.logEntries.get_array().push_back(entry);
         }
         KAA_MUTEX_UNIQUE_DECLARE(lock, requestsGuard_);
-        KAA_LOG_INFO(boost::format("Generated log upload request: id= %1%") % request.requestId.get_string());
-        requests_.insert(std::make_pair(request.requestId.get_string(), request));
+        KAA_LOG_INFO(boost::format("Generated log upload request: id= %1%") % request.requestId);
+        requests_.insert(std::make_pair(request.requestId, request));
     }
 
     if (transport_ != nullptr) {
@@ -228,15 +226,19 @@ LogSyncRequest LogCollector::getLogUploadRequest()
 {
     KAA_MUTEX_UNIQUE_DECLARE(lock, requestsGuard_);
     LogSyncRequest request;
-    request.requestId.set_null();
     KAA_LOG_INFO(boost::format("Trying to populate log upload request. Have %1% requests") % requests_.size());
     if (!requests_.empty()) {
         auto it = requests_.begin();
         request = it->second;
-        requests_.erase(it);
-        KAA_LOG_INFO(boost::format("Added log upload request id %1%") % request.requestId.get_string());
-        timeoutsMap_.insert(std::make_pair(request.requestId.get_string(),
-                clock_t::now() + std::chrono::seconds(configuration_->getLogUploadTimeout())));
+//<<<<<<< HEAD
+//        requests_.erase(it);
+//        KAA_LOG_INFO(boost::format("Added log upload request id %1%") % request.requestId.get_string());
+//        timeoutsMap_.insert(std::make_pair(request.requestId.get_string(),
+//                clock_t::now() + std::chrono::seconds(configuration_->getLogUploadTimeout())));
+//=======
+        KAA_LOG_INFO(boost::format("Added log upload request id %1%") % it->second.requestId);
+        requests_.erase(requests_.begin());
+//>>>>>>> master
     }
     return request;
 }

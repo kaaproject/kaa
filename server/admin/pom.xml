@@ -122,7 +122,6 @@
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
         </dependency>
         <dependency>
             <groupId>net.iharder</groupId>
@@ -159,10 +158,13 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
+       <dependency>
+            <groupId>org.logback-extensions</groupId>
+            <artifactId>logback-ext-spring</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -172,7 +174,6 @@
         <dependency>
             <groupId>com.twitter.common</groupId>
             <artifactId>thrift</artifactId>
-            <version>0.0.64</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -188,32 +189,28 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dto</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>gwt-client</artifactId>
-            <version>${project.version}</version>
+            <version>${avro-ui.version}</version>
         </dependency>        
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>converter</artifactId>
-            <version>${project.version}</version>
+            <version>${avro-ui.version}</version>
         </dependency>           
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.versly</groupId>
@@ -303,20 +300,36 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>admin-log4j.xml</exclude>
+                    <exclude>admin-logback.xml</exclude>
                     <exclude>admin-server.properties</exclude>
                     <exclude>jetty/**</exclude>
                 </excludes>
             </resource>
         </resources>
         <plugins>
-<!-- 		      <plugin> -->
-<!-- 		        <artifactId>maven-war-plugin</artifactId> -->
-<!-- 		        <configuration> -->
-<!-- 		          <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@-@{version}@.@{extension}@</outputFileNameMapping> -->
-<!-- 		        </configuration> -->
-<!-- 		      </plugin> -->
             <!-- REST documentation parse -->
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>${avro.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                        </goals>
+                        <configuration>
+                            <stringType>String</stringType>
+                            <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+                            <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                            <fieldVisibility>PRIVATE</fieldVisibility>
+                            <includes>
+                                <include>*.avsc</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>            
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
@@ -399,7 +412,7 @@
                 </executions>
                 <configuration>
                     <compileSourcesArtifacts>
-                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>  <!-- groupId:artifactId -->
+                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>
                     </compileSourcesArtifacts>
                     <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
                     <runTarget>KaaAdmin.html</runTarget>
@@ -444,7 +457,7 @@
                                 <resource>
                                     <directory>src/main/resources</directory>
                                     <includes>
-                                        <include>admin-log4j.xml</include>
+                                        <include>admin-logback.xml</include>
                                         <include>admin-server.properties</include>
                                     </includes>
                                 </resource>
@@ -483,6 +496,8 @@
 						<exclude>**/*.css</exclude>
 						<exclude>**/*.html</exclude>
 						<exclude>**/*.properties</exclude>		
+                        <exclude>**/*.avsc</exclude>      
+                        <exclude>**/gen/**/*.java</exclude>
 						<exclude>src/main/sh/bin/jetty.sh</exclude>
 						<exclude>src/main/resources/jetty/**</exclude>
 					</excludes>
@@ -686,7 +701,7 @@
                         </executions>
                         <configuration>
                             <compileSourcesArtifacts>
-                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>  <!-- groupId:artifactId -->
+                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>
                             </compileSourcesArtifacts>
                             <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
                             <runTarget>KaaAdmin.html</runTarget>

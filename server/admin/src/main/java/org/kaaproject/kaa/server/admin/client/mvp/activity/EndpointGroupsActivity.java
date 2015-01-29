@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -47,9 +45,8 @@ public class EndpointGroupsActivity extends AbstractListActivity<EndpointGroupDt
 
     @Override
     protected AbstractDataProvider<EndpointGroupDto> getDataProvider(
-            MultiSelectionModel<EndpointGroupDto> selectionModel,
-            AsyncCallback<List<EndpointGroupDto>> asyncCallback) {
-        return new EndpointGroupsDataProvider(selectionModel, asyncCallback, applicationId);
+            MultiSelectionModel<EndpointGroupDto> selectionModel) {
+        return new EndpointGroupsDataProvider(selectionModel, listView, applicationId);
     }
 
     @Override

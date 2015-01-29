@@ -44,6 +44,11 @@
             <artifactId>utils</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.common</groupId>
+            <artifactId>core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>

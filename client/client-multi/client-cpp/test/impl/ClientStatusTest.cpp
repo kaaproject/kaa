@@ -41,6 +41,8 @@ BOOST_AUTO_TEST_SUITE(ClientStatusSuite);
 
 BOOST_AUTO_TEST_CASE(checkDefaults)
 {
+    cleanfile();
+
     ClientStatus cs(filename);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 0);

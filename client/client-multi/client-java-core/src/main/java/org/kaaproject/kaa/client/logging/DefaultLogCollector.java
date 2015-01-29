@@ -47,7 +47,7 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
     private LogUploadFailoverStrategy failoverStrategy;
     private final LogTransport        transport;
 
-    private final Map<String, Long> timeoutMap = new LinkedHashMap<>();
+    private final Map<Integer, Long> timeoutMap = new LinkedHashMap<>();
 
     private boolean isUploading = false;
 
@@ -186,7 +186,7 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
         boolean isTimeout = false;
         long currentTime = System.currentTimeMillis();
 
-        for (Map.Entry<String, Long> logRequest : timeoutMap.entrySet()) {
+        for (Map.Entry<Integer, Long> logRequest : timeoutMap.entrySet()) {
             if (currentTime >= logRequest.getValue()) {
                 isTimeout = true;
                 break;
@@ -196,7 +196,7 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
         if (isTimeout) {
             LOG.info("Log delivery timeout detected");
 
-            for (Map.Entry<String, Long> logRequest : timeoutMap.entrySet()) {
+            for (Map.Entry<Integer, Long> logRequest : timeoutMap.entrySet()) {
                 storage.notifyUploadFailed(logRequest.getKey());
             }
 

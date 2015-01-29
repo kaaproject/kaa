@@ -24,7 +24,7 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode
 public class LogDeliveryMessage {
 
     /** The request id. */
-    private final String requestId;
+    private final Integer requestId;
 
     /** The success. */
     private final boolean success;
@@ -40,7 +40,7 @@ public class LogDeliveryMessage {
      * @param success
      *            the success
      */
-    public LogDeliveryMessage(String requestId, boolean success) {
+    public LogDeliveryMessage(Integer requestId, boolean success) {
         this(requestId, success, null);
     }
 
@@ -54,7 +54,7 @@ public class LogDeliveryMessage {
      * @param errorCode
      *            the error code
      */
-    public LogDeliveryMessage(String requestId, boolean success, LogDeliveryErrorCode errorCode) {
+    public LogDeliveryMessage(Integer requestId, boolean success, LogDeliveryErrorCode errorCode) {
         this.requestId = requestId;
         this.success = success;
         this.errorCode = errorCode;
@@ -65,7 +65,7 @@ public class LogDeliveryMessage {
      *
      * @return the request id
      */
-    public String getRequestId() {
+    public Integer getRequestId() {
         return requestId;
     }
 

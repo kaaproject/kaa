@@ -43,6 +43,8 @@ import org.mockito.Mockito;
 
 public class DefaultOperationDataProcessorTest {
 
+    private static final int REQUEST_ID = 42;
+    
     @Test
     public void testUpRequestCreationWithNullTypes() throws Exception {
         DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
@@ -174,9 +176,10 @@ public class DefaultOperationDataProcessorTest {
         response.setEventSyncResponse(new EventSyncResponse());
         response.setNotificationSyncResponse(new NotificationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
-        response.setRedirectSyncResponse(new RedirectSyncResponse("abc"));
+        response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
-        LogDeliveryStatus status = new LogDeliveryStatus("id", SyncResponseResultType.SUCCESS, null);
+
+        LogDeliveryStatus status = new LogDeliveryStatus(REQUEST_ID, SyncResponseResultType.SUCCESS, null);
         response.setLogSyncResponse(new LogSyncResponse(Collections.singletonList(status)));
 
         AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
@@ -201,9 +204,10 @@ public class DefaultOperationDataProcessorTest {
         response.setEventSyncResponse(new EventSyncResponse());
         response.setNotificationSyncResponse(new NotificationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
-        response.setRedirectSyncResponse(new RedirectSyncResponse("abc"));
+        response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
-        LogDeliveryStatus status = new LogDeliveryStatus("id", SyncResponseResultType.SUCCESS, null);
+
+        LogDeliveryStatus status = new LogDeliveryStatus(REQUEST_ID, SyncResponseResultType.SUCCESS, null);
         response.setLogSyncResponse(new LogSyncResponse(Collections.singletonList(status)));
 
         AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);

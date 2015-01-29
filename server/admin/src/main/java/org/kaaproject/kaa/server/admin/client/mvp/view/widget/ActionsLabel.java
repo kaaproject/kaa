@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,13 +29,12 @@ import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -71,11 +72,11 @@ public class ActionsLabel extends Label {
         textElement.setInnerText(text + " ");
         DOM.insertChild(getElement(), textElement, 0);
         Element caretSpan = DOM.createElement("span");
-        caretSpan.setClassName("caret");
+        caretSpan.setClassName(Utils.kaaAdminStyle.caret());
         DOM.appendChild(getElement(), caretSpan);
 
         actionsPopup = new PopupPanel(true, false);
-        actionsPopup.addStyleName("actionPopup");
+        actionsPopup.addStyleName(Utils.kaaAdminStyle.actionPopup());
         actionsPopup.setWidget(menu);
         actionsPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override

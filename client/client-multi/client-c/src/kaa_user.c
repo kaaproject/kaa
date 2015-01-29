@@ -18,17 +18,25 @@
 
 #include <string.h>
 
-#include "kaa_mem.h"
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
+#include "kaa_platform_common.h"
+#include "kaa_platform_utils.h"
+#include "utilities/kaa_log.h"
+#include "utilities/kaa_mem.h"
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *this, kaa_service_t service_type);
+#define KAA_USER_RECEIVE_UPDATES_FLAG   0x01
+
+#define EXTERNAL_SYSTEM_AUTH_FIELD      0x00
+
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 typedef struct {
-    char   *user_external_id;
     size_t  user_external_id_len;
-    char   *user_access_token;
     size_t  user_access_token_len;
+    char   *user_external_id;
+    char   *user_access_token;
 } user_info_t;
 
 struct kaa_user_manager_t {
@@ -37,7 +45,21 @@ struct kaa_user_manager_t {
     bool                                is_waiting_user_attach_response;
     kaa_status_t                       *status;                             /*!< Reference to global status */
     kaa_channel_manager_t              *channel_manager;                    /*!< Reference to global channel manager */
+    kaa_logger_t                       *logger;
 };
+
+typedef enum {
+    USER_RESULT_SUCCESS = 0x00,
+    USER_RESULT_FAILURE = 0x01
+} user_sync_result_t;
+
+typedef enum {
+    USER_ATTACH_RESPONSE_FIELD      = 0,
+    USER_ATTACH_NOTIFICAITON_FIELD  = 1,
+    USER_DETACH_NOTIFICATION_FIELD  = 2,
+    ENDPOINT_ATTACH_RESPONSES_FIELD = 3,
+    ENDPOINT_DETACH_RESPONSES_FIELD = 4
+} user_server_sync_field_t;
 
 static kaa_service_t user_sync_services[1] = {KAA_SERVICE_USER};
 
@@ -45,26 +67,26 @@ static user_info_t* create_user_info(const char *external_id, const char *user_a
 {
     KAA_RETURN_IF_NIL2(external_id, user_access_token, NULL);
 
-    user_info_t *user_info = KAA_MALLOC(user_info_t);
+    user_info_t *user_info = (user_info_t *) KAA_MALLOC(sizeof(user_info_t));
     KAA_RETURN_IF_NIL(user_info, NULL);
 
     user_info->user_external_id_len = strlen(external_id);
     user_info->user_access_token_len = strlen(user_access_token);
 
-    user_info->user_external_id = KAA_CALLOC(user_info->user_external_id_len + 1, sizeof(char));
+    user_info->user_external_id =(char *) KAA_MALLOC((user_info->user_external_id_len + 1) * sizeof(char));
     if (!user_info->user_external_id) {
         KAA_FREE(user_info);
         return NULL;
     }
-    memcpy(user_info->user_external_id, external_id, user_info->user_external_id_len + 1);
+    strcpy(user_info->user_external_id, external_id);
 
-    user_info->user_access_token = KAA_CALLOC(user_info->user_access_token_len + 1, sizeof(char));
+    user_info->user_access_token = (char *) KAA_MALLOC((user_info->user_access_token_len + 1) * sizeof(char));
     if (!user_info->user_access_token) {
         KAA_FREE(user_info->user_external_id);
         KAA_FREE(user_info);
         return NULL;
     }
-    memcpy(user_info->user_access_token, user_access_token, user_info->user_access_token_len + 1);
+    strcpy(user_info->user_access_token, user_access_token);
 
     return user_info;
 }
@@ -78,11 +100,11 @@ static void destroy_user_info(user_info_t *user_info)
     }
 }
 
-kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager)
+kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL2(user_manager_p, status, KAA_ERR_BADPARAM);
 
-    *user_manager_p = KAA_MALLOC(kaa_user_manager_t);
+    *user_manager_p = (kaa_user_manager_t *) KAA_MALLOC(sizeof(kaa_user_manager_t));
     KAA_RETURN_IF_NIL((*user_manager_p), KAA_ERR_NOMEM);
 
     (*user_manager_p)->attachment_listeners.on_attached_callback = NULL;
@@ -92,120 +114,196 @@ kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_sta
     (*user_manager_p)->is_waiting_user_attach_response = false;
     (*user_manager_p)->status = status;
     (*user_manager_p)->channel_manager = channel_manager;
+    (*user_manager_p)->logger = logger;
 
     return KAA_ERR_NONE;
 }
 
-void kaa_user_manager_destroy(kaa_user_manager_t *this)
+void kaa_user_manager_destroy(kaa_user_manager_t *self)
 {
-    if (this) {
-        destroy_user_info(this->user_info);
-        KAA_FREE(this);
+    if (self) {
+        destroy_user_info(self->user_info);
+        KAA_FREE(self);
     }
 }
 
-kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *this, const char *user_external_id, const char *access_token)
+kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
+                                          , const char *user_external_id
+                                          , const char *access_token)
 {
-    KAA_RETURN_IF_NIL3(this, user_external_id, access_token, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(self, user_external_id, access_token, KAA_ERR_BADPARAM);
 
-    if (this->is_waiting_user_attach_response) {
-        destroy_user_info(this->user_info);
-        this->user_info = NULL;
-        this->is_waiting_user_attach_response = false;
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to attach to user (external id = \"%s\", access token = \"%s\")", user_external_id, access_token);
+
+    if (self->is_waiting_user_attach_response) {
+        destroy_user_info(self->user_info);
+        self->user_info = NULL;
+        self->is_waiting_user_attach_response = false;
     }
 
-    this->user_info = create_user_info(user_external_id, access_token);
-    if (!this->user_info)
+    self->user_info = create_user_info(user_external_id, access_token);
+    if (!self->user_info)
         return KAA_ERR_NOMEM;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(this->channel_manager, user_sync_services[0]);
-    if (sync)
-        (*sync)(user_sync_services, 1);
+    kaa_transport_channel_interface_t *channel =
+            kaa_channel_manager_get_transport_channel(self->channel_manager, user_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, user_sync_services, 1);
+
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *this, kaa_attachment_status_listeners_t listeners)
+kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
+                                                    , const kaa_attachment_status_listeners_t *listeners)
 {
-    KAA_RETURN_IF_NIL(this, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    this->attachment_listeners = listeners;
+    self->attachment_listeners = *listeners;
 
-    if (listeners.on_response_callback)
-        (*listeners.on_response_callback)(kaa_is_endpoint_attached_to_user(this->status));
+    if (listeners->on_response_callback)
+        (listeners->on_response_callback)(listeners->context, self->status->is_attached);
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_user_compile_request(kaa_user_manager_t *this, kaa_user_sync_request_t** request_p, size_t requestId)
+static size_t kaa_user_request_get_size_no_header(kaa_user_manager_t *self)
 {
-    KAA_RETURN_IF_NIL2(this, request_p, KAA_ERR_BADPARAM);
-    *request_p = NULL;
+    size_t expected_size = 0;
+    if (self->user_info && !self->is_waiting_user_attach_response) {
+       expected_size += sizeof(uint32_t); // External system authentication field header
+       expected_size += kaa_aligned_size_get(self->user_info->user_external_id_len);
+       expected_size += kaa_aligned_size_get(self->user_info->user_access_token_len);
+    }
+    return expected_size;
+}
 
-    kaa_user_sync_request_t *request = kaa_create_user_sync_request();
-    KAA_RETURN_IF_NIL(request, KAA_ERR_NOMEM);
+kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size)
+{
+    KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
+    *expected_size = KAA_EXTENSION_HEADER_SIZE + kaa_user_request_get_size_no_header(self);
+    return KAA_ERR_NONE;
+}
 
-    request->endpoint_attach_requests = kaa_create_array_endpoint_attach_request_null_union_null_branch();
-    if (!request->endpoint_attach_requests) {
-        KAA_FREE(request);
-        return KAA_ERR_NOMEM;
+kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer)
+{
+    KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile user client sync");
+
+    size_t size = kaa_user_request_get_size_no_header(self);
+    if (kaa_platform_message_write_extension_header(writer, KAA_USER_EXTENSION_TYPE, KAA_USER_RECEIVE_UPDATES_FLAG, size)) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_WRITE_FAILED, "Failed to write the user extension header");
+        return KAA_ERR_WRITE_FAILED;
     }
 
-    request->endpoint_detach_requests = kaa_create_array_endpoint_detach_request_null_union_null_branch();
-    if (!request->endpoint_detach_requests) {
-        request->endpoint_attach_requests->destroy(request->endpoint_attach_requests);
-        KAA_FREE(request->endpoint_attach_requests);
-        KAA_FREE(request);
-        return KAA_ERR_NOMEM;
+    if (self->user_info && !self->is_waiting_user_attach_response) {
+        *(writer->current++) = EXTERNAL_SYSTEM_AUTH_FIELD;
+        *(writer->current++) = (uint8_t) self->user_info->user_external_id_len;
+        *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) self->user_info->user_access_token_len);
+        writer->current += sizeof(uint16_t);
+
+        if (self->user_info->user_external_id_len) {
+            if (kaa_platform_message_write_aligned(writer, self->user_info->user_external_id, self->user_info->user_external_id_len)) {
+                KAA_LOG_ERROR(self->logger, KAA_ERR_WRITE_FAILED, "Failed to write the user external id %s", self->user_info->user_external_id);
+                return KAA_ERR_WRITE_FAILED;
+            }
+        }
+        if (self->user_info->user_access_token_len) {
+            if (kaa_platform_message_write_aligned(writer, self->user_info->user_access_token, self->user_info->user_access_token_len)) {
+                KAA_LOG_ERROR(self->logger, KAA_ERR_WRITE_FAILED, "Failed to write the user access token %s", self->user_info->user_access_token);
+                return KAA_ERR_WRITE_FAILED;
+            }
+        }
+
+        self->is_waiting_user_attach_response = true;
     }
 
-    if (this->user_info && !this->is_waiting_user_attach_response) {
-        // FIXME: handle out of memory
-        kaa_user_attach_request_t *user_attach_request = kaa_create_user_attach_request();
+    return KAA_ERR_NONE;
+}
 
-        user_attach_request->user_external_id = KAA_CALLOC(this->user_info->user_external_id_len + 1, sizeof(char));
-        memcpy(user_attach_request->user_external_id, this->user_info->user_external_id, this->user_info->user_external_id_len);
-        user_attach_request->user_access_token = KAA_CALLOC(this->user_info->user_access_token_len + 1, sizeof(char));
-        memcpy(user_attach_request->user_access_token, this->user_info->user_access_token, this->user_info->user_access_token_len);
+kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length)
+{
+    KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-        this->is_waiting_user_attach_response = true;
-        request->user_attach_request = kaa_create_record_user_attach_request_null_union_user_attach_request_branch();
-        request->user_attach_request->data = user_attach_request;
-    } else {
-        request->user_attach_request = kaa_create_record_user_attach_request_null_union_null_branch();
-        if (!request->user_attach_request) {
-            request->destroy(request);
-            KAA_FREE(request);
-            return KAA_ERR_NOMEM;
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user server sync");
+
+    size_t remaining_length = extension_length;
+    uint32_t field_header = 0;
+    user_server_sync_field_t field = 0;
+
+    while (remaining_length > 0) {
+        field_header = KAA_NTOHL(*(uint32_t *) reader->current);
+        reader->current += sizeof(uint32_t);
+        remaining_length -= sizeof(uint32_t);
+
+        field = (field_header >> 24) & 0xFF;
+        switch (field) {
+            case USER_ATTACH_RESPONSE_FIELD: {
+                user_sync_result_t result = (uint8_t) (field_header >> 8) & 0xFF;
+                destroy_user_info(self->user_info);
+                self->user_info = NULL;
+                self->is_waiting_user_attach_response = false;
+                if (result == USER_RESULT_SUCCESS) {
+                    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
+                    self->status->is_attached = true;
+                    if (self->attachment_listeners.on_response_callback)
+                        (self->attachment_listeners.on_response_callback)(self->attachment_listeners.context, true);
+                } else {
+                    KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_STATE, "Failed to attach endpoint to user");
+                }
+                break;
+            }
+            case USER_ATTACH_NOTIFICAITON_FIELD: {
+                uint8_t external_id_length = (field_header >> 16) & 0xFF;
+                uint16_t access_token_length = (field_header) & 0xFFFF;
+                if (external_id_length + access_token_length > remaining_length)
+                    return KAA_ERR_INVALID_BUFFER_SIZE;
+
+                char external_id[external_id_length + 1];
+                char access_token[access_token_length + 1];
+
+                if (kaa_platform_message_read_aligned(reader, external_id, external_id_length)) {
+                    KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to read the external ID (length %u)", external_id_length);
+                    return KAA_ERR_READ_FAILED;
+                }
+                external_id[external_id_length] = '\0';
+                remaining_length -= kaa_aligned_size_get(external_id_length);
+
+                if (kaa_platform_message_read_aligned(reader, access_token, access_token_length)) {
+                    KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to read the access token (length %u)", access_token_length);
+                    return KAA_ERR_READ_FAILED;
+                }
+                access_token[access_token_length] = '\0';
+                remaining_length -= kaa_aligned_size_get(access_token_length);
+
+                self->status->is_attached = true;
+
+                if (self->attachment_listeners.on_attached_callback)
+                    (self->attachment_listeners.on_attached_callback)(self->attachment_listeners.context, external_id, access_token);
+                break;
+            }
+            case USER_DETACH_NOTIFICATION_FIELD: {
+                uint16_t access_token_length = (field_header) & 0xFFFF;
+                if (access_token_length > remaining_length)
+                    return KAA_ERR_INVALID_BUFFER_SIZE;
+
+                char access_token[access_token_length + 1];
+                if (kaa_platform_message_read_aligned(reader, access_token, access_token_length)) {
+                    KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to read the access token (length %u)", access_token_length);
+                    return KAA_ERR_READ_FAILED;
+                }
+                access_token[access_token_length] = '\0';
+                remaining_length -= kaa_aligned_size_get(access_token_length);
+
+                self->status->is_attached = false;
+
+                if (self->attachment_listeners.on_detached_callback)
+                    (self->attachment_listeners.on_detached_callback)(self->attachment_listeners.context, access_token);
+                break;
+            }
+            default:
+                KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Invalid field %u", field);
+                return KAA_ERR_READ_FAILED;
         }
     }
-
-    *request_p = request;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_user_manager_handle_sync(kaa_user_manager_t *this
-        , kaa_user_attach_response_t * user_attach_response, kaa_user_attach_notification_t *attach, kaa_user_detach_notification_t *detach)
-{
-    KAA_RETURN_IF_NIL(this, KAA_ERR_BADPARAM);
-
-    if (user_attach_response) {
-        destroy_user_info(this->user_info);
-        this->user_info = NULL;
-        this->is_waiting_user_attach_response = false;
-        if (user_attach_response->result == ENUM_SYNC_RESPONSE_RESULT_TYPE_SUCCESS)
-            kaa_set_endpoint_attached_to_user(this->status, true);
-        if (this->attachment_listeners.on_response_callback)
-            (*this->attachment_listeners.on_response_callback)(true);
-    }
-    if (attach) {
-        kaa_set_endpoint_attached_to_user(this->status, true);
-        if (this->attachment_listeners.on_attached_callback)
-            (*this->attachment_listeners.on_attached_callback)(attach->user_external_id, attach->endpoint_access_token);
-    }
-    if (detach) {
-        kaa_set_endpoint_attached_to_user(this->status, false);
-        if (this->attachment_listeners.on_detached_callback)
-            (*this->attachment_listeners.on_detached_callback)(detach->endpoint_access_token);
-    }
-
     return KAA_ERR_NONE;
 }

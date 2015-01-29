@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -44,9 +42,8 @@ public class ApplicationsActivity extends AbstractListActivity<ApplicationDto, A
 
     @Override
     protected AbstractDataProvider<ApplicationDto> getDataProvider(
-            MultiSelectionModel<ApplicationDto> selectionModel,
-            AsyncCallback<List<ApplicationDto>> asyncCallback) {
-        return new ApplicationsDataProvider(selectionModel, asyncCallback);
+            MultiSelectionModel<ApplicationDto> selectionModel) {
+        return new ApplicationsDataProvider(selectionModel, listView);
     }
 
     @Override

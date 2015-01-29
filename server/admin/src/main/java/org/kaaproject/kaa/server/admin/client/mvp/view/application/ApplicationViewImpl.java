@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.application;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
@@ -31,7 +31,6 @@ import com.google.gwt.user.client.ui.Label;
 public class ApplicationViewImpl extends BaseDetailsViewImpl implements ApplicationView {
 
     private SizedTextBox applicationName;
-//    private SizedTextBox applicationKey;
     private SizedTextBox applicationToken;
 
     private Button generateSdkButton;
@@ -61,7 +60,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
         applicationName.setWidth("100%");
         Label titleLabel = new Label(Utils.constants.title());
         if (editable) {
-            titleLabel.addStyleName("required");
+            titleLabel.addStyleName(avroUiStyle.requiredField());
         }
         detailsTable.setWidget(0, 0, titleLabel);
         detailsTable.setWidget(0, 1, applicationName);

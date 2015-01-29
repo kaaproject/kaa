@@ -32,11 +32,11 @@ public class DefaultRedirectionTransportTest {
         transport.onRedirectionResponse(response);
         transport.setBootstrapManager(manager);
         transport.onRedirectionResponse(response);
-        response.setDnsName(new String());
+        response.setAccessPointId(1);
         transport.onRedirectionResponse(response);
-        response.setDnsName("name");
+        response.setAccessPointId(2);
         transport.onRedirectionResponse(response);
-        Mockito.verify(manager, Mockito.times(1)).useNextOperationsServerByDnsName(Mockito.eq("name"));
+        Mockito.verify(manager, Mockito.times(1)).useNextOperationsServerByAccessPointId(1);
     }
 
 }

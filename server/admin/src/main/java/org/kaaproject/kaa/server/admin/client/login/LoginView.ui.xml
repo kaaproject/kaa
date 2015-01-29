@@ -17,14 +17,18 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:gwt="urn:import:com.google.gwt.user.client.ui"
-	xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client.mvp.view.widget">
+	xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client.mvp.view.widget"
+    xmlns:avroUi="urn:import:org.kaaproject.avro.ui.gwt.client.widget">
+    
+    <ui:with field='kaaAdminStyle' type='org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle'/>  
+    
 	<ui:style>
         .formStyle {
              margin-top: 20px;
         }
 	</ui:style>
 	<gwt:SimplePanel>
-		<gwt:SimplePanel width="500px" height="auto" styleName="loginPanel">
+		<gwt:SimplePanel width="500px" height="auto" styleName="{kaaAdminStyle.loginPanel}">
 		    <gwt:VerticalPanel width="100%" height="100%">
 		        <gwt:HorizontalPanel width="100%">
 		            <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
@@ -32,8 +36,8 @@
 	                </gwt:cell>
 		        </gwt:HorizontalPanel>
 		        <gwt:VerticalPanel width="100%" height="100%" addStyleNames="{style.formStyle}">
-		            <kaa:AlertPanel ui:field="errorPanel"/>
-		            <kaa:AlertPanel ui:field="infoPanel"/>
+		            <avroUi:AlertPanel ui:field="errorPanel"/>
+		            <avroUi:AlertPanel ui:field="infoPanel"/>
 		            <gwt:FormPanel ui:field="loginForm">
 		                <gwt:FlexTable ui:field="loginTable" cellSpacing="8"/>
 		            </gwt:FormPanel>

@@ -29,7 +29,7 @@ import akka.actor.ActorRef;
  */
 public class LogEventPackMessage {
 
-    private final String requestId;
+    private final int requestId;
 
     private final ActorRef originator;
 
@@ -42,13 +42,13 @@ public class LogEventPackMessage {
      * @param logEventPack
      *            the log event pack
      */
-    public LogEventPackMessage(String requestId, ActorRef originator, LogEventPack logEventPack) {
+    public LogEventPackMessage(int requestId, ActorRef originator, LogEventPack logEventPack) {
         this.requestId = requestId;
         this.originator = originator;
         this.logEventPack = logEventPack;
     }
 
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 

@@ -44,7 +44,7 @@ public interface EndpointRegistrationProcessor {
      * @return the map of access tokens.
      * @see EndpointAccessToken
      */
-    Map<String, EndpointAccessToken> getAttachEndpointRequests();
+    Map<Integer, EndpointAccessToken> getAttachEndpointRequests();
 
     /**
      * Retrieves current detach requests.
@@ -52,7 +52,7 @@ public interface EndpointRegistrationProcessor {
      * @return the map of endpoint key hashes.
      * @see EndpointKeyHash
      */
-    Map<String, EndpointKeyHash> getDetachEndpointRequests();
+    Map<Integer, EndpointKeyHash> getDetachEndpointRequests();
 
     /**
      * Retrieves the user attach request.

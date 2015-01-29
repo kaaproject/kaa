@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.kaaproject.kaa.common.endpoint.gen.Event;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
@@ -57,6 +56,7 @@ import org.kaaproject.kaa.server.operations.service.event.RouteTable;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableAddress;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
 import org.kaaproject.kaa.server.operations.service.event.UserRouteInfo;
+import org.kaaproject.kaa.server.sync.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

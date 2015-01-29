@@ -29,7 +29,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
-import org.kaaproject.kaa.server.operations.OperationsServerApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +82,6 @@ public class OperationsServerLauncherIT {
         try {
 
             operationsServerLauncherThread = new Thread(new Runnable() {
-                @SuppressWarnings("static-access")
                 @Override
                 public void run() {
                     logger.info("Starting Operations Server ...");
@@ -136,7 +134,6 @@ public class OperationsServerLauncherIT {
             zkCluster.start();
 
             operationsServerLauncherThread = new Thread(new Runnable() {
-                @SuppressWarnings("static-access")
                 @Override
                 public void run() {
                     logger.info("Starting Operations Server ...");

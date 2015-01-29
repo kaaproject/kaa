@@ -31,7 +31,7 @@ public class SingleLogDeliveryCallback extends AbstractActorCallback {
      * @param requestId
      *            the request id
      */
-    public SingleLogDeliveryCallback(ActorRef actor, String requestId) {
+    public SingleLogDeliveryCallback(ActorRef actor, int requestId) {
         super(actor, requestId);
     }
 

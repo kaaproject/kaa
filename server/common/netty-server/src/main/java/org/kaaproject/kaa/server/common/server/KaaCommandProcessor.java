@@ -18,8 +18,6 @@ package org.kaaproject.kaa.server.common.server;
 
 public interface KaaCommandProcessor<T, U> {
 
-    public static final String COMMAND_METHOD_NAME = "getCommandName";
-
     /**
      * @return the commandId
      */

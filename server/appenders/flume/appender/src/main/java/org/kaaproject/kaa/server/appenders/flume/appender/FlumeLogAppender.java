@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.appenders.flume.appender;
 
+import java.util.List;
+
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -44,13 +46,19 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
     @Override
     public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
-            Event event = flumeEventBuilder.generateEvent(logEventPack, header, getApplicationToken());
+            List<Event> events = flumeEventBuilder.generateEvents(logEventPack, header, getApplicationToken());
             try {
-                if (flumeClientManger != null) {
-                    flumeClientManger.sendEventToFlume(event);
-                    listener.onSuccess();
-                } else {
-                    LOG.warn("Flume client wasn't initialized. Invoke method init before.");
+                if (events != null && !events.isEmpty()) {
+                    if (flumeClientManger != null) {
+                        flumeClientManger.sendEventsToFlume(events);
+                        listener.onSuccess();
+                    } else {
+                        LOG.warn("Flume client wasn't initialized. Invoke method init before.");
+                        listener.onInternalError();
+                    }
+                }
+                else {
+                    LOG.warn("Unable to generate Flume events from log event pack!");
                     listener.onInternalError();
                 }
             } catch (EventDeliveryException e) {
@@ -69,6 +77,7 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
         LOG.debug("Initializing new instance of Flume log appender");
         try {
             flumeEventBuilder = new FlumeAvroEventBuilder();
+            flumeEventBuilder.init(configuration);
             flumeClientManger = FlumeClientManager.getInstance(configuration);
         } catch (Exception e) {
             LOG.error("Failed to init Flume log appender: ", e);

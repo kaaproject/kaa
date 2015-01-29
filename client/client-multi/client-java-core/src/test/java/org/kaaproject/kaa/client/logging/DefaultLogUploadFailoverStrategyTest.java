@@ -19,7 +19,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.mockito.Mockito;
@@ -40,12 +40,12 @@ public class DefaultLogUploadFailoverStrategyTest {
 
         strategy.onTimeout();
 
-        Mockito.verify(channelManager, Mockito.times(0)).onServerFailed(Mockito.any(ServerInfo.class));
+        Mockito.verify(channelManager, Mockito.times(0)).onServerFailed(Mockito.any(TransportConnectionInfo.class));
     }
 
     @Test
     public void testSwitchServerSuccess() {
-        ServerInfo serverInfo = Mockito.mock(ServerInfo.class);
+        TransportConnectionInfo serverInfo = Mockito.mock(TransportConnectionInfo.class);
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel.getServer()).thenReturn(serverInfo);
 
