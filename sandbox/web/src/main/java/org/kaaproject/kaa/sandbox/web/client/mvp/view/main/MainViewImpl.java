@@ -58,6 +58,7 @@ public class MainViewImpl extends Composite implements MainView {
     private Presenter presenter;
     
     private Anchor goToKaaAdminWeb;
+    private Anchor goToAvroUiSandboxWeb;
     private HTML changeKaaHostLabel;
     private TextBox kaaHost;
     private Button changeKaaHostButton;
@@ -120,41 +121,53 @@ public class MainViewImpl extends Composite implements MainView {
         kaaHost.setVisible(enabled);
         changeKaaHostButton.setVisible(enabled);
     }
-
-    private void initDetailsTable() {
-        
+    
+    private Widget constructGotoLink (Anchor anchor) {
         HTML label = new HTML("Go to");
-        goToKaaAdminWeb = new Anchor("Kaa Administrative Web Console");
         HorizontalPanel panel = new HorizontalPanel();
         panel.add(label);
         label.getElement().getStyle().setPaddingRight(15, Unit.PX);
         label.getElement().getStyle().setFontSize(16, Unit.PX);
-        goToKaaAdminWeb.getElement().getStyle().setFontSize(16, Unit.PX);
-        panel.add(goToKaaAdminWeb);
+        anchor.getElement().getStyle().setFontSize(16, Unit.PX);
+        panel.add(anchor);
         panel.getElement().getStyle().setPaddingBottom(40, Unit.PX);
-        detailsTable.setWidget(0, 0,  panel);
-        detailsTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+        return panel;
+    }
+ 
+    private void initDetailsTable() {
+        
+        int row = -1;
+        
+        goToKaaAdminWeb = new Anchor("Kaa Administrative Web Console");
+        Widget gotoLink = constructGotoLink(goToKaaAdminWeb);
+        detailsTable.setWidget(++row, 0,  gotoLink);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        
+        goToAvroUiSandboxWeb = new Anchor("Avro UI Sandbox Web Console");
+        gotoLink = constructGotoLink(goToAvroUiSandboxWeb);
+        detailsTable.setWidget(++row, 0,  gotoLink);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
         
         changeKaaHostLabel = new HTML("To change kaa services host/ip enter new host<br>value in field below and click 'Change' button.");
-        detailsTable.setWidget(1, 0, changeKaaHostLabel);
-        detailsTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+        detailsTable.setWidget(++row, 0, changeKaaHostLabel);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
         kaaHost = new TextBox();
         kaaHost.setWidth("200px");
-        detailsTable.setWidget(2, 0, kaaHost);
+        detailsTable.setWidget(++row, 0, kaaHost);
         changeKaaHostButton = new Button("Change");
-        detailsTable.setWidget(2, 1, changeKaaHostButton);
+        detailsTable.setWidget(row, 1, changeKaaHostButton);
         
         Label demoProjectsTitle = new Label("Demo projects");
         demoProjectsTitle.getElement().getStyle().setPaddingTop(40, Unit.PX);
         demoProjectsTitle.getElement().getStyle().setPaddingBottom(20, Unit.PX);
         demoProjectsTitle.addStyleName("b-app-content-title");
 
-        detailsTable.setWidget(3, 0, demoProjectsTitle);
-        detailsTable.getFlexCellFormatter().setColSpan(3, 0, 2);
+        detailsTable.setWidget(++row, 0, demoProjectsTitle);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
         
         demoProjectsView = new DemoProjectsView();
-        detailsTable.setWidget(4, 0, demoProjectsView);
-        detailsTable.getFlexCellFormatter().setColSpan(4, 0, 2);
+        detailsTable.setWidget(++row, 0, demoProjectsView);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
     }
 
     private void resetImpl() {
@@ -177,6 +190,11 @@ public class MainViewImpl extends Composite implements MainView {
     public HasClickHandlers getGoToKaaAdminWeb() {
         return goToKaaAdminWeb;
     }
+    
+    @Override
+    public HasClickHandlers getGoToAvroUiSandboxWeb() {
+        return goToAvroUiSandboxWeb;
+    }
 
     @Override
     public void setProjects(List<Project> projects) {
@@ -187,6 +205,5 @@ public class MainViewImpl extends Composite implements MainView {
     public HasProjectActionEventHandlers getProjectsActionSource() {
         return demoProjectsView;
     }
-
 
 }

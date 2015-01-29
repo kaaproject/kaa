@@ -21,10 +21,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
+@Table(name = "admin_authority")
 public class Authority implements GrantedAuthority {
 
     private static final long serialVersionUID = -4410337339526155136L;

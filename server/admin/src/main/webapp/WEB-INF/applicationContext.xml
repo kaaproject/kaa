@@ -41,18 +41,10 @@
 	
     <bean id="dataSource"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName">
-            <value>org.hsqldb.jdbcDriver</value>
-        </property>
-        <property name="url">
-            <value>jdbc:hsqldb:#{systemProperties['server_home_dir']}/db/kaasec</value>
-        </property>
-        <property name="username">
-            <value>sa</value>
-        </property>
-        <property name="password">
-            <value></value>
-        </property>
+        <property name="driverClassName" value="#{properties[jdbc_driver_className]}" />
+        <property name="url" value="jdbc:postgresql://#{properties[jdbc_host]}:#{properties[jdbc_port]}/#{properties[db_name]}" />
+        <property name="username" value="#{properties[jdbc_username]}" />
+        <property name="password" value="#{properties[jdbc_password]}" />
     </bean>
  
     <bean id="entityManagerFactory"
@@ -64,10 +56,10 @@
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
-                <prop key="hibernate.show_sql">true</prop>
-                <prop key="hibernate.format_sql">false</prop>
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.hbm2ddl.auto">#{properties[hibernate_hbm2ddl_auto]}</prop>
+                <prop key="hibernate.dialect">#{properties[hibernate_dialect]}</prop>
+                <prop key="hibernate.format_sql">#{properties[hibernate_format_sql]}</prop>
+                <prop key="hibernate.show_sql">#{properties[hibernate_show_sql]}</prop>
             </props>
         </property>
     </bean>
