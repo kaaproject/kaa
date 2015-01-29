@@ -36,7 +36,10 @@ extern "C" {
 /**
  * @brief Kaa user manager structure.
  */
-typedef struct kaa_user_manager_t kaa_user_manager_t;
+#ifndef KAA_USER_MANAGER_T
+# define KAA_USER_MANAGER_T
+    typedef struct kaa_user_manager_t       kaa_user_manager_t;
+#endif
 
 
 /**

@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+#include <stddef.h>
+#include <stdint.h>
+#include "platform/stdio.h"
 #include <string.h>
-
 #include "kaa_channel_manager.h"
 
 #include "kaa_context.h"
@@ -49,6 +51,8 @@ typedef struct {
     uint32_t    payload_size;
     uint16_t    channel_count;
 } kaa_sync_info_t;
+
+
 
 struct kaa_channel_manager_t {
     kaa_list_t         *transport_channels;

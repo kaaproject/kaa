@@ -15,11 +15,11 @@
  */
 
 #include "kaa_test.h"
-
+#include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <stdbool.h>
 #include "kaa_common.h"
 #include "kaa_bootstrap_manager.h"
 #include "kaa_channel_manager.h"

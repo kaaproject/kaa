@@ -17,12 +17,13 @@
 # ifndef KAA_PROFILE_GEN_H_
 # define KAA_PROFILE_GEN_H_
 
-# include "kaa_common_schema.h"
-# include "collections/kaa_list.h"
+# include "../kaa_common_schema.h"
+# include "../collections/kaa_list.h"
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 extern "C" {
-#endif
+# endif
+
 
 typedef struct {
     kaa_string_t* profile_body;
@@ -33,6 +34,7 @@ typedef struct {
 } kaa_profile_basic_endpoint_profile_test_t;
 
 kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create();
+kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_deserialize(avro_reader_t reader);
 
 #ifdef __cplusplus
 }      /* extern "C" */

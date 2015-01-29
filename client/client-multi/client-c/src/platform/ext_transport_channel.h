@@ -17,9 +17,9 @@
 #ifndef EXT_TRANSPORT_CHANNEL_H_
 #define EXT_TRANSPORT_CHANNEL_H_
 
-#include "kaa_common.h"
-#include "kaa_platform_protocol.h"
-#include "kaa_bootstrap_manager.h"
+#include "../kaa_common.h"
+#include "../kaa_platform_protocol.h"
+#include "../kaa_bootstrap_manager.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-#include "kaa_platform_protocol.h"
 
+#include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
-
+#include "platform/stdio.h"
+#include "platform/ext_sha.h"
+#include "kaa_status.h"
+#include "kaa_platform_protocol.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_context.h"
 #include "kaa_defaults.h"
-#include "kaa_status.h"
-
 #include "kaa_event.h"
 #include "kaa_profile.h"
 #include "kaa_logging.h"

@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdio.h>
+#include "platform/ext_sha.h"
 #include "kaa_test.h"
 #include "kaa_status.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 
-
-#include <string.h>
-#include <stdio.h>
 
 kaa_digest test_ep_key_hash = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
 kaa_digest test_profile_hash= {0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28};
@@ -115,8 +117,8 @@ void test_status_persistense()
     ASSERT_FALSE(status->is_registered);
 
     ASSERT_EQUAL(kaa_status_set_endpoint_access_token(status, "my_token"), KAA_ERR_NONE);
-    ASSERT_EQUAL(kaa_copy_sha_hash(status->endpoint_public_key_hash, test_ep_key_hash), KAA_ERR_NONE);
-    ASSERT_EQUAL(kaa_copy_sha_hash(status->profile_hash, test_profile_hash), KAA_ERR_NONE);
+    ASSERT_EQUAL(ext_copy_sha_hash(status->endpoint_public_key_hash, test_ep_key_hash), KAA_ERR_NONE);
+    ASSERT_EQUAL(ext_copy_sha_hash(status->profile_hash, test_profile_hash), KAA_ERR_NONE);
     status->is_attached = true;
     status->is_registered = true;
     status->event_seq_n = 10;

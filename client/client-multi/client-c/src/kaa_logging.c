@@ -16,11 +16,11 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "kaa_logging.h"
-
-#include <stddef.h>
 #include <string.h>
 
+#include "platform/stdio.h"
+#include "platform/ext_sha.h"
+#include "kaa_logging.h"
 #include "collections/kaa_list.h"
 #include "kaa_common.h"
 #include "kaa_status.h"
@@ -29,8 +29,9 @@
 #include "kaa_platform_common.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
-
 #include "avro_src/avro/io.h"
+
+
 
 #define KAA_LOGGING_RECEIVE_UPDATES_FLAG   0x01
 #define KAA_MAX_PADDING_LENGTH             (KAA_ALIGNMENT - 1)

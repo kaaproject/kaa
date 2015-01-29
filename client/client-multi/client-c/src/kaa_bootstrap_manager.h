@@ -32,7 +32,11 @@
 extern "C" {
 #endif
 
-typedef struct kaa_bootstrap_manager_t kaa_bootstrap_manager_t;
+
+#ifndef KAA_BOOTSTRAP_MANAGER_T
+# define KAA_BOOTSTRAP_MANAGER_T
+typedef struct kaa_bootstrap_manager_t  kaa_bootstrap_manager_t;
+#endif
 
 
 

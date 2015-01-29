@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "kaa_profile.h"
-
 #include <string.h>
-
+#include <stdbool.h>
+#include "platform/stdio.h"
 #include "avro_src/avro/io.h"
-
+#include "platform/ext_sha.h"
+#include "kaa_status.h"
+#include "kaa_profile.h"
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_defaults.h"
 #include "kaa_external.h"
 #include "kaa_channel_manager.h"
-#include "kaa_status.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
 
@@ -397,7 +396,7 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
     avro_writer_free(writer);
 
     kaa_digest new_hash;
-    kaa_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
+    ext_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
 
     if (!memcmp(new_hash, self->status->profile_hash, SHA_1_DIGEST_LENGTH)) {
         self->need_resync = false;
@@ -407,7 +406,7 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
 
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint profile is updated")
 
-    if (kaa_copy_sha_hash(self->status->profile_hash, new_hash)) {
+    if (ext_copy_sha_hash(self->status->profile_hash, new_hash)) {
         KAA_FREE(serialized_profile);
         return KAA_ERR_BAD_STATE;
     }

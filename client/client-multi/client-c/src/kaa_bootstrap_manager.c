@@ -16,7 +16,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdbool.h>
+#include "platform/stdio.h"
 #include "kaa_defaults.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"

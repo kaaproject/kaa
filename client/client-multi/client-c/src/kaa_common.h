@@ -22,10 +22,6 @@
 #ifndef KAA_COMMON_H_
 #define KAA_COMMON_H_
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-
 #include "kaa_error.h"
 
 #ifdef __cplusplus
@@ -91,21 +87,6 @@ typedef struct {
 typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
 typedef const uint8_t* kaa_endpoint_id_p;
 
-
-/*
- * SHA1 hash
- */
-#define SHA_1_DIGEST_LENGTH    20
-typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
-typedef unsigned char* kaa_digest_p;
-
-
-/*
- * @brief SHA-1 hash calculation routine.
- */
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
-
-kaa_error_t kaa_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src);
 
 
 #ifdef __cplusplus

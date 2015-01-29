@@ -37,7 +37,10 @@ extern "C" {
 /**
  * @brief Kaa channel manager structure.
  */
-typedef struct kaa_channel_manager_t kaa_channel_manager_t;
+#ifndef KAA_CHANNEL_MANAGER_T
+# define KAA_CHANNEL_MANAGER_T
+typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
+#endif
 
 
 

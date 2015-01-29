@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "platform/stdio.h"
+#include "platform/ext_sha.h"
 #include "kaa_status.h"
 #include "kaa_common.h"
 #include "kaa_external.h"

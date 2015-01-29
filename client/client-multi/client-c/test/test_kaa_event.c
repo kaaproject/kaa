@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
+
+#include "platform/ext_sha.h"
 #include "kaa_event.h"
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-
-#include <string.h>
 
 #include "kaa_test.h"
 
