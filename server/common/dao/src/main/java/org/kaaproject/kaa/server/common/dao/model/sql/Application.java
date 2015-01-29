@@ -15,13 +15,12 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_APPLICATION_TOKEN;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_LOG_APPENDERS_NAMES;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_SEQUENCE_NUMBER;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_APPLICATION_TOKEN;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_USER_VERIFIER_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PUBLIC_KEY_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
@@ -52,9 +51,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
     @Column(name = APPLICATION_SEQUENCE_NUMBER)
     private int sequenceNumber;
 
-    @Column(name = APPLICATION_USER_VERIFIER_NAME)
-    private String userVerifierName;
-
     @ManyToOne
     @JoinColumn(name = APPLICATION_TENANT_ID, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -79,7 +75,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
             this.applicationToken = dto.getApplicationToken();
             this.name = dto.getName();
             this.sequenceNumber = dto.getSequenceNumber();
-            this.userVerifierName = dto.getUserVerifierName();
             Long tenantId = getLongId(dto.getTenantId());
             if (tenantId != null) {
                 this.tenant = new Tenant(tenantId);
@@ -111,13 +106,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
 
     public void setSequenceNumber(int sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
-    }
-    public String getUserVerifierName() {
-        return userVerifierName;
-    }
-
-    public void setUserVerifierName(String userVerifierName) {
-        this.userVerifierName = userVerifierName;
     }
 
     public Tenant getTenant() {
@@ -240,7 +228,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
         dto.setApplicationToken(applicationToken);
         dto.setName(name);
         dto.setSequenceNumber(sequenceNumber);
-        dto.setUserVerifierName(userVerifierName);
         if (tenant != null) {
             dto.setTenantId(tenant.getStringId());
         }

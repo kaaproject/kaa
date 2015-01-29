@@ -15,34 +15,28 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.kaaproject</groupId>
+        <groupId>org.kaaproject.kaa.server</groupId>
         <version>0.7.0-SNAPSHOT</version>
-        <artifactId>kaa</artifactId>
+        <artifactId>verifiers</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa</groupId>
-    <artifactId>server</artifactId>
+    <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+    <artifactId>trustful-verifier</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa Server components</name>
+    <name>Kaa trustfull verifier</name>
     <url>http://kaaproject.org</url>
 
     <properties>
-        <main.dir>${basedir}/..</main.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.dir>${basedir}/../../..</main.dir>
     </properties>
-
+    
     <modules>
-        <module>common</module>
-        <module>admin</module>
-        <module>operations</module>
-        <module>control</module>
-        <module>bootstrap</module>
-        <module>flume</module>
-        <module>appenders</module>
-        <module>transports</module>
-        <module>verifiers</module>
+        <module>config</module>
+        <module>verifier</module>
     </modules>
 
 </project>

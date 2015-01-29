@@ -235,6 +235,20 @@ public final class ModelConstants {
     public static final String APPLICATION_EVENT_FAMILY_MAP_VERSION = VERSION;
     public static final String APPLICATION_EVENT_FAMILY_MAP_CREATED_USERNAME = CREATED_USERNAME;
     public static final String APPLICATION_EVENT_FAMILY_MAP_CREATED_TIME = CREATED_TIME;
+    
+    /**
+     * User verifier constants.
+     */
+    public static final String USER_VERIFIER_TABLE_NAME = "user_verifier";
+    public static final String USER_VERIFIER_ID = "verifier_id";
+    public static final String USER_VERIFIER_NAME = "name";
+    public static final String USER_VERIFIER_APPLICATION_ID = "application_id";
+    public static final String USER_VERIFIER_CLASS_NAME = "class_name";
+    public static final String USER_VERIFIER_RAW_CONFIGURATION = "raw_configuration";
+    public static final String USER_VERIFIER_DESCRIPTION = DESCRIPTION;
+    public static final String USER_VERIFIER_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String USER_VERIFIER_CREATED_TIME = CREATED_TIME;
+
 
     /**
      * Log schema constants.

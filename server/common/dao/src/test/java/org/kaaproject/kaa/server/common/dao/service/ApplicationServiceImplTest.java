@@ -94,7 +94,6 @@ public class ApplicationServiceImplTest extends AbstractTest {
     @Test(expected = IncorrectParameterException.class)
     public void saveAppTest() {
         ApplicationDto app = generateApplication();
-        app.setUserVerifierName("UserVerifierName");
         applicationService.saveApp(app);
     }
 }

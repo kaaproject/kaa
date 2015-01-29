@@ -18,31 +18,22 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.kaaproject</groupId>
+        <groupId>org.kaaproject.kaa</groupId>
         <version>0.7.0-SNAPSHOT</version>
-        <artifactId>kaa</artifactId>
+        <artifactId>server</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa</groupId>
-    <artifactId>server</artifactId>
+    <groupId>org.kaaproject.kaa.server</groupId>
+    <artifactId>verifiers</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa Server components</name>
+    <name>Kaa user verifiers</name>
     <url>http://kaaproject.org</url>
 
     <properties>
-        <main.dir>${basedir}/..</main.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.dir>${basedir}/../..</main.dir>
     </properties>
-
     <modules>
-        <module>common</module>
-        <module>admin</module>
-        <module>operations</module>
-        <module>control</module>
-        <module>bootstrap</module>
-        <module>flume</module>
-        <module>appenders</module>
-        <module>transports</module>
-        <module>verifiers</module>
+        <module>trustful-verifier</module>
     </modules>
-
 </project>

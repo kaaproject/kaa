@@ -135,16 +135,6 @@ public interface EndpointService {
     EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto);
 
     /**
-     * Check access token.
-     *
-     * @param appDto the app dto
-     * @param tenantId the tenant id
-     * @param userAccessToken the user access token
-     * @return true, if successful
-     */
-    boolean checkAccessToken(ApplicationDto appDto, String tenantId, String userAccessToken);
-
-    /**
      * Attach endpoint profile to user.
      *
      * @param userExternalId the user external id

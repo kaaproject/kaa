@@ -1,4 +1,5 @@
 /*
+
  * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,22 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.dao;
 
-import java.util.Map;
+import java.util.List;
 
-public class DefaultEndpointUserVerifierResolver implements EndpointUserVerifierResolver{
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 
-    Map<String, EndpointUserVerifier> verifierMap;
+public interface UserVerifierService {
 
-    public DefaultEndpointUserVerifierResolver(Map<String, EndpointUserVerifier> verifierMap){
-        super();
-        this.verifierMap = verifierMap;
-    }
+    /**
+     * @param appId
+     * @return
+     */
+    List<UserVerifierDto> findUserVerifiersByAppId(String appId);
+    
+    /**
+     * @param appId
+     * @param verifierId
+     * @return
+     */
+    UserVerifierDto findUserVerifiersByAppIdAndVerifierId(String appId, int verifierId);
 
-    @Override
-    public EndpointUserVerifier resolve(String verifierName) {
-        return verifierMap.get(verifierName);
-    }
+    /**
+     * @param id
+     * @return
+     */
+    UserVerifierDto findUserVerifierById(String id);
+
+    /**
+     * @param logAppenderDto
+     * @return
+     */
+    UserVerifierDto saveUserVerifier(UserVerifierDto logAppenderDto);
 
 }

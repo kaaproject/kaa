@@ -97,43 +97,44 @@ public class DefaultEndpointUserServiceTest {
         ReflectionTestUtils.setField(endpointUserService, "applicationService", applicationService);
     }
 
-    @Test
-    public void attachUserSuccessTest(){
-        UserAttachRequest request = new UserAttachRequest(EXTERNAL_USER_ID, USER_ACCESS_TOKEN);
-        EndpointProfileDto profileMock = mock(EndpointProfileDto.class);
-
-        when(profileMock.getApplicationId()).thenReturn(APPLICATION_ID);
-
-        ApplicationDto appDto = new ApplicationDto();
-        appDto.setTenantId(TEST_TENANT_ID);
-
-        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(appDto);
-
-        when(endpointService.checkAccessToken(appDto, EXTERNAL_USER_ID, USER_ACCESS_TOKEN)).thenReturn(Boolean.TRUE);
-
-        UserAttachResponse response = endpointUserService.attachUser(profileMock, request);
-        assertNotNull(response);
-        assertEquals(SyncStatus.SUCCESS, response.getResult());
-    }
-
-    @Test
-    public void attachUserFailureTest(){
-        UserAttachRequest request = new UserAttachRequest(EXTERNAL_USER_ID, USER_ACCESS_TOKEN);
-        EndpointProfileDto profileMock = mock(EndpointProfileDto.class);
-
-        when(profileMock.getApplicationId()).thenReturn(APPLICATION_ID);
-
-        ApplicationDto appDto = new ApplicationDto();
-        appDto.setTenantId(TEST_TENANT_ID);
-
-        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(appDto);
-
-        when(endpointService.checkAccessToken(appDto, EXTERNAL_USER_ID, USER_ACCESS_TOKEN)).thenReturn(Boolean.FALSE);
-
-        UserAttachResponse response = endpointUserService.attachUser(profileMock, request);
-        assertNotNull(response);
-        assertEquals(SyncStatus.FAILURE, response.getResult());
-    }
+//    TODO: move to appropriate place
+//    @Test
+//    public void attachUserSuccessTest(){
+//        UserAttachRequest request = new UserAttachRequest(EXTERNAL_USER_ID, USER_ACCESS_TOKEN);
+//        EndpointProfileDto profileMock = mock(EndpointProfileDto.class);
+//
+//        when(profileMock.getApplicationId()).thenReturn(APPLICATION_ID);
+//
+//        ApplicationDto appDto = new ApplicationDto();
+//        appDto.setTenantId(TEST_TENANT_ID);
+//
+//        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(appDto);
+//
+//        when(endpointService.checkAccessToken(appDto, EXTERNAL_USER_ID, USER_ACCESS_TOKEN)).thenReturn(Boolean.TRUE);
+//
+//        UserAttachResponse response = endpointUserService.attachUser(profileMock, request);
+//        assertNotNull(response);
+//        assertEquals(SyncStatus.SUCCESS, response.getResult());
+//    }
+//
+//    @Test
+//    public void attachUserFailureTest(){
+//        UserAttachRequest request = new UserAttachRequest(EXTERNAL_USER_ID, USER_ACCESS_TOKEN);
+//        EndpointProfileDto profileMock = mock(EndpointProfileDto.class);
+//
+//        when(profileMock.getApplicationId()).thenReturn(APPLICATION_ID);
+//
+//        ApplicationDto appDto = new ApplicationDto();
+//        appDto.setTenantId(TEST_TENANT_ID);
+//
+//        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(appDto);
+//
+//        when(endpointService.checkAccessToken(appDto, EXTERNAL_USER_ID, USER_ACCESS_TOKEN)).thenReturn(Boolean.FALSE);
+//
+//        UserAttachResponse response = endpointUserService.attachUser(profileMock, request);
+//        assertNotNull(response);
+//        assertEquals(SyncStatus.FAILURE, response.getResult());
+//    }
 
     @Test
     public void attachEndpointSuccessTest(){

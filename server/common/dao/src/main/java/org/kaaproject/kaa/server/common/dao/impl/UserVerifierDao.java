@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.dao;
+package org.kaaproject.kaa.server.common.dao.impl;
 
-/**
- * The Interface EndpointUserVerifierResolver.
- */
-public interface EndpointUserVerifierResolver {
+import java.util.List;
 
-    /**
-     * Resolve verifier name. Take <code>EndpointUserVerifier</code>
-     * object by verifier name
-     *
-     * @param verifierName the verifier name
-     * @return the endpoint user verifier
-     */
-    EndpointUserVerifier resolve(String verifierName);
+public interface UserVerifierDao<T> extends Dao<T> {
+
+    List<T> findByAppId(String appId);
+    
+    T findByAppIdAndVerifierId(String appId, int verifierId);
 
 }

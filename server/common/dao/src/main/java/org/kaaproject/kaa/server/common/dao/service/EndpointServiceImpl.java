@@ -42,8 +42,6 @@ import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifierResolver;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -78,9 +76,9 @@ public class EndpointServiceImpl implements EndpointService {
     @Autowired
     private ProfileFilterDao<ProfileFilter> profileFilterDao;
     @Autowired
-    private HistoryService historyService;
+    private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
-    private EndpointUserVerifierResolver endpointUserVerifierResolver;
+    private HistoryService historyService;
     
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
@@ -267,21 +265,6 @@ public class EndpointServiceImpl implements EndpointService {
             dto = getDto(endpointProfileDao.save(endpointProfileDto));
         }
         return dto;
-    }
-
-    @Override
-    public boolean checkAccessToken(ApplicationDto appDto, String userExternalId, String userAccessToken) {
-        validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
-        validateString(userExternalId, "Incorrect userAccessToken " + userAccessToken);
-        String kaaEndpointUserVerifierName = appDto.getUserVerifierName();
-        EndpointUserVerifier verifier = endpointUserVerifierResolver.resolve(kaaEndpointUserVerifierName);
-        if(verifier == null){
-            LOG.error("Can't find endpoint user verifier: {}!", kaaEndpointUserVerifierName);
-            return false;
-        }else{
-            LOG.debug("executing checkAccessToken using verifier: {}", kaaEndpointUserVerifierName);
-            return verifier.checkAccessToken(appDto.getTenantId(), userExternalId, userAccessToken);
-        }
     }
 
     @Override

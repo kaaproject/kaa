@@ -240,7 +240,6 @@ public class OperationsServiceIT extends AbstractTest {
         Application appObj = new Application();
         appObj.setTenant(customer);
         appObj.setName(APPLICATION_NAME);
-        appObj.setUserVerifierName("kaaEndpointUserVerifier");
 
         ApplicationDto applicationDto = applicationService.saveApp(appObj.toDto());
         Assert.assertNotNull(applicationDto);
