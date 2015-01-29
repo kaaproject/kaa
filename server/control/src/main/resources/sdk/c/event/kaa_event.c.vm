@@ -266,10 +266,7 @@ kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p
     (*event_manager_p)->global_event_callback = NULL;
     (*event_manager_p)->event_sequence_number = 0;
 
-    if (kaa_status_get_event_sequence_number(status, (uint32_t *) &(*event_manager_p)->event_sequence_number)) {
-        KAA_FREE(*event_manager_p);
-        return KAA_ERR_BAD_STATE;
-    }
+    (*event_manager_p)->event_sequence_number = status->event_seq_n;
 
     (*event_manager_p)->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED;
 
@@ -921,9 +918,9 @@ kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, co
     }
     self->event_listeners_requests = request_it;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
-    if (sync)
-        (*sync)(event_sync_services, 1);
+    kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager, event_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, event_sync_services, 1);
 
     return KAA_ERR_NONE;
 }
