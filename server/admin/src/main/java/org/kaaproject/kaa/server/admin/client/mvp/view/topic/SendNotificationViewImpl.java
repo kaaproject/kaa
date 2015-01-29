@@ -49,7 +49,7 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
         int row=0;
         
         Label label = new Label(Utils.constants.notificationSchema());
-        label.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        label.addStyleName(Utils.avroUiStyle.requiredField());
         notificationSchemaInfo = new SchemaInfoListBox();
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, notificationSchemaInfo);
@@ -71,6 +71,7 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
         
         notificationData = new RecordPanel(Utils.constants.notificationBody(), this, false, false);
         notificationData.addValueChangeHandler(this);
+        getFooter().setWidth("800px");
         getFooter().add(notificationData);
     }
     

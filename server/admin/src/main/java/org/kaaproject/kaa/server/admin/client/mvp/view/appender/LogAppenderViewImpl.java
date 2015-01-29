@@ -49,7 +49,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
                                                                         ValueChangeHandler<RecordField>, 
                                                                         ChosenChangeHandler {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
     private SizedTextBox name;
     private IntegerListBox minSchemaVersion;

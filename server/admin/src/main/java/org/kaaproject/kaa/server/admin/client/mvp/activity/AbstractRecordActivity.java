@@ -41,7 +41,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V extends BaseRecordView<T>, P extends AbstractRecordPlace> extends AbstractActivity implements BaseDetailsView.Presenter, ErrorMessageCustomizer {
+public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, V extends BaseRecordView<T,F>, P extends AbstractRecordPlace> extends AbstractActivity implements BaseDetailsView.Presenter, ErrorMessageCustomizer {
 
     protected final ClientFactory clientFactory;
     protected final String applicationId;
@@ -83,6 +83,8 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
     protected abstract void deactivateStruct(String id, AsyncCallback<T> callback);
 
     protected abstract P getRecordPlaceImpl(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random);
+    
+    protected void schemaSelected(SchemaDto schema) {}
 
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
@@ -185,9 +187,11 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
 
                 @Override
                 public void onSuccess(List<SchemaDto> result) {
-                    recordView.getSchema().setValue(Utils.getMaxSchemaVersions(result));
+                    SchemaDto schema = Utils.getMaxSchemaVersions(result);
+                    recordView.getSchema().setValue(schema);
                     recordView.getSchema().setAcceptableValues(result);
                     recordView.getRecordPanel().setData(record);
+                    schemaSelected(schema);
                     recordView.getRecordPanel().openDraft();
                 }
             });
@@ -201,10 +205,9 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
                 inactiveStruct.setMajorVersion(record.getMajorVersion());
                 inactiveStruct.setMinorVersion(record.getMinorVersion());
                 inactiveStruct.setDescription(record.getDescription());
-                inactiveStruct.setBody(record.getActiveStructureDto().getBody());
+                copyBody(record.getActiveStructureDto(), inactiveStruct);
                 record.setInactiveStructureDto(inactiveStruct);
             }
-
             recordView.getRecordPanel().setData(record);
             if (endpointGroup.getWeight()==0) {
                 recordView.getRecordPanel().setReadOnly();
@@ -227,7 +230,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
             inactiveStruct.setMinorVersion(recordView.getSchema().getValue().getMinorVersion());
         }
         inactiveStruct.setDescription(recordView.getRecordPanel().getDescription().getValue());
-        inactiveStruct.setBody(recordView.getRecordPanel().getBody().getValue());
+        updateBody(inactiveStruct, recordView.getRecordPanel().getBody().getValue());
         editStruct(inactiveStruct,
                 new AsyncCallback<T>() {
                     public void onSuccess(T result) {
@@ -239,6 +242,10 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, V e
                     }
         });
     }
+    
+    protected abstract void updateBody(T struct, F value);
+    
+    protected abstract void copyBody(T activeStruct, T inactiveStruct);
 
     protected void doActivate(final EventBus eventBus) {
         T inactiveStruct = record.getInactiveStructureDto();

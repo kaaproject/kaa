@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.event.grid;
+package org.kaaproject.kaa.server.common.core.configuration;
 
-import com.google.gwt.event.shared.EventHandler;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 
-public interface RowActionEventHandler<K> extends EventHandler {
-  void onRowAction(RowActionEvent<K> event);
+public class RawDataFactory implements KaaDataFactory<RawSchema, RawData> {
+
+    @Override
+    public RawData createData(RawSchema schema, String data) {
+        return new RawData(schema, data);
+    }
+
+
+
 }
-

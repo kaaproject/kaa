@@ -48,9 +48,6 @@ public interface KaaAdminResources extends ClientBundle {
         @ClassName("b-app-cell-button-small")
         String bAppCellButtonSmall();
         
-        @ClassName("b-app-content")
-        String bAppContent();
-        
         @ClassName("b-app-content-close")
         String bAppContentClose();
         
@@ -116,33 +113,6 @@ public interface KaaAdminResources extends ClientBundle {
         
         String caret();
         
-        String error();
-        
-        String hint();
-        
-        @ClassName("icon-error")
-        String iconError();
-        
-        @ClassName("icon-hint")
-        String iconHint();
-        
-        @ClassName("icon-info")
-        String iconInfo();
-        
-        @ClassName("icon-required")
-        String iconRequired();
-        
-        @ClassName("icon-success")
-        String iconSuccess();
-        
-        @ClassName("icon-warning")
-        String iconWarning();
-        
-        String info();
-        
-        @ClassName("LinkCell")
-        String linkCell();
-        
         String linkLabel();
         
         String loginButton();
@@ -150,34 +120,6 @@ public interface KaaAdminResources extends ClientBundle {
         String loginPanel();
         
         String secondary();
-        
-        String success();
-        
-        @ClassName("ui-icon")
-        String uiIcon();
-        
-        @ClassName("ui-icon-error")
-        String uiIconError();
-        
-        @ClassName("ui-icon-hint")
-        String uiIconHint();
-        
-        @ClassName("ui-icon-info")
-        String uiIconInfo();
-        
-        @ClassName("ui-icon-required")
-        String uiIconRequired();
-        
-        @ClassName("ui-icon-success")
-        String uiIconSuccess();
-        
-        @ClassName("ui-icon-warning")
-        String uiIconWarning();
-        
-        @ClassName("ui-message")
-        String uiMessage();
-        
-        String warning();
         
     }
 

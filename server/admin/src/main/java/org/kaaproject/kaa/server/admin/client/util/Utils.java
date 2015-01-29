@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.kaaproject.avro.ui.gwt.client.widget.AbstractFieldWidget;
+import org.kaaproject.avro.ui.gwt.client.AvroUiResources;
+import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdminConstants;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
@@ -28,7 +30,6 @@ import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.MessageDialog;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.UnauthorizedSessionDialog;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 
@@ -50,14 +51,14 @@ public class Utils {
     public static final KaaAdminMessages messages = GWT
             .create(KaaAdminMessages.class);
     
-    public static final AbstractFieldWidget.Resources fieldWidgetResources = 
-            GWT.create(AbstractFieldWidget.Resources.class);
+    public static final AvroUiResources avroUiResources = 
+            GWT.create(AvroUiResources.class);
     
     public static final KaaAdminStyle kaaAdminStyle = 
             resources.kaaAdminStyle();
     
-    public static final AbstractFieldWidget.Style fieldWidgetStyle =
-            fieldWidgetResources.fieldWidgetStyle();
+    public static final AvroUiStyle avroUiStyle =
+            avroUiResources.avroUiStyle();
     
     private static final DateTimeFormat simpleDateFormat = DateTimeFormat
             .getFormat("MM/dd/yyyy");
@@ -71,7 +72,7 @@ public class Utils {
     
     public static void injectKaaStyles() {
         kaaAdminStyle.ensureInjected();
-        fieldWidgetStyle.ensureInjected();
+        avroUiStyle.ensureInjected();
     }
 
     public static void handleException(Throwable caught,

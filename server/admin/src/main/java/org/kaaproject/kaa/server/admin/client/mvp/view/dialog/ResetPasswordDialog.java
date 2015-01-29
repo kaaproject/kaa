@@ -18,15 +18,15 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
-import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -82,7 +82,7 @@ public class ResetPasswordDialog extends KaaDialog implements HasErrorMessage {
 
         int row = 0;
         Widget label = new Label(Utils.constants.usernameOrEmail());
-        label.addStyleName(Utils.fieldWidgetStyle.requiredField());
+        label.addStyleName(Utils.avroUiStyle.requiredField());
         usernameOrEmail = new KaaAdminSizedTextBox(255);
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, usernameOrEmail);

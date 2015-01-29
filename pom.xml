@@ -918,5 +918,9 @@ Copyright 2014 CyberVision, Inc.
             <id>repository.kaaproject</id>
             <url>http://repository.kaaproject.org/repository/internal/</url>
         </repository>
+        <repository>
+            <id>repository.kaaproject.shapshots</id>
+            <url>http://repository.kaaproject.org/repository/snapshots/</url>
+        </repository>
     </repositories>
 </project>
