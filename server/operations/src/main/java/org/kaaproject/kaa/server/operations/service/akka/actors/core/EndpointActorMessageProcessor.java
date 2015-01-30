@@ -120,9 +120,6 @@ public class EndpointActorMessageProcessor {
 
     private final Map<Integer, LogDeliveryMessage> logUploadResponseMap;
 
-    /** The sync time. */
-    private long syncTime;
-
     private long lastActivityTime;
 
     private boolean userRegistrationRequestSent;
