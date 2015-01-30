@@ -173,7 +173,7 @@ public class EndpointActorMessageProcessor {
         for (ChannelMetaData channel : channels) {
             ClientSync originalRequest = channel.getRequestMessage().getRequest();
             ServerSync syncResponse = channel.getResponseHolder().getResponse();
-            
+
             ClientSync newRequest = new ClientSync();
             newRequest.setRequestId(originalRequest.getRequestId());
             newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
@@ -500,7 +500,7 @@ public class EndpointActorMessageProcessor {
 
     /**
      * Subscribe to topics.
-     * 
+     *
      * @param response
      *            the response
      */
@@ -551,7 +551,7 @@ public class EndpointActorMessageProcessor {
 
     /**
      * Send reply.
-     * 
+     *
      * @param pendingRequest
      *            the pending request
      * @param syncResponse
@@ -567,7 +567,7 @@ public class EndpointActorMessageProcessor {
         }
 
         ServerSync copy = deepCopy(syncResponse);
-        
+
         NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, request
                 .getCommand().getResponseBuilder(), request.getCommand().getErrorBuilder());
 
@@ -740,21 +740,23 @@ public class EndpointActorMessageProcessor {
                 ServerSync pendingResponse = channel.getResponseHolder().getResponse();
 
                 UserServerSync userSyncResponse = pendingResponse.getUserSync();
-                if (userSyncResponse != null) {
-                    if (message instanceof EndpointUserAttachMessage) {
-                        if (endpointProfile != null) {
-                            endpointProfile.setEndpointUserId(message.getUserId());
-                        }
-                        userSyncResponse.setUserAttachNotification(new UserAttachNotification(message.getUserId(),
-                                message.getOriginator()));
-                        LOG.debug("[{}][{}] Adding user attach notification", endpointKey, actorKey);
-                    } else if (message instanceof EndpointUserDetachMessage) {
-                        if (endpointProfile != null && message.getUserId().equals(endpointProfile.getEndpointUserId())) {
-                            endpointProfile.setEndpointUserId(null);
-                        }
-                        userSyncResponse.setUserDetachNotification(new UserDetachNotification(message.getOriginator()));
-                        LOG.debug("[{}][{}] Adding user detach notification", endpointKey, actorKey);
+                if (userSyncResponse == null) {
+                    userSyncResponse = new UserServerSync();
+                    pendingResponse.setUserSync(userSyncResponse);
+                }
+                if (message instanceof EndpointUserAttachMessage) {
+                    if (endpointProfile != null) {
+                        endpointProfile.setEndpointUserId(message.getUserId());
                     }
+                    userSyncResponse.setUserAttachNotification(new UserAttachNotification(message.getUserId(),
+                            message.getOriginator()));
+                    LOG.debug("[{}][{}] Adding user attach notification", endpointKey, actorKey);
+                } else if (message instanceof EndpointUserDetachMessage) {
+                    if (endpointProfile != null && message.getUserId().equals(endpointProfile.getEndpointUserId())) {
+                        endpointProfile.setEndpointUserId(null);
+                    }
+                    userSyncResponse.setUserDetachNotification(new UserDetachNotification(message.getOriginator()));
+                    LOG.debug("[{}][{}] Adding user detach notification", endpointKey, actorKey);
                 }
 
                 LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
