@@ -81,6 +81,8 @@ public class ApplicationActor extends UntypedActor {
     private final Map<String, ActorRef> userVerifierSessions;
 
     private final LogAppenderService logAppenderService;
+    
+    private final EndpointUserService endpointUserService;
 
     private final ApplicationService applicationService;
 
@@ -101,6 +103,7 @@ public class ApplicationActor extends UntypedActor {
         this.operationsService = operationsService;
         this.applicationService = applicationService;
         this.logAppenderService = logAppenderService;
+        this.endpointUserService = endpointUserService;
         this.notificationDeltaService = notificationDeltaService;
         this.applicationToken = applicationToken;
         this.endpointSessions = new HashMap<>();
@@ -473,6 +476,10 @@ public class ApplicationActor extends UntypedActor {
             } else if (logsSessions.remove(name) != null) {
                 LOG.debug("[{}] removed log: {}", applicationToken, localActor);
                 applicationLogActor = getOrCreateLogActor(name, logAppenderService, applicationService);
+                LOG.debug("[{}] created log: {}", applicationToken, applicationLogActor);
+            } else if (userVerifierSessions.remove(name) != null) {
+                LOG.debug("[{}] removed log: {}", applicationToken, localActor);
+                userVerifierActor = getOrCreateUserVerifierActor(name,  endpointUserService, applicationService);
                 LOG.debug("[{}] created log: {}", applicationToken, applicationLogActor);
             }
         } else {
