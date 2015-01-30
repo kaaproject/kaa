@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-#include <boost/test/unit_test.hpp>
-
-#include "kaa/gen/BootstrapGen.hpp"
-#include "kaa/channel/server/HttpServerInfo.hpp"
+#include "kaa/channel/TransportProtocolIdConstants.hpp"
 
 namespace kaa {
 
-BOOST_AUTO_TEST_SUITE(HttpServerInfoTestSuite)
+const TransportProtocolId TransportProtocolIdConstants::HTTP_TRANSPORT_ID(
+                    HTTP_TRANSPORT_PROTOCOL_ID, HTTP_TRANSPORT_PROTOCOL_VERSION);
 
-BOOST_AUTO_TEST_CASE(GetURLTest)
-{
-    HttpServerInfo hsi1(ServerType::OPERATIONS, "test.com", 80, "a2V5");
-    BOOST_CHECK(hsi1.getUrl().getUri() == "/EP/Sync");
+const TransportProtocolId TransportProtocolIdConstants::TCP_TRANSPORT_ID(
+                    TCP_TRANSPORT_PROTOCOL_ID, TCP_TRANSPORT_PROTOCOL_VERSION);
 
-    HttpServerInfo hsi2(ServerType::BOOTSTRAP, "test.com", 80, "a2V5");
-    BOOST_CHECK(hsi2.getUrl().getUri() == "/BS/Resolve");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-}
+} /* namespace kaa */

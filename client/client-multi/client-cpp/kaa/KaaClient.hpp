@@ -26,6 +26,7 @@
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/event/gen/EventFamilyFactory.hpp"
 #include "kaa/profile/ProfileManager.hpp"
+#include "kaa/channel/SyncDataProcessor.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
 #include "kaa/notification/NotificationManager.hpp"
 #include "kaa/schema/storage/ISchemaPersistenceManager.hpp"
@@ -35,8 +36,6 @@
 #include "kaa/ClientStatus.hpp"
 #include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
-#include "kaa/channel/BootstrapDataProcessor.hpp"
-#include "kaa/channel/OperationsDataProcessor.hpp"
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationHttpChannel.hpp"
@@ -90,10 +89,8 @@ public:
 #ifdef KAA_USE_LOGGING
     virtual ILogCollector&                      getLogCollector() { return *logCollector_; }
 #endif
-    virtual IKaaDataMultiplexer&                getOperationMultiplexer() { return *operationsProcessor_; }
-    virtual IKaaDataDemultiplexer&              getOperationDemultiplexer() { return *operationsProcessor_; }
-    virtual IKaaDataMultiplexer&                getBootstrapMultiplexer() { return *bootstrapProcessor_; }
-    virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer() { return *bootstrapProcessor_; }
+    virtual IKaaDataMultiplexer&                getOperationMultiplexer() { return *syncProcessor_; }
+    virtual IKaaDataDemultiplexer&              getOperationDemultiplexer() { return *syncProcessor_; }
 private:
     void initKaaConfiguration();
     void initKaaTransport();
@@ -130,8 +127,7 @@ private:
     std::unique_ptr<EndpointRegistrationManager>    registrationManager_;
 #endif
     std::unique_ptr<IKaaChannelManager>   channelManager_;
-    std::unique_ptr<BootstrapDataProcessor>   bootstrapProcessor_;
-    std::unique_ptr<OperationsDataProcessor>  operationsProcessor_;
+    std::unique_ptr<SyncDataProcessor>  syncProcessor_;
 
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::unique_ptr<DefaultBootstrapChannel>          bootstrapChannel_;

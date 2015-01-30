@@ -25,7 +25,7 @@
 
 namespace kaa {
 
-class DefaultBootstrapChannel : public AbstractHttpChannel<ChannelType::HTTP> {
+class DefaultBootstrapChannel : public AbstractHttpChannel {
 public:
     DefaultBootstrapChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys) : AbstractHttpChannel(channelManager, clientKeys) { }
     virtual ~DefaultBootstrapChannel() { }
@@ -34,10 +34,10 @@ public:
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
 
 private:
-    virtual std::shared_ptr<IHttpRequest> createRequest(AbstractServerInfoPtr server, const std::vector<std::uint8_t>& body)
+    virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body)
     {
         HttpDataProcessor *processor = getHttpDataProcessor();
-        auto request = processor->createBootstrapRequest(server->getUrl(), body);
+        auto request = processor->createBootstrapRequest(server->getURL(), body);
         return request;
     }
 

@@ -79,7 +79,7 @@ case "$cmd" in
     then
         measure_coverage  
     fi
-    test_cleanup
+    #test_cleanup
     if [[ $TEST_RESULT -ne 0 ]]
     then
         echo "Kaa C++ Client unittests failed!"

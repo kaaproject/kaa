@@ -21,22 +21,27 @@
 
 #ifdef KAA_DEFAULT_TCP_CHANNEL
 
-#include "kaa/channel/IDataChannel.hpp"
-#include "kaa/channel/server/KaaTcpServerInfo.hpp"
-#include <boost/asio.hpp>
-#include "kaa/security/KeyUtils.hpp"
-#include "kaa/security/RsaEncoderDecoder.hpp"
-#include "kaa/channel/IKaaChannelManager.hpp"
-#include "kaa/kaatcp/KaaTcpResponseProcessor.hpp"
-#include "kaa/KaaThread.hpp"
-
 #include <cstdint>
 #include <thread>
 #include <array>
 
+#include <boost/asio.hpp>
+
+#include "kaa/KaaThread.hpp"
+#include "kaa/security/KeyUtils.hpp"
+#include "kaa/channel/IDataChannel.hpp"
+#include "kaa/security/RsaEncoderDecoder.hpp"
+#include "kaa/channel/IKaaChannelManager.hpp"
+#include "kaa/kaatcp/KaaTcpResponseProcessor.hpp"
+#include "kaa/channel/IPTransportInfo.hpp"
+#include "kaa/channel/ITransportConnectionInfo.hpp"
+#include "kaa/channel/TransportProtocolIdConstants.hpp"
+
+
 namespace kaa {
 
 class IKaaTcpRequest;
+class KeyPair;
 
 class DefaultOperationTcpChannel : public IDataChannel {
 public:
@@ -48,17 +53,22 @@ public:
     virtual void syncAck(TransportType type);
 
     virtual const std::string& getId() const { return CHANNEL_ID; }
-    virtual ChannelType getChannelType() const { return ChannelType::KAATCP; }
+
+    virtual TransportProtocolId getTransportProtocolId() const {
+        return TransportProtocolIdConstants::TCP_TRANSPORT_ID;
+    }
 
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer);
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
-    virtual void setServer(IServerInfoPtr server);
+    virtual void setServer(ITransportConnectionInfoPtr server);
 
     virtual void shutdown();
     virtual void pause();
     virtual void resume();
 
-    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
+    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
+        return SUPPORTED_TYPES;
+    }
 
     virtual ServerType getServerType() const {
         return ServerType::OPERATIONS;
@@ -124,7 +134,7 @@ private:
     IKaaDataMultiplexer *multiplexer_;
     IKaaDataDemultiplexer *demultiplexer_;
     IKaaChannelManager *channelManager_;
-    OperationServerKaaTcpInfoPtr currentServer_;
+    std::shared_ptr<IPTransportInfo> currentServer_;
     KaaTcpResponseProcessor responsePorcessor;
     std::unique_ptr<RsaEncoderDecoder> encDec_;
 

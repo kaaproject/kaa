@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
+#ifdef KAA_DEFAULT_TCP_CHANNEL
+
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
 
-#ifdef KAA_DEFAULT_TCP_CHANNEL
+#include <memory>
+#include <sstream>
+#include <functional>
+
+#include <boost/bind.hpp>
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
@@ -27,9 +33,6 @@
 #include "kaa/kaatcp/PingRequest.hpp"
 #include "kaa/kaatcp/DisconnectMessage.hpp"
 #include "kaa/http/HttpUtils.hpp"
-#include <boost/bind.hpp>
-#include <sstream>
-#include <functional>
 
 namespace kaa {
 
@@ -204,7 +207,7 @@ void DefaultOperationTcpChannel::onServerFailed()
         return;
     }
 
-    channelManager_->onServerFailed(currentServer_);
+    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
 }
 
 boost::system::error_code DefaultOperationTcpChannel::sendData(const IKaaTcpRequest& request)
@@ -350,21 +353,23 @@ void DefaultOperationTcpChannel::setDemultiplexer(IKaaDataDemultiplexer *demulti
     demultiplexer_ = demultiplexer;
 }
 
-void DefaultOperationTcpChannel::setServer(IServerInfoPtr server)
+void DefaultOperationTcpChannel::setServer(ITransportConnectionInfoPtr server)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
+
     if (isShutdown_) {
         KAA_LOG_WARN(boost::format("Can't set server for channel %1%. Channel is down") % getId());
         return;
     }
-    if (server->getChannelType() == ChannelType::KAATCP) {
+    if (server->getTransportId() == TransportProtocolIdConstants::TCP_TRANSPORT_ID) {
         if (firstStart_ && !isPaused_) {
             createThreads();
             firstStart_ = false;
         }
-        currentServer_ = std::dynamic_pointer_cast<KaaTcpServerInfo, IServerInfo>(server);
+
+        currentServer_.reset(new IPTransportInfo(server));
         encDec_.reset(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
 
         if (!isPaused_) {

@@ -241,9 +241,9 @@
  "direction": "out",
  "fields": [
      {"name": "applicationToken", "type": "string"},
-     {"name": "endpointPublicKeyHash",  "type": "bytes"},
+     {"name": "endpointPublicKeyHash",  "type": ["bytes", "null"]},
      {"name": "profileHash",  "type": ["bytes", "null"]},
-     {"name": "timeout",  "type": "long"}
+     {"name": "timeout",  "type": ["long", "null"]}
   ]
 },
 {
@@ -256,6 +256,25 @@
      {"name": "profileBody", "type": "bytes"},
      {"name": "versionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo"},
      {"name": "endpointAccessToken", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ProtocolVersionPair",
+ "fields": [
+     {"name": "id", "type": "int"},
+     {"name": "version", "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "BootstrapSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "supportedProtocols", "type": {"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"}}
  ]
 },
 {
@@ -312,6 +331,27 @@
  "fields": [
      {"name": "requestId", "type": "int"},
      {"name": "logEntries", "type": [{ "type": "array", "items": "org.kaaproject.kaa.common.endpoint.gen.LogEntry"}, "null"] }
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ProtocolMetaData",
+ "direction": "in",
+ "fields": [
+     {"name": "accessPointId", "type": "int"},
+     {"name": "protocolVersionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"},
+     {"name": "connectionInfo", "type": "bytes"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "BootstrapSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "supportedProtocols", "type": {"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData"}}
  ]
 },
 {
@@ -387,7 +427,7 @@
  "name": "RedirectSyncResponse",
  "direction": "in",
  "fields": [
-     {"name": "dnsName", "type": "string"}
+     {"name": "accessPointId", "type": "int"}
  ]
 },
 {
@@ -398,6 +438,7 @@
  "fields": [
      {"name": "requestId", "type": "int"},
      {"name": "syncRequestMetaData", "type": ["org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData", "null"]},
+     {"name": "bootstrapSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest", "null"]},
      {"name": "profileSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest", "null"]},
      {"name": "configurationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest", "null"]},
      {"name": "notificationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest", "null"]},
@@ -414,6 +455,7 @@
  "fields": [
      {"name": "requestId", "type": "int"},
      {"name": "status", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "bootstrapSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse", "null"]},
      {"name": "profileSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse", "null"]},
      {"name": "configurationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse", "null"]},
      {"name": "notificationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse", "null"]},

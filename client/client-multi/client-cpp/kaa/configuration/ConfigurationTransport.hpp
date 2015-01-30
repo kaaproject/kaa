@@ -29,7 +29,7 @@
 
 namespace kaa {
 
-class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>, public IConfigurationTrasnport {
+class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>, public IConfigurationTransport {
 public:
     ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, ISchemaProcessor *schemaProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status);
 

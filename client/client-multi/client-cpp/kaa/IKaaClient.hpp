@@ -28,7 +28,6 @@ class EventFamilyFactory;
 class INotificationManager;
 class IConfigurationManager;
 class IEventListenersResolver;
-class IExternalTransportManager;
 class ISchemaPersistenceManager;
 class IEndpointRegistrationManager;
 class IConfigurationPersistenceManager;
@@ -170,20 +169,6 @@ public:
      * @return @link IKaaDataDemultiplexer @endlink object
      */
     virtual IKaaDataDemultiplexer&            getOperationDemultiplexer() = 0;
-
-    /**
-     * Retrieves Kaa bootstrap data multiplexer
-     *
-     * @return @link IKaaDataMultiplexer @endlink object
-     */
-    virtual IKaaDataMultiplexer&              getBootstrapMultiplexer() = 0;
-
-    /**
-     * Retrieves Kaa bootstrap data demultiplexer
-     *
-     * @return @link IKaaDataDemultiplexer @endlink object
-     */
-    virtual IKaaDataDemultiplexer&            getBootstrapDemultiplexer() = 0;
 
     virtual ~IKaaClient() { }
 };

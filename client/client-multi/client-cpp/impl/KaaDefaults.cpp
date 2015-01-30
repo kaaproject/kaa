@@ -20,10 +20,6 @@
 #include <cstdint>
 #include <sstream>
 
-#include "kaa/channel/server/HttpServerInfo.hpp"
-#include "kaa/channel/server/HttpLPServerInfo.hpp"
-#include "kaa/channel/server/KaaTcpServerInfo.hpp"
-
 namespace kaa {
 
 const char * const BUILD_VERSION = "0.6.1-SNAPSHOT";
@@ -50,37 +46,9 @@ const char * const CLIENT_PRIV_KEY_LOCATION = "key.private";
 
 const char * const CLIENT_STATUS_FILE_LOCATION = "kaa.status";
 
-static IServerInfoPtr createServerInfo(const int& channelType
-                                     , const std::string host
-                                     , const std::uint16_t& port
-                                     , const std::string& encodedPublicKey)
-{
-    IServerInfoPtr serverInfo;
-
-    switch (channelType) {
-    case 0: // HTTTP
-        serverInfo.reset(new HttpServerInfo(
-                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
-        break;
-    case 1: // HTTTP LP
-        serverInfo.reset(new HttpLPServerInfo(
-                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
-        break;
-    case 2: // Kaa TCP
-        serverInfo.reset(new KaaTcpServerInfo(
-                ServerType::BOOTSTRAP, host, port, encodedPublicKey));
-        break;
-    default:
-        break;
-    }
-
-    return serverInfo;
-}
-
-const BootstrapServers& getServerInfoList() {
+const BootstrapServers& getBootstrapServers() {
     /* Default value for unit test */
-    static BootstrapServers listOfServers = { createServerInfo(0, "test1.com", 80, "a2V5")
-                                            , createServerInfo(0, "test2.com", 443, "a2V5Mg==")};
+    static BootstrapServers listOfServers;
     std::random_shuffle(listOfServers.begin(), listOfServers.end());
     return listOfServers;
 }
@@ -114,35 +82,9 @@ SharedDataBuffer getPropertiesHash() {
     ss << CLIENT_PRIV_KEY_LOCATION;
     ss << CLIENT_STATUS_FILE_LOCATION;
 
-    for (auto server : getServerInfoList()) {
-        switch (server->getChannelType()) {
-        case ChannelType::HTTP:
-        {
-            HttpServerInfo* s = dynamic_cast<HttpServerInfo*>(server.get());
-            ss << s->getHost(); ss << s->getPort();
-            ss.write(reinterpret_cast<const char*>(
-                    s->getPublicKey().begin()), s->getPublicKey().size());
-            break;
-        }
-        case ChannelType::HTTP_LP:
-        {
-            HttpLPServerInfo* s = dynamic_cast<HttpLPServerInfo*>(server.get());
-            ss << s->getHost(); ss << s->getPort();
-            ss.write(reinterpret_cast<const char*>(
-                    s->getPublicKey().begin()), s->getPublicKey().size());
-            break;
-        }
-        case ChannelType::KAATCP:
-        {
-            KaaTcpServerInfo* s = dynamic_cast<KaaTcpServerInfo*>(server.get());
-            ss << s->getHost(); ss << s->getPort();
-            ss.write(reinterpret_cast<const char*>(
-                    s->getPublicKey().begin()), s->getPublicKey().size());
-            break;
-        }
-        default:
-            break;
-        }
+    for (const auto& server : getBootstrapServers()) {
+        const auto& connectionInfo = server->getConnectionInfo();
+        ss.write(reinterpret_cast<const char*>(connectionInfo.data()), connectionInfo.size());
     }
 
     ss.write(reinterpret_cast<const char*>(

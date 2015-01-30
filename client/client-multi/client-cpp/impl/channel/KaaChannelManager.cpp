@@ -20,56 +20,54 @@
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
-#include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/common/exception/KaaException.hpp"
-#include "kaa/channel/server/AbstractServerInfo.hpp"
 
 namespace kaa {
 
 KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers)
     : bootstrapManager_(manager), isShutdown_(false), isPaused_(false)
 {
-    for (const auto& si : servers) {
-        auto& list = bootstrapServers_[si->getChannelType()];
-        list.push_back(si);
+    for (const auto& connectionInfo : servers) {
+        auto& list = bootstrapServers_[connectionInfo->getTransportId()];
+        list.push_back(connectionInfo);
     }
 }
 
-void KaaChannelManager::onServerFailed(IServerInfoPtr server) {
+void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo) {
     if (isShutdown_) {
         KAA_LOG_WARN("Can't update server. Channel manager is down");
         return;
     }
-    if (!server) {
+    if (!connectionInfo) {
         KAA_LOG_WARN("Failed to process server failure: bad input data")
-        throw KaaException("empty server pointer");
+        throw KaaException("empty connection info pointer");
     }
 
-    if (server->getServerType() == ServerType::BOOTSTRAP) {
-        onServerUpdated(getNextBootstrapServer(server));
+    if (connectionInfo->getServerType() == ServerType::BOOTSTRAP) {
+        onTransportConnectionInfoUpdated(getNextBootstrapServer(connectionInfo));
     } else {
-        bootstrapManager_.useNextOperationsServer(server->getChannelType());
+        bootstrapManager_.useNextOperationsServer(connectionInfo->getTransportId());
     }
 }
 
-void KaaChannelManager::onServerUpdated(IServerInfoPtr server) {
+void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo) {
     if (isShutdown_) {
         KAA_LOG_WARN("Can't update server. Channel manager is down");
         return;
     }
-    if (!server) {
-        KAA_LOG_WARN("Failed to update server: bad input data")
-        throw KaaException("empty server pointer");
+    if (!connectionInfo) {
+        KAA_LOG_WARN("Failed to update connection info: bad input data")
+        throw KaaException("empty connection info pointer");
     }
 
-    ChannelType type = server->getChannelType();
-    if (server->getServerType() == ServerType::OPERATIONS) {
+    TransportProtocolId protocolId = connectionInfo->getTransportId();
+    if (connectionInfo->getServerType() == ServerType::OPERATIONS) {
         KAA_MUTEX_LOCKING("lastOpsServersGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lastOpsServers_Lock, lastOpsServersGuard_);
         KAA_MUTEX_LOCKED("lastOpsServersGuard_");
 
-        lastOpsServers_[type] = server;
+        lastOpsServers_[protocolId] = connectionInfo;
     }
 
     KAA_MUTEX_LOCKING("channelGuard_");
@@ -77,10 +75,10 @@ void KaaChannelManager::onServerUpdated(IServerInfoPtr server) {
     KAA_MUTEX_LOCKED("channelGuard_");
 
     for (auto& channel : channels_) {
-        if (channel->getServerType() == server->getServerType() && channel->getChannelType() == type) {
-            KAA_LOG_DEBUG(boost::format("Setting a new server for channel \"%1%\" type %2%")
-                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getChannelType()));
-            channel->setServer(server);
+        if (channel->getServerType() == connectionInfo->getServerType() && channel->getTransportProtocolId() == protocolId) {
+            KAA_LOG_DEBUG(boost::format("Setting a new connection data for channel \"%1%\" %2%")
+                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+            channel->setServer(connectionInfo);
         }
     }
 }
@@ -96,28 +94,29 @@ void KaaChannelManager::addChannelToList(IDataChannelPtr channel)
     if (res.second) {
         channel->setConnectivityChecker(connectivityChecker_);
 
-        IServerInfoPtr server;
+        ITransportConnectionInfoPtr connectionInfo;
 
+        TransportProtocolId protocolId = channel->getTransportProtocolId();
         if (channel->getServerType() == ServerType::BOOTSTRAP) {
-            server = getCurrentBootstrapServer(channel->getChannelType());
+            connectionInfo = getCurrentBootstrapServer(protocolId);
         } else {
             KAA_MUTEX_LOCKING("lastOpsServersGuard_");
             KAA_MUTEX_UNIQUE_DECLARE(lastOpsServers_Lock, lastOpsServersGuard_);
             KAA_MUTEX_LOCKED("lastOpsServersGuard_");
 
-            auto it = lastOpsServers_.find(channel->getChannelType());
+            auto it = lastOpsServers_.find(channel->getTransportProtocolId());
             if (it != lastOpsServers_.end()) {
-                server = it->second;
+                connectionInfo = it->second;
             }
         }
 
-        if (server) {
-            KAA_LOG_DEBUG(boost::format("Setting a new server for channel \"%1%\" type %2%")
-                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getChannelType()));
-            channel->setServer(server);
+        if (connectionInfo) {
+            KAA_LOG_DEBUG(boost::format("Setting a new server for channel \"%1%\" %2%")
+                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+            channel->setServer(connectionInfo);
         } else {
-            KAA_LOG_WARN(boost::format("Failed to find server for channel \"%1%\" type %2%")
-                        % channel->getId() % LoggingUtils::ChannelTypeToString(channel->getChannelType()))
+            KAA_LOG_WARN(boost::format("Failed to find server for channel \"%1%\" %2%")
+                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
         }
     }
 }
@@ -260,23 +259,6 @@ std::list<IDataChannelPtr> KaaChannelManager::getChannels()
     return channels;
 }
 
-std::list<IDataChannelPtr> KaaChannelManager::getChannelsByType(ChannelType type)
-{
-    KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
-    KAA_MUTEX_LOCKED("channelGuard_");
-
-    std::list<IDataChannelPtr> channels;
-
-    for (auto& channel : channels_) {
-        if (channel->getChannelType() == type) {
-            channels.push_back(channel);
-        }
-    }
-
-    return channels;
-}
-
 IDataChannelPtr KaaChannelManager::getChannelByTransportType(TransportType type)
 {
     KAA_MUTEX_LOCKING("mappedChannelGuard_");
@@ -324,42 +306,42 @@ void KaaChannelManager::clearChannelList()
     mappedChannels_.clear();
 }
 
-IServerInfoPtr KaaChannelManager::getCurrentBootstrapServer(ChannelType type)
+ITransportConnectionInfoPtr KaaChannelManager::getCurrentBootstrapServer(const TransportProtocolId& protocolId)
 {
-    IServerInfoPtr si;
-    auto it = lastBSServers_.find(type);
+    ITransportConnectionInfoPtr connectionInfo;
+    auto it = lastBSServers_.find(protocolId);
     if (it == lastBSServers_.end()) {
-        auto serverTypeIt = bootstrapServers_.find(type);
+        auto serverTypeIt = bootstrapServers_.find(protocolId);
         if (serverTypeIt != bootstrapServers_.end()) {
-            si = (*serverTypeIt).second.front();
-            lastBSServers_[type] = si;
+            connectionInfo = (*serverTypeIt).second.front();
+            lastBSServers_[protocolId] = connectionInfo;
         }
     } else {
-        si = (*it).second;
+        connectionInfo = (*it).second;
     }
 
-    return si;
+    return connectionInfo;
 }
 
-IServerInfoPtr KaaChannelManager::getNextBootstrapServer(IServerInfoPtr currentServer)
+ITransportConnectionInfoPtr KaaChannelManager::getNextBootstrapServer(ITransportConnectionInfoPtr usedConnectionInfo)
 {
-    IServerInfoPtr si;
+    ITransportConnectionInfoPtr nextConnectionInfo;
 
-    auto serverTypeIt = bootstrapServers_.find(currentServer->getChannelType());
+    auto serverTypeIt = bootstrapServers_.find(usedConnectionInfo->getTransportId());
     if (serverTypeIt != bootstrapServers_.end()) {
         const auto& list = (*serverTypeIt).second;
-        auto serverIt = std::find(list.begin(), list.end(), currentServer);
+        auto serverIt = std::find(list.begin(), list.end(), usedConnectionInfo);
 
         if (serverIt != list.end()) {
             if (++serverIt != list.end()) {
-                si = (*serverIt);
+                nextConnectionInfo = (*serverIt);
             } else {
-                si = list.front();
+                nextConnectionInfo = list.front();
             }
         }
     }
 
-    return si;
+    return nextConnectionInfo;
 }
 
 void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker) {

@@ -98,11 +98,9 @@ void DefaultOperationLongPollChannel::executeTask()
     }
     connectionInProgress_ = true;
 
-    OperationServerLongPollInfoPtr server = currentServer_;
-
     const auto& bodyRaw = multiplexer_->compileRequest(getSupportedTransportTypes());
     // Creating HTTP request using the given data
-    std::shared_ptr<IHttpRequest> postRequest = httpDataProcessor_.createOperationRequest(server->getUrl(), bodyRaw);
+    std::shared_ptr<IHttpRequest> postRequest = httpDataProcessor_.createOperationRequest(currentServer_->getURL(), bodyRaw);
 
     KAA_MUTEX_UNLOCKING("channelGuard_");
     KAA_UNLOCK(lock);
@@ -137,7 +135,8 @@ void DefaultOperationLongPollChannel::executeTask()
         if (stopped_) {
             KAA_LOG_INFO(boost::format("Connection for channel %1% was aborted") % getId());
         } else {
-            KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%") % server->getHost() % server->getPort() % e.what());
+            KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%")
+                    % currentServer_->getHost() % currentServer_->getPort() % e.what());
             isServerFailed = true;
             stopped_ = true;
         }
@@ -150,7 +149,7 @@ void DefaultOperationLongPollChannel::executeTask()
         KAA_MUTEX_LOCKED("conditionMutex_");
         KAA_CONDITION_NOTIFY_ALL(waitCondition_);
         if (isServerFailed) {
-            channelManager_->onServerFailed(server);
+            channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
         }
         return;
     }
@@ -227,7 +226,7 @@ void DefaultOperationLongPollChannel::setDemultiplexer(IKaaDataDemultiplexer *de
     demultiplexer_ = demultiplexer;
 }
 
-void DefaultOperationLongPollChannel::setServer(IServerInfoPtr server)
+void DefaultOperationLongPollChannel::setServer(ITransportConnectionInfoPtr server)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
@@ -236,13 +235,18 @@ void DefaultOperationLongPollChannel::setServer(IServerInfoPtr server)
         KAA_LOG_WARN(boost::format("Can't set server for channel %1%. Channel is down") % getId());
         return;
     }
-    if (server->getChannelType() == ChannelType::HTTP_LP) {
+    if (server->getTransportId() == TransportProtocolIdConstants::HTTP_TRANSPORT_ID) {
         if (!isPaused_) {
             stopPoll();
         }
-        currentServer_ = std::dynamic_pointer_cast<HttpLPServerInfo, IServerInfo>(server);
-        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
+
+        currentServer_.reset(new IPTransportInfo(server));
+        std::shared_ptr<IEncoderDecoder> encDec(
+                new RsaEncoderDecoder(clientKeys_.getPublicKey()
+                                    , clientKeys_.getPrivateKey()
+                                    , currentServer_->getPublicKey()));
         httpDataProcessor_.setEncoderDecoder(encDec);
+
         if (!isPaused_) {
             startPoll();
         }

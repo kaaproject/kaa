@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-#include "kaa/channel/OperationsDataProcessor.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
+#include "kaa/channel/SyncDataProcessor.hpp"
 
 namespace kaa {
 
-OperationsDataProcessor::OperationsDataProcessor(
+SyncDataProcessor::SyncDataProcessor(
                       IMetaDataTransportPtr       metaDataTransport
+                    , IBootstrapTransportPtr      bootstrapTransport
                     , IProfileTransportPtr        profileTransport
                     , IConfigurationTransportPtr  configurationTransport
                     , INotificationTransportPtr   notificationTransport
@@ -31,6 +32,7 @@ OperationsDataProcessor::OperationsDataProcessor(
                     , IRedirectionTransportPtr    redirectionTransport
                     , IKaaClientStateStoragePtr   clientStatus)
         : metaDataTransport_(metaDataTransport)
+        , bootstrapTransport_(bootstrapTransport)
         , profileTransport_(profileTransport)
         , configurationTransport_(configurationTransport)
         , notificationTransport_(notificationTransport)
@@ -44,10 +46,12 @@ OperationsDataProcessor::OperationsDataProcessor(
 
 }
 
-std::vector<std::uint8_t> OperationsDataProcessor::compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes)
+std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes)
 {
     SyncRequest request;
+
     request.requestId = ++requestId;
+    request.bootstrapSyncRequest.set_null();
     request.configurationSyncRequest.set_null();
     request.eventSyncRequest.set_null();
     request.logSyncRequest.set_null();
@@ -63,8 +67,24 @@ std::vector<std::uint8_t> OperationsDataProcessor::compileRequest(const std::map
                         % LoggingUtils::MetaDataSyncRequestToString(request.syncRequestMetaData));
 
     for (const auto& t : transportTypes) {
-        bool isDownDirection = t.second == ChannelDirection::DOWN;
+        bool isDownDirection = (t.second == ChannelDirection::DOWN);
         switch (t.first) {
+            case TransportType::BOOTSTRAP :
+                if (isDownDirection) {
+                    request.bootstrapSyncRequest.set_null();
+                } else if (bootstrapTransport_) {
+                    auto ptr = bootstrapTransport_->createBootstrapSyncRequest();
+                    if (ptr) {
+                        request.bootstrapSyncRequest.set_BootstrapSyncRequest(*ptr);
+                    } else {
+                        request.bootstrapSyncRequest.set_null();
+                    }
+                } else {
+                    KAA_LOG_WARN("Bootstrap transport was not specified.");
+                }
+                KAA_LOG_DEBUG(boost::format("Compiled BootstrapSyncRequest: %1%")
+                    % LoggingUtils::BootstrapSyncRequestToString(request.bootstrapSyncRequest));
+            break;
             case TransportType::PROFILE :
                 if (isDownDirection) {
                     request.profileSyncRequest.set_null();
@@ -171,19 +191,33 @@ std::vector<std::uint8_t> OperationsDataProcessor::compileRequest(const std::map
                 KAA_LOG_DEBUG(boost::format("Compiled LogSyncRequest: %1%")
                     % LoggingUtils::LogSyncRequestToString(request.logSyncRequest));
                 break;
-            default:    break;
+            default:
+                break;
         }
     }
-    SharedDataBuffer buffer = requestConverter_.toByteArray(request);
-    return std::vector<std::uint8_t>(buffer.first.get(), buffer.first.get() + buffer.second);
+
+    std::vector<std::uint8_t> encodedData;
+    requestConverter_.toByteArray(request, encodedData);
+
+    return encodedData;
 }
 
-void OperationsDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
+void SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
     SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
     std::int32_t requestId = syncResponse.requestId;
     KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%")
         % requestId );
+
+    if (!syncResponse.bootstrapSyncResponse.is_null() ) {
+        KAA_LOG_DEBUG(boost::format("Got BootstrapSyncResponse: %1%")
+            % LoggingUtils::BootstrapSyncResponseToString(syncResponse.bootstrapSyncResponse));
+        if (bootstrapTransport_) {
+            bootstrapTransport_->onBootstrapResponse(syncResponse.bootstrapSyncResponse.get_BootstrapSyncResponse());
+        } else {
+            KAA_LOG_ERROR("Got bootstrap sync response, but profile transport was not set!");
+        }
+    }
 
     if (!syncResponse.profileSyncResponse.is_null() ) {
         KAA_LOG_DEBUG(boost::format("Got ProfileSyncResponse: %1%")

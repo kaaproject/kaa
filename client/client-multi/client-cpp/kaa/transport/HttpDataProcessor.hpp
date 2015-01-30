@@ -23,20 +23,20 @@
     defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
     defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
 
-#include "kaa/security/RsaEncoderDecoder.hpp"
-#include "kaa/common/AvroByteArrayConverter.hpp"
-#include "kaa/http/IHttpResponse.hpp"
-#include "kaa/http/IHttpRequest.hpp"
-#include "kaa/http/MultipartPostHttpRequest.hpp"
-#include "kaa/transport/TransportException.hpp"
-#include "kaa/gen/BootstrapGen.hpp"
-#include "kaa/gen/EndpointGen.hpp"
-
 #include <vector>
 #include <memory>
 #include <cstdint>
+
 #include <boost/noncopyable.hpp>
+
 #include <botan/base64.h>
+
+#include "kaa/http/IHttpRequest.hpp"
+#include "kaa/http/IHttpResponse.hpp"
+#include "kaa/security/RsaEncoderDecoder.hpp"
+#include "kaa/http/MultipartPostHttpRequest.hpp"
+#include "kaa/transport/TransportException.hpp"
+
 
 namespace kaa {
 
