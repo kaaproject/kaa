@@ -51,6 +51,9 @@ typedef enum {
     KAA_ERR_EVENT_NOT_ATTACHED      = -41,
     KAA_ERR_EVENT_BAD_FQN           = -42,
     KAA_ERR_EVENT_TRX_NOT_FOUND     = -43,
+
+    KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED   = -101,
+    KAA_ERR_TCPCHANNEL_PARSER_INIT_FAILED  = -102,
 } kaa_error_t;
 
 #ifdef __cplusplus

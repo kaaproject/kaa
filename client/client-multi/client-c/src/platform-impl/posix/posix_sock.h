@@ -23,11 +23,20 @@ posix_sock.h
 #ifndef POSIX_SOCK_H_
 #define POSIX_SOCK_H_
 
+#include <sys/socket.h>
 #include <arpa/inet.h>
+
+typedef int kaa_fd;
+
+typedef struct sockaddr kaa_sockaddr_t;
+
+
 #define KAA_HTONS(hostshort)    htons((hostshort))
 #define KAA_HTONL(hostlong)     htonl((hostlong))
 
 #define KAA_NTOHS(netshort)     ntohs((netshort))
 #define KAA_NTOHL(netlong)      ntohl((netlong))
+
+
 
 #endif /* POSIX_SOCK_H_ */

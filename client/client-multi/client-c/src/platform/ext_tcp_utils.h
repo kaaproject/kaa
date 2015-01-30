@@ -15,7 +15,7 @@
  */
 
 /*
- * ext_tcp_utils.h
+ * @file ext_tcp_utils.h
  *
  *  Created on: Jan 23, 2015
  *      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
@@ -24,29 +24,28 @@
 #ifndef EXT_TCP_UTILS_H_
 #define EXT_TCP_UTILS_H_
 
-typedef int kaa_fd;
+#include "sock.h"
+
 #define KAA_TCP_SOCKET_NOT_SET -1
 
-typedef struct {
-    uint32_t ip_addr;
-    uint16_t port;
-} kaa_sockaddr_v4_t;
+
 
 typedef enum {
     RET_STATE_VALUE_ERROR, RET_STATE_VALUE_READY, RET_STATE_VALUE_IN_PROGRESS
-} kaa_function_return_state_t;
+} ext_tcp_utils_function_return_state_t;
 
 typedef enum {
     KAA_TCP_SOCK_ERROR, KAA_TCP_SOCK_CONNECTING, KAA_TCP_SOCK_CONNECTED
-} kaa_tcp_socket_state_t;
+} ext_tcp_socket_state_t;
 
 typedef enum {
     KAA_TCP_SOCK_IO_OK, KAA_TCP_SOCK_IO_EOF, KAA_TCP_SOCK_IO_ERROR
-} kaa_tcp_socket_io_errors_t;
+} ext_tcp_socket_io_errors_t;
 
-#define NTOHL(V) ntohl(V)
 
-typedef kaa_error_t (*kaa_tcp_utils_value_complete_fn)(void *context);
+typedef kaa_error_t (*ext_tcp_utils_value_complete_fn)(void *context);
+
+kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port);
 
 /**
  * Hostname DNS resolving helper function
@@ -56,13 +55,13 @@ typedef kaa_error_t (*kaa_tcp_utils_value_complete_fn)(void *context);
  *          and need to wait until hostresolved_callback is invoked.
  *          RET_STATE_VALUE_ERROR - mean error.
  */
-kaa_function_return_state_t kaa_tcp_utils_gethostbyaddr_v4(void *context, kaa_tcp_utils_value_complete_fn hostresolved_callback, uint32_t * ip_v4, const char * hostname, size_t hostname_size);
+ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(void *context, ext_tcp_utils_value_complete_fn hostresolved_callback, kaa_sockaddr_t * ip, const char * hostname, size_t hostname_size);
 
 
 /**
  * Create and open non blocking TCP V4 connection.
  */
-kaa_error_t kaa_tcp_utils_open_v4_tcp_socket(kaa_fd * fd, kaa_sockaddr_v4_t * destination);
+kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd * fd, kaa_sockaddr_t * destination);
 
 /**
  * Check state of connecting TCP V4 socket
@@ -71,7 +70,7 @@ kaa_error_t kaa_tcp_utils_open_v4_tcp_socket(kaa_fd * fd, kaa_sockaddr_v4_t * de
  *        KAA_TCP_SOCK_CONNECTING - still connecting
  *        KAA_TCP_SOCK_CONNECTED - connect successful.
  */
-kaa_tcp_socket_state_t kaa_tcp_utils_v4_tcp_socket_check(kaa_fd fd);
+ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd fd);
 
 
 /**
@@ -83,7 +82,7 @@ kaa_tcp_socket_state_t kaa_tcp_utils_v4_tcp_socket_check(kaa_fd fd);
  *       KAA_TCP_SOCK_IO_OK - write successful.
  *       KAA_TCP_SOCK_IO_ERROR - write failed, socket write return -1
  */
-kaa_tcp_socket_io_errors_t kaa_tcp_utils_v4_tcp_socket_write(kaa_fd fd, const char * buffer, size_t buffer_size, size_t * bytes_written);
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char * buffer, size_t buffer_size, size_t * bytes_written);
 
 
 /**
@@ -96,11 +95,11 @@ kaa_tcp_socket_io_errors_t kaa_tcp_utils_v4_tcp_socket_write(kaa_fd fd, const ch
  *       KAA_TCP_SOCK_IO_EOF - read return 0 bytes read, mostly mean FIN/ACK received.
  *       KAA_TCP_SOCK_IO_ERROR - read failed, socket read return -1
  */
-kaa_tcp_socket_io_errors_t kaa_tcp_utils_v4_tcp_socket_read(kaa_fd fd, const char * buffer, size_t buffer_size, size_t * bytes_read);
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd fd, const char * buffer, size_t buffer_size, size_t * bytes_read);
 
 /**
  * Close socket.
  */
-kaa_error_t kaa_tcp_utils_v4_tcp_socket_close(kaa_fd fd);
+kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd fd);
 
 #endif /* EXT_TCP_UTILS_H_ */

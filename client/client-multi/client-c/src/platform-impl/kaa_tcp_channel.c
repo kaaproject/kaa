@@ -21,7 +21,7 @@
  *      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
  */
 
-
+#include <stdbool.h>
 #include "kaa_tcp_channel.h"
 #include "../kaa_common.h"
 #include "../utilities/kaa_mem.h"
@@ -47,7 +47,7 @@ typedef struct {
     size_t public_key_length;
     char * hostname;
     size_t hostname_length;
-    kaa_sockaddr_v4_t sockaddr;
+    kaa_sockaddr_t sockaddr;
     kaa_fd  socket_descriptor;
 } kaa_tcp_access_point_t;
 
@@ -123,8 +123,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel)
 
     kaatcp_error_t parser_ret = kaatcp_parser_init(kaa_tcp_channel->parser, &parser_handler);
     if (parser_ret) {
-        //TODO make correct error code
-        return KAA_ERR_BADDATA;
+        return KAA_ERR_TCPCHANNEL_PARSER_INIT_FAILED;
     }
 
     channel->context = (void*) kaa_tcp_channel;
@@ -345,7 +344,7 @@ kaa_error_t kaa_tcp_channel_release_context(void * context) {
 kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transport_context)
 {
     KAA_RETURN_IF_NIL2(context, transport_context, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL2(transport_context->platform_protocol, transport_context->bootstrap_maanger, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(transport_context->platform_protocol, transport_context->bootstrap_manager, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
 
     kaa_error_t ret = KAA_ERR_NONE;
@@ -438,22 +437,23 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
 
     remaining_to_read = 4;
     if ((position + remaining_to_read) <= access_point->connection_data_len) {
-        channel->access_point.sockaddr.port = (uint16_t)get_uint32_t(access_point->connection_data + position);
+        ext_tcp_utils_set_sockaddr_port(&channel->access_point.sockaddr, (uint16_t)get_uint32_t(access_point->connection_data + position));
         position += remaining_to_read;
     } else {
         return KAA_ERR_INSUFFICIENT_BUFFER;
     }
 
-    kaa_function_return_state_t r = kaa_tcp_utils_gethostbyaddr_v4(
+    ext_tcp_utils_function_return_state_t r = ext_tcp_utils_gethostbyaddr(
             (void*)channel,
             kaa_tcp_channel_set_access_point_hostname_resolved,
-            &channel->access_point.sockaddr.ip_addr,
+            &channel->access_point.sockaddr,
             channel->access_point.hostname,
             channel->access_point.hostname_length);
     switch (r) {
         case RET_STATE_VALUE_IN_PROGRESS:
             channel->access_point.state = AP_NOT_SET;
-            ret = KAA_ERR_ACCESS_POINT_RESOLVE_FAILED;
+            ret = KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED;
+            break;
         case RET_STATE_VALUE_READY:
             channel->access_point.state = AP_RESOLVED;
             ret = kaa_tcp_channel_connect_access_point(channel);
@@ -540,11 +540,7 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t * channel)
 
     kaa_error_t ret = KAA_ERR_NONE;
 
-    if (channel->access_point.sockaddr.ip_addr > 0) {
-        channel->access_point.state = AP_SET;
-    } else {
-        channel->access_point.state = AP_NOT_SET;
-    }
+    channel->access_point.state = AP_SET;
 
     channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
 
@@ -583,7 +579,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
                 ret = kaa_buffer_get_unprocessed_space(tcp_channel->in_buffer, &buf, &buf_size);
                 KAA_RETURN_IF_ERR(ret);
                 if (buf_size > 0) {
-                    kaa_tcp_socket_io_errors_t ioe = kaa_tcp_utils_v4_tcp_socket_read(fd_p, buf, buf_size, &bytes_read);
+                    ext_tcp_socket_io_errors_t ioe = ext_tcp_utils_tcp_socket_read(fd_p, buf, buf_size, &bytes_read);
                     switch (ioe) {
                         case KAA_TCP_SOCK_IO_OK:
 
@@ -591,7 +587,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
                             ret = kaa_buffer_free_allicated_space(tcp_channel->out_buffer, bytes_read);
                             break;
                         default:
-                            ret = kaa_tcp_channel_socket_io_error(tcp_channel);
+                            ret = ext_tcp_channel_socket_io_error(tcp_channel);
                             break;
                     }
                 }
@@ -599,7 +595,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
             break;
         case FD_WRITE:
             if (tcp_channel->access_point.state == AP_CONNECTING) {
-                kaa_tcp_socket_state_t s = kaa_tcp_utils_v4_tcp_socket_check(fd_p);
+                ext_tcp_socket_state_t s = kaa_tcp_utils_v4_tcp_socket_check(fd_p);
                 switch (s) {
                     case KAA_TCP_SOCK_ERROR:
                         tcp_channel->access_point.state = AP_RESOLVED;
@@ -630,7 +626,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
                 ret = kaa_buffer_get_unprocessed_space(tcp_channel->out_buffer, &buf, &buf_size);
                 KAA_RETURN_IF_ERR(ret);
                 if (buf_size > 0) {
-                    kaa_tcp_socket_io_errors_t ioe = kaa_tcp_utils_v4_tcp_socket_write(fd_p, buf, buf_size, &bytes_written);
+                    ext_tcp_socket_io_errors_t ioe = kaa_tcp_utils_v4_tcp_socket_write(fd_p, buf, buf_size, &bytes_written);
                     switch (ioe) {
                         case KAA_TCP_SOCK_IO_OK:
                             ret = kaa_buffer_free_allicated_space(tcp_channel->out_buffer, bytes_written);
@@ -700,8 +696,7 @@ kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t * channel)
     channel->access_point.socket_descriptor = KAA_TCP_SOCKET_NOT_SET;
     channel->access_point.state = AP_NOT_SET;
     channel->access_point.id = 0;
-    channel->access_point.sockaddr.ip_addr = 0;
-    channel->access_point.sockaddr.port = 0;
+
     if (channel->access_point.hostname) {
         KAA_FREE(channel->access_point.hostname);
         channel->access_point.hostname = NULL;
