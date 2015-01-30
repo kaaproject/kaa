@@ -297,6 +297,15 @@
                                             <destFileName>admin.deb</destFileName>
                                         </artifactItem>
                                         <artifactItem>
+                                            <groupId>org.kaaproject.avro-ui</groupId>
+                                            <artifactId>gwt-sandbox</artifactId>
+                                            <version>${avro-ui.version}</version>
+                                            <type>war</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${webapps.path}</outputDirectory>
+                                            <destFileName>avroUiSandbox.war</destFileName>
+                                        </artifactItem>                                                  
+                                        <artifactItem>
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>control</artifactId>
                                             <version>${project.version}</version>
