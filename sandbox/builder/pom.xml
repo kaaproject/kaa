@@ -78,6 +78,10 @@
             <artifactId>ant-jsch</artifactId>
             <version>1.9.4</version>
         </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

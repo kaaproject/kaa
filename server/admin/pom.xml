@@ -50,29 +50,26 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
-            <version>${gwt.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
-            <version>${gwt.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-codeserver</artifactId>
-            <version>${gwt.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.github.jdramaix</groupId>
             <artifactId>gwtchosen</artifactId>
-            <version>1.2.0</version>
+            <version>${gwtchosen.version}</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.gwtquery</groupId>
             <artifactId>gwtquery</artifactId>
-            <version>1.4.2</version>
+            <version>${gwtquery.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -42,6 +42,8 @@ Copyright 2014 CyberVision, Inc.
         <oracle-nosql-client.version>3.0.14</oracle-nosql-client.version>
         <oracle-kvstore.version>3.1.7</oracle-kvstore.version>
         <gwt.version>2.6.1</gwt.version>
+        <gwtchosen.version>1.2.0</gwtchosen.version>
+        <gwtquery.version>1.4.2</gwtquery.version>
         <aspectj.version>1.7.4</aspectj.version>
         <twitter.common.thrift.version>0.0.64</twitter.common.thrift.version>
 
@@ -64,6 +66,7 @@ Copyright 2014 CyberVision, Inc.
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <commons.pool.version>1.5.4</commons.pool.version>
         <commons-lang3.version>3.1</commons-lang3.version>
+        <commons-logging.version>1.1.1</commons-logging.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
         <httpcomponents.core.version>4.2.5</httpcomponents.core.version>
         <jackson.version>1.9.13</jackson.version>
@@ -79,6 +82,7 @@ Copyright 2014 CyberVision, Inc.
         <jline.version>2.11</jline.version>
 
         <slf4j.version>1.7.7</slf4j.version>
+        <slf4j-android.version>1.7.7</slf4j-android.version>
         <logback.version>1.1.2</logback.version>
         <logback-ext-spring.version>0.1.2</logback-ext-spring.version>
 
@@ -107,6 +111,7 @@ Copyright 2014 CyberVision, Inc.
         <versly-wsdoc.version>1.0-SNAPSHOT</versly-wsdoc.version>
         <ant.version>1.9.4</ant.version>
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
+        <cdap-stream-client.version>1.0.1</cdap-stream-client.version>
     </properties>
 
     <modules>
@@ -522,9 +527,38 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+                <artifactId>shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+                <artifactId>shared</artifactId>
+                <version>${project.version}</version>
+                <classifier>sources</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+                <artifactId>converter</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>admin-rest-client</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>cdap</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>oracle-nosql</classifier>
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
@@ -775,6 +809,12 @@ Copyright 2014 CyberVision, Inc.
                 <version>${commons-fileupload.version}</version>
             </dependency>
             <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-compiler</artifactId>
                 <version>${avro.version}</version>
@@ -995,6 +1035,11 @@ Copyright 2014 CyberVision, Inc.
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-android</artifactId>
+                <version>${slf4j-android.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
@@ -1034,6 +1079,36 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>com.google.android</groupId>
                 <artifactId>android</artifactId>
                 <version>${android.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-servlet</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-user</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-dev</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-codeserver</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.jdramaix</groupId>
+                <artifactId>gwtchosen</artifactId>
+                <version>${gwtchosen.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.gwtquery</groupId>
+                <artifactId>gwtquery</artifactId>
+                <version>${gwtquery.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>
@@ -1097,6 +1172,11 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons-lang.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>co.cask.cdap</groupId>
+                <artifactId>cdap-stream-client</artifactId>
+                <version>${cdap-stream-client.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
