@@ -23,7 +23,7 @@
         <artifactId>nosql</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-    <artifactId>cassandra</artifactId>
+    <artifactId>cassandra-dao</artifactId>
     <packaging>jar</packaging>
 
     <name>Kaa DAO Cassandra plugin</name>
@@ -126,13 +126,5 @@
                 </executions>
             </plugin>
         </plugins>
-        <!--<testResources>-->
-            <!--<testResource>-->
-                <!--<directory>src/test/resources</directory>-->
-            <!--</testResource>-->
-            <!--<testResource>-->
-                <!--<directory>src/main/resources</directory>-->
-            <!--</testResource>-->
-        <!--</testResources>-->
     </build>
 </project>

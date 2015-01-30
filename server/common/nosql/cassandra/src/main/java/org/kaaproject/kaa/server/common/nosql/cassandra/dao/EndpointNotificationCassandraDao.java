@@ -1,6 +1,5 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
@@ -22,7 +21,7 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 
-@Repository
+@Repository(value = "unicastNotificationDao")
 public class EndpointNotificationCassandraDao extends AbstractCassandraDao<CassandraEndpointNotification, String> implements EndpointNotificationDao<CassandraEndpointNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointNotificationCassandraDao.class);
@@ -62,8 +61,8 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
     public void removeNotificationsByAppId(String appId) {
         LOG.debug("Remove endpoint notifications by app id {}", appId);
         Statement deleteEPNfs = delete().from(getColumnFamilyName()).where(QueryBuilder.in(CassandraModelConstants.ET_NF_ENDPOINT_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
-        Statement deleteEPNfsByAppId = delete().from(CassandraModelConstants.NF_BY_APP_COLUMN_FAMILY_NAME).where(eq(CassandraModelConstants.NF_BY_APP_APPLICATION_ID_PROPERTY, appId));
-        executeBatch(BatchStatement.Type.UNLOGGED, deleteEPNfs, deleteEPNfsByAppId);
+        LOG.trace("Execute query {}", deleteEPNfs);
+        execute(deleteEPNfs);
     }
 
     @Override
@@ -83,7 +82,7 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
                 .and(eq(CassandraModelConstants.ET_NF_LAST_MOD_TIME_PROPERTY, key.getLastModifyTime()));
         LOG.debug("[id] Execute query {}:", id, where);
         CassandraEndpointNotification endpointNotification = findOneByStatement(where);
-        LOG.debug(" endpoint notification by id {}:", id, endpointNotification != null ? "Found" : "No found");
+        LOG.debug("{} endpoint notification by id {}:", endpointNotification != null ? "Found" : "No found", id);
         LOG.trace("Found endpoint notification {} by id {}:", endpointNotification, id);
         return endpointNotification;
     }

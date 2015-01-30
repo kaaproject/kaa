@@ -792,7 +792,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                    <artifactId>cassandra</artifactId>
+                    <artifactId>cassandra-dao</artifactId>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

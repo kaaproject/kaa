@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
+package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type;
 
 import com.datastax.driver.mapping.annotations.Field;
 import com.datastax.driver.mapping.annotations.Transient;
@@ -24,15 +24,19 @@ import org.kaaproject.kaa.server.common.dao.model.ToDto;
 
 import java.io.Serializable;
 
-@UDT(name = CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME)
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME;
+
+@UDT(name = EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME)
 public final class CassandraEventClassFamilyVersionState implements ToDto<EventClassFamilyVersionStateDto>, Serializable {
 
     @Transient
     private static final long serialVersionUID = 3766947955702551264L;
 
-    @Field(name = CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY)
+    @Field(name = EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY)
     private String ecfId;
-    @Field(name = CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY)
+    @Field(name = EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY)
     private int version;
 
     public CassandraEventClassFamilyVersionState() {

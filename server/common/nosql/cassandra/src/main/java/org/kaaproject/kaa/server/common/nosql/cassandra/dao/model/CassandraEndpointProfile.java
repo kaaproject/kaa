@@ -26,6 +26,8 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;

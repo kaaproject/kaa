@@ -16,76 +16,121 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
-import com.datastax.driver.mapping.EnumType;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
+import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraNfSchemaVersionType;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.KEY_DELIMITER;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_APPLICATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_BODY_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_EXPIRED_AT_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_LAST_MOD_TIME_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_NOTIFICATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_SCHEMA_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_SCHEMA_VER_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_SEQ_NUM_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_TOPIC_ID_PROPERTY;
 
 
-@Table(name = CassandraModelConstants.NF_COLUMN_FAMILY_NAME)
+@Table(name = NF_COLUMN_FAMILY_NAME)
 public final class CassandraNotification implements Notification, Serializable {
 
     @Transient
+    public static final int MAX_BATCH_SIZE = 200;
+    @Transient
     private static final long serialVersionUID = 348872010210481058L;
+    @Transient
+    private static final int COMPOSITE_ID_SIZE = 5;
 
     @PartitionKey(value = 0)
-    @Column(name = CassandraModelConstants.NF_TOPIC_ID_PROPERTY)
+    @Column(name = NF_TOPIC_ID_PROPERTY)
     private String topicId;
-
+    @Frozen
     @PartitionKey(value = 1)
-    @Column(name = CassandraModelConstants.NF_NOTIFICATION_TYPE_PROPERTY)
-    @Enumerated(EnumType.STRING)
-    private NotificationTypeDto type;
+    @Column(name = NF_SCHEMA_VER_PROPERTY)
+    private CassandraNfSchemaVersionType versionType;
 
-    @Column(name = CassandraModelConstants.NF_NOTIFICATION_ID_PROPERTY)
-    private String id;
-    @Column(name = CassandraModelConstants.NF_APPLICATION_ID_PROPERTY)
-    private String applicationId;
-    @Column(name = CassandraModelConstants.NF_SCHEMA_ID_PROPERTY)
-    private String schemaId;
-
-    @ClusteringColumn(value = 0)
-    @Column(name = CassandraModelConstants.NF_VERSION_PROPERTY)
-    private int version;
-    @ClusteringColumn(value = 1)
-    @Column(name = CassandraModelConstants.NF_SEQ_NUM_PROPERTY)
+    @ClusteringColumn
+    @Column(name = NF_SEQ_NUM_PROPERTY)
     private int seqNum;
 
-    @Column(name = CassandraModelConstants.NF_LAST_MOD_TIME_PROPERTY)
+    @Column(name = NF_NOTIFICATION_ID_PROPERTY)
+    private String id;
+    @Column(name = NF_APPLICATION_ID_PROPERTY)
+    private String applicationId;
+    @Column(name = NF_SCHEMA_ID_PROPERTY)
+    private String schemaId;
+    @Column(name = NF_LAST_MOD_TIME_PROPERTY)
     private Date lastModifyTime;
-    @Column(name = CassandraModelConstants.NF_BODY_PROPERTY)
+    @Column(name = NF_BODY_PROPERTY)
     private ByteBuffer body;
-    @Column(name = CassandraModelConstants.NF_EXPIRED_AT_PROPERTY)
+    @Column(name = NF_EXPIRED_AT_PROPERTY)
     private Date expiredAt;
 
     public CassandraNotification() {
+    }
 
+    public CassandraNotification(String id) {
+        String[] columns = parseId(id);
+        if (columns != null && columns.length == COMPOSITE_ID_SIZE) {
+            this.topicId = columns[0];
+            this.versionType = new CassandraNfSchemaVersionType(columns[1], columns[2], columns[3]);
+            this.seqNum = Integer.parseInt(columns[4]);
+        }
     }
 
     public CassandraNotification(NotificationDto dto) {
-        this.id = dto.getId();
         this.applicationId = dto.getApplicationId();
         this.schemaId = dto.getSchemaId();
         this.topicId = dto.getTopicId();
-        this.version = dto.getVersion();
+        this.versionType = new CassandraNfSchemaVersionType(dto.getType(), dto.getVersion(), dto.getSecNum() / MAX_BATCH_SIZE);
         this.lastModifyTime = dto.getLastTimeModify();
-        this.type = dto.getType();
         this.body = getByteBuffer(dto.getBody());
         this.expiredAt = dto.getExpiredAt();
         this.seqNum = dto.getSecNum();
+        this.id = dto.getId();
+        if (isBlank(id)) {
+            generateId();
+        }
+    }
+
+    public String getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
+    }
+
+    public CassandraNfSchemaVersionType getVersionType() {
+        return versionType;
+    }
+
+    public void setVersionType(CassandraNfSchemaVersionType versionType) {
+        this.versionType = versionType;
+    }
+
+    public int getSeqNum() {
+        return seqNum;
+    }
+
+    public void setSeqNum(int seqNum) {
+        this.seqNum = seqNum;
     }
 
     public String getId() {
@@ -112,36 +157,12 @@ public final class CassandraNotification implements Notification, Serializable {
         this.schemaId = schemaId;
     }
 
-    public String getTopicId() {
-        return topicId;
-    }
-
-    public void setTopicId(String topicId) {
-        this.topicId = topicId;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
     public Date getLastModifyTime() {
         return lastModifyTime;
     }
 
     public void setLastModifyTime(Date lastModifyTime) {
         this.lastModifyTime = lastModifyTime;
-    }
-
-    public NotificationTypeDto getType() {
-        return type;
-    }
-
-    public void setType(NotificationTypeDto type) {
-        this.type = type;
     }
 
     public ByteBuffer getBody() {
@@ -160,14 +181,6 @@ public final class CassandraNotification implements Notification, Serializable {
         this.expiredAt = expiredAt;
     }
 
-    public int getSeqNum() {
-        return seqNum;
-    }
-
-    public void setSeqNum(int seqNum) {
-        this.seqNum = seqNum;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -176,7 +189,6 @@ public final class CassandraNotification implements Notification, Serializable {
         CassandraNotification that = (CassandraNotification) o;
 
         if (seqNum != that.seqNum) return false;
-        if (version != that.version) return false;
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
             return false;
         if (body != null ? !body.equals(that.body) : that.body != null) return false;
@@ -186,7 +198,7 @@ public final class CassandraNotification implements Notification, Serializable {
             return false;
         if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) return false;
         if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) return false;
-        if (type != that.type) return false;
+        if (versionType != null ? !versionType.equals(that.versionType) : that.versionType != null) return false;
 
         return true;
     }
@@ -194,12 +206,11 @@ public final class CassandraNotification implements Notification, Serializable {
     @Override
     public int hashCode() {
         int result = topicId != null ? topicId.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (versionType != null ? versionType.hashCode() : 0);
+        result = 31 * result + seqNum;
         result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
-        result = 31 * result + version;
-        result = 31 * result + seqNum;
         result = 31 * result + (lastModifyTime != null ? lastModifyTime.hashCode() : 0);
         result = 31 * result + (body != null ? body.hashCode() : 0);
         result = 31 * result + (expiredAt != null ? expiredAt.hashCode() : 0);
@@ -207,18 +218,48 @@ public final class CassandraNotification implements Notification, Serializable {
     }
 
     @Override
+    public String toString() {
+        return "CassandraNotification{" +
+                "topicId='" + topicId + '\'' +
+                ", versionType=" + versionType +
+                ", seqNum=" + seqNum +
+                ", id='" + id + '\'' +
+                ", applicationId='" + applicationId + '\'' +
+                ", schemaId='" + schemaId + '\'' +
+                ", lastModifyTime=" + lastModifyTime +
+                ", body=" + body +
+                ", expiredAt=" + expiredAt +
+                '}';
+    }
+
+    @Override
     public NotificationDto toDto() {
         NotificationDto dto = new NotificationDto();
-        dto.setId(id);
+        dto.setId(getStringId());
         dto.setApplicationId(applicationId);
         dto.setSchemaId(schemaId);
         dto.setTopicId(topicId);
         dto.setLastTimeModify(lastModifyTime);
-        dto.setVersion(version);
-        dto.setType(type);
+        dto.setVersion(versionType != null ? versionType.getVersion() : 0);
+        dto.setType(versionType != null ? versionType.getType() : null);
         dto.setBody(body != null ? getBytes(body) : null);
         dto.setExpiredAt(expiredAt);
         dto.setSecNum(seqNum);
         return dto;
+    }
+
+    public String getStringId() {
+        if (isBlank(id)) {
+            generateId();
+        }
+        return id;
+    }
+
+    public void generateId() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(topicId)
+                .append(KEY_DELIMITER).append(versionType.getStringId())
+                .append(KEY_DELIMITER).append(seqNum);
+        id = builder.toString();
     }
 }

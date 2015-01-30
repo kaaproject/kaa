@@ -5,7 +5,6 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -29,9 +29,11 @@ public abstract class AbstractCassandraDao<T, K> {
     @Autowired
     private CassandraClient cassandraClient;
     @Value("#{cassandra_properties[read_consistency_level]}")
-    private Integer readConsistencyLevel;
+    private String readConsistencyLevel;
     @Value("#{cassandra_properties[write_consistency_level]}")
-    private Integer writeConsistencyLevel;
+    private String writeConsistencyLevel;
+    @Value("#{cassandra_properties[batch_type]}")
+    private String batchType;
 
     private Session session;
 
@@ -56,20 +58,26 @@ public abstract class AbstractCassandraDao<T, K> {
 
     protected List<T> findListByStatement(Statement statement) {
         List<T> list = Collections.emptyList();
-        ResultSet resultSet = getSession().execute(statement);
-        Result result = getMapper().map(resultSet);
-        if (result != null) {
-            list = result.all();
+        if (statement != null) {
+            statement.setConsistencyLevel(getReadConsistencyLevel());
+            ResultSet resultSet = getSession().execute(statement);
+            Result result = getMapper().map(resultSet);
+            if (result != null) {
+                list = result.all();
+            }
         }
         return list;
     }
 
     protected T findOneByStatement(Statement statement) {
         T object = null;
-        ResultSet resultSet = getSession().execute(statement);
-        Result result = getMapper().map(resultSet);
-        if (result != null) {
-            object = (T) result.one();
+        if (statement != null) {
+            statement.setConsistencyLevel(getReadConsistencyLevel());
+            ResultSet resultSet = getSession().execute(statement);
+            Result result = getMapper().map(resultSet);
+            if (result != null) {
+                object = (T) result.one();
+            }
         }
         return object;
     }
@@ -85,31 +93,40 @@ public abstract class AbstractCassandraDao<T, K> {
     }
 
     public T save(T dto) {
-        LOG.info("Save entity {}", dto);
-        Mapper mapper = getMapper();
-        mapper.save(dto);
+        LOG.debug("Save entity {}", dto);
+        Statement saveStatement = getSaveQuery(dto);
+        saveStatement.setConsistencyLevel(getWriteConsistencyLevel());
+        execute(saveStatement);
         return dto;
     }
 
     protected void executeBatch(BatchStatement batch) {
-        LOG.info("Execute cassandra batch {}", batch);
+        LOG.debug("Execute cassandra batch {}", batch);
+        batch.setConsistencyLevel(getWriteConsistencyLevel());
         ResultSet resultSet = getSession().execute(batch);
         LOG.info("Executed batch {}", resultSet);
     }
 
-    protected void executeBatch(BatchStatement.Type type, Statement... statements) {
-        LOG.info("Execute cassandra batch {} with type {} ", statements, type);
-        BatchStatement batchStatement = new BatchStatement(type);
+    protected void executeBatch(Statement... statements) {
+        LOG.debug("Execute cassandra list of statements");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Execute cassandra statements {} ", Arrays.toString(statements));
+        }
+        BatchStatement batchStatement = new BatchStatement(getBatchType());
         for (Statement statement : statements) {
             batchStatement.add(statement);
         }
-        ResultSet resultSet = getSession().execute(batchStatement);
-        LOG.info("Result of batch execution is {}", resultSet);
+        executeBatch(batchStatement);
+    }
+
+    protected ResultSet execute(Statement statement, ConsistencyLevel consistencyLevel) {
+        LOG.debug("Execute cassandra batch {}", statement);
+        statement.setConsistencyLevel(consistencyLevel);
+        return getSession().execute(statement);
     }
 
     protected ResultSet execute(Statement statement) {
-        LOG.info("Execute cassandra batch {}", statement);
-        return getSession().execute(statement);
+        return execute(statement, ConsistencyLevel.ONE);
     }
 
     public <V> V save(V dto, Class<?> clazz) {
@@ -121,15 +138,16 @@ public abstract class AbstractCassandraDao<T, K> {
 
     public List<T> find() {
         LOG.debug("Get all entities from column family {}", getColumnFamilyName());
-        return findListByStatement(QueryBuilder.select().all().from(getColumnFamilyName()));
+        return findListByStatement(QueryBuilder.select().all().from(getColumnFamilyName()).setConsistencyLevel(getReadConsistencyLevel()));
     }
 
     public T findById(K key) {
+        LOG.debug("Get entity by key {}", key);
         return (T) getMapper().get(key);
     }
 
     public void removeAll() {
-        Delete delete = QueryBuilder.delete().all().from(getColumnFamilyName());
+        Statement delete = QueryBuilder.delete().all().from(getColumnFamilyName()).setConsistencyLevel(getWriteConsistencyLevel());
         LOG.debug("Remove all request: {}", delete.toString());
         session.execute(delete);
     }
@@ -142,23 +160,33 @@ public abstract class AbstractCassandraDao<T, K> {
         return UUID.randomUUID().toString();
     }
 
-    protected <V> List<Statement> getSaveQueryList(V dto, Class<?> clazz) {
-        return null;
-    }
-
     protected ConsistencyLevel getReadConsistencyLevel() {
-        ConsistencyLevel defaultConsistencyLevel = ConsistencyLevel.ANY;
+        ConsistencyLevel defaultConsistencyLevel = ConsistencyLevel.ONE;
         if (readConsistencyLevel != null) {
-            defaultConsistencyLevel = ConsistencyLevel.values()[readConsistencyLevel];
+            ConsistencyLevel cl = ConsistencyLevel.valueOf(readConsistencyLevel);
+            if (cl != null) {
+                defaultConsistencyLevel = cl;
+            }
         }
         return defaultConsistencyLevel;
     }
 
     protected ConsistencyLevel getWriteConsistencyLevel() {
-        ConsistencyLevel defaultConsistencyLevel = ConsistencyLevel.ANY;
+        ConsistencyLevel defaultConsistencyLevel = ConsistencyLevel.ONE;
         if (writeConsistencyLevel != null) {
-            defaultConsistencyLevel = ConsistencyLevel.values()[writeConsistencyLevel];
+            ConsistencyLevel cl = ConsistencyLevel.valueOf(writeConsistencyLevel);
+            if (cl != null) {
+                defaultConsistencyLevel = cl;
+            }
         }
         return defaultConsistencyLevel;
+    }
+
+    protected BatchStatement.Type getBatchType() {
+        BatchStatement.Type type = BatchStatement.Type.LOGGED;
+        if (batchType != null && BatchStatement.Type.UNLOGGED.name().equalsIgnoreCase(batchType)) {
+            type = BatchStatement.Type.UNLOGGED;
+        }
+        return type;
     }
 }

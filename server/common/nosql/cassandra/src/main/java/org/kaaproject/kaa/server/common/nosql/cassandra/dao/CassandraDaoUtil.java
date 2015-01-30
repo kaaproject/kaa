@@ -3,8 +3,8 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 import com.datastax.driver.core.utils.Bytes;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointGroupState;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEventClassFamilyVersionState;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 
 import java.nio.ByteBuffer;

@@ -23,8 +23,9 @@
 
     <logger name="org.kaaproject.kaa.server.common.dao.cassandra" level="DEBUG"/>
     <logger name="org.apache.cassandra" level="WARN"/>
+    <logger name="org.cassandraunit" level="DEBUG" />
 
-    <root level="INFO">
+    <root level="WARN">
         <appender-ref ref="console"/>
     </root>
 

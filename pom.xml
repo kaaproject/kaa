@@ -493,7 +493,7 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                <artifactId>cassandra</artifactId>
+                <artifactId>cassandra-dao</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

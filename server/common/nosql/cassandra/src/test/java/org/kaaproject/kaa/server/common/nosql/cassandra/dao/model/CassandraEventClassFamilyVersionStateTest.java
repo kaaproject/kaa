@@ -5,6 +5,7 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
 
 public class CassandraEventClassFamilyVersionStateTest {
 

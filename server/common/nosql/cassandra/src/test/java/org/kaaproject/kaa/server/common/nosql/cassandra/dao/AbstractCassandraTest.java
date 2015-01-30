@@ -2,21 +2,22 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
+import org.junit.AfterClass;
 import org.junit.ClassRule;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.CustomCassandraCQLUnit;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.ByteBuffer;
@@ -31,7 +32,7 @@ public class AbstractCassandraTest {
     private static final Random RANDOM = new Random();
 
     @ClassRule
-    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
+    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
 
     @Autowired
     protected EndpointNotificationDao<CassandraEndpointNotification> unicastNotificationDao;
@@ -40,7 +41,7 @@ public class AbstractCassandraTest {
     @Autowired
     protected EndpointProfileDao<CassandraEndpointProfile> endpointProfileDao;
     @Autowired
-    protected EndpointUserDao<CassandraEndpointUser> endpointUserDao;
+    protected EndpointUserCassandraDao endpointUserDao;
     @Autowired
     protected NotificationDao<CassandraNotification> notificationDao;
 

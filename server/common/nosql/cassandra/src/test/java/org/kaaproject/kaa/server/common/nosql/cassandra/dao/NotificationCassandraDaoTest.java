@@ -62,7 +62,7 @@ public class NotificationCassandraDaoTest extends AbstractCassandraTest {
         Assert.assertEquals(3, foundList.size());
         for (int i = 0; i < foundList.size(); i++) {
             CassandraNotification notification = foundList.get(i);
-            Assert.assertEquals(NotificationTypeDto.USER, notification.getType());
+            Assert.assertEquals(NotificationTypeDto.USER, notification.getVersionType().getType());
             Assert.assertEquals(topicId, notification.getTopicId());
             Assert.assertTrue(3 < notification.getSeqNum());
         }

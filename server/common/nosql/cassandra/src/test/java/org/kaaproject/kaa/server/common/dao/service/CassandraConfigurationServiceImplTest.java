@@ -37,11 +37,12 @@ import java.io.IOException;
 public class CassandraConfigurationServiceImplTest extends ConfigurationServiceImplTest {
 
     @ClassRule
-    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
+    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false));
 
     @AfterClass
     public static void after() throws Exception {
         cassandraUnit.cluster.close();
+        while (!cassandraUnit.cluster.isClosed()){}
     }
 
 }

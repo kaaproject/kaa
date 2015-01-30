@@ -3,8 +3,8 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 import com.datastax.driver.core.querybuilder.Update;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +36,7 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
     @Override
     public CassandraEndpointUser save(CassandraEndpointUser dto) {
         dto.setId(dto.getExternalId() + CassandraModelConstants.KEY_DELIMITER + dto.getTenantId());
+        LOG.trace("Save endpoint user {}", dto);
         return super.save(dto);
     }
 
@@ -88,7 +89,7 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
         LOG.debug("Try to remove endpoint user by id {}", id);
         if (isNotBlank(id) && id.contains(CassandraModelConstants.KEY_DELIMITER)) {
             String[] compositeId = id.split(CassandraModelConstants.KEY_DELIMITER);
-            if (compositeId != null && compositeId.length == 2) {
+            if (compositeId.length == 2) {
                 removeByExternalIdAndTenantId(compositeId[0], compositeId[1]);
             }
         }
@@ -100,8 +101,9 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
         CassandraEndpointUser endpointUser = null;
         if (isNotBlank(id) && id.contains(CassandraModelConstants.KEY_DELIMITER)) {
             String[] compositeId = id.split(CassandraModelConstants.KEY_DELIMITER);
-            if (compositeId != null && compositeId.length == 2) {
+            if (compositeId.length == 2) {
                 endpointUser = findByExternalIdAndTenantId(compositeId[0], compositeId[1]);
+                LOG.trace("Found endpoint user {} by id {}", endpointUser, id);
             }
         }
         return endpointUser;

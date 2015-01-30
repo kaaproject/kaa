@@ -1,6 +1,5 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
@@ -9,7 +8,6 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAccessTokenDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAppIdDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByUserIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAccessToken;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
@@ -21,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +31,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoU
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertStringToKeyHash;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 
-@Repository
+@Repository(value = "endpointProfileDao")
 public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDao.class);
@@ -41,8 +40,6 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     private CassandraEPByAppIdDao cassandraEPByAppIdDao;
     @Autowired
     private CassandraEPByAccessTokenDao cassandraEPByAccessTokenDao;
-    @Autowired
-    private CassandraEPByUserIdDao cassandraEPByUserIdDao;
 
     private EndpointUserCassandraDao endpointUserDao;
 
@@ -76,9 +73,9 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         }
         Statement saveProfile = getSaveQuery(profile);
         if (saveByAccessToken != null) {
-            executeBatch(BatchStatement.Type.UNLOGGED, saveProfile, saveByAppId, saveByAccessToken);
+            executeBatch(saveProfile, saveByAppId, saveByAccessToken);
         } else {
-            executeBatch(BatchStatement.Type.UNLOGGED, saveProfile, saveByAppId);
+            executeBatch(saveProfile, saveByAppId);
         }
         LOG.debug("Endpoint profile saved");
         return profile;
@@ -118,45 +115,55 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         LOG.debug("Remove endpoint profile by application id [{}]", appId);
         Statement deleteEps = delete().from(getColumnFamilyName()).where(in(CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
         Statement deleteEpsByAppId = delete().from(CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME).where(eq(CassandraModelConstants.EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId));
-        executeBatch(BatchStatement.Type.UNLOGGED, deleteEps, deleteEpsByAppId);
+        executeBatch(deleteEps, deleteEpsByAppId);
         LOG.trace("Execute statements {}, {} like batch", deleteEps, deleteEpsByAppId);
     }
 
     @Override
     public CassandraEndpointProfile findByAccessToken(String endpointAccessToken) {
+        LOG.debug("Try to find endpoint profile by access token id [{}]", endpointAccessToken);
         CassandraEndpointProfile endpointProfile = null;
         ByteBuffer epKeyHash = cassandraEPByAccessTokenDao.findEPIdByAccessToken(endpointAccessToken);
         if (epKeyHash != null) {
             endpointProfile = (CassandraEndpointProfile) getMapper().get(epKeyHash);
         }
+        LOG.trace("Found endpoint profile {} by access token id [{}]", endpointProfile, endpointAccessToken);
         return endpointProfile;
     }
 
     @Override
     public List<CassandraEndpointProfile> findByEndpointUserId(String endpointUserId) {
+        LOG.debug("Try to find endpoint profiles by endpoint user id [{}]", endpointUserId);
         List<CassandraEndpointProfile> profileList = Collections.emptyList();
         CassandraEndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
         if (endpointUser != null) {
             List<String> ids = endpointUser.getEndpointIds();
             if (ids != null && !ids.isEmpty()) {
                 Statement select = select().from(getColumnFamilyName()).where(QueryBuilder.in(CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY, convertStringIds(ids)));
+                LOG.trace("Execute statements {}", select);
                 profileList = findListByStatement(select);
             }
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Found endpoint profiles {}", Arrays.toString(profileList.toArray()));
         }
         return profileList;
     }
 
     @Override
     public CassandraEndpointProfile findById(ByteBuffer key) {
+        LOG.debug("Try to find endpoint profiles by key [{}]", key);
         CassandraEndpointProfile profile = null;
         if (key != null) {
             profile = findByKeyHash(key.array());
         }
+        LOG.trace("Found endpoint profiles {}", profile);
         return profile;
     }
 
     @Override
     public void removeById(ByteBuffer key) {
+        LOG.debug("Remove endpoint profiles by key [{}]", key);
         if (key != null) {
             removeByKeyHash(key.array());
         }

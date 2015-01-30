@@ -1,9 +1,9 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 
-@Repository
+@Repository(value = "endpointConfigurationDao")
 public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointConfiguration, ByteBuffer> implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);

@@ -34,11 +34,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CassandraLogAppenderServiceImplTest extends LogAppenderServiceImplTest {
 
     @ClassRule
-    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
+    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false));
 
     @AfterClass
     public static void after() throws Exception {
         cassandraUnit.cluster.close();
+        while (!cassandraUnit.cluster.isClosed()){}
     }
 
 }

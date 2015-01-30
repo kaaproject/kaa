@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
+package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type;
 
 import com.datastax.driver.mapping.annotations.Field;
 import com.datastax.driver.mapping.annotations.Transient;
@@ -24,17 +24,22 @@ import org.kaaproject.kaa.server.common.dao.model.ToDto;
 
 import java.io.Serializable;
 
-@UDT(name = CassandraModelConstants.ENDPOINT_GROUP_STATE_USER_TYPE_NAME)
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_USER_TYPE_NAME;
+
+@UDT(name = ENDPOINT_GROUP_STATE_USER_TYPE_NAME)
 public final class CassandraEndpointGroupState implements ToDto<EndpointGroupStateDto>, Serializable {
 
     @Transient
     private static final long serialVersionUID = -1658174097110691624L;
 
-    @Field(name = CassandraModelConstants.ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY)
+    @Field(name = ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY)
     private String endpointGroupId;
-    @Field(name = CassandraModelConstants.ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY)
+    @Field(name = ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY)
     private String profileFilterId;
-    @Field(name = CassandraModelConstants.ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY)
+    @Field(name = ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY)
     private String configurationId;
 
     public CassandraEndpointGroupState() {
