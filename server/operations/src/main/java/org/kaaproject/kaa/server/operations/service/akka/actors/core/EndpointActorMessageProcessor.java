@@ -734,36 +734,44 @@ public class EndpointActorMessageProcessor {
                 "[{}][{}] Current Endpoint was attached/detached from user. Need to close all current event channels {}",
                 endpointKey, actorKey, eventChannels.size());
         userRegistrationRequestSent = false;
+        
+        if (message instanceof EndpointUserAttachMessage) {
+            if (endpointProfile != null) {
+                endpointProfile.setEndpointUserId(message.getUserId());
+            }
+            LOG.debug("[{}][{}] Updating endpoint user id to {} in profile", endpointKey, actorKey, message.getUserId());
+        } else if (message instanceof EndpointUserDetachMessage) {
+            if (endpointProfile != null && message.getUserId().equals(endpointProfile.getEndpointUserId())) {
+                endpointProfile.setEndpointUserId(null);
+            }
+            LOG.debug("[{}][{}] Clanup endpoint user id in profile", endpointKey, actorKey, message.getUserId());
+        }
+
         if (!eventChannels.isEmpty()) {
+            updateUserConnection(context);
             for (ChannelMetaData channel : eventChannels) {
                 SyncRequestMessage pendingRequest = channel.getRequestMessage();
                 ServerSync pendingResponse = channel.getResponseHolder().getResponse();
 
                 UserServerSync userSyncResponse = pendingResponse.getUserSync();
-                if (userSyncResponse == null) {
+                if (userSyncResponse == null && pendingRequest.isValid(TransportType.USER)) {
                     userSyncResponse = new UserServerSync();
                     pendingResponse.setUserSync(userSyncResponse);
                 }
-                if (message instanceof EndpointUserAttachMessage) {
-                    if (endpointProfile != null) {
-                        endpointProfile.setEndpointUserId(message.getUserId());
+                if( userSyncResponse != null){
+                    if (message instanceof EndpointUserAttachMessage) {
+                        userSyncResponse.setUserAttachNotification(new UserAttachNotification(message.getUserId(),
+                                message.getOriginator()));
+                        LOG.debug("[{}][{}] Adding user attach notification", endpointKey, actorKey);
+                    } else if (message instanceof EndpointUserDetachMessage) {
+                        userSyncResponse.setUserDetachNotification(new UserDetachNotification(message.getOriginator()));
+                        LOG.debug("[{}][{}] Adding user detach notification", endpointKey, actorKey);
                     }
-                    userSyncResponse.setUserAttachNotification(new UserAttachNotification(message.getUserId(),
-                            message.getOriginator()));
-                    LOG.debug("[{}][{}] Adding user attach notification", endpointKey, actorKey);
-                } else if (message instanceof EndpointUserDetachMessage) {
-                    if (endpointProfile != null && message.getUserId().equals(endpointProfile.getEndpointUserId())) {
-                        endpointProfile.setEndpointUserId(null);
-                    }
-                    userSyncResponse.setUserDetachNotification(new UserDetachNotification(message.getOriginator()));
-                    LOG.debug("[{}][{}] Adding user detach notification", endpointKey, actorKey);
                 }
 
                 LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
                 sendReply(context, pendingRequest, pendingResponse);
-                if (channel.getType().isAsync()) {
-                    updateUserConnection(context);
-                } else {
+                if (!channel.getType().isAsync()) {
                     channelMap.removeChannel(channel);
                 }
             }
