@@ -835,6 +835,9 @@ public class EndpointActorMessageProcessor {
     }
 
     private static LogDeliveryErrorCode toErrorCode(org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode errorCode) {
+        if(errorCode == null){
+            return null;
+        }
         switch (errorCode) {
         case APPENDER_INTERNAL_ERROR:
             return LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR;
