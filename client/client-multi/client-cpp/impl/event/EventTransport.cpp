@@ -122,7 +122,7 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
         }
 
         isEventSNSynchronized_ = true;
-        needResync = eventDataProcessor_.hasPendingEvents();
+        needResync = eventDataProcessor_.hasPendingEvents() || eventDataProcessor_.hasPendingListenerRequests();
     }
 
     if (!response.events.is_null()) {
