@@ -12,12 +12,6 @@ CREATE TYPE IF NOT EXISTS kaa.ep_group_state (
     cf_id text
 );
 
-CREATE TYPE IF NOT EXISTS kaa.nf_schema_ver (
-    nf_type text,
-    version int,
-    batch_num int
-);
-
 CREATE TABLE IF NOT EXISTS kaa.ep_nfs (
     ep_key_hash blob,
     seq_num int,
@@ -35,16 +29,17 @@ CREATE TABLE IF NOT EXISTS kaa.ep_nfs (
 
 CREATE TABLE IF NOT EXISTS kaa.notification (
     topic_id text,
-    schema_ver frozen < nf_schema_ver >,
-    seq_num int,
+    nf_type text,
     nf_id text,
     app_id text,
     schema_id text,
     last_mod_time timestamp,
+    version int,
     body blob,
     expired_at timestamp,
-    PRIMARY KEY (( topic_id, schema_ver ), seq_num)
-) WITH CLUSTERING ORDER BY ( seq_num DESC );
+    seq_num int,
+    PRIMARY KEY((topic_id, nf_type), version, seq_num)
+) WITH CLUSTERING ORDER BY (version DESC, seq_num DESC);
 
 CREATE TABLE IF NOT EXISTS kaa.ep_conf (
     cf_hash blob PRIMARY KEY,
@@ -67,7 +62,7 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     ep_id text,
     app_id text,
     ep_key blob,
-    user_id uuid,
+    user_id text,
     access_token text,
     pf_schema_id text,
     cf_group_state list < frozen < ep_group_state > >,
@@ -95,19 +90,7 @@ CREATE TABLE IF NOT EXISTS kaa.app_eps (
     PRIMARY KEY (app_id, ep_key_hash)
 );
 
-CREATE TABLE IF NOT EXISTS kaa.topic_seq (
-    topic_id text PRIMARY KEY,
-    seq_num int
-);
-
 CREATE TABLE IF NOT EXISTS kaa.access_token_eps (
-    access_token text,
+    access_token text PRIMARY KEY ,
     ep_key_hash blob,
-    PRIMARY KEY (access_token, ep_key_hash)
-);
-
-CREATE TABLE IF NOT EXISTS kaa.topics (
-    topic_id text,
-    schema_ver frozen < nf_schema_ver >,
-    PRIMARY KEY (topic_id, schema_ver)
 );

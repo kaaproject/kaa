@@ -716,7 +716,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>mongodb</id>
+            <id>mongodb-dao</id>
             <properties>
                 <db.context>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</db.context>
                 <db.property>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</db.property>
@@ -733,7 +733,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>cassandra</id>
+            <id>cassandra-dao</id>
             <properties>
                 <db.context>../common/nosql/cassandra/src/main/resources/common-dao-cassandra-context.xml</db.context>
                 <db.property>../common/nosql/cassandra/src/main/resources/common-dao-cassandra.properties</db.property>

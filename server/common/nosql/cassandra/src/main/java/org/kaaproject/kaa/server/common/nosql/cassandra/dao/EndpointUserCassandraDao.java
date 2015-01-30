@@ -17,7 +17,10 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 import static com.datastax.driver.core.querybuilder.Select.Where;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY;
 
 public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser>, EndpointUserVerifier {
 
@@ -34,10 +37,12 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
     }
 
     @Override
-    public CassandraEndpointUser save(CassandraEndpointUser dto) {
-        dto.setId(dto.getExternalId() + CassandraModelConstants.KEY_DELIMITER + dto.getTenantId());
-        LOG.trace("Save endpoint user {}", dto);
-        return super.save(dto);
+    public CassandraEndpointUser save(CassandraEndpointUser user) {
+        if (isBlank(user.getId())) {
+            user.generateId();
+        }
+        LOG.trace("Save endpoint user {}", user);
+        return super.save(user);
     }
 
     @Override
@@ -48,8 +53,8 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
     @Override
     public CassandraEndpointUser findByExternalIdAndTenantId(String externalId, String tenantId) {
         LOG.debug("Try to find endpoint user by external id {} and tenant id {}", externalId, tenantId);
-        Where where = select().from(getColumnFamilyName()).where(eq(CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY, externalId)).and(eq(CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY, tenantId));
-        LOG.trace("Try to find endpoint user by cql select", where);
+        Where where = select().from(getColumnFamilyName()).where(eq(EP_USER_EXTERNAL_ID_PROPERTY, externalId)).and(eq(EP_USER_TENANT_ID_PROPERTY, tenantId));
+        LOG.trace("Try to find endpoint user by cql select {}", where);
         CassandraEndpointUser endpointUser = findOneByStatement(where);
         LOG.trace("Found {} endpoint user", endpointUser);
         return endpointUser;
@@ -58,7 +63,7 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
     @Override
     public void removeByExternalIdAndTenantId(String externalId, String tenantId) {
         LOG.debug("Try to remove endpoint user by external id {} and tenant id {}", externalId, tenantId);
-        execute(delete().from(getColumnFamilyName()).where(eq(CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY, externalId)).and(eq(CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY, tenantId)));
+        execute(delete().from(getColumnFamilyName()).where(eq(EP_USER_EXTERNAL_ID_PROPERTY, externalId)).and(eq(EP_USER_TENANT_ID_PROPERTY, tenantId)));
     }
 
     @Override
@@ -66,8 +71,8 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
         LOG.debug("Generating access token for endpoint user with external id {} and tenant id {}", externalId, tenantId);
         String accessToken = UUID.randomUUID().toString();
         Update.Where query = update(getColumnFamilyName()).with(set(CassandraModelConstants.EP_USER_ACCESS_TOKEN_PROPERTY, accessToken))
-                .where(eq(CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY, externalId))
-                .and(eq(CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY, tenantId));
+                .where(eq(EP_USER_EXTERNAL_ID_PROPERTY, externalId))
+                .and(eq(EP_USER_TENANT_ID_PROPERTY, tenantId));
         execute(query);
         LOG.trace("Generated access token {} for endpoint user by query {}", accessToken, query);
         return accessToken;
@@ -87,25 +92,16 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
     @Override
     public void removeById(String id) {
         LOG.debug("Try to remove endpoint user by id {}", id);
-        if (isNotBlank(id) && id.contains(CassandraModelConstants.KEY_DELIMITER)) {
-            String[] compositeId = id.split(CassandraModelConstants.KEY_DELIMITER);
-            if (compositeId.length == 2) {
-                removeByExternalIdAndTenantId(compositeId[0], compositeId[1]);
-            }
-        }
+        CassandraEndpointUser endpointUser = new CassandraEndpointUser(id);
+        removeByExternalIdAndTenantId(endpointUser.getExternalId(), endpointUser.getTenantId());
     }
 
     @Override
     public CassandraEndpointUser findById(String id) {
         LOG.debug("Try to find endpoint user by id {}", id);
-        CassandraEndpointUser endpointUser = null;
-        if (isNotBlank(id) && id.contains(CassandraModelConstants.KEY_DELIMITER)) {
-            String[] compositeId = id.split(CassandraModelConstants.KEY_DELIMITER);
-            if (compositeId.length == 2) {
-                endpointUser = findByExternalIdAndTenantId(compositeId[0], compositeId[1]);
-                LOG.trace("Found endpoint user {} by id {}", endpointUser, id);
-            }
-        }
+        CassandraEndpointUser endpointUser = new CassandraEndpointUser(id);
+        endpointUser = findByExternalIdAndTenantId(endpointUser.getExternalId(), endpointUser.getTenantId());
+        LOG.trace("Found endpoint user {} by id {}", endpointUser, id);
         return endpointUser;
     }
 }

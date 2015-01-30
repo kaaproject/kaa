@@ -278,15 +278,17 @@ public class EndpointServiceImpl implements EndpointService {
             return false;
         }else{
             LOG.debug("executing checkAccessToken using verifier: {}", kaaEndpointUserVerifierName);
-            return verifier.checkAccessToken(appDto.getTenantId(), userExternalId, userAccessToken);
+            return verifier.checkAccessToken(userExternalId, appDto.getTenantId(), userAccessToken);
         }
     }
 
     @Override
     public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, String userAccessToken, EndpointProfileDto profile) {
+        LOG.info("Try to attach endpoint profile with id {}, to user with access token {} ext id {} and tenant id {}",
+                profile.getId(), userAccessToken, userExternalId, tenantId);
         validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
         EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(userExternalId, tenantId);
-        if(endpointUser == null){
+        if (endpointUser == null) {
             LOG.info("Creating new endpoint user with external id: [{}] in context of [{}] tenant", userExternalId, tenantId);
             EndpointUserDto endpointUserDto = new EndpointUserDto();
             endpointUserDto.setTenantId(tenantId);
@@ -295,24 +297,27 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUserDto.setAccessToken(userAccessToken);
             endpointUser = endpointUserDao.save(endpointUserDto);
         }
-
         List<String> endpointIds = endpointUser.getEndpointIds();
-        if(endpointIds == null){
+        if (endpointIds == null) {
             endpointIds = new ArrayList<>();
             endpointUser.setEndpointIds(endpointIds);
         }
         endpointIds.add(profile.getId());
         endpointUserDao.save(endpointUser);
         profile.setEndpointUserId(endpointUser.getId());
+        LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, profile);
         return saveEndpointProfile(profile);
     }
 
     @Override
     public EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) {
+        LOG.info("Try to attach endpoint with access token {} to user with {}", endpointAccessToken, endpointUserId);
         validateString(endpointUserId, "Incorrect endpointUserId " + endpointUserId);
         EndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
+        LOG.trace("[{}] Found endpoint user with id {} ", endpointUserId, endpointUser);
         if(endpointUser != null){
             EndpointProfile endpoint = endpointProfileDao.findByAccessToken(endpointAccessToken);
+            LOG.trace("[{}] Found endpoint profile by with access token {} ", endpointAccessToken, endpoint);
             if(endpoint != null){
                 if(endpoint.getEndpointUserId() == null || endpointUserId.equals(endpoint.getEndpointUserId())){
                     List<String> endpointIds = endpointUser.getEndpointIds();
@@ -320,6 +325,7 @@ public class EndpointServiceImpl implements EndpointService {
                         endpointIds = new ArrayList<>();
                         endpointUser.setEndpointIds(endpointIds);
                     }
+                    LOG.debug("Attach endpoint profile with id {} to endpoint user with id {} ", endpoint.getId(), endpointUser.getId());
                     endpointIds.add(endpoint.getId());
                     endpointUserDao.save(endpointUser);
                     endpoint.setEndpointUserId(endpointUser.getId());

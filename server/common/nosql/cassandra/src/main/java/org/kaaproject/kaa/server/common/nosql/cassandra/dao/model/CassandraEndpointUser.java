@@ -26,31 +26,49 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import java.io.Serializable;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ACCESS_TOKEN_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ENDPOINT_IDS_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_USERNAME_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_USER_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.KEY_DELIMITER;
 
-@Table(name = CassandraModelConstants.EP_USER_COLUMN_FAMILY_NAME)
+@Table(name = EP_USER_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointUser implements EndpointUser, Serializable {
 
     @Transient
     private static final long serialVersionUID = 3766947955702551264L;
 
     @PartitionKey(value = 0)
-    @Column(name = CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY)
+    @Column(name = EP_USER_EXTERNAL_ID_PROPERTY)
     private String externalId;
     @PartitionKey(value = 1)
-    @Column(name = CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY)
+    @Column(name = EP_USER_TENANT_ID_PROPERTY)
     private String tenantId;
 
-    @Column(name = CassandraModelConstants.EP_USER_USER_ID_PROPERTY)
+    @Column(name = EP_USER_USER_ID_PROPERTY)
     private String id;
-    @Column(name = CassandraModelConstants.EP_USER_USERNAME_PROPERTY)
+    @Column(name = EP_USER_USERNAME_PROPERTY)
     private String username;
 
-    @Column(name = CassandraModelConstants.EP_USER_ACCESS_TOKEN_PROPERTY)
+    @Column(name = EP_USER_ACCESS_TOKEN_PROPERTY)
     private String accessToken;
-    @Column(name = CassandraModelConstants.EP_USER_ENDPOINT_IDS_PROPERTY)
+    @Column(name = EP_USER_ENDPOINT_IDS_PROPERTY)
     private List<String> endpointIds;
 
     public CassandraEndpointUser() {
+    }
+
+    public CassandraEndpointUser(String id) {
+        String[] columns = parseId(id);
+        if (columns.length == 2) {
+            externalId = columns[0];
+            tenantId = columns[1];
+        }
     }
 
     public CassandraEndpointUser(EndpointUserDto dto) {
@@ -164,5 +182,12 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
         dto.setAccessToken(accessToken);
         dto.setEndpointIds(endpointIds);
         return dto;
+    }
+
+    public String generateId() {
+        if (isBlank(id)) {
+            id = externalId + KEY_DELIMITER + tenantId;
+        }
+        return id;
     }
 }

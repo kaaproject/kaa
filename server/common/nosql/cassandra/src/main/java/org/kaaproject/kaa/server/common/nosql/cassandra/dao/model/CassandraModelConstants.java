@@ -41,12 +41,13 @@ public class CassandraModelConstants {
      * Cassandra notification constants.
      */
     public static final String NF_COLUMN_FAMILY_NAME = "notification";
-    public static final String NF_TOPIC_ID_PROPERTY = TOPIC_ID_PROPERTY;
-    public static final String NF_SCHEMA_VER_PROPERTY = "schema_ver";
+    public static final String NF_TOPIC_ID_PROPERTY = "topic_id";
     public static final String NF_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
     public static final String NF_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
     public static final String NF_SCHEMA_ID_PROPERTY = SCHEMA_ID_PROPERTY;
+    public static final String NF_VERSION_PROPERTY = VERSION_PROPERTY;
     public static final String NF_LAST_MOD_TIME_PROPERTY = LAST_MOD_TIME_PROPERTY;
+    public static final String NF_NOTIFICATION_TYPE_PROPERTY = NOTIFICATION_TYPE_PROPERTY;
     public static final String NF_BODY_PROPERTY = BODY_PROPERTY;
     public static final String NF_EXPIRED_AT_PROPERTY = EXPIRED_AT_PROPERTY;
     public static final String NF_SEQ_NUM_PROPERTY = SEQ_NUM_PROPERTY;

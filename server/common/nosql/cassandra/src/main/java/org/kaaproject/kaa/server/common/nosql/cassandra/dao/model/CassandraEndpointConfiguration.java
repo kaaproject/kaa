@@ -28,20 +28,23 @@ import java.nio.ByteBuffer;
 
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.*;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_PROPERTY;
 
 
-@Table(name = CassandraModelConstants.ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME)
+@Table(name = ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointConfiguration implements EndpointConfiguration, Serializable {
 
     @Transient
     private static final long serialVersionUID = -5646769700581347085L;
 
     @PartitionKey
-    @Column(name = CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY)
+    @Column(name = ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY)
     private ByteBuffer configurationHash;
-    @Column(name = CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_PROPERTY)
+    @Column(name = ENDPOINT_CONFIGURATION_CONF_PROPERTY)
     private ByteBuffer configuration;
-    @Column(name = CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY)
+    @Column(name = ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY)
     private String id;
 
     public CassandraEndpointConfiguration() {

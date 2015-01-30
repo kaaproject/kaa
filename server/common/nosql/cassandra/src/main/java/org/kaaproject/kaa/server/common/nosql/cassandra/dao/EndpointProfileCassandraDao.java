@@ -60,10 +60,10 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     @Override
     public CassandraEndpointProfile save(CassandraEndpointProfile profile) {
-        LOG.debug("Saving endpoint profile...");
         if (profile.getId() == null) {
             profile.setId(convertKeyHashToString(profile.getEndpointKeyHash()));
         }
+        LOG.debug("Saving endpoint profile with id {}", profile.getId());
         ByteBuffer epKeyHash = profile.getEndpointKeyHash();
         Statement saveByAppId = cassandraEPByAppIdDao.getSaveQuery(new CassandraEPByAppId(profile.getApplicationId(), epKeyHash));
         String accessToken = profile.getAccessToken();

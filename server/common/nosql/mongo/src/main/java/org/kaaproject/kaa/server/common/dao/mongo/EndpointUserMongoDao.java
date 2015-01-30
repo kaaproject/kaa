@@ -65,7 +65,7 @@ public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, St
     }
 
     @Override
-    public boolean checkAccessToken(String tenantId, String externalId, String accessToken) {
+    public boolean checkAccessToken(String externalId, String tenantId, String accessToken) {
         MongoEndpointUser endpointUser = findByExternalIdAndTenantId(externalId, tenantId);
         if(endpointUser == null){
             LOG.debug("Can't find user with external id {}", externalId);
