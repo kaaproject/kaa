@@ -68,7 +68,7 @@ Copyright 2014 CyberVision, Inc.
         <commons-lang3.version>3.1</commons-lang3.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
-        <httpcomponents.core.version>4.2.5</httpcomponents.core.version>
+        <httpcomponents.core.version>4.3</httpcomponents.core.version>
         <jackson.version>1.9.13</jackson.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
@@ -812,7 +812,6 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>${commons-logging.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.avro</groupId>
