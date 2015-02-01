@@ -424,6 +424,11 @@ Copyright 2014 CyberVision, Inc.
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.9.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>

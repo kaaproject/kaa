@@ -119,14 +119,6 @@
             <artifactId>curator-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>thrift-cli-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>netty-server</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -203,7 +195,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
