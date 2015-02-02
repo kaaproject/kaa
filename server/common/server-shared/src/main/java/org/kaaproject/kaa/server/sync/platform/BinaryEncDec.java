@@ -60,6 +60,7 @@ import org.kaaproject.kaa.server.sync.Topic;
 import org.kaaproject.kaa.server.sync.TopicState;
 import org.kaaproject.kaa.server.sync.UserAttachNotification;
 import org.kaaproject.kaa.server.sync.UserAttachRequest;
+import org.kaaproject.kaa.server.sync.UserAttachResponse;
 import org.kaaproject.kaa.server.sync.UserClientSync;
 import org.kaaproject.kaa.server.sync.UserDetachNotification;
 import org.kaaproject.kaa.server.sync.UserServerSync;
@@ -305,10 +306,19 @@ public class BinaryEncDec implements PlatformEncDec {
         buildExtensionHeader(buf, USER_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
         int extPosition = buf.position();
         if (userSync.getUserAttachResponse() != null) {
+            UserAttachResponse uaResponse = userSync.getUserAttachResponse();
             buf.put(USER_ATTACH_RESPONSE_FIELD_ID);
             buf.put(NOTHING);
-            buf.put(userSync.getUserAttachResponse().getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+            buf.put(uaResponse.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
             buf.put(NOTHING);
+            buf.putShort((short)(uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
+            if(uaResponse.getErrorReason() != null){
+                byte[] data = uaResponse.getErrorReason().getBytes(UTF8);
+                buf.putShort((short)data.length);
+                put(buf, data);
+            }else{
+                buf.putShort((short)0);
+            }
         }
         if (userSync.getUserAttachNotification() != null) {
             UserAttachNotification nf = userSync.getUserAttachNotification();
@@ -816,9 +826,13 @@ public class BinaryEncDec implements PlatformEncDec {
     private UserAttachRequest parseUserAttachRequest(ByteBuffer buf) {
         int extIdLength = buf.get() & 0xFF;
         int tokenLength = getIntFromUnsignedShort(buf);
+        int verifierTokenLength = getIntFromUnsignedShort(buf);
+        //reserved
+        buf.getShort();
         String userExternalId = getUTF8String(buf, extIdLength);
         String userAccessToken = getUTF8String(buf, tokenLength);
-        return new UserAttachRequest(userExternalId, userAccessToken);
+        String userVerifierToken = getUTF8String(buf, verifierTokenLength);
+        return new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
     }
 
     private static List<EventClassFamilyVersionInfo> parseEventFamilyVersionList(ByteBuffer buf, int count) {

@@ -242,11 +242,11 @@ public class DefaultEndpointRegistrationManagerTest {
 
         manager.setAttachedListener(null);
         manager.attachUser("foo", "bar", null);
-        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS), null, null);
+        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), null, null);
 
         manager.setAttachedListener(listener);
         manager.attachUser("foo", "bar", null);
-        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS), null, null);
+        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), null, null);
 
         verify(listener, times(2)).onAttachedToUser(anyString(), anyString());
         verify(state, times(4)).setAttachedToUser(true);

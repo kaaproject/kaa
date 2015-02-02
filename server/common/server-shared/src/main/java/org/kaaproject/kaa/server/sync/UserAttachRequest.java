@@ -16,18 +16,24 @@
 package org.kaaproject.kaa.server.sync;
 
 public class UserAttachRequest {
+    private String userVerifierId;
     private String userExternalId;
     private String userAccessToken;
-
-    public UserAttachRequest() {
-    }
 
     /**
      * All-args constructor.
      */
-    public UserAttachRequest(String userExternalId, String userAccessToken) {
+    public UserAttachRequest(String userVerifierId, String userExternalId, String userAccessToken) {
+        this.userVerifierId = userVerifierId;
         this.userExternalId = userExternalId;
         this.userAccessToken = userAccessToken;
+    }
+
+    /**
+     * Gets the value of the 'userExternalId' field.
+     */
+    public String getUserVerifierId() {
+        return userVerifierId;
     }
 
     /**
@@ -38,30 +44,10 @@ public class UserAttachRequest {
     }
 
     /**
-     * Sets the value of the 'userExternalId' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setUserExternalId(String value) {
-        this.userExternalId = value;
-    }
-
-    /**
      * Gets the value of the 'userAccessToken' field.
      */
     public String getUserAccessToken() {
         return userAccessToken;
-    }
-
-    /**
-     * Sets the value of the 'userAccessToken' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setUserAccessToken(String value) {
-        this.userAccessToken = value;
     }
 
     @Override
@@ -70,6 +56,7 @@ public class UserAttachRequest {
         int result = 1;
         result = prime * result + ((userAccessToken == null) ? 0 : userAccessToken.hashCode());
         result = prime * result + ((userExternalId == null) ? 0 : userExternalId.hashCode());
+        result = prime * result + ((userVerifierId == null) ? 0 : userVerifierId.hashCode());
         return result;
     }
 
@@ -99,7 +86,13 @@ public class UserAttachRequest {
         } else if (!userExternalId.equals(other.userExternalId)) {
             return false;
         }
+        if (userVerifierId == null) {
+            if (other.userVerifierId != null) {
+                return false;
+            }
+        } else if (!userVerifierId.equals(other.userVerifierId)) {
+            return false;
+        }
         return true;
     }
-
 }

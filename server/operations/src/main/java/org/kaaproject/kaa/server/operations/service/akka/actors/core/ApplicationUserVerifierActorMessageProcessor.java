@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -87,9 +88,9 @@ public class ApplicationUserVerifierActorMessageProcessor {
     public void verifyUser(UserVerificationRequestMessage message) {
         UserVerifier verifier = userVerifiers.get(message.getVerifierId());
         if (verifier != null) {
-
+            verifier.checkAccessToken(message.getUserId(), message.getAccessToken(), new DefaultVerifierCallback(message.getOriginator(), message.getRequestid()));
         } else {
-            message.getOriginator().tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.NO_VERIFIER_CONFIGURED),
+            message.getOriginator().tell(UserVerificationResponseMessage.failure(message.getRequestid(), UserVerifierErrorCode.NO_VERIFIER_CONFIGURED),
                     ActorRef.noSender());
         }
     }
@@ -149,13 +150,15 @@ public class ApplicationUserVerifierActorMessageProcessor {
         }
     }
 
-    public static class DefaultVerifierCallback implements UserVerifierCallback {
+    private static class DefaultVerifierCallback implements UserVerifierCallback {
         
         private final ActorRef endpointActor;
+        private final UUID requestId;
 
-        public DefaultVerifierCallback(ActorRef endpointActor) {
+        public DefaultVerifierCallback(ActorRef endpointActor, UUID requestId) {
             super();
             this.endpointActor = endpointActor;
+            this.requestId = requestId;
         }
         
         private void tell(UserVerificationResponseMessage msg){
@@ -164,52 +167,52 @@ public class ApplicationUserVerifierActorMessageProcessor {
 
         @Override
         public void onSuccess() {
-            tell(UserVerificationResponseMessage.success());
+            tell(UserVerificationResponseMessage.success(requestId));
         }
 
         @Override
         public void onTokenInvalid() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.TOKEN_INVALID));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.TOKEN_INVALID));
         }
 
         @Override
         public void onTokenExpired() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.TOKEN_EXPIRED));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.TOKEN_EXPIRED));
         }
 
         @Override
         public void onVerificationFailure(String reason) {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.OTHER, reason));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.OTHER, reason));
         }
 
         @Override
         public void onInternalError() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.INTERNAL_ERROR));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.INTERNAL_ERROR));
         }
 
         @Override
         public void onInternalError(String reason) {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.TOKEN_EXPIRED, reason));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.TOKEN_EXPIRED, reason));
         }
 
         @Override
         public void onConnectionError() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.CONNECTION_ERROR));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.CONNECTION_ERROR));
         }
 
         @Override
         public void onConnectionError(String reason) {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.CONNECTION_ERROR, reason));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.CONNECTION_ERROR, reason));
         }
 
         @Override
         public void onRemoteError() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.REMOTE_ERROR));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.REMOTE_ERROR));
         }
 
         @Override
         public void onRemoteError(String reason) {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.REMOTE_ERROR, reason));
+            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.REMOTE_ERROR, reason));
         }
     }
 }
