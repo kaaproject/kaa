@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.common.verifier.UserVerifier;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierContext;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierErrorCode;
+import org.kaaproject.kaa.server.common.verifier.UserVerifierLifecycleException;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage;
 import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
@@ -63,7 +64,7 @@ public class ApplicationUserVerifierActorMessageProcessor {
         }
     }
 
-    private UserVerifier createUserVerifier(UserVerifierDto verifierDto) throws ReflectiveOperationException {
+    private UserVerifier createUserVerifier(UserVerifierDto verifierDto) throws Exception {
         if (verifierDto == null) {
             throw new IllegalArgumentException("verifier dto can't be null");
         }
@@ -77,7 +78,7 @@ public class ApplicationUserVerifierActorMessageProcessor {
         } catch (ClassNotFoundException e) {
             LOG.error("Unable to find custom verifier class {}", verifierDto.getClassName());
             throw e;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | UserVerifierLifecycleException e) {
             LOG.error("Unable to instantiate custom verifier from class {}", verifierDto.getClassName());
             throw e;
         }
