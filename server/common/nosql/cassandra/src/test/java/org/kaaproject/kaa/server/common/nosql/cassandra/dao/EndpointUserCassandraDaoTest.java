@@ -1,5 +1,6 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
+import com.datastax.driver.core.utils.Bytes;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
