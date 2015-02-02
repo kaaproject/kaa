@@ -37,6 +37,10 @@
     <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>verifier-shared</artifactId>
         </dependency>
         <dependency>

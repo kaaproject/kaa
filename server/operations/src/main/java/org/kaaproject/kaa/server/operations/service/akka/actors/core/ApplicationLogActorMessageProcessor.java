@@ -166,7 +166,6 @@ public class ApplicationLogActorMessageProcessor {
             LogAppender logAppender = logAppenderService.getApplicationAppender(appenderId);
             if (logAppender != null) {
                 addAppender(appenderId, logAppender);
-            } else {
                 LOG.info("[{}] Log appender [{}] registered.", applicationId, appenderId);
             }
         } else {

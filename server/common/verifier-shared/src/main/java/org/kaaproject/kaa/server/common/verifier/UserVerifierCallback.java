@@ -53,13 +53,28 @@ public interface UserVerifierCallback {
     void onInternalError();
 
     /**
+     * Failed verification due to internal error
+     */
+    void onInternalError(String reason);
+
+    /**
      * Failed verification due to connection error
      */
     void onConnectionError();
 
     /**
+     * Failed verification due to connection error
+     */
+    void onConnectionError(String reason);
+
+    /**
      * Failed verification due to remote authentication service error
      */
     void onRemoteError();
+
+    /**
+     * Failed verification due to remote authentication service error
+     */
+    void onRemoteError(String reason);
 
 }
