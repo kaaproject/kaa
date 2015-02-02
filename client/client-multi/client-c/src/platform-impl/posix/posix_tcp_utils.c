@@ -15,12 +15,12 @@
  */
 
 #include "../../platform/ext_tcp_utils.h"
+#include "../../platform/stdio.h"
 #include "../../kaa_common.h"
 #include <unistd.h>
 #include <errno.h>
 #include <netdb.h>
 #include <string.h>
-#include <stdio.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -46,7 +46,7 @@ kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
 }
 
 
-ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_props_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
+ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
 {
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
 
