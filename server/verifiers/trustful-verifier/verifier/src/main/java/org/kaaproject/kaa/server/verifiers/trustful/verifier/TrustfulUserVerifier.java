@@ -1,17 +1,18 @@
 package org.kaaproject.kaa.server.verifiers.trustful.verifier;
 
-import org.kaaproject.kaa.server.common.verifier.UserVerifier;
+import org.kaaproject.kaa.server.common.verifier.AbstractKaaUserVerifier;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierContext;
+import org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TrustfulUserVerifier implements UserVerifier {
+public class TrustfulUserVerifier extends AbstractKaaUserVerifier<TrustfulAvroConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(TrustfulUserVerifier.class);
 
     @Override
-    public void init(UserVerifierContext context) {
-        LOG.info("Initializing user verifier with {}", context);
+    public void init(UserVerifierContext context, TrustfulAvroConfig configuration) {
+        LOG.info("Initializing user verifier with context {} and configuration {}", context, configuration);
     }
 
     @Override
@@ -29,5 +30,9 @@ public class TrustfulUserVerifier implements UserVerifier {
     public void stop() {
         LOG.info("user verifier stopped");
     }
-
+    
+    @Override
+    public Class<TrustfulAvroConfig> getConfigurationClass() {
+        return TrustfulAvroConfig.class;
+    }
 }

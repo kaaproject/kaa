@@ -33,7 +33,7 @@ public interface UserVerifier {
      *            the user verifier initialization context
      * @throws UserVerifierLifecycleException
      */
-    void init(UserVerifierContext context);
+    void init(UserVerifierContext context) throws UserVerifierLifecycleException;
     
     /**
      * Verifies the access token.
