@@ -30,21 +30,19 @@
 #define KAA_TCP_SOCKET_NOT_SET -1
 
 
-
 typedef enum {
     RET_STATE_VALUE_ERROR, RET_STATE_VALUE_READY, RET_STATE_VALUE_IN_PROGRESS
 } ext_tcp_utils_function_return_state_t;
+
 
 typedef enum {
     KAA_TCP_SOCK_ERROR, KAA_TCP_SOCK_CONNECTING, KAA_TCP_SOCK_CONNECTED
 } ext_tcp_socket_state_t;
 
+
 typedef enum {
     KAA_TCP_SOCK_IO_OK, KAA_TCP_SOCK_IO_EOF, KAA_TCP_SOCK_IO_ERROR
 } ext_tcp_socket_io_errors_t;
-
-
-kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port);
 
 
 typedef kaa_error_t (*on_dns_resolve_complete_fn)(void *context, const kaa_sockaddr_t *addr, kaa_socklen_t addr_size);
@@ -74,10 +72,13 @@ typedef struct {
 ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_props_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size);
 
 
+kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port);
+
+
 /**
  * Create and open non blocking TCP connection.
  */
-kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd *fd, kaa_sockaddr_t *destination, kaa_socklen_t destination_size);
+kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd *fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size);
 
 /**
  * Check state of connecting TCP V4 socket
@@ -86,7 +87,7 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd *fd, kaa_sockaddr_t *destinatio
  *        KAA_TCP_SOCK_CONNECTING - still connecting
  *        KAA_TCP_SOCK_CONNECTED - connect successful.
  */
-ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd fd);
+ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size);
 
 
 /**
@@ -98,7 +99,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd fd);
  *       KAA_TCP_SOCK_IO_OK - write successful.
  *       KAA_TCP_SOCK_IO_ERROR - write failed, socket write return -1
  */
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char  buffer, size_t buffer_size, size_t *bytes_written);
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char *buffer, size_t buffer_size, size_t *bytes_written);
 
 
 /**
