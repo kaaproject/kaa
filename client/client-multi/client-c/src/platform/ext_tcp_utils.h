@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-/*
+/**
  * @file ext_tcp_utils.h
+ * @brief External interface for socket manipulations used by Kaa transport channel implementations.
  *
- *  Created on: Jan 23, 2015
- *      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+ * @author Andriy Panasenko <apanasenko@cybervisiontech.com>
  */
+
 
 #ifndef EXT_TCP_UTILS_H_
 #define EXT_TCP_UTILS_H_
