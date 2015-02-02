@@ -122,6 +122,7 @@ public class OperationsServiceIT extends AbstractTest {
     private static final String ENDPOINT_ACCESS_TOKEN = "endpointAccessToken";
     private static final String INVALID_ENDPOINT_ACCESS_TOKEN = "InvalidEndpointAccessToken";
     private static final int REQUEST_ID1 = 42;
+    private static final String USER_VERIFIER_ID = "user@test.com";
     private static final String USER_EXTERNAL_ID = "user@test.com";
     private static final String USER_ACCESS_TOKEN = "userAccessToken";
     private static final String INVALID_USER_ACCESS_TOKEN = "invalidUserAccessToken";
@@ -568,7 +569,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
+        userRequest.setUserAttachRequest(new UserAttachRequest(USER_VERIFIER_ID, USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         request.setUserSync(userRequest);
 
 
@@ -596,7 +597,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, INVALID_USER_ACCESS_TOKEN));
+        userRequest.setUserAttachRequest(new UserAttachRequest(USER_VERIFIER_ID, USER_EXTERNAL_ID, INVALID_USER_ACCESS_TOKEN));
         request.setUserSync(userRequest);
 
         ServerSync response = operationsService.sync(request).getResponse();
@@ -650,7 +651,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
+        userRequest.setUserAttachRequest(new UserAttachRequest(USER_VERIFIER_ID, USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointAttachRequests(Collections.singletonList(new EndpointAttachRequest(REQUEST_ID1, ENDPOINT_ACCESS_TOKEN)));
         request.setUserSync(userRequest);
 
@@ -685,7 +686,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
+        userRequest.setUserAttachRequest(new UserAttachRequest(USER_VERIFIER_ID, USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointAttachRequests(Collections.singletonList(new EndpointAttachRequest(REQUEST_ID1, INVALID_ENDPOINT_ACCESS_TOKEN)));
         request.setUserSync(userRequest);
 
@@ -717,7 +718,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
+        userRequest.setUserAttachRequest(new UserAttachRequest(USER_VERIFIER_ID, USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()))));
         request.setUserSync(userRequest);
 
@@ -752,7 +753,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
+        userRequest.setUserAttachRequest(new UserAttachRequest(USER_VERIFIER_ID, USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()))));
         request.setUserSync(userRequest);
 

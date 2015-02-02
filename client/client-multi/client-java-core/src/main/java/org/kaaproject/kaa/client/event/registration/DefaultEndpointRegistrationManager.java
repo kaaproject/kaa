@@ -134,7 +134,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
 
     @Override
     public void attachUser(String userExternalId, String userAccessToken, UserAuthResultListener callback) {
-        userAttachRequest = new UserAttachRequest(userExternalId, userAccessToken);
+        //TODO: make this configurable
+        userAttachRequest = new UserAttachRequest("VERIFIER_ID", userExternalId, userAccessToken);
         userAuthResultListener = callback;
         if (userTransport != null) {
             userTransport.sync();
