@@ -48,6 +48,7 @@ typedef struct {
     char * hostname;
     size_t hostname_length;
     kaa_sockaddr_t sockaddr;
+    size_t  sockaddr_length;
     kaa_fd  socket_descriptor;
 } kaa_tcp_access_point_t;
 
@@ -61,9 +62,12 @@ typedef struct {
     kaa_tcp_access_point_t access_point;
     kaa_service_t pending_request_services[];
     size_t pending_request_service_count;
-    kaa_buffer_t    * in_buffer;
-    kaa_buffer_t    * out_buffer;
-    kaatcp_parser_t * parser;
+    kaa_buffer_t    *in_buffer;
+    kaa_buffer_t    *out_buffer;
+    kaatcp_parser_t *parser;
+    char *application_token;
+    size_t application_token_length;
+    uint16_t message_id;
 } kaa_tcp_channel_t;
 
 
@@ -82,7 +86,14 @@ kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface
 kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * channel, fd_event_t event_type, kaa_fd fd_p);
 kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_interface_t * channel, kaa_tcp_channel_event_fn callback, void * context);
 
-
+/*
+ * Parser handlers
+ */
+void kaa_tcp_channel_bootstrap_message_callback(void * context, kaatcp_bootstrap_response_t *message);
+void kaa_tcp_channel_connack_message_callback(void * context, kaatcp_connack_t message);
+void kaa_tcp_channel_disconnect_message_callback(void * context, kaatcp_disconnect_t message);
+void kaa_tcp_channel_kaasync_message_callback(void * context, kaatcp_kaasync_t *message);
+void kaa_tcp_channel_pingresp_message_callback(void * context);
 /**
  * Internal functions
  */
@@ -92,13 +103,16 @@ kaa_error_t kaa_tcp_channel_sync_bootstrap(kaa_tcp_channel_t * channel);
 kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t * channel, const kaa_service_t services[], size_t service_count);
 kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t * channel, const kaa_service_t services[], size_t service_count);
 kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolved(void *context);
+kaa_error_t kaa_tcp_channel_flush_pending_service(kaa_tcp_channel_t * channel, kaa_service_t service);
 kaa_error_t kaa_tcp_channel_flush_pending_services(kaa_tcp_channel_t * channel);
 kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t * channel);
 uint32_t get_uint32_t(const char * buffer);
 kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t * channel);
 kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t * channel);
 
-kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel)
+kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel,
+        const char *application_token,
+        size_t application_token_length)
 {
     KAA_RETURN_IF_NIL(channel,KAA_ERR_BADPARAM);
 
@@ -119,8 +133,20 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel)
     kaa_tcp_channel->parser = KAA_CALLOC(1,sizeof(kaatcp_parser_t));
     KAA_RETURN_IF_NIL(kaa_tcp_channel->parser,KAA_ERR_NOMEM);
 
-    kaatcp_parser_handlers_t parser_handler;
+    if (application_token_length > 0) {
+        kaa_tcp_channel->application_token = KAA_MALLOC(application_token_length);
+        KAA_RETURN_IF_NIL(kaa_tcp_channel->application_token,KAA_ERR_NOMEM);
+        memcpy(kaa_tcp_channel->application_token, application_token, application_token_length);
+        kaa_tcp_channel->application_token_length = application_token_length;
+    }
 
+    kaatcp_parser_handlers_t parser_handler;
+    parser_handler.bootstrap_handler = kaa_tcp_channel_bootstrap_message_callback;
+    parser_handler.connack_handler = kaa_tcp_channel_connack_message_callback;
+    parser_handler.disconnect_handler = kaa_tcp_channel_disconnect_message_callback;
+    parser_handler.kaasync_handler = kaa_tcp_channel_kaasync_message_callback;
+    parser_handler.pingresp_handler = kaa_tcp_channel_pingresp_message_callback;
+    parser_handler.handlers_context = (void*) kaa_tcp_channel;
     kaatcp_error_t parser_ret = kaatcp_parser_init(kaa_tcp_channel->parser, &parser_handler);
     if (parser_ret) {
         return KAA_ERR_TCPCHANNEL_PARSER_INIT_FAILED;
@@ -153,7 +179,7 @@ kaa_error_t kaa_tcp_channel_get_supported_services(void * context, kaa_service_t
     kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
 
     kaa_error_t ret = KAA_ERR_NONE;
-
+    //TODO create method
 
 
     return ret;
@@ -322,7 +348,10 @@ kaa_error_t kaa_tcp_channel_release_context(void * context) {
     kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
     kaa_error_t ret = KAA_ERR_NONE;
 
-    KAA_FREE(channel->parser);
+    if (channel->parser) {
+        KAA_FREE(channel->parser);
+        channel->parser = NULL;
+    }
 
 
     ret = kaa_tcp_channel_release_access_point(channel);
@@ -331,8 +360,15 @@ kaa_error_t kaa_tcp_channel_release_context(void * context) {
 
     ret = kaa_buffer_destroy(channel->out_buffer);
 
+    if (channel->application_token) {
+        KAA_FREE(channel->application_token);
+        channel->application_token = NULL;
+        channel->application_token_length = 0;
+    }
+
     if (channel->pending_request_services) {
         KAA_FREE(channel->pending_request_services);
+        channel->pending_request_services = NULL;
     }
 
     channel->access_point.state = AP_UNDEFINED;
@@ -436,19 +472,29 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
     }
 
     remaining_to_read = 4;
+    int access_point_socket_port = 0;
     if ((position + remaining_to_read) <= access_point->connection_data_len) {
-        ext_tcp_utils_set_sockaddr_port(&channel->access_point.sockaddr, (uint16_t)get_uint32_t(access_point->connection_data + position));
+        access_point_socket_port = (uint16_t)get_uint32_t(access_point->connection_data + position);
         position += remaining_to_read;
     } else {
         return KAA_ERR_INSUFFICIENT_BUFFER;
     }
 
+    kaa_dns_resolve_listener_t resolve_listener;
+    resolve_listener.context = (void*)channel;
+    resolve_listener.on_host_resolved = kaa_tcp_channel_set_access_point_hostname_resolved;
+
+    kaa_dns_resolve_props_t resolve_props;
+    resolve_props.hostname = channel->access_point.hostname;
+    resolve_props.hostname_length = channel->access_point.hostname_length;
+    resolve_props.port = access_point_socket_port;
+
     ext_tcp_utils_function_return_state_t r = ext_tcp_utils_gethostbyaddr(
-            (void*)channel,
-            kaa_tcp_channel_set_access_point_hostname_resolved,
+            &resolve_listener,
+            &resolve_props,
             &channel->access_point.sockaddr,
-            channel->access_point.hostname,
-            channel->access_point.hostname_length);
+            &channel->access_point.sockaddr_length
+            );
     switch (r) {
         case RET_STATE_VALUE_IN_PROGRESS:
             channel->access_point.state = AP_NOT_SET;
@@ -499,10 +545,12 @@ kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface
                 *fd_p = tcp_channel->access_point.socket_descriptor;
             } else  if (tcp_channel->access_point.state == AP_CONNECTED) {
                 //If there are some pending sync services put W into fd_set
-                if ((tcp_channel->pending_request_service_count > 0)
-                        && tcp_channel->channel_state == KAA_TCP_CHANNEL_AUTHORIZED){
-                    *fd_p = tcp_channel->access_point.socket_descriptor;
-                    break;
+                if (tcp_channel->pending_request_service_count > 0) {
+                    if (is_service_pending(tcp_channel, KAA_SERVICE_BOOTSTRAP)
+                        || tcp_channel->channel_state == KAA_TCP_CHANNEL_AUTHORIZED){
+                        *fd_p = tcp_channel->access_point.socket_descriptor;
+                        break;
+                    }
                 }
                 //If out buffer have some bytes to transmit put
                 char * buf = NULL;
@@ -519,6 +567,29 @@ kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface
                 *fd_p = tcp_channel->access_point.socket_descriptor;
             }
             break;
+    }
+
+    return ret;
+}
+
+kaa_error_t kaa_tcp_channel_flush_pending_service(kaa_tcp_channel_t * channel, kaa_service_t service)
+{
+    KAA_RETURN_IF_NIL(channel, KAA_ERR_BADPARAM);
+
+    kaa_error_t ret = KAA_ERR_NONE;
+    if (is_service_pending(channel, service)) {
+        switch (service) {
+            case KAA_SERVICE_BOOTSTRAP:
+                const kaa_service_t bootstrap_sync_services[1] = { KAA_SERVICE_BOOTSTRAP };
+                kaa_tcp_channel_delete_pending_services(channel,&bootstrap_sync_services,1);
+                kaatcp_bootstrap_request_t bootstrap;
+                kaatcp_error_t kaatcp_error = kaatcp_fill_bootstrap_message(channel->application_token, channel->message_id++, &bootstrap);
+                //TODO create message
+                break;
+            default:
+                break;
+        }
+
     }
 
     return ret;
@@ -544,7 +615,7 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t * channel)
 
     channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
 
-    ret = kaa_tcp_utils_v4_tcp_socket_close(channel->access_point.socket_descriptor);
+    ret = ext_tcp_utils_tcp_socket_close(channel->access_point.socket_descriptor);
 
     channel->access_point.socket_descriptor = KAA_TCP_SOCKET_NOT_SET;
 
@@ -583,7 +654,14 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
                     switch (ioe) {
                         case KAA_TCP_SOCK_IO_OK:
 
-                            //TODO push bytes into parser
+                            //TODO Modify parser errors code
+                            kaatcp_error_t kaatcp_ret = kaatcp_parser_process_buffer(tcp_channel->parser, tcp_channel->out_buffer, bytes_read);
+                            if (kaatcp_ret) {
+                                ret = KAA_ERR_TCPCHANNEL_PARSER_ERROR;
+                                ext_tcp_channel_socket_io_error(tcp_channel);
+                                break;
+                            }
+
                             ret = kaa_buffer_free_allicated_space(tcp_channel->out_buffer, bytes_read);
                             break;
                         default:
@@ -595,7 +673,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
             break;
         case FD_WRITE:
             if (tcp_channel->access_point.state == AP_CONNECTING) {
-                ext_tcp_socket_state_t s = kaa_tcp_utils_v4_tcp_socket_check(fd_p);
+                ext_tcp_socket_state_t s = ext_tcp_utils_tcp_socket_check(fd_p, &tcp_channel.access_point.sockaddr, tcp_channel.access_point.sockaddr_length);
                 switch (s) {
                     case KAA_TCP_SOCK_ERROR:
                         tcp_channel->access_point.state = AP_RESOLVED;
@@ -616,7 +694,12 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
             } else if (tcp_channel->access_point.state == AP_CONNECTED) {
 
                 if (tcp_channel->pending_request_service_count > 0) {
-                    ret = kaa_tcp_channel_flush_pending_services(tcp_channel);
+                    if (is_service_pending(tcp_channel, KAA_SERVICE_BOOTSTRAP)) {
+                        ret = kaa_tcp_channel_flush_pending_service(tcp_channel, KAA_SERVICE_BOOTSTRAP);
+                    }
+                    if (tcp_channel->channel_state == KAA_TCP_CHANNEL_AUTHORIZED) {
+                        ret = kaa_tcp_channel_flush_pending_services(tcp_channel);
+                    }
 
                 }
 
@@ -626,7 +709,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
                 ret = kaa_buffer_get_unprocessed_space(tcp_channel->out_buffer, &buf, &buf_size);
                 KAA_RETURN_IF_ERR(ret);
                 if (buf_size > 0) {
-                    ext_tcp_socket_io_errors_t ioe = kaa_tcp_utils_v4_tcp_socket_write(fd_p, buf, buf_size, &bytes_written);
+                    ext_tcp_socket_io_errors_t ioe = ext_tcp_utils_tcp_socket_write(fd_p, buf, buf_size, &bytes_written);
                     switch (ioe) {
                         case KAA_TCP_SOCK_IO_OK:
                             ret = kaa_buffer_free_allicated_space(tcp_channel->out_buffer, bytes_written);
@@ -677,7 +760,11 @@ kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t * channel)
     if (channel->access_point.state != AP_RESOLVED) {
         return KAA_ERR_BAD_STATE;
     }
-    kaa_error_t ret = kaa_tcp_utils_open_v4_tcp_socket(&channel->access_point.socket_descriptor, &channel->access_point.sockaddr);
+    kaa_error_t ret = ext_tcp_utils_open_tcp_socket(
+                &channel->access_point.socket_descriptor,
+                &channel->access_point.sockaddr,
+                channel->access_point.sockaddr_length);
+
     KAA_RETURN_IF_ERR(ret);
     channel->access_point.state = AP_CONNECTING;
     return ret;
@@ -709,4 +796,50 @@ kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t * channel)
     }
 
     return ret;
+}
+
+void kaa_tcp_channel_bootstrap_message_callback(void * context, kaatcp_bootstrap_response_t *message)
+{
+    //TODO create code
+    kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
+    if (!channel) {
+        return;
+    }
+
+}
+
+void kaa_tcp_channel_connack_message_callback(void * context, kaatcp_connack_t message)
+{
+    //TODO create code
+    kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
+    if (!channel) {
+        return;
+    }
+}
+
+void kaa_tcp_channel_disconnect_message_callback(void * context, kaatcp_disconnect_t message)
+{
+    //TODO create code
+    kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
+    if (!channel) {
+        return;
+    }
+}
+
+void kaa_tcp_channel_kaasync_message_callback(void * context, kaatcp_kaasync_t *message)
+{
+    //TODO create code
+    kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
+    if (!channel) {
+        return;
+    }
+}
+
+void kaa_tcp_channel_pingresp_message_callback(void * context)
+{
+    //TODO create code
+    kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
+    if (!channel) {
+        return;
+    }
 }
