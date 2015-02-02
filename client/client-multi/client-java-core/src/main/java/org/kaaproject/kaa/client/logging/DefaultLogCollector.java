@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.client.logging;
 
+import static org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration.Builder.BATCH_VOLUME;
+import static org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration.Builder.MAX_STORAGE_SIZE;
+import static org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration.Builder.SINK_THRESHOLD;
+import static org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration.Builder.UPLOAD_TIMEOUT;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
@@ -53,10 +58,10 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
 
     public DefaultLogCollector(LogTransport transport, KaaChannelManager manager) {
         configuration = new DefaultLogUploadConfiguration.Builder()
-                                .setBatchVolume(8 * 1024)
-                                .setVolumeThreshold(4 * 8 * 1024)
-                                .setMaximumAllowedVolume(1024 * 1024)
-                                .setLogUploadTimeout(2 * 60)
+                                .setBatchVolume(BATCH_VOLUME)
+                                .setVolumeThreshold(SINK_THRESHOLD)
+                                .setMaximumAllowedVolume(MAX_STORAGE_SIZE)
+                                .setLogUploadTimeout(UPLOAD_TIMEOUT)
                                 .build();
         storage = new MemoryLogStorage(configuration.getBatchVolume());
         storageStatus = (LogStorageStatus)storage;

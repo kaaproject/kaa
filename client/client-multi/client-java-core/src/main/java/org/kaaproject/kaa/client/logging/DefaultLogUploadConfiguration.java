@@ -50,6 +50,14 @@ public class DefaultLogUploadConfiguration implements LogUploadConfiguration {
     }
 
     public static class Builder {
+        public static final int UPLOAD_TIMEOUT = 2 * 60;
+
+        public static final int MAX_STORAGE_SIZE = 1024 * 1024;
+
+        public static final int BATCH_VOLUME = 8 * 1024;
+
+        public static final int SINK_THRESHOLD = 4 * BATCH_VOLUME;
+        
         DefaultLogUploadConfiguration config = new DefaultLogUploadConfiguration();
 
         public Builder setBatchVolume(long volume) {
