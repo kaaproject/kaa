@@ -78,7 +78,7 @@ typedef struct {
 
 
 /**
- * The target host information which used for resolving needs. See @link ext_tcp_utils_gethostbyaddr @endlink.
+ * The target host information which is used for DNS resolve needs. See @link ext_tcp_utils_gethostbyaddr @endlink.
  */
 typedef struct {
     char    *hostname;               /**< The target's hostname. */
