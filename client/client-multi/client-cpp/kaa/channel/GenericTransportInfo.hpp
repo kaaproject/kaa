@@ -17,19 +17,24 @@
 #ifndef KAA_CHANNEL_GENERICTRANSPORTINFO_HPP_
 #define KAA_CHANNEL_GENERICTRANSPORTINFO_HPP_
 
+#include <botan/base64.h>
+
 #include "ITransportConnectionInfo.hpp"
 
 namespace kaa {
 
-/*
- *
- */
+
 class GenericTransportInfo: public ITransportConnectionInfo
 {
 public:
     GenericTransportInfo(ServerType type, const ProtocolMetaData& metaData) :
         serverType_(type), accessPointId_(metaData.accessPointId)
       , protocolId_(metaData.protocolVersionInfo), connectionData_(metaData.connectionInfo) {}
+
+    GenericTransportInfo(ServerType type, const std::int32_t& accessPointId
+        , const TransportProtocolId& protocolId, const std::vector<std::uint8_t>& connectionData)
+        : serverType_(type), accessPointId_(accessPointId)
+        , protocolId_(protocolId), connectionData_(connectionData) {}
 
     virtual ServerType getServerType() {
         return serverType_;

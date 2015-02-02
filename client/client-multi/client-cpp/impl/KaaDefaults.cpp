@@ -20,6 +20,8 @@
 #include <cstdint>
 #include <sstream>
 
+#include "kaa/channel/GenericTransportInfo.hpp"
+
 namespace kaa {
 
 const char * const BUILD_VERSION = "0.6.1-SNAPSHOT";
@@ -46,9 +48,23 @@ const char * const CLIENT_PRIV_KEY_LOCATION = "key.private";
 
 const char * const CLIENT_STATUS_FILE_LOCATION = "kaa.status";
 
+ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointId
+                                              , const std::int32_t& protocolId
+                                              , const std::int32_t& protocolVersion
+                                              , const std::string& encodedConnectionData)
+{
+    auto buffer = Botan::base64_decode(encodedConnectionData);
+    ITransportConnectionInfoPtr connectionInfo(
+            new GenericTransportInfo(ServerType::BOOTSTRAP
+                                   , accessPointId
+                                   , TransportProtocolId(protocolId, protocolVersion)
+                                   , std::vector<std::uint8_t>(buffer.begin(), buffer.end())));
+
+    return connectionInfo;
+}
+
 const BootstrapServers& getBootstrapServers() {
-    /* Default value for unit test */
-    static BootstrapServers listOfServers;
+    static BootstrapServers listOfServers = { createTransportInfo(0x123, 0x1, 0x2, "asfc") };
     std::random_shuffle(listOfServers.begin(), listOfServers.end());
     return listOfServers;
 }

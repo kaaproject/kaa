@@ -39,6 +39,7 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
+import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
@@ -319,36 +320,36 @@ public class CppSdkGenerator extends SdkGenerator {
         kaaDefaultsString = replaceVar(kaaDefaultsString, APPLICATION_TOKEN_VAR, appToken);
         kaaDefaultsString = replaceVar(kaaDefaultsString, PROFILE_VERSION_VAR, profileSchemaVersion+"");
         kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_VERSION_VAR, configurationSchemaVersion+"");
+        kaaDefaultsString = replaceVar(kaaDefaultsString, SYSTEM_NF_VERSION_VAR, "1");
         kaaDefaultsString = replaceVar(kaaDefaultsString, USER_NF_VERSION_VAR, notificationSchemaVersion+"");
         kaaDefaultsString = replaceVar(kaaDefaultsString, LOG_SCHEMA_VERSION_VAR, logSchemaVersion+"");
+
+        kaaDefaultsString = replaceVar(kaaDefaultsString, POLLING_PERIOD_SECONDS_VAR, "5");
 
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_PUB_KEY_LOCATION_VAR, "key.public");
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_PRIV_KEY_LOCATION_VAR, "key.private");
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_STATUS_FILE_LOCATION_VAR, "kaa.status");
-        kaaDefaultsString = replaceVar(kaaDefaultsString, POLLING_PERIOD_SECONDS_VAR, "5");
-        kaaDefaultsString = replaceVar(kaaDefaultsString, SYSTEM_NF_VERSION_VAR, "1");
 
         String bootstrapServers = "";
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
+
         for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
             if (nodeIndex > 0) {
                 bootstrapServers += "\n                                          , ";
             }
 
             BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
-            List<TransportMetaData> supportedTransports = node.getTransports();
+            List<TransportMetaData> supportedChannels = node.getTransports();
 
-            for (int chIndex = 0; chIndex < supportedTransports.size(); ++chIndex) {
-                if (chIndex > 0) {
-                    bootstrapServers += "\n                                          , ";
-                }
+            int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
 
-                TransportMetaData transport = supportedTransports.get(chIndex);
-
+            for (TransportMetaData transport : supportedChannels) {
                 for(VersionConnectionInfoPair pair : transport.getConnectionInfo()){
-                    String serverPattern = "createServerInfo(";
-                    serverPattern += transport.getId();
+                    String serverPattern = "createTransportInfo(";
+                    serverPattern += "0x" + Integer.toHexString(accessPointId);
+                    serverPattern += ", ";
+                    serverPattern += "0x" + Integer.toHexString(transport.getId());
                     serverPattern += ", ";
                     serverPattern += pair.getVersion();
                     serverPattern += ", \"";
