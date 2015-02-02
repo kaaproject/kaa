@@ -81,6 +81,7 @@ set (KAA_SOURCE_FILES
                        src/platform-impl/ext_log_storage_memory.c
                        src/platform-impl/posix/logger.c
                        src/platform-impl/posix/sha.c
+                       src/platform-impl/posix/posix_tcp_utils.c
                        src/platform-impl/ext_log_upload_strategy_by_volume.c
 )
 

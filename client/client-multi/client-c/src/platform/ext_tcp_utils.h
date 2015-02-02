@@ -25,6 +25,7 @@
 #define EXT_TCP_UTILS_H_
 
 #include "sock.h"
+#include "../kaa_error.h"
 
 #define KAA_TCP_SOCKET_NOT_SET -1
 
@@ -76,7 +77,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
 /**
  * Create and open non blocking TCP connection.
  */
-kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd * fd, kaa_sockaddr_t * destination, kaa_socklen_t destination_size);
+kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd *fd, kaa_sockaddr_t *destination, kaa_socklen_t destination_size);
 
 /**
  * Check state of connecting TCP V4 socket
@@ -97,7 +98,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd fd);
  *       KAA_TCP_SOCK_IO_OK - write successful.
  *       KAA_TCP_SOCK_IO_ERROR - write failed, socket write return -1
  */
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char * buffer, size_t buffer_size, size_t * bytes_written);
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char  buffer, size_t buffer_size, size_t *bytes_written);
 
 
 /**
@@ -110,7 +111,7 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char 
  *       KAA_TCP_SOCK_IO_EOF - read return 0 bytes read, mostly mean FIN/ACK received.
  *       KAA_TCP_SOCK_IO_ERROR - read failed, socket read return -1
  */
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd fd, const char * buffer, size_t buffer_size, size_t * bytes_read);
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd fd, char *buffer, size_t buffer_size, size_t *bytes_read);
 
 /**
  * Close socket.

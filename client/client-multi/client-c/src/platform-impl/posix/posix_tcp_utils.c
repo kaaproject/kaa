@@ -20,10 +20,28 @@
 #include <errno.h>
 #include <netdb.h>
 #include <string.h>
+#include <stdio.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
 {
+    KAA_RETURN_IF_NIL2(addr, port, KAA_ERR_BADPARAM);
+    switch (addr->sa_family) {
+        case AF_INET: {
+            struct sockaddr_in *s_in = (struct sockaddr_in *) addr;
+            s_in->sin_port = KAA_HTONS(port);
+            break;
+        }
+        case AF_INET6: {
+            struct sockaddr_in6 *s_in6 = (struct sockaddr_in6 *) addr;
+            s_in6->sin6_port = KAA_HTONS(port);
+            break;
+        }
+        default:
+            return KAA_ERR_SOCKET_INVALID_FAMILY;
+    }
     return KAA_ERR_NONE;
 }
 
@@ -51,12 +69,10 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
         resolve_error = getaddrinfo(hostname_str, NULL, &hints, &resolve_result);
     }
 
-    if (resolve_error < 0) {
+    if (resolve_error < 0)
         return RET_STATE_VALUE_ERROR;
-    }
-    if (!resolve_result) {
+    if (!resolve_result)
         return RET_STATE_VALUE_ERROR;
-    }
 
     memcpy(result, resolve_result->ai_addr, resolve_result->ai_addrlen);
     *result_size = resolve_result->ai_addrlen;
@@ -65,7 +81,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
 }
 
 
-kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd * fd, kaa_sockaddr_t * destination, kaa_socklen_t destination_size)
+kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd *fd, kaa_sockaddr_t *destination, kaa_socklen_t destination_size)
 {
     KAA_RETURN_IF_NIL3(fd, destination, destination_size, KAA_ERR_BADPARAM);
 
@@ -74,11 +90,15 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd * fd, kaa_sockaddr_t * destinat
         return KAA_ERR_SOCKET_ERROR;
 
     int flags = fcntl(sock, F_GETFL);
-    if (flags < 0)
+    if (flags < 0) {
+        ext_tcp_utils_tcp_socket_close(sock);
         return KAA_ERR_SOCKET_ERROR;
+    }
 
-    if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0)
+    if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
+        ext_tcp_utils_tcp_socket_close(sock);
         return KAA_ERR_SOCKET_ERROR;
+    }
 
     if (connect(sock, destination, destination_size) && errno != EINPROGRESS) {
         ext_tcp_utils_tcp_socket_close(sock);
@@ -96,19 +116,19 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd fd)
 }
 
 
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char * buffer, size_t buffer_size, size_t * bytes_written)
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char *buffer, size_t buffer_size, size_t *bytes_written)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, KAA_TCP_SOCK_IO_ERROR);
     ssize_t write_result = write(fd, buffer, buffer_size);
     if (write_result < 0)
-        return KAA_TCP_SOCK_ERROR;
+        return KAA_TCP_SOCK_IO_ERROR;
     if (bytes_written)
         *bytes_written = write_result;
     return KAA_TCP_SOCK_IO_OK;
 }
 
 
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd fd, const char * buffer, size_t buffer_size, size_t * bytes_read)
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd fd, char *buffer, size_t buffer_size, size_t *bytes_read)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, KAA_TCP_SOCK_IO_ERROR);
     ssize_t read_result = read(fd, buffer, buffer_size);
