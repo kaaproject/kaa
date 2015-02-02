@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.operations.service.akka;
 
 import java.security.KeyPair;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -30,23 +29,20 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.OperationsServerActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.EncDecActor;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.KaaPlatformProtocol;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
+import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
+import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
+import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Service;
 
 import akka.actor.ActorRef;
@@ -60,8 +56,6 @@ import akka.routing.RoundRobinPool;
  */
 @Service
 public class DefaultAkkaService implements AkkaService {
-
-    private static final String PROTOCOL_LOOKUP_PACKAGE_NAME = "org.kaaproject.kaa.server.operations.service";
 
     private static final String IO_ROUTER_ACTOR_NAME = "ioRouter";
 
@@ -128,8 +122,8 @@ public class DefaultAkkaService implements AkkaService {
         LOG.info("Initializing Akka EPS actor...");
         opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService,
                 notificationDeltaService, eventService, applicationService, logAppenderService)), EPS);
-        LOG.info("Lookup platform protocol");
-        Set<String> platformProtocols = lookupPlatformProtocols();
+        LOG.info("Lookup platform protocols");
+        Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
         LOG.info("Initializing Akka io router...");
         ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor,
                 metricsService, cacheService, new KeyPair(keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()),
@@ -138,17 +132,6 @@ public class DefaultAkkaService implements AkkaService {
         listener = new AkkaEventServiceListener(opsActor);
         eventService.addListener(listener);
         LOG.info("Initializing Akka system done");
-    }
-
-    private Set<String> lookupPlatformProtocols() {
-        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPlatformProtocol.class));
-        Set<BeanDefinition> beans = scanner.findCandidateComponents(PROTOCOL_LOOKUP_PACKAGE_NAME);
-        Set<String> protocols = new HashSet<>();
-        for (BeanDefinition bean : beans) {
-            protocols.add(bean.getBeanClassName());
-        }
-        return protocols;
     }
 
     /*
@@ -208,7 +191,7 @@ public class DefaultAkkaService implements AkkaService {
     }
 
     @Override
-    public void process(SessionInitRequest message) {
+    public void process(SessionInitMessage message) {
         ioRouter.tell(message, ActorRef.noSender());
     }
 }

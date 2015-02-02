@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include "platform/platform.h"
+#include <stdbool.h>
 #include "kaa_platform_utils.h"
-
-#include <string.h>
 
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"

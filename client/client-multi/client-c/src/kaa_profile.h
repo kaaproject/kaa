@@ -44,7 +44,10 @@ typedef kaa_profile_basic_endpoint_profile_test_t kaa_profile_t;
 /**
  * Private profile manager data structure
  */
-typedef struct kaa_profile_manager_t kaa_profile_manager_t;
+#ifndef KAA_PROFILE_MANAGER_T
+# define KAA_PROFILE_MANAGER_T
+    typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
+#endif
 
 
 
@@ -59,9 +62,18 @@ typedef struct kaa_profile_manager_t kaa_profile_manager_t;
  *
  * @return      Error code.
  */
-kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile);
+kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile);
 
 
+/**
+ * @brief Updates user's access token.
+ *
+ * @param[in] self      Profile manager instance.
+ * @param[in] token     New user access token.
+ *
+ * @return      Error code.
+ */
+kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t *self, const char *token);
 
 # ifdef __cplusplus
 }      /* extern "C" */

@@ -7,11 +7,12 @@ package org.kaaproject.kaa.server.common.zk.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OperationsNodeInfo\",\"namespace\":\"org.kaaproject.kaa.server.common.zk.gen\",\"fields\":[{\"name\":\"connectionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ConnectionInfo\",\"fields\":[{\"name\":\"thriftHost\",\"type\":\"string\"},{\"name\":\"thriftPort\",\"type\":\"int\"},{\"name\":\"publicKey\",\"type\":[\"bytes\",\"null\"]}]}},{\"name\":\"timeStarted\",\"type\":\"long\"},{\"name\":\"SupportedChannelsArray\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"SupportedChannel\",\"fields\":[{\"name\":\"ZkChannel\",\"type\":{\"type\":\"record\",\"name\":\"ZkSupportedChannel\",\"fields\":[{\"name\":\"ChannelType\",\"type\":{\"type\":\"enum\",\"name\":\"ZkChannelType\",\"symbols\":[\"HTTP\",\"HTTP_LP\",\"KAATCP\"]}},{\"name\":\"RedirectionSupported\",\"type\":\"boolean\"},{\"name\":\"CommunicationParameters\",\"type\":[{\"type\":\"record\",\"name\":\"ZkHttpComunicationParameters\",\"fields\":[{\"name\":\"ZkComunicationParameters\",\"type\":{\"type\":\"record\",\"name\":\"IpComunicationParameters\",\"fields\":[{\"name\":\"HostName\",\"type\":\"string\"},{\"name\":\"Port\",\"type\":\"int\"}]}}]},{\"type\":\"record\",\"name\":\"ZkHttpLpComunicationParameters\",\"fields\":[{\"name\":\"ZkComunicationParameters\",\"type\":\"IpComunicationParameters\"}]},{\"type\":\"record\",\"name\":\"ZkKaaTcpComunicationParameters\",\"fields\":[{\"name\":\"ZkComunicationParameters\",\"type\":\"IpComunicationParameters\"}]}]},{\"name\":\"ChannelStatistics\",\"type\":[{\"type\":\"record\",\"name\":\"ZkHttpStatistics\",\"fields\":[{\"name\":\"ZkStatistics\",\"type\":{\"type\":\"record\",\"name\":\"BaseStatistics\",\"fields\":[{\"name\":\"processedRequestCount\",\"type\":\"int\"},{\"name\":\"registeredUsersCount\",\"type\":\"int\"},{\"name\":\"deltaCalculationCount\",\"type\":\"int\"},{\"name\":\"timeStarted\",\"type\":\"long\"}]}}]},{\"type\":\"record\",\"name\":\"ZkHttpLpStatistics\",\"fields\":[{\"name\":\"ZkStatistics\",\"type\":\"BaseStatistics\"}]},{\"type\":\"record\",\"name\":\"ZkKaaTcpStatistics\",\"fields\":[{\"name\":\"ZkStatistics\",\"type\":\"BaseStatistics\"}]}]}]}}]}}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OperationsNodeInfo\",\"namespace\":\"org.kaaproject.kaa.server.common.zk.gen\",\"fields\":[{\"name\":\"connectionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ConnectionInfo\",\"fields\":[{\"name\":\"thriftHost\",\"type\":\"string\"},{\"name\":\"thriftPort\",\"type\":\"int\"},{\"name\":\"publicKey\",\"type\":[\"bytes\",\"null\"]}]}},{\"name\":\"loadInfo\",\"type\":{\"type\":\"record\",\"name\":\"LoadInfo\",\"fields\":[{\"name\":\"loadIndex\",\"type\":\"int\"}]}},{\"name\":\"timeStarted\",\"type\":\"long\"},{\"name\":\"transports\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"TransportMetaData\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"minSupportedVersion\",\"type\":\"int\"},{\"name\":\"maxSupportedVersion\",\"type\":\"int\"},{\"name\":\"connectionInfo\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"VersionConnectionInfoPair\",\"fields\":[{\"name\":\"version\",\"type\":\"int\"},{\"name\":\"conenctionInfo\",\"type\":\"bytes\"}]}}}]}}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo;
+   private org.kaaproject.kaa.server.common.zk.gen.LoadInfo loadInfo;
    private long timeStarted;
-   private java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel> SupportedChannelsArray;
+   private java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -23,10 +24,11 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
   /**
    * All-args constructor.
    */
-  public OperationsNodeInfo(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo, java.lang.Long timeStarted, java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel> SupportedChannelsArray) {
+  public OperationsNodeInfo(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo, org.kaaproject.kaa.server.common.zk.gen.LoadInfo loadInfo, java.lang.Long timeStarted, java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports) {
     this.connectionInfo = connectionInfo;
+    this.loadInfo = loadInfo;
     this.timeStarted = timeStarted;
-    this.SupportedChannelsArray = SupportedChannelsArray;
+    this.transports = transports;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -34,8 +36,9 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return connectionInfo;
-    case 1: return timeStarted;
-    case 2: return SupportedChannelsArray;
+    case 1: return loadInfo;
+    case 2: return timeStarted;
+    case 3: return transports;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -44,8 +47,9 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: connectionInfo = (org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo)value$; break;
-    case 1: timeStarted = (java.lang.Long)value$; break;
-    case 2: SupportedChannelsArray = (java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel>)value$; break;
+    case 1: loadInfo = (org.kaaproject.kaa.server.common.zk.gen.LoadInfo)value$; break;
+    case 2: timeStarted = (java.lang.Long)value$; break;
+    case 3: transports = (java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -66,6 +70,21 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
   }
 
   /**
+   * Gets the value of the 'loadInfo' field.
+   */
+  public org.kaaproject.kaa.server.common.zk.gen.LoadInfo getLoadInfo() {
+    return loadInfo;
+  }
+
+  /**
+   * Sets the value of the 'loadInfo' field.
+   * @param value the value to set.
+   */
+  public void setLoadInfo(org.kaaproject.kaa.server.common.zk.gen.LoadInfo value) {
+    this.loadInfo = value;
+  }
+
+  /**
    * Gets the value of the 'timeStarted' field.
    */
   public java.lang.Long getTimeStarted() {
@@ -81,18 +100,18 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
   }
 
   /**
-   * Gets the value of the 'SupportedChannelsArray' field.
+   * Gets the value of the 'transports' field.
    */
-  public java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel> getSupportedChannelsArray() {
-    return SupportedChannelsArray;
+  public java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> getTransports() {
+    return transports;
   }
 
   /**
-   * Sets the value of the 'SupportedChannelsArray' field.
+   * Sets the value of the 'transports' field.
    * @param value the value to set.
    */
-  public void setSupportedChannelsArray(java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel> value) {
-    this.SupportedChannelsArray = value;
+  public void setTransports(java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> value) {
+    this.transports = value;
   }
 
   /** Creates a new OperationsNodeInfo RecordBuilder */
@@ -117,8 +136,9 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
     implements org.apache.avro.data.RecordBuilder<OperationsNodeInfo> {
 
     private org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo;
+    private org.kaaproject.kaa.server.common.zk.gen.LoadInfo loadInfo;
     private long timeStarted;
-    private java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel> SupportedChannelsArray;
+    private java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports;
 
     /** Creates a new Builder */
     private Builder() {
@@ -132,13 +152,17 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
         this.connectionInfo = data().deepCopy(fields()[0].schema(), other.connectionInfo);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.timeStarted)) {
-        this.timeStarted = data().deepCopy(fields()[1].schema(), other.timeStarted);
+      if (isValidValue(fields()[1], other.loadInfo)) {
+        this.loadInfo = data().deepCopy(fields()[1].schema(), other.loadInfo);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.SupportedChannelsArray)) {
-        this.SupportedChannelsArray = data().deepCopy(fields()[2].schema(), other.SupportedChannelsArray);
+      if (isValidValue(fields()[2], other.timeStarted)) {
+        this.timeStarted = data().deepCopy(fields()[2].schema(), other.timeStarted);
         fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.transports)) {
+        this.transports = data().deepCopy(fields()[3].schema(), other.transports);
+        fieldSetFlags()[3] = true;
       }
     }
     
@@ -149,13 +173,17 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
         this.connectionInfo = data().deepCopy(fields()[0].schema(), other.connectionInfo);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.timeStarted)) {
-        this.timeStarted = data().deepCopy(fields()[1].schema(), other.timeStarted);
+      if (isValidValue(fields()[1], other.loadInfo)) {
+        this.loadInfo = data().deepCopy(fields()[1].schema(), other.loadInfo);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.SupportedChannelsArray)) {
-        this.SupportedChannelsArray = data().deepCopy(fields()[2].schema(), other.SupportedChannelsArray);
+      if (isValidValue(fields()[2], other.timeStarted)) {
+        this.timeStarted = data().deepCopy(fields()[2].schema(), other.timeStarted);
         fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.transports)) {
+        this.transports = data().deepCopy(fields()[3].schema(), other.transports);
+        fieldSetFlags()[3] = true;
       }
     }
 
@@ -184,6 +212,31 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
+    /** Gets the value of the 'loadInfo' field */
+    public org.kaaproject.kaa.server.common.zk.gen.LoadInfo getLoadInfo() {
+      return loadInfo;
+    }
+    
+    /** Sets the value of the 'loadInfo' field */
+    public org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo.Builder setLoadInfo(org.kaaproject.kaa.server.common.zk.gen.LoadInfo value) {
+      validate(fields()[1], value);
+      this.loadInfo = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'loadInfo' field has been set */
+    public boolean hasLoadInfo() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'loadInfo' field */
+    public org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo.Builder clearLoadInfo() {
+      loadInfo = null;
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
     /** Gets the value of the 'timeStarted' field */
     public java.lang.Long getTimeStarted() {
       return timeStarted;
@@ -191,45 +244,45 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
     
     /** Sets the value of the 'timeStarted' field */
     public org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo.Builder setTimeStarted(long value) {
-      validate(fields()[1], value);
+      validate(fields()[2], value);
       this.timeStarted = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'timeStarted' field has been set */
     public boolean hasTimeStarted() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'timeStarted' field */
     public org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo.Builder clearTimeStarted() {
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'SupportedChannelsArray' field */
-    public java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel> getSupportedChannelsArray() {
-      return SupportedChannelsArray;
+    /** Gets the value of the 'transports' field */
+    public java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> getTransports() {
+      return transports;
     }
     
-    /** Sets the value of the 'SupportedChannelsArray' field */
-    public org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo.Builder setSupportedChannelsArray(java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel> value) {
-      validate(fields()[2], value);
-      this.SupportedChannelsArray = value;
-      fieldSetFlags()[2] = true;
+    /** Sets the value of the 'transports' field */
+    public org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo.Builder setTransports(java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> value) {
+      validate(fields()[3], value);
+      this.transports = value;
+      fieldSetFlags()[3] = true;
       return this; 
     }
     
-    /** Checks whether the 'SupportedChannelsArray' field has been set */
-    public boolean hasSupportedChannelsArray() {
-      return fieldSetFlags()[2];
+    /** Checks whether the 'transports' field has been set */
+    public boolean hasTransports() {
+      return fieldSetFlags()[3];
     }
     
-    /** Clears the value of the 'SupportedChannelsArray' field */
-    public org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo.Builder clearSupportedChannelsArray() {
-      SupportedChannelsArray = null;
-      fieldSetFlags()[2] = false;
+    /** Clears the value of the 'transports' field */
+    public org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo.Builder clearTransports() {
+      transports = null;
+      fieldSetFlags()[3] = false;
       return this;
     }
 
@@ -238,8 +291,9 @@ public class OperationsNodeInfo extends org.apache.avro.specific.SpecificRecordB
       try {
         OperationsNodeInfo record = new OperationsNodeInfo();
         record.connectionInfo = fieldSetFlags()[0] ? this.connectionInfo : (org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo) defaultValue(fields()[0]);
-        record.timeStarted = fieldSetFlags()[1] ? this.timeStarted : (java.lang.Long) defaultValue(fields()[1]);
-        record.SupportedChannelsArray = fieldSetFlags()[2] ? this.SupportedChannelsArray : (java.util.List<org.kaaproject.kaa.server.common.zk.gen.SupportedChannel>) defaultValue(fields()[2]);
+        record.loadInfo = fieldSetFlags()[1] ? this.loadInfo : (org.kaaproject.kaa.server.common.zk.gen.LoadInfo) defaultValue(fields()[1]);
+        record.timeStarted = fieldSetFlags()[2] ? this.timeStarted : (java.lang.Long) defaultValue(fields()[2]);
+        record.transports = fieldSetFlags()[3] ? this.transports : (java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData>) defaultValue(fields()[3]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

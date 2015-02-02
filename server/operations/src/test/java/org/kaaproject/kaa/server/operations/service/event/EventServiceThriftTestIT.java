@@ -16,10 +16,13 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -42,25 +45,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
-import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
-import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
-import org.kaaproject.kaa.server.operations.pojo.sync.Event;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
+import org.kaaproject.kaa.server.sync.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,12 +264,8 @@ public class EventServiceThriftTestIT {
             ByteBuffer keyData = ByteBuffer.wrap(new byte[] {45,45,45,45,45});
             ConnectionInfo connectionInfo = new ConnectionInfo(thriftHost, thriftPort, keyData);
             nodeInfo.setConnectionInfo(connectionInfo);
-            SupportedChannel channel = new SupportedChannel();
-            ZkHttpComunicationParameters httpCommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(thriftHost, 1000));
-            BaseStatistics statistics = new BaseStatistics(2, 3, 1, System.currentTimeMillis());
-            ZkHttpStatistics httpChannelStatistics = new ZkHttpStatistics(statistics );
-            channel.setZkChannel(new ZkSupportedChannel(ZkChannelType.HTTP, true, httpCommunicationParameters, httpChannelStatistics));
-            nodeInfo.setSupportedChannelsArray(Arrays.asList(channel));
+            nodeInfo.setLoadInfo(new LoadInfo(1));
+            nodeInfo.setTransports(new ArrayList<TransportMetaData>());
             String zkHostPortList = "localhost:"+ZK_PORT;
             operationsNode = new OperationsNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(3000, 1000));
             try {

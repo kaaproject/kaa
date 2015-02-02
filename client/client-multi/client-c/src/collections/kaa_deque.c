@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+#include "../platform/platform.h"
 #include "kaa_deque.h"
 
-#include <stddef.h>
-#include "kaa_common.h"
-#include "utilities/kaa_mem.h"
+#include "../kaa_common.h"
+#include "../utilities/kaa_mem.h"
 
 struct kaa_deque_iterator_t {
     kaa_deque_iterator_t  *prev;

@@ -559,14 +559,14 @@ public class BootstrapThriftService {
             case 1: // OPERATIONS_SERVERS_LIST
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list8 = iprot.readListBegin();
-                  struct.operationsServersList = new ArrayList<ThriftOperationsServer>(_list8.size);
-                  for (int _i9 = 0; _i9 < _list8.size; ++_i9)
+                  org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
+                  struct.operationsServersList = new ArrayList<ThriftOperationsServer>(_list0.size);
+                  for (int _i1 = 0; _i1 < _list0.size; ++_i1)
                   {
-                    ThriftOperationsServer _elem10;
-                    _elem10 = new ThriftOperationsServer();
-                    _elem10.read(iprot);
-                    struct.operationsServersList.add(_elem10);
+                    ThriftOperationsServer _elem2;
+                    _elem2 = new ThriftOperationsServer();
+                    _elem2.read(iprot);
+                    struct.operationsServersList.add(_elem2);
                   }
                   iprot.readListEnd();
                 }
@@ -594,9 +594,9 @@ public class BootstrapThriftService {
           oprot.writeFieldBegin(OPERATIONS_SERVERS_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.operationsServersList.size()));
-            for (ThriftOperationsServer _iter11 : struct.operationsServersList)
+            for (ThriftOperationsServer _iter3 : struct.operationsServersList)
             {
-              _iter11.write(oprot);
+              _iter3.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -627,9 +627,9 @@ public class BootstrapThriftService {
         if (struct.isSetOperationsServersList()) {
           {
             oprot.writeI32(struct.operationsServersList.size());
-            for (ThriftOperationsServer _iter12 : struct.operationsServersList)
+            for (ThriftOperationsServer _iter4 : struct.operationsServersList)
             {
-              _iter12.write(oprot);
+              _iter4.write(oprot);
             }
           }
         }
@@ -641,14 +641,14 @@ public class BootstrapThriftService {
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list13 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.operationsServersList = new ArrayList<ThriftOperationsServer>(_list13.size);
-            for (int _i14 = 0; _i14 < _list13.size; ++_i14)
+            org.apache.thrift.protocol.TList _list5 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.operationsServersList = new ArrayList<ThriftOperationsServer>(_list5.size);
+            for (int _i6 = 0; _i6 < _list5.size; ++_i6)
             {
-              ThriftOperationsServer _elem15;
-              _elem15 = new ThriftOperationsServer();
-              _elem15.read(iprot);
-              struct.operationsServersList.add(_elem15);
+              ThriftOperationsServer _elem7;
+              _elem7 = new ThriftOperationsServer();
+              _elem7.read(iprot);
+              struct.operationsServersList.add(_elem7);
             }
           }
           struct.setOperationsServersListIsSet(true);

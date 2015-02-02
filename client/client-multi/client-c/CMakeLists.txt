@@ -54,6 +54,7 @@ else()
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
 endif()
 
+
 find_package (OpenSSL REQUIRED)
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -64,10 +65,9 @@ set (KAA_SOURCE_FILES
                        src/avro_src/encoding_binary.c
                        src/collections/kaa_deque.c
                        src/collections/kaa_list.c
-                       src/kaa_bootstrap.c
+                       src/kaa_bootstrap_manager.c
                        src/kaa_channel_manager.c
                        src/kaa_common_schema.c
-                       src/kaa_common.c
                        src/kaa_event.c
                        src/kaa_logging.c
                        src/kaa_platform_protocol.c
@@ -79,6 +79,8 @@ set (KAA_SOURCE_FILES
                        src/utilities/kaa_mem.c
                        src/kaa_platform_utils.c
                        src/platform-impl/ext_log_storage_memory.c
+                       src/platform-impl/posix/logger.c
+                       src/platform-impl/posix/sha.c
                        src/platform-impl/ext_log_upload_strategy_by_volume.c
 )
 
@@ -142,11 +144,11 @@ add_executable  (test_status
                 )
 target_link_libraries(test_status kaac crypto ${CUNIT_LIB_NAME})
 
-add_executable  (test_bootstrap
-                    test/test_kaa_bootstrap.c
+add_executable  (test_bootstrap_manager
+                    test/test_kaa_bootstrap_manager.c
                     test/kaa_test_external.c
                 )
-target_link_libraries(test_bootstrap kaac crypto ${CUNIT_LIB_NAME})
+target_link_libraries(test_bootstrap_manager kaac crypto ${CUNIT_LIB_NAME})
 
 add_executable  (test_profile
                     src/gen/kaa_profile_gen.c
@@ -172,6 +174,12 @@ add_executable  (test_deque
                     test/kaa_test_external.c
                 )
 target_link_libraries(test_deque kaac crypto ${CUNIT_LIB_NAME})
+
+add_executable  (test_channel_manager
+                    test/test_kaa_channel_manager.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_channel_manager kaac crypto ${CUNIT_LIB_NAME})
 
 endif ()
 

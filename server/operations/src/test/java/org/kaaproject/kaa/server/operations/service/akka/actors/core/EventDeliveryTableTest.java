@@ -21,10 +21,10 @@ import java.nio.ByteBuffer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.pojo.sync.Event;
 import org.kaaproject.kaa.server.operations.service.event.EndpointEvent;
 import org.kaaproject.kaa.server.operations.service.event.EventDeliveryTable;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableAddress;
+import org.kaaproject.kaa.server.sync.Event;
 
 public class EventDeliveryTableTest {
 

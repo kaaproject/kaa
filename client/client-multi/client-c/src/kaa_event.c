@@ -16,13 +16,13 @@
 
 # ifndef KAA_DISABLE_FEATURE_EVENTS
 
-# include "kaa_event.h"
-
 # include <stdbool.h>
-# include <stddef.h>
 # include <stdint.h>
 # include <string.h>
-
+# include <stdarg.h>
+# include "platform/stdio.h"
+# include "platform/ext_sha.h"
+# include "kaa_event.h"
 # include "kaa_status.h"
 # include "kaa_channel_manager.h"
 # include "kaa_platform_utils.h"
@@ -31,6 +31,8 @@
 # include "collections/kaa_list.h"
 # include "utilities/kaa_mem.h"
 # include "utilities/kaa_log.h"
+# include "platform/ext_system_logger.h"
+
 
 
 
@@ -116,8 +118,8 @@ static kaa_service_t event_sync_services[1] = { KAA_SERVICE_EVENT };
 
 
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self
-                                                              , kaa_service_t service_type);
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 
 static void destroy_event_listener_request(void *request_p)
@@ -265,11 +267,7 @@ kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p
     (*event_manager_p)->trx_counter = 0;
     (*event_manager_p)->global_event_callback = NULL;
     (*event_manager_p)->event_sequence_number = 0;
-
-    if (kaa_status_get_event_sequence_number(status, (uint32_t *) &(*event_manager_p)->event_sequence_number)) {
-        KAA_FREE(*event_manager_p);
-        return KAA_ERR_BAD_STATE;
-    }
+    (*event_manager_p)->event_sequence_number = status->event_seq_n;
 
     (*event_manager_p)->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED;
 
@@ -368,7 +366,7 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
         char target_string[2 * KAA_ENDPOINT_ID_LENGTH + 1];
         int i = 0;
         for (; i < KAA_ENDPOINT_ID_LENGTH; ++i) {
-            snprintf(&target_string[2 * i], 3, "%02X", target[i]);
+            ext_snpintf(&target_string[2 * i], 3, "%02X", target[i]);
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event target = %s", target_string);
     }
@@ -400,9 +398,10 @@ kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self
         }
     }
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
-    if (sync)
-        (*sync)(event_sync_services, 1);
+    kaa_transport_channel_interface_t *channel =
+            kaa_channel_manager_get_transport_channel(self->channel_manager, event_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, event_sync_services, 1);
 
     return KAA_ERR_NONE;
 }
@@ -828,10 +827,10 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
             }
         }
         if (kaa_list_get_size(self->pending_events) > 0) {
-            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
-                                            self->channel_manager, event_sync_services[0]);
-            if (sync)
-                (*sync)(event_sync_services, 1);
+            kaa_transport_channel_interface_t *channel =
+                    kaa_channel_manager_get_transport_channel(self->channel_manager, event_sync_services[0]);
+            if (channel)
+                channel->sync_handler(channel->context, event_sync_services, 1);
         }
     }
 
@@ -920,9 +919,9 @@ kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, co
     }
     self->event_listeners_requests = request_it;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
-    if (sync)
-        (*sync)(event_sync_services, 1);
+    kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager, event_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, event_sync_services, 1);
 
     return KAA_ERR_NONE;
 }
@@ -1032,9 +1031,10 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
                 trx->events = NULL;
             }
             kaa_list_remove_at(&self->transactions, it, &destroy_transaction);
-            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, event_sync_services[0]);
-            if (need_sync && sync)
-                (*sync)(event_sync_services, 1);
+            kaa_transport_channel_interface_t *channel =
+                    kaa_channel_manager_get_transport_channel(self->channel_manager, event_sync_services[0]);
+            if (need_sync && channel)
+                channel->sync_handler(channel->context, event_sync_services, 1);
 
             return KAA_ERR_NONE;
         }

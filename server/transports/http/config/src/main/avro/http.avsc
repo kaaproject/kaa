@@ -1,0 +1,10 @@
+{
+ "namespace": "org.kaaproject.kaa.server.transport.http.config.gen",
+ "type": "record",
+ "name": "AvroHttpConfig",
+ "fields": [
+     {"name": "bindInterface", "type": "string"},
+     {"name": "bindPort", "type": "int"},
+     {"name": "maxBodySize", "type": "int"}
+ ]
+}

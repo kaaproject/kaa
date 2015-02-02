@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
-import org.kaaproject.kaa.server.operations.pojo.Base64Util;
+import org.kaaproject.kaa.server.common.Base64Util;
 
 public final class RemoteEndpointEvent {
 

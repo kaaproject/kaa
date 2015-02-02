@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.config;
 
-import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
-
 
 /**
  * The Class OperationsServerConfig.
@@ -45,9 +43,6 @@ public class OperationsServerConfig {
     /** The zk ignore errors. */
     private boolean zkIgnoreErrors;
 
-    /** The operations node. */
-    private OperationsNode operationsNode;
-    
     /**
      * @return the thriftHost
      */
@@ -98,66 +93,59 @@ public class OperationsServerConfig {
     }
 
     /**
-     * @param thriftHost the thriftHost to set
+     * @param thriftHost
+     *            the thriftHost to set
      */
     public void setThriftHost(String thriftHost) {
         this.thriftHost = thriftHost;
     }
 
     /**
-     * @param thriftPort the thriftPort to set
+     * @param thriftPort
+     *            the thriftPort to set
      */
     public void setThriftPort(int thriftPort) {
         this.thriftPort = thriftPort;
     }
 
     /**
-     * @param zkEnabled the zkEnabled to set
+     * @param zkEnabled
+     *            the zkEnabled to set
      */
     public void setZkEnabled(boolean zkEnabled) {
         this.zkEnabled = zkEnabled;
     }
 
     /**
-     * @param zkHostPortList the zkHostPortList to set
+     * @param zkHostPortList
+     *            the zkHostPortList to set
      */
     public void setZkHostPortList(String zkHostPortList) {
         this.zkHostPortList = zkHostPortList;
     }
 
     /**
-     * @param zkMaxRetryTime the zkMaxRetryTime to set
+     * @param zkMaxRetryTime
+     *            the zkMaxRetryTime to set
      */
     public void setZkMaxRetryTime(int zkMaxRetryTime) {
         this.zkMaxRetryTime = zkMaxRetryTime;
     }
 
     /**
-     * @param zkSleepTime the zkSleepTime to set
+     * @param zkSleepTime
+     *            the zkSleepTime to set
      */
     public void setZkSleepTime(int zkSleepTime) {
         this.zkSleepTime = zkSleepTime;
     }
 
     /**
-     * @param zkIgnoreErrors the zkIgnoreErrors to set
+     * @param zkIgnoreErrors
+     *            the zkIgnoreErrors to set
      */
     public void setZkIgnoreErrors(boolean zkIgnoreErrors) {
         this.zkIgnoreErrors = zkIgnoreErrors;
-    }
-
-    /**
-     * @return the operationsNode
-     */
-    public OperationsNode getOperationsNode() {
-        return operationsNode;
-    }
-
-    /**
-     * @param operationsNode the operationsNode to set
-     */
-    public void setOperationsNode(OperationsNode operationsNode) {
-        this.operationsNode = operationsNode;
     }
 
 }

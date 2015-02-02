@@ -16,8 +16,9 @@
 
 package org.kaaproject.kaa.client;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -30,12 +31,13 @@ import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AbstractKaaClientTest extends AbstractKaaClient {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClientTest.class);
 
-    public AbstractKaaClientTest() throws IOException, InvalidKeySpecException,
-            NoSuchAlgorithmException {
+    public AbstractKaaClientTest() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         super();
     }
 
@@ -125,9 +127,7 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     }
 
     @Override
-    public AbstractHttpClient createHttpClient(String url,
-            PrivateKey privateKey, PublicKey publicKey,
-            PublicKey remotePublicKey) {
+    public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
         return mock(AbstractHttpClient.class);
     }
 
@@ -143,7 +143,7 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     }
 
     @Test
-    public void testInit(){
+    public void testInit() {
         try {
             start();
             init();
@@ -160,6 +160,7 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
             start();
             stop();
         } catch (Exception e) {
+            LOG.error("Start failure", e);
             assertTrue("Exception was caught during testStart test: " + e.getMessage(), false);
         }
     }
@@ -167,9 +168,5 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     @Test
     public void testDefaultChannels() throws Exception {
         init();
-        assertEquals("default_operations_long_poll_channel", getDefaultChannel(ChannelType.HTTP_LP).getId());
-        assertEquals("default_operations_http_channel", getDefaultChannel(ChannelType.HTTP).getId());
-        assertEquals("default_bootstrap_channel", getDefaultChannel(ChannelType.BOOTSTRAP).getId());
-        assertEquals("default_operation_tcp_channel", getDefaultChannel(ChannelType.KAATCP).getId());
     }
 }

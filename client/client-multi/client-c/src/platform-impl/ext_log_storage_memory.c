@@ -16,14 +16,15 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "platform/ext_log_storage.h"
+#include "../platform/platform.h"
 
-#include <stdint.h>
-#include <string.h>
+#include "../platform/ext_log_storage.h"
 
-#include "collections/kaa_list.h"
-#include "utilities/kaa_mem.h"
-#include "utilities/kaa_log.h"
+
+
+#include "../collections/kaa_list.h"
+#include "../utilities/kaa_mem.h"
+#include "../utilities/kaa_log.h"
 
 
 

@@ -26,16 +26,20 @@
 
 #include <stdbool.h>
 #include "kaa_error.h"
+#include "platform/ext_user_callback.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+
 /**
  * @brief Kaa user manager structure.
  */
-typedef struct kaa_user_manager_t kaa_user_manager_t;
-
+#ifndef KAA_USER_MANAGER_T
+# define KAA_USER_MANAGER_T
+    typedef struct kaa_user_manager_t       kaa_user_manager_t;
+#endif
 
 
 /**
@@ -51,34 +55,6 @@ typedef struct kaa_user_manager_t kaa_user_manager_t;
  * @return      Error code.
  */
 kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self, const char *user_external_id, const char *access_token);
-
-
-
-/**
- * @brief Structure of user attachment status events listeners.
- *
- * Example functions:
- * @code
- * void on_attached(const char * user_external_id, const char * endpoint_access_token)
- * {
- *     printf("Attached to user %s by endpoint %s\n", user_external_id, endpoint_access_token);
- * }
- * void on_detached(const char * endpoint_access_token)
- * {
- *     printf("Detached from user entity by endpoint %s\n", endpoint_access_token);
- * }
- * void on_attach_status_changed(bool is_attached)
- * {
- *     printf("Attached status is %d\n", is_attached);
- * }
- * @endcode
- */
-typedef struct {
-    void (*on_attached_callback)(const char *user_external_id, const char *endpoint_access_token);
-    void (*on_detached_callback)(const char *endpoint_access_token);
-    void (*on_response_callback)(bool is_attached);
-} kaa_attachment_status_listeners_t;
-
 
 
 /**
