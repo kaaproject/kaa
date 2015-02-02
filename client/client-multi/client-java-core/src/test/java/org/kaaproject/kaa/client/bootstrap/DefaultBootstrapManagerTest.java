@@ -17,40 +17,32 @@
 package org.kaaproject.kaa.client.bootstrap;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.nio.ByteBuffer;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.HttpLongPollServerInfo;
-import org.kaaproject.kaa.client.channel.HttpServerInfo;
+import org.kaaproject.kaa.client.channel.IPTransportInfo;
+import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
-import org.kaaproject.kaa.common.bootstrap.gen.HTTPComunicationParameters;
-import org.kaaproject.kaa.common.bootstrap.gen.HTTPLPComunicationParameters;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
-import org.kaaproject.kaa.common.bootstrap.gen.SupportedChannel;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.mockito.Mockito;
 
 public class DefaultBootstrapManagerTest {
@@ -59,10 +51,8 @@ public class DefaultBootstrapManagerTest {
 
         private boolean serverUpdated = false;
         private String receivedUrl;
-        private final boolean isLongPoll;
 
-        public ChanelManagerMock(boolean longPoll) {
-            this.isLongPoll = longPoll;
+        public ChanelManagerMock() {
         }
 
         public String getReceivedUrl() {
@@ -94,11 +84,6 @@ public class DefaultBootstrapManagerTest {
         }
 
         @Override
-        public List<KaaDataChannel> getChannelsByType(ChannelType type) {
-            return null;
-        }
-
-        @Override
         public KaaDataChannel getChannelByTransportType(TransportType type) {
             return null;
         }
@@ -109,19 +94,13 @@ public class DefaultBootstrapManagerTest {
         }
 
         @Override
-        public void onServerFailed(ServerInfo server) {
+        public void onServerFailed(TransportConnectionInfo server) {
 
         }
 
         @Override
-        public void onServerUpdated(ServerInfo newServer) {
-            if (isLongPoll) {
-                assertTrue(newServer instanceof HttpLongPollServerInfo);
-                receivedUrl = ((HttpLongPollServerInfo) newServer).getURL();
-            } else {
-                assertTrue(newServer instanceof HttpServerInfo);
-                receivedUrl = ((HttpServerInfo) newServer).getURL();
-            }
+        public void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
+            receivedUrl = new IPTransportInfo(newServer).getURL();
             serverUpdated = true;
         }
 
@@ -162,21 +141,14 @@ public class DefaultBootstrapManagerTest {
         BootstrapTransport transport = mock(BootstrapTransport.class);
         DefaultBootstrapManager manager = new DefaultBootstrapManager(transport);
 
-        OperationsServerList serverList = new OperationsServerList();
-
         boolean exception = false;
         try {
             manager.receiveOperationsServerList();
-            manager.useNextOperationsServer(ChannelType.HTTP_LP);
+            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         } catch (BootstrapRuntimeException e) {
             exception = true;
         }
         assertTrue(exception);
-
-        LinkedList<OperationsServer> list = new LinkedList<OperationsServer>();
-        list.add(new OperationsServer());
-        list.add(new OperationsServer());
-        serverList.setOperationsServerArray(list);
 
         manager.receiveOperationsServerList();
 
@@ -189,7 +161,7 @@ public class DefaultBootstrapManagerTest {
 
         boolean exception = false;
         try {
-            manager.useNextOperationsServer(ChannelType.HTTP_LP);
+            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         } catch (BootstrapRuntimeException e) {
             exception = true;
         }
@@ -202,36 +174,28 @@ public class DefaultBootstrapManagerTest {
         keyGen.initialize(2048);
         KeyPair keyPair = keyGen.genKeyPair();
 
-        OperationsServerList serverList = new OperationsServerList();
-        OperationsServer server = new OperationsServer();
-        server.setName("localhost:9889");
-        server.setPublicKey(ByteBuffer.wrap(keyPair.getPublic().getEncoded()));
-        List<SupportedChannel> channels = new LinkedList<>();
-        server.setSupportedChannelsArray(channels);
-        channels.add(new SupportedChannel(ChannelType.HTTP_LP, new HTTPLPComunicationParameters("localhost", 9889)));
-        LinkedList<OperationsServer> list = new LinkedList<OperationsServer>();
-        list.add(server);
-        serverList.setOperationsServerArray(list);
+        List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
+        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, keyPair.getPublic());
+        list.add(md);
 
-        ChanelManagerMock channelManager = spy(new ChanelManagerMock(true));
+        ChanelManagerMock channelManager = spy(new ChanelManagerMock());
 
         manager.setChannelManager(channelManager);
         manager.setTransport(transport);
-        manager.onServerListUpdated(serverList);
-        manager.useNextOperationsServer(ChannelType.HTTP_LP);
+        manager.onProtocolListUpdated(list);
+        manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         assertTrue(channelManager.isServerUpdated());
-        assertEquals("http://localhost:9889/EP/LongSync", channelManager.getReceivedUrl());
+        assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 
-        manager.useNextOperationsServerByDnsName(null);
-        manager.useNextOperationsServerByDnsName("some.name");
-        verify(channelManager, times(1)).onServerUpdated(any(ServerInfo.class));
+        manager.useNextOperationsServerByAccessPointId("some.name".hashCode());
+        verify(channelManager, times(1)).onTransportConnectionInfoUpdated(Mockito.any(TransportConnectionInfo.class));
     }
 
     @Test
     public void testUseServerByDnsName() throws NoSuchAlgorithmException {
         DefaultBootstrapManager manager = new DefaultBootstrapManager(null);
 
-        ChanelManagerMock channelManager = spy(new ChanelManagerMock(false));
+        ChanelManagerMock channelManager = spy(new ChanelManagerMock());
         manager.setChannelManager(channelManager);
 
         BootstrapTransport transport = mock(BootstrapTransport.class);
@@ -242,65 +206,22 @@ public class DefaultBootstrapManagerTest {
         keyGen.initialize(2048);
         KeyPair keyPair = keyGen.genKeyPair();
 
-        OperationsServerList serverList = new OperationsServerList();
-        OperationsServer server1 = new OperationsServer();
-        server1.setName("localhost:9889");
-        server1.setPublicKey(ByteBuffer.wrap(keyPair.getPublic().getEncoded()));
-        List<SupportedChannel> channels1 = new LinkedList<>();
-        server1.setSupportedChannelsArray(channels1);
-        channels1.add(new SupportedChannel(ChannelType.HTTP, new HTTPComunicationParameters("localhost", 9889)));
+        List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
+        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, keyPair.getPublic());
+        list.add(md);
 
-        LinkedList<OperationsServer> list = new LinkedList<OperationsServer>();
-        serverList.setOperationsServerArray(list);
-        list.add(server1);
+        manager.onProtocolListUpdated(list);
+        assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 
-        manager.onServerListUpdated(serverList);
-        assertEquals("http://localhost:9889/EP/Sync", channelManager.getReceivedUrl());
-
-        manager.useNextOperationsServerByDnsName("localhost2:9889");
+        manager.useNextOperationsServerByAccessPointId("localhost2:9889".hashCode());
         Mockito.verify(transport, Mockito.times(1)).sync();
 
-        OperationsServer server2 = new OperationsServer();
-        server2.setName("localhost2:9889");
-        server2.setPublicKey(ByteBuffer.wrap(keyPair.getPublic().getEncoded()));
-        List<SupportedChannel> channels2 = new LinkedList<>();
-        server2.setSupportedChannelsArray(channels2);
-        channels2.add(new SupportedChannel(ChannelType.HTTP, new HTTPComunicationParameters("localhost2", 9889)));
+        list = new ArrayList<ProtocolMetaData>();
+        md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, keyPair.getPublic());
+        list.add(md);
 
-        list.add(server2);
-
-        manager.onServerListUpdated(serverList);
-        assertEquals("http://localhost2:9889/EP/Sync", channelManager.getReceivedUrl());
+        manager.onProtocolListUpdated(list);
+        assertEquals("http://localhost2:9889", channelManager.getReceivedUrl());
         assertTrue(channelManager.isServerUpdated());
     }
-
-    @Test
-    public void testGetOperationsServerList() throws NoSuchAlgorithmException {
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null);
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
-        manager.setChannelManager(channelManager);
-        assertNull(manager.getOperationsServerList());
-
-        // Generating pseudo operation key
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048);
-        KeyPair keyPair = keyGen.genKeyPair();
-
-        OperationsServerList serverList = new OperationsServerList();
-        OperationsServer server1 = new OperationsServer();
-        server1.setName("localhost:9889");
-        server1.setPublicKey(ByteBuffer.wrap(keyPair.getPublic().getEncoded()));
-        List<SupportedChannel> channels1 = new LinkedList<>();
-        server1.setSupportedChannelsArray(channels1);
-        channels1.add(new SupportedChannel(ChannelType.HTTP, new HTTPComunicationParameters("localhost", 9889)));
-
-        LinkedList<OperationsServer> list = new LinkedList<OperationsServer>();
-        serverList.setOperationsServerArray(list);
-        list.add(server1);
-
-        manager.onServerListUpdated(serverList);
-
-        assertNotNull(manager.getOperationsServerList());
-    }
-
 }

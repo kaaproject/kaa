@@ -22,14 +22,7 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.kaaproject.kaa.server.common.zk.WorkerNodeTracker;
-import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,58 +87,17 @@ public class BootstrapNode extends WorkerNodeTracker {
             }
         });
     }
-    
-    /**
-     * Updates statistics of current NodeData
-     * @param deltaCalculationCount
-     * @param processedRequestCount
-     * @param RegisteredUsersCount
-     * @throws IOException
-     */
-    public void updateNodeStatsValues(ZkChannelType channelType,
-                                      int deltaCalculationCount,
-                                      int processedRequestCount,
-                                      int registeredUsersCount)
-            throws IOException {
-        
-        LOG.trace("Bootstrap Node update statistics for {} channel", channelType.toString());
-        for(BootstrapSupportedChannel channel : nodeInfo.getSupportedChannelsArray()) {
-            if(channel.getZkChannel().getChannelType().equals(channelType)) {
-                BaseStatistics stats = null;
-                switch (channelType) { //NOSONAR
-                case HTTP:
-                    ZkHttpStatistics zkHttpStats = (ZkHttpStatistics)channel.getZkChannel().getChannelStatistics();
-                    stats = zkHttpStats.getZkStatistics();
-                    break;
-                case HTTP_LP:
-                    ZkHttpLpStatistics zkHttpLpStats = (ZkHttpLpStatistics)channel.getZkChannel().getChannelStatistics();
-                    stats = zkHttpLpStats.getZkStatistics();
-                    break;
-                case KAATCP:
-                    ZkKaaTcpStatistics zkTcpStats = (ZkKaaTcpStatistics)channel.getZkChannel().getChannelStatistics();
-                    stats = zkTcpStats.getZkStatistics();
-                    break;
-                }
-                if (stats != null) {
-                    stats.setDeltaCalculationCount(deltaCalculationCount);
-                    stats.setProcessedRequestCount(processedRequestCount);
-                    stats.setRegisteredUsersCount(registeredUsersCount);
-                    
-                    try {
-                        client.setData().forPath(nodePath,
-                                bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
-                        LOG.trace("Bootstrap Node update statistics for {} channel, data set: {},{},{}", 
-                                channelType.toString(),
-                                deltaCalculationCount,
-                                processedRequestCount,
-                                registeredUsersCount);
-                    } catch (Exception e) {
-                        LOG.error("Unknown Error", e);
-                        close();
-                    }
-                }
-                break;
-            }
-        }
+
+    public BootstrapNodeInfo getNodeInfo() {
+        return nodeInfo;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("BootstrapNode [nodeInfo=");
+        builder.append(nodeInfo);
+        builder.append("]");
+        return builder.toString();
     }
 }

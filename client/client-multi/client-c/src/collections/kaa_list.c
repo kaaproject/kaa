@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-#include "collections/kaa_list.h"
-#include "utilities/kaa_mem.h"
+#include <stdint.h>
+#include "../platform/stdio.h"
+#include "kaa_list.h"
+#include "../utilities/kaa_mem.h"
 
 struct kaa_list_t {
     void              *data;
@@ -145,6 +150,28 @@ kaa_list_t *kaa_list_remove_at(kaa_list_t **head, kaa_list_t *position, dealloca
         }
     }
     return NULL;
+}
+
+kaa_error_t kaa_list_remove_first(kaa_list_t **head, match_predicate pred, void *context, deallocate_list_data deallocator)
+{
+    KAA_RETURN_IF_NIL2(head, pred, KAA_ERR_BADPARAM);
+
+    if (pred((*head)->data, context)) {
+        kaa_list_t *item_to_delete = *head;
+        *head = (*head)->next;
+        kaa_list_destroy_node(item_to_delete, deallocator);
+        return KAA_ERR_NONE;
+    }
+
+    for (kaa_list_t *curr_head = *head; curr_head->next != NULL; curr_head = curr_head->next) {
+        if (pred(curr_head->next->data, context)) {
+            kaa_list_t *item_to_delete = curr_head->next;
+            curr_head->next = curr_head->next->next;
+            kaa_list_destroy_node(item_to_delete, deallocator);
+            return KAA_ERR_NONE;
+        }
+    }
+    return KAA_ERR_NOT_FOUND;
 }
 
 void kaa_list_set_data_at(kaa_list_t *position, void *data, deallocate_list_data deallocator)

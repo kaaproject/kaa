@@ -21,8 +21,6 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
-
 #include "avro_src/avro/io.h"
 
 #include "collections/kaa_list.h"

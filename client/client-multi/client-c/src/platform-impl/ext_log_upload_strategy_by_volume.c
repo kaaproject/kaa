@@ -20,10 +20,11 @@
  * Makes decisions purely based on the amount of logs collected in the storage.
  */
 
-#include "platform/ext_log_upload_strategy.h"
-#include <stddef.h>
-#include "kaa_common.h"
-#include "utilities/kaa_mem.h"
+#include "../platform/platform.h"
+
+#include "../platform/ext_log_upload_strategy.h"
+#include "../kaa_common.h"
+#include "../utilities/kaa_mem.h"
 
 
 

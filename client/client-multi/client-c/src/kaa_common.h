@@ -22,10 +22,6 @@
 #ifndef KAA_COMMON_H_
 #define KAA_COMMON_H_
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-
 #include "kaa_error.h"
 
 #ifdef __cplusplus
@@ -56,7 +52,7 @@ extern "C" {
 
 
 /**
- * Types of Kaa platform services
+ * @brief Types of Kaa platform services
  */
 typedef enum {
     KAA_SERVICE_BOOTSTRAP = 0,
@@ -66,6 +62,23 @@ typedef enum {
     KAA_SERVICE_LOGGING = 4,
 } kaa_service_t;
 
+/**
+ * @brief Identifier used to uniquely represent transport protocol.
+ */
+typedef struct {
+    uint32_t id;
+    uint16_t version;
+} kaa_transport_protocol_id_t;
+
+/**
+ * @brief Connection parameters used by transport channels to establish
+ * connection both to Bootstrap and Operations servers.
+ */
+typedef struct {
+    uint32_t    id;
+    uint16_t    connection_data_len;
+    char        *connection_data;
+} kaa_access_point_t;
 
 /*
  * Endpoint ID
@@ -73,26 +86,6 @@ typedef enum {
 #define KAA_ENDPOINT_ID_LENGTH 20
 typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
 typedef const uint8_t* kaa_endpoint_id_p;
-
-
-/*
- * SHA1 hash
- */
-#define SHA_1_DIGEST_LENGTH 20
-typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
-typedef const unsigned char* kaa_digest_p;
-
-kaa_error_t kaa_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest);
-
-
-
-// TODO: Channel types must be represented as a list managed in runtime by the channel_manager
-#define KAA_CHANNEL_TYPE_COUNT 3
-typedef enum {
-    HTTP,
-    HTTP_LP,
-    KAATCP
-} kaa_channel_type_t;
 
 
 

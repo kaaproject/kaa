@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kaaproject.kaa.server.common.server.http.DefaultHttpServerInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,16 +28,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author Andrey Panasenko
  */
-@SuppressWarnings("rawtypes")
-public class CommandFactory {
+public class CommandFactory<U,V> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpServerInitializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CommandFactory.class);
 
-    private final Map<String, KaaCommandProcessorFactory> factories;
+    private final Map<String, KaaCommandProcessorFactory<U, V>> factories;
 
-    public CommandFactory(List<KaaCommandProcessorFactory> factories) {
+    public CommandFactory(List<KaaCommandProcessorFactory<U,V>> factories) {
         this.factories = new HashMap<>();
-        for (KaaCommandProcessorFactory factory : factories) {
+        for (KaaCommandProcessorFactory<U,V> factory : factories) {
             this.factories.put(factory.getCommandName(), factory);
         }
     }
@@ -54,7 +52,8 @@ public class CommandFactory {
      * @throws Exception
      *             - throws if URI is incorrect or request command not found
      */
-    public KaaCommandProcessor getCommandProcessor(String uri) throws Exception { // NOSONAR
+    //TODO: remove this method and move logic to http RequestDecoder
+    public KaaCommandProcessor<U,V> getCommandProcessor(String uri) throws Exception { // NOSONAR
         if (uri == null || uri.length() <= 0) {
             throw new Exception("URI parameter incorrect"); // NOSONAR
         }
@@ -65,7 +64,7 @@ public class CommandFactory {
         // String domain = params[1];
         String command = params[2];
         LOG.trace("Command {} looking for URI {}", command, uri);
-        KaaCommandProcessorFactory factory = factories.get(command);
+        KaaCommandProcessorFactory<U,V> factory = factories.get(command);
         if (factory != null) {
             LOG.trace("Command {} found", command);
             return factory.createCommandProcessor();
@@ -73,16 +72,5 @@ public class CommandFactory {
             LOG.warn("Requested command not found: {}", command);
             throw new Exception("Requested command not found"); // NOSONAR
         }
-    }
-
-    public KaaCommandProcessor getCommandProcessorByName(String name) throws Exception { // NOSONAR
-        LOG.trace("Command {} looking in the map", name);
-        KaaCommandProcessorFactory factory = factories.get(name);
-        if (factory != null) {
-            LOG.trace("Command {} found", name);
-            return factory.createCommandProcessor();
-        }
-        LOG.warn("Requested command not found: {}", name);
-        throw new Exception("Requested command not found"); // NOSONAR
     }
 }

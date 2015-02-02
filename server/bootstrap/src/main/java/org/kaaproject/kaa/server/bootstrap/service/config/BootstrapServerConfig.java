@@ -15,11 +15,11 @@
  */
 package org.kaaproject.kaa.server.bootstrap.service.config;
 
-import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 
 /**
- * BootstrapServerConfig Class.
- * ServerConfig Spring injection parameters handling class.
+ * BootstrapServerConfig Class. ServerConfig Spring injection parameters
+ * handling class.
+ * 
  * @author Andrey Panasenko
  *
  */
@@ -45,11 +45,9 @@ public class BootstrapServerConfig {
     /** The zk ignore errors. */
     private boolean zkIgnoreErrors;
 
-    /** The Bootstrap Node */
-    private BootstrapNode bootstrapNode;
-    
     /**
      * The thrift host.
+     * 
      * @return the thriftHost
      */
     public String getThriftHost() {
@@ -58,6 +56,7 @@ public class BootstrapServerConfig {
 
     /**
      * The thrift port.
+     * 
      * @return the thriftPort
      */
     public int getThriftPort() {
@@ -73,6 +72,7 @@ public class BootstrapServerConfig {
 
     /**
      * The zk host port list.
+     * 
      * @return the zkHostPortList
      */
     public String getZkHostPortList() {
@@ -80,7 +80,8 @@ public class BootstrapServerConfig {
     }
 
     /**
-     * The zk max retry time. 
+     * The zk max retry time.
+     * 
      * @return the zkMaxRetryTime
      */
     public int getZkMaxRetryTime() {
@@ -89,6 +90,7 @@ public class BootstrapServerConfig {
 
     /**
      * The zk sleep time.
+     * 
      * @return the zkSleepTime
      */
     public int getZkSleepTime() {
@@ -96,7 +98,8 @@ public class BootstrapServerConfig {
     }
 
     /**
-     * The zk ignore errors. 
+     * The zk ignore errors.
+     * 
      * @return the zkIgnoreErrors
      */
     public boolean isZkIgnoreErrors() {
@@ -104,65 +107,58 @@ public class BootstrapServerConfig {
     }
 
     /**
-     * @param thriftHost the thriftHost to set
+     * @param thriftHost
+     *            the thriftHost to set
      */
     public void setThriftHost(String thriftHost) {
         this.thriftHost = thriftHost;
     }
 
     /**
-     * @param thriftPort the thriftPort to set
+     * @param thriftPort
+     *            the thriftPort to set
      */
     public void setThriftPort(int thriftPort) {
         this.thriftPort = thriftPort;
     }
 
     /**
-     * @param zkEnabled the zkEnabled to set
+     * @param zkEnabled
+     *            the zkEnabled to set
      */
     public void setZkEnabled(boolean zkEnabled) {
         this.zkEnabled = zkEnabled;
     }
 
     /**
-     * @param zkHostPortList the zkHostPortList to set
+     * @param zkHostPortList
+     *            the zkHostPortList to set
      */
     public void setZkHostPortList(String zkHostPortList) {
         this.zkHostPortList = zkHostPortList;
     }
 
     /**
-     * @param zkMaxRetryTime the zkMaxRetryTime to set
+     * @param zkMaxRetryTime
+     *            the zkMaxRetryTime to set
      */
     public void setZkMaxRetryTime(int zkMaxRetryTime) {
         this.zkMaxRetryTime = zkMaxRetryTime;
     }
 
     /**
-     * @param zkSleepTime the zkSleepTime to set
+     * @param zkSleepTime
+     *            the zkSleepTime to set
      */
     public void setZkSleepTime(int zkSleepTime) {
         this.zkSleepTime = zkSleepTime;
     }
 
     /**
-     * @param zkIgnoreErrors the zkIgnoreErrors to set
+     * @param zkIgnoreErrors
+     *            the zkIgnoreErrors to set
      */
     public void setZkIgnoreErrors(boolean zkIgnoreErrors) {
         this.zkIgnoreErrors = zkIgnoreErrors;
-    }
-
-    /**
-     * @return the bootstrapNode
-     */
-    public BootstrapNode getBootstrapNode() {
-        return bootstrapNode;
-    }
-
-    /**
-     * @param bootstrapNode the bootstrapNode to set
-     */
-    public void setBootstrapNode(BootstrapNode bootstrapNode) {
-        this.bootstrapNode = bootstrapNode;
     }
 }

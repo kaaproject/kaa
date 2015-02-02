@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <stdbool.h>
 #include "kaa_test.h"
 
 #include <stddef.h>
@@ -154,7 +155,6 @@ void test_write_protocol_message_header()
     const char serialized_header[KAA_PROTOCOL_ID_SIZE + KAA_PROTOCOL_VERSION_SIZE] = {0x00, 0x00, 0x30, 0x39, 0x01, 0x00};
     uint32_t protocol_id = 12345;
     uint16_t protocol_version = 256;
-    uint16_t extension_count = 5;
 
     error_code = kaa_platform_message_writer_create(&writer, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

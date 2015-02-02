@@ -15,19 +15,19 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.messages.io.response;
 
-import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.PlatformAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ErrorBuilder;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.ResponseBuilder;
-import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.transport.channel.ChannelAware;
+import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
+import org.kaaproject.kaa.server.transport.message.MessageBuilder;
+import org.kaaproject.kaa.server.transport.platform.PlatformAware;
+import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 public interface SessionResponse extends ChannelAware, PlatformAware{
 
     int getPlatformId();
     ServerSync getResponse();
-    NettySessionInfo getSessionInfo();
-    ResponseBuilder getResponseConverter();
+    SessionInfo getSessionInfo();
+    MessageBuilder getMessageBuilder();
     ErrorBuilder getErrorConverter();
 
 }

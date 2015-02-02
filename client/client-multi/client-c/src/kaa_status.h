@@ -24,30 +24,23 @@ extern "C" {
 #include "kaa_error.h"
 #include "kaa_common.h"
 
-typedef struct kaa_status_t kaa_status_t;
+#ifndef KAA_STATUS_T
+# define KAA_STATUS_T
+typedef struct
+{
 
-kaa_error_t kaa_is_endpoint_registered(kaa_status_t *self, bool *result);
-kaa_error_t kaa_set_endpoint_registered(kaa_status_t *self, bool is_registered);
+    uint32_t        event_seq_n;
+    uint16_t        log_bucket_id;
+    bool            is_registered;
+    bool            is_attached;
+    kaa_digest      endpoint_public_key_hash;
+    kaa_digest      profile_hash;
 
-kaa_error_t kaa_is_endpoint_attached_to_user(kaa_status_t *self, bool *result);
-kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *self, bool is_attached);
+    char *          endpoint_access_token;
+} kaa_status_t;
 
-kaa_error_t kaa_status_get_endpoint_access_token(kaa_status_t *self, const char **result);
-kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
+#endif
 
-kaa_error_t kaa_status_get_endpoint_public_key_hash(kaa_status_t *self, kaa_digest_p *result);
-kaa_error_t kaa_status_set_endpoint_public_key_hash(kaa_status_t *self, const kaa_digest hash);
-
-kaa_error_t kaa_status_get_profile_hash(kaa_status_t *self, kaa_digest_p *result);
-kaa_error_t kaa_status_set_profile_hash(kaa_status_t *self, const kaa_digest hash);
-
-kaa_error_t kaa_status_get_event_sequence_number(kaa_status_t *self, uint32_t *result);
-kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t *self, uint32_t seq_n);
-
-kaa_error_t kaa_status_get_log_bucket_id(kaa_status_t *self, uint16_t *result);
-kaa_error_t kaa_status_set_log_bucket_id(kaa_status_t *self, uint16_t id);
-
-kaa_error_t kaa_status_save(kaa_status_t *self);
 
 #ifdef __cplusplus
 } // extern "C"

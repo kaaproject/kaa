@@ -41,6 +41,7 @@
         <module>bootstrap</module>
         <module>flume</module>
         <module>appenders</module>
+        <module>transports</module>
     </modules>
 
 </project>

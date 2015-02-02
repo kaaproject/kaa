@@ -27,9 +27,9 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.R
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.ChannelAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpDisconnectMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.NettyTcpPingMessage;
+import org.kaaproject.kaa.server.transport.channel.ChannelAware;
+import org.kaaproject.kaa.server.transport.message.SessionDisconnectMessage;
+import org.kaaproject.kaa.server.transport.message.SessionPingMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,9 +119,9 @@ public class EndpointActor extends UntypedActor {
             processEndpointSync((SyncRequestMessage) message);
         } else if (message instanceof EndpointEventReceiveMessage) {
             processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
-        } else if (message instanceof NettyTcpDisconnectMessage) {
+        } else if (message instanceof SessionDisconnectMessage) {
             processDisconnectMessage((ChannelAware) message);
-        } else if (message instanceof NettyTcpPingMessage) {
+        } else if (message instanceof SessionPingMessage) {
             processPingMessage((ChannelAware) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processThriftNotification((ThriftNotificationMessage) message);

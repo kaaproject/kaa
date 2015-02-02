@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-#include "kaa_common_schema.h"
-
 #include <string.h>
-#include <stdlib.h>
-
+#include "platform/stdio.h"
+#include "kaa_common_schema.h"
 #include "avro_src/avro/io.h"
 #include "avro_src/encoding.h"
-
 #include "utilities/kaa_mem.h"
 #include "kaa_error.h"
+
+
 
 void kaa_string_serialize(avro_writer_t writer, void* data)
 {

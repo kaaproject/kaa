@@ -32,7 +32,7 @@ public abstract class AbstractKaaTransport implements KaaTransport {
     private static final Logger LOG = LoggerFactory
             .getLogger(AbstractKaaTransport.class);
 
-    private KaaChannelManager channelManager;
+    protected KaaChannelManager channelManager;
 
     protected KaaClientState clientState;
 

@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.client.channel.connectivity;
 
-import org.kaaproject.kaa.client.channel.AbstractServerInfo;
+import org.kaaproject.kaa.client.channel.IPTransportInfo;
 
 public interface PingServerStorage {
-    AbstractServerInfo getCurrentPingServer();
+    IPTransportInfo getCurrentPingServer();
 }

@@ -17,8 +17,8 @@
 package org.kaaproject.kaa.client.channel;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
-import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 
 /**
  * {@link KaaTransport} for the Bootstrap service.
@@ -35,7 +35,7 @@ public interface BootstrapTransport extends KaaTransport {
      * @return Resovle request.
      *
      */
-    Resolve createResolveRequest();
+    SyncRequest createResolveRequest();
 
     /**
      * Updates the state of the Bootstrap manager according the given response.
@@ -43,7 +43,7 @@ public interface BootstrapTransport extends KaaTransport {
      * @param servers response from Bootstrap server.
      * 
      */
-    void onResolveResponse(OperationsServerList servers);
+    void onResolveResponse(SyncResponse servers);
 
     /**
      * Sets the given Bootstrap manager.
@@ -52,5 +52,4 @@ public interface BootstrapTransport extends KaaTransport {
      *
      */
     void setBootstrapManager(BootstrapManager manager);
-
 }

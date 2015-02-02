@@ -23,7 +23,7 @@ typedef struct {
     ${field_type} ${field_name};
 #end
 
-#if ($TypeConverter.isTypeOut($schema) && $schema.getFields().size() > 0)
+#if ($TypeConverter.isTypeOut($schema))
     serialize_fn serialize;
     get_size_fn  get_size;
 #end

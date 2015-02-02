@@ -16,11 +16,11 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "kaa_logging.h"
-
-#include <stddef.h>
 #include <string.h>
 
+#include "platform/stdio.h"
+#include "platform/ext_sha.h"
+#include "kaa_logging.h"
 #include "collections/kaa_list.h"
 #include "kaa_common.h"
 #include "kaa_status.h"
@@ -29,15 +29,17 @@
 #include "kaa_platform_common.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
-
 #include "avro_src/avro/io.h"
+
+
 
 #define KAA_LOGGING_RECEIVE_UPDATES_FLAG   0x01
 #define KAA_MAX_PADDING_LENGTH             (KAA_ALIGNMENT - 1)
 
 
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 
 
@@ -126,9 +128,10 @@ static void update_storage(kaa_log_collector_t *self)
         case UPLOAD:
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Initiating log upload...");
             self->max_log_bucket_size = volume;
-            kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(self->channel_manager, logging_sync_services[0]);
-            if (sync)
-                (*sync)(logging_sync_services, 1);
+            kaa_transport_channel_interface_t *channel =
+                    kaa_channel_manager_get_transport_channel(self->channel_manager, logging_sync_services[0]);
+            if (channel)
+                channel->sync_handler(channel->context, logging_sync_services, 1);
             break;
         default:
             KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Upload will not be triggered now.");
@@ -146,9 +149,13 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Adding new log record {%p}", entry);
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Record size is %zu", record.size);
-    if (!record.size)
+    if (!record.size) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
+                                                                                "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
+    }
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Record size is %zu", record.size);
 
     kaa_error_t error = ext_log_storage_allocate_log_record_buffer(self->log_storage_context, &record);
     if (error)
@@ -214,8 +221,8 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         return KAA_ERR_WRITE_FAILED;
     }
 
-    if (!self->log_bucket_id && kaa_status_get_log_bucket_id(self->status, &self->log_bucket_id))
-        return KAA_ERR_BAD_STATE;
+    if (!self->log_bucket_id)
+        self->log_bucket_id = self->status->log_bucket_id;
     ++self->log_bucket_id;
 
     *((uint16_t *) tmp_writer.current) = KAA_HTONS(self->log_bucket_id);
