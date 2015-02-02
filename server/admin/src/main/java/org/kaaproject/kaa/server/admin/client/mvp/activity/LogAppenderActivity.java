@@ -21,20 +21,19 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderFormWrapper, LogAppenderView, LogAppenderPlace> {
+public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderDto, LogAppenderView, LogAppenderPlace> {
 
     private String applicationId;
 
@@ -63,8 +62,8 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
     }
 
     @Override
-    protected LogAppenderFormWrapper newEntity() {
-        LogAppenderFormWrapper dto = new LogAppenderFormWrapper();
+    protected LogAppenderDto newEntity() {
+        LogAppenderDto dto = new LogAppenderDto();
         dto.setApplicationId(applicationId);
         return dto;
     }
@@ -109,9 +108,9 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
             detailsView.getMaxSchemaVersion().setValue(entity.getMaxLogSchemaVersion());
             detailsView.getConfirmDelivery().setValue(entity.isConfirmDelivery());
             detailsView.setMetadataListBox(entity.getHeaderStructure());
-            detailsView.getConfiguration().setValue(entity.getConfiguration());
+            detailsView.getConfiguration().setValue(entity.getFieldConfiguration());
             LogAppenderInfoDto appenderInfo = 
-                    new LogAppenderInfoDto(entity.getTypeName(), entity.getConfiguration(), entity.getAppenderClassName());
+                    new LogAppenderInfoDto(entity.getPluginTypeName(), entity.getFieldConfiguration(), entity.getPluginClassName());
             detailsView.getAppenderInfo().setValue(appenderInfo);
         }
         detailsView.setSchemaVersions(versions);
@@ -122,23 +121,22 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
         entity.setName(detailsView.getName().getValue());
         entity.setMinLogSchemaVersion(detailsView.getMinSchemaVersion().getValue());
         entity.setMaxLogSchemaVersion(detailsView.getMaxSchemaVersion().getValue());
-        entity.setConfirmDelivery(detailsView.getConfirmDelivery().getValue());
-        entity.setStatus(LogAppenderStatusDto.REGISTERED);
+        entity.setConfirmDelivery(detailsView.getConfirmDelivery().getValue());        
         entity.setDescription(detailsView.getDescription().getValue());
         entity.setHeaderStructure(detailsView.getHeader());
         LogAppenderInfoDto appenderInfo = detailsView.getAppenderInfo().getValue();
-        entity.setTypeName(appenderInfo.getName());
-        entity.setAppenderClassName(appenderInfo.getAppenderClassName());
-        entity.setConfiguration(detailsView.getConfiguration().getValue());
+        entity.setPluginTypeName(appenderInfo.getName());
+        entity.setPluginClassName(appenderInfo.getAppenderClassName());
+        entity.setFieldConfiguration(detailsView.getConfiguration().getValue());
     }
 
     @Override
-    protected void getEntity(String id, AsyncCallback<LogAppenderFormWrapper> callback) {
+    protected void getEntity(String id, AsyncCallback<LogAppenderDto> callback) {
         KaaAdmin.getDataSource().getLogAppenderForm(id, callback);
     }
 
     @Override
-    protected void editEntity(LogAppenderFormWrapper entity, AsyncCallback<LogAppenderFormWrapper> callback) {
+    protected void editEntity(LogAppenderDto entity, AsyncCallback<LogAppenderDto> callback) {
         KaaAdmin.getDataSource().editLogAppenderForm(entity, callback);
     }
 

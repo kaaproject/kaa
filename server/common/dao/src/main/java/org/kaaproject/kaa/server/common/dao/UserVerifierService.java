@@ -31,10 +31,10 @@ public interface UserVerifierService {
     
     /**
      * @param appId
-     * @param verifierId
+     * @param verifierToken
      * @return
      */
-    UserVerifierDto findUserVerifiersByAppIdAndVerifierId(String appId, int verifierId);
+    UserVerifierDto findUserVerifiersByAppIdAndVerifierToken(String appId, String verifierToken);
 
     /**
      * @param id
@@ -47,5 +47,10 @@ public interface UserVerifierService {
      * @return
      */
     UserVerifierDto saveUserVerifier(UserVerifierDto logAppenderDto);
+    
+    /**
+     * @param id
+     */
+    void removeUserVerifierById(String id);
 
 }

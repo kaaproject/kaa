@@ -42,7 +42,7 @@ public class ApplicationUserVerifierActorMessageProcessor {
     private final String applicationId;
 
     /** The log appenders */
-    private Map<Integer, UserVerifier> userVerifiers;
+    private Map<String, UserVerifier> userVerifiers;
 
     ApplicationUserVerifierActorMessageProcessor(EndpointUserService endpointUserService, String applicationId) {
         this.applicationId = applicationId;
@@ -51,12 +51,12 @@ public class ApplicationUserVerifierActorMessageProcessor {
     }
 
     private void initUserVerifiers() {
-        this.userVerifiers = new HashMap<Integer, UserVerifier>();
+        this.userVerifiers = new HashMap<String, UserVerifier>();
         for (UserVerifierDto dto : endpointUserService.findUserVerifiers(applicationId)) {
             try {
                 LOG.trace("Initializing user verifier for {}", dto);
                 UserVerifier verifier = createUserVerifier(dto);
-                userVerifiers.put(dto.getVerifierId(), verifier);
+                userVerifiers.put(dto.getVerifierToken(), verifier);
             } catch (Exception e) {
                 LOG.error("Failed to create user verifier", e);
             }
@@ -69,16 +69,16 @@ public class ApplicationUserVerifierActorMessageProcessor {
         }
         try {
             @SuppressWarnings("unchecked")
-            Class<UserVerifier> verifierClass = (Class<UserVerifier>) Class.forName(verifierDto.getClassName());
+            Class<UserVerifier> verifierClass = (Class<UserVerifier>) Class.forName(verifierDto.getPluginClassName());
             UserVerifier userVerifier = verifierClass.newInstance();
             userVerifier.init(new UserVerifierContext(verifierDto));
             userVerifier.start();
             return userVerifier;
         } catch (ClassNotFoundException e) {
-            LOG.error("Unable to find custom verifier class {}", verifierDto.getClassName());
+            LOG.error("Unable to find custom verifier class {}", verifierDto.getPluginClassName());
             throw e;
         } catch (InstantiationException | IllegalAccessException e) {
-            LOG.error("Unable to instantiate custom verifier from class {}", verifierDto.getClassName());
+            LOG.error("Unable to instantiate custom verifier from class {}", verifierDto.getPluginClassName());
             throw e;
         }
     }
@@ -95,46 +95,46 @@ public class ApplicationUserVerifierActorMessageProcessor {
 
     public void processNotification(Notification notification) {
         LOG.debug("Process user verifier notification [{}]", notification);
-        int verifierId = notification.getUserVerifierId();
+        String verifierToken = notification.getUserVerifierToken();
         switch (notification.getOp()) {
         case ADD_USER_VERIFIER:
-            addUserVerifier(verifierId);
+            addUserVerifier(verifierToken);
             break;
         case REMOVE_USER_VERIFIER:
-            removeUserVerifier(verifierId);
+            removeUserVerifier(verifierToken);
             break;
         case UPDATE_USER_VERIFIER:
-            removeUserVerifier(verifierId);
-            addUserVerifier(verifierId);
+            removeUserVerifier(verifierToken);
+            addUserVerifier(verifierToken);
             break;
         default:
-            LOG.debug("[{}][{}] Operation [{}] is not supported.", applicationId, verifierId, notification.getOp());
+            LOG.debug("[{}][{}] Operation [{}] is not supported.", applicationId, verifierToken, notification.getOp());
         }
     }
 
-    private void addUserVerifier(int verifierId) {
-        LOG.info("[{}] Adding user verifier with id [{}].", applicationId, verifierId);
-        if (!userVerifiers.containsKey(verifierId)) {
-            UserVerifierDto verifierDto = endpointUserService.findUserVerifier(applicationId, verifierId);
+    private void addUserVerifier(String verifierToken) {
+        LOG.info("[{}] Adding user verifier with token [{}].", applicationId, verifierToken);
+        if (!userVerifiers.containsKey(verifierToken)) {
+            UserVerifierDto verifierDto = endpointUserService.findUserVerifier(applicationId, verifierToken);
             if (verifierDto != null) {
                 try {
-                    userVerifiers.put(verifierId, createUserVerifier(verifierDto));
-                    LOG.info("[{}] user verifier [{}] registered.", applicationId, verifierId);
+                    userVerifiers.put(verifierToken, createUserVerifier(verifierDto));
+                    LOG.info("[{}] user verifier [{}] registered.", applicationId, verifierToken);
                 } catch (Exception e) {
                     LOG.error("Failed to create user verifier", e);
                 }
             }
         } else {
-            LOG.info("[{}] User verifier [{}] is already registered.", applicationId, verifierId);
+            LOG.info("[{}] User verifier [{}] is already registered.", applicationId, verifierToken);
         }
     }
 
-    private void removeUserVerifier(int appenderId) {
-        if (userVerifiers.containsKey(appenderId)) {
-            LOG.info("[{}] Stopping user verifier with id [{}].", applicationId, appenderId);
-            userVerifiers.remove(appenderId).stop();
+    private void removeUserVerifier(String verifierToken) {
+        if (userVerifiers.containsKey(verifierToken)) {
+            LOG.info("[{}] Stopping user verifier with token [{}].", applicationId, verifierToken);
+            userVerifiers.remove(verifierToken).stop();
         } else {
-            LOG.warn("[{}] Can't remove unregistered user verifier with id [{}]", applicationId, appenderId);
+            LOG.warn("[{}] Can't remove unregistered user verifier with token [{}]", applicationId, verifierToken);
         }
     }
 
@@ -142,7 +142,7 @@ public class ApplicationUserVerifierActorMessageProcessor {
     };
 
     void postStop() {
-        for (Entry<Integer, UserVerifier> verifier : userVerifiers.entrySet()) {
+        for (Entry<String, UserVerifier> verifier : userVerifiers.entrySet()) {
             LOG.info("[{}] Stopping user verifier with id [{}].", applicationId, verifier.getKey());
             verifier.getValue().stop();
         }

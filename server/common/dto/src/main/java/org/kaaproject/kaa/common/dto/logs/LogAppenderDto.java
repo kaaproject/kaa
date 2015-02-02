@@ -13,68 +13,166 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaaproject.kaa.common.dto.logs;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-public class LogAppenderDto extends LogAppenderBaseDto {
+import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 
-    private static final long serialVersionUID = 8035147059935996619L;
+public class LogAppenderDto extends PluginDto {
 
-    private byte[] rawConfiguration;
+    private static final long serialVersionUID = 8035147059931231619L;
+
+    private String applicationToken;
+    private String tenantId;
+    private int minLogSchemaVersion;
+    private int maxLogSchemaVersion;
+    private boolean confirmDelivery = true;
+    private List<LogHeaderStructureDto> headerStructure;
 
     public LogAppenderDto() {
         super();
     }
 
-    public LogAppenderDto(LogAppenderBaseDto detailsDto) {
-        super(detailsDto);
+    public LogAppenderDto(LogAppenderDto logAppenderDto) {
+        super(logAppenderDto);
+        this.applicationToken = logAppenderDto.getApplicationToken();
+        this.tenantId = logAppenderDto.getTenantId();
+        this.minLogSchemaVersion = logAppenderDto.getMinLogSchemaVersion();
+        this.maxLogSchemaVersion = logAppenderDto.getMaxLogSchemaVersion();
+        this.confirmDelivery = logAppenderDto.isConfirmDelivery();
+        this.headerStructure = new ArrayList<LogHeaderStructureDto>(logAppenderDto.getHeaderStructure());
     }
 
-    public LogAppenderDto(LogAppenderDto detailsDto) {
-        super(detailsDto);
-        this.rawConfiguration = detailsDto.rawConfiguration;
+    public String getApplicationToken() {
+        return applicationToken;
     }
 
-    public byte[] getRawConfiguration() {
-        return rawConfiguration;
+    public void setApplicationToken(String applicationToken) {
+        this.applicationToken = applicationToken;
     }
 
-    public void setRawConfiguration(byte[] rawConfiguration) {
-        this.rawConfiguration = rawConfiguration;
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public int getMinLogSchemaVersion() {
+        return minLogSchemaVersion;
+    }
+
+    public void setMinLogSchemaVersion(int minLogSchemaVersion) {
+        this.minLogSchemaVersion = minLogSchemaVersion;
+    }
+
+    public int getMaxLogSchemaVersion() {
+        return maxLogSchemaVersion;
+    }
+
+    public void setMaxLogSchemaVersion(int maxLogSchemaVersion) {
+        this.maxLogSchemaVersion = maxLogSchemaVersion;
+    }
+
+    public List<LogHeaderStructureDto> getHeaderStructure() {
+        return headerStructure;
+    }
+
+    public void setHeaderStructure(List<LogHeaderStructureDto> headerStructure) {
+        this.headerStructure = headerStructure;
+    }
+
+    public boolean isConfirmDelivery() {
+        return confirmDelivery;
+    }
+
+    public void setConfirmDelivery(boolean confirmDelivery) {
+        this.confirmDelivery = confirmDelivery;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + Arrays.hashCode(rawConfiguration);
+        result = prime
+                * result
+                + ((applicationToken == null) ? 0 : applicationToken.hashCode());
+        result = prime * result + (confirmDelivery ? 1231 : 1237);
+        result = prime * result
+                + ((headerStructure == null) ? 0 : headerStructure.hashCode());
+        result = prime * result + maxLogSchemaVersion;
+        result = prime * result + minLogSchemaVersion;
+        result = prime * result
+                + ((tenantId == null) ? 0 : tenantId.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LogAppenderDto other = (LogAppenderDto) obj;
-        if (!Arrays.equals(rawConfiguration, other.rawConfiguration))
+        if (applicationToken == null) {
+            if (other.applicationToken != null) {
+                return false;
+            }
+        } else if (!applicationToken.equals(other.applicationToken)) {
             return false;
+        }
+        if (confirmDelivery != other.confirmDelivery) {
+            return false;
+        }
+        if (headerStructure == null) {
+            if (other.headerStructure != null) {
+                return false;
+            }
+        } else if (!headerStructure.equals(other.headerStructure)) {
+            return false;
+        }
+        if (maxLogSchemaVersion != other.maxLogSchemaVersion) {
+            return false;
+        }
+        if (minLogSchemaVersion != other.minLogSchemaVersion) {
+            return false;
+        }
+        if (tenantId == null) {
+            if (other.tenantId != null) {
+                return false;
+            }
+        } else if (!tenantId.equals(other.tenantId)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("LogAppenderDto [rawConfiguration=");
-        builder.append(Arrays.toString(rawConfiguration));
+        builder.append("LogAppenderBaseDto [applicationToken=");
+        builder.append(applicationToken);
+        builder.append(", tenantId=");
+        builder.append(tenantId);
+        builder.append(", minLogSchemaVersion=");
+        builder.append(minLogSchemaVersion);
+        builder.append(", maxLogSchemaVersion=");
+        builder.append(maxLogSchemaVersion);
+        builder.append(", confirmDelivery=");
+        builder.append(confirmDelivery);
         builder.append(", parent=");
         builder.append(super.toString());
         builder.append("]");
         return builder.toString();
     }
+
+
 }

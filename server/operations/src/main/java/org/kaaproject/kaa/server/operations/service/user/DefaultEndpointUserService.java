@@ -77,8 +77,8 @@ public class DefaultEndpointUserService implements EndpointUserService {
     private CacheService cacheService;
     
     @Override
-    public UserVerifierDto findUserVerifier(String appId, int verifierId) {
-        return userVerifierService.findUserVerifiersByAppIdAndVerifierId(appId, verifierId);
+    public UserVerifierDto findUserVerifier(String appId, String verifierToken) {
+        return userVerifierService.findUserVerifiersByAppIdAndVerifierToken(appId, verifierToken);
     }
 
     @Override

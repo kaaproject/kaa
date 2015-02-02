@@ -77,7 +77,6 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
@@ -845,7 +844,6 @@ public abstract class AbstractTestControlServer {
         }
         appender.setMinLogSchemaVersion(schema.getMajorVersion());
         appender.setMaxLogSchemaVersion(schema.getMajorVersion());
-        appender.setStatus(LogAppenderStatusDto.REGISTERED);
 
         LogAppenderDto savedLogAppender = toDto(client.editLogAppender(toDataStruct(appender)));
         return savedLogAppender;

@@ -24,9 +24,4 @@ public interface LogAppenderDao<T> extends Dao<T> {
     
     List<T> findByAppIdAndSchemaVersion(String appId, int schemaVersion);
 
-    List<T> findAllLogAppendersByAppId(String appId);
-
-    T registerLogAppenderById(String logAppenderId);
-
-    T unregisterLogAppenderById(String logAppenderId);
 }

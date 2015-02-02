@@ -21,6 +21,6 @@ public interface UserVerifierDao<T> extends Dao<T> {
 
     List<T> findByAppId(String appId);
     
-    T findByAppIdAndVerifierId(String appId, int verifierId);
+    T findByAppIdAndVerifierToken(String appId, String verifierToken);
 
 }

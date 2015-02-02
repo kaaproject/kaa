@@ -20,7 +20,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.USER_VERIFIER_ID;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.USER_VERIFIER_TOKEN;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,16 +56,16 @@ public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier>
     }
     
     @Override
-    public UserVerifier findByAppIdAndVerifierId(String appId,
-            int verifierId) {
+    public UserVerifier findByAppIdAndVerifierToken(String appId,
+            String verifierToken) {
         UserVerifier verifier = null;
         if (isNotBlank(appId)) {
             verifier = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.and(
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.eq(USER_VERIFIER_ID, verifierId))
+                            Restrictions.eq(USER_VERIFIER_TOKEN, verifierToken))
                     );
-            LOG.debug("Found log appender by application id {} and verifier id {}", appId, verifierId);
+            LOG.debug("Found log appender by application id {} and verifier token {}", appId, verifierToken);
         }
         return verifier;
     }

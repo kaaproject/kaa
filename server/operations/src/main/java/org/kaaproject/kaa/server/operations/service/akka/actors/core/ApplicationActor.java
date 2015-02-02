@@ -246,7 +246,7 @@ public class ApplicationActor extends UntypedActor {
         } else if (notification.isSetAppenderId()) {
             LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
             processLogNotificationMessage(message);
-        } else if (notification.isSetUserVerifierId()) {
+        } else if (notification.isSetUserVerifierToken()) {
             LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
             processUserVerifierNotificationMessage(message);
         } else {
