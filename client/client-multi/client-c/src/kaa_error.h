@@ -52,6 +52,9 @@ typedef enum {
     KAA_ERR_EVENT_BAD_FQN           = -42,
     KAA_ERR_EVENT_TRX_NOT_FOUND     = -43,
 
+    KAA_ERR_BUFFER_IS_NOT_ENOUGH    = -51,
+    KAA_ERR_BUFFER_INVALID_SIZE     = -52,
+
     KAA_ERR_SOCKET_ERROR            = -91,
     KAA_ERR_SOCKET_CONNECT_ERROR    = -92,
     KAA_ERR_SOCKET_INVALID_FAMILY   = -93,
