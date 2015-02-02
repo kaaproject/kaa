@@ -115,6 +115,15 @@ public:
     virtual void setServer(IServerInfoPtr server) = 0;
 
     /**
+     * Retrieves current used server.
+     *
+     * @return Server info.
+     * @see IServerInfo
+     *
+     */
+    virtual IServerInfoPtr getServer() = 0;
+
+    /**
      * Retrieves the map of transport types and their directions supported by this channel.
      *
      * @return the map of transport types.

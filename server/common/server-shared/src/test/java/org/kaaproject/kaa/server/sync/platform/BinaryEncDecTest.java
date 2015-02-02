@@ -34,6 +34,7 @@ import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventSequenceNumberResponse;
 import org.kaaproject.kaa.server.sync.EventServerSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
+import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
 import org.kaaproject.kaa.server.sync.LogServerSync;
 import org.kaaproject.kaa.server.sync.NotificationClientSync;
 import org.kaaproject.kaa.server.sync.ProfileClientSync;
@@ -163,7 +164,7 @@ public class BinaryEncDecTest {
     public void testEncodeLogServerSync() throws PlatformEncDecException {
         ServerSync sync = new ServerSync();
         sync.setRequestId(MAGIC_NUMBER);
-        LogServerSync lSync = new LogServerSync(MAGIC_NUMBER, SyncStatus.FAILURE);
+        LogServerSync lSync = new LogServerSync(Collections.singletonList(new LogDeliveryStatus(MAGIC_NUMBER, SyncStatus.FAILURE, null)));
         sync.setLogSync(lSync);
 
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));

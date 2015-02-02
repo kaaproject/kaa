@@ -17,18 +17,21 @@
 #ifndef LOGCOLLECTOR_HPP_
 #define LOGCOLLECTOR_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #ifdef KAA_USE_LOGGING
 
+#include "kaa/KaaDefaults.hpp"
 #include "kaa/log/ILogCollector.hpp"
 
+#include <chrono>
 #include <memory>
+#include <unordered_map>
+
 #include "kaa/KaaThread.hpp"
+#include "kaa/log/LoggingTransport.hpp"
 #include "kaa/log/MemoryLogStorage.hpp"
 #include "kaa/log/SizeUploadStrategy.hpp"
+#include "kaa/log/LogUploadFailoverStrategy.hpp"
 #include "kaa/log/DefaultLogUploadConfiguration.hpp"
-#include "kaa/log/LoggingTransport.hpp"
 
 namespace kaa {
 
@@ -37,20 +40,25 @@ namespace kaa {
  */
 class LogCollector : public ILogCollector {
 public:
-    LogCollector();
-    LogCollector(ILogStorage* storage, ILogStorageStatus* status, ILogUploadConfiguration* configuration, ILogUploadStrategy* strategy);
+    LogCollector(IKaaChannelManagerPtr manager);
+    LogCollector(ILogStorage* storage
+               , ILogStorageStatus* status
+               , ILogUploadConfiguration* configuration
+               , ILogUploadStrategy* strategy
+               , ILogUploadFailoverStrategy* failoverStrategy);
 
-    void addLogRecord(const SuperRecord& record) {
+    virtual void addLogRecord(const SuperRecord& record) {
         makeLogRecord(LogRecord(record));
     }
 
-    void setStorage(ILogStorage * storage);
-    void setStorageStatus(ILogStorageStatus * status);
-    void setConfiguration(ILogUploadConfiguration * configuration);
-    void setUploadStrategy(ILogUploadStrategy * strategy);
+    virtual void setStorage(ILogStorage * storage);
+    virtual void setStorageStatus(ILogStorageStatus * status);
+    virtual void setConfiguration(ILogUploadConfiguration * configuration);
+    virtual void setUploadStrategy(ILogUploadStrategy * strategy);
+    virtual void setFailoverStrategy(ILogUploadFailoverStrategy * strategy);
 
     LogSyncRequest getLogUploadRequest();
-    void onLogUploadResponse(const LogSyncResponse& response);
+    virtual void onLogUploadResponse(const LogSyncResponse& response);
 
     void setTransport(LoggingTransport *transport);
 
@@ -60,13 +68,17 @@ private:
     void makeLogRecord(const LogRecord& record);
     void doUpload();
     void doCleanup();
-private:
-    ILogStorage *               storage_;
-    ILogStorageStatus *         status_;
-    ILogUploadConfiguration *   configuration_;
-    ILogUploadStrategy *        strategy_;
 
-    LoggingTransport*           transport_;
+    bool isDeliveryTimeout();
+
+private:
+    ILogStorage *                  storage_;
+    ILogStorageStatus *            status_;
+    ILogUploadConfiguration *      configuration_;
+    ILogUploadStrategy *           uploadStrategy_;
+    ILogUploadFailoverStrategy *   failoverStrategy_;
+
+    LoggingTransport*              transport_;
 
     std::map<std::int32_t, LogSyncRequest> requests_;
 
@@ -76,7 +88,11 @@ private:
 
     std::unique_ptr<MemoryLogStorage>                 defaultLogStorage_;
     std::unique_ptr<SizeUploadStrategy>               defaultUploadStrategy_;
+    std::unique_ptr<LogUploadFailoverStrategy>        defaultFailoverStrategy_;
     std::unique_ptr<DefaultLogUploadConfiguration>    defaultConfiguration_;
+
+    typedef std::chrono::system_clock clock_t;
+    std::unordered_map<std::string, std::chrono::time_point<clock_t>> timeoutsMap_;
 };
 
 }  // namespace kaa

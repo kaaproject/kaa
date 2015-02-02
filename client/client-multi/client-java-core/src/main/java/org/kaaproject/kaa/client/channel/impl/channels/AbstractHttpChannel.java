@@ -160,6 +160,11 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     protected abstract String getURLSufix();
 
     @Override
+    public TransportConnectionInfo getServer() {
+        return currentServer;
+    }
+
+    @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {}
 
     @Override

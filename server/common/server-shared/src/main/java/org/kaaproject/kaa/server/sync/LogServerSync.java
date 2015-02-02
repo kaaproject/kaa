@@ -15,62 +15,64 @@
  */
 package org.kaaproject.kaa.server.sync;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LogServerSync {
-    private int requestId;
-    private SyncStatus result;
+    private List<LogDeliveryStatus> deliveryStatuses;
 
     public LogServerSync() {
+        this(new ArrayList<LogDeliveryStatus>());
+    }
+    
+    public LogServerSync(List<LogDeliveryStatus> deliveryStatuses) {
+        super();
+        this.deliveryStatuses = deliveryStatuses;
     }
 
-    /**
-     * All-args constructor.
-     */
-    public LogServerSync(int requestId, SyncStatus result) {
-        this.requestId = requestId;
-        this.result = result;
+    public List<LogDeliveryStatus> getDeliveryStatuses() {
+        return deliveryStatuses;
     }
 
-    /**
-     * Gets the value of the 'requestId' field.
-     */
-    public int getRequestId() {
-        return requestId;
+    public void setDeliveryStatuses(List<LogDeliveryStatus> deliveryStatuses) {
+        this.deliveryStatuses = deliveryStatuses;
     }
 
-    /**
-     * Sets the value of the 'requestId' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setRequestId(int value) {
-        this.requestId = value;
-    }
-
-    /**
-     * Gets the value of the 'result' field.
-     */
-    public SyncStatus getResult() {
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((deliveryStatuses == null) ? 0 : deliveryStatuses.hashCode());
         return result;
     }
 
-    /**
-     * Sets the value of the 'result' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setResult(SyncStatus value) {
-        this.result = value;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        LogServerSync other = (LogServerSync) obj;
+        if (deliveryStatuses == null) {
+            if (other.deliveryStatuses != null) {
+                return false;
+            }
+        } else if (!deliveryStatuses.equals(other.deliveryStatuses)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("LogServerSync [requestId=");
-        builder.append(requestId);
-        builder.append(", result=");
-        builder.append(result);
+        builder.append("LogServerSync [deliveryStatuses=");
+        builder.append(deliveryStatuses);
         builder.append("]");
         return builder.toString();
     }

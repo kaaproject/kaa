@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
 import org.kaaproject.kaa.server.sync.EventServerSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
+import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
 import org.kaaproject.kaa.server.sync.LogEntry;
 import org.kaaproject.kaa.server.sync.LogServerSync;
 import org.kaaproject.kaa.server.sync.Notification;
@@ -354,10 +355,12 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
-        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
-        buf.putShort((short) Integer.valueOf(logSync.getRequestId()).intValue());
-        buf.put(logSync.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
-        buf.put(NOTHING);
+        for(LogDeliveryStatus status : logSync.getDeliveryStatuses()){
+            buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+            buf.putShort((short) Integer.valueOf(status.getRequestId()).intValue());
+            buf.put(status.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+            buf.put(NOTHING);
+        }
     }
 
     private void encode(GrowingByteBuffer buf, ConfigurationServerSync configurationSync) {

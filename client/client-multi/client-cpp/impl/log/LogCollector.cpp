@@ -24,32 +24,37 @@
 
 namespace kaa {
 
-LogCollector::LogCollector()
+LogCollector::LogCollector(IKaaChannelManagerPtr manager)
     : storage_(nullptr)
     , status_(nullptr)
     , configuration_(nullptr)
-    , strategy_(nullptr)
+    , uploadStrategy_(nullptr)
+    , failoverStrategy_(nullptr)
     , transport_(nullptr)
     , isUploading_(false)
 {
     defaultConfiguration_.reset(new DefaultLogUploadConfiguration);
     defaultLogStorage_.reset(new MemoryLogStorage(defaultConfiguration_->getBlockSize()));
     defaultUploadStrategy_.reset(new SizeUploadStrategy);
+    defaultFailoverStrategy_.reset(new LogUploadFailoverStrategy(manager));
 
     storage_ = defaultLogStorage_.get();
     status_ = defaultLogStorage_.get();
     configuration_ = defaultConfiguration_.get();
-    strategy_ = defaultUploadStrategy_.get();
+    uploadStrategy_ = defaultUploadStrategy_.get();
+    failoverStrategy_ = defaultFailoverStrategy_.get();
 }
 
-LogCollector::LogCollector  ( ILogStorage* storage
-                            , ILogStorageStatus* status
-                            , ILogUploadConfiguration* configuration
-                            , ILogUploadStrategy* strategy)
+LogCollector::LogCollector(ILogStorage* storage
+                         , ILogStorageStatus* status
+                         , ILogUploadConfiguration* configuration
+                         , ILogUploadStrategy* uploadStrategy
+                         , ILogUploadFailoverStrategy* failoverStrategy)
     : storage_(storage)
     , status_(status)
     , configuration_(configuration)
-    , strategy_(strategy)
+    , uploadStrategy_(uploadStrategy)
+    , failoverStrategy_(failoverStrategy)
     , transport_(nullptr)
     , isUploading_(false)
 {
@@ -64,8 +69,13 @@ void LogCollector::makeLogRecord(const LogRecord& record)
 
     if (storage_ != nullptr) {
         storage_->addLogRecord(record);
-        if (strategy_ != nullptr) {
-            LogUploadStrategyDecision decision = strategy_->isUploadNeeded(configuration_, status_);
+
+        if (isDeliveryTimeout()) {
+            return;
+        }
+
+        if (uploadStrategy_ != nullptr) {
+            LogUploadStrategyDecision decision = uploadStrategy_->isUploadNeeded(configuration_, status_);
             switch (decision) {
                 case LogUploadStrategyDecision::CLEANUP: {
                     KAA_LOG_INFO(boost::format("Need to cleanup log storage."));
@@ -73,10 +83,12 @@ void LogCollector::makeLogRecord(const LogRecord& record)
                     break;
                 }
                 case LogUploadStrategyDecision::UPLOAD: {
-                    if (!isUploading_) {
-                        KAA_LOG_INFO(boost::format("Going to start logs upload."));
-                        isUploading_ = true;
-                        doUpload();
+                    if (failoverStrategy_ == nullptr || failoverStrategy_->isUploadApproved()) {
+                        if (!isUploading_) {
+                            KAA_LOG_INFO(boost::format("Going to start logs upload."));
+                            isUploading_ = true;
+                            doUpload();
+                        }
                     }
                     break;
                 }
@@ -87,7 +99,7 @@ void LogCollector::makeLogRecord(const LogRecord& record)
             }
         } else {
             KAA_LOG_ERROR(boost::format("Can not decide if log upload is needed. Strategy: %1%, Configuration: %2%, Status: %3%)")
-                % strategy_ % configuration_ % status_);
+                % uploadStrategy_ % configuration_ % status_);
         }
     } else {
         KAA_LOG_ERROR("Can not add log to an empty storage");
@@ -126,12 +138,26 @@ void LogCollector::setConfiguration(ILogUploadConfiguration * configuration)
 
 void LogCollector::setUploadStrategy(ILogUploadStrategy * strategy)
 {
-    KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
+    if (strategy != nullptr) {
+        KAA_MUTEX_LOCKING("storageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
 
-    KAA_LOG_DEBUG(boost::format("Replacing log upload strategy from %1% to %2%") % strategy_ % strategy);
-    strategy_ = strategy;
+        KAA_LOG_DEBUG(boost::format("Replacing log upload strategy from %1% to %2%") % uploadStrategy_ % strategy);
+        uploadStrategy_ = strategy;
+    }
+}
+
+void LogCollector::setFailoverStrategy(ILogUploadFailoverStrategy * strategy)
+{
+    if (strategy != nullptr) {
+        KAA_MUTEX_LOCKING("storageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
+
+        KAA_LOG_DEBUG(boost::format("Replacing log failover strategy from %1% to %2%") % failoverStrategy_ % strategy);
+        failoverStrategy_ = strategy;
+    }
 }
 
 void LogCollector::doUpload()
@@ -170,6 +196,32 @@ void LogCollector::doCleanup()
     }
 }
 
+bool LogCollector::isDeliveryTimeout()
+{
+    bool isTimeout = false;
+    const auto& now = clock_t::now();
+
+    for (const auto& request : timeoutsMap_) {
+        if (now >= request.second) {
+            isTimeout = true;
+            break;
+        }
+    }
+
+    if (isTimeout) {
+        KAA_LOG_INFO("Log delivery timeout detected");
+
+        for (const auto& request : timeoutsMap_) {
+            storage_->notifyUploadFailed(request.first);
+        }
+
+        timeoutsMap_.clear();
+        failoverStrategy_->onTimeout();
+    }
+
+    return isTimeout;
+}
+
 LogSyncRequest LogCollector::getLogUploadRequest()
 {
     KAA_MUTEX_UNIQUE_DECLARE(lock, requestsGuard_);
@@ -178,25 +230,44 @@ LogSyncRequest LogCollector::getLogUploadRequest()
     if (!requests_.empty()) {
         auto it = requests_.begin();
         request = it->second;
+//<<<<<<< HEAD
+//        requests_.erase(it);
+//        KAA_LOG_INFO(boost::format("Added log upload request id %1%") % request.requestId.get_string());
+//        timeoutsMap_.insert(std::make_pair(request.requestId.get_string(),
+//                clock_t::now() + std::chrono::seconds(configuration_->getLogUploadTimeout())));
+//=======
         KAA_LOG_INFO(boost::format("Added log upload request id %1%") % it->second.requestId);
         requests_.erase(requests_.begin());
+//>>>>>>> master
     }
     return request;
 }
 
 void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
 {
-    if (response.result == SyncResponseResultType::SUCCESS) {
-        storage_->removeRecordBlock(response.requestId);
-        if (!requests_.empty() || strategy_->isUploadNeeded(configuration_, status_) == LogUploadStrategyDecision::UPLOAD) {
-            doUpload();
-        } else {
-            isUploading_ = false;
+    if (!response.deliveryStatuses.is_null()) {
+        const auto& deliveryStatuses = response.deliveryStatuses.get_array();
+        for (const auto& status : deliveryStatuses) {
+            if (status.result == SyncResponseResultType::SUCCESS) {
+                storage_->removeRecordBlock(status.requestId);
+                if (!requests_.empty() || uploadStrategy_->isUploadNeeded(configuration_, status_) == LogUploadStrategyDecision::UPLOAD) {
+                    doUpload();
+                } else {
+                    isUploading_ = false;
+                }
+            } else {
+                KAA_LOG_ERROR("Failed to upload logs. Try again later.");
+                isUploading_ = false;
+                storage_->notifyUploadFailed(status.requestId);
+                if (!status.errorCode.is_null()) {
+                    failoverStrategy_->onFailure(status.errorCode.get_LogDeliveryErrorCode());
+                } else {
+                    KAA_LOG_ERROR("Log delivery failed, but no error code received!!!");
+                }
+            }
+
+            timeoutsMap_.erase(status.requestId);
         }
-    } else {
-        KAA_LOG_ERROR("Failed to upload logs. Try again later.");
-        isUploading_ = false;
-        storage_->notifyUploadFailed(response.requestId);
     }
 }
 

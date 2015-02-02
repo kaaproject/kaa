@@ -81,7 +81,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
     profileManager_.reset(new ProfileManager());
 
 #ifdef KAA_USE_LOGGING
-    logCollector_.reset(new LogCollector());
+    logCollector_.reset(new LogCollector(channelManager_.get()));
 #endif
 
     initKaaConfiguration();

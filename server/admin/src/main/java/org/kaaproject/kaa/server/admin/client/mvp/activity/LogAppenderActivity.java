@@ -107,6 +107,7 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
             detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
             detailsView.getMinSchemaVersion().setValue(entity.getMinLogSchemaVersion());
             detailsView.getMaxSchemaVersion().setValue(entity.getMaxLogSchemaVersion());
+            detailsView.getConfirmDelivery().setValue(entity.isConfirmDelivery());
             detailsView.setMetadataListBox(entity.getHeaderStructure());
             detailsView.getConfiguration().setValue(entity.getConfiguration());
             LogAppenderInfoDto appenderInfo = 
@@ -121,6 +122,7 @@ public class LogAppenderActivity extends AbstractDetailsActivity<LogAppenderForm
         entity.setName(detailsView.getName().getValue());
         entity.setMinLogSchemaVersion(detailsView.getMinSchemaVersion().getValue());
         entity.setMaxLogSchemaVersion(detailsView.getMaxSchemaVersion().getValue());
+        entity.setConfirmDelivery(detailsView.getConfirmDelivery().getValue());
         entity.setStatus(LogAppenderStatusDto.REGISTERED);
         entity.setDescription(detailsView.getDescription().getValue());
         entity.setHeaderStructure(detailsView.getHeader());
