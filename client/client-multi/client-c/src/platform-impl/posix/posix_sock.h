@@ -29,6 +29,7 @@ posix_sock.h
 typedef int kaa_fd;
 
 typedef struct sockaddr kaa_sockaddr_t;
+typedef socklen_t kaa_socklen_t;
 
 
 #define KAA_HTONS(hostshort)    htons((hostshort))

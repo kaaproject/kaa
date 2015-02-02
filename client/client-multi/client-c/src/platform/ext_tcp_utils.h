@@ -43,25 +43,40 @@ typedef enum {
 } ext_tcp_socket_io_errors_t;
 
 
-typedef kaa_error_t (*ext_tcp_utils_value_complete_fn)(void *context);
-
 kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port);
 
+
+typedef kaa_error_t (*on_dns_resolve_complete_fn)(void *context, const kaa_sockaddr_t *addr, kaa_socklen_t addr_size);
+
+
+typedef struct {
+    void                      *context;
+    on_dns_resolve_complete_fn on_host_resolved;
+} kaa_dns_resolve_listener_t;
+
+
+typedef struct {
+    char    *hostname;
+    size_t   hostname_length;
+    uint16_t port;
+} kaa_dns_resolve_props_t;
+
 /**
- * Hostname DNS resolving helper function
+ * @brief Hostname DNS resolving helper function
+ *
  * @return kaa_function_return_state_t enum,
  *          RET_STATE_VALUE_READY - mean that ip_v4 value is ready and may be used.
  *          RET_STATE_VALUE_IN_PROGRESS - mean that DNS name resolving in progress
  *          and need to wait until hostresolved_callback is invoked.
  *          RET_STATE_VALUE_ERROR - mean error.
  */
-ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(void *context, ext_tcp_utils_value_complete_fn hostresolved_callback, kaa_sockaddr_t * ip, const char * hostname, size_t hostname_size);
+ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_props_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size);
 
 
 /**
- * Create and open non blocking TCP V4 connection.
+ * Create and open non blocking TCP connection.
  */
-kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd * fd, kaa_sockaddr_t * destination);
+kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd * fd, kaa_sockaddr_t * destination, kaa_socklen_t destination_size);
 
 /**
  * Check state of connecting TCP V4 socket
