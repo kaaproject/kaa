@@ -69,9 +69,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
         resolve_error = getaddrinfo(hostname_str, NULL, &hints, &resolve_result);
     }
 
-    if (resolve_error < 0)
-        return RET_STATE_VALUE_ERROR;
-    if (!resolve_result)
+    if (resolve_error || !resolve_result)
         return RET_STATE_VALUE_ERROR;
 
     memcpy(result, resolve_result->ai_addr, resolve_result->ai_addrlen);
