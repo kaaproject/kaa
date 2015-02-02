@@ -196,9 +196,9 @@ public abstract class AbstractKaaClient implements KaaClient {
         eventManager = new DefaultEventManager(this.kaaClientState, eventTransport);
         eventFamilyFactory = new EventFamilyFactory(this.eventManager);
         endpointRegistrationManager = new DefaultEndpointRegistrationManager(this.kaaClientState, userTransport, profileTransport);
-        logCollector = new DefaultLogCollector(logTransport);
 
         channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
+        logCollector = new DefaultLogCollector(logTransport, channelManager);
 
         KaaDataChannel bootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
         bootstrapChannel.setMultiplexer(bootstrapDataProcessor);

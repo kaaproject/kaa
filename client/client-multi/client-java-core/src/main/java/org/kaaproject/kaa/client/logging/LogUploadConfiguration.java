@@ -50,4 +50,11 @@ public interface LogUploadConfiguration {
      * @return Size in bytes.
      */
     long getMaximumAllowedVolume();
+
+    /**
+     * Maximum time to wait log delivery response.
+     *
+     * @return Time in seconds.
+     */
+    long getLogUploadTimeout();
 }

@@ -494,6 +494,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     @Override
+    public TransportConnectionInfo getServer() {
+        return currentServer;
+    }
+
+    @Override
     public void setConnectivityChecker(ConnectivityChecker checker) {
         connectivityChecker = checker;
     }

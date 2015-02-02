@@ -45,9 +45,16 @@ public class LogAppenderGrid extends AbstractKaaGrid<LogAppenderDto, String> {
             @Override
             public String getValue(LogAppenderDto item) {
                 return String.valueOf(item.getMinLogSchemaVersion());
-
             }
         }, 80);
+        prefWidth += constructBooleanColumn(table,
+                Utils.constants.confirmDelivery(),
+                new BooleanValueProvider<LogAppenderDto>() {
+                    @Override
+                    public Boolean getValue(LogAppenderDto item) {
+                        return item.isConfirmDelivery();
+                    }
+                }, 40);
         prefWidth += constructStringColumn(table, Utils.constants.maxVersion(),
                 new StringValueProvider<LogAppenderDto>() {
             @Override
@@ -58,7 +65,6 @@ public class LogAppenderGrid extends AbstractKaaGrid<LogAppenderDto, String> {
                 else {
                     return String.valueOf(item.getMaxLogSchemaVersion());
                 }
-
             }
         }, 80);
         prefWidth += constructStringColumn(table, Utils.constants.logAppenderType(),

@@ -26,6 +26,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.appenders.cdap.config.gen.CdapConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import co.cask.cdap.client.StreamClient;
 import co.cask.cdap.client.StreamWriter;
 import co.cask.cdap.client.rest.RestStreamClient;
+import co.cask.cdap.common.http.exception.HttpFailureException;
 import co.cask.cdap.security.authentication.client.AuthenticationClient;
 import co.cask.cdap.security.authentication.client.basic.BasicAuthenticationClient;
 
@@ -65,24 +67,29 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
     }
 
     @Override
-    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
+    public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
             if (streamWriter != null) {
-                final String appToken = this.getApplicationToken();
-                LOG.debug("[{}] appending {} logs to cdap stream", this.getApplicationToken(), logEventPack.getEvents()
-                        .size());
-                for (LogEventDto dto : generateLogEvent(logEventPack, header)) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("{\"header\":").append(dto.getHeader()).append(",");
-                    sb.append("\"event\":").append(dto.getEvent()).append("}");
-                    ListenableFuture<Void> result = streamWriter.write(sb.toString(), UTF8);
-                    Futures.addCallback(result, new Callback(appToken), callbackExecutor);
+                LOG.debug("[{}] appending {} logs to cdap stream", this.getApplicationToken(), logEventPack.getEvents().size());
+                try {
+                    for (LogEventDto dto : generateLogEvent(logEventPack, header)) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("{\"header\":").append(dto.getHeader()).append(",");
+                        sb.append("\"event\":").append(dto.getEvent()).append("}");
+                        ListenableFuture<Void> result = streamWriter.write(sb.toString(), UTF8);
+                        Futures.addCallback(result, new Callback(listener), callbackExecutor);
+                    }
+                } catch (IOException e) {
+                    LOG.debug("[{}] Failed to generate log event.", getName());
+                    listener.onInternalError();
                 }
             } else {
                 LOG.info("[{}] Attempted to append to empty streamWriter.", getName());
+                listener.onInternalError();
             }
         } else {
             LOG.info("[{}] Attempted to append to closed appender.", getName());
+            listener.onInternalError();
         }
     }
 
@@ -96,7 +103,7 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
             }
             callbackPoolSize = Math.min(callbackPoolSize, MAX_CALLBACK_THREAD_POOL_SIZE);
             callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
-            
+
             if (configuration.getStream() != null) {
                 streamWriter = streamClient.createWriter(configuration.getStream());
             } else {
@@ -138,8 +145,8 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
             builder.verifySSLCert(configuration.getVerifySslCert().booleanValue());
         }
         if (configuration.getAuthClient() != null) {
-            AuthenticationClient authClient = (AuthenticationClient) Class.forName(configuration.getAuthClient())
-                    .getConstructor().newInstance();
+            AuthenticationClient authClient = (AuthenticationClient) Class.forName(configuration.getAuthClient()).getConstructor()
+                    .newInstance();
             authClient.setConnectionInfo(host, port, ssl);
             if (authClient.isAuthEnabled()) {
                 Properties properties = new Properties();
@@ -160,21 +167,25 @@ public class CdapLogAppender extends AbstractLogAppender<CdapConfig> {
     }
 
     private static final class Callback implements FutureCallback<Void> {
-        private final String appToken;
+        private final LogDeliveryCallback callback;
 
-        private Callback(String appToken) {
-            this.appToken = appToken;
+        private Callback(LogDeliveryCallback callback) {
+            this.callback = callback;
         }
 
         @Override
         public void onSuccess(Void result) {
-            LOG.trace("[{}] Successfull log delivery", appToken);
+            callback.onSuccess();
         }
 
         @Override
         public void onFailure(Throwable t) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn(String.format("[%s] Error during log delivery", appToken), t);
+            if (t instanceof HttpFailureException) {
+                callback.onRemoteError();
+            } else if (t instanceof IOException) {
+                callback.onConnectionError();
+            } else {
+                callback.onInternalError();
             }
         }
     }

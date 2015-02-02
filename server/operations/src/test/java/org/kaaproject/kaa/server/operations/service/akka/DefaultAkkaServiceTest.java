@@ -72,6 +72,7 @@ import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -359,6 +360,7 @@ public class DefaultAkkaServiceTest {
     public void testDecodeSessionException() throws Exception {
         SessionAwareMessage message = Mockito.mock(SessionAwareMessage.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
         SessionInfo sessionInfo = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID,
                 Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class),
                 EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
@@ -1209,7 +1211,9 @@ public class DefaultAkkaServiceTest {
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(ClientSync.class),
                 Mockito.any(EndpointProfileDto.class));
         Mockito.verify(logAppenderService, Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
-        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class));
+
+        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
+
         Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
                 .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
@@ -1385,6 +1389,7 @@ public class DefaultAkkaServiceTest {
                 .singletonList(new org.kaaproject.kaa.server.sync.EndpointAttachResponse(REQUEST_ID, Base64Util
                         .encode(targetPublicKeyHash.array()), org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS)));
         sourceResponse.setUserSync(userSyncResponse);
+
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
         sourceResponseHolder.setEndpointProfile(sourceProfileMock);
 

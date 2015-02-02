@@ -43,7 +43,13 @@ public class DefaultLogUploadStrategyTest {
     @Test
     public void testNOOPDecision() {
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
-        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration(20, 60, 150);
+        DefaultLogUploadConfiguration conf =
+                        new DefaultLogUploadConfiguration.Builder()
+                            .setBatchVolume(20)
+                            .setVolumeThreshold(60)
+                            .setMaximumAllowedVolume(150)
+                            .setLogUploadTimeout(300)
+                            .build();
         TestLogStorageStatus status = new TestLogStorageStatus(30, 3);
 
         Assert.assertTrue(strategy.isUploadNeeded(conf, status) == LogUploadStrategyDecision.NOOP);
@@ -52,7 +58,13 @@ public class DefaultLogUploadStrategyTest {
     @Test
     public void testUpdateDecision() {
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
-        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration(20, 60, 150);
+        DefaultLogUploadConfiguration conf =
+                        new DefaultLogUploadConfiguration.Builder()
+                            .setBatchVolume(20)
+                            .setVolumeThreshold(60)
+                            .setMaximumAllowedVolume(150)
+                            .setLogUploadTimeout(300)
+                            .build();
         TestLogStorageStatus status = new TestLogStorageStatus(60, 3);
 
         Assert.assertTrue(strategy.isUploadNeeded(conf, status) == LogUploadStrategyDecision.UPLOAD);
@@ -64,7 +76,13 @@ public class DefaultLogUploadStrategyTest {
     @Test
     public void testCleanupDecision() {
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
-        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration(20, 60, 150);
+        DefaultLogUploadConfiguration conf =
+                        new DefaultLogUploadConfiguration.Builder()
+                            .setBatchVolume(20)
+                            .setVolumeThreshold(60)
+                            .setMaximumAllowedVolume(150)
+                            .setLogUploadTimeout(300)
+                            .build();
         TestLogStorageStatus status = new TestLogStorageStatus(150, 3);
 
         Assert.assertTrue(strategy.isUploadNeeded(conf, status) == LogUploadStrategyDecision.CLEANUP);
