@@ -51,8 +51,8 @@ public class DefaultEndpointRegistrationManagerTest {
 
     private static final int REQUEST_ID = 42;
     
-    @Test
-    public void checkUserAttach() throws Exception {
+    @Test(expected=IllegalStateException.class)
+    public void checkUserAttachWithNoDefaultVerifier() throws Exception {
         KaaClientState state = mock(KaaClientState.class);
         when(state.getEndpointAccessToken()).thenReturn("");
 
@@ -60,6 +60,17 @@ public class DefaultEndpointRegistrationManagerTest {
         DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, transport, null));
 
         manager.attachUser("externalId", "token", null);
+    }
+    
+    @Test
+    public void checkUserAttachWithCustomVerifier() throws Exception {
+        KaaClientState state = mock(KaaClientState.class);
+        when(state.getEndpointAccessToken()).thenReturn("");
+
+        UserTransport transport = mock(UserTransport.class);
+        DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, transport, null));
+
+        manager.attachUser("verifierToken", "externalId", "token", null);
         verify(transport, times(1)).sync();
     }
 
@@ -159,7 +170,7 @@ public class DefaultEndpointRegistrationManagerTest {
 
         UserTransport transport = mock(UserTransport.class);
         EndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, transport, null);
-        manager.attachUser("userExternalId", "userAccessToken", new UserAuthResultListener() {
+        manager.attachUser("externalId", "userExternalId", "userAccessToken", new UserAuthResultListener() {
             @Override
             public void onAuthResult(UserAttachResponse response) {
             }
@@ -241,12 +252,12 @@ public class DefaultEndpointRegistrationManagerTest {
         verify(state, times(2)).setAttachedToUser(true);
 
         manager.setAttachedListener(null);
-        manager.attachUser("foo", "bar", null);
-        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS), null, null);
+        manager.attachUser("externalId", "foo", "bar", null);
+        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), null, null);
 
         manager.setAttachedListener(listener);
-        manager.attachUser("foo", "bar", null);
-        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS), null, null);
+        manager.attachUser("externalId", "foo", "bar", null);
+        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), null, null);
 
         verify(listener, times(2)).onAttachedToUser(anyString(), anyString());
         verify(state, times(4)).setAttachedToUser(true);

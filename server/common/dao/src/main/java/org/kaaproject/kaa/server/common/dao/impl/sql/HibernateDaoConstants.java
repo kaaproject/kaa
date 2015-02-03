@@ -42,7 +42,7 @@ public class HibernateDaoConstants {
     public static final String FQN_PROPERTY = "fqn";
     public static final String CLASS_NAME_PROPERTY = "className";
 
-    public static final String USER_VERIFIER_ID = "verifier_id";
+    public static final String USER_VERIFIER_TOKEN = "verifier_token";
     
     public static final String LOG_APPENDER_STATUS = "status";
     public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "min_log_schema_version";

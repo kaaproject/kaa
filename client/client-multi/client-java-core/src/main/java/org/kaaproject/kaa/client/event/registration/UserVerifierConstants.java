@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.client.event.registration;
 
-package org.kaaproject.kaa.server.common.log.shared.annotation;
+public class UserVerifierConstants {
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE) 
-public @interface KaaAppenderConfig {
+    static final String DEFAULT_USER_VERIFIER_TOKEN = null;
 
 }

@@ -120,7 +120,8 @@ public interface EndpointRegistrationManager {
     void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationResultListener resultListener);
 
     /**
-     * Creates user attach request
+     * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
+     * If there was no default verifier selected this method will throw runtime exception. 
      *
      * @param userExternalId
      * @param userAccessToken
@@ -129,6 +130,18 @@ public interface EndpointRegistrationManager {
      * @see UserAuthResultListener
      */
     void attachUser(String userExternalId, String userAccessToken, UserAuthResultListener callback);
+    
+    /**
+     * Creates user attach request using specified verifier.
+     *
+     * @param userVerifierId
+     * @param userExternalId
+     * @param userAccessToken
+     * @param callback called when authentication result received
+     *
+     * @see UserAuthResultListener
+     */
+    void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAuthResultListener callback);
 
     /**
      * Retrieves list of attached endpoints

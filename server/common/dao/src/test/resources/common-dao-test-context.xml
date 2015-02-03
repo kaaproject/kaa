@@ -45,21 +45,11 @@
 
     <bean id="eventSchemaProcessor" class="org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessorImpl" />
 
-    <bean id="dummyEndpointUserVerifier" class="org.kaaproject.kaa.server.common.dao.DummyEndpointUserVerifier"/>
-
-    <bean id="endpointUserVerifierResolver" class="org.kaaproject.kaa.server.common.dao.DefaultEndpointUserVerifierResolver">
-        <constructor-arg name="verifierMap" ref="verifierMap"></constructor-arg>
-    </bean>
-
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl"/>
 
     <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl"/>
-    
-    <bean id="topicService" class="org.kaaproject.kaa.server.common.dao.service.TopicServiceImpl"/>
 
-    <util:map id="verifierMap">
-        <entry key="dummyEndpointUserVerifier" value-ref="dummyEndpointUserVerifier" />
-    </util:map>
+    <bean id="topicService" class="org.kaaproject.kaa.server.common.dao.service.TopicServiceImpl"/>
 </beans>

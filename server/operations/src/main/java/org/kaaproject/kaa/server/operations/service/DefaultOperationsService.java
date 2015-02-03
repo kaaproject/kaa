@@ -72,7 +72,6 @@ import org.kaaproject.kaa.server.sync.SubscriptionType;
 import org.kaaproject.kaa.server.sync.SyncResponseStatus;
 import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.Topic;
-import org.kaaproject.kaa.server.sync.UserAttachResponse;
 import org.kaaproject.kaa.server.sync.UserClientSync;
 import org.kaaproject.kaa.server.sync.UserServerSync;
 import org.slf4j.Logger;
@@ -111,7 +110,7 @@ public class DefaultOperationsService implements OperationsService {
 
     @Autowired
     EndpointUserService endpointUserService;
-
+    
     private String operationServerHash;
 
     /*
@@ -313,12 +312,6 @@ public class DefaultOperationsService implements OperationsService {
     private UserServerSync processUserSyncRequest(String endpointId, int requestHash, ClientSyncMetaData metaData, UserClientSync request,
             EndpointProfileDto profile) {
         UserServerSync response = new UserServerSync();
-        if (request.getUserAttachRequest() != null) {
-            LOG.debug("[{}] processing user attach request {}", endpointId, request.getUserAttachRequest());
-            UserAttachResponse userAttachResponse = endpointUserService.attachUser(profile, request.getUserAttachRequest());
-            LOG.debug("[{}] user attach response {}", endpointId, userAttachResponse);
-            response.setUserAttachResponse(userAttachResponse);
-        }
         if (request.getEndpointAttachRequests() != null) {
             response.setEndpointAttachResponses(processEndpointAttachRequests(endpointId, requestHash, request, profile));
         }
@@ -674,5 +667,11 @@ public class DefaultOperationsService implements OperationsService {
     @Override
     public void setPublicKey(PublicKey publicKey) {
         operationServerHash = Base64Util.encode(SHA1HashUtils.hashToBytes(publicKey.getEncoded()));
+    }
+
+
+    @Override
+    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
+        return endpointUserService.attachEndpointToUser(profile, appToken, userExternalId);
     }
 }

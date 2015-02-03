@@ -69,8 +69,10 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -84,21 +86,21 @@ import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvid
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.file.FileData;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
-import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
-import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -127,6 +129,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Autowired
     private CacheService cacheService;
+    
+    @Value("#{properties[additional_plugins_scan_package]}")
+    private String additionalPluginsScanPackage;
 
     private PasswordEncoder passwordEncoder;
     
@@ -134,23 +139,38 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.passwordEncoder = passwordEncoder;
     }
     
-    private List<LogAppenderInfoDto> appenders = new ArrayList<>();
-    private Map<String, Schema> appenderConfigSchemas = new HashMap<>();
+    private Map<PluginType, Map<String, PluginInfoDto>> pluginsInfo =
+            new HashMap<>();
+    {
+        for (PluginType type : PluginType.values()) {
+            pluginsInfo.put(type, new HashMap<String, PluginInfoDto>());
+        }
+    }
     
     @Override
     public void afterPropertiesSet() throws Exception {
         ClassPathScanningCandidateComponentProvider scanner =
                 new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(KaaAppenderConfig.class));
-        Set<BeanDefinition> beans = scanner.findCandidateComponents("org.kaaproject.kaa.server.appenders");
+        scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPluginConfig.class));
+        scanPluginsPackage(scanner, "org.kaaproject.kaa.server.appenders");
+        scanPluginsPackage(scanner, "org.kaaproject.kaa.server.verifiers");
+        if (!isEmpty(additionalPluginsScanPackage)) {
+            scanPluginsPackage(scanner, additionalPluginsScanPackage);
+        }
+    }
+    
+    private void scanPluginsPackage(ClassPathScanningCandidateComponentProvider scanner, 
+            String packageName) throws Exception {
+        Set<BeanDefinition> beans = scanner.findCandidateComponents(packageName);
         for (BeanDefinition bean : beans) {
             Class<?> clazz = Class.forName(bean.getBeanClassName());
-            AppenderConfig appenderConfig = (AppenderConfig)clazz.newInstance();
-            appenderConfigSchemas.put(appenderConfig.getLogAppenderClass(), appenderConfig.getConfigSchema());
-            RecordField appenderConfigForm = FormAvroConverter.createRecordFieldFromSchema(appenderConfig.getConfigSchema());
-            LogAppenderInfoDto appender = new LogAppenderInfoDto(
-                    appenderConfig.getName(), appenderConfigForm, appenderConfig.getLogAppenderClass());
-            appenders.add(appender);
+            KaaPluginConfig annotation = clazz.getAnnotation(KaaPluginConfig.class);
+            PluginConfig pluginConfig = (PluginConfig)clazz.newInstance();
+            RecordField fieldConfiguration = 
+                    FormAvroConverter.createRecordFieldFromSchema(pluginConfig.getPluginConfigSchema());
+            PluginInfoDto pluginInfo = new PluginInfoDto(
+                    pluginConfig.getPluginTypeName(), fieldConfiguration, pluginConfig.getPluginClassName());
+            pluginsInfo.get(annotation.pluginType()).put(pluginInfo.getPluginClassName(), pluginInfo);
         }
     }
 
@@ -1347,6 +1367,40 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
+    
+    private void setPluginRawConfigurationFromForm(PluginDto plugin) throws IOException {
+        RecordField fieldConfiguration = plugin.getFieldConfiguration();        
+        GenericRecord record = FormAvroConverter.
+                createGenericRecordFromRecordField(fieldConfiguration);
+        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+        byte[] rawConfiguration = converter.encode(record);
+        plugin.setRawConfiguration(rawConfiguration);
+    }
+    
+    private void setPluginRawConfigurationFromJson(PluginDto plugin, PluginType type) {
+        PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
+        byte[] rawConfiguration = GenericAvroConverter.toRawData(plugin.getJsonConfiguration(), 
+                pluginInfo.getFieldConfiguration().getSchema());
+        plugin.setRawConfiguration(rawConfiguration);
+    }
+    
+    private void setPluginFormConfigurationFromRaw(PluginDto plugin, PluginType type) throws IOException {
+        PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
+        byte[] rawConfiguration = plugin.getRawConfiguration();
+        GenericAvroConverter<GenericRecord> converter = 
+                new GenericAvroConverter<>(pluginInfo.getFieldConfiguration().getSchema());
+        GenericRecord record = converter.decodeBinary(rawConfiguration);
+        RecordField formData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
+        plugin.setFieldConfiguration(formData);
+    }   
+    
+    private void setPluginJsonConfigurationFromRaw(PluginDto plugin, PluginType type) {
+        PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
+        byte[] rawConfiguration = plugin.getRawConfiguration();
+        String jsonConfiguration = GenericAvroConverter.toJson(rawConfiguration, 
+                pluginInfo.getFieldConfiguration().getSchema());
+        plugin.setJsonConfiguration(jsonConfiguration);
+    }   
 
     @Override
     public List<LogAppenderDto> getLogAppendersByApplicationId(String appId)
@@ -1393,77 +1447,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     @Override
-    public List<LogAppenderRestDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException {
-        List<LogAppenderDto> logAppenders = getLogAppendersByApplicationId(appId);
-        List<LogAppenderRestDto> restLogAppenders = new ArrayList<>(logAppenders.size());
-        for (LogAppenderDto logAppender : logAppenders) {
-            restLogAppenders.add(toRestLogAppender(logAppender));
-        }
-        return restLogAppenders;
-    }
-
-    @Override
-    public LogAppenderRestDto getRestLogAppender(String appenderId) throws KaaAdminServiceException {
-        LogAppenderDto logAppender = getLogAppender(appenderId);
-        return toRestLogAppender(logAppender);
-    }
-
-    @Override
-    public LogAppenderRestDto editRestLogAppender(LogAppenderRestDto restLogAppender) throws KaaAdminServiceException {
-        LogAppenderDto logAppender = toLogAppender(restLogAppender);
-        LogAppenderDto savedLogAppender = editLogAppender(logAppender);
-        return toRestLogAppender(savedLogAppender);
-    }
-
-    private LogAppenderRestDto toRestLogAppender(LogAppenderDto logAppender) {
-        LogAppenderRestDto restLogAppender = new LogAppenderRestDto(logAppender);
-        Schema schema = appenderConfigSchemas.get(restLogAppender.getAppenderClassName());
-        String configuration = GenericAvroConverter.toJson(logAppender.getRawConfiguration(), schema.toString());
-        restLogAppender.setConfiguration(configuration);
-        return restLogAppender;
-    }
-    
-    private LogAppenderDto toLogAppender(LogAppenderRestDto restLogAppender) {
-        LogAppenderDto logAppender = new LogAppenderDto(restLogAppender);
-        Schema schema = appenderConfigSchemas.get(restLogAppender.getAppenderClassName());
-        byte[] rawConfiguration = GenericAvroConverter.toRawData(restLogAppender.getConfiguration(), schema.toString());
-        logAppender.setRawConfiguration(rawConfiguration);
-        return logAppender;
-    }
-
-    @Override
-    public LogAppenderFormWrapper getLogAppenderForm(String appenderId) throws KaaAdminServiceException {
-        LogAppenderDto logAppender =  getLogAppender(appenderId);
-        try {
-            LogAppenderFormWrapper wrapper = new LogAppenderFormWrapper(logAppender);
-            Schema schema = appenderConfigSchemas.get(wrapper.getAppenderClassName());
-            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
-            GenericRecord record = converter.decodeBinary(logAppender.getRawConfiguration());
-            RecordField formData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
-            wrapper.setConfiguration(formData);
-            return wrapper;
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
-    public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException {
-        LogAppenderDto logAppender = new LogAppenderDto(wrapper);
-        try {
-            GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(wrapper.getConfiguration());
-            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
-            byte[] rawConfiguration = converter.encode(record);
-            logAppender.setRawConfiguration(rawConfiguration);
-            LogAppenderDto saved = editLogAppender(logAppender);
-            LogAppenderFormWrapper savedWrapper = new LogAppenderFormWrapper(saved);
-            return savedWrapper;
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1477,10 +1460,174 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     @Override
-    public List<LogAppenderInfoDto> getLogAppenderInfos()
+    public LogAppenderDto getLogAppenderForm(String appenderId) throws KaaAdminServiceException {
+        LogAppenderDto logAppender =  getLogAppender(appenderId);
+        try {
+            setPluginFormConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
+            return logAppender;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public LogAppenderDto editLogAppenderForm(LogAppenderDto logAppender) throws KaaAdminServiceException {
+        try {
+            setPluginRawConfigurationFromForm(logAppender);
+            LogAppenderDto saved = editLogAppender(logAppender);
+            return saved;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException {
+        List<LogAppenderDto> logAppenders = getLogAppendersByApplicationId(appId);
+        for (LogAppenderDto logAppender : logAppenders) {
+            setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
+        }
+        return logAppenders;
+    }
+
+    @Override
+    public LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException {
+        LogAppenderDto logAppender = getLogAppender(appenderId);
+        setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
+        return logAppender;
+    }
+
+    @Override
+    public LogAppenderDto editRestLogAppender(LogAppenderDto logAppender) throws KaaAdminServiceException {
+        setPluginRawConfigurationFromJson(logAppender, PluginType.LOG_APPENDER);
+        LogAppenderDto savedLogAppender = editLogAppender(logAppender);
+        setPluginJsonConfigurationFromRaw(savedLogAppender, PluginType.LOG_APPENDER);
+        return savedLogAppender;
+    }
+
+    @Override
+    public List<PluginInfoDto> getLogAppenderPluginInfos()
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        return appenders;
+        return new ArrayList<PluginInfoDto>(pluginsInfo.get(PluginType.LOG_APPENDER).values());
+    }
+    
+    @Override
+    public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(appId);
+            return toDtoList(clientProvider.getClient().getUserVerifiersByApplicationId(appId));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public UserVerifierDto getUserVerifier(String userVerifierId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            UserVerifierDto userVerifier = toDto(clientProvider.getClient().getUserVerifier(userVerifierId));
+            Utils.checkNotNull(userVerifier);
+            checkApplicationId(userVerifier.getApplicationId());
+            return userVerifier;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(userVerifier.getId())) {
+                userVerifier.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(userVerifier.getApplicationId());
+            }
+            else {
+                UserVerifierDto storedUserVerifier = toDto(clientProvider.getClient().getUserVerifier(userVerifier.getId()));
+                Utils.checkNotNull(storedUserVerifier);
+                checkApplicationId(storedUserVerifier.getApplicationId());
+            }
+            return toDto(clientProvider.getClient().editUserVerifier(toDataStruct(userVerifier)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public void deleteUserVerifier(String userVerifierId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            UserVerifierDto userVerifier = toDto(clientProvider.getClient().getUserVerifier(userVerifierId));
+            Utils.checkNotNull(userVerifier);
+            checkApplicationId(userVerifier.getApplicationId());
+            clientProvider.getClient().deleteUserVerifier(userVerifierId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public UserVerifierDto getUserVerifierForm(String userVerifierId)
+            throws KaaAdminServiceException {
+        UserVerifierDto userVerifier =  getUserVerifier(userVerifierId);
+        try {
+            setPluginFormConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
+            return userVerifier;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public UserVerifierDto editUserVerifierForm(UserVerifierDto userVerifier)
+            throws KaaAdminServiceException {
+        try {
+            setPluginRawConfigurationFromForm(userVerifier);
+            UserVerifierDto saved = editUserVerifier(userVerifier);
+            return saved;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId)
+            throws KaaAdminServiceException {
+        List<UserVerifierDto> userVerifiers = getUserVerifiersByApplicationId(appId);
+        for (UserVerifierDto userVerifier : userVerifiers) {
+            setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
+        }
+        return userVerifiers;
+    }
+
+    @Override
+    public UserVerifierDto getRestUserVerifier(String userVerifierId)
+            throws KaaAdminServiceException {
+        UserVerifierDto userVerifier = getUserVerifier(userVerifierId);
+        setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
+        return userVerifier;    
+    }
+
+    @Override
+    public UserVerifierDto editRestUserVerifier(UserVerifierDto userVerifier)
+            throws KaaAdminServiceException {
+        setPluginRawConfigurationFromJson(userVerifier, PluginType.USER_VERIFIER);
+        UserVerifierDto savedUserVerifier = editUserVerifier(userVerifier);
+        setPluginJsonConfigurationFromRaw(savedUserVerifier, PluginType.USER_VERIFIER);
+        return savedUserVerifier;    
+    }
+
+    @Override
+    public List<PluginInfoDto> getUserVerifierPluginInfos()
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        return new ArrayList<PluginInfoDto>(pluginsInfo.get(PluginType.USER_VERIFIER).values());
     }
 
     @Override

@@ -18,27 +18,28 @@ package org.kaaproject.kaa.server.appenders.mongo.config;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
-import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
-import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 
-@KaaAppenderConfig
-public class MongoDbAppenderConfig implements AppenderConfig {
+@KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
+public class MongoDbAppenderConfig implements PluginConfig {
     
     public MongoDbAppenderConfig() {
     }
 
     @Override
-    public String getName() {
+    public String getPluginTypeName() {
         return "Mongo";
     }
 
     @Override
-    public String getLogAppenderClass() {
+    public String getPluginClassName() {
         return "org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender";
     }
 
     @Override
-    public Schema getConfigSchema() {
+    public Schema getPluginConfigSchema() {
         return MongoDbConfig.getClassSchema();
     }
 

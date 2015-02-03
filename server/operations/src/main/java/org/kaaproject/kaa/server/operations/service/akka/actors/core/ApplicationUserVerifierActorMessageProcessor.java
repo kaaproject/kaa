@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -43,7 +44,7 @@ public class ApplicationUserVerifierActorMessageProcessor {
     private final String applicationId;
 
     /** The log appenders */
-    private Map<Integer, UserVerifier> userVerifiers;
+    private Map<String, UserVerifier> userVerifiers;
 
     ApplicationUserVerifierActorMessageProcessor(EndpointUserService endpointUserService, String applicationId) {
         this.applicationId = applicationId;
@@ -52,12 +53,12 @@ public class ApplicationUserVerifierActorMessageProcessor {
     }
 
     private void initUserVerifiers() {
-        this.userVerifiers = new HashMap<Integer, UserVerifier>();
+        this.userVerifiers = new HashMap<String, UserVerifier>();
         for (UserVerifierDto dto : endpointUserService.findUserVerifiers(applicationId)) {
             try {
                 LOG.trace("Initializing user verifier for {}", dto);
                 UserVerifier verifier = createUserVerifier(dto);
-                userVerifiers.put(dto.getVerifierId(), verifier);
+                userVerifiers.put(dto.getVerifierToken(), verifier);
             } catch (Exception e) {
                 LOG.error("Failed to create user verifier", e);
             }
@@ -70,16 +71,16 @@ public class ApplicationUserVerifierActorMessageProcessor {
         }
         try {
             @SuppressWarnings("unchecked")
-            Class<UserVerifier> verifierClass = (Class<UserVerifier>) Class.forName(verifierDto.getClassName());
+            Class<UserVerifier> verifierClass = (Class<UserVerifier>) Class.forName(verifierDto.getPluginClassName());
             UserVerifier userVerifier = verifierClass.newInstance();
             userVerifier.init(new UserVerifierContext(verifierDto));
             userVerifier.start();
             return userVerifier;
         } catch (ClassNotFoundException e) {
-            LOG.error("Unable to find custom verifier class {}", verifierDto.getClassName());
+            LOG.error("Unable to find custom verifier class {}", verifierDto.getPluginClassName());
             throw e;
         } catch (InstantiationException | IllegalAccessException | UserVerifierLifecycleException e) {
-            LOG.error("Unable to instantiate custom verifier from class {}", verifierDto.getClassName());
+            LOG.error("Unable to instantiate custom verifier from class {}", verifierDto.getPluginClassName());
             throw e;
         }
     }
@@ -87,55 +88,55 @@ public class ApplicationUserVerifierActorMessageProcessor {
     public void verifyUser(UserVerificationRequestMessage message) {
         UserVerifier verifier = userVerifiers.get(message.getVerifierId());
         if (verifier != null) {
-
+            verifier.checkAccessToken(message.getUserId(), message.getAccessToken(), new DefaultVerifierCallback(message));
         } else {
-            message.getOriginator().tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.NO_VERIFIER_CONFIGURED),
+            message.getOriginator().tell(UserVerificationResponseMessage.failure(message.getRequestid(), message.getUserId(), UserVerifierErrorCode.NO_VERIFIER_CONFIGURED),
                     ActorRef.noSender());
         }
     }
 
     public void processNotification(Notification notification) {
         LOG.debug("Process user verifier notification [{}]", notification);
-        int verifierId = notification.getUserVerifierId();
+        String verifierToken = notification.getUserVerifierToken();
         switch (notification.getOp()) {
         case ADD_USER_VERIFIER:
-            addUserVerifier(verifierId);
+            addUserVerifier(verifierToken);
             break;
         case REMOVE_USER_VERIFIER:
-            removeUserVerifier(verifierId);
+            removeUserVerifier(verifierToken);
             break;
         case UPDATE_USER_VERIFIER:
-            removeUserVerifier(verifierId);
-            addUserVerifier(verifierId);
+            removeUserVerifier(verifierToken);
+            addUserVerifier(verifierToken);
             break;
         default:
-            LOG.debug("[{}][{}] Operation [{}] is not supported.", applicationId, verifierId, notification.getOp());
+            LOG.debug("[{}][{}] Operation [{}] is not supported.", applicationId, verifierToken, notification.getOp());
         }
     }
 
-    private void addUserVerifier(int verifierId) {
-        LOG.info("[{}] Adding user verifier with id [{}].", applicationId, verifierId);
-        if (!userVerifiers.containsKey(verifierId)) {
-            UserVerifierDto verifierDto = endpointUserService.findUserVerifier(applicationId, verifierId);
+    private void addUserVerifier(String verifierToken) {
+        LOG.info("[{}] Adding user verifier with token [{}].", applicationId, verifierToken);
+        if (!userVerifiers.containsKey(verifierToken)) {
+            UserVerifierDto verifierDto = endpointUserService.findUserVerifier(applicationId, verifierToken);
             if (verifierDto != null) {
                 try {
-                    userVerifiers.put(verifierId, createUserVerifier(verifierDto));
-                    LOG.info("[{}] user verifier [{}] registered.", applicationId, verifierId);
+                    userVerifiers.put(verifierToken, createUserVerifier(verifierDto));
+                    LOG.info("[{}] user verifier [{}] registered.", applicationId, verifierToken);
                 } catch (Exception e) {
                     LOG.error("Failed to create user verifier", e);
                 }
             }
         } else {
-            LOG.info("[{}] User verifier [{}] is already registered.", applicationId, verifierId);
+            LOG.info("[{}] User verifier [{}] is already registered.", applicationId, verifierToken);
         }
     }
 
-    private void removeUserVerifier(int appenderId) {
-        if (userVerifiers.containsKey(appenderId)) {
-            LOG.info("[{}] Stopping user verifier with id [{}].", applicationId, appenderId);
-            userVerifiers.remove(appenderId).stop();
+    private void removeUserVerifier(String verifierToken) {
+        if (userVerifiers.containsKey(verifierToken)) {
+            LOG.info("[{}] Stopping user verifier with token [{}].", applicationId, verifierToken);
+            userVerifiers.remove(verifierToken).stop();
         } else {
-            LOG.warn("[{}] Can't remove unregistered user verifier with id [{}]", applicationId, appenderId);
+            LOG.warn("[{}] Can't remove unregistered user verifier with token [{}]", applicationId, verifierToken);
         }
     }
 
@@ -143,73 +144,81 @@ public class ApplicationUserVerifierActorMessageProcessor {
     };
 
     void postStop() {
-        for (Entry<Integer, UserVerifier> verifier : userVerifiers.entrySet()) {
+        for (Entry<String, UserVerifier> verifier : userVerifiers.entrySet()) {
             LOG.info("[{}] Stopping user verifier with id [{}].", applicationId, verifier.getKey());
             verifier.getValue().stop();
         }
     }
 
-    public static class DefaultVerifierCallback implements UserVerifierCallback {
+    private static class DefaultVerifierCallback implements UserVerifierCallback {
         
         private final ActorRef endpointActor;
+        private final UUID requestId;
+        private final String userId;
 
-        public DefaultVerifierCallback(ActorRef endpointActor) {
+        public DefaultVerifierCallback(UserVerificationRequestMessage message) {
             super();
-            this.endpointActor = endpointActor;
+            this.endpointActor = message.getOriginator();
+            this.requestId = message.getRequestid();
+            this.userId = message.getUserId();
         }
         
-        private void tell(UserVerificationResponseMessage msg){
-            endpointActor.tell(msg, ActorRef.noSender());
+        private void tellFailure(UserVerifierErrorCode errorCode){
+            tellFailure(errorCode, null);
+        }
+        
+        private void tellFailure(UserVerifierErrorCode errorCode, String reason){
+            endpointActor.tell(UserVerificationResponseMessage.failure(requestId, reason, errorCode, reason), ActorRef.noSender());
         }
 
         @Override
         public void onSuccess() {
-            tell(UserVerificationResponseMessage.success());
+            endpointActor.tell(UserVerificationResponseMessage.success(requestId, userId), ActorRef.noSender());
         }
 
         @Override
         public void onTokenInvalid() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.TOKEN_INVALID));
+            tellFailure(UserVerifierErrorCode.TOKEN_INVALID);
         }
 
         @Override
         public void onTokenExpired() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.TOKEN_EXPIRED));
+            tellFailure(UserVerifierErrorCode.TOKEN_EXPIRED);
         }
 
         @Override
         public void onVerificationFailure(String reason) {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.OTHER, reason));
+            tellFailure(UserVerifierErrorCode.OTHER, reason);
         }
 
         @Override
         public void onInternalError() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.INTERNAL_ERROR));
+            tellFailure(UserVerifierErrorCode.INTERNAL_ERROR);
         }
 
         @Override
         public void onInternalError(String reason) {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.TOKEN_EXPIRED, reason));
+            tellFailure(UserVerifierErrorCode.INTERNAL_ERROR, reason);
         }
 
         @Override
         public void onConnectionError() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.CONNECTION_ERROR));
+            tellFailure(UserVerifierErrorCode.CONNECTION_ERROR);
         }
 
         @Override
         public void onConnectionError(String reason) {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.CONNECTION_ERROR, reason));
+            tellFailure(UserVerifierErrorCode.CONNECTION_ERROR, reason);
         }
 
         @Override
         public void onRemoteError() {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.REMOTE_ERROR));
+            tellFailure(UserVerifierErrorCode.REMOTE_ERROR);
         }
 
         @Override
         public void onRemoteError(String reason) {
-            tell(UserVerificationResponseMessage.failure(UserVerifierErrorCode.REMOTE_ERROR, reason));
+            tellFailure(UserVerifierErrorCode.REMOTE_ERROR, reason);
         }
     }
 }

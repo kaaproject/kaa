@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
@@ -268,7 +267,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, String userAccessToken, EndpointProfileDto profile) {
+    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile) {
         validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
         EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(userExternalId, tenantId);
         if(endpointUser == null){
@@ -277,7 +276,6 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUserDto.setTenantId(tenantId);
             endpointUserDto.setExternalId(userExternalId);
             endpointUserDto.setUsername(userExternalId);
-            endpointUserDto.setAccessToken(userAccessToken);
             endpointUser = endpointUserDao.save(endpointUserDto);
         }
 

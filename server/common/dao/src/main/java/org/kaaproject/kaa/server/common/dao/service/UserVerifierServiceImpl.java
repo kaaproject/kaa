@@ -16,11 +16,15 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
@@ -47,9 +51,9 @@ public class UserVerifierServiceImpl implements UserVerifierService {
     }
 
     @Override
-    public UserVerifierDto findUserVerifiersByAppIdAndVerifierId(String appId, int verifierId) {
-        LOG.debug("Find user verifier by application id [{}] and verifier id [{}]", appId, verifierId);
-        return getDto(userVerifierDao.findByAppIdAndVerifierId(appId, verifierId));
+    public UserVerifierDto findUserVerifiersByAppIdAndVerifierToken(String appId, String verifierToken) {
+        LOG.debug("Find user verifier by application id [{}] and verifier token [{}]", appId, verifierToken);
+        return getDto(userVerifierDao.findByAppIdAndVerifierToken(appId, verifierToken));
     }
 
     @Override
@@ -59,13 +63,23 @@ public class UserVerifierServiceImpl implements UserVerifierService {
     }
 
     @Override
-    public UserVerifierDto saveUserVerifier(UserVerifierDto logAppenderDto) {
-        LOG.debug("Save user verifier [{}]", logAppenderDto);
+    public UserVerifierDto saveUserVerifier(UserVerifierDto userVerifierDto) {
+        LOG.debug("Save user verifier [{}]", userVerifierDto);
         UserVerifierDto saved = null;
-        if (logAppenderDto != null) {
-            logAppenderDto.setCreatedTime(System.currentTimeMillis());
-            saved = getDto(userVerifierDao.save(new UserVerifier(logAppenderDto)));
+        if (userVerifierDto != null) {
+            if(isBlank(userVerifierDto.getId())) {
+                userVerifierDto.setCreatedTime(System.currentTimeMillis());
+                String verifierToken = RandomStringUtils.randomNumeric(Constants.USER_VERIFIER_TOKEN_SIZE);
+                userVerifierDto.setVerifierToken(verifierToken);
+            }
+            saved = getDto(userVerifierDao.save(new UserVerifier(userVerifierDto)));
         }
         return saved;
     }
+
+    @Override
+    public void removeUserVerifierById(String id) {
+        validateId(id, "Can't remove user verifier. Invalid user verifier id: " + id);
+        userVerifierDao.removeById(id);
+        LOG.debug("Removed user verifier [{}]", id);    }
 }

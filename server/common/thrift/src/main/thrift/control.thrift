@@ -233,9 +233,15 @@ service ControlThriftService extends cli.CliThriftService{
   list<data> getLogAppendersByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
   data getLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   data editLogAppender(1: data logAppender) throws(1: ControlThriftException ControlException)
-  data registerLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
-  data unregisterLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   void deleteLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   FileData generateRecordStructureLibrary(1: id applicationId, 2: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
   FileData getRecordStructureSchema(1: id applicationId, 2: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
+  
+  /**
+  * User verifiers
+  */
+  list<data> getUserVerifiersByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
+  data getUserVerifier(1: id userVerifierId) throws(1: ControlThriftException ControlException)
+  data editUserVerifier(1: data userVerifier) throws(1: ControlThriftException ControlException)
+  void deleteUserVerifier(1: id userVerifierId) throws(1: ControlThriftException ControlException)
 }

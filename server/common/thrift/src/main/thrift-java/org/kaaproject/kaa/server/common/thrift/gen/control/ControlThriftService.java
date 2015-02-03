@@ -309,15 +309,24 @@ public class ControlThriftService {
 
     public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct editLogAppender(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct logAppender) throws ControlThriftException, org.apache.thrift.TException;
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct registerLogAppender(String logAppenderId) throws ControlThriftException, org.apache.thrift.TException;
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct unregisterLogAppender(String logAppenderId) throws ControlThriftException, org.apache.thrift.TException;
-
     public void deleteLogAppender(String logAppenderId) throws ControlThriftException, org.apache.thrift.TException;
 
     public FileData generateRecordStructureLibrary(String applicationId, int logSchemaVersion) throws ControlThriftException, org.apache.thrift.TException;
 
     public FileData getRecordStructureSchema(String applicationId, int logSchemaVersion) throws ControlThriftException, org.apache.thrift.TException;
+
+    /**
+     * User verifiers
+     * 
+     * @param applicationId
+     */
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getUserVerifiersByApplicationId(String applicationId) throws ControlThriftException, org.apache.thrift.TException;
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getUserVerifier(String userVerifierId) throws ControlThriftException, org.apache.thrift.TException;
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct editUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier) throws ControlThriftException, org.apache.thrift.TException;
+
+    public void deleteUserVerifier(String userVerifierId) throws ControlThriftException, org.apache.thrift.TException;
 
   }
 
@@ -505,15 +514,19 @@ public class ControlThriftService {
 
     public void editLogAppender(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct logAppender, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void registerLogAppender(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
-
-    public void unregisterLogAppender(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
-
     public void deleteLogAppender(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void generateRecordStructureLibrary(String applicationId, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void getRecordStructureSchema(String applicationId, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void getUserVerifiersByApplicationId(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void getUserVerifier(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void editUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void deleteUserVerifier(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -2896,58 +2909,6 @@ public class ControlThriftService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "editLogAppender failed: unknown result");
     }
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct registerLogAppender(String logAppenderId) throws ControlThriftException, org.apache.thrift.TException
-    {
-      send_registerLogAppender(logAppenderId);
-      return recv_registerLogAppender();
-    }
-
-    public void send_registerLogAppender(String logAppenderId) throws org.apache.thrift.TException
-    {
-      registerLogAppender_args args = new registerLogAppender_args();
-      args.setLogAppenderId(logAppenderId);
-      sendBase("registerLogAppender", args);
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_registerLogAppender() throws ControlThriftException, org.apache.thrift.TException
-    {
-      registerLogAppender_result result = new registerLogAppender_result();
-      receiveBase(result, "registerLogAppender");
-      if (result.isSetSuccess()) {
-        return result.success;
-      }
-      if (result.ControlException != null) {
-        throw result.ControlException;
-      }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "registerLogAppender failed: unknown result");
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct unregisterLogAppender(String logAppenderId) throws ControlThriftException, org.apache.thrift.TException
-    {
-      send_unregisterLogAppender(logAppenderId);
-      return recv_unregisterLogAppender();
-    }
-
-    public void send_unregisterLogAppender(String logAppenderId) throws org.apache.thrift.TException
-    {
-      unregisterLogAppender_args args = new unregisterLogAppender_args();
-      args.setLogAppenderId(logAppenderId);
-      sendBase("unregisterLogAppender", args);
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_unregisterLogAppender() throws ControlThriftException, org.apache.thrift.TException
-    {
-      unregisterLogAppender_result result = new unregisterLogAppender_result();
-      receiveBase(result, "unregisterLogAppender");
-      if (result.isSetSuccess()) {
-        return result.success;
-      }
-      if (result.ControlException != null) {
-        throw result.ControlException;
-      }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "unregisterLogAppender failed: unknown result");
-    }
-
     public void deleteLogAppender(String logAppenderId) throws ControlThriftException, org.apache.thrift.TException
     {
       send_deleteLogAppender(logAppenderId);
@@ -3023,6 +2984,107 @@ public class ControlThriftService {
         throw result.ControlException;
       }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getRecordStructureSchema failed: unknown result");
+    }
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getUserVerifiersByApplicationId(String applicationId) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_getUserVerifiersByApplicationId(applicationId);
+      return recv_getUserVerifiersByApplicationId();
+    }
+
+    public void send_getUserVerifiersByApplicationId(String applicationId) throws org.apache.thrift.TException
+    {
+      getUserVerifiersByApplicationId_args args = new getUserVerifiersByApplicationId_args();
+      args.setApplicationId(applicationId);
+      sendBase("getUserVerifiersByApplicationId", args);
+    }
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> recv_getUserVerifiersByApplicationId() throws ControlThriftException, org.apache.thrift.TException
+    {
+      getUserVerifiersByApplicationId_result result = new getUserVerifiersByApplicationId_result();
+      receiveBase(result, "getUserVerifiersByApplicationId");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserVerifiersByApplicationId failed: unknown result");
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getUserVerifier(String userVerifierId) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_getUserVerifier(userVerifierId);
+      return recv_getUserVerifier();
+    }
+
+    public void send_getUserVerifier(String userVerifierId) throws org.apache.thrift.TException
+    {
+      getUserVerifier_args args = new getUserVerifier_args();
+      args.setUserVerifierId(userVerifierId);
+      sendBase("getUserVerifier", args);
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_getUserVerifier() throws ControlThriftException, org.apache.thrift.TException
+    {
+      getUserVerifier_result result = new getUserVerifier_result();
+      receiveBase(result, "getUserVerifier");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserVerifier failed: unknown result");
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct editUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_editUserVerifier(userVerifier);
+      return recv_editUserVerifier();
+    }
+
+    public void send_editUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier) throws org.apache.thrift.TException
+    {
+      editUserVerifier_args args = new editUserVerifier_args();
+      args.setUserVerifier(userVerifier);
+      sendBase("editUserVerifier", args);
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_editUserVerifier() throws ControlThriftException, org.apache.thrift.TException
+    {
+      editUserVerifier_result result = new editUserVerifier_result();
+      receiveBase(result, "editUserVerifier");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "editUserVerifier failed: unknown result");
+    }
+
+    public void deleteUserVerifier(String userVerifierId) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_deleteUserVerifier(userVerifierId);
+      recv_deleteUserVerifier();
+    }
+
+    public void send_deleteUserVerifier(String userVerifierId) throws org.apache.thrift.TException
+    {
+      deleteUserVerifier_args args = new deleteUserVerifier_args();
+      args.setUserVerifierId(userVerifierId);
+      sendBase("deleteUserVerifier", args);
+    }
+
+    public void recv_deleteUserVerifier() throws ControlThriftException, org.apache.thrift.TException
+    {
+      deleteUserVerifier_result result = new deleteUserVerifier_result();
+      receiveBase(result, "deleteUserVerifier");
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      return;
     }
 
   }
@@ -6024,70 +6086,6 @@ public class ControlThriftService {
       }
     }
 
-    public void registerLogAppender(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
-      checkReady();
-      registerLogAppender_call method_call = new registerLogAppender_call(logAppenderId, resultHandler, this, ___protocolFactory, ___transport);
-      this.___currentMethod = method_call;
-      ___manager.call(method_call);
-    }
-
-    public static class registerLogAppender_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private String logAppenderId;
-      public registerLogAppender_call(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
-        super(client, protocolFactory, transport, resultHandler, false);
-        this.logAppenderId = logAppenderId;
-      }
-
-      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("registerLogAppender", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        registerLogAppender_args args = new registerLogAppender_args();
-        args.setLogAppenderId(logAppenderId);
-        args.write(prot);
-        prot.writeMessageEnd();
-      }
-
-      public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getResult() throws ControlThriftException, org.apache.thrift.TException {
-        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
-          throw new IllegalStateException("Method call not finished!");
-        }
-        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
-        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_registerLogAppender();
-      }
-    }
-
-    public void unregisterLogAppender(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
-      checkReady();
-      unregisterLogAppender_call method_call = new unregisterLogAppender_call(logAppenderId, resultHandler, this, ___protocolFactory, ___transport);
-      this.___currentMethod = method_call;
-      ___manager.call(method_call);
-    }
-
-    public static class unregisterLogAppender_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private String logAppenderId;
-      public unregisterLogAppender_call(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
-        super(client, protocolFactory, transport, resultHandler, false);
-        this.logAppenderId = logAppenderId;
-      }
-
-      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("unregisterLogAppender", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        unregisterLogAppender_args args = new unregisterLogAppender_args();
-        args.setLogAppenderId(logAppenderId);
-        args.write(prot);
-        prot.writeMessageEnd();
-      }
-
-      public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getResult() throws ControlThriftException, org.apache.thrift.TException {
-        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
-          throw new IllegalStateException("Method call not finished!");
-        }
-        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
-        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_unregisterLogAppender();
-      }
-    }
-
     public void deleteLogAppender(String logAppenderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       deleteLogAppender_call method_call = new deleteLogAppender_call(logAppenderId, resultHandler, this, ___protocolFactory, ___transport);
@@ -6187,6 +6185,134 @@ public class ControlThriftService {
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
         return (new Client(prot)).recv_getRecordStructureSchema();
+      }
+    }
+
+    public void getUserVerifiersByApplicationId(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      getUserVerifiersByApplicationId_call method_call = new getUserVerifiersByApplicationId_call(applicationId, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class getUserVerifiersByApplicationId_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String applicationId;
+      public getUserVerifiersByApplicationId_call(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.applicationId = applicationId;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getUserVerifiersByApplicationId", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        getUserVerifiersByApplicationId_args args = new getUserVerifiersByApplicationId_args();
+        args.setApplicationId(applicationId);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_getUserVerifiersByApplicationId();
+      }
+    }
+
+    public void getUserVerifier(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      getUserVerifier_call method_call = new getUserVerifier_call(userVerifierId, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class getUserVerifier_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String userVerifierId;
+      public getUserVerifier_call(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.userVerifierId = userVerifierId;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getUserVerifier", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        getUserVerifier_args args = new getUserVerifier_args();
+        args.setUserVerifierId(userVerifierId);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_getUserVerifier();
+      }
+    }
+
+    public void editUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      editUserVerifier_call method_call = new editUserVerifier_call(userVerifier, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class editUserVerifier_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier;
+      public editUserVerifier_call(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.userVerifier = userVerifier;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("editUserVerifier", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        editUserVerifier_args args = new editUserVerifier_args();
+        args.setUserVerifier(userVerifier);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_editUserVerifier();
+      }
+    }
+
+    public void deleteUserVerifier(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      deleteUserVerifier_call method_call = new deleteUserVerifier_call(userVerifierId, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class deleteUserVerifier_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String userVerifierId;
+      public deleteUserVerifier_call(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.userVerifierId = userVerifierId;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("deleteUserVerifier", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        deleteUserVerifier_args args = new deleteUserVerifier_args();
+        args.setUserVerifierId(userVerifierId);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_deleteUserVerifier();
       }
     }
 
@@ -6294,11 +6420,13 @@ public class ControlThriftService {
       processMap.put("getLogAppendersByApplicationId", new getLogAppendersByApplicationId());
       processMap.put("getLogAppender", new getLogAppender());
       processMap.put("editLogAppender", new editLogAppender());
-      processMap.put("registerLogAppender", new registerLogAppender());
-      processMap.put("unregisterLogAppender", new unregisterLogAppender());
       processMap.put("deleteLogAppender", new deleteLogAppender());
       processMap.put("generateRecordStructureLibrary", new generateRecordStructureLibrary());
       processMap.put("getRecordStructureSchema", new getRecordStructureSchema());
+      processMap.put("getUserVerifiersByApplicationId", new getUserVerifiersByApplicationId());
+      processMap.put("getUserVerifier", new getUserVerifier());
+      processMap.put("editUserVerifier", new editUserVerifier());
+      processMap.put("deleteUserVerifier", new deleteUserVerifier());
       return processMap;
     }
 
@@ -8486,54 +8614,6 @@ public class ControlThriftService {
       }
     }
 
-    public static class registerLogAppender<I extends Iface> extends org.apache.thrift.ProcessFunction<I, registerLogAppender_args> {
-      public registerLogAppender() {
-        super("registerLogAppender");
-      }
-
-      public registerLogAppender_args getEmptyArgsInstance() {
-        return new registerLogAppender_args();
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public registerLogAppender_result getResult(I iface, registerLogAppender_args args) throws org.apache.thrift.TException {
-        registerLogAppender_result result = new registerLogAppender_result();
-        try {
-          result.success = iface.registerLogAppender(args.logAppenderId);
-        } catch (ControlThriftException ControlException) {
-          result.ControlException = ControlException;
-        }
-        return result;
-      }
-    }
-
-    public static class unregisterLogAppender<I extends Iface> extends org.apache.thrift.ProcessFunction<I, unregisterLogAppender_args> {
-      public unregisterLogAppender() {
-        super("unregisterLogAppender");
-      }
-
-      public unregisterLogAppender_args getEmptyArgsInstance() {
-        return new unregisterLogAppender_args();
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public unregisterLogAppender_result getResult(I iface, unregisterLogAppender_args args) throws org.apache.thrift.TException {
-        unregisterLogAppender_result result = new unregisterLogAppender_result();
-        try {
-          result.success = iface.unregisterLogAppender(args.logAppenderId);
-        } catch (ControlThriftException ControlException) {
-          result.ControlException = ControlException;
-        }
-        return result;
-      }
-    }
-
     public static class deleteLogAppender<I extends Iface> extends org.apache.thrift.ProcessFunction<I, deleteLogAppender_args> {
       public deleteLogAppender() {
         super("deleteLogAppender");
@@ -8599,6 +8679,102 @@ public class ControlThriftService {
         getRecordStructureSchema_result result = new getRecordStructureSchema_result();
         try {
           result.success = iface.getRecordStructureSchema(args.applicationId, args.logSchemaVersion);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
+    public static class getUserVerifiersByApplicationId<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getUserVerifiersByApplicationId_args> {
+      public getUserVerifiersByApplicationId() {
+        super("getUserVerifiersByApplicationId");
+      }
+
+      public getUserVerifiersByApplicationId_args getEmptyArgsInstance() {
+        return new getUserVerifiersByApplicationId_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public getUserVerifiersByApplicationId_result getResult(I iface, getUserVerifiersByApplicationId_args args) throws org.apache.thrift.TException {
+        getUserVerifiersByApplicationId_result result = new getUserVerifiersByApplicationId_result();
+        try {
+          result.success = iface.getUserVerifiersByApplicationId(args.applicationId);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
+    public static class getUserVerifier<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getUserVerifier_args> {
+      public getUserVerifier() {
+        super("getUserVerifier");
+      }
+
+      public getUserVerifier_args getEmptyArgsInstance() {
+        return new getUserVerifier_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public getUserVerifier_result getResult(I iface, getUserVerifier_args args) throws org.apache.thrift.TException {
+        getUserVerifier_result result = new getUserVerifier_result();
+        try {
+          result.success = iface.getUserVerifier(args.userVerifierId);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
+    public static class editUserVerifier<I extends Iface> extends org.apache.thrift.ProcessFunction<I, editUserVerifier_args> {
+      public editUserVerifier() {
+        super("editUserVerifier");
+      }
+
+      public editUserVerifier_args getEmptyArgsInstance() {
+        return new editUserVerifier_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public editUserVerifier_result getResult(I iface, editUserVerifier_args args) throws org.apache.thrift.TException {
+        editUserVerifier_result result = new editUserVerifier_result();
+        try {
+          result.success = iface.editUserVerifier(args.userVerifier);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
+    public static class deleteUserVerifier<I extends Iface> extends org.apache.thrift.ProcessFunction<I, deleteUserVerifier_args> {
+      public deleteUserVerifier() {
+        super("deleteUserVerifier");
+      }
+
+      public deleteUserVerifier_args getEmptyArgsInstance() {
+        return new deleteUserVerifier_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public deleteUserVerifier_result getResult(I iface, deleteUserVerifier_args args) throws org.apache.thrift.TException {
+        deleteUserVerifier_result result = new deleteUserVerifier_result();
+        try {
+          iface.deleteUserVerifier(args.userVerifierId);
         } catch (ControlThriftException ControlException) {
           result.ControlException = ControlException;
         }
@@ -8710,11 +8886,13 @@ public class ControlThriftService {
       processMap.put("getLogAppendersByApplicationId", new getLogAppendersByApplicationId());
       processMap.put("getLogAppender", new getLogAppender());
       processMap.put("editLogAppender", new editLogAppender());
-      processMap.put("registerLogAppender", new registerLogAppender());
-      processMap.put("unregisterLogAppender", new unregisterLogAppender());
       processMap.put("deleteLogAppender", new deleteLogAppender());
       processMap.put("generateRecordStructureLibrary", new generateRecordStructureLibrary());
       processMap.put("getRecordStructureSchema", new getRecordStructureSchema());
+      processMap.put("getUserVerifiersByApplicationId", new getUserVerifiersByApplicationId());
+      processMap.put("getUserVerifier", new getUserVerifier());
+      processMap.put("editUserVerifier", new editUserVerifier());
+      processMap.put("deleteUserVerifier", new deleteUserVerifier());
       return processMap;
     }
 
@@ -13895,120 +14073,6 @@ public class ControlThriftService {
       }
     }
 
-    public static class registerLogAppender<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, registerLogAppender_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
-      public registerLogAppender() {
-        super("registerLogAppender");
-      }
-
-      public registerLogAppender_args getEmptyArgsInstance() {
-        return new registerLogAppender_args();
-      }
-
-      public AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
-        final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>() { 
-          public void onComplete(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct o) {
-            registerLogAppender_result result = new registerLogAppender_result();
-            result.success = o;
-            try {
-              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
-              return;
-            } catch (Exception e) {
-              LOGGER.error("Exception writing to internal frame buffer", e);
-            }
-            fb.close();
-          }
-          public void onError(Exception e) {
-            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
-            org.apache.thrift.TBase msg;
-            registerLogAppender_result result = new registerLogAppender_result();
-            if (e instanceof ControlThriftException) {
-                        result.ControlException = (ControlThriftException) e;
-                        result.setControlExceptionIsSet(true);
-                        msg = result;
-            }
-             else 
-            {
-              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
-            }
-            try {
-              fcall.sendResponse(fb,msg,msgType,seqid);
-              return;
-            } catch (Exception ex) {
-              LOGGER.error("Exception writing to internal frame buffer", ex);
-            }
-            fb.close();
-          }
-        };
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public void start(I iface, registerLogAppender_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
-        iface.registerLogAppender(args.logAppenderId,resultHandler);
-      }
-    }
-
-    public static class unregisterLogAppender<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, unregisterLogAppender_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
-      public unregisterLogAppender() {
-        super("unregisterLogAppender");
-      }
-
-      public unregisterLogAppender_args getEmptyArgsInstance() {
-        return new unregisterLogAppender_args();
-      }
-
-      public AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
-        final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>() { 
-          public void onComplete(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct o) {
-            unregisterLogAppender_result result = new unregisterLogAppender_result();
-            result.success = o;
-            try {
-              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
-              return;
-            } catch (Exception e) {
-              LOGGER.error("Exception writing to internal frame buffer", e);
-            }
-            fb.close();
-          }
-          public void onError(Exception e) {
-            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
-            org.apache.thrift.TBase msg;
-            unregisterLogAppender_result result = new unregisterLogAppender_result();
-            if (e instanceof ControlThriftException) {
-                        result.ControlException = (ControlThriftException) e;
-                        result.setControlExceptionIsSet(true);
-                        msg = result;
-            }
-             else 
-            {
-              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
-            }
-            try {
-              fcall.sendResponse(fb,msg,msgType,seqid);
-              return;
-            } catch (Exception ex) {
-              LOGGER.error("Exception writing to internal frame buffer", ex);
-            }
-            fb.close();
-          }
-        };
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public void start(I iface, unregisterLogAppender_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
-        iface.unregisterLogAppender(args.logAppenderId,resultHandler);
-      }
-    }
-
     public static class deleteLogAppender<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, deleteLogAppender_args, Void> {
       public deleteLogAppender() {
         super("deleteLogAppender");
@@ -14176,6 +14240,233 @@ public class ControlThriftService {
 
       public void start(I iface, getRecordStructureSchema_args args, org.apache.thrift.async.AsyncMethodCallback<FileData> resultHandler) throws TException {
         iface.getRecordStructureSchema(args.applicationId, args.logSchemaVersion,resultHandler);
+      }
+    }
+
+    public static class getUserVerifiersByApplicationId<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserVerifiersByApplicationId_args, List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>> {
+      public getUserVerifiersByApplicationId() {
+        super("getUserVerifiersByApplicationId");
+      }
+
+      public getUserVerifiersByApplicationId_args getEmptyArgsInstance() {
+        return new getUserVerifiersByApplicationId_args();
+      }
+
+      public AsyncMethodCallback<List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>>() { 
+          public void onComplete(List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> o) {
+            getUserVerifiersByApplicationId_result result = new getUserVerifiersByApplicationId_result();
+            result.success = o;
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            getUserVerifiersByApplicationId_result result = new getUserVerifiersByApplicationId_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, getUserVerifiersByApplicationId_args args, org.apache.thrift.async.AsyncMethodCallback<List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>> resultHandler) throws TException {
+        iface.getUserVerifiersByApplicationId(args.applicationId,resultHandler);
+      }
+    }
+
+    public static class getUserVerifier<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserVerifier_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
+      public getUserVerifier() {
+        super("getUserVerifier");
+      }
+
+      public getUserVerifier_args getEmptyArgsInstance() {
+        return new getUserVerifier_args();
+      }
+
+      public AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>() { 
+          public void onComplete(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct o) {
+            getUserVerifier_result result = new getUserVerifier_result();
+            result.success = o;
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            getUserVerifier_result result = new getUserVerifier_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, getUserVerifier_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
+        iface.getUserVerifier(args.userVerifierId,resultHandler);
+      }
+    }
+
+    public static class editUserVerifier<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, editUserVerifier_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
+      public editUserVerifier() {
+        super("editUserVerifier");
+      }
+
+      public editUserVerifier_args getEmptyArgsInstance() {
+        return new editUserVerifier_args();
+      }
+
+      public AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>() { 
+          public void onComplete(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct o) {
+            editUserVerifier_result result = new editUserVerifier_result();
+            result.success = o;
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            editUserVerifier_result result = new editUserVerifier_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, editUserVerifier_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
+        iface.editUserVerifier(args.userVerifier,resultHandler);
+      }
+    }
+
+    public static class deleteUserVerifier<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, deleteUserVerifier_args, Void> {
+      public deleteUserVerifier() {
+        super("deleteUserVerifier");
+      }
+
+      public deleteUserVerifier_args getEmptyArgsInstance() {
+        return new deleteUserVerifier_args();
+      }
+
+      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Void>() { 
+          public void onComplete(Void o) {
+            deleteUserVerifier_result result = new deleteUserVerifier_result();
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            deleteUserVerifier_result result = new deleteUserVerifier_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, deleteUserVerifier_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+        iface.deleteUserVerifier(args.userVerifierId,resultHandler);
       }
     }
 
@@ -92871,1668 +93162,6 @@ public class ControlThriftService {
 
   }
 
-  public static class registerLogAppender_args implements org.apache.thrift.TBase<registerLogAppender_args, registerLogAppender_args._Fields>, java.io.Serializable, Cloneable, Comparable<registerLogAppender_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("registerLogAppender_args");
-
-    private static final org.apache.thrift.protocol.TField LOG_APPENDER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("logAppenderId", org.apache.thrift.protocol.TType.STRING, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new registerLogAppender_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new registerLogAppender_argsTupleSchemeFactory());
-    }
-
-    public String logAppenderId; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      LOG_APPENDER_ID((short)1, "logAppenderId");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 1: // LOG_APPENDER_ID
-            return LOG_APPENDER_ID;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.LOG_APPENDER_ID, new org.apache.thrift.meta_data.FieldMetaData("logAppenderId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(registerLogAppender_args.class, metaDataMap);
-    }
-
-    public registerLogAppender_args() {
-    }
-
-    public registerLogAppender_args(
-      String logAppenderId)
-    {
-      this();
-      this.logAppenderId = logAppenderId;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public registerLogAppender_args(registerLogAppender_args other) {
-      if (other.isSetLogAppenderId()) {
-        this.logAppenderId = other.logAppenderId;
-      }
-    }
-
-    public registerLogAppender_args deepCopy() {
-      return new registerLogAppender_args(this);
-    }
-
-    @Override
-    public void clear() {
-      this.logAppenderId = null;
-    }
-
-    public String getLogAppenderId() {
-      return this.logAppenderId;
-    }
-
-    public registerLogAppender_args setLogAppenderId(String logAppenderId) {
-      this.logAppenderId = logAppenderId;
-      return this;
-    }
-
-    public void unsetLogAppenderId() {
-      this.logAppenderId = null;
-    }
-
-    /** Returns true if field logAppenderId is set (has been assigned a value) and false otherwise */
-    public boolean isSetLogAppenderId() {
-      return this.logAppenderId != null;
-    }
-
-    public void setLogAppenderIdIsSet(boolean value) {
-      if (!value) {
-        this.logAppenderId = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case LOG_APPENDER_ID:
-        if (value == null) {
-          unsetLogAppenderId();
-        } else {
-          setLogAppenderId((String)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case LOG_APPENDER_ID:
-        return getLogAppenderId();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case LOG_APPENDER_ID:
-        return isSetLogAppenderId();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof registerLogAppender_args)
-        return this.equals((registerLogAppender_args)that);
-      return false;
-    }
-
-    public boolean equals(registerLogAppender_args that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_logAppenderId = true && this.isSetLogAppenderId();
-      boolean that_present_logAppenderId = true && that.isSetLogAppenderId();
-      if (this_present_logAppenderId || that_present_logAppenderId) {
-        if (!(this_present_logAppenderId && that_present_logAppenderId))
-          return false;
-        if (!this.logAppenderId.equals(that.logAppenderId))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      HashCodeBuilder builder = new HashCodeBuilder();
-
-      boolean present_logAppenderId = true && (isSetLogAppenderId());
-      builder.append(present_logAppenderId);
-      if (present_logAppenderId)
-        builder.append(logAppenderId);
-
-      return builder.toHashCode();
-    }
-
-    @Override
-    public int compareTo(registerLogAppender_args other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetLogAppenderId()).compareTo(other.isSetLogAppenderId());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetLogAppenderId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.logAppenderId, other.logAppenderId);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("registerLogAppender_args(");
-      boolean first = true;
-
-      sb.append("logAppenderId:");
-      if (this.logAppenderId == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.logAppenderId);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class registerLogAppender_argsStandardSchemeFactory implements SchemeFactory {
-      public registerLogAppender_argsStandardScheme getScheme() {
-        return new registerLogAppender_argsStandardScheme();
-      }
-    }
-
-    private static class registerLogAppender_argsStandardScheme extends StandardScheme<registerLogAppender_args> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, registerLogAppender_args struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 1: // LOG_APPENDER_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                struct.logAppenderId = iprot.readString();
-                struct.setLogAppenderIdIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, registerLogAppender_args struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.logAppenderId != null) {
-          oprot.writeFieldBegin(LOG_APPENDER_ID_FIELD_DESC);
-          oprot.writeString(struct.logAppenderId);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class registerLogAppender_argsTupleSchemeFactory implements SchemeFactory {
-      public registerLogAppender_argsTupleScheme getScheme() {
-        return new registerLogAppender_argsTupleScheme();
-      }
-    }
-
-    private static class registerLogAppender_argsTupleScheme extends TupleScheme<registerLogAppender_args> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, registerLogAppender_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetLogAppenderId()) {
-          optionals.set(0);
-        }
-        oprot.writeBitSet(optionals, 1);
-        if (struct.isSetLogAppenderId()) {
-          oprot.writeString(struct.logAppenderId);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, registerLogAppender_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
-        if (incoming.get(0)) {
-          struct.logAppenderId = iprot.readString();
-          struct.setLogAppenderIdIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class registerLogAppender_result implements org.apache.thrift.TBase<registerLogAppender_result, registerLogAppender_result._Fields>, java.io.Serializable, Cloneable, Comparable<registerLogAppender_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("registerLogAppender_result");
-
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
-    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new registerLogAppender_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new registerLogAppender_resultTupleSchemeFactory());
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success; // required
-    public ControlThriftException ControlException; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success"),
-      CONTROL_EXCEPTION((short)1, "ControlException");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 0: // SUCCESS
-            return SUCCESS;
-          case 1: // CONTROL_EXCEPTION
-            return CONTROL_EXCEPTION;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT          , "data")));
-      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(registerLogAppender_result.class, metaDataMap);
-    }
-
-    public registerLogAppender_result() {
-    }
-
-    public registerLogAppender_result(
-      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success,
-      ControlThriftException ControlException)
-    {
-      this();
-      this.success = success;
-      this.ControlException = ControlException;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public registerLogAppender_result(registerLogAppender_result other) {
-      if (other.isSetSuccess()) {
-        this.success = other.success;
-      }
-      if (other.isSetControlException()) {
-        this.ControlException = new ControlThriftException(other.ControlException);
-      }
-    }
-
-    public registerLogAppender_result deepCopy() {
-      return new registerLogAppender_result(this);
-    }
-
-    @Override
-    public void clear() {
-      this.success = null;
-      this.ControlException = null;
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getSuccess() {
-      return this.success;
-    }
-
-    public registerLogAppender_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
-      this.success = success;
-      return this;
-    }
-
-    public void unsetSuccess() {
-      this.success = null;
-    }
-
-    /** Returns true if field success is set (has been assigned a value) and false otherwise */
-    public boolean isSetSuccess() {
-      return this.success != null;
-    }
-
-    public void setSuccessIsSet(boolean value) {
-      if (!value) {
-        this.success = null;
-      }
-    }
-
-    public ControlThriftException getControlException() {
-      return this.ControlException;
-    }
-
-    public registerLogAppender_result setControlException(ControlThriftException ControlException) {
-      this.ControlException = ControlException;
-      return this;
-    }
-
-    public void unsetControlException() {
-      this.ControlException = null;
-    }
-
-    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
-    public boolean isSetControlException() {
-      return this.ControlException != null;
-    }
-
-    public void setControlExceptionIsSet(boolean value) {
-      if (!value) {
-        this.ControlException = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case SUCCESS:
-        if (value == null) {
-          unsetSuccess();
-        } else {
-          setSuccess((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
-        }
-        break;
-
-      case CONTROL_EXCEPTION:
-        if (value == null) {
-          unsetControlException();
-        } else {
-          setControlException((ControlThriftException)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case SUCCESS:
-        return getSuccess();
-
-      case CONTROL_EXCEPTION:
-        return getControlException();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case SUCCESS:
-        return isSetSuccess();
-      case CONTROL_EXCEPTION:
-        return isSetControlException();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof registerLogAppender_result)
-        return this.equals((registerLogAppender_result)that);
-      return false;
-    }
-
-    public boolean equals(registerLogAppender_result that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_success = true && this.isSetSuccess();
-      boolean that_present_success = true && that.isSetSuccess();
-      if (this_present_success || that_present_success) {
-        if (!(this_present_success && that_present_success))
-          return false;
-        if (!this.success.equals(that.success))
-          return false;
-      }
-
-      boolean this_present_ControlException = true && this.isSetControlException();
-      boolean that_present_ControlException = true && that.isSetControlException();
-      if (this_present_ControlException || that_present_ControlException) {
-        if (!(this_present_ControlException && that_present_ControlException))
-          return false;
-        if (!this.ControlException.equals(that.ControlException))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      HashCodeBuilder builder = new HashCodeBuilder();
-
-      boolean present_success = true && (isSetSuccess());
-      builder.append(present_success);
-      if (present_success)
-        builder.append(success);
-
-      boolean present_ControlException = true && (isSetControlException());
-      builder.append(present_ControlException);
-      if (present_ControlException)
-        builder.append(ControlException);
-
-      return builder.toHashCode();
-    }
-
-    @Override
-    public int compareTo(registerLogAppender_result other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetSuccess()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetControlException()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-      }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("registerLogAppender_result(");
-      boolean first = true;
-
-      sb.append("success:");
-      if (this.success == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.success);
-      }
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("ControlException:");
-      if (this.ControlException == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.ControlException);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class registerLogAppender_resultStandardSchemeFactory implements SchemeFactory {
-      public registerLogAppender_resultStandardScheme getScheme() {
-        return new registerLogAppender_resultStandardScheme();
-      }
-    }
-
-    private static class registerLogAppender_resultStandardScheme extends StandardScheme<registerLogAppender_result> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, registerLogAppender_result struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                struct.success.read(iprot);
-                struct.setSuccessIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 1: // CONTROL_EXCEPTION
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.ControlException = new ControlThriftException();
-                struct.ControlException.read(iprot);
-                struct.setControlExceptionIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, registerLogAppender_result struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.success != null) {
-          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          struct.success.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        if (struct.ControlException != null) {
-          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
-          struct.ControlException.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class registerLogAppender_resultTupleSchemeFactory implements SchemeFactory {
-      public registerLogAppender_resultTupleScheme getScheme() {
-        return new registerLogAppender_resultTupleScheme();
-      }
-    }
-
-    private static class registerLogAppender_resultTupleScheme extends TupleScheme<registerLogAppender_result> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, registerLogAppender_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetSuccess()) {
-          optionals.set(0);
-        }
-        if (struct.isSetControlException()) {
-          optionals.set(1);
-        }
-        oprot.writeBitSet(optionals, 2);
-        if (struct.isSetSuccess()) {
-          struct.success.write(oprot);
-        }
-        if (struct.isSetControlException()) {
-          struct.ControlException.write(oprot);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, registerLogAppender_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(2);
-        if (incoming.get(0)) {
-          struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-          struct.success.read(iprot);
-          struct.setSuccessIsSet(true);
-        }
-        if (incoming.get(1)) {
-          struct.ControlException = new ControlThriftException();
-          struct.ControlException.read(iprot);
-          struct.setControlExceptionIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class unregisterLogAppender_args implements org.apache.thrift.TBase<unregisterLogAppender_args, unregisterLogAppender_args._Fields>, java.io.Serializable, Cloneable, Comparable<unregisterLogAppender_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("unregisterLogAppender_args");
-
-    private static final org.apache.thrift.protocol.TField LOG_APPENDER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("logAppenderId", org.apache.thrift.protocol.TType.STRING, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new unregisterLogAppender_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new unregisterLogAppender_argsTupleSchemeFactory());
-    }
-
-    public String logAppenderId; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      LOG_APPENDER_ID((short)1, "logAppenderId");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 1: // LOG_APPENDER_ID
-            return LOG_APPENDER_ID;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.LOG_APPENDER_ID, new org.apache.thrift.meta_data.FieldMetaData("logAppenderId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(unregisterLogAppender_args.class, metaDataMap);
-    }
-
-    public unregisterLogAppender_args() {
-    }
-
-    public unregisterLogAppender_args(
-      String logAppenderId)
-    {
-      this();
-      this.logAppenderId = logAppenderId;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public unregisterLogAppender_args(unregisterLogAppender_args other) {
-      if (other.isSetLogAppenderId()) {
-        this.logAppenderId = other.logAppenderId;
-      }
-    }
-
-    public unregisterLogAppender_args deepCopy() {
-      return new unregisterLogAppender_args(this);
-    }
-
-    @Override
-    public void clear() {
-      this.logAppenderId = null;
-    }
-
-    public String getLogAppenderId() {
-      return this.logAppenderId;
-    }
-
-    public unregisterLogAppender_args setLogAppenderId(String logAppenderId) {
-      this.logAppenderId = logAppenderId;
-      return this;
-    }
-
-    public void unsetLogAppenderId() {
-      this.logAppenderId = null;
-    }
-
-    /** Returns true if field logAppenderId is set (has been assigned a value) and false otherwise */
-    public boolean isSetLogAppenderId() {
-      return this.logAppenderId != null;
-    }
-
-    public void setLogAppenderIdIsSet(boolean value) {
-      if (!value) {
-        this.logAppenderId = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case LOG_APPENDER_ID:
-        if (value == null) {
-          unsetLogAppenderId();
-        } else {
-          setLogAppenderId((String)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case LOG_APPENDER_ID:
-        return getLogAppenderId();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case LOG_APPENDER_ID:
-        return isSetLogAppenderId();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof unregisterLogAppender_args)
-        return this.equals((unregisterLogAppender_args)that);
-      return false;
-    }
-
-    public boolean equals(unregisterLogAppender_args that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_logAppenderId = true && this.isSetLogAppenderId();
-      boolean that_present_logAppenderId = true && that.isSetLogAppenderId();
-      if (this_present_logAppenderId || that_present_logAppenderId) {
-        if (!(this_present_logAppenderId && that_present_logAppenderId))
-          return false;
-        if (!this.logAppenderId.equals(that.logAppenderId))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      HashCodeBuilder builder = new HashCodeBuilder();
-
-      boolean present_logAppenderId = true && (isSetLogAppenderId());
-      builder.append(present_logAppenderId);
-      if (present_logAppenderId)
-        builder.append(logAppenderId);
-
-      return builder.toHashCode();
-    }
-
-    @Override
-    public int compareTo(unregisterLogAppender_args other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetLogAppenderId()).compareTo(other.isSetLogAppenderId());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetLogAppenderId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.logAppenderId, other.logAppenderId);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("unregisterLogAppender_args(");
-      boolean first = true;
-
-      sb.append("logAppenderId:");
-      if (this.logAppenderId == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.logAppenderId);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class unregisterLogAppender_argsStandardSchemeFactory implements SchemeFactory {
-      public unregisterLogAppender_argsStandardScheme getScheme() {
-        return new unregisterLogAppender_argsStandardScheme();
-      }
-    }
-
-    private static class unregisterLogAppender_argsStandardScheme extends StandardScheme<unregisterLogAppender_args> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, unregisterLogAppender_args struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 1: // LOG_APPENDER_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                struct.logAppenderId = iprot.readString();
-                struct.setLogAppenderIdIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, unregisterLogAppender_args struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.logAppenderId != null) {
-          oprot.writeFieldBegin(LOG_APPENDER_ID_FIELD_DESC);
-          oprot.writeString(struct.logAppenderId);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class unregisterLogAppender_argsTupleSchemeFactory implements SchemeFactory {
-      public unregisterLogAppender_argsTupleScheme getScheme() {
-        return new unregisterLogAppender_argsTupleScheme();
-      }
-    }
-
-    private static class unregisterLogAppender_argsTupleScheme extends TupleScheme<unregisterLogAppender_args> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, unregisterLogAppender_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetLogAppenderId()) {
-          optionals.set(0);
-        }
-        oprot.writeBitSet(optionals, 1);
-        if (struct.isSetLogAppenderId()) {
-          oprot.writeString(struct.logAppenderId);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, unregisterLogAppender_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
-        if (incoming.get(0)) {
-          struct.logAppenderId = iprot.readString();
-          struct.setLogAppenderIdIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class unregisterLogAppender_result implements org.apache.thrift.TBase<unregisterLogAppender_result, unregisterLogAppender_result._Fields>, java.io.Serializable, Cloneable, Comparable<unregisterLogAppender_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("unregisterLogAppender_result");
-
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
-    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new unregisterLogAppender_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new unregisterLogAppender_resultTupleSchemeFactory());
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success; // required
-    public ControlThriftException ControlException; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success"),
-      CONTROL_EXCEPTION((short)1, "ControlException");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 0: // SUCCESS
-            return SUCCESS;
-          case 1: // CONTROL_EXCEPTION
-            return CONTROL_EXCEPTION;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT          , "data")));
-      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(unregisterLogAppender_result.class, metaDataMap);
-    }
-
-    public unregisterLogAppender_result() {
-    }
-
-    public unregisterLogAppender_result(
-      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success,
-      ControlThriftException ControlException)
-    {
-      this();
-      this.success = success;
-      this.ControlException = ControlException;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public unregisterLogAppender_result(unregisterLogAppender_result other) {
-      if (other.isSetSuccess()) {
-        this.success = other.success;
-      }
-      if (other.isSetControlException()) {
-        this.ControlException = new ControlThriftException(other.ControlException);
-      }
-    }
-
-    public unregisterLogAppender_result deepCopy() {
-      return new unregisterLogAppender_result(this);
-    }
-
-    @Override
-    public void clear() {
-      this.success = null;
-      this.ControlException = null;
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getSuccess() {
-      return this.success;
-    }
-
-    public unregisterLogAppender_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
-      this.success = success;
-      return this;
-    }
-
-    public void unsetSuccess() {
-      this.success = null;
-    }
-
-    /** Returns true if field success is set (has been assigned a value) and false otherwise */
-    public boolean isSetSuccess() {
-      return this.success != null;
-    }
-
-    public void setSuccessIsSet(boolean value) {
-      if (!value) {
-        this.success = null;
-      }
-    }
-
-    public ControlThriftException getControlException() {
-      return this.ControlException;
-    }
-
-    public unregisterLogAppender_result setControlException(ControlThriftException ControlException) {
-      this.ControlException = ControlException;
-      return this;
-    }
-
-    public void unsetControlException() {
-      this.ControlException = null;
-    }
-
-    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
-    public boolean isSetControlException() {
-      return this.ControlException != null;
-    }
-
-    public void setControlExceptionIsSet(boolean value) {
-      if (!value) {
-        this.ControlException = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case SUCCESS:
-        if (value == null) {
-          unsetSuccess();
-        } else {
-          setSuccess((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
-        }
-        break;
-
-      case CONTROL_EXCEPTION:
-        if (value == null) {
-          unsetControlException();
-        } else {
-          setControlException((ControlThriftException)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case SUCCESS:
-        return getSuccess();
-
-      case CONTROL_EXCEPTION:
-        return getControlException();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case SUCCESS:
-        return isSetSuccess();
-      case CONTROL_EXCEPTION:
-        return isSetControlException();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof unregisterLogAppender_result)
-        return this.equals((unregisterLogAppender_result)that);
-      return false;
-    }
-
-    public boolean equals(unregisterLogAppender_result that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_success = true && this.isSetSuccess();
-      boolean that_present_success = true && that.isSetSuccess();
-      if (this_present_success || that_present_success) {
-        if (!(this_present_success && that_present_success))
-          return false;
-        if (!this.success.equals(that.success))
-          return false;
-      }
-
-      boolean this_present_ControlException = true && this.isSetControlException();
-      boolean that_present_ControlException = true && that.isSetControlException();
-      if (this_present_ControlException || that_present_ControlException) {
-        if (!(this_present_ControlException && that_present_ControlException))
-          return false;
-        if (!this.ControlException.equals(that.ControlException))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      HashCodeBuilder builder = new HashCodeBuilder();
-
-      boolean present_success = true && (isSetSuccess());
-      builder.append(present_success);
-      if (present_success)
-        builder.append(success);
-
-      boolean present_ControlException = true && (isSetControlException());
-      builder.append(present_ControlException);
-      if (present_ControlException)
-        builder.append(ControlException);
-
-      return builder.toHashCode();
-    }
-
-    @Override
-    public int compareTo(unregisterLogAppender_result other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetSuccess()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetControlException()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-      }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("unregisterLogAppender_result(");
-      boolean first = true;
-
-      sb.append("success:");
-      if (this.success == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.success);
-      }
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("ControlException:");
-      if (this.ControlException == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.ControlException);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class unregisterLogAppender_resultStandardSchemeFactory implements SchemeFactory {
-      public unregisterLogAppender_resultStandardScheme getScheme() {
-        return new unregisterLogAppender_resultStandardScheme();
-      }
-    }
-
-    private static class unregisterLogAppender_resultStandardScheme extends StandardScheme<unregisterLogAppender_result> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, unregisterLogAppender_result struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                struct.success.read(iprot);
-                struct.setSuccessIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 1: // CONTROL_EXCEPTION
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.ControlException = new ControlThriftException();
-                struct.ControlException.read(iprot);
-                struct.setControlExceptionIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, unregisterLogAppender_result struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.success != null) {
-          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          struct.success.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        if (struct.ControlException != null) {
-          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
-          struct.ControlException.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class unregisterLogAppender_resultTupleSchemeFactory implements SchemeFactory {
-      public unregisterLogAppender_resultTupleScheme getScheme() {
-        return new unregisterLogAppender_resultTupleScheme();
-      }
-    }
-
-    private static class unregisterLogAppender_resultTupleScheme extends TupleScheme<unregisterLogAppender_result> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, unregisterLogAppender_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetSuccess()) {
-          optionals.set(0);
-        }
-        if (struct.isSetControlException()) {
-          optionals.set(1);
-        }
-        oprot.writeBitSet(optionals, 2);
-        if (struct.isSetSuccess()) {
-          struct.success.write(oprot);
-        }
-        if (struct.isSetControlException()) {
-          struct.ControlException.write(oprot);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, unregisterLogAppender_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(2);
-        if (incoming.get(0)) {
-          struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-          struct.success.read(iprot);
-          struct.setSuccessIsSet(true);
-        }
-        if (incoming.get(1)) {
-          struct.ControlException = new ControlThriftException();
-          struct.ControlException.read(iprot);
-          struct.setControlExceptionIsSet(true);
-        }
-      }
-    }
-
-  }
-
   public static class deleteLogAppender_args implements org.apache.thrift.TBase<deleteLogAppender_args, deleteLogAppender_args._Fields>, java.io.Serializable, Cloneable, Comparable<deleteLogAppender_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("deleteLogAppender_args");
 
@@ -97122,6 +95751,3277 @@ public class ControlThriftService {
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getUserVerifiersByApplicationId_args implements org.apache.thrift.TBase<getUserVerifiersByApplicationId_args, getUserVerifiersByApplicationId_args._Fields>, java.io.Serializable, Cloneable, Comparable<getUserVerifiersByApplicationId_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserVerifiersByApplicationId_args");
+
+    private static final org.apache.thrift.protocol.TField APPLICATION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("applicationId", org.apache.thrift.protocol.TType.STRING, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getUserVerifiersByApplicationId_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserVerifiersByApplicationId_argsTupleSchemeFactory());
+    }
+
+    public String applicationId; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      APPLICATION_ID((short)1, "applicationId");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // APPLICATION_ID
+            return APPLICATION_ID;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.APPLICATION_ID, new org.apache.thrift.meta_data.FieldMetaData("applicationId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserVerifiersByApplicationId_args.class, metaDataMap);
+    }
+
+    public getUserVerifiersByApplicationId_args() {
+    }
+
+    public getUserVerifiersByApplicationId_args(
+      String applicationId)
+    {
+      this();
+      this.applicationId = applicationId;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getUserVerifiersByApplicationId_args(getUserVerifiersByApplicationId_args other) {
+      if (other.isSetApplicationId()) {
+        this.applicationId = other.applicationId;
+      }
+    }
+
+    public getUserVerifiersByApplicationId_args deepCopy() {
+      return new getUserVerifiersByApplicationId_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.applicationId = null;
+    }
+
+    public String getApplicationId() {
+      return this.applicationId;
+    }
+
+    public getUserVerifiersByApplicationId_args setApplicationId(String applicationId) {
+      this.applicationId = applicationId;
+      return this;
+    }
+
+    public void unsetApplicationId() {
+      this.applicationId = null;
+    }
+
+    /** Returns true if field applicationId is set (has been assigned a value) and false otherwise */
+    public boolean isSetApplicationId() {
+      return this.applicationId != null;
+    }
+
+    public void setApplicationIdIsSet(boolean value) {
+      if (!value) {
+        this.applicationId = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case APPLICATION_ID:
+        if (value == null) {
+          unsetApplicationId();
+        } else {
+          setApplicationId((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case APPLICATION_ID:
+        return getApplicationId();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case APPLICATION_ID:
+        return isSetApplicationId();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getUserVerifiersByApplicationId_args)
+        return this.equals((getUserVerifiersByApplicationId_args)that);
+      return false;
+    }
+
+    public boolean equals(getUserVerifiersByApplicationId_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_applicationId = true && this.isSetApplicationId();
+      boolean that_present_applicationId = true && that.isSetApplicationId();
+      if (this_present_applicationId || that_present_applicationId) {
+        if (!(this_present_applicationId && that_present_applicationId))
+          return false;
+        if (!this.applicationId.equals(that.applicationId))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_applicationId = true && (isSetApplicationId());
+      builder.append(present_applicationId);
+      if (present_applicationId)
+        builder.append(applicationId);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(getUserVerifiersByApplicationId_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetApplicationId()).compareTo(other.isSetApplicationId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetApplicationId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.applicationId, other.applicationId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getUserVerifiersByApplicationId_args(");
+      boolean first = true;
+
+      sb.append("applicationId:");
+      if (this.applicationId == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.applicationId);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getUserVerifiersByApplicationId_argsStandardSchemeFactory implements SchemeFactory {
+      public getUserVerifiersByApplicationId_argsStandardScheme getScheme() {
+        return new getUserVerifiersByApplicationId_argsStandardScheme();
+      }
+    }
+
+    private static class getUserVerifiersByApplicationId_argsStandardScheme extends StandardScheme<getUserVerifiersByApplicationId_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserVerifiersByApplicationId_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // APPLICATION_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.applicationId = iprot.readString();
+                struct.setApplicationIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserVerifiersByApplicationId_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.applicationId != null) {
+          oprot.writeFieldBegin(APPLICATION_ID_FIELD_DESC);
+          oprot.writeString(struct.applicationId);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getUserVerifiersByApplicationId_argsTupleSchemeFactory implements SchemeFactory {
+      public getUserVerifiersByApplicationId_argsTupleScheme getScheme() {
+        return new getUserVerifiersByApplicationId_argsTupleScheme();
+      }
+    }
+
+    private static class getUserVerifiersByApplicationId_argsTupleScheme extends TupleScheme<getUserVerifiersByApplicationId_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserVerifiersByApplicationId_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetApplicationId()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetApplicationId()) {
+          oprot.writeString(struct.applicationId);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserVerifiersByApplicationId_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.applicationId = iprot.readString();
+          struct.setApplicationIdIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getUserVerifiersByApplicationId_result implements org.apache.thrift.TBase<getUserVerifiersByApplicationId_result, getUserVerifiersByApplicationId_result._Fields>, java.io.Serializable, Cloneable, Comparable<getUserVerifiersByApplicationId_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserVerifiersByApplicationId_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.LIST, (short)0);
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getUserVerifiersByApplicationId_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserVerifiersByApplicationId_resultTupleSchemeFactory());
+    }
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> success; // required
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+              new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT              , "data"))));
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserVerifiersByApplicationId_result.class, metaDataMap);
+    }
+
+    public getUserVerifiersByApplicationId_result() {
+    }
+
+    public getUserVerifiersByApplicationId_result(
+      List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> success,
+      ControlThriftException ControlException)
+    {
+      this();
+      this.success = success;
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getUserVerifiersByApplicationId_result(getUserVerifiersByApplicationId_result other) {
+      if (other.isSetSuccess()) {
+        List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> __this__success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(other.success.size());
+        for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct other_element : other.success) {
+          __this__success.add(other_element);
+        }
+        this.success = __this__success;
+      }
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public getUserVerifiersByApplicationId_result deepCopy() {
+      return new getUserVerifiersByApplicationId_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+      this.ControlException = null;
+    }
+
+    public int getSuccessSize() {
+      return (this.success == null) ? 0 : this.success.size();
+    }
+
+    public java.util.Iterator<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getSuccessIterator() {
+      return (this.success == null) ? null : this.success.iterator();
+    }
+
+    public void addToSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct elem) {
+      if (this.success == null) {
+        this.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>();
+      }
+      this.success.add(elem);
+    }
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getSuccess() {
+      return this.success;
+    }
+
+    public getUserVerifiersByApplicationId_result setSuccess(List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public getUserVerifiersByApplicationId_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>)value);
+        }
+        break;
+
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getUserVerifiersByApplicationId_result)
+        return this.equals((getUserVerifiersByApplicationId_result)that);
+      return false;
+    }
+
+    public boolean equals(getUserVerifiersByApplicationId_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_success = true && (isSetSuccess());
+      builder.append(present_success);
+      if (present_success)
+        builder.append(success);
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(getUserVerifiersByApplicationId_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getUserVerifiersByApplicationId_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getUserVerifiersByApplicationId_resultStandardSchemeFactory implements SchemeFactory {
+      public getUserVerifiersByApplicationId_resultStandardScheme getScheme() {
+        return new getUserVerifiersByApplicationId_resultStandardScheme();
+      }
+    }
+
+    private static class getUserVerifiersByApplicationId_resultStandardScheme extends StandardScheme<getUserVerifiersByApplicationId_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserVerifiersByApplicationId_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+                {
+                  org.apache.thrift.protocol.TList _list264 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list264.size);
+                  for (int _i265 = 0; _i265 < _list264.size; ++_i265)
+                  {
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem266;
+                    _elem266 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem266.read(iprot);
+                    struct.success.add(_elem266);
+                  }
+                  iprot.readListEnd();
+                }
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserVerifiersByApplicationId_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.success != null) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          {
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter267 : struct.success)
+            {
+              _iter267.write(oprot);
+            }
+            oprot.writeListEnd();
+          }
+          oprot.writeFieldEnd();
+        }
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getUserVerifiersByApplicationId_resultTupleSchemeFactory implements SchemeFactory {
+      public getUserVerifiersByApplicationId_resultTupleScheme getScheme() {
+        return new getUserVerifiersByApplicationId_resultTupleScheme();
+      }
+    }
+
+    private static class getUserVerifiersByApplicationId_resultTupleScheme extends TupleScheme<getUserVerifiersByApplicationId_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserVerifiersByApplicationId_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetControlException()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          {
+            oprot.writeI32(struct.success.size());
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter268 : struct.success)
+            {
+              _iter268.write(oprot);
+            }
+          }
+        }
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserVerifiersByApplicationId_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          {
+            org.apache.thrift.protocol.TList _list269 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list269.size);
+            for (int _i270 = 0; _i270 < _list269.size; ++_i270)
+            {
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem271;
+              _elem271 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem271.read(iprot);
+              struct.success.add(_elem271);
+            }
+          }
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getUserVerifier_args implements org.apache.thrift.TBase<getUserVerifier_args, getUserVerifier_args._Fields>, java.io.Serializable, Cloneable, Comparable<getUserVerifier_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserVerifier_args");
+
+    private static final org.apache.thrift.protocol.TField USER_VERIFIER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userVerifierId", org.apache.thrift.protocol.TType.STRING, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getUserVerifier_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserVerifier_argsTupleSchemeFactory());
+    }
+
+    public String userVerifierId; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      USER_VERIFIER_ID((short)1, "userVerifierId");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // USER_VERIFIER_ID
+            return USER_VERIFIER_ID;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.USER_VERIFIER_ID, new org.apache.thrift.meta_data.FieldMetaData("userVerifierId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserVerifier_args.class, metaDataMap);
+    }
+
+    public getUserVerifier_args() {
+    }
+
+    public getUserVerifier_args(
+      String userVerifierId)
+    {
+      this();
+      this.userVerifierId = userVerifierId;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getUserVerifier_args(getUserVerifier_args other) {
+      if (other.isSetUserVerifierId()) {
+        this.userVerifierId = other.userVerifierId;
+      }
+    }
+
+    public getUserVerifier_args deepCopy() {
+      return new getUserVerifier_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.userVerifierId = null;
+    }
+
+    public String getUserVerifierId() {
+      return this.userVerifierId;
+    }
+
+    public getUserVerifier_args setUserVerifierId(String userVerifierId) {
+      this.userVerifierId = userVerifierId;
+      return this;
+    }
+
+    public void unsetUserVerifierId() {
+      this.userVerifierId = null;
+    }
+
+    /** Returns true if field userVerifierId is set (has been assigned a value) and false otherwise */
+    public boolean isSetUserVerifierId() {
+      return this.userVerifierId != null;
+    }
+
+    public void setUserVerifierIdIsSet(boolean value) {
+      if (!value) {
+        this.userVerifierId = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case USER_VERIFIER_ID:
+        if (value == null) {
+          unsetUserVerifierId();
+        } else {
+          setUserVerifierId((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case USER_VERIFIER_ID:
+        return getUserVerifierId();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case USER_VERIFIER_ID:
+        return isSetUserVerifierId();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getUserVerifier_args)
+        return this.equals((getUserVerifier_args)that);
+      return false;
+    }
+
+    public boolean equals(getUserVerifier_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_userVerifierId = true && this.isSetUserVerifierId();
+      boolean that_present_userVerifierId = true && that.isSetUserVerifierId();
+      if (this_present_userVerifierId || that_present_userVerifierId) {
+        if (!(this_present_userVerifierId && that_present_userVerifierId))
+          return false;
+        if (!this.userVerifierId.equals(that.userVerifierId))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_userVerifierId = true && (isSetUserVerifierId());
+      builder.append(present_userVerifierId);
+      if (present_userVerifierId)
+        builder.append(userVerifierId);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(getUserVerifier_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetUserVerifierId()).compareTo(other.isSetUserVerifierId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetUserVerifierId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userVerifierId, other.userVerifierId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getUserVerifier_args(");
+      boolean first = true;
+
+      sb.append("userVerifierId:");
+      if (this.userVerifierId == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.userVerifierId);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getUserVerifier_argsStandardSchemeFactory implements SchemeFactory {
+      public getUserVerifier_argsStandardScheme getScheme() {
+        return new getUserVerifier_argsStandardScheme();
+      }
+    }
+
+    private static class getUserVerifier_argsStandardScheme extends StandardScheme<getUserVerifier_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserVerifier_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // USER_VERIFIER_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.userVerifierId = iprot.readString();
+                struct.setUserVerifierIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserVerifier_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.userVerifierId != null) {
+          oprot.writeFieldBegin(USER_VERIFIER_ID_FIELD_DESC);
+          oprot.writeString(struct.userVerifierId);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getUserVerifier_argsTupleSchemeFactory implements SchemeFactory {
+      public getUserVerifier_argsTupleScheme getScheme() {
+        return new getUserVerifier_argsTupleScheme();
+      }
+    }
+
+    private static class getUserVerifier_argsTupleScheme extends TupleScheme<getUserVerifier_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserVerifier_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetUserVerifierId()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetUserVerifierId()) {
+          oprot.writeString(struct.userVerifierId);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserVerifier_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.userVerifierId = iprot.readString();
+          struct.setUserVerifierIdIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getUserVerifier_result implements org.apache.thrift.TBase<getUserVerifier_result, getUserVerifier_result._Fields>, java.io.Serializable, Cloneable, Comparable<getUserVerifier_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserVerifier_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getUserVerifier_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserVerifier_resultTupleSchemeFactory());
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success; // required
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT          , "data")));
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserVerifier_result.class, metaDataMap);
+    }
+
+    public getUserVerifier_result() {
+    }
+
+    public getUserVerifier_result(
+      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success,
+      ControlThriftException ControlException)
+    {
+      this();
+      this.success = success;
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getUserVerifier_result(getUserVerifier_result other) {
+      if (other.isSetSuccess()) {
+        this.success = other.success;
+      }
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public getUserVerifier_result deepCopy() {
+      return new getUserVerifier_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+      this.ControlException = null;
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getSuccess() {
+      return this.success;
+    }
+
+    public getUserVerifier_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public getUserVerifier_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
+        }
+        break;
+
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getUserVerifier_result)
+        return this.equals((getUserVerifier_result)that);
+      return false;
+    }
+
+    public boolean equals(getUserVerifier_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_success = true && (isSetSuccess());
+      builder.append(present_success);
+      if (present_success)
+        builder.append(success);
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(getUserVerifier_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getUserVerifier_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getUserVerifier_resultStandardSchemeFactory implements SchemeFactory {
+      public getUserVerifier_resultStandardScheme getScheme() {
+        return new getUserVerifier_resultStandardScheme();
+      }
+    }
+
+    private static class getUserVerifier_resultStandardScheme extends StandardScheme<getUserVerifier_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserVerifier_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                struct.success.read(iprot);
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserVerifier_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.success != null) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          struct.success.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getUserVerifier_resultTupleSchemeFactory implements SchemeFactory {
+      public getUserVerifier_resultTupleScheme getScheme() {
+        return new getUserVerifier_resultTupleScheme();
+      }
+    }
+
+    private static class getUserVerifier_resultTupleScheme extends TupleScheme<getUserVerifier_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserVerifier_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetControlException()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          struct.success.write(oprot);
+        }
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserVerifier_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+          struct.success.read(iprot);
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class editUserVerifier_args implements org.apache.thrift.TBase<editUserVerifier_args, editUserVerifier_args._Fields>, java.io.Serializable, Cloneable, Comparable<editUserVerifier_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("editUserVerifier_args");
+
+    private static final org.apache.thrift.protocol.TField USER_VERIFIER_FIELD_DESC = new org.apache.thrift.protocol.TField("userVerifier", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new editUserVerifier_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new editUserVerifier_argsTupleSchemeFactory());
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      USER_VERIFIER((short)1, "userVerifier");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // USER_VERIFIER
+            return USER_VERIFIER;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.USER_VERIFIER, new org.apache.thrift.meta_data.FieldMetaData("userVerifier", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT          , "data")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(editUserVerifier_args.class, metaDataMap);
+    }
+
+    public editUserVerifier_args() {
+    }
+
+    public editUserVerifier_args(
+      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier)
+    {
+      this();
+      this.userVerifier = userVerifier;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public editUserVerifier_args(editUserVerifier_args other) {
+      if (other.isSetUserVerifier()) {
+        this.userVerifier = other.userVerifier;
+      }
+    }
+
+    public editUserVerifier_args deepCopy() {
+      return new editUserVerifier_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.userVerifier = null;
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getUserVerifier() {
+      return this.userVerifier;
+    }
+
+    public editUserVerifier_args setUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier) {
+      this.userVerifier = userVerifier;
+      return this;
+    }
+
+    public void unsetUserVerifier() {
+      this.userVerifier = null;
+    }
+
+    /** Returns true if field userVerifier is set (has been assigned a value) and false otherwise */
+    public boolean isSetUserVerifier() {
+      return this.userVerifier != null;
+    }
+
+    public void setUserVerifierIsSet(boolean value) {
+      if (!value) {
+        this.userVerifier = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case USER_VERIFIER:
+        if (value == null) {
+          unsetUserVerifier();
+        } else {
+          setUserVerifier((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case USER_VERIFIER:
+        return getUserVerifier();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case USER_VERIFIER:
+        return isSetUserVerifier();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof editUserVerifier_args)
+        return this.equals((editUserVerifier_args)that);
+      return false;
+    }
+
+    public boolean equals(editUserVerifier_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_userVerifier = true && this.isSetUserVerifier();
+      boolean that_present_userVerifier = true && that.isSetUserVerifier();
+      if (this_present_userVerifier || that_present_userVerifier) {
+        if (!(this_present_userVerifier && that_present_userVerifier))
+          return false;
+        if (!this.userVerifier.equals(that.userVerifier))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_userVerifier = true && (isSetUserVerifier());
+      builder.append(present_userVerifier);
+      if (present_userVerifier)
+        builder.append(userVerifier);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(editUserVerifier_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetUserVerifier()).compareTo(other.isSetUserVerifier());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetUserVerifier()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userVerifier, other.userVerifier);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("editUserVerifier_args(");
+      boolean first = true;
+
+      sb.append("userVerifier:");
+      if (this.userVerifier == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.userVerifier);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class editUserVerifier_argsStandardSchemeFactory implements SchemeFactory {
+      public editUserVerifier_argsStandardScheme getScheme() {
+        return new editUserVerifier_argsStandardScheme();
+      }
+    }
+
+    private static class editUserVerifier_argsStandardScheme extends StandardScheme<editUserVerifier_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, editUserVerifier_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // USER_VERIFIER
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.userVerifier = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                struct.userVerifier.read(iprot);
+                struct.setUserVerifierIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, editUserVerifier_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.userVerifier != null) {
+          oprot.writeFieldBegin(USER_VERIFIER_FIELD_DESC);
+          struct.userVerifier.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class editUserVerifier_argsTupleSchemeFactory implements SchemeFactory {
+      public editUserVerifier_argsTupleScheme getScheme() {
+        return new editUserVerifier_argsTupleScheme();
+      }
+    }
+
+    private static class editUserVerifier_argsTupleScheme extends TupleScheme<editUserVerifier_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, editUserVerifier_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetUserVerifier()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetUserVerifier()) {
+          struct.userVerifier.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, editUserVerifier_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.userVerifier = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+          struct.userVerifier.read(iprot);
+          struct.setUserVerifierIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class editUserVerifier_result implements org.apache.thrift.TBase<editUserVerifier_result, editUserVerifier_result._Fields>, java.io.Serializable, Cloneable, Comparable<editUserVerifier_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("editUserVerifier_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new editUserVerifier_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new editUserVerifier_resultTupleSchemeFactory());
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success; // required
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT          , "data")));
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(editUserVerifier_result.class, metaDataMap);
+    }
+
+    public editUserVerifier_result() {
+    }
+
+    public editUserVerifier_result(
+      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success,
+      ControlThriftException ControlException)
+    {
+      this();
+      this.success = success;
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public editUserVerifier_result(editUserVerifier_result other) {
+      if (other.isSetSuccess()) {
+        this.success = other.success;
+      }
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public editUserVerifier_result deepCopy() {
+      return new editUserVerifier_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+      this.ControlException = null;
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getSuccess() {
+      return this.success;
+    }
+
+    public editUserVerifier_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public editUserVerifier_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
+        }
+        break;
+
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof editUserVerifier_result)
+        return this.equals((editUserVerifier_result)that);
+      return false;
+    }
+
+    public boolean equals(editUserVerifier_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_success = true && (isSetSuccess());
+      builder.append(present_success);
+      if (present_success)
+        builder.append(success);
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(editUserVerifier_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("editUserVerifier_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class editUserVerifier_resultStandardSchemeFactory implements SchemeFactory {
+      public editUserVerifier_resultStandardScheme getScheme() {
+        return new editUserVerifier_resultStandardScheme();
+      }
+    }
+
+    private static class editUserVerifier_resultStandardScheme extends StandardScheme<editUserVerifier_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, editUserVerifier_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                struct.success.read(iprot);
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, editUserVerifier_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.success != null) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          struct.success.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class editUserVerifier_resultTupleSchemeFactory implements SchemeFactory {
+      public editUserVerifier_resultTupleScheme getScheme() {
+        return new editUserVerifier_resultTupleScheme();
+      }
+    }
+
+    private static class editUserVerifier_resultTupleScheme extends TupleScheme<editUserVerifier_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, editUserVerifier_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetControlException()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          struct.success.write(oprot);
+        }
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, editUserVerifier_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+          struct.success.read(iprot);
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class deleteUserVerifier_args implements org.apache.thrift.TBase<deleteUserVerifier_args, deleteUserVerifier_args._Fields>, java.io.Serializable, Cloneable, Comparable<deleteUserVerifier_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("deleteUserVerifier_args");
+
+    private static final org.apache.thrift.protocol.TField USER_VERIFIER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userVerifierId", org.apache.thrift.protocol.TType.STRING, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new deleteUserVerifier_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new deleteUserVerifier_argsTupleSchemeFactory());
+    }
+
+    public String userVerifierId; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      USER_VERIFIER_ID((short)1, "userVerifierId");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // USER_VERIFIER_ID
+            return USER_VERIFIER_ID;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.USER_VERIFIER_ID, new org.apache.thrift.meta_data.FieldMetaData("userVerifierId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(deleteUserVerifier_args.class, metaDataMap);
+    }
+
+    public deleteUserVerifier_args() {
+    }
+
+    public deleteUserVerifier_args(
+      String userVerifierId)
+    {
+      this();
+      this.userVerifierId = userVerifierId;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public deleteUserVerifier_args(deleteUserVerifier_args other) {
+      if (other.isSetUserVerifierId()) {
+        this.userVerifierId = other.userVerifierId;
+      }
+    }
+
+    public deleteUserVerifier_args deepCopy() {
+      return new deleteUserVerifier_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.userVerifierId = null;
+    }
+
+    public String getUserVerifierId() {
+      return this.userVerifierId;
+    }
+
+    public deleteUserVerifier_args setUserVerifierId(String userVerifierId) {
+      this.userVerifierId = userVerifierId;
+      return this;
+    }
+
+    public void unsetUserVerifierId() {
+      this.userVerifierId = null;
+    }
+
+    /** Returns true if field userVerifierId is set (has been assigned a value) and false otherwise */
+    public boolean isSetUserVerifierId() {
+      return this.userVerifierId != null;
+    }
+
+    public void setUserVerifierIdIsSet(boolean value) {
+      if (!value) {
+        this.userVerifierId = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case USER_VERIFIER_ID:
+        if (value == null) {
+          unsetUserVerifierId();
+        } else {
+          setUserVerifierId((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case USER_VERIFIER_ID:
+        return getUserVerifierId();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case USER_VERIFIER_ID:
+        return isSetUserVerifierId();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof deleteUserVerifier_args)
+        return this.equals((deleteUserVerifier_args)that);
+      return false;
+    }
+
+    public boolean equals(deleteUserVerifier_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_userVerifierId = true && this.isSetUserVerifierId();
+      boolean that_present_userVerifierId = true && that.isSetUserVerifierId();
+      if (this_present_userVerifierId || that_present_userVerifierId) {
+        if (!(this_present_userVerifierId && that_present_userVerifierId))
+          return false;
+        if (!this.userVerifierId.equals(that.userVerifierId))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_userVerifierId = true && (isSetUserVerifierId());
+      builder.append(present_userVerifierId);
+      if (present_userVerifierId)
+        builder.append(userVerifierId);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(deleteUserVerifier_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetUserVerifierId()).compareTo(other.isSetUserVerifierId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetUserVerifierId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userVerifierId, other.userVerifierId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("deleteUserVerifier_args(");
+      boolean first = true;
+
+      sb.append("userVerifierId:");
+      if (this.userVerifierId == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.userVerifierId);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class deleteUserVerifier_argsStandardSchemeFactory implements SchemeFactory {
+      public deleteUserVerifier_argsStandardScheme getScheme() {
+        return new deleteUserVerifier_argsStandardScheme();
+      }
+    }
+
+    private static class deleteUserVerifier_argsStandardScheme extends StandardScheme<deleteUserVerifier_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, deleteUserVerifier_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // USER_VERIFIER_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.userVerifierId = iprot.readString();
+                struct.setUserVerifierIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, deleteUserVerifier_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.userVerifierId != null) {
+          oprot.writeFieldBegin(USER_VERIFIER_ID_FIELD_DESC);
+          oprot.writeString(struct.userVerifierId);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class deleteUserVerifier_argsTupleSchemeFactory implements SchemeFactory {
+      public deleteUserVerifier_argsTupleScheme getScheme() {
+        return new deleteUserVerifier_argsTupleScheme();
+      }
+    }
+
+    private static class deleteUserVerifier_argsTupleScheme extends TupleScheme<deleteUserVerifier_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, deleteUserVerifier_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetUserVerifierId()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetUserVerifierId()) {
+          oprot.writeString(struct.userVerifierId);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, deleteUserVerifier_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.userVerifierId = iprot.readString();
+          struct.setUserVerifierIdIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class deleteUserVerifier_result implements org.apache.thrift.TBase<deleteUserVerifier_result, deleteUserVerifier_result._Fields>, java.io.Serializable, Cloneable, Comparable<deleteUserVerifier_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("deleteUserVerifier_result");
+
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new deleteUserVerifier_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new deleteUserVerifier_resultTupleSchemeFactory());
+    }
+
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(deleteUserVerifier_result.class, metaDataMap);
+    }
+
+    public deleteUserVerifier_result() {
+    }
+
+    public deleteUserVerifier_result(
+      ControlThriftException ControlException)
+    {
+      this();
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public deleteUserVerifier_result(deleteUserVerifier_result other) {
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public deleteUserVerifier_result deepCopy() {
+      return new deleteUserVerifier_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.ControlException = null;
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public deleteUserVerifier_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof deleteUserVerifier_result)
+        return this.equals((deleteUserVerifier_result)that);
+      return false;
+    }
+
+    public boolean equals(deleteUserVerifier_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(deleteUserVerifier_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("deleteUserVerifier_result(");
+      boolean first = true;
+
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class deleteUserVerifier_resultStandardSchemeFactory implements SchemeFactory {
+      public deleteUserVerifier_resultStandardScheme getScheme() {
+        return new deleteUserVerifier_resultStandardScheme();
+      }
+    }
+
+    private static class deleteUserVerifier_resultStandardScheme extends StandardScheme<deleteUserVerifier_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, deleteUserVerifier_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, deleteUserVerifier_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class deleteUserVerifier_resultTupleSchemeFactory implements SchemeFactory {
+      public deleteUserVerifier_resultTupleScheme getScheme() {
+        return new deleteUserVerifier_resultTupleScheme();
+      }
+    }
+
+    private static class deleteUserVerifier_resultTupleScheme extends TupleScheme<deleteUserVerifier_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, deleteUserVerifier_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetControlException()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, deleteUserVerifier_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
           struct.ControlException = new ControlThriftException();
           struct.ControlException.read(iprot);
           struct.setControlExceptionIsSet(true);

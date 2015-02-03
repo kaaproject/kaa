@@ -20,15 +20,13 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.LOG_APPENDER_STATUS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.slf4j.Logger;
@@ -51,10 +49,7 @@ public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> i
         LOG.debug("Find log appenders by application id {}", appId);
         if (isNotBlank(appId)) {
             appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.and(
-                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.eq(LOG_APPENDER_STATUS, LogAppenderStatusDto.REGISTERED))
-                    );
+                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
         }
         return appenders;
     }
@@ -67,44 +62,11 @@ public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> i
             appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.and(
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.eq(LOG_APPENDER_STATUS, LogAppenderStatusDto.REGISTERED),
                             Restrictions.le(LOG_APPENDER_MIN_LOG_SCHEMA_VERSION, schemaVersion),
                             Restrictions.ge(LOG_APPENDER_MAX_LOG_SCHEMA_VERSION, schemaVersion))
                     );
         }
         return appenders;
-    }
-
-    @Override
-    public List<LogAppender> findAllLogAppendersByAppId(String appId) {
-        List<LogAppender> appenders = Collections.emptyList();
-        LOG.debug("Find all log appenders by application id {}", appId);
-        if (isNotBlank(appId)) {
-            appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
-        }
-        return appenders;
-    }
-
-    @Override
-    public LogAppender registerLogAppenderById(String logAppenderId) {
-        LOG.debug("Register log appender with id {}", logAppenderId);
-        return updateStatus(logAppenderId, LogAppenderStatusDto.REGISTERED);
-    }
-
-    @Override
-    public LogAppender unregisterLogAppenderById(String logAppenderId) {
-        LOG.debug("Unregister log appender with id {}", logAppenderId);
-        return updateStatus(logAppenderId, LogAppenderStatusDto.UNREGISTERED);
-    }
-
-    private LogAppender updateStatus(String appenderId, LogAppenderStatusDto status) {
-        LogAppender appender = findById(appenderId);
-        if(appender!= null){
-            appender.setStatus(status);
-            appender = save(appender);
-        }
-        return appender;
     }
 
 }

@@ -27,6 +27,16 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.kaaproject.avro-ui</groupId>
+            <artifactId>shared</artifactId>
+            <version>${avro-ui.version}</version>
+        </dependency>              
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>        
 	</dependencies>
 
 	<build>

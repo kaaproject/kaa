@@ -17,6 +17,8 @@ package org.kaaproject.kaa.server.sync;
 
 public class UserAttachResponse {
     private SyncStatus result;
+    private UserVerifierErrorCode errorCode;
+    private String errorReason;
 
     public UserAttachResponse() {
     }
@@ -24,8 +26,10 @@ public class UserAttachResponse {
     /**
      * All-args constructor.
      */
-    public UserAttachResponse(SyncStatus result) {
+    public UserAttachResponse(SyncStatus result, UserVerifierErrorCode errorCode, String errorReason) {
         this.result = result;
+        this.errorCode = errorCode;
+        this.errorReason = errorReason;
     }
 
     /**
@@ -45,13 +49,24 @@ public class UserAttachResponse {
         this.result = value;
     }
 
+    public UserVerifierErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+    public String getErrorReason() {
+        return errorReason;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("UserAttachResponse [result=");
         builder.append(result);
+        builder.append(", errorCode=");
+        builder.append(errorCode);
+        builder.append(", errorReason=");
+        builder.append(errorReason);
         builder.append("]");
         return builder.toString();
     }
-
 }

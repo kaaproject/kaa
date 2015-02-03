@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.log.shared.config;
+package org.kaaproject.kaa.client.event.registration;
 
-import org.apache.avro.Schema;
+public class UserVerifierConstants {
 
-public interface AppenderConfig {
+    static final String DEFAULT_USER_VERIFIER_TOKEN = ${default_user_verifier_token};
 
-    String getName();
-    
-    String getLogAppenderClass();
-    
-    Schema getConfigSchema();
-    
 }

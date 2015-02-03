@@ -20,31 +20,31 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.ValueListBox;
 
-public class AppenderInfoListBox extends ValueListBox<LogAppenderInfoDto> {
-    public AppenderInfoListBox() {
+public class PluginInfoListBox extends ValueListBox<PluginInfoDto> {
+    public PluginInfoListBox() {
         super(new AppenderInfoListBoxRenderer());
     }
 
     public void reset() {
-        List<LogAppenderInfoDto> emptyList = Collections.emptyList();
+        List<PluginInfoDto> emptyList = Collections.emptyList();
         setValue(null);
         setAcceptableValues(emptyList);
     }
 
-    static class AppenderInfoListBoxRenderer implements Renderer<LogAppenderInfoDto> {
+    static class AppenderInfoListBoxRenderer implements Renderer<PluginInfoDto> {
 
         @Override
-        public String render(LogAppenderInfoDto object) {
-            return object != null ? object.getName() : "";
+        public String render(PluginInfoDto object) {
+            return object != null ? object.getPluginTypeName() : "";
         }
 
         @Override
-        public void render(LogAppenderInfoDto object, Appendable appendable) throws IOException {
+        public void render(PluginInfoDto object, Appendable appendable) throws IOException {
             appendable.append(render(object));
         }
     }

@@ -45,10 +45,10 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
@@ -69,7 +69,9 @@ public class DataSource {
 
     private List<EventClassFamilyDto> ecfs;
     
-    private List<LogAppenderInfoDto> appenderInfos;
+    private List<PluginInfoDto> logAppenderPluginInfos;
+    
+    private List<PluginInfoDto> userVerifierPluginInfos;
 
     public DataSource(KaaAdminServiceAsync rpcService, EventBus eventBus) {
         this.rpcService = rpcService;
@@ -949,21 +951,21 @@ public class DataSource {
     }
 
     public void getLogAppenderForm(String appenderId,
-            final AsyncCallback<LogAppenderFormWrapper> callback) {
+            final AsyncCallback<LogAppenderDto> callback) {
         rpcService.getLogAppenderForm(appenderId,
-                new DataCallback<LogAppenderFormWrapper>(callback) {
+                new DataCallback<LogAppenderDto>(callback) {
             @Override
-            protected void onResult(LogAppenderFormWrapper result) {
+            protected void onResult(LogAppenderDto result) {
             }
         });
     }
 
-    public void editLogAppenderForm(LogAppenderFormWrapper dto,
-            final AsyncCallback<LogAppenderFormWrapper> callback) {
+    public void editLogAppenderForm(LogAppenderDto dto,
+            final AsyncCallback<LogAppenderDto> callback) {
         rpcService.editLogAppenderForm(dto,
-                new DataCallback<LogAppenderFormWrapper>(callback) {
+                new DataCallback<LogAppenderDto>(callback) {
             @Override
-            protected void onResult(LogAppenderFormWrapper result) {
+            protected void onResult(LogAppenderDto result) {
             }
         });
     }
@@ -980,22 +982,81 @@ public class DataSource {
         });
     }
     
-    public void loadAppenderInfos(
-            final AsyncCallback<List<LogAppenderInfoDto>> callback) {
-        if (appenderInfos == null) {
-            appenderInfos = new ArrayList<LogAppenderInfoDto>();
-            rpcService.getLogAppenderInfos(new DataCallback<List<LogAppenderInfoDto>>(callback) {
+    public void loadLogAppenderPluginInfos(
+            final AsyncCallback<List<PluginInfoDto>> callback) {
+        if (logAppenderPluginInfos == null) {
+            logAppenderPluginInfos = new ArrayList<PluginInfoDto>();
+            rpcService.getLogAppenderPluginInfos(new DataCallback<List<PluginInfoDto>>(callback) {
                 @Override
-                protected void onResult(List<LogAppenderInfoDto> result) {
-                    appenderInfos.addAll(result);
+                protected void onResult(List<PluginInfoDto> result) {
+                    logAppenderPluginInfos.addAll(result);
                 }
             });
         } else {
             if (callback != null) {
-                callback.onSuccess(appenderInfos);
+                callback.onSuccess(logAppenderPluginInfos);
             }
         }
     }    
+    
+    public void loadUserVerifiers(String applicationId,
+            final AsyncCallback<List<UserVerifierDto>> callback) {
+        rpcService.getUserVerifiersByApplicationId(applicationId,
+                new DataCallback<List<UserVerifierDto>>(callback) {
+            @Override
+            protected void onResult(List<UserVerifierDto> result) {
+            }
+        });
+    }
+
+    public void getUserVerifierForm(String userVerifierId,
+            final AsyncCallback<UserVerifierDto> callback) {
+        rpcService.getUserVerifierForm(userVerifierId,
+                new DataCallback<UserVerifierDto>(callback) {
+            @Override
+            protected void onResult(UserVerifierDto result) {
+            }
+        });
+    }
+
+    public void editUserVerifierForm(UserVerifierDto dto,
+            final AsyncCallback<UserVerifierDto> callback) {
+        rpcService.editUserVerifierForm(dto,
+                new DataCallback<UserVerifierDto>(callback) {
+            @Override
+            protected void onResult(UserVerifierDto result) {
+            }
+        });
+    }
+
+    public void removeUserVerifier(String userVerifierId,
+            final AsyncCallback<Void> callback) {
+        rpcService.deleteUserVerifier(userVerifierId,
+                new DataCallback<Void>(callback) {
+            @Override
+            protected void onResult(Void result) {
+                eventBus.fireEvent(new DataEvent(
+                        UserVerifierDto.class));
+            }
+        });
+    }
+    
+    public void loadUserVerifierPluginInfos(
+            final AsyncCallback<List<PluginInfoDto>> callback) {
+        if (userVerifierPluginInfos == null) {
+            userVerifierPluginInfos = new ArrayList<PluginInfoDto>();
+            rpcService.getUserVerifierPluginInfos(new DataCallback<List<PluginInfoDto>>(callback) {
+                @Override
+                protected void onResult(List<PluginInfoDto> result) {
+                    userVerifierPluginInfos.addAll(result);
+                }
+            });
+        } else {
+            if (callback != null) {
+                callback.onSuccess(userVerifierPluginInfos);
+            }
+        }
+    }        
 
     abstract class DataCallback<T> implements AsyncCallback<T> {
 

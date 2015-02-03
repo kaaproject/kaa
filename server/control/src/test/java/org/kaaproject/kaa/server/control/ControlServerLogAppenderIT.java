@@ -26,7 +26,6 @@ import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 
 public class ControlServerLogAppenderIT extends AbstractTestControlServer {
 
@@ -42,21 +41,6 @@ public class ControlServerLogAppenderIT extends AbstractTestControlServer {
         LogAppenderDto appenderDto = createLogAppender(null, null);
         LogAppenderDto found = toDto(client.getLogAppender(appenderDto.getId()));
         Assert.assertEquals(appenderDto, found);
-    }
-
-    @Test
-    public void registerLogAppenderTest() throws TException, IOException {
-        LogAppenderDto appenderDto = createLogAppender(null, null);
-        client.unregisterLogAppender(appenderDto.getId());
-        LogAppenderDto found = toDto(client.registerLogAppender(appenderDto.getId()));
-        Assert.assertEquals(appenderDto, found);
-    }
-
-    @Test
-    public void unregisterLogAppenderTest() throws TException, IOException {
-        LogAppenderDto appenderDto = createLogAppender(null, null);
-        LogAppenderDto found = toDto(client.unregisterLogAppender(appenderDto.getId()));
-        Assert.assertEquals(LogAppenderStatusDto.UNREGISTERED, found.getStatus());
     }
 
     @Test

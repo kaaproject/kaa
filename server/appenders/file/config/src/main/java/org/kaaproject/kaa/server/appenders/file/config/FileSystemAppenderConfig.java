@@ -17,27 +17,28 @@ package org.kaaproject.kaa.server.appenders.file.config;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig;
-import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
-import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 
-@KaaAppenderConfig
-public class FileSystemAppenderConfig implements AppenderConfig{
+@KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
+public class FileSystemAppenderConfig implements PluginConfig{
 
     public FileSystemAppenderConfig() {
     }
     
     @Override
-    public String getName() {
+    public String getPluginTypeName() {
         return "File";
     }
 
     @Override
-    public String getLogAppenderClass() {
+    public String getPluginClassName() {
         return "org.kaaproject.kaa.server.appenders.file.appender.FileSystemLogAppender";
     }
 
     @Override
-    public Schema getConfigSchema() {
+    public Schema getPluginConfigSchema() {
         return FileConfig.getClassSchema();
     }
 

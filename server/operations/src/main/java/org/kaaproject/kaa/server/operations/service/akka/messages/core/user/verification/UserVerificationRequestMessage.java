@@ -15,10 +15,13 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification;
 
+import java.util.UUID;
+
 import akka.actor.ActorRef;
 
 public class UserVerificationRequestMessage {
 
+    private final UUID id;
     private final ActorRef originator;
     private final int verifierId;
     private final String userId;
@@ -26,10 +29,15 @@ public class UserVerificationRequestMessage {
 
     public UserVerificationRequestMessage(ActorRef originator, int verifierId, String userId, String accessToken) {
         super();
+        this.id = UUID.randomUUID();
         this.originator = originator;
         this.verifierId = verifierId;
         this.userId = userId;
         this.accessToken = accessToken;
+    }
+
+    public UUID getRequestid() {
+        return id;
     }
 
     public int getVerifierId() {
@@ -51,7 +59,11 @@ public class UserVerificationRequestMessage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("UserVerificationRequestMessage [verifierId=");
+        builder.append("UserVerificationRequestMessage [id=");
+        builder.append(id);
+        builder.append(", originator=");
+        builder.append(originator);
+        builder.append(", verifierId=");
         builder.append(verifierId);
         builder.append(", userId=");
         builder.append(userId);
@@ -60,4 +72,6 @@ public class UserVerificationRequestMessage {
         builder.append("]");
         return builder.toString();
     }
+
+
 }

@@ -27,16 +27,14 @@ import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
 import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
-import org.kaaproject.kaa.server.sync.UserAttachRequest;
-import org.kaaproject.kaa.server.sync.UserAttachResponse;
 
 public interface EndpointUserService {
 
-    UserVerifierDto findUserVerifier(String appId, int verifierId);
-    
+    UserVerifierDto findUserVerifier(String appId, String verifierToken);
+
     List<UserVerifierDto> findUserVerifiers(String appId);
 
-    UserAttachResponse attachUser(EndpointProfileDto profile, UserAttachRequest userAttachRequest);
+    EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId);
 
     EndpointAttachResponse attachEndpoint(EndpointProfileDto profile, EndpointAttachRequest endpointAttachRequest);
 

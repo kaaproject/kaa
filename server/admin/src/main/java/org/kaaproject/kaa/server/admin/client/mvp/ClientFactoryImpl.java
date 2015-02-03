@@ -31,6 +31,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
@@ -48,6 +49,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.appender.LogAppenderViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.appender.LogAppendersViewImpl;
@@ -82,6 +84,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifierViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifiersViewImpl;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
 import com.google.gwt.place.shared.Place;
@@ -150,6 +154,10 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<LogAppenderDto> appendersView = new LogAppendersViewImpl();
     private final LogAppenderView appenderView = new LogAppenderViewImpl(false);
     private final LogAppenderView createAppenderView = new LogAppenderViewImpl(true);
+
+    private final BaseListView<UserVerifierDto> userVerifiersView = new UserVerifiersViewImpl();
+    private final UserVerifierView userVerifierView = new UserVerifierViewImpl(false);
+    private final UserVerifierView createUserVerifierView = new UserVerifierViewImpl(true);
 
     private final BaseListView<EventClassFamilyDto> ecfsView = new EcfsViewImpl();
     private final EcfView ecfView = new EcfViewImpl(false);
@@ -416,6 +424,21 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public LogAppenderView getCreateAppenderView() {
         return createAppenderView;
+    }
+
+    @Override
+    public BaseListView<UserVerifierDto> getUserVerifiersView() {
+        return userVerifiersView;
+    }
+
+    @Override
+    public UserVerifierView getUserVerifierView() {
+        return userVerifierView;
+    }
+
+    @Override
+    public UserVerifierView getCreateUserVerifierView() {
+        return createUserVerifierView;
     }
 
 }

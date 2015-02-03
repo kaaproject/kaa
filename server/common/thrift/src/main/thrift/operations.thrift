@@ -91,7 +91,7 @@ struct Notification {
   12: binary keyHash
   13: Operation op
   14: id appenderId
-  15: shared.Integer userVerifierId
+  15: string userVerifierToken
 }
 
 struct RedirectionRule {
