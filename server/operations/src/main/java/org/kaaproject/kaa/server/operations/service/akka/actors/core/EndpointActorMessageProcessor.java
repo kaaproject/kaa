@@ -324,6 +324,21 @@ public class EndpointActorMessageProcessor {
                     new UserVerificationRequestMessage(context.self(), aRequest.getUserExternalId().hashCode(), aRequest.getUserExternalId(),
                             aRequest.getUserAccessToken()), context.self());
             LOG.debug("[{}][{}] received and forwarded user attach request {}", endpointKey, actorKey, request.getUserAttachRequest());
+            
+            if(userAttachResponseMap.size() > 0){
+                updateResponseWithUserAttachResults(responseHolder.getResponse());
+            }
+        }
+    }
+
+    private void updateResponseWithUserAttachResults(ServerSync response) {
+        if(response.getUserSync() == null){
+            response.setUserSync(new UserServerSync());
+        }
+        for(Entry<UUID, UserVerificationResponseMessage> messageEntry : userAttachResponseMap.entrySet()){
+            response.getUserSync().setUserAttachResponse(toUserAttachResponse(messageEntry.getValue()));
+            userAttachResponseMap.remove(messageEntry.getKey());
+            break;
         }
     }
 
@@ -849,17 +864,8 @@ public class EndpointActorMessageProcessor {
             ChannelMetaData channel = channels.get(0);
             SyncRequestMessage pendingRequest = channel.getRequestMessage();
             ServerSync pendingResponse = channel.getResponseHolder().getResponse();
-
-            UserServerSync sync = pendingResponse.getUserSync();
-            if(sync == null){
-                sync = new UserServerSync();
-                pendingResponse.setUserSync(sync);
-            }
-            for(Entry<UUID, UserVerificationResponseMessage> messageEntry : userAttachResponseMap.entrySet()){
-                sync.setUserAttachResponse(toUserAttachResponse(messageEntry.getValue()));
-                userAttachResponseMap.remove(messageEntry.getKey());
-                break;
-            }
+            
+            updateResponseWithUserAttachResults(pendingResponse);
 
             LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
             sendReply(context, pendingRequest, pendingResponse);
