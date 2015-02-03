@@ -60,7 +60,6 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -68,7 +67,6 @@ import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
@@ -633,7 +631,7 @@ public class AbstractTest {
         return endpointUser;
     }
 
-    protected LogAppenderDto generateLogAppender(String appId, String schemaId, LogAppenderStatusDto status) {
+    protected LogAppenderDto generateLogAppender(String appId, String schemaId) {
         LogAppenderDto logAppender = null;
         ApplicationDto app = null;
         LogSchemaDto schema = null;
@@ -654,7 +652,6 @@ public class AbstractTest {
         logAppender.setMinLogSchemaVersion(version);
         logAppender.setMaxLogSchemaVersion(version);
         logAppender.setTenantId(app.getTenantId());
-        logAppender.setStatus(status != null ? status : LogAppenderStatusDto.REGISTERED);
         logAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
         return logAppendersService.saveLogAppender(logAppender);
     }

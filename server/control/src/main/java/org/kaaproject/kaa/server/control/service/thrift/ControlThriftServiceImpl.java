@@ -57,6 +57,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculationAlgorithm;
@@ -75,6 +76,7 @@ import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserService;
+import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
@@ -163,6 +165,9 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     @Autowired
     private LogAppendersService logAppenderService;
+    
+    @Autowired
+    private UserVerifierService userVerifierService;
 
     /*
      * (non-Javadoc)
@@ -1548,16 +1553,6 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     }
 
     @Override
-    public DataStruct registerLogAppender(String logAppenderId) throws ControlThriftException, TException {
-        return toDataStruct(logAppenderService.registerLogAppenderById(logAppenderId));
-    }
-
-    @Override
-    public DataStruct unregisterLogAppender(String logAppenderId) throws ControlThriftException, TException {
-        return toDataStruct(logAppenderService.unregisterLogAppenderById(logAppenderId));
-    }
-
-    @Override
     public void deleteLogAppender(String logAppenderId) throws ControlThriftException, TException {
         LogAppenderDto logAppenderDto = logAppenderService.findLogAppenderById(logAppenderId);
         LOG.info("Remove log appender ...");
@@ -1568,6 +1563,58 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         thriftNotification.setOp(Operation.REMOVE_LOG_APPENDER);
         LOG.info("Send notification to operation servers about removing appender.");
         controlZKService.sendEndpointNotification(thriftNotification);
+    }
+    
+    @Override
+    public List<DataStruct> getUserVerifiersByApplicationId(String applicationId)
+            throws ControlThriftException, TException {
+        return toDataStructList(userVerifierService.findUserVerifiersByAppId(applicationId));
+    }
+
+    @Override
+    public DataStruct getUserVerifierAppender(String userVerifierId)
+            throws ControlThriftException, TException {
+        return toDataStruct(userVerifierService.findUserVerifierById(userVerifierId));
+    }
+
+    @Override
+    public DataStruct editUserVerifier(DataStruct userVerifier)
+            throws ControlThriftException, TException {
+        UserVerifierDto userVerifierDto = ThriftDtoConverter.<UserVerifierDto> toDto(userVerifier);
+        DataStruct dataStruct = null;
+        if (userVerifierDto != null) {
+            UserVerifierDto saved = userVerifierService.saveUserVerifier(userVerifierDto);
+            if (saved != null) {
+                Notification thriftNotification = new Notification();
+                thriftNotification.setAppId(saved.getApplicationId());
+                thriftNotification.setUserVerifierToken(saved.getVerifierToken());
+                if (userVerifierDto.getId() == null) {
+                    LOG.info("Add new user verifier ...");
+                    thriftNotification.setOp(Operation.ADD_USER_VERIFIER);
+                    LOG.info("Send notification to operation servers about new user verifier.");
+                } else {
+                    thriftNotification.setOp(Operation.UPDATE_USER_VERIFIER);
+                    LOG.info("Send notification to operation servers about update user verifier configuration.");
+                }
+                dataStruct = toDataStruct(saved);
+                controlZKService.sendEndpointNotification(thriftNotification);
+            }
+        }
+        return dataStruct;
+    }
+
+    @Override
+    public void deleteUserVerifier(String userVerifierId)
+            throws ControlThriftException, TException {
+        UserVerifierDto userVerifierDto = userVerifierService.findUserVerifierById(userVerifierId);
+        LOG.info("Remove user verifier ...");
+        userVerifierService.removeUserVerifierById(userVerifierId);
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(userVerifierDto.getApplicationId());
+        thriftNotification.setUserVerifierToken(userVerifierDto.getVerifierToken());
+        thriftNotification.setOp(Operation.REMOVE_USER_VERIFIER);
+        LOG.info("Send notification to operation servers about removing user verifier.");
+        controlZKService.sendEndpointNotification(thriftNotification);    
     }
 
     @Override

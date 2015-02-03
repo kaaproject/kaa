@@ -49,5 +49,10 @@ public interface Constants { //NOSONAR
      * The size of application token
      */
     public static final int APP_TOKEN_SIZE = 20;
+    
+    /**
+     * The size of user verifier token
+     */
+    public static final int USER_VERIFIER_TOKEN_SIZE = 20;
 
 }

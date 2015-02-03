@@ -49,7 +49,7 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -549,7 +549,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="logAppenders/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
-    public List<LogAppenderRestDto> getLogAppendersByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
+    public List<LogAppenderDto> getLogAppendersByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getRestLogAppendersByApplicationId(applicationId);
     }
 
@@ -559,7 +559,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="logAppender/{logAppenderId}", method=RequestMethod.GET)
     @ResponseBody
-    public LogAppenderRestDto getLogAppender(@PathVariable String logAppenderId) throws KaaAdminServiceException {
+    public LogAppenderDto getLogAppender(@PathVariable String logAppenderId) throws KaaAdminServiceException {
         return kaaAdminService.getRestLogAppender(logAppenderId);
     }
 
@@ -569,7 +569,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="logAppender", method=RequestMethod.POST)
     @ResponseBody
-    public LogAppenderRestDto editLogAppender(@RequestBody LogAppenderRestDto logAppender) throws KaaAdminServiceException {
+    public LogAppenderDto editLogAppender(@RequestBody LogAppenderDto logAppender) throws KaaAdminServiceException {
         return kaaAdminService.editRestLogAppender(logAppender);
     }
 

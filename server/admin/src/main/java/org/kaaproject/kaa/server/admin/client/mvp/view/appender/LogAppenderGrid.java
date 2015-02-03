@@ -71,7 +71,7 @@ public class LogAppenderGrid extends AbstractKaaGrid<LogAppenderDto, String> {
                 new StringValueProvider<LogAppenderDto>() {
             @Override
             public String getValue(LogAppenderDto item) {
-                return item.getTypeName();
+                return item.getPluginTypeName();
             }
         }, 80);
 

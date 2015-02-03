@@ -48,7 +48,7 @@ public class DefaultLogAppenderService implements LogAppenderService {
     @Override
     public List<LogAppender> getApplicationAppenders(String applicationId) {
         LOG.debug("Get log appenders by application id [{}]", applicationId);
-        List<LogAppenderDto> appenders = logAppendersService.findRegisteredLogAppendersByAppId(applicationId);
+        List<LogAppenderDto> appenders = logAppendersService.findAllAppendersByAppId(applicationId);
         LOG.debug("Found all appenders [{}] for application.", appenders);
         List<LogAppender> logAppenders = new ArrayList<>(appenders.size());
 
@@ -68,7 +68,7 @@ public class DefaultLogAppenderService implements LogAppenderService {
     public List<LogAppender> getApplicationAppendersByLogSchemaVersion(
             String applicationId, int schemaVersion) {
         LOG.debug("Get log appenders by application id [{}] and schema version [{}]", applicationId, schemaVersion);
-        List<LogAppenderDto> appenders = logAppendersService.findRegisteredLogAppendersByAppIdAndSchemaVersion(applicationId, schemaVersion);
+        List<LogAppenderDto> appenders = logAppendersService.findLogAppendersByAppIdAndSchemaVersion(applicationId, schemaVersion);
         LOG.debug("Found all appenders [{}] for application and schema version.", appenders);
         List<LogAppender> logAppenders = new ArrayList<>(appenders.size());
 

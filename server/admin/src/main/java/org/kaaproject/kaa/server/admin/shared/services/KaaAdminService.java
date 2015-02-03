@@ -43,11 +43,9 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.file.FileData;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
@@ -236,15 +234,15 @@ public interface KaaAdminService extends RemoteService {
 
     public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException;
 
-    public List<LogAppenderRestDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
+    public List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
 
-    public LogAppenderRestDto getRestLogAppender(String appenderId) throws KaaAdminServiceException;
+    public LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException;
 
-    public LogAppenderRestDto editRestLogAppender(LogAppenderRestDto appender) throws KaaAdminServiceException;
+    public LogAppenderDto editRestLogAppender(LogAppenderDto appender) throws KaaAdminServiceException;
     
-    public LogAppenderFormWrapper getLogAppenderForm(String appenderId) throws KaaAdminServiceException;
+    public LogAppenderDto getLogAppenderForm(String appenderId) throws KaaAdminServiceException;
 
-    public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException;
+    public LogAppenderDto editLogAppenderForm(LogAppenderDto wrapper) throws KaaAdminServiceException;
 
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException;
 

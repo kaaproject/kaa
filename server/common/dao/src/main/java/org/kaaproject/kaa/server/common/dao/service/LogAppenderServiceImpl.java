@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 
@@ -45,13 +46,7 @@ public class LogAppenderServiceImpl implements LogAppendersService {
     private LogSchemaDao<LogSchema> logSchemaDao;
 
     @Override
-    public List<LogAppenderDto> findRegisteredLogAppendersByAppId(String appId) {
-        LOG.debug("Find registered log appenders by application id [{}]", appId);
-        return convertDtoList(logAppenderDao.findByAppId(appId));
-    }
-
-    @Override
-    public List<LogAppenderDto> findRegisteredLogAppendersByAppIdAndSchemaVersion(
+    public List<LogAppenderDto> findLogAppendersByAppIdAndSchemaVersion(
             String appId, int schemaVersion) {
         LOG.debug("Find registered log appenders by application id [{}] and schema version [{}]", appId, schemaVersion);
         return convertDtoList(logAppenderDao.findByAppIdAndSchemaVersion(appId, schemaVersion));
@@ -60,19 +55,7 @@ public class LogAppenderServiceImpl implements LogAppendersService {
     @Override
     public List<LogAppenderDto> findAllAppendersByAppId(String appId) {
         LOG.debug("Find vacant log appenders by application id [{}]", appId);
-        return convertDtoList(logAppenderDao.findAllLogAppendersByAppId(appId));
-    }
-
-    @Override
-    public LogAppenderDto registerLogAppenderById(String logAppenderId) {
-        LOG.debug("Register log appender by id [{}]", logAppenderId);
-        return getDto(logAppenderDao.registerLogAppenderById(logAppenderId));
-    }
-
-    @Override
-    public LogAppenderDto unregisterLogAppenderById(String logAppenderId) {
-        LOG.debug("Unregister log appender by id [{}]", logAppenderId);
-        return getDto(logAppenderDao.unregisterLogAppenderById(logAppenderId));
+        return convertDtoList(logAppenderDao.findByAppId(appId));
     }
 
     @Override
@@ -80,7 +63,9 @@ public class LogAppenderServiceImpl implements LogAppendersService {
         LOG.debug("Save log appender [{}]", logAppenderDto);
         LogAppenderDto saved = null;
         if (logAppenderDto != null) {
-            logAppenderDto.setCreatedTime(System.currentTimeMillis());
+            if(isBlank(logAppenderDto.getId())) {
+                logAppenderDto.setCreatedTime(System.currentTimeMillis());
+            }
             saved = getDto(logAppenderDao.save(new LogAppender(logAppenderDto)));
         }
         return saved;

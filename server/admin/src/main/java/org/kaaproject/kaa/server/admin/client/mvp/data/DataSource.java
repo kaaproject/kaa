@@ -47,7 +47,6 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
@@ -949,21 +948,21 @@ public class DataSource {
     }
 
     public void getLogAppenderForm(String appenderId,
-            final AsyncCallback<LogAppenderFormWrapper> callback) {
+            final AsyncCallback<LogAppenderDto> callback) {
         rpcService.getLogAppenderForm(appenderId,
-                new DataCallback<LogAppenderFormWrapper>(callback) {
+                new DataCallback<LogAppenderDto>(callback) {
             @Override
-            protected void onResult(LogAppenderFormWrapper result) {
+            protected void onResult(LogAppenderDto result) {
             }
         });
     }
 
-    public void editLogAppenderForm(LogAppenderFormWrapper dto,
-            final AsyncCallback<LogAppenderFormWrapper> callback) {
+    public void editLogAppenderForm(LogAppenderDto dto,
+            final AsyncCallback<LogAppenderDto> callback) {
         rpcService.editLogAppenderForm(dto,
-                new DataCallback<LogAppenderFormWrapper>(callback) {
+                new DataCallback<LogAppenderDto>(callback) {
             @Override
-            protected void onResult(LogAppenderFormWrapper result) {
+            protected void onResult(LogAppenderDto result) {
             }
         });
     }

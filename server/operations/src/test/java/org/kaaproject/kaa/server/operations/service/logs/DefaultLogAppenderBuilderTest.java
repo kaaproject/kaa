@@ -24,21 +24,21 @@ public class DefaultLogAppenderBuilderTest {
     @Test(expected = ReflectiveOperationException.class)
     public void testGetNotExistingAppender() throws ReflectiveOperationException {
         LogAppenderDto dto = new LogAppenderDto();
-        dto.setAppenderClassName("not.existing.class.name");
+        dto.setPluginClassName("not.existing.class.name");
         builder.getAppender(dto);
     }
 
     @Test(expected = ReflectiveOperationException.class)
     public void testGetProtectedAppender() throws ReflectiveOperationException {
         LogAppenderDto dto = new LogAppenderDto();
-        dto.setAppenderClassName(TestPrivateAppender.class.getName());
+        dto.setPluginClassName(TestPrivateAppender.class.getName());
         builder.getAppender(dto);
     }
 
     @Test
     public void testGetPublicAppender() throws ReflectiveOperationException {
         LogAppenderDto dto = new LogAppenderDto();
-        dto.setAppenderClassName(TestPublicAppender.class.getName());
+        dto.setPluginClassName(TestPublicAppender.class.getName());
         builder.getAppender(dto);
     }
 

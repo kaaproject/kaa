@@ -32,7 +32,7 @@ import org.kaaproject.kaa.server.sync.UserAttachResponse;
 
 public interface EndpointUserService {
 
-    UserVerifierDto findUserVerifier(String appId, int verifierId);
+    UserVerifierDto findUserVerifier(String appId, String verifierToken);
     
     List<UserVerifierDto> findUserVerifiers(String appId);
 
