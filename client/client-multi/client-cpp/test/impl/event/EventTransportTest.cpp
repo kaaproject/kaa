@@ -58,6 +58,11 @@ public:
         return mock;
     }
 
+    virtual bool hasPendingListenerRequests() const
+    {
+        return false;
+    }
+
     virtual void onEventsReceived(const EventSyncResponse::events_t& events) {}
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners) {}
 

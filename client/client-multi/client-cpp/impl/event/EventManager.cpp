@@ -112,6 +112,12 @@ std::map<std::int32_t, std::list<std::string> > EventManager::getPendingListener
     return result;
 }
 
+bool EventManager::hasPendingListenerRequests() const
+{
+    KAA_MUTEX_UNIQUE_DECLARE(lock, eventListenersGuard_);
+    return !eventListenersRequests_.empty();
+}
+
 void EventManager::onEventFromServer(const std::string& eventClassFQN
                                    , const std::vector<std::uint8_t>& data
                                    , const std::string& source)

@@ -65,6 +65,7 @@ public:
     virtual bool hasPendingEvents() const;
 
     virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests();
+    virtual bool hasPendingListenerRequests() const;
 
     virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener);
 
@@ -104,7 +105,7 @@ private:
     IKaaClientStateStoragePtr status_;
 
     std::map<std::int32_t/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
-    KAA_MUTEX_DECLARE(eventListenersGuard_);
+    KAA_MUTEX_MUTABLE_DECLARE(eventListenersGuard_);
 };
 
 } /* namespace kaa */

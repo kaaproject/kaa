@@ -180,6 +180,7 @@ public:
         if (!response.is_null()) {
             ss << KVSTRING(events, IncomingEventsToString(response.get_EventSyncResponse().events));
             ss << KVSTRING(eventListenersResponse, EventListenersResponseToString(response.get_EventSyncResponse().eventListenersResponses));
+            ss << KVSTRING(eventSequenceNumberResponse, EventSequenceNumberResponseToString(response.get_EventSyncResponse().eventSequenceNumberResponse));
         } else {
             ss << "null";
         }
@@ -209,12 +210,23 @@ public:
         return ss.str();
     }
 
+    static std::string DetachUserNotificationToString(const UserSyncResponse::userDetachNotification_t& response) {
+        std::ostringstream ss;
+        if (!response.is_null()) {
+            ss << KVSTRING(accessToken, response.get_UserDetachNotification().endpointAccessToken);
+        } else {
+            ss << "null";
+        }
+        return ss.str();
+    }
+
     static std::string UserSyncResponseToString(const SyncResponse::userSyncResponse_t& response) {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(endpointAttachResponses, AttachEPResponsesToString(response.get_UserSyncResponse().endpointAttachResponses));
             ss << KVSTRING(endpointDetachResponses, DetachEPResponsesToString(response.get_UserSyncResponse().endpointDetachResponses));
             ss << KVSTRING(userAttachResponse, AttachUserResponseToString(response.get_UserSyncResponse().userAttachResponse));
+            ss << KVSTRING(userDetachNotification, DetachUserNotificationToString(response.get_UserSyncResponse().userDetachNotification));
         } else {
             ss << "null";
         }
@@ -679,6 +691,15 @@ public:
         return stream.str();
     }
 
+    static std::string EventSequenceNumberResponseToString(const EventSyncResponse::eventSequenceNumberResponse_t& response) {
+        std::ostringstream ss;
+        if (!response.is_null()) {
+            ss << KVSTRING(sequnceNumber, response.get_EventSequenceNumberResponse().seqNum);
+        } else {
+            ss << "null";
+        }
+        return ss.str();
+    }
 
     static std::string TransportTypeToString(TransportType type) {
         std::string description;
