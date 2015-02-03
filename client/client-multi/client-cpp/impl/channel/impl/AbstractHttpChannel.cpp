@@ -32,6 +32,7 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
                                        )
 {
     const auto& bodyRaw = multiplexer_->compileRequest(types);
+
     // Creating HTTP request using the given data
     std::shared_ptr<IHttpRequest> postRequest = createRequest(currentServer_, bodyRaw);
 
@@ -156,9 +157,9 @@ void AbstractHttpChannel::setServer(ITransportConnectionInfoPtr server)
             lastConnectionFailed_ = false;
             processTypes(getSupportedTransportTypes()
 #ifdef KAA_THREADSAFE
-                    , lock
+                        , lock
 #endif
-                    );
+                        );
         }
     } else {
         KAA_LOG_ERROR(boost::format("Invalid server info for channel %1%") % getId());

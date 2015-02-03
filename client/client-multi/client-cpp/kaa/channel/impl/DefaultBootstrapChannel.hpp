@@ -37,7 +37,7 @@ private:
     virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body)
     {
         HttpDataProcessor *processor = getHttpDataProcessor();
-        auto request = processor->createBootstrapRequest(server->getURL(), body);
+        auto request = processor->createBootstrapRequest(server->getURL() + getURLSuffix(), body);
         return request;
     }
 
@@ -48,6 +48,11 @@ private:
 
     virtual ServerType getServerType() const {
         return ServerType::BOOTSTRAP;
+    }
+
+protected:
+    virtual std::string getURLSuffix() {
+        return "/BS/Sync";
     }
 
 private:

@@ -18,10 +18,17 @@
 
 namespace kaa {
 
+const std::int32_t TransportProtocolIdConstants::HTTP_TRANSPORT_PROTOCOL_ID      = 0xfb9a3cf0;
+const std::int32_t TransportProtocolIdConstants::HTTP_TRANSPORT_PROTOCOL_VERSION = 1;
+
+const std::int32_t TransportProtocolIdConstants::TCP_TRANSPORT_PROTOCOL_ID       = 0x56c8ff92;
+const std::int32_t TransportProtocolIdConstants::TCP_TRANSPORT_PROTOCOL_VERSION  = 1;
+
 const TransportProtocolId TransportProtocolIdConstants::HTTP_TRANSPORT_ID(
                     HTTP_TRANSPORT_PROTOCOL_ID, HTTP_TRANSPORT_PROTOCOL_VERSION);
 
 const TransportProtocolId TransportProtocolIdConstants::TCP_TRANSPORT_ID(
                     TCP_TRANSPORT_PROTOCOL_ID, TCP_TRANSPORT_PROTOCOL_VERSION);
+
 
 } /* namespace kaa */

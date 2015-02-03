@@ -67,7 +67,7 @@ private:
     void useNewChannelForType(TransportType type);
     void replaceChannel(IDataChannelPtr channel);
 
-    void addChannelToList(IDataChannelPtr channel);
+    bool addChannelToList(IDataChannelPtr channel);
 
     void doShutdown();
 

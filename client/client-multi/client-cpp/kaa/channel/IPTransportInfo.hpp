@@ -42,7 +42,7 @@ public:
         return url_;
     }
 
-    PublicKey getPublicKey() const {
+    const PublicKey& getPublicKey() const {
         return publicKey_;
     }
 

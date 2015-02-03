@@ -63,7 +63,7 @@ ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointI
     return connectionInfo;
 }
 
-const BootstrapServers& getServerInfoList() {
+const BootstrapServers& getBootstrapServers() {
     static BootstrapServers listOfServers = { %{bootstrap_servers_info} };
     std::random_shuffle(listOfServers.begin(), listOfServers.end());
     return listOfServers;

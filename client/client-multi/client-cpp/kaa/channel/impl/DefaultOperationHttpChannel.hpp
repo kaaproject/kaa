@@ -36,7 +36,7 @@ public:
 private:
     virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body)
     {
-        return getHttpDataProcessor()->createOperationRequest(server->getURL(), body);
+        return getHttpDataProcessor()->createOperationRequest(server->getURL() + getURLSuffix(), body);
     }
 
     virtual std::string retrieveResponse(const IHttpResponse& response)
@@ -49,6 +49,10 @@ private:
 
     virtual ServerType getServerType() const {
         return ServerType::OPERATIONS;
+    }
+
+    virtual std::string getURLSuffix() {
+        return "/EP/Sync";
     }
 
 private:

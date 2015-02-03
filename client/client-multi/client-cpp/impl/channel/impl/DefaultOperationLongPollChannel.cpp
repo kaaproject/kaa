@@ -100,7 +100,8 @@ void DefaultOperationLongPollChannel::executeTask()
 
     const auto& bodyRaw = multiplexer_->compileRequest(getSupportedTransportTypes());
     // Creating HTTP request using the given data
-    std::shared_ptr<IHttpRequest> postRequest = httpDataProcessor_.createOperationRequest(currentServer_->getURL(), bodyRaw);
+    std::shared_ptr<IHttpRequest> postRequest = httpDataProcessor_.createOperationRequest(
+                                        currentServer_->getURL() + getURLSuffix(), bodyRaw);
 
     KAA_MUTEX_UNLOCKING("channelGuard_");
     KAA_UNLOCK(lock);

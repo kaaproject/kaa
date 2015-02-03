@@ -73,6 +73,8 @@ protected:
 #endif
                             );
 
+    virtual std::string getURLSuffix() = 0;
+
 private:
     virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body) = 0;
     virtual std::string retrieveResponse(const IHttpResponse& response) = 0;

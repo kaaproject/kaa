@@ -52,11 +52,22 @@ public:
     }
 
     bool operator<(const TransportProtocolId& protocolId) const {
-        return (id_ < protocolId.id_ && version_ < protocolId.version_);
+        return (hashCode() < protocolId.hashCode());
     }
 
     bool operator>(const TransportProtocolId& protocolId) const {
-        return (id_ > protocolId.id_ && version_ > protocolId.version_);
+        return (hashCode() > protocolId.hashCode());
+    }
+
+private:
+    std::uint32_t hashCode() const {
+        const std::uint32_t prime = 31;
+
+        std::uint32_t hashCode = 1;
+        hashCode = prime * hashCode + id_;
+        hashCode = prime * hashCode + version_;
+
+        return hashCode;
     }
 
 private:

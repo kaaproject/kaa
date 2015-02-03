@@ -71,6 +71,11 @@ public:
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
+protected:
+    std::string getURLSuffix() {
+        return "/EP/LongSync";
+    }
+
 private:
     void startPoll();
     void stopPoll();

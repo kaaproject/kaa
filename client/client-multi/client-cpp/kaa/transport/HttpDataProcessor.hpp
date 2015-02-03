@@ -47,7 +47,6 @@ public:
             const PublicKey& remoteKey) :
             encDec_(new RsaEncoderDecoder(pubKey, privKey, remoteKey)) { }
     HttpDataProcessor() { }
-    ~HttpDataProcessor() { }
 
     std::shared_ptr<IHttpRequest> createOperationRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data);
     std::string retrieveOperationResponse(const IHttpResponse& response);
@@ -58,6 +57,8 @@ public:
     void setEncoderDecoder(std::shared_ptr<IEncoderDecoder> encoderDecoder) { encDec_ = encoderDecoder; }
 
 private:
+    std::shared_ptr<IHttpRequest> createHttpRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data, bool sign);
+
     void verifyResponse(const IHttpResponse& response);
 
 private:

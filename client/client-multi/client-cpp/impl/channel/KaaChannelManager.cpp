@@ -83,7 +83,7 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
     }
 }
 
-void KaaChannelManager::addChannelToList(IDataChannelPtr channel)
+bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
@@ -119,6 +119,8 @@ void KaaChannelManager::addChannelToList(IDataChannelPtr channel)
                         % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
         }
     }
+
+    return res.second;
 }
 
 void KaaChannelManager::setChannel(TransportType type, IDataChannelPtr channel)
@@ -158,8 +160,10 @@ void KaaChannelManager::addChannel(IDataChannelPtr channel)
     if (isPaused_) {
         channel->pause();
     }
-    addChannelToList(channel);
-    useNewChannel(channel);
+
+    if (addChannelToList(channel)) {
+        useNewChannel(channel);
+    }
 }
 
 bool KaaChannelManager::useChannelForType(const std::pair<TransportType, ChannelDirection>& type, IDataChannelPtr channel)

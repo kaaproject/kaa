@@ -24,21 +24,21 @@
 
 namespace kaa {
 
-const char * const BUILD_VERSION = "0.6.1-SNAPSHOT";
+const char * const BUILD_VERSION = "0.6.3-SNAPSHOT";
 
-const char * const BUILD_COMMIT_HASH = "N/A";
+const char * const BUILD_COMMIT_HASH = "2";
 
-const char * const APPLICATION_TOKEN = "999739850901241";
+const char * const APPLICATION_TOKEN = "31442896109454287616";
 
-const std::uint32_t PROFILE_VERSION = 1;
+const std::uint32_t PROFILE_VERSION = 2;
 
-const std::uint32_t CONFIG_VERSION = 1;
+const std::uint32_t CONFIG_VERSION = 2;
 
 const std::uint32_t SYSTEM_NF_VERSION = 1;
 
-const std::uint32_t USER_NF_VERSION = 1;
+const std::uint32_t USER_NF_VERSION = 2;
 
-const std::uint32_t LOG_SCHEMA_VERSION = 1;
+const std::uint32_t LOG_SCHEMA_VERSION = 2;
 
 const std::uint32_t POLLING_PERIOD_SECONDS = 5;
 
@@ -64,23 +64,24 @@ ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointI
 }
 
 const BootstrapServers& getBootstrapServers() {
-    static BootstrapServers listOfServers = { createTransportInfo(0x123, 0x1, 0x2, "asfc") };
+    static BootstrapServers listOfServers = { createTransportInfo(0x4c22e496, 0xfb9a3cf0, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACah")
+                                          , createTransportInfo(0x4c22e496, 0x56c8ff92, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACag") };
     std::random_shuffle(listOfServers.begin(), listOfServers.end());
     return listOfServers;
 }
 
 const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() {
-    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("");
+    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("AgAAAABAPTA49ltAWLGYSuIAmDFgAA==");
     return configData;
 }
 
 const std::string& getDefaultConfigSchema() {
-    static const std::string configSchema = "";
+    static const std::string configSchema = "{\"items\":{\"name\":\"deltaT\",\"type\":\"record\",\"fields\":[{\"name\":\"delta\",\"type\":[{\"name\":\"testT\",\"type\":\"record\",\"addressable\":true,\"fields\":[{\"name\":\"testField1\",\"type\":[\"string\",{\"symbols\":[\"unchanged\"],\"name\":\"unchangedT\",\"type\":\"enum\",\"namespace\":\"org.kaaproject.configuration\"}],\"by_default\":\"\"},{\"optional\":true,\"name\":\"testField2\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"testRecordT\",\"namespace\":\"org.kaa.config\",\"fields\":[{\"name\":\"testField3\",\"type\":[\"int\",\"org.kaaproject.configuration.unchangedT\"]},{\"name\":\"__uuid\",\"type\":{\"name\":\"uuidT\",\"type\":\"fixed\",\"size\":16,\"namespace\":\"org.kaaproject.configuration\"}}]},\"org.kaaproject.configuration.unchangedT\"]},{\"name\":\"__uuid\",\"type\":\"org.kaaproject.configuration.uuidT\"}],\"namespace\":\"org.kaa.config\"},\"org.kaa.config.testRecordT\"]}],\"namespace\":\"org.kaaproject.configuration\"},\"type\":\"array\"}";
     return configSchema;
 }
 
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() {
-    static const EventClassFamilyVersionInfos versions;/* = {{"familyName1",1}, {"familyName2",3}};*/
+    static const EventClassFamilyVersionInfos versions = { {"test_event_family",1} };/* = {{"familyName1",1}, {"familyName2",3}};*/
     return versions;
 }
 

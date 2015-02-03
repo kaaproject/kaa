@@ -43,8 +43,7 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
     std::int32_t publicKeyLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
     data += sizeof(std::int32_t);
 
-    publicKey_.clear();
-    publicKey_.copy(data, publicKeyLength);
+    publicKey_ = PublicKey(data, publicKeyLength);
     data += publicKeyLength;
 
     std::int32_t hostLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
@@ -63,7 +62,7 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
         throw KaaException("Bad connection data");
     }
 
-    KAA_LOG_TRACE(boost::format("Create IP transport data: host=%1%, port=%2%") % host_% port_);
+    KAA_LOG_TRACE(boost::format("Create IP transport data: host=%1%, port=%2%, publicKeyLength=%3%") % host_% port_ % publicKey_.size());
 }
 
 } /* namespace kaa */

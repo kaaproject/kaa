@@ -334,18 +334,17 @@ public class CppSdkGenerator extends SdkGenerator {
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
 
-        for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
-            if (nodeIndex > 0) {
-                bootstrapServers += "\n                                          , ";
-            }
-
-            BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
+        int nodeCount = bootstrapNodes.size();
+        for (BootstrapNodeInfo node : bootstrapNodes) {
             List<TransportMetaData> supportedChannels = node.getTransports();
 
             int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
+            int transportCount = supportedChannels.size();
 
             for (TransportMetaData transport : supportedChannels) {
-                for(VersionConnectionInfoPair pair : transport.getConnectionInfo()){
+                int supportedProtocolCount = transport.getConnectionInfo().size();
+
+                for(VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
                     String serverPattern = "createTransportInfo(";
                     serverPattern += "0x" + Integer.toHexString(accessPointId);
                     serverPattern += ", ";
@@ -358,7 +357,19 @@ public class CppSdkGenerator extends SdkGenerator {
                     serverPattern += ")";
 
                     bootstrapServers += serverPattern;
+
+                    if (--supportedProtocolCount > 0) {
+                        bootstrapServers += "\n                                            , ";
+                    }
                 }
+
+                if (--transportCount > 0) {
+                    bootstrapServers += "\n                                            , ";
+                }
+            }
+
+            if (--nodeCount > 0) {
+                bootstrapServers += "\n                                            , ";
             }
         }
 
