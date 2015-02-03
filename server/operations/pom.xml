@@ -99,7 +99,7 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-            <artifactId>mongo</artifactId>
+            <artifactId>mongo-dao</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -617,20 +617,6 @@
                                     <groupname>kaa</groupname>
                                     <sources>
                                         <source>
-                                            <location>../common/dao/src/main/resources/common-dao-context.xml</location>
-                                        </source>
-                                        <source>
-                                            <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
                                             <location>src/main/resources</location>
                                         </source>
                                         <source>
@@ -716,10 +702,10 @@
             </dependencies>
         </profile>
         <profile>
-            <id>mongodb-dao</id>
+            <id>mongo-dao</id>
             <properties>
-                <db.context>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</db.context>
-                <db.property>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</db.property>
+                <db.context>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb-context.xml</db.context>
+                <db.property>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb.properties</db.property>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -727,7 +713,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                    <artifactId>mongo</artifactId>
+                    <artifactId>mongo-dao</artifactId>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
@@ -735,8 +721,8 @@
         <profile>
             <id>cassandra-dao</id>
             <properties>
-                <db.context>../common/nosql/cassandra/src/main/resources/common-dao-cassandra-context.xml</db.context>
-                <db.property>../common/nosql/cassandra/src/main/resources/common-dao-cassandra.properties</db.property>
+                <db.context>../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra-context.xml</db.context>
+                <db.property>../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra.properties</db.property>
             </properties>
             <dependencies>
                 <dependency>

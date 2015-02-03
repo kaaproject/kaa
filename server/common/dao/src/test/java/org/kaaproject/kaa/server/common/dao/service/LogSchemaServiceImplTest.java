@@ -28,7 +28,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class LogSchemaServiceImplTest extends AbstractTest {

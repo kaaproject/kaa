@@ -47,7 +47,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
 import org.kaaproject.kaa.server.operations.service.OperationsServiceIT;

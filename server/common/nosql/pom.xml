@@ -41,8 +41,8 @@
     </properties>
 
     <modules>
-        <module>mongo</module>
-        <module>cassandra</module>
+        <module>mongo-dao</module>
+        <module>cassandra-dao</module>
     </modules>
     <dependencyManagement>
         <dependencies>

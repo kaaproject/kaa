@@ -41,7 +41,7 @@ import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

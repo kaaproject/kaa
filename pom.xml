@@ -488,7 +488,7 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                <artifactId>mongo</artifactId>
+                <artifactId>mongo-dao</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -555,7 +555,7 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                <artifactId>mongo</artifactId>
+                <artifactId>mongo-dao</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>

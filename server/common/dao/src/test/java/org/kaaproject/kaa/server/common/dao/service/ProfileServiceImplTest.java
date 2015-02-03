@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")

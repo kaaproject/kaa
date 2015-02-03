@@ -27,7 +27,7 @@ import org.apache.thrift.transport.TTransport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.operations.OperationsServerApplication;
 import org.slf4j.Logger;
