@@ -1,33 +1,44 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.verifiers.trustful.config;
 
 import org.apache.avro.Schema;
-import org.kaaproject.kaa.server.common.utils.CRC32Util;
-import org.kaaproject.kaa.server.common.verifier.KaaUserVerifierConfig;
-import org.kaaproject.kaa.server.common.verifier.UserVerifierConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig;
 
-@KaaUserVerifierConfig
-public class TrustfulVerifierConfig implements UserVerifierConfig{
+@KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
+public class TrustfulVerifierConfig implements PluginConfig {
 
-    private static final String ORG_KAAPROJECT_KAA_SERVER_VERIFIERS_TRUSTFUL = "org.kaaproject.kaa.server.verifiers.trustful";
+    private static final String TRUSTFUL_VERIFIER_NAME = "Trustful verifier";
 
     @Override
-    public int getId() {
-        return CRC32Util.crc32(getName());
+    public String getPluginTypeName() {
+        return TRUSTFUL_VERIFIER_NAME;
     }
 
     @Override
-    public String getName() {
-        return ORG_KAAPROJECT_KAA_SERVER_VERIFIERS_TRUSTFUL;
-    }
-
-    @Override
-    public String getUserVerifierClass() {
+    public String getPluginClassName() {
         return "org.kaaproject.kaa.server.verifiers.trustful.TrustfulUserVerifier";
     }
 
     @Override
-    public Schema getConfigSchema() {
+    public Schema getPluginConfigSchema() {
         return TrustfulAvroConfig.SCHEMA$;
     }
 

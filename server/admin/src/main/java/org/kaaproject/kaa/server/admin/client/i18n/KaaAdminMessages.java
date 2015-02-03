@@ -88,5 +88,11 @@ public interface KaaAdminMessages extends Messages {
     
     @DefaultMessage("An error occurred while communicating with the server. Possible causes are:<br>a) Server is not running, or <br>b) Network problem.<br>Check your network connection or try again later.")
     String serverIsUnreacheableMessage();
+    
+    @DefaultMessage("Remove user verifier")
+    String removeUserVerifierTitle();
+    
+    @DefaultMessage("Are you sure you want to delete selected user verifier?")
+    String removeUserVerifierQuestion();
 
 }

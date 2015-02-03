@@ -322,7 +322,7 @@ public class ControlThriftService {
      */
     public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getUserVerifiersByApplicationId(String applicationId) throws ControlThriftException, org.apache.thrift.TException;
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getUserVerifierAppender(String userVerifierId) throws ControlThriftException, org.apache.thrift.TException;
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getUserVerifier(String userVerifierId) throws ControlThriftException, org.apache.thrift.TException;
 
     public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct editUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier) throws ControlThriftException, org.apache.thrift.TException;
 
@@ -522,7 +522,7 @@ public class ControlThriftService {
 
     public void getUserVerifiersByApplicationId(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void getUserVerifierAppender(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getUserVerifier(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void editUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -3012,30 +3012,30 @@ public class ControlThriftService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserVerifiersByApplicationId failed: unknown result");
     }
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getUserVerifierAppender(String userVerifierId) throws ControlThriftException, org.apache.thrift.TException
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getUserVerifier(String userVerifierId) throws ControlThriftException, org.apache.thrift.TException
     {
-      send_getUserVerifierAppender(userVerifierId);
-      return recv_getUserVerifierAppender();
+      send_getUserVerifier(userVerifierId);
+      return recv_getUserVerifier();
     }
 
-    public void send_getUserVerifierAppender(String userVerifierId) throws org.apache.thrift.TException
+    public void send_getUserVerifier(String userVerifierId) throws org.apache.thrift.TException
     {
-      getUserVerifierAppender_args args = new getUserVerifierAppender_args();
+      getUserVerifier_args args = new getUserVerifier_args();
       args.setUserVerifierId(userVerifierId);
-      sendBase("getUserVerifierAppender", args);
+      sendBase("getUserVerifier", args);
     }
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_getUserVerifierAppender() throws ControlThriftException, org.apache.thrift.TException
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_getUserVerifier() throws ControlThriftException, org.apache.thrift.TException
     {
-      getUserVerifierAppender_result result = new getUserVerifierAppender_result();
-      receiveBase(result, "getUserVerifierAppender");
+      getUserVerifier_result result = new getUserVerifier_result();
+      receiveBase(result, "getUserVerifier");
       if (result.isSetSuccess()) {
         return result.success;
       }
       if (result.ControlException != null) {
         throw result.ControlException;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserVerifierAppender failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserVerifier failed: unknown result");
     }
 
     public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct editUserVerifier(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct userVerifier) throws ControlThriftException, org.apache.thrift.TException
@@ -6220,23 +6220,23 @@ public class ControlThriftService {
       }
     }
 
-    public void getUserVerifierAppender(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getUserVerifier(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      getUserVerifierAppender_call method_call = new getUserVerifierAppender_call(userVerifierId, resultHandler, this, ___protocolFactory, ___transport);
+      getUserVerifier_call method_call = new getUserVerifier_call(userVerifierId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class getUserVerifierAppender_call extends org.apache.thrift.async.TAsyncMethodCall {
+    public static class getUserVerifier_call extends org.apache.thrift.async.TAsyncMethodCall {
       private String userVerifierId;
-      public getUserVerifierAppender_call(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public getUserVerifier_call(String userVerifierId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.userVerifierId = userVerifierId;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getUserVerifierAppender", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        getUserVerifierAppender_args args = new getUserVerifierAppender_args();
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getUserVerifier", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        getUserVerifier_args args = new getUserVerifier_args();
         args.setUserVerifierId(userVerifierId);
         args.write(prot);
         prot.writeMessageEnd();
@@ -6248,7 +6248,7 @@ public class ControlThriftService {
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_getUserVerifierAppender();
+        return (new Client(prot)).recv_getUserVerifier();
       }
     }
 
@@ -6424,7 +6424,7 @@ public class ControlThriftService {
       processMap.put("generateRecordStructureLibrary", new generateRecordStructureLibrary());
       processMap.put("getRecordStructureSchema", new getRecordStructureSchema());
       processMap.put("getUserVerifiersByApplicationId", new getUserVerifiersByApplicationId());
-      processMap.put("getUserVerifierAppender", new getUserVerifierAppender());
+      processMap.put("getUserVerifier", new getUserVerifier());
       processMap.put("editUserVerifier", new editUserVerifier());
       processMap.put("deleteUserVerifier", new deleteUserVerifier());
       return processMap;
@@ -8710,23 +8710,23 @@ public class ControlThriftService {
       }
     }
 
-    public static class getUserVerifierAppender<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getUserVerifierAppender_args> {
-      public getUserVerifierAppender() {
-        super("getUserVerifierAppender");
+    public static class getUserVerifier<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getUserVerifier_args> {
+      public getUserVerifier() {
+        super("getUserVerifier");
       }
 
-      public getUserVerifierAppender_args getEmptyArgsInstance() {
-        return new getUserVerifierAppender_args();
+      public getUserVerifier_args getEmptyArgsInstance() {
+        return new getUserVerifier_args();
       }
 
       protected boolean isOneway() {
         return false;
       }
 
-      public getUserVerifierAppender_result getResult(I iface, getUserVerifierAppender_args args) throws org.apache.thrift.TException {
-        getUserVerifierAppender_result result = new getUserVerifierAppender_result();
+      public getUserVerifier_result getResult(I iface, getUserVerifier_args args) throws org.apache.thrift.TException {
+        getUserVerifier_result result = new getUserVerifier_result();
         try {
-          result.success = iface.getUserVerifierAppender(args.userVerifierId);
+          result.success = iface.getUserVerifier(args.userVerifierId);
         } catch (ControlThriftException ControlException) {
           result.ControlException = ControlException;
         }
@@ -8890,7 +8890,7 @@ public class ControlThriftService {
       processMap.put("generateRecordStructureLibrary", new generateRecordStructureLibrary());
       processMap.put("getRecordStructureSchema", new getRecordStructureSchema());
       processMap.put("getUserVerifiersByApplicationId", new getUserVerifiersByApplicationId());
-      processMap.put("getUserVerifierAppender", new getUserVerifierAppender());
+      processMap.put("getUserVerifier", new getUserVerifier());
       processMap.put("editUserVerifier", new editUserVerifier());
       processMap.put("deleteUserVerifier", new deleteUserVerifier());
       return processMap;
@@ -14300,20 +14300,20 @@ public class ControlThriftService {
       }
     }
 
-    public static class getUserVerifierAppender<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserVerifierAppender_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
-      public getUserVerifierAppender() {
-        super("getUserVerifierAppender");
+    public static class getUserVerifier<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserVerifier_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
+      public getUserVerifier() {
+        super("getUserVerifier");
       }
 
-      public getUserVerifierAppender_args getEmptyArgsInstance() {
-        return new getUserVerifierAppender_args();
+      public getUserVerifier_args getEmptyArgsInstance() {
+        return new getUserVerifier_args();
       }
 
       public AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
         return new AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>() { 
           public void onComplete(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct o) {
-            getUserVerifierAppender_result result = new getUserVerifierAppender_result();
+            getUserVerifier_result result = new getUserVerifier_result();
             result.success = o;
             try {
               fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
@@ -14326,7 +14326,7 @@ public class ControlThriftService {
           public void onError(Exception e) {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TBase msg;
-            getUserVerifierAppender_result result = new getUserVerifierAppender_result();
+            getUserVerifier_result result = new getUserVerifier_result();
             if (e instanceof ControlThriftException) {
                         result.ControlException = (ControlThriftException) e;
                         result.setControlExceptionIsSet(true);
@@ -14352,8 +14352,8 @@ public class ControlThriftService {
         return false;
       }
 
-      public void start(I iface, getUserVerifierAppender_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
-        iface.getUserVerifierAppender(args.userVerifierId,resultHandler);
+      public void start(I iface, getUserVerifier_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
+        iface.getUserVerifier(args.userVerifierId,resultHandler);
       }
     }
 
@@ -96643,15 +96643,15 @@ public class ControlThriftService {
 
   }
 
-  public static class getUserVerifierAppender_args implements org.apache.thrift.TBase<getUserVerifierAppender_args, getUserVerifierAppender_args._Fields>, java.io.Serializable, Cloneable, Comparable<getUserVerifierAppender_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserVerifierAppender_args");
+  public static class getUserVerifier_args implements org.apache.thrift.TBase<getUserVerifier_args, getUserVerifier_args._Fields>, java.io.Serializable, Cloneable, Comparable<getUserVerifier_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserVerifier_args");
 
     private static final org.apache.thrift.protocol.TField USER_VERIFIER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userVerifierId", org.apache.thrift.protocol.TType.STRING, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new getUserVerifierAppender_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new getUserVerifierAppender_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new getUserVerifier_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserVerifier_argsTupleSchemeFactory());
     }
 
     public String userVerifierId; // required
@@ -96721,13 +96721,13 @@ public class ControlThriftService {
       tmpMap.put(_Fields.USER_VERIFIER_ID, new org.apache.thrift.meta_data.FieldMetaData("userVerifierId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserVerifierAppender_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserVerifier_args.class, metaDataMap);
     }
 
-    public getUserVerifierAppender_args() {
+    public getUserVerifier_args() {
     }
 
-    public getUserVerifierAppender_args(
+    public getUserVerifier_args(
       String userVerifierId)
     {
       this();
@@ -96737,14 +96737,14 @@ public class ControlThriftService {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public getUserVerifierAppender_args(getUserVerifierAppender_args other) {
+    public getUserVerifier_args(getUserVerifier_args other) {
       if (other.isSetUserVerifierId()) {
         this.userVerifierId = other.userVerifierId;
       }
     }
 
-    public getUserVerifierAppender_args deepCopy() {
-      return new getUserVerifierAppender_args(this);
+    public getUserVerifier_args deepCopy() {
+      return new getUserVerifier_args(this);
     }
 
     @Override
@@ -96756,7 +96756,7 @@ public class ControlThriftService {
       return this.userVerifierId;
     }
 
-    public getUserVerifierAppender_args setUserVerifierId(String userVerifierId) {
+    public getUserVerifier_args setUserVerifierId(String userVerifierId) {
       this.userVerifierId = userVerifierId;
       return this;
     }
@@ -96815,12 +96815,12 @@ public class ControlThriftService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof getUserVerifierAppender_args)
-        return this.equals((getUserVerifierAppender_args)that);
+      if (that instanceof getUserVerifier_args)
+        return this.equals((getUserVerifier_args)that);
       return false;
     }
 
-    public boolean equals(getUserVerifierAppender_args that) {
+    public boolean equals(getUserVerifier_args that) {
       if (that == null)
         return false;
 
@@ -96849,7 +96849,7 @@ public class ControlThriftService {
     }
 
     @Override
-    public int compareTo(getUserVerifierAppender_args other) {
+    public int compareTo(getUserVerifier_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -96883,7 +96883,7 @@ public class ControlThriftService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("getUserVerifierAppender_args(");
+      StringBuilder sb = new StringBuilder("getUserVerifier_args(");
       boolean first = true;
 
       sb.append("userVerifierId:");
@@ -96918,15 +96918,15 @@ public class ControlThriftService {
       }
     }
 
-    private static class getUserVerifierAppender_argsStandardSchemeFactory implements SchemeFactory {
-      public getUserVerifierAppender_argsStandardScheme getScheme() {
-        return new getUserVerifierAppender_argsStandardScheme();
+    private static class getUserVerifier_argsStandardSchemeFactory implements SchemeFactory {
+      public getUserVerifier_argsStandardScheme getScheme() {
+        return new getUserVerifier_argsStandardScheme();
       }
     }
 
-    private static class getUserVerifierAppender_argsStandardScheme extends StandardScheme<getUserVerifierAppender_args> {
+    private static class getUserVerifier_argsStandardScheme extends StandardScheme<getUserVerifier_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserVerifierAppender_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserVerifier_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -96955,7 +96955,7 @@ public class ControlThriftService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserVerifierAppender_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserVerifier_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -96970,16 +96970,16 @@ public class ControlThriftService {
 
     }
 
-    private static class getUserVerifierAppender_argsTupleSchemeFactory implements SchemeFactory {
-      public getUserVerifierAppender_argsTupleScheme getScheme() {
-        return new getUserVerifierAppender_argsTupleScheme();
+    private static class getUserVerifier_argsTupleSchemeFactory implements SchemeFactory {
+      public getUserVerifier_argsTupleScheme getScheme() {
+        return new getUserVerifier_argsTupleScheme();
       }
     }
 
-    private static class getUserVerifierAppender_argsTupleScheme extends TupleScheme<getUserVerifierAppender_args> {
+    private static class getUserVerifier_argsTupleScheme extends TupleScheme<getUserVerifier_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, getUserVerifierAppender_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserVerifier_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetUserVerifierId()) {
@@ -96992,7 +96992,7 @@ public class ControlThriftService {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, getUserVerifierAppender_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserVerifier_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
@@ -97004,16 +97004,16 @@ public class ControlThriftService {
 
   }
 
-  public static class getUserVerifierAppender_result implements org.apache.thrift.TBase<getUserVerifierAppender_result, getUserVerifierAppender_result._Fields>, java.io.Serializable, Cloneable, Comparable<getUserVerifierAppender_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserVerifierAppender_result");
+  public static class getUserVerifier_result implements org.apache.thrift.TBase<getUserVerifier_result, getUserVerifier_result._Fields>, java.io.Serializable, Cloneable, Comparable<getUserVerifier_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserVerifier_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
     private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new getUserVerifierAppender_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new getUserVerifierAppender_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new getUserVerifier_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserVerifier_resultTupleSchemeFactory());
     }
 
     public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success; // required
@@ -97089,13 +97089,13 @@ public class ControlThriftService {
       tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserVerifierAppender_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserVerifier_result.class, metaDataMap);
     }
 
-    public getUserVerifierAppender_result() {
+    public getUserVerifier_result() {
     }
 
-    public getUserVerifierAppender_result(
+    public getUserVerifier_result(
       org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success,
       ControlThriftException ControlException)
     {
@@ -97107,7 +97107,7 @@ public class ControlThriftService {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public getUserVerifierAppender_result(getUserVerifierAppender_result other) {
+    public getUserVerifier_result(getUserVerifier_result other) {
       if (other.isSetSuccess()) {
         this.success = other.success;
       }
@@ -97116,8 +97116,8 @@ public class ControlThriftService {
       }
     }
 
-    public getUserVerifierAppender_result deepCopy() {
-      return new getUserVerifierAppender_result(this);
+    public getUserVerifier_result deepCopy() {
+      return new getUserVerifier_result(this);
     }
 
     @Override
@@ -97130,7 +97130,7 @@ public class ControlThriftService {
       return this.success;
     }
 
-    public getUserVerifierAppender_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
+    public getUserVerifier_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
       this.success = success;
       return this;
     }
@@ -97154,7 +97154,7 @@ public class ControlThriftService {
       return this.ControlException;
     }
 
-    public getUserVerifierAppender_result setControlException(ControlThriftException ControlException) {
+    public getUserVerifier_result setControlException(ControlThriftException ControlException) {
       this.ControlException = ControlException;
       return this;
     }
@@ -97226,12 +97226,12 @@ public class ControlThriftService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof getUserVerifierAppender_result)
-        return this.equals((getUserVerifierAppender_result)that);
+      if (that instanceof getUserVerifier_result)
+        return this.equals((getUserVerifier_result)that);
       return false;
     }
 
-    public boolean equals(getUserVerifierAppender_result that) {
+    public boolean equals(getUserVerifier_result that) {
       if (that == null)
         return false;
 
@@ -97274,7 +97274,7 @@ public class ControlThriftService {
     }
 
     @Override
-    public int compareTo(getUserVerifierAppender_result other) {
+    public int compareTo(getUserVerifier_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -97318,7 +97318,7 @@ public class ControlThriftService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("getUserVerifierAppender_result(");
+      StringBuilder sb = new StringBuilder("getUserVerifier_result(");
       boolean first = true;
 
       sb.append("success:");
@@ -97361,15 +97361,15 @@ public class ControlThriftService {
       }
     }
 
-    private static class getUserVerifierAppender_resultStandardSchemeFactory implements SchemeFactory {
-      public getUserVerifierAppender_resultStandardScheme getScheme() {
-        return new getUserVerifierAppender_resultStandardScheme();
+    private static class getUserVerifier_resultStandardSchemeFactory implements SchemeFactory {
+      public getUserVerifier_resultStandardScheme getScheme() {
+        return new getUserVerifier_resultStandardScheme();
       }
     }
 
-    private static class getUserVerifierAppender_resultStandardScheme extends StandardScheme<getUserVerifierAppender_result> {
+    private static class getUserVerifier_resultStandardScheme extends StandardScheme<getUserVerifier_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserVerifierAppender_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserVerifier_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -97408,7 +97408,7 @@ public class ControlThriftService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserVerifierAppender_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserVerifier_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -97428,16 +97428,16 @@ public class ControlThriftService {
 
     }
 
-    private static class getUserVerifierAppender_resultTupleSchemeFactory implements SchemeFactory {
-      public getUserVerifierAppender_resultTupleScheme getScheme() {
-        return new getUserVerifierAppender_resultTupleScheme();
+    private static class getUserVerifier_resultTupleSchemeFactory implements SchemeFactory {
+      public getUserVerifier_resultTupleScheme getScheme() {
+        return new getUserVerifier_resultTupleScheme();
       }
     }
 
-    private static class getUserVerifierAppender_resultTupleScheme extends TupleScheme<getUserVerifierAppender_result> {
+    private static class getUserVerifier_resultTupleScheme extends TupleScheme<getUserVerifier_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, getUserVerifierAppender_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserVerifier_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
@@ -97456,7 +97456,7 @@ public class ControlThriftService {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, getUserVerifierAppender_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserVerifier_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {

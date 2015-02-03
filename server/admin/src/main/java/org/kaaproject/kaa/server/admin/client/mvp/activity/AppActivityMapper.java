@@ -46,6 +46,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifierPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifiersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UsersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
 
@@ -173,6 +175,12 @@ public class AppActivityMapper implements ActivityMapper {
             }
             else if (clazz ==  LogAppenderPlace.class) {
                 return new LogAppenderActivity((LogAppenderPlace) place, clientFactory);
+            }
+            else if (clazz ==  UserVerifiersPlace.class) {
+                return new UserVerifiersActivity((UserVerifiersPlace) place, clientFactory);
+            }
+            else if (clazz ==  UserVerifierPlace.class) {
+                return new UserVerifierActivity((UserVerifierPlace) place, clientFactory);
             }
 
         }

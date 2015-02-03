@@ -18,20 +18,12 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class LogAppenderPlace extends LogAppendersPlace {
+public class LogAppenderPlace extends AbstractPluginPlace {
 
-    protected String appenderId;
-
-    public LogAppenderPlace(String applicationId, String appenderId) {
-        super(applicationId);
-        this.appenderId = appenderId;
-    }
-
-    public String getAppenderId() {
-        return appenderId;
+    public LogAppenderPlace(String applicationId, String pluginId) {
+        super(applicationId, pluginId);
     }
 
     @Override
@@ -40,43 +32,13 @@ public class LogAppenderPlace extends LogAppendersPlace {
     }
 
     @Prefix(value = "appender")
-    public static class Tokenizer implements PlaceTokenizer<LogAppenderPlace>, PlaceConstants {
+    public static class Tokenizer extends AbstractPluginPlace.Tokenizer<LogAppenderPlace> {
 
         @Override
-        public LogAppenderPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new LogAppenderPlace(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(APPENDER_ID));
+        protected LogAppenderPlace getPlaceImpl(String applicationId,
+                String schemaId) {
+            return new LogAppenderPlace(applicationId, schemaId);
         }
-
-        @Override
-        public String getToken(LogAppenderPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(APPENDER_ID, place.getAppenderId());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        LogAppenderPlace other = (LogAppenderPlace) obj;
-        if (appenderId == null) {
-            if (other.appenderId != null)
-                return false;
-        } else if (!appenderId.equals(other.appenderId))
-            return false;
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
     }
 
     @Override

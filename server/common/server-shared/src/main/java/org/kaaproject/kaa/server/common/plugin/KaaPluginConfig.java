@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.log.shared.annotation;
+package org.kaaproject.kaa.server.common.plugin;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Represents a marker annotation for {@link PluginConfig}.
+ * 
+ * @author Igor Kulikov
+ *
+ */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE) 
-public @interface KaaAppenderConfig {
+public @interface KaaPluginConfig {
 
+    PluginType pluginType();
+    
 }

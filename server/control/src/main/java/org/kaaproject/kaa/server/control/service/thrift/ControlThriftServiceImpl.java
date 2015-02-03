@@ -1572,7 +1572,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     }
 
     @Override
-    public DataStruct getUserVerifierAppender(String userVerifierId)
+    public DataStruct getUserVerifier(String userVerifierId)
             throws ControlThriftException, TException {
         return toDataStruct(userVerifierService.findUserVerifierById(userVerifierId));
     }

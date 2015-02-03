@@ -668,4 +668,25 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("Server is unreachable")
     String serverIsUnreachable();
     
+    @DefaultStringValue("Type")
+    String type();
+    
+    @DefaultStringValue("Verifier token")
+    String verifierToken();
+    
+    @DefaultStringValue("Add user verifier")
+    String addUserVerifier();
+    
+    @DefaultStringValue("User Verifier")
+    String userVerifier();
+    
+    @DefaultStringValue("User Verifiers")
+    String userVerifiers();
+    
+    @DefaultStringValue("Add new user verifier")
+    String addNewUserVerifier();
+
+    @DefaultStringValue("User Verifier details")
+    String userVerifierDetails();
+    
 }

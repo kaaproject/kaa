@@ -241,7 +241,7 @@ service ControlThriftService extends cli.CliThriftService{
   * User verifiers
   */
   list<data> getUserVerifiersByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
-  data getUserVerifierAppender(1: id userVerifierId) throws(1: ControlThriftException ControlException)
+  data getUserVerifier(1: id userVerifierId) throws(1: ControlThriftException ControlException)
   data editUserVerifier(1: data userVerifier) throws(1: ControlThriftException ControlException)
   void deleteUserVerifier(1: id userVerifierId) throws(1: ControlThriftException ControlException)
 }

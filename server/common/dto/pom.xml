@@ -32,6 +32,11 @@
             <artifactId>shared</artifactId>
             <version>${avro-ui.version}</version>
         </dependency>              
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>        
 	</dependencies>
 
 	<build>

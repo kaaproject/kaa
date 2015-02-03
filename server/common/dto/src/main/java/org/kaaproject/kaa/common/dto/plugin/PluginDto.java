@@ -19,11 +19,12 @@ package org.kaaproject.kaa.common.dto.plugin;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.AbstractDetailDto;
 import org.kaaproject.kaa.common.dto.HasId;
 
-
+@JsonIgnoreProperties({"rawConfiguration","fieldConfiguration"})
 public abstract class PluginDto extends AbstractDetailDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -5156203569187681620L;

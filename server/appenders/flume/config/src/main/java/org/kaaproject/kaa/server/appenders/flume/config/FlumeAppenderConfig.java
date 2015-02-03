@@ -18,24 +18,25 @@ package org.kaaproject.kaa.server.appenders.flume.config;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
-import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
-import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 
-@KaaAppenderConfig
-public class FlumeAppenderConfig implements AppenderConfig {
+@KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
+public class FlumeAppenderConfig implements PluginConfig {
 
     @Override
-    public String getName() {
+    public String getPluginTypeName() {
         return "Flume";
     }
 
     @Override
-    public String getLogAppenderClass() {
+    public String getPluginClassName() {
         return "org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender";
     }
 
     @Override
-    public Schema getConfigSchema() {
+    public Schema getPluginConfigSchema() {
         return FlumeConfig.getClassSchema();
     }
 

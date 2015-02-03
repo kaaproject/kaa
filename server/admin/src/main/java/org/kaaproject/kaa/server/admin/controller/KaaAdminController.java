@@ -51,6 +51,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
@@ -582,6 +583,46 @@ public class KaaAdminController {
     public void deleteLogAppender(@RequestParam(value="logAppenderId") String logAppenderId) throws KaaAdminServiceException {
         kaaAdminService.deleteLogAppender(logAppenderId);
     }
+    
+    /**
+     * Gets all user verifiers by application id.
+     *
+     */
+    @RequestMapping(value="userVerifiers/{applicationId}", method=RequestMethod.GET)
+    @ResponseBody
+    public List<UserVerifierDto> getUserVerifiersByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.getRestUserVerifiersByApplicationId(applicationId);
+    }
+
+    /**
+     * Gets the user verifier by its id.
+     *
+     */
+    @RequestMapping(value="userVerifier/{userVerifierId}", method=RequestMethod.GET)
+    @ResponseBody
+    public UserVerifierDto getUserVerifier(@PathVariable String userVerifierId) throws KaaAdminServiceException {
+        return kaaAdminService.getRestUserVerifier(userVerifierId);
+    }
+
+    /**
+     * Edits user verifier.
+     *
+     */
+    @RequestMapping(value="userVerifier", method=RequestMethod.POST)
+    @ResponseBody
+    public UserVerifierDto editUserVerifier(@RequestBody UserVerifierDto userVerifier) throws KaaAdminServiceException {
+        return kaaAdminService.editRestUserVerifier(userVerifier);
+    }
+
+    /**
+     * Delete user verifier by its id.
+     *
+     */
+    @RequestMapping(value="delUserVerifier", method=RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteUserVerifier(@RequestParam(value="userVerifierId") String userVerifierId) throws KaaAdminServiceException {
+        kaaAdminService.deleteUserVerifier(userVerifierId);
+    }    
 
     /**
      * Generate log library by record key.
