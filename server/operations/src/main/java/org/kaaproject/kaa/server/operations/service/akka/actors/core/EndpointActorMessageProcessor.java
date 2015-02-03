@@ -873,7 +873,11 @@ public class EndpointActorMessageProcessor {
                 channelMap.removeChannel(channel);
             }
         }
-    }    
+        if(message.isSuccess()){
+            operationsService.attachEndpointToUser(endpointProfile, appToken, message.getUserId());
+            updateUserConnection(context);
+        }
+    }
 
     private UserAttachResponse toUserAttachResponse(UserVerificationResponseMessage value) {
         //TODO: improve response structure to handle error codes;

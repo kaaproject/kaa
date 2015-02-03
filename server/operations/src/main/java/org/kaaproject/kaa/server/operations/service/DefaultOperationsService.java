@@ -110,7 +110,7 @@ public class DefaultOperationsService implements OperationsService {
 
     @Autowired
     EndpointUserService endpointUserService;
-
+    
     private String operationServerHash;
 
     /*
@@ -667,5 +667,11 @@ public class DefaultOperationsService implements OperationsService {
     @Override
     public void setPublicKey(PublicKey publicKey) {
         operationServerHash = Base64Util.encode(SHA1HashUtils.hashToBytes(publicKey.getEncoded()));
+    }
+
+
+    @Override
+    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
+        return endpointUserService.attachEndpointToUser(profile, appToken, userExternalId);
     }
 }

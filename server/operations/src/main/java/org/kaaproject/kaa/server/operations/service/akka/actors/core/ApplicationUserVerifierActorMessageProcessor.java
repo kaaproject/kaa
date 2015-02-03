@@ -88,9 +88,9 @@ public class ApplicationUserVerifierActorMessageProcessor {
     public void verifyUser(UserVerificationRequestMessage message) {
         UserVerifier verifier = userVerifiers.get(message.getVerifierId());
         if (verifier != null) {
-            verifier.checkAccessToken(message.getUserId(), message.getAccessToken(), new DefaultVerifierCallback(message.getOriginator(), message.getRequestid()));
+            verifier.checkAccessToken(message.getUserId(), message.getAccessToken(), new DefaultVerifierCallback(message));
         } else {
-            message.getOriginator().tell(UserVerificationResponseMessage.failure(message.getRequestid(), UserVerifierErrorCode.NO_VERIFIER_CONFIGURED),
+            message.getOriginator().tell(UserVerificationResponseMessage.failure(message.getRequestid(), message.getUserId(), UserVerifierErrorCode.NO_VERIFIER_CONFIGURED),
                     ActorRef.noSender());
         }
     }
@@ -154,65 +154,71 @@ public class ApplicationUserVerifierActorMessageProcessor {
         
         private final ActorRef endpointActor;
         private final UUID requestId;
+        private final String userId;
 
-        public DefaultVerifierCallback(ActorRef endpointActor, UUID requestId) {
+        public DefaultVerifierCallback(UserVerificationRequestMessage message) {
             super();
-            this.endpointActor = endpointActor;
-            this.requestId = requestId;
+            this.endpointActor = message.getOriginator();
+            this.requestId = message.getRequestid();
+            this.userId = message.getUserId();
         }
         
-        private void tell(UserVerificationResponseMessage msg){
-            endpointActor.tell(msg, ActorRef.noSender());
+        private void tellFailure(UserVerifierErrorCode errorCode){
+            tellFailure(errorCode, null);
+        }
+        
+        private void tellFailure(UserVerifierErrorCode errorCode, String reason){
+            endpointActor.tell(UserVerificationResponseMessage.failure(requestId, reason, errorCode, reason), ActorRef.noSender());
         }
 
         @Override
         public void onSuccess() {
-            tell(UserVerificationResponseMessage.success(requestId));
+            endpointActor.tell(UserVerificationResponseMessage.success(requestId, userId), ActorRef.noSender());
         }
 
         @Override
         public void onTokenInvalid() {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.TOKEN_INVALID));
+            tellFailure(UserVerifierErrorCode.TOKEN_INVALID);
         }
 
         @Override
         public void onTokenExpired() {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.TOKEN_EXPIRED));
+            tellFailure(UserVerifierErrorCode.TOKEN_EXPIRED);
         }
 
         @Override
         public void onVerificationFailure(String reason) {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.OTHER, reason));
+            tellFailure(UserVerifierErrorCode.OTHER, reason);
         }
 
         @Override
         public void onInternalError() {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.INTERNAL_ERROR));
+            tellFailure(UserVerifierErrorCode.INTERNAL_ERROR);
         }
 
         @Override
         public void onInternalError(String reason) {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.TOKEN_EXPIRED, reason));
+            tellFailure(UserVerifierErrorCode.INTERNAL_ERROR, reason);
         }
 
         @Override
         public void onConnectionError() {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.CONNECTION_ERROR));
+            tellFailure(UserVerifierErrorCode.CONNECTION_ERROR);
         }
 
         @Override
         public void onConnectionError(String reason) {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.CONNECTION_ERROR, reason));
+            tellFailure(UserVerifierErrorCode.CONNECTION_ERROR, reason);
         }
 
         @Override
         public void onRemoteError() {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.REMOTE_ERROR));
+            tellFailure(UserVerifierErrorCode.REMOTE_ERROR);
         }
 
         @Override
         public void onRemoteError(String reason) {
-            tell(UserVerificationResponseMessage.failure(requestId, UserVerifierErrorCode.REMOTE_ERROR, reason));
+            tellFailure(UserVerifierErrorCode.REMOTE_ERROR, reason);
         }
     }
 }
