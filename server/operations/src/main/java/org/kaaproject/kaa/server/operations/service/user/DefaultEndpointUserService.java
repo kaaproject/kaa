@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -45,8 +44,6 @@ import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
 import org.kaaproject.kaa.server.sync.SyncStatus;
-import org.kaaproject.kaa.server.sync.UserAttachRequest;
-import org.kaaproject.kaa.server.sync.UserAttachResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,20 +82,11 @@ public class DefaultEndpointUserService implements EndpointUserService {
     public List<UserVerifierDto> findUserVerifiers(String appId) {
         return userVerifierService.findUserVerifiersByAppId(appId);
     }
-
+    
     @Override
-    public UserAttachResponse attachUser(EndpointProfileDto profile, UserAttachRequest userAttachRequest) {
-        ApplicationDto appDto = applicationService.findAppById(profile.getApplicationId());
-        throw new RuntimeException("Not implemented yet");
-//        if (endpointService.checkAccessToken(appDto, userAttachRequest.getUserExternalId(), userAttachRequest.getUserAccessToken())) {
-//            LOG.debug("[{}] received valid attachUserRequest. Assigning endpoint to user.", userAttachRequest.getUserExternalId());
-//            endpointService.attachEndpointToUser(userAttachRequest.getUserExternalId(), appDto.getTenantId(),
-//                    userAttachRequest.getUserAccessToken(), profile);
-//            return new UserAttachResponse(SyncStatus.SUCCESS);
-//        } else {
-//            LOG.warn("[{}] received invalid attachUserRequest.", userAttachRequest.getUserExternalId());
-//            return new UserAttachResponse(SyncStatus.FAILURE);
-//        }
+    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
+        String tenantId = cacheService.getTenantIdByAppToken(appToken);
+        return endpointService.attachEndpointToUser(userExternalId, tenantId, profile);
     }
 
     @Override

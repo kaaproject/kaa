@@ -316,17 +316,22 @@ public class BinaryEncDecTest {
 
     @Test
     public void testUserClientSync() throws PlatformEncDecException {
-        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + 4 + 8 + 4 + 4 + 8 + 4 + 4 + SHA_1_LENGTH]);
+        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + 4 + 4 + 8 + 8 + 4 + 4 + 8 + 4 + 4 + SHA_1_LENGTH]);
         // user assign request
         buf.put((byte) 0);
         buf.put((byte) 4);
         buf.put((byte) 0);
         buf.put((byte) 5);
+        buf.put((byte) 0);
+        buf.put((byte) 8);
+        buf.put((byte) 0);
+        buf.put((byte) 0);
         buf.put("user".getBytes(Charset.forName("UTF-8")));
         buf.put("token".getBytes(Charset.forName("UTF-8")));
         buf.put((byte) 0);
         buf.put((byte) 0);
         buf.put((byte) 0);
+        buf.put("verifier".getBytes(Charset.forName("UTF-8")));
         // attach requests
         buf.put((byte) 1);
         buf.put((byte) 0);
