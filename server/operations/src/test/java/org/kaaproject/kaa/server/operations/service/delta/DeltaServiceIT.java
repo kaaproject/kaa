@@ -76,7 +76,7 @@ import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-test-context.xml")
-@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
 @ActiveProfiles(value = "mongo")
 public class DeltaServiceIT {

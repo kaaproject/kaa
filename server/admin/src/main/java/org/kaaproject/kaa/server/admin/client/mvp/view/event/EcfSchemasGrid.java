@@ -17,13 +17,13 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class EcfSchemasGrid extends AbstractGrid<EventSchemaVersionDto, Integer> {
+public class EcfSchemasGrid extends AbstractKaaGrid<EventSchemaVersionDto, Integer> {
 
     public EcfSchemasGrid() {
         super(Unit.PX, false, true);

@@ -45,6 +45,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
 import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
@@ -165,14 +166,24 @@ public interface KaaAdminService extends RemoteService {
 
     public StructureRecordDto<ConfigurationDto> getConfigurationRecord(String schemaId, String endpointGroupId) throws KaaAdminServiceException;
 
+    public StructureRecordDto<ConfigurationRecordFormDto> getConfigurationRecordForm(String schemaId, String endpointGroupId) throws KaaAdminServiceException;
+
     public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
 
+    public List<SchemaInfoDto> getVacantConfigurationSchemaInfosByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
+    
     public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws KaaAdminServiceException;
 
+    public ConfigurationRecordFormDto editConfigurationRecordForm(ConfigurationRecordFormDto configuration) throws KaaAdminServiceException;
+    
     public ConfigurationDto activateConfiguration(String configurationId) throws KaaAdminServiceException;
 
+    public ConfigurationRecordFormDto activateConfigurationRecordForm(String configurationId) throws KaaAdminServiceException;
+    
     public ConfigurationDto deactivateConfiguration(String configurationId) throws KaaAdminServiceException;
 
+    public ConfigurationRecordFormDto deactivateConfigurationRecordForm(String configurationId) throws KaaAdminServiceException;
+    
     public void deleteConfigurationRecord(String schemaId, String endpointGroupId) throws KaaAdminServiceException;
 
     public List<TopicDto> getTopicsByApplicationId(String applicationId) throws KaaAdminServiceException;

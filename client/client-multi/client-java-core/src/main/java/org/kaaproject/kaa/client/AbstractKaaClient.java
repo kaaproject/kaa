@@ -42,16 +42,15 @@ import org.kaaproject.kaa.client.channel.MetaDataTransport;
 import org.kaaproject.kaa.client.channel.NotificationTransport;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.RedirectionTransport;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.UserTransport;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
-import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
-import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultBootstrapTransport;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultConfigurationTransport;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultEventTransport;
@@ -89,7 +88,6 @@ import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,8 +149,6 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     private final EndpointObjectHash publicKeyHash;
 
-    private final Map<ChannelType, KaaDataChannel> defaultChannels = new HashMap<ChannelType, KaaDataChannel>();
-
     AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         this(new KaaClientProperties());
     }
@@ -160,12 +156,12 @@ public abstract class AbstractKaaClient implements KaaClient {
     AbstractKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         this.properties = properties;
 
-        Map<ChannelType, List<ServerInfo>> bootstrapServers = properties.getBootstrapServers();
+        Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
             throw new RuntimeException("Unable to obtain list of bootstrap servers."); //NOSONAR
         }
 
-        for (Map.Entry<ChannelType, List<ServerInfo>> cursor : bootstrapServers.entrySet()) {
+        for (Map.Entry<TransportProtocolId, List<TransportConnectionInfo>> cursor : bootstrapServers.entrySet()) {
             Collections.shuffle(cursor.getValue());
         }
 
@@ -174,7 +170,7 @@ public abstract class AbstractKaaClient implements KaaClient {
         configurationPersistenceManager = new DefaultConfigurationPersistenceManager(
                                             kaaClientState, configurationProcessor);
 
-        BootstrapTransport bootstratpTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
+        BootstrapTransport bootstrapTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
         ProfileTransport profileTransport = new DefaultProfileTransport();
         EventTransport eventTransport = new DefaultEventTransport(kaaClientState);
         NotificationTransport notificationTransport = new DefaultNotificationTransport();
@@ -192,33 +188,28 @@ public abstract class AbstractKaaClient implements KaaClient {
         operationsDataProcessor.setUserTransport(userTransport);
         operationsDataProcessor.setLogTransport(logTransport);
 
-        bootstrapDataProcessor.setBootstrapTransport(bootstratpTransport);
+        bootstrapDataProcessor.setBootstrapTransport(bootstrapTransport);
 
         profileManager = new DefaultProfileManager(profileTransport);
-        bootstrapManager = new DefaultBootstrapManager(bootstratpTransport);
+        bootstrapManager = new DefaultBootstrapManager(bootstrapTransport);
         notificationManager = new DefaultNotificationManager(this.kaaClientState, notificationTransport);
         eventManager = new DefaultEventManager(this.kaaClientState, eventTransport);
         eventFamilyFactory = new EventFamilyFactory(this.eventManager);
         endpointRegistrationManager = new DefaultEndpointRegistrationManager(this.kaaClientState, userTransport, profileTransport);
-        logCollector = new DefaultLogCollector(logTransport);
 
         channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
+        logCollector = new DefaultLogCollector(logTransport, channelManager);
 
-        defaultChannels.put(ChannelType.KAATCP, new DefaultOperationTcpChannel(kaaClientState, channelManager));
-        defaultChannels.put(ChannelType.BOOTSTRAP, new DefaultBootstrapChannel(this, kaaClientState));
-        defaultChannels.put(ChannelType.HTTP, new DefaultOperationHttpChannel(this, kaaClientState));
-        defaultChannels.put(ChannelType.HTTP_LP, new DefaultOperationsChannel(this, kaaClientState));
-        for (Map.Entry<ChannelType, KaaDataChannel> channel : defaultChannels.entrySet()) {
-            if (channel.getKey().equals(ChannelType.BOOTSTRAP)) {
-                channel.getValue().setMultiplexer(bootstrapDataProcessor);
-                channel.getValue().setDemultiplexer(bootstrapDataProcessor);
-            } else {
-                channel.getValue().setMultiplexer(operationsDataProcessor);
-                channel.getValue().setDemultiplexer(operationsDataProcessor);
-            }
-        }
-        channelManager.addChannel(defaultChannels.get(ChannelType.BOOTSTRAP));
-        channelManager.addChannel(defaultChannels.get(ChannelType.KAATCP));
+        KaaDataChannel bootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
+        bootstrapChannel.setMultiplexer(bootstrapDataProcessor);
+        bootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
+        channelManager.addChannel(bootstrapChannel);
+        
+        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, channelManager);
+        operationsChannel.setMultiplexer(operationsDataProcessor);
+        operationsChannel.setDemultiplexer(operationsDataProcessor);
+        channelManager.addChannel(operationsChannel);
+
         bootstrapManager.setChannelManager(channelManager);
 
         publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
@@ -226,8 +217,10 @@ public abstract class AbstractKaaClient implements KaaClient {
         metaDataTransport.setClientState(kaaClientState);
         metaDataTransport.setEndpointPublicKeyhash(publicKeyHash);
         metaDataTransport.setTimeout(LONG_POLL_TIMEOUT);
-        bootstratpTransport.setBootstrapManager(bootstrapManager);
-        transports.put(TransportType.BOOTSTRAP, bootstratpTransport);
+        
+        bootstrapTransport.setBootstrapManager(bootstrapManager);
+        
+        transports.put(TransportType.BOOTSTRAP, bootstrapTransport);
         profileTransport.setProfileManager(profileManager);
         profileTransport.setClientProperties(properties);
         transports.put(TransportType.PROFILE, profileTransport);
@@ -410,10 +403,5 @@ public abstract class AbstractKaaClient implements KaaClient {
     @Override
     public LogCollector getLogCollector() {
         return logCollector;
-    }
-
-    @Override
-    public KaaDataChannel getDefaultChannel(ChannelType type) {
-        return defaultChannels.get(type);
     }
 }

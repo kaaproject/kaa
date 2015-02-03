@@ -33,7 +33,6 @@ import org.kaaproject.kaa.client.logging.LogCollector;
 import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 /**
  * <p>Interface for the Kaa client.</p>
@@ -211,13 +210,4 @@ public interface KaaClient {
      * @return LogCollector object
      */
     LogCollector getLogCollector();
-
-    /**
-     * <p>Retrieves the default channel implementation for the specified {@link ChannelType}.</p>
-     *
-     * @param type
-     *          the channel's type (HTTP, KAATCP, etc.)
-     * @return KaaDataChannel default implementation for the specified {@link ChannelType}
-     */
-    KaaDataChannel getDefaultChannel(ChannelType type);
 }

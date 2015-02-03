@@ -19,14 +19,14 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowAction;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEventHandler;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEventHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;

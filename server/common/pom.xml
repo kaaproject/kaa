@@ -48,6 +48,7 @@
         <module>log-shared</module>
         <module>admin-rest-client</module>
         <module>server-shared</module>
+        <module>transport-shared</module>
     </modules>
 
     <dependencyManagement>

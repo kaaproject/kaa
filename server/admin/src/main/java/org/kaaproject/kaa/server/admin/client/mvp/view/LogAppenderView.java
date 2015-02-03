@@ -31,6 +31,8 @@ public interface LogAppenderView extends BaseDetailsView {
 
     ValueListBox<Integer> getMaxSchemaVersion();
     
+    HasValue<Boolean> getConfirmDelivery();
+    
     HasValue<String> getName();
 
     ValueListBox<LogAppenderInfoDto> getAppenderInfo();
@@ -44,9 +46,9 @@ public interface LogAppenderView extends BaseDetailsView {
     void setMetadataListBox(List<LogHeaderStructureDto> header);
 
     List<LogHeaderStructureDto> getHeader();
-    
+
     HasValue<RecordField> getConfiguration();
-    
+
     void setSchemaVersions(List<Integer> schemaVersions);
-    
+
 }

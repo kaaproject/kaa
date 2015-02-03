@@ -25,8 +25,6 @@ import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.CommonBSConstants;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,26 +60,19 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
     }
 
     private void processTypes(Map<TransportType, ChannelDirection> types) throws Exception {
-        byte [] requestBodyRaw = getMultiplexer().compileRequest(types);
-        byte[] responseDataRaw = null;
+        byte[] requestBodyRaw = getMultiplexer().compileRequest(types);
+        byte [] decodedResponse = null;
         synchronized (this) {
-            LinkedHashMap<String, byte[]> requestEntity = new LinkedHashMap<String, byte[]>(); //NOSONAR
-            requestEntity.put(CommonBSConstants.APPLICATION_TOKEN_ATTR_NAME, requestBodyRaw);
-
-            LOG.debug("Going to execute {}", requestEntity);
-            responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, true);
+            LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createBootstrapHttpRequest(requestBodyRaw, getHttpClient().getEncoderDecoder());
+            byte [] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, false);
+            decodedResponse = getHttpClient().getEncoderDecoder().decodeData(responseDataRaw);
         }
-        getDemultiplexer().processResponse(responseDataRaw);
+        getDemultiplexer().processResponse(decodedResponse);
     }
 
     @Override
     public String getId() {
         return CHANNEL_ID;
-    }
-
-    @Override
-    public ChannelType getType() {
-        return ChannelType.HTTP;
     }
 
     @Override
@@ -100,5 +91,8 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
         return new BootstrapRunnable();
     }
 
-
+    @Override
+    protected String getURLSufix() {
+        return "/BS/Sync";
+    }
 }

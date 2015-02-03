@@ -44,7 +44,7 @@ import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDataLoader;
 import org.kaaproject.kaa.server.control.TestCluster;
 import org.kaaproject.kaa.server.control.cli.ControlApiCommandProcessor.EntityType;
 import org.kaaproject.kaa.server.control.service.ControlService;
-import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionType;
+import org.kaaproject.kaa.server.sync.SubscriptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

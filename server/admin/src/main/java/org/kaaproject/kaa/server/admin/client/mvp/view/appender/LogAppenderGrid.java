@@ -17,13 +17,13 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
+public class LogAppenderGrid extends AbstractKaaGrid<LogAppenderDto, String> {
 
     public LogAppenderGrid(boolean embedded) {
         super(Unit.PX, true, embedded);
@@ -45,9 +45,16 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
             @Override
             public String getValue(LogAppenderDto item) {
                 return String.valueOf(item.getMinLogSchemaVersion());
-
             }
         }, 80);
+        prefWidth += constructBooleanColumn(table,
+                Utils.constants.confirmDelivery(),
+                new BooleanValueProvider<LogAppenderDto>() {
+                    @Override
+                    public Boolean getValue(LogAppenderDto item) {
+                        return item.isConfirmDelivery();
+                    }
+                }, 40);
         prefWidth += constructStringColumn(table, Utils.constants.maxVersion(),
                 new StringValueProvider<LogAppenderDto>() {
             @Override
@@ -58,7 +65,6 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
                 else {
                     return String.valueOf(item.getMaxLogSchemaVersion());
                 }
-
             }
         }, 80);
         prefWidth += constructStringColumn(table, Utils.constants.logAppenderType(),

@@ -17,13 +17,13 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
 
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractGrid<T, String> {
+public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGrid<T, String> {
 
     public BaseSchemasGrid() {
         super(Unit.PX, false);

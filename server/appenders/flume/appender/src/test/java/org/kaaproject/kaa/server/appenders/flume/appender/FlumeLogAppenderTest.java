@@ -21,8 +21,11 @@ import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
+import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
@@ -32,7 +35,11 @@ import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -91,20 +98,58 @@ public class FlumeLogAppenderTest {
     @Test
     public void appendWithExceptionTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
-        doThrow(new EventDeliveryException()).when(flumeClientManger).sendEventToFlume(null);
-        appender.doAppend(eventPack);
+        Mockito.when(flumeEventBuilder.generateEvents(Mockito.any(LogEventPack.class), Mockito.any(RecordHeader.class), Mockito.anyString())).thenReturn(Collections.singletonList(Mockito.mock(Event.class)));
+        doThrow(new EventDeliveryException()).when(flumeClientManger).sendEventsToFlume(Mockito.anyList());
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        appender.doAppend(eventPack, callback);
+        Assert.assertTrue(callback.connectionError);
     }
 
     @Test
     public void appendTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
-        appender.doAppend(eventPack);
+        Mockito.when(flumeEventBuilder.generateEvents(Mockito.any(LogEventPack.class), Mockito.any(RecordHeader.class), Mockito.anyString())).thenReturn(Collections.singletonList(Mockito.mock(Event.class)));
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        appender.doAppend(eventPack, callback);
+        Assert.assertTrue(callback.success);
+
     }
 
     @Test
     public void appendWithEmptyClientManagerTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
         ReflectionTestUtils.setField(appender, "flumeClientManger", null);
-        appender.doAppend(eventPack);
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        appender.doAppend(eventPack, callback);
+        Assert.assertTrue(callback.internallError);
+    }
+    
+    private static class TestLogDeliveryCallback implements LogDeliveryCallback{
+
+    	private volatile boolean success;
+    	private volatile boolean internallError;
+    	private volatile boolean connectionError;
+    	private volatile boolean remoteError;
+    	
+		@Override
+		public void onSuccess() {
+			success = true;
+		}
+
+		@Override
+		public void onInternalError() {
+			internallError = true;
+		}
+
+		@Override
+		public void onConnectionError() {
+			connectionError = true;
+		}
+
+		@Override
+		public void onRemoteError() {
+			remoteError = true;
+		}
+    	
     }
 }

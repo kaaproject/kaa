@@ -20,16 +20,16 @@
 #ifdef KAA_USE_LOGGING
 
 #include "kaa/KaaDefaults.hpp"
-
-#include "kaa/log/LogRecord.hpp"
-#include "kaa/log/ILogStorage.hpp"
-#include "kaa/log/ILogStorageStatus.hpp"
-#include "kaa/log/ILogUploadConfiguration.hpp"
-#include "kaa/log/ILogUploadStrategy.hpp"
-#include "kaa/gen/EndpointGen.hpp"
 #include "kaa/log/gen/LogGen.hpp"
 
 namespace kaa {
+
+class ILogStorage;
+class ILogUploadConfiguration;
+class ILogUploadStrategy;
+class ILogUploadFailoverStrategy;
+class ILogStorageStatus;
+class LogSyncResponse;
 
 /**
  * Public interface for accessing Kaa Log Subsystem.
@@ -64,6 +64,13 @@ public:
      * \param   strategy    \c ILogUploadStrategy implementation.
      */
     virtual void setUploadStrategy(ILogUploadStrategy * strategy) = 0;
+
+    /**
+     * Provide specific strategy to determine what to do in case of a log upload failover.
+     *
+     * \param   strategy    \c ILogUploadFailoverStrategy implementation.
+     */
+    virtual void setFailoverStrategy(ILogUploadFailoverStrategy * strategy) = 0;
 
     /**
      * Provide object having information about current log storage state.

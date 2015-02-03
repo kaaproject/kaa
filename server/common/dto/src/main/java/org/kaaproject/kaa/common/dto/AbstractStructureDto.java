@@ -41,6 +41,30 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
     protected String body;
     protected UpdateStatus status;
     protected long endpointCount;
+    
+    public AbstractStructureDto() {}
+    
+    public AbstractStructureDto(AbstractStructureDto other) {
+        this.id = other.id;
+        this.applicationId = other.applicationId;
+        this.schemaId = other.schemaId;
+        this.endpointGroupId = other.endpointGroupId;
+        this.sequenceNumber = other.sequenceNumber;
+        this.majorVersion = other.majorVersion;
+        this.minorVersion = other.minorVersion;
+        this.description = other.description;
+        this.createdTime = other.createdTime;
+        this.lastModifyTime = other.lastModifyTime;
+        this.activatedTime = other.activatedTime;
+        this.deactivatedTime = other.deactivatedTime;
+        this.createdUsername = other.createdUsername;
+        this.modifiedUsername = other.modifiedUsername;
+        this.activatedUsername = other.activatedUsername;
+        this.deactivatedUsername = other.deactivatedUsername;
+        this.body = other.body;
+        this.status = other.status;
+        this.endpointCount = other.endpointCount;
+    }
 
     @Override
     public String getId() {

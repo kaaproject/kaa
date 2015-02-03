@@ -20,15 +20,20 @@ import java.io.IOException;
 import ${log_record_class_package}.${log_record_class};
 
 /**
- * Interface for log collector.
+ * <p>Interface for a log collector.</p>
  *
- * Responsible for adding new log record to a local storage.
+ * <p>Adds new log record to a local storage.</p>
  *
- * May be configurable by setting user defined log record storage,
+ * <p>May be configured by setting user defined log record storage,
  * storage status, upload configuration and log upload strategy.
- * Each of them may be set independently of others.
- * 
- * Reference implementation of each module is present and use by default.
+ * Each of them may be set independently of others.</p>
+ *
+ * <p>Reference implementation of each module used by default.</p>
+ *
+ * @see LogStorage
+ * @see LogStorageStatus
+ * @see LogUploadStrategy
+ * @see LogUploadConfiguration
  */
 public interface LogCollector {
     
@@ -54,15 +59,22 @@ public interface LogCollector {
     void setStorageStatus(LogStorageStatus status);
 
     /**
-     * Set user implementation of a log upload strategy. 
-     * 
+     * Set user implementation of a log upload strategy.
+     *
      * @param strategy User-defined log upload strategy object.
      */
     void setUploadStrategy(LogUploadStrategy strategy);
 
     /**
-     * Set user implementation of a log upload configuration. 
-     * 
+     * Set user implementation of a upload failover strategy.
+     *
+     * @param strategy User-defined upload failover strategy object.
+     */
+    void setFailoverStrategy(LogUploadFailoverStrategy strategy);
+
+    /**
+     * Set user implementation of a log upload configuration.
+     *
      * @param configuration User-defined log upload configuration object.
      */
     void setConfiguration(LogUploadConfiguration configuration);

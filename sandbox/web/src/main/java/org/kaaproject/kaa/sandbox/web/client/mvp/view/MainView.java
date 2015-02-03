@@ -40,6 +40,8 @@ public interface MainView extends IsWidget {
     
     HasClickHandlers getGoToKaaAdminWeb();
     
+    HasClickHandlers getGoToAvroUiSandboxWeb();
+    
     HasClickHandlers getChangeKaaHostButton();
     
     void setChangeKaaHostEnabled(boolean enabled);

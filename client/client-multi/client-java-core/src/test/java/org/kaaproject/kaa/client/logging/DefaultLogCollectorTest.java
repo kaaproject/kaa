@@ -16,17 +16,21 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Collections;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.logging.gen.SuperRecord;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +39,15 @@ public class DefaultLogCollectorTest {
 
     @Test
     public void testNewLogUploadConfiguration() {
-        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration(3, 4, 50);
-        LogTransport transport = mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport);
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration.Builder()
+                                                    .setBatchVolume(3)
+                                                    .setVolumeThreshold(4)
+                                                    .setMaximumAllowedVolume(50)
+                                                    .setLogUploadTimeout(300)
+                                                    .build();
+        LogTransport transport = Mockito.mock(LogTransport.class);
+        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
         logCollector.setConfiguration(conf);
 
         try {
@@ -73,8 +83,9 @@ public class DefaultLogCollectorTest {
 
     @Test
     public void testNewUploadStrategyWithDefaultStorageStatus() {
-        LogTransport transport = mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport);
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        LogTransport transport = Mockito.mock(LogTransport.class);
+        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
 
         logCollector.setUploadStrategy(new CustomStrategy());
 
@@ -104,8 +115,9 @@ public class DefaultLogCollectorTest {
 
     @Test
     public void testNewLoStorageStatus() {
-        LogTransport transport = mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport);
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        LogTransport transport = Mockito.mock(LogTransport.class);
+        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
         CustomStorageStatus status = new CustomStorageStatus();
         CustomStrategy strategy = new CustomStrategy();
 
@@ -128,9 +140,10 @@ public class DefaultLogCollectorTest {
 
     @Test
     public void testNewLogStorage() {
-        LogStorage storage = mock(LogStorage.class);
-        LogTransport transport = mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport);
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        LogStorage storage = Mockito.mock(LogStorage.class);
+        LogTransport transport = Mockito.mock(LogTransport.class);
+        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
         CustomStorageStatus status = new CustomStorageStatus();
 
         logCollector.setStorage(storage);
@@ -159,9 +172,16 @@ public class DefaultLogCollectorTest {
 
     @Test
     public void testLogUploadRequestAndSuccessResponse() {
-        LogTransport transport = mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport);
-        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration(15, 25, 50);
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        LogTransport transport = Mockito.mock(LogTransport.class);
+        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+        DefaultLogUploadConfiguration conf =
+                new DefaultLogUploadConfiguration.Builder()
+                                            .setBatchVolume(15)
+                                            .setVolumeThreshold(25)
+                                            .setMaximumAllowedVolume(50)
+                                            .setLogUploadTimeout(300)
+                                            .build();
 
         logCollector.setConfiguration(conf);
 
@@ -184,9 +204,8 @@ public class DefaultLogCollectorTest {
                     , request1.getLogEntries().size() == 3);
 
             LogSyncResponse uploadResponse = new LogSyncResponse();
-            uploadResponse.setRequestId(request1.getRequestId());
-            uploadResponse.setResult(SyncResponseResultType.SUCCESS);
-
+            LogDeliveryStatus status = new LogDeliveryStatus(request1.getRequestId(), SyncResponseResultType.SUCCESS, null);
+            uploadResponse.setDeliveryStatuses(Collections.singletonList(status));
             try {
                 logCollector.onLogResponse(uploadResponse);
             } catch (Exception e) {
@@ -194,6 +213,53 @@ public class DefaultLogCollectorTest {
             }
 
             verify(transport, times(1)).sync();
+        } catch (Exception e) {
+            Assert.assertTrue("Exception: " + e.toString(), false);
+        }
+    }
+
+    @Test
+    public void testTimeout() {
+        long timeout = 2; // in seconds
+
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        LogTransport transport = Mockito.mock(LogTransport.class);
+        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+        LogUploadFailoverStrategy failoverStrategy = Mockito.mock(LogUploadFailoverStrategy.class);
+        DefaultLogUploadConfiguration conf =
+                new DefaultLogUploadConfiguration.Builder()
+                                            .setBatchVolume(15)
+                                            .setVolumeThreshold(25)
+                                            .setMaximumAllowedVolume(50)
+                                            .setLogUploadTimeout(timeout)
+                                            .build();
+
+        logCollector.setConfiguration(conf);
+        logCollector.setFailoverStrategy(failoverStrategy);
+
+        try {
+            SuperRecord record = new SuperRecord();
+            record.setLogdata("test");
+
+            logCollector.addLogRecord(record);
+            logCollector.addLogRecord(record);
+            logCollector.addLogRecord(record);
+            logCollector.addLogRecord(record);
+            logCollector.addLogRecord(record);
+            logCollector.addLogRecord(record);
+
+            Mockito.verify(failoverStrategy, Mockito.times(0)).onTimeout();
+
+            LogSyncRequest request1 = Mockito.mock(LogSyncRequest.class);
+            logCollector.fillSyncRequest(request1);
+
+            Thread.sleep(timeout / 2 * 1000);
+            Mockito.verify(failoverStrategy, Mockito.times(0)).onTimeout();
+            Thread.sleep(timeout / 2 * 1000);
+
+            logCollector.addLogRecord(record);
+
+            Mockito.verify(failoverStrategy, Mockito.times(1)).onTimeout();
         } catch (Exception e) {
             Assert.assertTrue("Exception: " + e.toString(), false);
         }

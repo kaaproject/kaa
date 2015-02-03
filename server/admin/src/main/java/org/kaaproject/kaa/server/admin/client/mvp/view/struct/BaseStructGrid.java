@@ -19,13 +19,13 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractGrid<StructureRecordDto<T>, StructureRecordKey> {
+public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaGrid<StructureRecordDto<T>, StructureRecordKey> {
 
     public BaseStructGrid() {
         super(Unit.PX, true, true);

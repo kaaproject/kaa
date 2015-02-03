@@ -19,6 +19,8 @@ package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
+
 /**
  * The Class OperationsServerLoadHistory
  *
@@ -33,12 +35,11 @@ public class OperationsServerLoadHistory {
      */
     public class OperationsServerLoad {
         private final long time;
-        private int registeredUsersCount;
-        private int processedRequestCount;
-        private int deltaCalculationCount;
+        private LoadInfo loadInfo;
 
-        protected OperationsServerLoad() {
+        protected OperationsServerLoad(LoadInfo load) {
             time = System.currentTimeMillis();
+            this.loadInfo = load;
         }
 
         /**
@@ -55,8 +56,8 @@ public class OperationsServerLoadHistory {
          *
          * @return the registeredUsersCount
          */
-        public int getRegisteredUsersCount() {
-            return registeredUsersCount;
+        public LoadInfo getLoadInfo() {
+            return loadInfo;
         }
 
         /**
@@ -64,44 +65,8 @@ public class OperationsServerLoadHistory {
          *
          * @param registeredUsersCount the registeredUsersCount to set
          */
-        public void setRegisteredUsersCount(int registeredUsersCount) {
-            this.registeredUsersCount = registeredUsersCount;
-        }
-
-        /**
-         * Gets the processed request count.
-         *
-         * @return the processedRequestCount
-         */
-        public int getProcessedRequestCount() {
-            return processedRequestCount;
-        }
-
-        /**
-         * Sets the processed request count.
-         *
-         * @param processedRequestCount the processedRequestCount to set
-         */
-        public void setProcessedRequestCount(int processedRequestCount) {
-            this.processedRequestCount = processedRequestCount;
-        }
-
-        /**
-         * Gets the delta calculation count.
-         *
-         * @return the deltaCalculationCount
-         */
-        public int getDeltaCalculationCount() {
-            return deltaCalculationCount;
-        }
-
-        /**
-         * Sets the delta calculation count.
-         *
-         * @param deltaCalculationCount the deltaCalculationCount to set
-         */
-        public void setDeltaCalculationCount(int deltaCalculationCount) {
-            this.deltaCalculationCount = deltaCalculationCount;
+        public void setLoadInfo(LoadInfo loadInfo) {
+            this.loadInfo = loadInfo;
         }
     }
 
@@ -117,13 +82,9 @@ public class OperationsServerLoadHistory {
      * @param processedRequestCount the processed request count
      * @param deltaCalculationCount the delta calculation count
      */
-    public void addOpsServerLoad(int registeredUsersCount, int processedRequestCount, int deltaCalculationCount) {
+    public void addOpsServerLoad(LoadInfo load) {
         removeOldHistory();
-        OperationsServerLoad snap = new OperationsServerLoad();
-        snap.setRegisteredUsersCount(registeredUsersCount);
-        snap.setProcessedRequestCount(processedRequestCount);
-        snap.setDeltaCalculationCount(deltaCalculationCount);
-        history.add(snap);
+        history.add(new OperationsServerLoad(load));
     }
 
     /**

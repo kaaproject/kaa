@@ -21,15 +21,15 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPane
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseRecordViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ProfileFilterViewImpl extends BaseRecordViewImpl<ProfileFilterDto> {
+public class ProfileFilterViewImpl extends BaseRecordViewImpl<ProfileFilterDto, String> {
 
     public ProfileFilterViewImpl(boolean create) {
         super(create);
     }
 
     @Override
-    protected AbstractRecordPanel<ProfileFilterDto> createRecordPanel() {
-        return new ProfileFilterPanel();
+    protected AbstractRecordPanel<ProfileFilterDto, String> createRecordPanel() {
+        return new ProfileFilterPanel(this);
     }
 
     @Override

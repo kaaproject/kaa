@@ -54,6 +54,10 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(IServerInfoPtr server);
 
+    virtual IServerInfoPtr getServer() {
+        return currentServer_;
+    }
+
     virtual void shutdown();
     virtual void pause();
     virtual void resume();

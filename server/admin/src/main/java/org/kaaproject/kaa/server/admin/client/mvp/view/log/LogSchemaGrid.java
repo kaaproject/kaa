@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.log;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionListener;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionValidator;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowAction;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell.ActionListener;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell.ActionValidator;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 

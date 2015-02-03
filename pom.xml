@@ -453,6 +453,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/bin/**</exclude>
                         <exclude>**/thirdparty/**</exclude>
                         <exclude>**/security.policy</exclude>
+                        <exclude>**/*-transport.config</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -514,6 +515,35 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>log-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>transport-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+                <artifactId>transport</artifactId>
+                <classifier>http</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+                <artifactId>config</artifactId>
+                <classifier>http</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+                <artifactId>transport</artifactId>
+                <classifier>tcp</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+                <artifactId>config</artifactId>
+                <classifier>tcp</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -889,6 +919,10 @@ Copyright 2014 CyberVision, Inc.
         <repository>
             <id>repository.kaaproject</id>
             <url>http://repository.kaaproject.org/repository/internal/</url>
+        </repository>
+        <repository>
+            <id>repository.kaaproject.shapshots</id>
+            <url>http://repository.kaaproject.org/repository/snapshots/</url>
         </repository>
     </repositories>
 </project>

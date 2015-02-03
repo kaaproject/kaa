@@ -51,6 +51,10 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(IServerInfoPtr server);
 
+    virtual IServerInfoPtr getServer() {
+        return currentServer_;
+    }
+
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
 
     virtual void shutdown();

@@ -45,7 +45,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointVersionInfo;
+import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

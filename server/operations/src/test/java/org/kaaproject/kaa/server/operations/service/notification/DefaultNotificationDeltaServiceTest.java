@@ -39,11 +39,11 @@ import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationResponse;
-import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand;
-import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType;
-import org.kaaproject.kaa.server.operations.pojo.sync.TopicState;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
+import org.kaaproject.kaa.server.sync.SubscriptionCommand;
+import org.kaaproject.kaa.server.sync.SubscriptionCommandType;
+import org.kaaproject.kaa.server.sync.TopicState;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 

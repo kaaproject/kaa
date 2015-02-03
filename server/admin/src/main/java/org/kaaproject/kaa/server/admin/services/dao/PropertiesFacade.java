@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.admin.services.dao;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -28,12 +27,18 @@ import javax.transaction.Transactional;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.specific.SpecificRecordBase;
+import org.kaaproject.avro.ui.converter.FormAvroConverter;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.server.admin.services.entity.Properties;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
-import org.kaaproject.avro.ui.converter.FormAvroConverter;
-import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -98,14 +103,16 @@ public class PropertiesFacade {
         }
     }
     
-    @SuppressWarnings("unchecked")
     private <S extends SpecificRecordBase> S buildDefaultProperties(Class<S> propertiesClass) {
         S result = null;
         try {
-            Method newBuilderMethod = propertiesClass.getMethod("newBuilder");
-            Object builderObject = newBuilderMethod.invoke(null);
-            Method buildMethod = builderObject.getClass().getMethod("build");
-            result = (S)buildMethod.invoke(builderObject);
+            Schema schema = (Schema)propertiesClass.getField(SCHEMA).get(null);
+            RawSchema rawSchema = new RawSchema(schema.toString());
+            DefaultRecordGenerationAlgorithm<RawData> algotithm = 
+                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+            RawData rawData = algotithm.getRootData();
+            AvroJsonConverter<S> converter = new AvroJsonConverter<>(schema, propertiesClass);
+            result = converter.decodeJson(rawData.getRawData());
         } catch (Exception e) {
             LOG.error("Unable to build default specific properties for class " + propertiesClass.getSimpleName(), e);
         }

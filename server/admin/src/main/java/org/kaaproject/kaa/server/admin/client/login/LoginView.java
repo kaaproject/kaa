@@ -16,9 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.login;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel.Type;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel.Type;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
@@ -37,7 +38,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class LoginView extends Composite {
+public class LoginView extends Composite implements HasErrorMessage {
     private static LoginViewUiBinder uiBinder = GWT.create(LoginViewUiBinder.class);
 
     interface LoginViewUiBinder extends UiBinder<Widget, LoginView> {
@@ -116,6 +117,18 @@ public class LoginView extends Composite {
         return forgotPasswordLabel;
     }
 
+    @Override
+    public void clearError() {
+        errorPanel.setMessage("");
+        errorPanel.setVisible(false);
+    }
+
+    @Override
+    public void setErrorMessage(String message) {
+        errorPanel.setMessage(message);
+        errorPanel.setVisible(true);
+    }
+
     public void clearMessages() {
         errorPanel.setMessage("");
         errorPanel.setVisible(false);
@@ -123,13 +136,9 @@ public class LoginView extends Composite {
         infoPanel.setVisible(false);
     }
 
-    public void setErrorMessage(String message) {
-        errorPanel.setMessage(message);
-        errorPanel.setVisible(true);
-    }
-
     public void setInfoMessage(String message) {
         infoPanel.setMessage(message);
         infoPanel.setVisible(true);
     }
+
 }
