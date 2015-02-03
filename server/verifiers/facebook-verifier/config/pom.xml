@@ -20,13 +20,13 @@
     <parent>
         <groupId>org.kaaproject.kaa.server.verifiers</groupId>
         <version>0.7.0-SNAPSHOT</version>
-        <artifactId>trustful-verifier</artifactId>
+        <artifactId>facebook-verifier</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+    <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
     <artifactId>config</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa trustful verifier config</name>
+    <name>Kaa Facebook verifier config</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -48,20 +48,8 @@
             <artifactId>utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
         </dependency>
     </dependencies>
 
@@ -93,7 +81,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <classifier>trustful</classifier>
+                    <classifier>facebook</classifier>
                 </configuration>
             </plugin>
         </plugins>

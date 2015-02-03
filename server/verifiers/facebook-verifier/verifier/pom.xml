@@ -20,13 +20,13 @@
     <parent>
         <groupId>org.kaaproject.kaa.server.verifiers</groupId>
         <version>0.7.0-SNAPSHOT</version>
-        <artifactId>trustful-verifier</artifactId>
+        <artifactId>facebook-verifier</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+    <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
     <artifactId>verifier</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa trustful verifier implementation</name>
+    <name>Kaa Facebook verifier implementation</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -40,10 +40,10 @@
             <artifactId>verifier-shared</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+            <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
-            <classifier>trustful</classifier>
+            <classifier>facebook</classifier>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -55,6 +55,19 @@
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -63,7 +76,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <classifier>trustful</classifier>
+                    <classifier>facebook</classifier>
                 </configuration>
             </plugin>
         </plugins>
