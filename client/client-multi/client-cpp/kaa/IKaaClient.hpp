@@ -170,6 +170,20 @@ public:
      */
     virtual IKaaDataDemultiplexer&            getOperationDemultiplexer() = 0;
 
+    /**
+     * Retrieves Kaa bootstrap data multiplexer
+     *
+     * @return @link IKaaDataMultiplexer @endlink object
+     */
+    virtual IKaaDataMultiplexer&              getBootstrapMultiplexer() = 0;
+
+    /**
+     * Retrieves Kaa bootstrap data demultiplexer
+     *
+     * @return @link IKaaDataDemultiplexer @endlink object
+     */
+    virtual IKaaDataDemultiplexer&            getBootstrapDemultiplexer() = 0;
+
     virtual ~IKaaClient() { }
 };
 

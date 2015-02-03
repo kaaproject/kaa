@@ -688,7 +688,7 @@ public:
     static std::string EventSequenceNumberResponseToString(const EventSyncResponse::eventSequenceNumberResponse_t& response) {
         std::ostringstream ss;
         if (!response.is_null()) {
-            ss << KVSTRING(sequnceNumber, response.get_EventSequenceNumberResponse().seqNum);
+            ss << KVSTRING(sequenceNumber, response.get_EventSequenceNumberResponse().seqNum);
         } else {
             ss << "null";
         }

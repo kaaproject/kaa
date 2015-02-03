@@ -91,6 +91,9 @@ public:
 #endif
     virtual IKaaDataMultiplexer&                getOperationMultiplexer() { return *syncProcessor_; }
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer() { return *syncProcessor_; }
+
+    virtual IKaaDataMultiplexer&                getBootstrapMultiplexer()  { return *syncProcessor_; }
+    virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer() { return *syncProcessor_; }
 private:
     void initKaaConfiguration();
     void initKaaTransport();

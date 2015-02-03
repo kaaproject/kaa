@@ -206,8 +206,7 @@ void SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &respons
 {
     SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
     std::int32_t requestId = syncResponse.requestId;
-    KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%")
-        % requestId );
+    KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%") % requestId );
 
     if (!syncResponse.bootstrapSyncResponse.is_null() ) {
         KAA_LOG_DEBUG(boost::format("Got BootstrapSyncResponse: %1%")

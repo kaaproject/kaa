@@ -40,9 +40,14 @@ public:
         request->endpointPublicKeyHash.set_bytes(publicKeyHash_);
 
         SharedDataBuffer buffer = clientStatus_->getProfileHash();
+
         std::vector<std::uint8_t> profileHash;
         profileHash.reserve(buffer.second);
-        std::copy(buffer.first.get(), buffer.first.get() + buffer.second, profileHash.begin());
+
+        for (size_t i = 0; i < buffer.second; ++i) {
+            profileHash.push_back(buffer.first[i]);
+        }
+
         request->profileHash.set_bytes(profileHash);
 
         request->timeout.set_long(timeout_);
