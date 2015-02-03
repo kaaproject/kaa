@@ -1,0 +1,8 @@
+{
+ "namespace": "org.kaaproject.kaa.server.verifiers.gplus.config.gen",
+ "type": "record",
+ "name": "GplusAvroConfig",
+ "fields": [
+    {"name":"max_parallel_connections","type":"int"}
+ ]
+}
