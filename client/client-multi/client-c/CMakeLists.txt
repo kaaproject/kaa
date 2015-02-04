@@ -30,7 +30,7 @@ endif()
 
 if (CMAKE_COMPILER_IS_GNUCC)
 # TODO: add switch for Debug/Release versions
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -std=gnu99")
 if (KAA_COLLECT_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
 endif ()
@@ -77,6 +77,7 @@ set (KAA_SOURCE_FILES
                        src/kaa.c
                        src/utilities/kaa_log.c
                        src/utilities/kaa_mem.c
+                       src/utilities/kaa_buffer.c
                        src/kaa_platform_utils.c
                        src/platform-impl/ext_log_storage_memory.c
                        src/platform-impl/posix/logger.c
