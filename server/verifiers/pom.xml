@@ -35,6 +35,7 @@
     </properties>
     <modules>
         <module>trustful-verifier</module>
+        <module>gplus-verifier</module>
         <module>facebook-verifier</module>
     </modules>
 </project>
