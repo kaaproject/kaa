@@ -8,14 +8,8 @@ import org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.io.*;
+import java.net.*;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(GplusUserVerifier.class);
-    private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
+    private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo";
 
     private ExecutorService threadPool;
 
@@ -40,13 +34,11 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
         URL url = null;
         try {
-            url = new URL(GOOGLE_OAUTH + URLEncoder.encode(accessToken, "UTF-8"));
+            url = new URL(GOOGLE_OAUTH);
         } catch (MalformedURLException e) {
             LOG.debug("message", e);
-        } catch (UnsupportedEncodingException e) {
-            LOG.debug("message", e);
         }
-        threadPool.submit(new RunnableVerifier(url, callback, userExternalId));
+        threadPool.submit(new RunnableVerifier(url, callback, userExternalId, accessToken));
 
     }
 
@@ -56,11 +48,13 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         private URL url;
         private UserVerifierCallback callback;
         private String userExternalId;
+        private String accessToken;
 
-        public RunnableVerifier(URL url, UserVerifierCallback callback, String userExternalId) {
+        public RunnableVerifier(URL url, UserVerifierCallback callback, String userExternalId, String accessToken) {
             this.url = url;
             this.callback = callback;
             this.userExternalId = userExternalId;
+            this.accessToken = accessToken;
         }
 
         @Override
@@ -72,7 +66,34 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             HttpURLConnection connection = null;
             try {
                 connection = establishConnection(url);
-                connection.setRequestMethod("GET");
+
+                try {
+                    connection.setRequestMethod("POST");
+                } catch (ProtocolException e) {
+                    LOG.debug("message", e);
+                }
+
+                connection.setRequestProperty("Content-Type",
+                        "application/x-www-form-urlencoded");
+                connection.setUseCaches(false);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                String urlParameters = "access_token=" + accessToken;
+
+                connection.setRequestProperty("Content-Length", "" +
+                        Integer.toString(urlParameters.getBytes().length));
+
+                try {
+                    DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                    wr.writeBytes(urlParameters);
+                    wr.flush();
+                    wr.close();
+                } catch (IOException e) {
+                    LOG.debug("message", e);
+                }
+
+
                 int responseCode = connection.getResponseCode();
 
                 if (responseCode == 400) {
