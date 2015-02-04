@@ -59,7 +59,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
         @Override
         public void run() {
-            BufferedReader br = null;
+            BufferedReader bufferedReader = null;
             String line;
             StringBuilder responseJson = new StringBuilder();
 
@@ -102,11 +102,11 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 }
 
                 if (responseCode == 200) {
-                    br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    while ((line = br.readLine()) != null) {
+                    bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    while ((line = bufferedReader.readLine()) != null) {
                         responseJson.append(line);
                     }
-                    br.close();
+                    bufferedReader.close();
 
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, String> map = mapper.readValue(responseJson.toString(), Map.class);
@@ -126,6 +126,13 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             } finally {
                 if (null != connection) {
                     connection.disconnect();
+                }
+                if(null!=bufferedReader){
+                    try {
+                        bufferedReader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
