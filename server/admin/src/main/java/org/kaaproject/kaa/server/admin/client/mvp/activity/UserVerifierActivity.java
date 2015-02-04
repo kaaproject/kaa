@@ -13,8 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class UserVerifierActivity extends AbstractPluginActivity<UserVerifierDto, UserVerifierView, UserVerifierPlace> {
 
-    private String applicationId;
-
     public UserVerifierActivity(UserVerifierPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
     }

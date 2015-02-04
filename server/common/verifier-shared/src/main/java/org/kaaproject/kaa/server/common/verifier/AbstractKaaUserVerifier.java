@@ -17,10 +17,10 @@ public abstract class AbstractKaaUserVerifier<T extends SpecificRecordBase> impl
         AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(getConfigurationClass());
         try {
             T configuration = converter.fromByteArray(context.getVerifierDto().getRawConfiguration());
-            LOG.info("Initializing transport {} with {}", getClassName(), configuration);
+            LOG.info("Initializing user verifier {} with {}", getClassName(), configuration);
             init(context, configuration);
         } catch (IOException e) {
-            LOG.error(MessageFormat.format("Failed to initialize transport {0}", getClassName()), e);
+            LOG.error(MessageFormat.format("Failed to initialize user verifier {0}", getClassName()), e);
             throw new UserVerifierLifecycleException(e);
         }
     }

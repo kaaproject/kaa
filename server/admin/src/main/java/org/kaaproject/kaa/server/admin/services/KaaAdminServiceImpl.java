@@ -37,6 +37,8 @@ import net.iharder.Base64;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
+//import org.codehaus.jackson.map.ObjectMapper;
+//import org.codehaus.jackson.map.SerializationConfig;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -111,7 +113,7 @@ import org.springframework.stereotype.Service;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
-
+    
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
 
