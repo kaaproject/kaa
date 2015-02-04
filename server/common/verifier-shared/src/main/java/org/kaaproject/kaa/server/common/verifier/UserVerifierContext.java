@@ -37,4 +37,13 @@ public class UserVerifierContext {
     public UserVerifierDto getVerifierDto() {
         return verifierDto;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UserVerifierContext [verifierDto=");
+        builder.append(verifierDto);
+        builder.append("]");
+        return builder.toString();
+    }
 }
