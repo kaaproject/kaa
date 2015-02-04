@@ -72,10 +72,6 @@ set ( KAA_TEST_SOURCES
         ../impl/transport/HttpDataProcessor.cpp
         ../impl/bootstrap/BootstrapManager.cpp
         ../impl/bootstrap/BootstrapTransport.cpp
-#        ../impl/update/PollingStrategy.cpp
-#        ../impl/update/LongPollStrategy.cpp
-#        ../impl/update/ExternalUpdateManager.cpp
-#        ../impl/update/RequestFactory.cpp
         ../impl/common/CommonTypesFactory.cpp
         ../impl/common/AvroGenericUtils.cpp
         ../impl/common/types/CommonArray.cpp
@@ -111,6 +107,7 @@ set ( KAA_TEST_SOURCES
         ../impl/log/LogCollector.cpp
         ../impl/log/LogRecord.cpp
         ../impl/log/MemoryLogStorage.cpp
+        ../impl/log/LogUploadFailoverStrategy.cpp
         ../impl/kaatcp/KaaTcpCommon.cpp
         ../impl/kaatcp/KaaTcpParser.cpp
         ../impl/kaatcp/ConnackMessage.cpp
@@ -122,8 +119,6 @@ set ( KAA_TEST_SOURCES
         impl/common/AvroByteArrayConverterTest.cpp
         impl/common/AvroDatumsComparatorTest.cpp
         impl/common/CommonTypesFactoryTest.cpp
-##        impl/profile/UpdateProfileTest.cpp
-##        impl/update/EndpointCommandsTest.cpp
         impl/schema/SchemaProcessorTest.cpp
         impl/schema/SchemaPersistenceTest.cpp
         impl/configuration/ConfigurationTests.cpp
@@ -135,15 +130,11 @@ set ( KAA_TEST_SOURCES
         impl/http/HttpUrlTest.cpp
         impl/http/HttpResponseTest.cpp
         impl/http/HttpRequestTest.cpp
-#        impl/http/HttpExternalTransportManagerTest.cpp
         impl/ClientStatusTest.cpp
         impl/event/EndpointRegistrationManagerTest.cpp
         impl/bootstrap/ServerInfoTest.cpp
         impl/channel/HttpServerInfoTest.cpp
-##        impl/bootstrap/BootstrapManagerTest.cpp
         impl/security/KeyUtilsTest.cpp
-##        impl/event/EventFamilyFactoryTest.cpp
-##        impl/event/EventListenersResolverTest.cpp
         impl/event/EventTransportTest.cpp
         impl/channel/AbstractServerInfoTest.cpp
         impl/channel/KaaChannelManagerTest.cpp
@@ -151,6 +142,10 @@ set ( KAA_TEST_SOURCES
         impl/notification/NotificationManagerTest.cpp
         impl/kaatcp/KaaTcpTest.cpp
         impl/channel/PingConnectivityCheckerTest.cpp
+        impl/log/LogUploadFailoverStrategyTest.cpp
+##        impl/bootstrap/BootstrapManagerTest.cpp
+##        impl/event/EventFamilyFactoryTest.cpp
+##        impl/event/EventListenersResolverTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

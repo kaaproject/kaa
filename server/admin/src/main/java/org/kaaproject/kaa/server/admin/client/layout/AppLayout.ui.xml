@@ -20,12 +20,13 @@
         xmlns:kaa="urn:import:org.kaaproject.kaa.server.admin.client">
 
         <ui:with field='kaaAdminStyle' type='org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle'/>  
-    
+        <ui:with field='avroUiStyle' type='org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle'/>  
+        
         <gwt:FlowPanel ui:field="mainLayoutPanel">
             <gwt:SimplePanel ui:field="appHeader" />
             <gwt:FlowPanel ui:field="navPanel">
             </gwt:FlowPanel>
-            <kaa:layout.SimpleWidgetPanel styleName="{kaaAdminStyle.bAppContent}" ui:field="appContent" />
+            <kaa:layout.SimpleWidgetPanel styleName="{avroUiStyle.bAppContent}" ui:field="appContent" />
         </gwt:FlowPanel>
 
 </ui:UiBinder>

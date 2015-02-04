@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -26,7 +27,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.data.EventMapDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

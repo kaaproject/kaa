@@ -65,6 +65,9 @@
     <extend-property name="locale" values="en"/>
 
     <set-property-fallback name="locale" value="en"/>
+    
+    <!--  set-property name="locale" value="en"/-->
+    
     <set-configuration-property name="locale.cookie" value="KAA_ADMIN_LOCALE"/>
     <set-configuration-property name="locale.useragent" value="Y"/>
 

@@ -42,6 +42,7 @@ extern "C" {
 /**
  * Extension ID description
  */
+#define KAA_BOOTSTRAP_EXTENSION_TYPE        0
 #define KAA_META_DATA_EXTENSION_TYPE        1
 #define KAA_PROFILE_EXTENSION_TYPE          2
 #define KAA_USER_EXTENSION_TYPE             3

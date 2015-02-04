@@ -19,10 +19,10 @@
 
 #ifdef KAA_USE_LOGGING
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <vector>
 #include <cstdint>
+
+#include "kaa/KaaDefaults.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/log/gen/LogGen.hpp"
 
@@ -30,7 +30,8 @@ namespace kaa {
 
 class LogRecord {
 public:
-    LogRecord(const %{log_record_class_name} & logRecord) {
+    LogRecord() {}
+    LogRecord(const SuperRecord & logRecord) {
         SharedDataBuffer buffer = converter_.toByteArray(logRecord);
 
         for (size_t i = 0; i < buffer.second; i++) {

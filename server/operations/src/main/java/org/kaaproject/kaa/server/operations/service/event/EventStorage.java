@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.kaaproject.kaa.server.operations.pojo.Base64Util;
+import org.kaaproject.kaa.server.common.Base64Util;
 
 public class EventStorage {
 

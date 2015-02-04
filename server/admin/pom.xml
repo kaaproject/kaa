@@ -138,9 +138,8 @@
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.3.2</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -497,7 +496,7 @@
 						<exclude>**/*.html</exclude>
 						<exclude>**/*.properties</exclude>		
                         <exclude>**/*.avsc</exclude>      
-                        <exclude>**/gen/*.java</exclude>
+                        <exclude>**/gen/**/*.java</exclude>
 						<exclude>src/main/sh/bin/jetty.sh</exclude>
 						<exclude>src/main/resources/jetty/**</exclude>
 					</excludes>

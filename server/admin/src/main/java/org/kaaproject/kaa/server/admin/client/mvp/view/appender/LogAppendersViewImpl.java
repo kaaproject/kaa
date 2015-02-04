@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class LogAppendersViewImpl extends BaseListViewImpl<LogAppenderDto> {

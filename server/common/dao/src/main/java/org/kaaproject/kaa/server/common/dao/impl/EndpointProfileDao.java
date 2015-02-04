@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -26,7 +27,7 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
  *
  * @param <T> the type parameter
  */
-public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T> {
+public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, ByteBuffer> {
 
     T save(EndpointProfileDto dto);
 

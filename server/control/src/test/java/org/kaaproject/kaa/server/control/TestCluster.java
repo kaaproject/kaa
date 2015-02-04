@@ -21,8 +21,6 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -30,17 +28,11 @@ import org.apache.curator.test.InstanceSpec;
 import org.apache.curator.test.TestingCluster;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
-import org.kaaproject.kaa.server.common.zk.gen.BaseStatistics;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
-import org.kaaproject.kaa.server.common.zk.gen.IpComunicationParameters;
+import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.SupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpStatistics;
-import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.slf4j.Logger;
@@ -163,20 +155,7 @@ public class TestCluster {
         ByteBuffer testKeyData = ByteBuffer.wrap(x509EncodedKeySpec.getEncoded());
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
         
-        
-        List<BootstrapSupportedChannel> chList = new LinkedList<>();
-        ZkHttpComunicationParameters CommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(BOOTSTRAP_NODE_HOST, 1001));
-        ZkHttpStatistics ChannelStatistics = new ZkHttpStatistics(new BaseStatistics(
-                Integer.valueOf(1), 
-                Integer.valueOf(1), 
-                Integer.valueOf(1), 
-                Long.valueOf(1)));
-        chList.add(new BootstrapSupportedChannel(new ZkSupportedChannel(
-                ZkChannelType.HTTP, 
-                true, 
-                CommunicationParameters, 
-                ChannelStatistics)));
-        nodeInfo.setSupportedChannelsArray(chList);
+        nodeInfo.setTransports(new ArrayList<TransportMetaData>());
         
         return nodeInfo;
     }
@@ -190,14 +169,9 @@ public class TestCluster {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[]{10,11,12,45,34,23,67,89,66,12});
         nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000,testKeyData));
+        nodeInfo.setLoadInfo(new LoadInfo(1));
         nodeInfo.setTimeStarted(System.currentTimeMillis());
-        List<SupportedChannel> supportedChannels = new ArrayList<>();
-        ZkHttpComunicationParameters httpCommunicationParameters = new ZkHttpComunicationParameters(new IpComunicationParameters(ENDPOINT_NODE_HOST, 1000));
-        BaseStatistics statistics = new BaseStatistics(2, 3, 1, System.currentTimeMillis());
-        ZkHttpStatistics httpChannelStatistics = new ZkHttpStatistics(statistics );
-        SupportedChannel channelHttp = new SupportedChannel(new ZkSupportedChannel(ZkChannelType.HTTP, true, httpCommunicationParameters, httpChannelStatistics));
-        supportedChannels.add(channelHttp);
-        nodeInfo.setSupportedChannelsArray(supportedChannels );
+        nodeInfo.setTransports(new ArrayList<TransportMetaData>());
         return nodeInfo;
     }
     

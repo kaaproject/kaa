@@ -22,6 +22,15 @@ public class ConfigurationDto extends AbstractStructureDto {
     private static final long serialVersionUID = 1766336602276590007L;
 
     private String protocolSchema;
+    
+    public ConfigurationDto() {
+        super();
+    }
+    
+    public ConfigurationDto(ConfigurationDto other) {
+        super(other);
+        this.protocolSchema = other.protocolSchema;
+    }
 
     public String getProtocolSchema() {
         return protocolSchema;

@@ -22,21 +22,38 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 
+import akka.actor.ActorRef;
+
 /**
  * The Class LogEventPackMessage.
  */
 public class LogEventPackMessage {
+
+    private final int requestId;
+
+    private final ActorRef originator;
 
     /** Log Event Pack. */
     private final LogEventPack logEventPack;
 
     /**
      * Instantiates a new log event pack message.
-     *
-     * @param logEventPack the log event pack
+     * 
+     * @param logEventPack
+     *            the log event pack
      */
-    public LogEventPackMessage(LogEventPack logEventPack) {
+    public LogEventPackMessage(int requestId, ActorRef originator, LogEventPack logEventPack) {
+        this.requestId = requestId;
+        this.originator = originator;
         this.logEventPack = logEventPack;
+    }
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public ActorRef getOriginator() {
+        return originator;
     }
 
     public LogEventPack getLogEventPack() {
@@ -66,5 +83,4 @@ public class LogEventPackMessage {
     public void setLogSchema(LogSchema logSchema) {
         logEventPack.setLogSchema(logSchema);
     }
-
 }

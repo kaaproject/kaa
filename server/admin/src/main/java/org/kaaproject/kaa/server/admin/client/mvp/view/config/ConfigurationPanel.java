@@ -16,11 +16,19 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.config;
 
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
+import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseStructView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.struct.ConfigFormStructView;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
-public class ConfigurationPanel extends AbstractRecordPanel<ConfigurationDto>{
+public class ConfigurationPanel extends AbstractRecordPanel<ConfigurationRecordFormDto, RecordField>{
+
+    public ConfigurationPanel(HasErrorMessage hasErrorMessage) {
+        super(hasErrorMessage);
+    }
 
     @Override
     protected String bodyLabelText() {
@@ -30,6 +38,11 @@ public class ConfigurationPanel extends AbstractRecordPanel<ConfigurationDto>{
     @Override
     public void setReadOnly() {
         this.setActiveReadOnly();
+    }
+
+    @Override
+    protected BaseStructView<ConfigurationRecordFormDto, RecordField> createStructView(HasErrorMessage hasErrorMessage) {
+        return new ConfigFormStructView(hasErrorMessage);
     }
 
 }

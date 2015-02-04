@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-typedef struct kaa_status_t             kaa_status_t;
+typedef struct kaa_status_holder_t      kaa_status_holder_t;
 typedef struct kaa_platform_protocol_t  kaa_platform_protocol_t;
 typedef struct kaa_bootstrap_manager_t  kaa_bootstrap_manager_t;
 typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
@@ -45,14 +45,12 @@ typedef struct kaa_log_collector        kaa_log_collector_t;
 
 typedef struct kaa_logger_t             kaa_logger_t;
 
-
-
 /**
  * General Kaa endpoint context. Contains private structures of all Kaa endpoint SDK subsystems that can be used
  * independently to perform API calls to specific subsystems.
  */
 typedef struct {
-    kaa_status_t               *status;             /**< See @link kaa_status.h @endlink. */
+    kaa_status_holder_t        *status;             /**< See @link kaa_status.h @endlink. */
     kaa_platform_protocol_t    *platfrom_protocol;  /**< See @link kaa_platform_protocol.h @endlink. */
     kaa_bootstrap_manager_t    *bootstrap_manager;  /**< See @link kaa_bootstrap.h @endlink. */
     kaa_channel_manager_t      *channel_manager;    /**< See @link kaa_channel_manager.h @endlink. */

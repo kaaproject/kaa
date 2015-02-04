@@ -15,7 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-
 public final class ModelConstants {
 
     /**
@@ -206,7 +205,7 @@ public final class ModelConstants {
     public static final String EVENT_CLASS_FAMILY_CREATED_USERNAME = CREATED_USERNAME;
     public static final String EVENT_CLASS_FAMILY_CREATED_TIME = CREATED_TIME;
 
-     /**
+    /**
      * Event class constants.
      */
     public static final String EVENT_CLASS_TABLE_NAME = "event_class";
@@ -240,7 +239,13 @@ public final class ModelConstants {
      * Log schema constants.
      */
     public static final String LOG_SCHEMA_TABLE_NAME = "log_schema";
-    
+
+    /**
+     * Notification schema constants
+     */
+    public static final String NOTIFICATION_SCHEMA_TABLE_NAME = "notification_schema";
+    public static final String NOTIFICATION_SCHEMA_TYPE_PROPERTY = "type";
+
     /**
      * Log appender constants.
      */
@@ -249,6 +254,7 @@ public final class ModelConstants {
     public static final String LOG_APPENDER_APPLICATION_ID = "application_id";
     public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "min_log_schema_version";
     public static final String LOG_APPENDER_MAX_LOG_SCHEMA_VERSION = "max_log_schema_version";
+    public static final String LOG_APPENDER_CONFIRM_DELIVERY = "confirm_delivery";
     public static final String LOG_APPENDER_STATUS = "status";
     public static final String LOG_APPENDER_TYPE_NAME = "type_name";
     public static final String LOG_APPENDER_APPENDER_CLASS_NAME = "appender_class_name";

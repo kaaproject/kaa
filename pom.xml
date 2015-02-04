@@ -51,7 +51,7 @@ Copyright 2014 CyberVision, Inc.
         <netty.version>4.0.20.Final</netty.version>
         <avro.version>1.7.5</avro.version>
         <apache.velocity>1.7</apache.velocity>
-        <zookeeper.version>3.4.5</zookeeper.version>
+        <zookeeper.version>3.4.6</zookeeper.version>
         <curator.version>2.3.0</curator.version>
         <libthrift.version>0.9.1</libthrift.version>
         <commons-cli.version>1.2</commons-cli.version>
@@ -91,6 +91,7 @@ Copyright 2014 CyberVision, Inc.
         <sonar.skippedModules>admin,admin-rest-client,client-java-android,gwt-client</sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
+
     </properties>
 
     <modules>
@@ -106,9 +107,6 @@ Copyright 2014 CyberVision, Inc.
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <properties>
-                <build.commit>N/A</build.commit>
-            </properties>
         </profile>
         <profile>
             <id>examples</id>
@@ -131,9 +129,6 @@ Copyright 2014 CyberVision, Inc.
                 <module>it</module>
                 <module>sandbox</module>
             </modules>
-            <properties>
-                <build.commit>${GIT_COMMIT}</build.commit>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -451,6 +446,8 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/bin/**</exclude>
                         <exclude>**/thirdparty/**</exclude>
                         <exclude>**/security.policy</exclude>
+                        <exclude>**/*-transport.config</exclude>
+                        <exclude>**/*.cql</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -486,7 +483,12 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                <artifactId>mongo</artifactId>
+                <artifactId>mongo-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                <artifactId>cassandra-dao</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -507,6 +509,35 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>log-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>transport-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+                <artifactId>transport</artifactId>
+                <classifier>http</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+                <artifactId>config</artifactId>
+                <classifier>http</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+                <artifactId>transport</artifactId>
+                <classifier>tcp</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+                <artifactId>config</artifactId>
+                <classifier>tcp</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -548,7 +579,7 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                <artifactId>mongo</artifactId>
+                <artifactId>mongo-dao</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
@@ -720,12 +751,6 @@ Copyright 2014 CyberVision, Inc.
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.driver.ver}</version>
@@ -882,6 +907,10 @@ Copyright 2014 CyberVision, Inc.
         <repository>
             <id>repository.kaaproject</id>
             <url>http://repository.kaaproject.org/repository/internal/</url>
+        </repository>
+        <repository>
+            <id>repository.kaaproject.shapshots</id>
+            <url>http://repository.kaaproject.org/repository/snapshots/</url>
         </repository>
     </repositories>
 </project>

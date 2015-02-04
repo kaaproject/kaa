@@ -17,12 +17,12 @@
 #ifndef LOGRECORD_HPP_
 #define LOGRECORD_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #ifdef KAA_USE_LOGGING
 
 #include <vector>
 #include <cstdint>
+
+#include "kaa/KaaDefaults.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/log/gen/LogGen.hpp"
 

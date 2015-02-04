@@ -52,6 +52,7 @@ import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -69,8 +70,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
@@ -81,26 +81,26 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
-import org.kaaproject.kaa.server.operations.pojo.Base64Util;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
-import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointAttachRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointDetachRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.EndpointVersionInfo;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventListenersRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ServerSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommand;
-import org.kaaproject.kaa.server.operations.pojo.sync.SubscriptionCommandType;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncStatus;
-import org.kaaproject.kaa.server.operations.pojo.sync.SyncResponseStatus;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserAttachRequest;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
+import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
+import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
+import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
+import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
+import org.kaaproject.kaa.server.sync.EventClientSync;
+import org.kaaproject.kaa.server.sync.EventListenersRequest;
+import org.kaaproject.kaa.server.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.sync.ProfileClientSync;
+import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.sync.SubscriptionCommand;
+import org.kaaproject.kaa.server.sync.SubscriptionCommandType;
+import org.kaaproject.kaa.server.sync.SyncResponseStatus;
+import org.kaaproject.kaa.server.sync.SyncStatus;
+import org.kaaproject.kaa.server.sync.UserAttachRequest;
+import org.kaaproject.kaa.server.sync.UserClientSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +112,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-test-context.xml")
-@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
 public class OperationsServiceIT extends AbstractTest {
     private static final Charset UTF_8 = Charset.forName("UTF-8");

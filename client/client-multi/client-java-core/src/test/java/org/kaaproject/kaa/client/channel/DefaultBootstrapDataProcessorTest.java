@@ -17,15 +17,18 @@
 package org.kaaproject.kaa.client.channel;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServer;
-import org.kaaproject.kaa.common.bootstrap.gen.OperationsServerList;
-import org.kaaproject.kaa.common.bootstrap.gen.Resolve;
+import org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.mockito.Mockito;
 
 public class DefaultBootstrapDataProcessorTest {
@@ -34,7 +37,7 @@ public class DefaultBootstrapDataProcessorTest {
     public void testRequestCreation() throws IOException {
         DefaultBootstrapDataProcessor processor = new DefaultBootstrapDataProcessor();
         BootstrapTransport transport = Mockito.mock(BootstrapTransport.class);
-        Mockito.when(transport.createResolveRequest()).thenReturn(new Resolve("123"));
+        Mockito.when(transport.createResolveRequest()).thenReturn(new SyncRequest());
         processor.setBootstrapTransport(transport);
         Assert.assertNotNull(processor.compileRequest(null));
         Mockito.verify(transport, Mockito.times(1)).createResolveRequest();
@@ -51,11 +54,13 @@ public class DefaultBootstrapDataProcessorTest {
         DefaultBootstrapDataProcessor processor = new DefaultBootstrapDataProcessor();
         BootstrapTransport transport = Mockito.mock(BootstrapTransport.class);
         processor.setBootstrapTransport(transport);
-        OperationsServerList list = new OperationsServerList();
-        list.setOperationsServerArray(new LinkedList<OperationsServer>());
-        AvroByteArrayConverter<OperationsServerList> converter = new AvroByteArrayConverter<>(OperationsServerList.class);
-        processor.processResponse(converter.toByteArray(list));
-        Mockito.verify(transport, Mockito.times(1)).onResolveResponse(list);
+        SyncResponse response = new SyncResponse();
+        response.setStatus(SyncResponseResultType.SUCCESS);
+        List<ProtocolMetaData> mdList = new ArrayList<ProtocolMetaData>();
+        response.setBootstrapSyncResponse(new BootstrapSyncResponse(1, mdList));
+        AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
+        processor.processResponse(converter.toByteArray(response));
+        Mockito.verify(transport, Mockito.times(1)).onResolveResponse(response);
     }
 
     @Test
@@ -64,16 +69,7 @@ public class DefaultBootstrapDataProcessorTest {
         BootstrapTransport transport = Mockito.mock(BootstrapTransport.class);
         processor.setBootstrapTransport(transport);
         processor.processResponse(null);
-        Mockito.verify(transport, Mockito.times(0)).onResolveResponse(Mockito.any(OperationsServerList.class));
-    }
-
-    @Test
-    public void testResponseWithNullTransport() throws IOException {
-        DefaultBootstrapDataProcessor processor = new DefaultBootstrapDataProcessor();
-        OperationsServerList list = new OperationsServerList();
-        list.setOperationsServerArray(new LinkedList<OperationsServer>());
-        AvroByteArrayConverter<OperationsServerList> converter = new AvroByteArrayConverter<>(OperationsServerList.class);
-        processor.processResponse(converter.toByteArray(list));
+        Mockito.verify(transport, Mockito.times(0)).onResolveResponse(Mockito.any(SyncResponse.class));
     }
 
     @Test

@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
+import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,29 +147,33 @@ public class ApplicationActor extends UntypedActor {
 
         /*
          * (non-Javadoc)
-         *
+         * 
          * @see akka.japi.Creator#create()
          */
         @Override
         public ApplicationActor create() throws Exception {
-            return new ApplicationActor(operationsService, notificationDeltaService, applicationService, logAppenderService, applicationToken);
+            return new ApplicationActor(operationsService, notificationDeltaService, applicationService, logAppenderService,
+                    applicationToken);
         }
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
      */
     @Override
     public void onReceive(Object message) throws Exception {
-        if(LOG.isTraceEnabled()){
+        if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Received: {}", applicationToken, message);
-        }else{
+        } else {
             LOG.debug("[{}] Received: {}", applicationToken, message.getClass().getName());
         }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
+        }
+        if (message instanceof SessionAware) {
+            processSessionAwareMessage((SessionAware) message);
         } else if (message instanceof EndpointEventDeliveryMessage) {
             processEndpointEventDeliveryMessage((EndpointEventDeliveryMessage) message);
         } else if (message instanceof Terminated) {
@@ -179,9 +184,9 @@ public class ApplicationActor extends UntypedActor {
             updateEndpointActor((EndpointStopMessage) message);
         } else if (message instanceof LogEventPackMessage) {
             processLogEventPackMessage((LogEventPackMessage) message);
-        } else if (message instanceof EndpointUserActionMessage){
+        } else if (message instanceof EndpointUserActionMessage) {
             processEndpointUserActionMessage((EndpointUserActionMessage) message, true);
-        } else if (message instanceof EndpointUserActionRouteMessage){
+        } else if (message instanceof EndpointUserActionRouteMessage) {
             processEndpointUserActionMessage(((EndpointUserActionRouteMessage) message).getMessage(), false);
         }
     }
@@ -216,7 +221,7 @@ public class ApplicationActor extends UntypedActor {
         } else if (notification.isSetUnicastNotificationId()) {
             LOG.debug("[{}] Forwarding message to specific endpoint", applicationToken);
             sendToSpecificEndpoint(message);
-        } else if(notification.isSetAppenderId()){
+        } else if (notification.isSetAppenderId()) {
             LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
             processLogNotificationMessage(message);
         } else {
@@ -304,6 +309,21 @@ public class ApplicationActor extends UntypedActor {
         }
     }
 
+    /**
+     * Process endpoint aware message.
+     *
+     * @param message
+     *            the message
+     */
+    private void processSessionAwareMessage(SessionAware message) {
+        ActorMetaData endpointMetaData = endpointSessions.get(message.getSessionInfo().getKey());
+        if (endpointMetaData != null) {
+            endpointMetaData.actorRef.tell(message, self());
+        } else {
+            LOG.debug("[{}] Can't find endpoint actor that corresponds to {}", applicationToken, message.getSessionInfo().getKey());
+        }
+    }
+
     private void processEndpointEventReceiveMessage(EndpointEventReceiveMessage message) {
         ActorMetaData endpointActor = endpointSessions.get(message.getKey());
         if (endpointActor != null) {
@@ -367,8 +387,10 @@ public class ApplicationActor extends UntypedActor {
             UUID uuid = UUID.randomUUID();
             String endpointActorId = uuid.toString().replaceAll("-", "");
             LOG.debug("[{}] Creating actor with endpointKey: {}", applicationToken, endpointActorId);
-            endpointMetaData = new ActorMetaData(context().actorOf(Props.create(new EndpointActor.ActorCreator(operationsService, endpointActorId, message.getAppToken(), message.getKey())),
-                    endpointActorId), endpointActorId);
+            endpointMetaData = new ActorMetaData(context()
+                    .actorOf(
+                            Props.create(new EndpointActor.ActorCreator(operationsService, endpointActorId, message.getAppToken(), message
+                                    .getKey())), endpointActorId), endpointActorId);
             endpointSessions.put(message.getKey(), endpointMetaData);
             endpointActorMap.put(endpointActorId, message.getKey());
             context().watch(endpointMetaData.actorRef);
@@ -381,8 +403,9 @@ public class ApplicationActor extends UntypedActor {
         if (endpointMetaData != null) {
             LOG.debug("[{}] Found affected endpoint and forwarding message to it", applicationToken);
             endpointMetaData.actorRef.tell(message, self());
-        }else if(escalate){
-            LOG.debug("[{}] Failed to fing affected endpoint in scope of current application. Forwarding message to tenant actor", applicationToken);
+        } else if (escalate) {
+            LOG.debug("[{}] Failed to fing affected endpoint in scope of current application. Forwarding message to tenant actor",
+                    applicationToken);
             EndpointUserActionRouteMessage routeMessage = new EndpointUserActionRouteMessage(message, applicationToken);
             context().parent().tell(routeMessage, self());
         }
@@ -393,8 +416,8 @@ public class ApplicationActor extends UntypedActor {
         EndpointObjectHash endpointKey = message.getEndpointKey();
         LOG.debug("[{}] Stoping actor [{}] with [{}]", applicationToken, message.getActorKey(), endpointKey);
         ActorMetaData endpointMetaData = endpointSessions.get(endpointKey);
-        if(endpointMetaData != null){
-            if(actorKey.equals(endpointMetaData.getEndpointActorId())){
+        if (endpointMetaData != null) {
+            if (actorKey.equals(endpointMetaData.getEndpointActorId())) {
                 endpointSessions.remove(endpointKey);
                 LOG.debug("[{}] Removed actor [{}] from endpoint sessions map", applicationToken, actorKey);
             }
@@ -425,7 +448,7 @@ public class ApplicationActor extends UntypedActor {
                 }
             } else if (topicSessions.remove(name) != null) {
                 LOG.debug("[{}] removed topic: {}", applicationToken, localActor);
-            } else if (logsSessions.remove(name) != null)  {
+            } else if (logsSessions.remove(name) != null) {
                 LOG.debug("[{}] removed log: {}", applicationToken, localActor);
                 applicationLogActor = getOrCreateLogActor(name, logAppenderService, applicationService);
                 LOG.debug("[{}] created log: {}", applicationToken, applicationLogActor);
@@ -438,7 +461,8 @@ public class ApplicationActor extends UntypedActor {
     private ActorRef getOrCreateLogActor(String name, LogAppenderService logAppenderService, ApplicationService applicationService) {
         ActorRef logActor = logsSessions.get(name);
         if (logActor == null) {
-            logActor = context().actorOf(Props.create(new ApplicationLogActor.ActorCreator(logAppenderService, applicationService, applicationToken)));
+            logActor = context().actorOf(
+                    Props.create(new ApplicationLogActor.ActorCreator(logAppenderService, applicationService, applicationToken)));
             context().watch(logActor);
             logsSessions.put(logActor.path().name(), logActor);
         }
@@ -459,7 +483,7 @@ public class ApplicationActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#preStart()
      */
     @Override
@@ -469,7 +493,7 @@ public class ApplicationActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#postStop()
      */
     @Override

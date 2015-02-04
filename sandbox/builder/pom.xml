@@ -34,6 +34,7 @@
         <spring.version>3.2.10.RELEASE</spring.version>
         <base.path>${project.build.directory}/sandbox</base.path>
         <distro.path>${base.path}/distro</distro.path>
+        <webapps.path>${base.path}/sandbox/webapps</webapps.path>
         <base.images.url>http://www.kaaproject.org/Uploads/</base.images.url>
         <ubuntu.image.url>${base.images.url}/kaa-sandbox-ubuntu-64bit.ova</ubuntu.image.url>
         <ubuntu.image.name>Kaa Sandbox Ubuntu 64 bit</ubuntu.image.name>
@@ -158,6 +159,15 @@
                                     <outputDirectory>${distro.path}</outputDirectory>
                                     <destFileName>admin.deb</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.avro-ui</groupId>
+                                    <artifactId>gwt-sandbox</artifactId>
+                                    <version>${avro-ui.version}</version>
+                                    <type>war</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${webapps.path}</outputDirectory>
+                                    <destFileName>avroUiSandbox.war</destFileName>
+                                </artifactItem>                                
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -286,6 +296,15 @@
                                             <outputDirectory>${distro.path}</outputDirectory>
                                             <destFileName>admin.deb</destFileName>
                                         </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.kaaproject.avro-ui</groupId>
+                                            <artifactId>gwt-sandbox</artifactId>
+                                            <version>${avro-ui.version}</version>
+                                            <type>war</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${webapps.path}</outputDirectory>
+                                            <destFileName>avroUiSandbox.war</destFileName>
+                                        </artifactItem>                                                  
                                         <artifactItem>
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>control</artifactId>

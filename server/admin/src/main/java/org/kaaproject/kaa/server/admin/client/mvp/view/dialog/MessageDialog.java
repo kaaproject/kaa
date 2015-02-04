@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,8 +32,27 @@ public class MessageDialog extends KaaDialog {
     private Button okButton;
     
     private Listener listener;
-
+    
+    public static MessageDialog showMessageDialog(String title, String message) {
+        return showMessageDialog(AlertPanel.Type.INFO, title, message);
+    }
+    
+    public static MessageDialog showMessageDialog(AlertPanel.Type type, String title, String message) {
+        return showMessageDialog(null, type, title, message);
+    }
+    
+    public static MessageDialog showMessageDialog(Listener listener, AlertPanel.Type type, String title, String message) {
+        MessageDialog dialog = new MessageDialog(listener, type, title, message);
+        dialog.center();
+        dialog.show();
+        return dialog;
+    }
+    
     public MessageDialog(Listener listener, String title, String message) {
+        this(listener, AlertPanel.Type.INFO, title, message);
+    }
+
+    public MessageDialog(Listener listener, AlertPanel.Type type, String title, String message) {
         super(false, true);
         setTitle(title);
         this.listener = listener;
@@ -42,7 +61,7 @@ public class MessageDialog extends KaaDialog {
         dialogContents.setSpacing(4);
         setWidget(dialogContents);
         
-        AlertPanel messageLabel = new AlertPanel(AlertPanel.Type.INFO);
+        AlertPanel messageLabel = new AlertPanel(type);
         messageLabel.setMessage(message);
         dialogContents.add(messageLabel);
         
@@ -58,7 +77,9 @@ public class MessageDialog extends KaaDialog {
         this.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
-                MessageDialog.this.listener.onOk();
+                if (MessageDialog.this.listener != null) {
+                    MessageDialog.this.listener.onOk();
+                }
             }
         });
     }

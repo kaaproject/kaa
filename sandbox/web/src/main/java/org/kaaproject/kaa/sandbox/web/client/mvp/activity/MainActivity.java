@@ -83,6 +83,12 @@ public class MainActivity extends AbstractActivity implements MainView.Presenter
                 gotoKaaAdminWeb();
             }
           }));
+        registrations.add(view.getGoToAvroUiSandboxWeb().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                gotoAvroUiSandboxWeb();
+            }
+          }));
         
         registrations.add(view.getProjectsActionSource().addProjectActionHandler(new ProjectActionEventHandler() {
             @Override
@@ -139,6 +145,10 @@ public class MainActivity extends AbstractActivity implements MainView.Presenter
     
     private void gotoKaaAdminWeb() {
         Sandbox.redirectToModule("kaaAdmin");
+    }
+    
+    private void gotoAvroUiSandboxWeb() {
+        Sandbox.redirectToModule("avroUiSandbox");
     }
 
     private void changeKaaHost() {

@@ -169,6 +169,8 @@ public:
     virtual ~IKaaChannelManager() {}
 };
 
+typedef IKaaChannelManager* IKaaChannelManagerPtr;
+
 }  // namespace kaa
 
 

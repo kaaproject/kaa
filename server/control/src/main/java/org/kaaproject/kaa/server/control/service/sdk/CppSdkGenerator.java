@@ -40,12 +40,8 @@ import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.kaaproject.kaa.server.control.service.sdk.event.CppEventSourcesGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -341,48 +337,27 @@ public class CppSdkGenerator extends SdkGenerator {
             }
 
             BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
-            List<BootstrapSupportedChannel> supportedChannels = node.getSupportedChannelsArray();
-            String encodedPublicKey = Base64.encodeBase64String(node.getConnectionInfo().getPublicKey().array());
+            List<TransportMetaData> supportedTransports = node.getTransports();
 
-            for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
+            for (int chIndex = 0; chIndex < supportedTransports.size(); ++chIndex) {
                 if (chIndex > 0) {
                     bootstrapServers += "\n                                          , ";
                 }
 
-                String serverPattern = "createServerInfo(";
-                ZkSupportedChannel channel = supportedChannels.get(chIndex).getZkChannel();
+                TransportMetaData transport = supportedTransports.get(chIndex);
 
-                serverPattern += channel.getChannelType().ordinal();
-                serverPattern += ", ";
-
-                if (channel.getChannelType() == ZkChannelType.HTTP) {
-                    ZkHttpComunicationParameters params =
-                            (ZkHttpComunicationParameters)channel.getCommunicationParameters();
-
-                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
+                for(VersionConnectionInfoPair pair : transport.getConnectionInfo()){
+                    String serverPattern = "createServerInfo(";
+                    serverPattern += transport.getId();
                     serverPattern += ", ";
-                    serverPattern += params.getZkComunicationParameters().getPort();
-                } else if (channel.getChannelType() == ZkChannelType.HTTP_LP) {
-                    ZkHttpLpComunicationParameters params =
-                            (ZkHttpLpComunicationParameters)channel.getCommunicationParameters();
+                    serverPattern += pair.getVersion();
+                    serverPattern += ", \"";
+                    serverPattern += Base64.encodeBase64String(pair.getConenctionInfo().array());
+                    serverPattern += "\"";
+                    serverPattern += ")";
 
-                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
-                    serverPattern += ", ";
-                    serverPattern += params.getZkComunicationParameters().getPort();
-                } else if (channel.getChannelType() == ZkChannelType.KAATCP) {
-                    ZkKaaTcpComunicationParameters params =
-                            (ZkKaaTcpComunicationParameters)channel.getCommunicationParameters();
-
-                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
-                    serverPattern += ", ";
-                    serverPattern += params.getZkComunicationParameters().getPort();
+                    bootstrapServers += serverPattern;
                 }
-
-                serverPattern += ", ";
-                serverPattern += "\"" + encodedPublicKey + "\"";
-                serverPattern += ")";
-
-                bootstrapServers += serverPattern;
             }
         }
 

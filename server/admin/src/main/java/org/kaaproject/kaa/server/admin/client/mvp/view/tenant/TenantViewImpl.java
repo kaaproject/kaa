@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
 
-    private static final String REQUIRED = Utils.fieldWidgetStyle.requiredField();
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
     private SizedTextBox tenantName;
     private SizedTextBox userName;

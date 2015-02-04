@@ -31,18 +31,19 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.KaaTcpServerInfo;
-import org.kaaproject.kaa.client.channel.ServerInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolException;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.ConnAckListener;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.DisconnectListener;
@@ -83,7 +84,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private static final String CHANNEL_ID = "default_operation_tcp_channel";
 
-    private KaaTcpServerInfo currentServer;
+    private IPTransportInfo currentServer;
     private final KaaClientState state;
 
     private ScheduledExecutorService executor;
@@ -470,7 +471,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     @Override
-    public synchronized void setServer(ServerInfo server) {
+    public synchronized void setServer(TransportConnectionInfo server) {
         if (server == null) {
             LOG.warn("Server is null for Channel [{}].", getId());
             return;
@@ -479,7 +480,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             LOG.info("Can't set server. Channel [{}] is down", getId());
             return;
         }
-        this.currentServer = (KaaTcpServerInfo) server;
+        this.currentServer = new IPTransportInfo(server);
         this.encDec = new MessageEncoderDecoder(state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
         if (!isPaused) {
             if (executor == null) {
@@ -490,6 +491,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         } else {
             LOG.info("Can't start new session. Channel [{}] is paused", getId());
         }
+    }
+
+    @Override
+    public TransportConnectionInfo getServer() {
+        return currentServer;
     }
 
     @Override
@@ -535,8 +541,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     @Override
-    public ChannelType getType() {
-        return ChannelType.KAATCP;
+    public TransportProtocolId getTransportProtocolId() {
+        return TransportProtocolIdConstants.TCP_TRANSPORT_ID;
     }
 
     @Override

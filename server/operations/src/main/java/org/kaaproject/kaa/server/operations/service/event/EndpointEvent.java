@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.pojo.sync.Event;
+import org.kaaproject.kaa.server.sync.Event;
 
 public final class EndpointEvent {
 
