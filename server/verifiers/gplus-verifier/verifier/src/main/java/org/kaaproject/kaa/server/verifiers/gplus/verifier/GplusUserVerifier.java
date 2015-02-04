@@ -31,22 +31,20 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
     @Override
     public void init(UserVerifierContext context, GplusAvroConfig configuration) {
-        LOG.info("Initializing user verifier with context {} and configuration {}", context, configuration);
-        thredPool = new ThreadPoolExecutor(0, configuration.getMaxParallelConnections(),
-                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+        thredPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
+                configuration.getKeepAliveTimeMilliseconds(), TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
     @Override
     public void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback) {
-        LOG.trace("Received user verification request for user {} and access token {}", userExternalId, accessToken);
 
         URL url = null;
         try {
             url = new URL(GOOGLE_OAUTH + URLEncoder.encode(accessToken,"UTF-8"));
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOG.debug("message", e);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LOG.debug("message", e);
         }
         thredPool.submit(new RunnableVerifier(url, callback, userExternalId));
 
@@ -102,7 +100,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.debug("message", e);
             }
 
             callback.onConnectionError();
@@ -114,20 +112,19 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         try {
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.debug("message", e);
         }
         return connection;
     }
 
     @Override
     public void start() {
-        LOG.info("user verifier started");
+
     }
 
     @Override
     public void stop() {
         thredPool.shutdown();
-        LOG.info("user verifier stopped");
     }
 
     @Override

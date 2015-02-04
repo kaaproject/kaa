@@ -3,6 +3,8 @@
  "type": "record",
  "name": "GplusAvroConfig",
  "fields": [
-    {"name":"max_parallel_connections","type":"int"}
+    {"name":"max_parallel_connections","type":"int"},
+    {"name":"min_parallel_connections","type":"int"},
+    {"name":"keep_alive_time_milliseconds","type":"long"}
  ]
 }
