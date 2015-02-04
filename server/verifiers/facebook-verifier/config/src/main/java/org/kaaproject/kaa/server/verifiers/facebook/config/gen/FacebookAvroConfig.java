@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.verifiers.facebook.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"FacebookAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.facebook.config.gen\",\"fields\":[{\"name\":\"app_id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"app_secret\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"max_parallel_connections\",\"type\":\"int\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"FacebookAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.facebook.config.gen\",\"fields\":[{\"name\":\"app_id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Application id\"},{\"name\":\"app_secret\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Application secret\"},{\"name\":\"max_parallel_connections\",\"type\":\"int\",\"displayName\":\"Maximal number of allowed connections per verifier\",\"by_default\":\"5\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String app_id;
    private java.lang.String app_secret;
