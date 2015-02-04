@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import com.datastax.driver.core.Statement;
@@ -43,7 +59,7 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
 
     @Override
     public List<CassandraEndpointNotification> findNotificationsByKeyHash(byte[] keyHash) {
-        LOG.debug("Find endpoint notifications by endpoint key hash {}", keyHash);
+        LOG.debug("Try to find endpoint notifications by endpoint key hash {}", keyHash);
         List<CassandraEndpointNotification> cassandraEndpointNotifications = Collections.emptyList();
         if (keyHash != null) {
             Select.Where where = select().from(getColumnFamilyName()).where(eq(ET_NF_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(keyHash)));
@@ -82,9 +98,8 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
         CassandraEndpointNotification key = new CassandraEndpointNotification(id);
         Select.Where where = select().from(getColumnFamilyName()).where(eq(ET_NF_ENDPOINT_KEY_HASH_PROPERTY, key.getEndpointKeyHash()))
                 .and(eq(ET_NF_LAST_MOD_TIME_PROPERTY, key.getLastModifyTime()));
-        LOG.debug("[id] Execute query {}:", id, where);
+        LOG.debug("[{}] Execute query {}:", id, where);
         CassandraEndpointNotification endpointNotification = findOneByStatement(where);
-        LOG.debug("{} endpoint notification by id {}:", endpointNotification != null ? "Found" : "No found", id);
         LOG.trace("Found endpoint notification {} by id {}:", endpointNotification, id);
         return endpointNotification;
     }
@@ -96,6 +111,6 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
         Statement delete = delete().from(getColumnFamilyName()).where(eq(ET_NF_ENDPOINT_KEY_HASH_PROPERTY, key.getEndpointKeyHash()))
                 .and(eq(ET_NF_LAST_MOD_TIME_PROPERTY, key.getLastModifyTime()));
         execute(delete);
-        LOG.debug("[id] Execute query {}:", id, delete);
+        LOG.debug("[{}] Execute query {}:", id, delete);
     }
 }

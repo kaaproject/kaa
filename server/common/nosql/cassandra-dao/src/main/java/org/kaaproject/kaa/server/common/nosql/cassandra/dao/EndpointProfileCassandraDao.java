@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import com.datastax.driver.core.ResultSet;
@@ -80,7 +96,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         } else {
             executeBatch(saveProfile, saveByAppId);
         }
-        LOG.debug("Endpoint profile saved");
+        LOG.debug("[{}] Endpoint profile saved", profile.getId());
         return profile;
     }
 
@@ -88,8 +104,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     public CassandraEndpointProfile findByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Try to find endpoint profile by key hash [{}]", endpointKeyHash);
         CassandraEndpointProfile endpointProfile = (CassandraEndpointProfile) getMapper().get(getByteBuffer(endpointKeyHash));
-        LOG.debug("{} endpoint profile by key hash [{}]", endpointKeyHash, endpointProfile != null ? "Found" : "No found");
-        LOG.trace("Found endpoint profile {} by key hash [{}]", endpointKeyHash, endpointProfile);
+        LOG.debug("[{}] Found endpoint profile {}", endpointKeyHash, endpointProfile);
         return endpointProfile;
     }
 
@@ -130,7 +145,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         if (epKeyHash != null) {
             endpointProfile = (CassandraEndpointProfile) getMapper().get(epKeyHash);
         }
-        LOG.trace("Found endpoint profile {} by access token id [{}]", endpointProfile, endpointAccessToken);
+        LOG.trace("Found endpoint profile {} by access token [{}]", endpointProfile, endpointAccessToken);
         return endpointProfile;
     }
 

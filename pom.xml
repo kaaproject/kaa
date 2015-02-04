@@ -92,7 +92,6 @@ Copyright 2014 CyberVision, Inc.
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
 
-        <GIT_COMMIT>N/A</GIT_COMMIT>
     </properties>
 
     <modules>
@@ -108,9 +107,6 @@ Copyright 2014 CyberVision, Inc.
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <properties>
-                <build.commit>${GIT_COMMIT}</build.commit>
-            </properties>
         </profile>
         <profile>
             <id>examples</id>
@@ -133,9 +129,6 @@ Copyright 2014 CyberVision, Inc.
                 <module>it</module>
                 <module>sandbox</module>
             </modules>
-            <properties>
-                <build.commit>${GIT_COMMIT}</build.commit>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -454,6 +447,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/thirdparty/**</exclude>
                         <exclude>**/security.policy</exclude>
                         <exclude>**/*-transport.config</exclude>
+                        <exclude>**/*.cql</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -754,12 +748,6 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
