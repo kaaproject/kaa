@@ -26,7 +26,7 @@
     <artifactId>trustful-verifier</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa trustfull verifier</name>
+    <name>Kaa Trustful verifier</name>
     <url>http://kaaproject.org</url>
 
     <properties>
