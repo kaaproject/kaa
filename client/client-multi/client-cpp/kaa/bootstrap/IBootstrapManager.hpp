@@ -51,7 +51,7 @@ public:
      * @param name endpoint's DNS.
      *
      */
-    virtual void useNextOperationsServerByAccessPointId(const std::int32_t& id) = 0;
+    virtual void useNextOperationsServerByAccessPointId(std::int32_t id) = 0;
 
     /**
      * Sets bootstrap transport object.

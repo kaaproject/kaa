@@ -31,7 +31,7 @@ public:
 
     virtual void receiveOperationsServerList();
     virtual void useNextOperationsServer(const TransportProtocolId& protocolId);
-    virtual void useNextOperationsServerByAccessPointId(const std::int32_t& id);
+    virtual void useNextOperationsServerByAccessPointId(std::int32_t id);
     virtual void setTransport(IBootstrapTransport* transport);
     virtual void setChannelManager(IKaaChannelManager* manager);
     virtual void onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers);
@@ -39,7 +39,7 @@ public:
 private:
     typedef std::list<ITransportConnectionInfoPtr> OperationsServers;
 
-    OperationsServers getOPSByAccessPointId(const std::int32_t& id);
+    OperationsServers getOPSByAccessPointId(std::int32_t id);
     void              notifyChannelManangerAboutServer(const OperationsServers& servers);
 
 private:

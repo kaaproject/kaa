@@ -35,7 +35,7 @@ void BootstrapManager::receiveOperationsServerList()
     }
 }
 
-std::list<ITransportConnectionInfoPtr> BootstrapManager::getOPSByAccessPointId(const std::int32_t& id)
+std::list<ITransportConnectionInfoPtr> BootstrapManager::getOPSByAccessPointId(std::int32_t id)
 {
     OperationsServers servers;
 
@@ -79,7 +79,7 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
     }
 }
 
-void BootstrapManager::useNextOperationsServerByAccessPointId(const std::int32_t& id)
+void BootstrapManager::useNextOperationsServerByAccessPointId(std::int32_t id)
 {
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 

@@ -38,9 +38,7 @@ bool IPConnectivityChecker::checkConnectivity()
     try {
         ITransportConnectionInfoPtr server = serverStorage_.getPingServer();
 
-        if (server || server->getTransportId() == TransportProtocolIdConstants::HTTP_TRANSPORT_ID ||
-                server->getTransportId() == TransportProtocolIdConstants::TCP_TRANSPORT_ID)
-        {
+        if (isIPServer(server)) {
             IPTransportInfo transportInfo(server);
 
             boost::asio::io_service io_service;
@@ -67,6 +65,12 @@ bool IPConnectivityChecker::checkConnectivity()
     }
 
     return false;
+}
+
+bool IPConnectivityChecker::isIPServer(ITransportConnectionInfoPtr serverConnectionInfo)
+{
+    return (serverConnectionInfo && (serverConnectionInfo->getTransportId() == TransportProtocolIdConstants::HTTP_TRANSPORT_ID ||
+                                     serverConnectionInfo->getTransportId() == TransportProtocolIdConstants::TCP_TRANSPORT_ID));
 }
 
 } /* namespace kaa */

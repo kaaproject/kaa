@@ -65,7 +65,7 @@ void EventManager::produceEvent(const std::string& fqn
         event.target.set_string(target);
     }
 
-    if (trxId.get()) {
+    if (trxId) {
         getContainerByTrxId(trxId).push_back(event);
         return;
     }
@@ -163,9 +163,9 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
     if (!listenersResponses.is_null()) {
         const auto& container = listenersResponses.get_array();
 
-        for (const auto& response : container) {
-            KAA_MUTEX_UNIQUE_DECLARE(lock, eventListenersGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(lock, eventListenersGuard_);
 
+        for (const auto& response : container) {
             auto it = eventListenersRequests_.find(response.requestId);
 
             if (it != eventListenersRequests_.end()) {

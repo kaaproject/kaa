@@ -39,6 +39,9 @@ public:
 
     virtual bool checkConnectivity();
 private:
+    bool isIPServer(ITransportConnectionInfoPtr serverConnectionInfo);
+
+private:
     IPingServerStorage& serverStorage_;
 };
 

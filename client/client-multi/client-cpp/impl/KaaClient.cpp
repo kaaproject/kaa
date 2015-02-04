@@ -18,7 +18,7 @@
 
 #include "kaa/KaaClient.hpp"
 
-#include "../kaa/channel/connectivity/IPConnectivityChecker.hpp"
+#include "kaa/channel/connectivity/IPConnectivityChecker.hpp"
 #include "kaa/bootstrap/BootstrapManager.hpp"
 #include "kaa/KaaDefaults.hpp"
 
