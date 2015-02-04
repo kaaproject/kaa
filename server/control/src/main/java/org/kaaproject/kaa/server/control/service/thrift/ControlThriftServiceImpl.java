@@ -855,7 +855,8 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     @Override
     public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId,
             int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion) throws TException {
+            int notificationSchemaVersion, List<String> aefMapIds, 
+            int logSchemaVersion, String defaultVerifierToken) throws TException {
 
         try {
             ApplicationDto application = applicationService.findAppById(applicationId);
@@ -930,7 +931,8 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
                     protocolSchema.getRawSchema(),
                     defaultConfigurationData,
                     eventFamilies,
-                    logDataSchema.getRawSchema());
+                    logDataSchema.getRawSchema(),
+                    defaultVerifierToken);
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new TException(e);

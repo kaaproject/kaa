@@ -19,7 +19,9 @@ package org.kaaproject.kaa.common.dto.admin;
 import java.io.Serializable;
 import java.util.List;
 
-public class SdkKey implements Serializable {
+import org.kaaproject.kaa.common.dto.HasId;
+
+public class SdkKey implements HasId, Serializable {
 
     private static final long serialVersionUID = 2433663439327120870L;
 
@@ -32,6 +34,7 @@ public class SdkKey implements Serializable {
     private Integer logSchemaVersion;
     private SdkPlatform targetPlatform;
     private List<String> aefMapIds;
+    private String defaultVerifierToken;
 
     public SdkKey() {
     }
@@ -39,7 +42,8 @@ public class SdkKey implements Serializable {
     public SdkKey(String applicationId, Integer configurationSchemaVersion,
             Integer profileSchemaVersion, Integer notificationSchemaVersion,
             Integer logSchemaVersion,
-            SdkPlatform targetPlatform, List<String> aefMapIds) {
+            SdkPlatform targetPlatform, List<String> aefMapIds, 
+            String defaultVerifierToken) {
         super();
         this.applicationId = applicationId;
         this.configurationSchemaVersion = configurationSchemaVersion;
@@ -48,6 +52,7 @@ public class SdkKey implements Serializable {
         this.logSchemaVersion = logSchemaVersion;
         this.targetPlatform = targetPlatform;
         this.aefMapIds = aefMapIds;
+        this.defaultVerifierToken = defaultVerifierToken;
     }
 
     public String getApplicationId() {
@@ -105,6 +110,14 @@ public class SdkKey implements Serializable {
     public void setLogSchemaVersion(Integer logSchemaVersion) {
         this.logSchemaVersion = logSchemaVersion;
     }
+    
+    public String getDefaultVerifierToken() {
+        return defaultVerifierToken;
+    }
+
+    public void setDefaultVerifierToken(String defaultVerifierToken) {
+        this.defaultVerifierToken = defaultVerifierToken;
+    }
 
     @Override
     public int hashCode() {
@@ -120,15 +133,18 @@ public class SdkKey implements Serializable {
                         : configurationSchemaVersion.hashCode());
         result = prime
                 * result
+                + ((defaultVerifierToken == null) ? 0 : defaultVerifierToken
+                        .hashCode());
+        result = prime
+                * result
+                + ((logSchemaVersion == null) ? 0 : logSchemaVersion.hashCode());
+        result = prime
+                * result
                 + ((notificationSchemaVersion == null) ? 0
                         : notificationSchemaVersion.hashCode());
         result = prime
                 * result
                 + ((profileSchemaVersion == null) ? 0 : profileSchemaVersion
-                        .hashCode());
-        result = prime
-                * result
-                + ((logSchemaVersion == null) ? 0 : logSchemaVersion
                         .hashCode());
         result = prime * result
                 + ((targetPlatform == null) ? 0 : targetPlatform.hashCode());
@@ -169,6 +185,20 @@ public class SdkKey implements Serializable {
                 .equals(other.configurationSchemaVersion)) {
             return false;
         }
+        if (defaultVerifierToken == null) {
+            if (other.defaultVerifierToken != null) {
+                return false;
+            }
+        } else if (!defaultVerifierToken.equals(other.defaultVerifierToken)) {
+            return false;
+        }
+        if (logSchemaVersion == null) {
+            if (other.logSchemaVersion != null) {
+                return false;
+            }
+        } else if (!logSchemaVersion.equals(other.logSchemaVersion)) {
+            return false;
+        }
         if (notificationSchemaVersion == null) {
             if (other.notificationSchemaVersion != null) {
                 return false;
@@ -184,17 +214,18 @@ public class SdkKey implements Serializable {
         } else if (!profileSchemaVersion.equals(other.profileSchemaVersion)) {
             return false;
         }
-        if (logSchemaVersion == null) {
-            if (other.logSchemaVersion != null) {
-                return false;
-            }
-        } else if (!logSchemaVersion.equals(other.logSchemaVersion)) {
-            return false;
-        }
         if (targetPlatform != other.targetPlatform) {
             return false;
         }
         return true;
     }
+
+    @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
+    public void setId(String id) {}
 
 }

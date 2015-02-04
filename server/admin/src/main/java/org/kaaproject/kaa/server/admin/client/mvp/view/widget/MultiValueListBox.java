@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -167,9 +168,21 @@ public class MultiValueListBox<T> extends Composite implements
 
     valueKeyToIndex.put(key, values.size());
     values.add(value);
-    getListBox().addItem(renderer.render(value));
+    addListBoxItem(renderer.render(value));
     assert values.size() == getListBox().getItemCount();
   }
+  
+  private void addListBoxItem(String item) {
+      addItemWithTitle(getListBox().getElement(), item, item);
+  }
+  
+  private static native void addItemWithTitle(Element element, String name, String value) /*-{
+      var opt = $doc.createElement("option");
+      opt.title = name;
+      opt.text = name;
+      opt.value = value;
+      element.options.add(opt);
+  }-*/;
 
   private ListBox getListBox() {
     return (ListBox) getWidget();

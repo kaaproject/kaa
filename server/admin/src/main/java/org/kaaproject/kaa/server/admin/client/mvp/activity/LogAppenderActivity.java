@@ -33,8 +33,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class LogAppenderActivity extends AbstractPluginActivity<LogAppenderDto, LogAppenderView, LogAppenderPlace> {
 
-    private String applicationId;
-
     public LogAppenderActivity(LogAppenderPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
     }

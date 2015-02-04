@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
-
-import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
+package org.kaaproject.kaa.server.admin.client.mvp.view.sdk;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,16 +25,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
-import org.kaaproject.kaa.server.admin.client.KaaAdmin;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
-import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
-import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -44,7 +41,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -55,11 +51,9 @@ import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
-
+public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements GenerateSdkView, ValueChangeHandler<SchemaDto>  {
+    
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
-
-    private AlertPanel errorPanel;
 
     private SchemaListBox configurationSchemaVersion;
     private SchemaListBox profileSchemaVersion;
@@ -68,134 +62,66 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
     private ValueListBox<SdkPlatform> targetPlatform;
 
     private List<AefMapInfoDto> aefMaps;
-    private AefMapInfoDtoComparator aefMapComparator;
+    private AefMapInfoDtoComparator aefMapComparator = new AefMapInfoDtoComparator();
 
     private MultiAefMapListBox availableAefMaps;
     private MultiAefMapListBox selectedAefMaps;
 
     private Button addAefMapButton;
     private Button removeAefMapButton;
+    
+    private ValueListBox<UserVerifierDto> defaultUserVerifier;
 
-    private String applicationId;
-
-    private Button generateSdkButton;
-
-    public static void showGenerateSdkDialog(final String applicationId, final AsyncCallback<GenerateSdkDialog> callback) {
-        KaaAdmin.getDataSource().getSchemaVersionsByApplicationId(applicationId, new AsyncCallback<SchemaVersions>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(final SchemaVersions schemaVersions) {
-                KaaAdmin.getDataSource().getAefMaps(applicationId, new AsyncCallback<List<AefMapInfoDto>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-
-                    @Override
-                    public void onSuccess(List<AefMapInfoDto> ecfs) {
-                        GenerateSdkDialog dialog = new GenerateSdkDialog(applicationId, schemaVersions, ecfs);
-                        dialog.center();
-                        callback.onSuccess(dialog);
-                        dialog.show();
-                    }
-                });
-            }
-        });
+    
+    public GenerateSdkViewImpl() {
+        super(true);
     }
-
-    public GenerateSdkDialog(String applicationId, SchemaVersions schemaVersions, List<AefMapInfoDto> aefMaps) {
-        super(false, true);
-
-        this.applicationId = applicationId;
-        this.aefMaps = aefMaps;
-
-        setWidth("500px");
-
-        setTitle(Utils.constants.generate_sdk());
-
-        VerticalPanel dialogContents = new VerticalPanel();
-        dialogContents.setSpacing(4);
-        setWidget(dialogContents);
-
-        errorPanel = new AlertPanel(AlertPanel.Type.ERROR);
-        errorPanel.setVisible(false);
-        dialogContents.add(errorPanel);
-
-        FlexTable table = new FlexTable();
-        table.setCellSpacing(6);
-
+    
+    @Override
+    protected void initDetailsTable() {
+        
+        detailsTable.getColumnFormatter().setWidth(0, "250px");
+        detailsTable.getColumnFormatter().setWidth(1, "500px");
+        
         int row = 0;
-
-        ValueChangeHandler<SchemaDto> schemaValueChangeHandler = new ValueChangeHandler<SchemaDto>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<SchemaDto> event) {
-                fireChanged();
-            }
-        };
-
         Widget label = new Label(Utils.constants.configurationSchemaVersion());
         label.addStyleName(REQUIRED);
         configurationSchemaVersion = new SchemaListBox();
         configurationSchemaVersion.setWidth("80px");
-        List<SchemaDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
-        configurationSchemaVersion.setValue(getMaxSchemaVersions(confSchemaVersions));
-        configurationSchemaVersion.setAcceptableValues(confSchemaVersions);
-        configurationSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
-
-        table.setWidget(row, 0, label);
-        table.setWidget(row, 1, configurationSchemaVersion);
-        table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+        configurationSchemaVersion.addValueChangeHandler(this);
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, configurationSchemaVersion);
+        
         row++;
-
         label = new Label(Utils.constants.profileSchemaVersion());
         label.addStyleName(REQUIRED);
         profileSchemaVersion = new SchemaListBox();
         profileSchemaVersion.setWidth("80px");
-        List<SchemaDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
-        profileSchemaVersion.setValue(getMaxSchemaVersions(pfSchemaVersions));
-        profileSchemaVersion.setAcceptableValues(pfSchemaVersions);
-        profileSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
-
-        table.setWidget(row, 0, label);
-        table.setWidget(row, 1, profileSchemaVersion);
-        table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+        profileSchemaVersion.addValueChangeHandler(this);
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, profileSchemaVersion);
+        
         row++;
-
         label = new Label(Utils.constants.notificationSchemaVersion());
         label.addStyleName(REQUIRED);
         notificationSchemaVersion = new SchemaListBox();
         notificationSchemaVersion.setWidth("80px");
-        List<SchemaDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
-        notificationSchemaVersion.setValue(getMaxSchemaVersions(notSchemaVersions));
-        notificationSchemaVersion.setAcceptableValues(notSchemaVersions);
-        notificationSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
-
-        table.setWidget(row, 0, label);
-        table.setWidget(row, 1, notificationSchemaVersion);
-        table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+        notificationSchemaVersion.addValueChangeHandler(this);
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, notificationSchemaVersion);
+        
         row++;
-
         label = new Label(Utils.constants.logSchemaVersion());
         label.addStyleName(REQUIRED);
         logSchemaVersion = new SchemaListBox();
         logSchemaVersion.setWidth("80px");
-        List<SchemaDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
-        logSchemaVersion.setValue(getMaxSchemaVersions(logSchemaVersions));
-        logSchemaVersion.setAcceptableValues(logSchemaVersions);
-        logSchemaVersion.addValueChangeHandler(schemaValueChangeHandler);
-
-        table.setWidget(row, 0, label);
-        table.setWidget(row, 1, logSchemaVersion);
-        table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+        logSchemaVersion.addValueChangeHandler(this);
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, logSchemaVersion);
+        
         row++;
-
         label = new Label(Utils.constants.targetPlatform());
         label.addStyleName(REQUIRED);
-
         Renderer<SdkPlatform> targetPlatformRenderer = new Renderer<SdkPlatform>() {
             @Override
             public String render(SdkPlatform object) {
@@ -211,24 +137,17 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
                 appendable.append(render(object));
             }
         };
-
         targetPlatform = new ValueListBox<>(targetPlatformRenderer);
-        targetPlatform.setWidth("80px");
-        // Set default sdk platform
-         targetPlatform.setValue(SdkPlatform.ANDROID);
-        targetPlatform.setAcceptableValues(Arrays.asList(SdkPlatform.values()));
         targetPlatform.addValueChangeHandler(new ValueChangeHandler<SdkPlatform>() {
             @Override
             public void onValueChange(ValueChangeEvent<SdkPlatform> event) {
                 fireChanged();
             }
         });
-
-        table.setWidget(row, 0, label);
-        table.setWidget(row, 1, targetPlatform);
-        table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, targetPlatform);
+        
         row++;
-
         FlexTable ecfsTable = new FlexTable();
         ecfsTable.setCellSpacing(6);
 
@@ -260,21 +179,15 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
         ecfsTable.setWidget(0, 0, availableEcfsPanel);
         ecfsTable.setWidget(0, 1, ecfButtonsPanel);
         ecfsTable.setWidget(0, 2, selectedEcfsPanel);
+        
+        ecfsTable.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_MIDDLE);
 
         DisclosurePanel ecfsDisclosure = new DisclosurePanel(Utils.constants.ecfs());
         ecfsDisclosure.setAnimationEnabled(true);
         ecfsDisclosure.setContent(ecfsTable);
-
-        aefMapComparator = new AefMapInfoDtoComparator();
-        Collections.sort(aefMaps, aefMapComparator);
-
-        availableAefMaps.setAcceptableValues(aefMaps);
-
+        
         addAefMapButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
         removeAefMapButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
-
-        addAefMapButton.setEnabled(false);
-        removeAefMapButton.setEnabled(false);
 
         addAefMapButton.addClickHandler(new ClickHandler() {
             @Override
@@ -290,8 +203,8 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
             }
         });
 
-        availableAefMaps.setSize("150px", "100px");
-        selectedAefMaps.setSize("150px", "100px");
+        availableAefMaps.setSize("250px", "100px");
+        selectedAefMaps.setSize("250px", "100px");
 
         availableAefMaps.addValueChangeHandler(new ValueChangeHandler<List<AefMapInfoDto>>() {
             @Override
@@ -306,30 +219,127 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
                 updateAefMapButtons();
             }
         });
-
-        dialogContents.add(table);
-        dialogContents.add(ecfsDisclosure);
-
-        generateSdkButton = new Button(Utils.constants.generate_sdk(), new ClickHandler() {
+        detailsTable.setWidget(row, 0, ecfsDisclosure);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        
+        row++;
+        label = new Label(Utils.constants.defaultUserVerifier());
+        label.addStyleName(REQUIRED);
+        Renderer<UserVerifierDto> userVerifierRenderer = new Renderer<UserVerifierDto>() {
             @Override
-            public void onClick(ClickEvent event) {
-                performGenerateSdk();
+            public String render(UserVerifierDto object) {
+                if (object != null) {
+                    return object.getName();
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public void render(UserVerifierDto object, Appendable appendable) throws IOException {
+                appendable.append(render(object));
+            }
+        };
+        defaultUserVerifier = new ValueListBox<>(userVerifierRenderer);
+        defaultUserVerifier.addValueChangeHandler(new ValueChangeHandler<UserVerifierDto>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<UserVerifierDto> event) {
+                fireChanged();
             }
         });
-
-        Button closeButton = new Button(Utils.constants.close(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                hide();
-            }
-        });
-        addButton(generateSdkButton);
-        addButton(closeButton);
-
-        generateSdkButton.setEnabled(false);
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, defaultUserVerifier);
+    }
+    
+    @Override
+    public void onValueChange(ValueChangeEvent<SchemaDto> event) {
         fireChanged();
     }
+    
+    @Override
+    protected String getCreateTitle() {
+        return Utils.constants.generate_sdk();
+    }
 
+    @Override
+    protected String getViewTitle() {
+        return Utils.constants.generate_sdk();
+    }
+
+    @Override
+    protected String getSubTitle() {
+        return Utils.constants.sdkDetails();
+    }
+
+    @Override
+    public ValueListBox<SchemaDto> getConfigurationSchemaVersion() {
+        return configurationSchemaVersion;
+    }
+
+    @Override
+    public ValueListBox<SchemaDto> getProfileSchemaVersion() {
+        return profileSchemaVersion;
+    }
+
+    @Override
+    public ValueListBox<SchemaDto> getNotificationSchemaVersion() {
+        return notificationSchemaVersion;
+    }
+
+    @Override
+    public ValueListBox<SchemaDto> getLogSchemaVersion() {
+        return logSchemaVersion;
+    }
+
+    @Override
+    public ValueListBox<SdkPlatform> getTargetPlatform() {
+        return targetPlatform;
+    }
+
+    @Override
+    public MultiValueListBox<AefMapInfoDto> getSelectedAefMaps() {
+        return selectedAefMaps;
+    }
+
+    @Override
+    public ValueListBox<UserVerifierDto> getDefaultUserVerifier() {
+        return defaultUserVerifier;
+    }
+    
+    @Override
+    public void setAefMaps(List<AefMapInfoDto> aefMaps) {
+        this.aefMaps = aefMaps;
+        Collections.sort(this.aefMaps, aefMapComparator);
+        availableAefMaps.setAcceptableValues(aefMaps);
+        
+    }
+
+    @Override
+    protected void resetImpl() {
+        configurationSchemaVersion.reset();
+        profileSchemaVersion.reset();
+        notificationSchemaVersion.reset();
+        logSchemaVersion.reset();
+        targetPlatform.setValue(SdkPlatform.ANDROID);
+        targetPlatform.setAcceptableValues(Arrays.asList(SdkPlatform.values()));
+        availableAefMaps.reset();
+        selectedAefMaps.reset();
+        addAefMapButton.setEnabled(false);
+        removeAefMapButton.setEnabled(false);
+        defaultUserVerifier.setValue(null);
+        defaultUserVerifier.setAcceptableValues(Collections.<UserVerifierDto>emptyList());
+    }
+
+    @Override
+    protected boolean validate() {
+        boolean result = configurationSchemaVersion.getValue() != null;
+        result &= profileSchemaVersion.getValue() != null;
+        result &= notificationSchemaVersion.getValue() != null;
+        result &= logSchemaVersion.getValue() != null;
+        result &= targetPlatform.getValue() != null;
+        return result;
+    }
+    
     private void addAefMap() {
         List<AefMapInfoDto> selected = availableAefMaps.getValue();
         availableAefMaps.setValue(null, true);
@@ -375,6 +385,13 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
         availableAefMaps.setAcceptableValues(available);
         selectedAefMaps.setAcceptableValues(totalSelected);
     }
+    
+    private void updateAefMapButtons() {
+        boolean availableSelected = availableAefMaps.getValue() != null && !availableAefMaps.getValue().isEmpty();
+        boolean selectedSelected = selectedAefMaps.getValue() != null && !selectedAefMaps.getValue().isEmpty();
+        addAefMapButton.setEnabled(availableSelected);
+        removeAefMapButton.setEnabled(selectedSelected);
+    }
 
     class AefMapInfoDtoComparator implements Comparator<AefMapInfoDto> {
         @Override
@@ -387,68 +404,10 @@ public class GenerateSdkDialog extends KaaDialog implements HasErrorMessage {
         }
     }
 
-    private void updateAefMapButtons() {
-        boolean availableSelected = availableAefMaps.getValue() != null && !availableAefMaps.getValue().isEmpty();
-        boolean selectedSelected = selectedAefMaps.getValue() != null && !selectedAefMaps.getValue().isEmpty();
-        addAefMapButton.setEnabled(availableSelected);
-        removeAefMapButton.setEnabled(selectedSelected);
-    }
-
-    private void fireChanged() {
-        boolean valid = validate();
-        generateSdkButton.setEnabled(valid);
-    }
-
-    private void performGenerateSdk() {
-        SchemaDto configurationSchema = configurationSchemaVersion.getValue();
-        SchemaDto profileSchema = profileSchemaVersion.getValue();
-        SchemaDto notificationSchema = notificationSchemaVersion.getValue();
-        SchemaDto logSchema = logSchemaVersion.getValue();
-        SdkPlatform targetPlatformVal = targetPlatform.getValue();
-
-        List<String> aefMapIds = new ArrayList<>();
-        List<AefMapInfoDto> aefMaps = selectedAefMaps.getValues();
-        if (aefMaps != null) {
-            for (AefMapInfoDto aefMap : aefMaps) {
-                aefMapIds.add(aefMap.getAefMapId());
-            }
-        }
-
-        KaaAdmin.getDataSource().getSdk(applicationId, configurationSchema.getMajorVersion(), profileSchema.getMajorVersion(),
-                notificationSchema.getMajorVersion(), targetPlatformVal, aefMapIds, logSchema.getMajorVersion(), new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Utils.handleException(caught, GenerateSdkDialog.this);
-                    }
-
-                    @Override
-                    public void onSuccess(String key) {
-                        clearError();
-                        ServletHelper.downloadSdk(key);
-                    }
-                });
-    }
-
-    private boolean validate() {
-        boolean result = configurationSchemaVersion.getValue() != null;
-        result &= profileSchemaVersion.getValue() != null;
-        result &= notificationSchemaVersion.getValue() != null;
-        result &= logSchemaVersion.getValue() != null;
-        result &= targetPlatform.getValue() != null;
-        return result;
-    }
-
     @Override
-    public void clearError() {
-        errorPanel.setMessage("");
-        errorPanel.setVisible(false);
-    }
-
-    @Override
-    public void setErrorMessage(String message) {
-        errorPanel.setMessage(message);
-        errorPanel.setVisible(true);
+    protected void updateSaveButton(boolean enabled, boolean invalid) {
+        saveButton.setText(Utils.constants.generate_sdk());
+        saveButton.setEnabled(!invalid);
     }
 
 }

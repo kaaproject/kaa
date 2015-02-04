@@ -26,7 +26,7 @@
     <artifactId>config</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa trustful verifier config</name>
+    <name>Kaa Trustful verifier config</name>
     <url>http://kaaproject.org</url>
 
     <properties>

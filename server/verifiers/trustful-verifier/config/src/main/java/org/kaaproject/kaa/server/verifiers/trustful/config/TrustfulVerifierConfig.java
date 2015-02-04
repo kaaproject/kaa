@@ -34,7 +34,7 @@ public class TrustfulVerifierConfig implements PluginConfig {
 
     @Override
     public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.verifiers.trustful.TrustfulUserVerifier";
+        return "org.kaaproject.kaa.server.verifiers.trustful.verifier.TrustfulUserVerifier";
     }
 
     @Override

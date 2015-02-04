@@ -22,6 +22,7 @@ import com.google.gwt.place.shared.WithTokenizers;
 @WithTokenizers({UserProfilePlace.Tokenizer.class,
     ApplicationsPlace.Tokenizer.class,
     ApplicationPlace.Tokenizer.class,
+    GenerateSdkPlace.Tokenizer.class,
     ProfileSchemasPlace.Tokenizer.class,
     ProfileSchemaPlace.Tokenizer.class,
     ConfigurationSchemasPlace.Tokenizer.class,

@@ -1804,7 +1804,8 @@ public class ControlApiCommandProcessor {
                     configurationSchemaVersion,
                     notificationSchemaVersion,
                     null,
-                    logSchemaVersion);
+                    logSchemaVersion,
+                    null);
 
             writer.println("Generated SDK: " + sdk.getFileName());
 

@@ -135,11 +135,18 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant LOG_COLLECTOR_SOURCE_TEMPLATE. */
     private static final String LOG_COLLECTOR_SOURCE_TEMPLATE = "sdk/java/log/DefaultLogCollector.java.template";
 
+    /** The Constant USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE. */
+    private static final String USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE = "sdk/java/event/UserVerifierConstants.java.template";
+    
     /** The Constant ABSTRACT_PROFILE_CONTAINER. */
     private static final String ABSTRACT_PROFILE_CONTAINER = "AbstractProfileContainer";
 
     /** The Constant ABSTRACT_NOTIFICATION_LISTENER. */
     private static final String ABSTRACT_NOTIFICATION_LISTENER = "AbstractNotificationListener";
+    
+    /** The Constant  USER_VERIFIER_CONSTANTS. */
+    private static final String  USER_VERIFIER_CONSTANTS = "UserVerifierConstants";
+
 
     /** The Constant LOG_RECORD. */
     private static final String LOG_RECORD = "LogRecord";
@@ -167,6 +174,9 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant LOG_RECORD_CLASS_VAR. */
     private static final String LOG_RECORD_CLASS_VAR = "\\$\\{log_record_class\\}";
+    
+    /** The Constant DEFAULT_USER_VERIFIER_TOKEN_VAR. */
+    private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
 
     /** The Constant random. */
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -190,7 +200,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     public Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String appToken, int profileSchemaVersion,
             int configurationSchemaVersion, int notificationSchemaVersion, int logSchemaVersion, String profileSchemaBody,
             String notificationSchemaBody, String configurationProtocolSchemaBody, byte[] defaultConfigurationData,
-            List<EventFamilyMetadata> eventFamilies, String logSchemaBody) throws Exception {
+            List<EventFamilyMetadata> eventFamilies, String logSchemaBody, String defaultVerifierToken) throws Exception {
 
         String sdkTemplateLocation;
         if (sdkPlatform == SdkPlatform.JAVA) {
@@ -263,6 +273,18 @@ public class JavaSdkGenerator extends SdkGenerator {
             }
             javaSources.addAll(JavaEventClassesGenerator.generateEventClasses(eventFamilies));
         }
+        
+        String userVerifierConstantsTemplate = readResource(USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE);
+        if (defaultVerifierToken == null) {
+            defaultVerifierToken = "null";
+        } else {
+            defaultVerifierToken = "\"" + defaultVerifierToken + "\"";
+        }
+        String userVerifierConstantsSource = userVerifierConstantsTemplate.replaceAll(DEFAULT_USER_VERIFIER_TOKEN_VAR, 
+                defaultVerifierToken);
+        
+        JavaDynamicBean userVerifierConstantsClassBean = new JavaDynamicBean(USER_VERIFIER_CONSTANTS, userVerifierConstantsSource);
+        javaSources.add(userVerifierConstantsClassBean);
 
         packageSources(javaSources, replacementData);
 
