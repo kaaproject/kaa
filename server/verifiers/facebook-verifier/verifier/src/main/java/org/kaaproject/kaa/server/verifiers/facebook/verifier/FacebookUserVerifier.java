@@ -92,7 +92,7 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                         callback.onSuccess();
                     }
                 } else {
-                    LOG.trace("Server response code: {}, no data can be retrieved" + connection.getResponseCode());
+                    LOG.trace("Server response code: {}, no data can be retrieved", connection.getResponseCode());
 
                     callback.onVerificationFailure("Server response code:" + connection.getResponseCode()
                             + ", no data can be retrieved");
@@ -123,9 +123,7 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                             "input_token=" + userAccessToken +
                             "&access_token=" + accessToken);
 
-
-        HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
-        return connection;
+        return (HttpURLConnection) myUrl.openConnection();
     }
 
     @Override
