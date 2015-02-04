@@ -23,11 +23,11 @@ public class UserVerificationRequestMessage {
 
     private final UUID id;
     private final ActorRef originator;
-    private final int verifierId;
+    private final String verifierId;
     private final String userId;
     private final String accessToken;
 
-    public UserVerificationRequestMessage(ActorRef originator, int verifierId, String userId, String accessToken) {
+    public UserVerificationRequestMessage(ActorRef originator, String verifierId, String userId, String accessToken) {
         super();
         this.id = UUID.randomUUID();
         this.originator = originator;
@@ -40,7 +40,7 @@ public class UserVerificationRequestMessage {
         return id;
     }
 
-    public int getVerifierId() {
+    public String getVerifierId() {
         return verifierId;
     }
 

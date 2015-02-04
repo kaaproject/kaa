@@ -58,6 +58,7 @@ public class ApplicationUserVerifierActorMessageProcessor {
             try {
                 LOG.trace("Initializing user verifier for {}", dto);
                 UserVerifier verifier = createUserVerifier(dto);
+                LOG.trace("Registering user verifier with token {}", dto.getVerifierToken());
                 userVerifiers.put(dto.getVerifierToken(), verifier);
             } catch (Exception e) {
                 LOG.error("Failed to create user verifier", e);
@@ -90,6 +91,7 @@ public class ApplicationUserVerifierActorMessageProcessor {
         if (verifier != null) {
             verifier.checkAccessToken(message.getUserId(), message.getAccessToken(), new DefaultVerifierCallback(message));
         } else {
+            LOG.debug("Failed to find verifier with token {}", message.getVerifierId());
             message.getOriginator().tell(UserVerificationResponseMessage.failure(message.getRequestid(), message.getUserId(), UserVerifierErrorCode.NO_VERIFIER_CONFIGURED),
                     ActorRef.noSender());
         }

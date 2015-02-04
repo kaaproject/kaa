@@ -321,7 +321,7 @@ public class EndpointActorMessageProcessor {
         if (request != null && request.getUserAttachRequest() != null) {
             UserAttachRequest aRequest = request.getUserAttachRequest();
             context.parent().tell(
-                    new UserVerificationRequestMessage(context.self(), aRequest.getUserExternalId().hashCode(), aRequest.getUserExternalId(),
+                    new UserVerificationRequestMessage(context.self(), aRequest.getUserVerifierId(), aRequest.getUserExternalId(),
                             aRequest.getUserAccessToken()), context.self());
             LOG.debug("[{}][{}] received and forwarded user attach request {}", endpointKey, actorKey, request.getUserAttachRequest());
             
