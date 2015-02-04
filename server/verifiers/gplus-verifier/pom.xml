@@ -26,7 +26,7 @@
     <artifactId>gplus-verifier</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa gplus verifier</name>
+    <name>Kaa Google+ verifier</name>
     <url>http://kaaproject.org</url>
 
     <properties>

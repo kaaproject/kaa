@@ -26,7 +26,7 @@
     <artifactId>verifier</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa gplus verifier implementation</name>
+    <name>Kaa Google+ verifier implementation</name>
     <url>http://kaaproject.org</url>
 
     <properties>

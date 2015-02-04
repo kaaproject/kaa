@@ -10,11 +10,11 @@ import org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig;
 @KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
 public class GplusVerifierConfig implements PluginConfig {
 
-    private static final String TRUSTFUL_VERIFIER_NAME = "Trustful verifier";
+    private static final String GPLUS_VERIFIER_NAME = "Google+ verifier";
 
     @Override
     public String getPluginTypeName() {
-        return TRUSTFUL_VERIFIER_NAME;
+        return GPLUS_VERIFIER_NAME;
     }
 
     @Override

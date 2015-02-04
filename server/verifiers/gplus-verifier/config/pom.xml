@@ -26,7 +26,7 @@
     <artifactId>config</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa gplus verifier config</name>
+    <name>Kaa Google+ verifier config</name>
     <url>http://kaaproject.org</url>
 
     <properties>

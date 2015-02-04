@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -22,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(GplusUserVerifier.class);
+    private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
 
     private ExecutorService thredPool;
 
@@ -39,8 +42,10 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
         URL url = null;
         try {
-            url = new URL("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=" + accessToken);
+            url = new URL(GOOGLE_OAUTH + URLEncoder.encode(accessToken,"UTF-8"));
         } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         thredPool.submit(new RunnableVerifier(url, callback, userExternalId));
