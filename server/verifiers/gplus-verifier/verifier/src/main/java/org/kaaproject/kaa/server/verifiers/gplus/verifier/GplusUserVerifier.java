@@ -19,14 +19,15 @@ import java.util.concurrent.TimeUnit;
 public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(GplusUserVerifier.class);
     private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
-
+    private GplusAvroConfig configuration;
     private ExecutorService threadPool;
 
 
     @Override
     public void init(UserVerifierContext context, GplusAvroConfig configuration) {
-        threadPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
-                configuration.getKeepAliveTimeMilliseconds(), TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        LOG.info("Initializing user verifier with context {} and configuration {}", context, configuration);
+        this.configuration = configuration;
+
     }
 
     @Override
@@ -34,8 +35,9 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
         URL url = null;
         try {
-            url = new URL(GOOGLE_OAUTH+accessToken);
+            url = new URL(GOOGLE_OAUTH + accessToken);
         } catch (MalformedURLException e) {
+            callback.onVerificationFailure("Internal error: malformed url");
             LOG.debug("message", e);
         }
         threadPool.submit(new RunnableVerifier(url, callback, userExternalId));
@@ -60,6 +62,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             BufferedReader bufferedReader = null;
             String line;
             StringBuilder responseJson = new StringBuilder();
+            int responseCode = 0;
 
             HttpURLConnection connection = null;
             try {
@@ -67,7 +70,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
                 connection.setRequestMethod("GET");
 
-                int responseCode = connection.getResponseCode();
+                responseCode = connection.getResponseCode();
 
                 if (responseCode == 400) {
                     callback.onTokenInvalid();
@@ -100,7 +103,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 if (null != connection) {
                     connection.disconnect();
                 }
-                if(null!=bufferedReader){
+                if (null != bufferedReader) {
                     try {
                         bufferedReader.close();
                     } catch (IOException e) {
@@ -109,7 +112,9 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 }
             }
 
-            callback.onConnectionError();
+            LOG.trace("Server response code: {} no data can be retrieved" + responseCode);
+
+            callback.onVerificationFailure("Server response code:" + responseCode + ", no data can be retrieved");
         }
     }
 
@@ -125,12 +130,15 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
     @Override
     public void start() {
-
+        LOG.info("user verifier started");
+        threadPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
+                configuration.getKeepAliveTimeMilliseconds(), TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
     @Override
     public void stop() {
         threadPool.shutdown();
+        LOG.info("user verifier stopped");
     }
 
     @Override

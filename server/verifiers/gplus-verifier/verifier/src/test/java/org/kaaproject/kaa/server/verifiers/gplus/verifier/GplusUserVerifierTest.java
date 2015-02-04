@@ -32,7 +32,10 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
                 " \"error_description\": \"Invalid Value\"\n" +
                 "}\n");
         verifier.init(null, config);
+        verifier.start();
+
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
+
         verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
     }
@@ -46,6 +49,7 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
                 "  \"expires_in\":436\n" +
                 "}");
         verifier.init(null, config);
+        verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
         verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
@@ -55,6 +59,7 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
     public void badRequestTest() {
         verifier = new MyGplusVerifier(400);
         verifier.init(null, config);
+        verifier.start();
 
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
 
@@ -75,6 +80,7 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
 
 
         verifier.init(null, config);
+        verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
         verifier.checkAccessToken(userId, "someToken", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onSuccess();
