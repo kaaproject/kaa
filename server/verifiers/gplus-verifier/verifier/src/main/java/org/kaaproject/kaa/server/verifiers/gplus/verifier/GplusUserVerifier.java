@@ -26,12 +26,12 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     private static final Logger LOG = LoggerFactory.getLogger(GplusUserVerifier.class);
     private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
 
-    private ExecutorService thredPool;
+    private ExecutorService threadPool;
 
 
     @Override
     public void init(UserVerifierContext context, GplusAvroConfig configuration) {
-        thredPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
+        threadPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
                 configuration.getKeepAliveTimeMilliseconds(), TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
@@ -40,13 +40,13 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
         URL url = null;
         try {
-            url = new URL(GOOGLE_OAUTH + URLEncoder.encode(accessToken,"UTF-8"));
+            url = new URL(GOOGLE_OAUTH + URLEncoder.encode(accessToken, "UTF-8"));
         } catch (MalformedURLException e) {
             LOG.debug("message", e);
         } catch (UnsupportedEncodingException e) {
             LOG.debug("message", e);
         }
-        thredPool.submit(new RunnableVerifier(url, callback, userExternalId));
+        threadPool.submit(new RunnableVerifier(url, callback, userExternalId));
 
     }
 
@@ -69,8 +69,9 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             String line;
             StringBuilder responseJson = new StringBuilder();
 
+            HttpURLConnection connection = null;
             try {
-                HttpURLConnection connection = establishConnection(url);
+                connection = establishConnection(url);
                 connection.setRequestMethod("GET");
                 int responseCode = connection.getResponseCode();
 
@@ -101,6 +102,10 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 }
             } catch (IOException e) {
                 LOG.debug("message", e);
+            } finally {
+                if (null != connection) {
+                    connection.disconnect();
+                }
             }
 
             callback.onConnectionError();
@@ -108,7 +113,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     }
 
     protected HttpURLConnection establishConnection(URL url) {
-        HttpURLConnection connection =null;
+        HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
@@ -124,7 +129,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
     @Override
     public void stop() {
-        thredPool.shutdown();
+        threadPool.shutdown();
     }
 
     @Override
