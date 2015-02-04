@@ -63,7 +63,6 @@ Copyright 2014 CyberVision, Inc.
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <commons.pool.version>1.5.4</commons.pool.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
-        <jackson-databind.version>2.5.0</jackson-databind.version>
         <jackson.version>2.4.1</jackson.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
@@ -862,7 +861,7 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
