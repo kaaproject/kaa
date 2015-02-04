@@ -149,7 +149,8 @@ public class CppSdkGenerator extends SdkGenerator {
             String configurationProtocolSchemaBody,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody) throws Exception {
+            String logSchemaBody,
+            String defaultVerifierToken) throws Exception {
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + CPP_SDK_DIR + "/" + CPP_SDK_PREFIX + buildVersion + ".tar.gz";
 

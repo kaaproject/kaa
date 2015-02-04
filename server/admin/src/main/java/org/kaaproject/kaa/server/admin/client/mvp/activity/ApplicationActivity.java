@@ -20,9 +20,8 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.GenerateSdkDialog;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -45,7 +44,7 @@ public class ApplicationActivity
             registrations.add(detailsView.getGenerateSdkButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    showGenerateSdkDialog();
+                    goTo(new GenerateSdkPlace(entityId));
                 }
             }));
         }
@@ -77,14 +76,12 @@ public class ApplicationActivity
             detailsView.getApplicationToken().setValue(entity.getApplicationToken());
         }
         detailsView.getApplicationName().setValue(entity.getName());
-//        detailsView.getApplicationKey().setValue(entity.getPublicKey());
 
     }
 
     @Override
     protected void onSave() {
         entity.setName(detailsView.getApplicationName().getValue());
-//        entity.setPublicKey(detailsView.getApplicationKey().getValue());
     }
 
     @Override
@@ -96,18 +93,5 @@ public class ApplicationActivity
     protected void editEntity(ApplicationDto entity,
             AsyncCallback<ApplicationDto> callback) {
         KaaAdmin.getDataSource().editApplication(entity, callback);
-    }
-
-    private void showGenerateSdkDialog() {
-        GenerateSdkDialog.showGenerateSdkDialog(entityId,
-                new AsyncCallback<GenerateSdkDialog>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Utils.handleException(caught, detailsView);
-                    }
-
-                    @Override
-                    public void onSuccess(GenerateSdkDialog result) {}
-        });
     }
 }

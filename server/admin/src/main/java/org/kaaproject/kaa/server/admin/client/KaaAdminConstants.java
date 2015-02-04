@@ -689,4 +689,10 @@ public interface KaaAdminConstants extends ConstantsWithLookup {
     @DefaultStringValue("User Verifier details")
     String userVerifierDetails();
     
+    @DefaultStringValue("Default User Verifier")
+    String defaultUserVerifier();
+    
+    @DefaultStringValue("SDK details")
+    String sdkDetails();
+    
 }
