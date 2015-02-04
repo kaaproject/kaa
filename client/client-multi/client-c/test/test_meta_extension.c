@@ -15,10 +15,13 @@
  */
 
 #include <stdbool.h>
-#include "kaa_test.h"
 #include <stddef.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdio.h>
+
+#include "kaa_test.h"
+
 #include "platform/ext_sha.h"
 #include "kaa_error.h"
 #include "kaa_common.h"

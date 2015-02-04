@@ -123,10 +123,10 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
     // TODO: Need to print milliseconds. For this purpose, timespec() from C11
     // standard may be used, but GCC 4.6.4 doesn't support this API.
     size_t consumed_len = 0;
-    // Print log message prefix
 
+    // Print log message prefix
     int res_len = ext_format_sprintf(self->log_buffer, self->buffer_size, KAA_LOG_PREFIX_FORMAT
-        		, kaa_log_level_name[log_level], truncated_name, lineno, error_code);
+                , kaa_log_level_name[log_level], truncated_name, lineno, error_code);
 
     if (res_len <= 0)   // Something terrible happened
         return;
@@ -140,9 +140,9 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
         va_list args;
         va_start(args, format);
         res_len = ext_logger_sprintf(self->log_buffer + consumed_len
-				, self->buffer_size - consumed_len
-				, format
-				, args);
+                                   , self->buffer_size - consumed_len
+                                   , format
+                                   , args);
         va_end(args);
 
         if (res_len <= 0)   // Something terrible happened
