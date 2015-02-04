@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.verifiers.gplus.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GplusAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.gplus.config.gen\",\"fields\":[{\"name\":\"max_parallel_connections\",\"type\":\"int\"},{\"name\":\"min_parallel_connections\",\"type\":\"int\"},{\"name\":\"keep_alive_time_milliseconds\",\"type\":\"long\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GplusAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.gplus.config.gen\",\"fields\":[{\"name\":\"max_parallel_connections\",\"type\":\"int\",\"default\":\"20\"},{\"name\":\"min_parallel_connections\",\"type\":\"int\",\"default\":\"2\"},{\"name\":\"keep_alive_time_milliseconds\",\"type\":\"long\",\"default\":\"60000\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private int max_parallel_connections;
    private int min_parallel_connections;
