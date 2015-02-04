@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef PINGCONNECTIVITYCHECKER_HPP_
-#define PINGCONNECTIVITYCHECKER_HPP_
+#ifndef IP_CONNECTIVITY_CHECKER_HPP_
+#define IP_CONNECTIVITY_CHECKER_HPP_
 
 #include "kaa/KaaDefaults.hpp"
 
@@ -32,12 +32,15 @@ class IPingServerStorage;
  *
  * Use simple ping mechanism of some pattern server.
  */
-class PingConnectivityChecker: public IConnectivityChecker {
+class IPConnectivityChecker: public IConnectivityChecker {
 public:
-    PingConnectivityChecker(IPingServerStorage& storage)
+    IPConnectivityChecker(IPingServerStorage& storage)
         : serverStorage_(storage) {}
 
     virtual bool checkConnectivity();
+private:
+    bool isIPServer(ITransportConnectionInfoPtr serverConnectionInfo);
+
 private:
     IPingServerStorage& serverStorage_;
 };
@@ -46,4 +49,4 @@ private:
 
 #endif
 
-#endif /* PINGCONNECTIVITYCHECKER_HPP_ */
+#endif /* IP_CONNECTIVITY_CHECKER_HPP_ */

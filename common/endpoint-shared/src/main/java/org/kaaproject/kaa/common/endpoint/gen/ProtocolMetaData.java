@@ -7,7 +7,7 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class ProtocolMetaData extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProtocolMetaData\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"},{\"name\":\"protocolVersionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}],\"direction\":\"out\"}},{\"name\":\"connectionInfo\",\"type\":\"bytes\"}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProtocolMetaData\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"},{\"name\":\"protocolVersionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}]}},{\"name\":\"connectionInfo\",\"type\":\"bytes\"}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private int accessPointId;
    private org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair protocolVersionInfo;
