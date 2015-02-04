@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
@@ -75,6 +76,8 @@ public interface ClientFactory {
     BaseListView<ApplicationDto> getApplicationsView();
     ApplicationView getCreateApplicationView();
     ApplicationView getApplicationView();
+    
+    GenerateSdkView getGenerateSdkView();
 
     BaseListView<UserDto> getUsersView();
     UserView getCreateUserView();

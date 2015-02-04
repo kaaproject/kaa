@@ -33,7 +33,6 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -95,7 +94,7 @@ public interface KaaAdminService extends RemoteService {
 
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-    public String getSdk(String applicationId, Integer configurationSchemaVersion, Integer profileSchemaVersion, Integer notificationSchemaVersion, SdkPlatform targetPlatform, List<String> aefMapIds, Integer logSchemaVersion) throws KaaAdminServiceException;
+    public String generateSdk(SdkKey key) throws KaaAdminServiceException;
     
     public FileData getSdk(SdkKey key) throws KaaAdminServiceException;
     

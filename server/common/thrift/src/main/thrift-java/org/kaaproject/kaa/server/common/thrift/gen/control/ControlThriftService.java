@@ -257,8 +257,9 @@ public class ControlThriftService {
      * @param notificationSchemaVersion
      * @param aefMapIds
      * @param logSchemaVersion
+     * @param defaultVerifierToken
      */
-    public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion) throws ControlThriftException, org.apache.thrift.TException;
+    public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, String defaultVerifierToken) throws ControlThriftException, org.apache.thrift.TException;
 
     /**
      * Events
@@ -476,7 +477,7 @@ public class ControlThriftService {
 
     public void getUnicastNotificationsByKeyHash(ByteBuffer keyhash, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, String defaultVerifierToken, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void editEventClassFamily(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct eventClassFamily, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -2411,13 +2412,13 @@ public class ControlThriftService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUnicastNotificationsByKeyHash failed: unknown result");
     }
 
-    public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion) throws ControlThriftException, org.apache.thrift.TException
+    public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, String defaultVerifierToken) throws ControlThriftException, org.apache.thrift.TException
     {
-      send_generateSdk(sdkPlatform, applicationId, profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, aefMapIds, logSchemaVersion);
+      send_generateSdk(sdkPlatform, applicationId, profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, aefMapIds, logSchemaVersion, defaultVerifierToken);
       return recv_generateSdk();
     }
 
-    public void send_generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion) throws org.apache.thrift.TException
+    public void send_generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, String defaultVerifierToken) throws org.apache.thrift.TException
     {
       generateSdk_args args = new generateSdk_args();
       args.setSdkPlatform(sdkPlatform);
@@ -2427,6 +2428,7 @@ public class ControlThriftService {
       args.setNotificationSchemaVersion(notificationSchemaVersion);
       args.setAefMapIds(aefMapIds);
       args.setLogSchemaVersion(logSchemaVersion);
+      args.setDefaultVerifierToken(defaultVerifierToken);
       sendBase("generateSdk", args);
     }
 
@@ -5448,9 +5450,9 @@ public class ControlThriftService {
       }
     }
 
-    public void generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, String defaultVerifierToken, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      generateSdk_call method_call = new generateSdk_call(sdkPlatform, applicationId, profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, aefMapIds, logSchemaVersion, resultHandler, this, ___protocolFactory, ___transport);
+      generateSdk_call method_call = new generateSdk_call(sdkPlatform, applicationId, profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, aefMapIds, logSchemaVersion, defaultVerifierToken, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -5463,7 +5465,8 @@ public class ControlThriftService {
       private int notificationSchemaVersion;
       private List<String> aefMapIds;
       private int logSchemaVersion;
-      public generateSdk_call(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private String defaultVerifierToken;
+      public generateSdk_call(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion, int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, String defaultVerifierToken, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.sdkPlatform = sdkPlatform;
         this.applicationId = applicationId;
@@ -5472,6 +5475,7 @@ public class ControlThriftService {
         this.notificationSchemaVersion = notificationSchemaVersion;
         this.aefMapIds = aefMapIds;
         this.logSchemaVersion = logSchemaVersion;
+        this.defaultVerifierToken = defaultVerifierToken;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -5484,6 +5488,7 @@ public class ControlThriftService {
         args.setNotificationSchemaVersion(notificationSchemaVersion);
         args.setAefMapIds(aefMapIds);
         args.setLogSchemaVersion(logSchemaVersion);
+        args.setDefaultVerifierToken(defaultVerifierToken);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -8174,7 +8179,7 @@ public class ControlThriftService {
       public generateSdk_result getResult(I iface, generateSdk_args args) throws org.apache.thrift.TException {
         generateSdk_result result = new generateSdk_result();
         try {
-          result.success = iface.generateSdk(args.sdkPlatform, args.applicationId, args.profileSchemaVersion, args.configurationSchemaVersion, args.notificationSchemaVersion, args.aefMapIds, args.logSchemaVersion);
+          result.success = iface.generateSdk(args.sdkPlatform, args.applicationId, args.profileSchemaVersion, args.configurationSchemaVersion, args.notificationSchemaVersion, args.aefMapIds, args.logSchemaVersion, args.defaultVerifierToken);
         } catch (ControlThriftException ControlException) {
           result.ControlException = ControlException;
         }
@@ -13045,7 +13050,7 @@ public class ControlThriftService {
       }
 
       public void start(I iface, generateSdk_args args, org.apache.thrift.async.AsyncMethodCallback<Sdk> resultHandler) throws TException {
-        iface.generateSdk(args.sdkPlatform, args.applicationId, args.profileSchemaVersion, args.configurationSchemaVersion, args.notificationSchemaVersion, args.aefMapIds, args.logSchemaVersion,resultHandler);
+        iface.generateSdk(args.sdkPlatform, args.applicationId, args.profileSchemaVersion, args.configurationSchemaVersion, args.notificationSchemaVersion, args.aefMapIds, args.logSchemaVersion, args.defaultVerifierToken,resultHandler);
       }
     }
 
@@ -76134,6 +76139,7 @@ public class ControlThriftService {
     private static final org.apache.thrift.protocol.TField NOTIFICATION_SCHEMA_VERSION_FIELD_DESC = new org.apache.thrift.protocol.TField("notificationSchemaVersion", org.apache.thrift.protocol.TType.I32, (short)5);
     private static final org.apache.thrift.protocol.TField AEF_MAP_IDS_FIELD_DESC = new org.apache.thrift.protocol.TField("aefMapIds", org.apache.thrift.protocol.TType.LIST, (short)6);
     private static final org.apache.thrift.protocol.TField LOG_SCHEMA_VERSION_FIELD_DESC = new org.apache.thrift.protocol.TField("logSchemaVersion", org.apache.thrift.protocol.TType.I32, (short)7);
+    private static final org.apache.thrift.protocol.TField DEFAULT_VERIFIER_TOKEN_FIELD_DESC = new org.apache.thrift.protocol.TField("defaultVerifierToken", org.apache.thrift.protocol.TType.STRING, (short)8);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -76152,6 +76158,7 @@ public class ControlThriftService {
     public int notificationSchemaVersion; // required
     public List<String> aefMapIds; // required
     public int logSchemaVersion; // required
+    public String defaultVerifierToken; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -76165,7 +76172,8 @@ public class ControlThriftService {
       CONFIGURATION_SCHEMA_VERSION((short)4, "configurationSchemaVersion"),
       NOTIFICATION_SCHEMA_VERSION((short)5, "notificationSchemaVersion"),
       AEF_MAP_IDS((short)6, "aefMapIds"),
-      LOG_SCHEMA_VERSION((short)7, "logSchemaVersion");
+      LOG_SCHEMA_VERSION((short)7, "logSchemaVersion"),
+      DEFAULT_VERIFIER_TOKEN((short)8, "defaultVerifierToken");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -76194,6 +76202,8 @@ public class ControlThriftService {
             return AEF_MAP_IDS;
           case 7: // LOG_SCHEMA_VERSION
             return LOG_SCHEMA_VERSION;
+          case 8: // DEFAULT_VERIFIER_TOKEN
+            return DEFAULT_VERIFIER_TOKEN;
           default:
             return null;
         }
@@ -76257,6 +76267,8 @@ public class ControlThriftService {
               new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING              , "id"))));
       tmpMap.put(_Fields.LOG_SCHEMA_VERSION, new org.apache.thrift.meta_data.FieldMetaData("logSchemaVersion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32          , "Integer")));
+      tmpMap.put(_Fields.DEFAULT_VERIFIER_TOKEN, new org.apache.thrift.meta_data.FieldMetaData("defaultVerifierToken", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(generateSdk_args.class, metaDataMap);
     }
@@ -76271,7 +76283,8 @@ public class ControlThriftService {
       int configurationSchemaVersion,
       int notificationSchemaVersion,
       List<String> aefMapIds,
-      int logSchemaVersion)
+      int logSchemaVersion,
+      String defaultVerifierToken)
     {
       this();
       this.sdkPlatform = sdkPlatform;
@@ -76285,6 +76298,7 @@ public class ControlThriftService {
       this.aefMapIds = aefMapIds;
       this.logSchemaVersion = logSchemaVersion;
       setLogSchemaVersionIsSet(true);
+      this.defaultVerifierToken = defaultVerifierToken;
     }
 
     /**
@@ -76309,6 +76323,9 @@ public class ControlThriftService {
         this.aefMapIds = __this__aefMapIds;
       }
       this.logSchemaVersion = other.logSchemaVersion;
+      if (other.isSetDefaultVerifierToken()) {
+        this.defaultVerifierToken = other.defaultVerifierToken;
+      }
     }
 
     public generateSdk_args deepCopy() {
@@ -76328,6 +76345,7 @@ public class ControlThriftService {
       this.aefMapIds = null;
       setLogSchemaVersionIsSet(false);
       this.logSchemaVersion = 0;
+      this.defaultVerifierToken = null;
     }
 
     /**
@@ -76517,6 +76535,30 @@ public class ControlThriftService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LOGSCHEMAVERSION_ISSET_ID, value);
     }
 
+    public String getDefaultVerifierToken() {
+      return this.defaultVerifierToken;
+    }
+
+    public generateSdk_args setDefaultVerifierToken(String defaultVerifierToken) {
+      this.defaultVerifierToken = defaultVerifierToken;
+      return this;
+    }
+
+    public void unsetDefaultVerifierToken() {
+      this.defaultVerifierToken = null;
+    }
+
+    /** Returns true if field defaultVerifierToken is set (has been assigned a value) and false otherwise */
+    public boolean isSetDefaultVerifierToken() {
+      return this.defaultVerifierToken != null;
+    }
+
+    public void setDefaultVerifierTokenIsSet(boolean value) {
+      if (!value) {
+        this.defaultVerifierToken = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case SDK_PLATFORM:
@@ -76575,6 +76617,14 @@ public class ControlThriftService {
         }
         break;
 
+      case DEFAULT_VERIFIER_TOKEN:
+        if (value == null) {
+          unsetDefaultVerifierToken();
+        } else {
+          setDefaultVerifierToken((String)value);
+        }
+        break;
+
       }
     }
 
@@ -76601,6 +76651,9 @@ public class ControlThriftService {
       case LOG_SCHEMA_VERSION:
         return Integer.valueOf(getLogSchemaVersion());
 
+      case DEFAULT_VERIFIER_TOKEN:
+        return getDefaultVerifierToken();
+
       }
       throw new IllegalStateException();
     }
@@ -76626,6 +76679,8 @@ public class ControlThriftService {
         return isSetAefMapIds();
       case LOG_SCHEMA_VERSION:
         return isSetLogSchemaVersion();
+      case DEFAULT_VERIFIER_TOKEN:
+        return isSetDefaultVerifierToken();
       }
       throw new IllegalStateException();
     }
@@ -76706,6 +76761,15 @@ public class ControlThriftService {
           return false;
       }
 
+      boolean this_present_defaultVerifierToken = true && this.isSetDefaultVerifierToken();
+      boolean that_present_defaultVerifierToken = true && that.isSetDefaultVerifierToken();
+      if (this_present_defaultVerifierToken || that_present_defaultVerifierToken) {
+        if (!(this_present_defaultVerifierToken && that_present_defaultVerifierToken))
+          return false;
+        if (!this.defaultVerifierToken.equals(that.defaultVerifierToken))
+          return false;
+      }
+
       return true;
     }
 
@@ -76747,6 +76811,11 @@ public class ControlThriftService {
       builder.append(present_logSchemaVersion);
       if (present_logSchemaVersion)
         builder.append(logSchemaVersion);
+
+      boolean present_defaultVerifierToken = true && (isSetDefaultVerifierToken());
+      builder.append(present_defaultVerifierToken);
+      if (present_defaultVerifierToken)
+        builder.append(defaultVerifierToken);
 
       return builder.toHashCode();
     }
@@ -76829,6 +76898,16 @@ public class ControlThriftService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetDefaultVerifierToken()).compareTo(other.isSetDefaultVerifierToken());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetDefaultVerifierToken()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.defaultVerifierToken, other.defaultVerifierToken);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -76887,6 +76966,14 @@ public class ControlThriftService {
       if (!first) sb.append(", ");
       sb.append("logSchemaVersion:");
       sb.append(this.logSchemaVersion);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("defaultVerifierToken:");
+      if (this.defaultVerifierToken == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.defaultVerifierToken);
+      }
       first = false;
       sb.append(")");
       return sb.toString();
@@ -76999,6 +77086,14 @@ public class ControlThriftService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 8: // DEFAULT_VERIFIER_TOKEN
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.defaultVerifierToken = iprot.readString();
+                struct.setDefaultVerifierTokenIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -77048,6 +77143,11 @@ public class ControlThriftService {
         oprot.writeFieldBegin(LOG_SCHEMA_VERSION_FIELD_DESC);
         oprot.writeI32(struct.logSchemaVersion);
         oprot.writeFieldEnd();
+        if (struct.defaultVerifierToken != null) {
+          oprot.writeFieldBegin(DEFAULT_VERIFIER_TOKEN_FIELD_DESC);
+          oprot.writeString(struct.defaultVerifierToken);
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
@@ -77087,7 +77187,10 @@ public class ControlThriftService {
         if (struct.isSetLogSchemaVersion()) {
           optionals.set(6);
         }
-        oprot.writeBitSet(optionals, 7);
+        if (struct.isSetDefaultVerifierToken()) {
+          optionals.set(7);
+        }
+        oprot.writeBitSet(optionals, 8);
         if (struct.isSetSdkPlatform()) {
           oprot.writeI32(struct.sdkPlatform.getValue());
         }
@@ -77115,12 +77218,15 @@ public class ControlThriftService {
         if (struct.isSetLogSchemaVersion()) {
           oprot.writeI32(struct.logSchemaVersion);
         }
+        if (struct.isSetDefaultVerifierToken()) {
+          oprot.writeString(struct.defaultVerifierToken);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, generateSdk_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(7);
+        BitSet incoming = iprot.readBitSet(8);
         if (incoming.get(0)) {
           struct.sdkPlatform = SdkPlatform.findByValue(iprot.readI32());
           struct.setSdkPlatformIsSet(true);
@@ -77157,6 +77263,10 @@ public class ControlThriftService {
         if (incoming.get(6)) {
           struct.logSchemaVersion = iprot.readI32();
           struct.setLogSchemaVersionIsSet(true);
+        }
+        if (incoming.get(7)) {
+          struct.defaultVerifierToken = iprot.readString();
+          struct.setDefaultVerifierTokenIsSet(true);
         }
       }
     }
