@@ -5,6 +5,6 @@
  "fields": [
     {"name":"max_parallel_connections","displayName": "Maximum parallel connections opened","type":"int", "by_default" : "20"},
     {"name":"min_parallel_connections","displayName": "Minimum parallel connections opened","type":"int", "by_default" : "2"},
-    {"name":"keep_alive_time_milliseconds","displayName": "Time to keep connection alive","type":"long", "by_default" : "60000"}
+    {"name":"keep_alive_time_milliseconds","displayName": "Time to keep connection alive","type":"long", "by_default" : "60_000"}
  ]
 }

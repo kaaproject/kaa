@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(GplusUserVerifier.class);
-    private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo";
+    private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
 
     private ExecutorService threadPool;
 
@@ -34,11 +34,11 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
         URL url = null;
         try {
-            url = new URL(GOOGLE_OAUTH);
+            url = new URL(GOOGLE_OAUTH+accessToken);
         } catch (MalformedURLException e) {
             LOG.debug("message", e);
         }
-        threadPool.submit(new RunnableVerifier(url, callback, userExternalId, accessToken));
+        threadPool.submit(new RunnableVerifier(url, callback, userExternalId));
 
     }
 
@@ -48,13 +48,11 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         private URL url;
         private UserVerifierCallback callback;
         private String userExternalId;
-        private String accessToken;
 
-        public RunnableVerifier(URL url, UserVerifierCallback callback, String userExternalId, String accessToken) {
+        public RunnableVerifier(URL url, UserVerifierCallback callback, String userExternalId) {
             this.url = url;
             this.callback = callback;
             this.userExternalId = userExternalId;
-            this.accessToken = accessToken;
         }
 
         @Override
@@ -67,32 +65,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             try {
                 connection = establishConnection(url);
 
-                try {
-                    connection.setRequestMethod("POST");
-                } catch (ProtocolException e) {
-                    LOG.debug("message", e);
-                }
-
-                connection.setRequestProperty("Content-Type",
-                        "application/x-www-form-urlencoded");
-                connection.setUseCaches(false);
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-
-                String urlParameters = "access_token=" + accessToken;
-
-                connection.setRequestProperty("Content-Length", "" +
-                        Integer.toString(urlParameters.getBytes().length));
-
-                try {
-                    DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                    wr.writeBytes(urlParameters);
-                    wr.flush();
-                    wr.close();
-                } catch (IOException e) {
-                    LOG.debug("message", e);
-                }
-
+                connection.setRequestMethod("GET");
 
                 int responseCode = connection.getResponseCode();
 
