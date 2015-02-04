@@ -14,37 +14,34 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
 
 public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(FacebookUserVerifier.class);
     private static final String FACEBOOK_URL_PREFIX = "https://graph.facebook.com/debug_token";
+    private static final long MAX_SEC_FACEBOOK_REQUEST_TIME = 60;
     private FacebookAvroConfig configuration;
     private ExecutorService tokenVerifiersPool;
     private static ObjectMapper responseMapper;
 
     @Override
     public void init(UserVerifierContext context, FacebookAvroConfig configuration) {
-        LOG.info("Initializing user verifier with context {} and configuration {}", context, configuration);
+        LOG.info("Initializing facebook user verifier with context {} and configuration {}", context, configuration);
         this.configuration = configuration;
-        tokenVerifiersPool = new ThreadPoolExecutor(0, configuration.getMaxParallelConnections(),
-                            60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void checkAccessToken(String userExternalId, String userAccessToken, UserVerifierCallback callback) {
-        LOG.trace("Received user verification request for user {} and input token {}", userExternalId, userAccessToken);
-
         tokenVerifiersPool.submit(new TokenVerifier(userExternalId, userAccessToken, callback, configuration));
     }
 
     private class TokenVerifier implements Runnable {
-        String userExternalId;
-        String userAccessToken;
-        final UserVerifierCallback callback;
-        final FacebookAvroConfig config;
+        private final String userExternalId;
+        private final String userAccessToken;
+        private final UserVerifierCallback callback;
+        private final FacebookAvroConfig config;
 
         public TokenVerifier(String userExternalId, String userAccessToken,
                              UserVerifierCallback callback, FacebookAvroConfig config) {
@@ -68,29 +65,29 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
 
                 // no data field means that token is invalid
                 if (connection.getResponseCode() == 400) {
-                    LOG.trace("400 Bad request");
-                    callback.onVerificationFailure("400 Bad request");
+                    LOG.trace("400: The request could not be understood by the verifier due to malformed syntax");
+                    callback.onVerificationFailure("400: The request could not be understood by the verifier due" +
+                                                   " to malformed syntax");
                 } else if (connection.getResponseCode() == 200) {
                     reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
                     // we always get a map
-                    HashMap<String, Object> responseMap =
-                            responseMapper.readValue(reader.readLine(), HashMap.class);
+                    Map<String, Object> responseMap =
+                            responseMapper.readValue(reader.readLine(), Map.class);
 
-                    HashMap<String, Object> dataMap = (HashMap) responseMap.get("data");
+                    Map<String, Object> dataMap = (Map) responseMap.get("data");
                     String receivedUserId = (String) dataMap.get("user_id");
                     if (receivedUserId == null) {
-                        HashMap<String, Object> errorMap = (HashMap) dataMap.get("error");
+                        Map<String, Object> errorMap = (Map) dataMap.get("error");
                         LOG.trace("Bad input token: {}, errcode = ", errorMap.get("message"), errorMap.get("code"));
                         callback.onVerificationFailure("Bad input token: " + errorMap.get("message") +
                                 ", errcode = " + errorMap.get("code"));
                     } else if (!receivedUserId.equals(userExternalId)) {
-                        LOG.trace("Input token {} doesn't belong to the user with {} id", userAccessToken, userExternalId);
+                        LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
 
                         callback.onVerificationFailure("User access token " + userAccessToken + " doesn't belong to the user");
                     } else {
-                        LOG.trace("Input token {} is confirmed and belongs to the user with {} id",
-                                userAccessToken, userExternalId);
+                        LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
 
                         callback.onSuccess();
                     }
@@ -101,12 +98,12 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                             + ", no data can be retrieved");
                 }
             } catch (MalformedURLException e) {
-                LOG.debug(e.toString());
+                LOG.debug("message", e);
 
                 // should be unreachable, as URL is correct
                 callback.onVerificationFailure("Internal error: malformed url");
             } catch (IOException e) {
-                LOG.debug(e.toString());
+                LOG.debug("message", e);
                 callback.onVerificationFailure("Internal error: IOException");
             } finally {
                 if (connection != null) connection.disconnect();
@@ -114,7 +111,7 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                     try {
                         reader.close();
                     } catch (IOException e) {
-                        LOG.debug(e.toString());
+                        LOG.debug("message", e);
                     }
                 }
             }
@@ -133,12 +130,16 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
 
     @Override
     public void start() {
-        LOG.info("user verifier started");
+        LOG.info("facebook user verifier started");
+        tokenVerifiersPool = new ThreadPoolExecutor(0, configuration.getMaxParallelConnections(),
+                MAX_SEC_FACEBOOK_REQUEST_TIME, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
     @Override
     public void stop() {
-        LOG.info("user verifier stopped");
+        LOG.info("stopping facebook verifier");
+        tokenVerifiersPool.shutdown();
+        LOG.info("facebook user verifier stopped");
     }
 
     @Override

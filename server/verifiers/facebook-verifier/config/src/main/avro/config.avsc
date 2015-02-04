@@ -3,8 +3,20 @@
  "type": "record",
  "name": "FacebookAvroConfig",
  "fields": [
-   {"name": "app_id", "type": "string"},
-   {"name": "app_secret", "type": "string"},
-   {"name": "max_parallel_connections", "type": "int"}
+   {
+        "name": "app_id",
+        "displayName": "Application id",
+        "type": "string"
+   },
+   {
+        "name": "app_secret",
+        "displayName": "Application secret",
+        "type": "string"
+   },
+   {
+       "name": "max_parallel_connections",
+       "displayName": "Maximal number of allowed connections per verifier",
+       "type": "int", "by_default": "5"
+    }
  ]
 }

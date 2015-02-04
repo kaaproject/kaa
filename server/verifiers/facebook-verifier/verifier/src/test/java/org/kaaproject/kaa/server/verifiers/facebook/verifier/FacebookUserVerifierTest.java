@@ -14,9 +14,7 @@ import static org.mockito.Mockito.*;
 
 public class FacebookUserVerifierTest extends FacebookUserVerifier {
     private static FacebookUserVerifier verifier;
-    private static String userId = "1557997434440423";
     private static FacebookAvroConfig config;
-    private static HttpURLConnection connection;
 
     @BeforeClass
     public static void setUp() {
@@ -32,6 +30,7 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
                                                 "The access token could not be decrypte" +
                                                 "d\"},\"is_valid\":false,\"scopes\":[]}}");
         verifier.init(null, config);
+        verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
         verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
@@ -45,15 +44,18 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
                                                  ":\"800033850084728\"}}");
 
         verifier.init(null, config);
+        verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
         verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
+        verifier.stop();
     }
 
     @Test
     public void badRequestTest() {
         verifier = new MyFacebookVerifier(400);
         verifier.init(null, config);
+        verifier.start();
 
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
 
@@ -61,6 +63,7 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
 
         // no exception is thrown, if onVerificationFailure(String) was called
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
+        verifier.stop();
     }
 
     @Test
@@ -72,9 +75,11 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
                 ":\"" + userId + "\"}}");
 
         verifier.init(null, config);
+        verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
         verifier.checkAccessToken(userId, "someToken", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onSuccess();
+        verifier.stop();
     }
 
     private static class MyFacebookVerifier extends FacebookUserVerifier {
@@ -92,7 +97,7 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
 
         @Override
         protected HttpURLConnection establishConnection(String userAccessToken, String accessToken) {
-            connection = mock(HttpURLConnection.class);
+            HttpURLConnection connection = mock(HttpURLConnection.class);
 
             try {
                 when(connection.getResponseCode()).thenReturn(responseCode);
