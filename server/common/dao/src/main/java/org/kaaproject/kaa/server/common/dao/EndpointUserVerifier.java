@@ -28,6 +28,6 @@ public interface EndpointUserVerifier {
      * @param accessToken the access token
      * @return true, if successful
      */
-    boolean checkAccessToken(String tenantId, String userExternalId, String accessToken);
+    boolean checkAccessToken(String userExternalId, String tenantId, String accessToken);
 
 }

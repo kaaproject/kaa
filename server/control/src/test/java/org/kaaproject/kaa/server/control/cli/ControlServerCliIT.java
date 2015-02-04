@@ -39,8 +39,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDataLoader;
 import org.kaaproject.kaa.server.control.TestCluster;
 import org.kaaproject.kaa.server.control.cli.ControlApiCommandProcessor.EntityType;
 import org.kaaproject.kaa.server.control.service.ControlService;
@@ -574,6 +574,7 @@ public class ControlServerCliIT {
      * @throws TException             the t exception
      * @throws UnsupportedEncodingException the unsupported encoding exception
      */
+    @Ignore
     @Test
     public void testExecuteNotificationSchemaCommandFromCli() throws TException, UnsupportedEncodingException {
         controlClientConnect();

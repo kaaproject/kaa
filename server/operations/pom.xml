@@ -52,10 +52,6 @@
             <artifactId>dao</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-            <artifactId>mongo</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dto</artifactId>
         </dependency>
@@ -115,7 +111,7 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-            <artifactId>mongo</artifactId>
+            <artifactId>mongo-dao</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -298,6 +294,7 @@
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
+                            <excludeTypes>test-jar</excludeTypes>
                             <includeScope>runtime</includeScope>
                         </configuration>
                     </execution>
@@ -309,7 +306,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>
-                        <server_log_sufix></server_log_sufix>
+                        <server_log_sufix>operations</server_log_sufix>
                         <server_home_dir>.</server_home_dir>
                     </systemPropertyVariables>
                 </configuration>
@@ -501,7 +498,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</src>
+                                    <src>${db.context}</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -510,7 +507,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</src>
+                                    <src>${db.property}</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -577,7 +574,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
@@ -633,20 +629,6 @@
                                     <groupname>kaa</groupname>
                                     <sources>
                                         <source>
-                                            <location>../common/dao/src/main/resources/common-dao-context.xml</location>
-                                        </source>
-                                        <source>
-                                            <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
                                             <location>src/main/resources</location>
                                         </source>
                                         <source>
@@ -659,10 +641,10 @@
                                             <location>../common/dao/src/main/resources/dao.properties</location>
                                         </source>
                                         <source>
-                                            <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</location>
+                                            <location>${db.context}</location>
                                         </source>
                                         <source>
-                                            <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</location>
+                                            <location>${db.property}</location>
                                         </source>
                                     </sources>
                                 </mapping>
@@ -727,6 +709,37 @@
                     <artifactId>appender</artifactId>
                     <version>${project.version}</version>
                     <classifier>oracle-nosql</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>mongo-dao</id>
+            <properties>
+                <db.context>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb-context.xml</db.context>
+                <db.property>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb.properties</db.property>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                    <artifactId>mongo-dao</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cassandra-dao</id>
+            <properties>
+                <db.context>../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra-context.xml</db.context>
+                <db.property>../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra.properties</db.property>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                    <artifactId>cassandra-dao</artifactId>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

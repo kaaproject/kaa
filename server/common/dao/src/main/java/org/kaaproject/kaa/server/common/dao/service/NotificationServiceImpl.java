@@ -54,7 +54,7 @@ import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
-import org.kaaproject.kaa.server.common.dao.model.NotificationSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,14 +71,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Value("#{dao[dao_max_wait_time]}")
     private int waitSeconds;
-
     @Autowired
     private TopicDao<Topic> topicDao;
+    @Autowired
+    private NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private NotificationDao<Notification> notificationDao;
     private EndpointNotificationDao<EndpointNotification> unicastNotificationDao;
-    private NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
 
     // 7 days
     private static final int TTL = 7 * 24 * 3600 * 1000;
@@ -98,7 +98,8 @@ public class NotificationServiceImpl implements NotificationService {
                 throw new IncorrectParameterException("Invalid Notification type in Notification Schema object.");
             }
             if (foundSchema != null) {
-                notificationSchemaDto.setMajorVersion(foundSchema.incrementVersion());
+                int lastSchemaVersion = foundSchema.getMajorVersion();
+                notificationSchemaDto.setMajorVersion(++lastSchemaVersion);
             } else {
                 notificationSchemaDto.incrementVersion();
             }
@@ -112,7 +113,7 @@ public class NotificationServiceImpl implements NotificationService {
                 throw new IncorrectParameterException("Invalid notification schema id: " + id);
             }
         }
-        return getDto(notificationSchemaDao.save(notificationSchemaDto));
+        return getDto(notificationSchemaDao.save(new NotificationSchema(notificationSchemaDto)));
     }
 
     @Override
@@ -230,7 +231,6 @@ public class NotificationServiceImpl implements NotificationService {
     public void removeNotificationSchemasByAppId(String appId) {
         validateId(appId, "Can't remove notification schemas. Invalid application id: " + appId);
         LOG.debug("Cascade remove corresponding notification to application id [{}]", appId);
-        notificationDao.removeNotificationsByAppId(appId);
         unicastNotificationDao.removeNotificationsByAppId(appId);
         notificationSchemaDao.removeNotificationSchemasByAppId(appId);
     }
@@ -354,9 +354,5 @@ public class NotificationServiceImpl implements NotificationService {
 
     public void setUnicastNotificationDao(EndpointNotificationDao<EndpointNotification> unicastNotificationDao) {
         this.unicastNotificationDao = unicastNotificationDao;
-    }
-
-    public void setNotificationSchemaDao(NotificationSchemaDao<NotificationSchema> notificationSchemaDao) {
-        this.notificationSchemaDao = notificationSchemaDao;
     }
 }
