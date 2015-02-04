@@ -96,6 +96,11 @@
             <classifier>tcp</classifier>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+            <artifactId>verifier</artifactId>
+            <classifier>trustful</classifier>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
         </dependency>
@@ -239,7 +244,7 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
-            <artifactId>config</artifactId>
+            <artifactId>verifier</artifactId>
             <version>${project.version}</version>
             <classifier>trustful</classifier>
             <scope>runtime</scope>

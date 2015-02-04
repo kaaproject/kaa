@@ -88,7 +88,7 @@ public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppend
         
         confirmDelivery = new CheckBox();
         confirmDelivery.setWidth("100%");
-        Label confirmDeliveryLabel = new Label(Utils.constants.mandatory());
+        Label confirmDeliveryLabel = new Label(Utils.constants.confirmDelivery());
         idx++;
         detailsTable.setWidget(idx, 0, confirmDeliveryLabel);
         detailsTable.setWidget(idx, 1, confirmDelivery);

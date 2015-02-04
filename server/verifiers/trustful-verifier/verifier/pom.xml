@@ -42,7 +42,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>trustful</classifier>
         </dependency>
         <dependency>

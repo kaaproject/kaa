@@ -296,7 +296,7 @@
             <version>${project.version}</version>
             <classifier>trustful</classifier>
             <scope>runtime</scope>
-        </dependency>        
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

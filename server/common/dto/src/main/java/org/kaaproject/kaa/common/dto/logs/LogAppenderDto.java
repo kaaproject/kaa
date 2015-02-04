@@ -158,7 +158,7 @@ public class LogAppenderDto extends PluginDto {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("LogAppenderBaseDto [applicationToken=");
+        builder.append("LogAppenderDto [applicationToken=");
         builder.append(applicationToken);
         builder.append(", tenantId=");
         builder.append(tenantId);
