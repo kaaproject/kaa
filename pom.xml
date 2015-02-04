@@ -545,6 +545,18 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+                <artifactId>verifier</artifactId>
+                <classifier>trustful</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+                <artifactId>config</artifactId>
+                <classifier>trustful</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>zk</artifactId>
                 <version>${project.version}</version>
