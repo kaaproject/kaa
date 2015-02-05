@@ -49,10 +49,14 @@ kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
 ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
 {
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
+    if (*result_size < sizeof(struct sockaddr_in))
+        return RET_STATE_BUFFER_NOT_ENOUGH;
 
     struct addrinfo hints;
     memset(&hints, 0 , sizeof(struct addrinfo));
     hints.ai_protocol = SOCK_STREAM;
+    if (*result_size < sizeof(struct sockaddr_in6))
+        hints.ai_family = AF_INET;
 
     char hostname_str[resolve_props->hostname_length + 1];
     memcpy(hostname_str, resolve_props->hostname, resolve_props->hostname_length);
@@ -71,6 +75,11 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
 
     if (resolve_error || !resolve_result)
         return RET_STATE_VALUE_ERROR;
+
+    if (resolve_result->ai_addrlen > *result_size) {
+        freeaddrinfo(resolve_result);
+        return RET_STATE_BUFFER_NOT_ENOUGH;
+    }
 
     memcpy(result, resolve_result->ai_addr, resolve_result->ai_addrlen);
     *result_size = resolve_result->ai_addrlen;
