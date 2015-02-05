@@ -23,20 +23,32 @@ extern "C" {
 
 #include "kaatcp_common.h"
 
-kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_protocol_id,
-        char *sync_request, size_t sync_request_size,
-        char *session_key, size_t session_key_size,
-        char *signature, size_t signature_size,
-        kaatcp_connect_t *message);
-kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message, char *buf, size_t *buf_size);
 
-kaatcp_error_t kaatcp_fill_disconnect_message(kaatcp_disconnect_reason_t reason, kaatcp_disconnect_t *message);
-kaatcp_error_t kaatcp_get_request_disconnect(const kaatcp_disconnect_t *message, char *buf, size_t *buf_size);
 
-kaatcp_error_t kaatcp_fill_kaasync_message(char *sync_request,
-        size_t sync_request_size, uint16_t message_id, uint8_t zipped,
-        uint8_t encrypted, kaatcp_kaasync_t *message);
-kaatcp_error_t kaatcp_get_request_kaasync(const kaatcp_kaasync_t *message, char *buf, size_t *buf_size);
+kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_protocol_id
+                                         , char *sync_request, size_t sync_request_size
+                                         , char *session_key, size_t session_key_size
+                                         , char *signature, size_t signature_size
+                                         , kaatcp_connect_t *message);
+
+kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
+                                        , char *buf
+                                        , size_t *buf_size);
+
+kaatcp_error_t kaatcp_fill_disconnect_message(kaatcp_disconnect_reason_t reason
+                                            , kaatcp_disconnect_t *message);
+
+kaatcp_error_t kaatcp_get_request_disconnect(const kaatcp_disconnect_t *message
+                                           , char *buf
+                                           , size_t *buf_size);
+
+kaatcp_error_t kaatcp_fill_kaasync_message(char *sync_request, size_t sync_request_size
+                                         , uint16_t message_id, uint8_t zipped, uint8_t encrypted
+                                         , kaatcp_kaasync_t *message);
+
+kaatcp_error_t kaatcp_get_request_kaasync(const kaatcp_kaasync_t *message
+                                        , char *buf
+                                        , size_t *buf_size);
 
 kaatcp_error_t kaatcp_get_request_ping(char *buf, size_t *buf_size);
 

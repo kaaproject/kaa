@@ -158,6 +158,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel, 
         for(int i=0;i<supported_service_count;i++) {
             kaa_tcp_channel->supported_services[i] = supported_services[i];
         }
+        kaa_tcp_channel->supported_service_count = supported_service_count;
     }
 
     ret = kaa_buffer_create_buffer(&kaa_tcp_channel->in_buffer, KAA_TCP_CHANNEL_IN_BUFFER_SIZE);
