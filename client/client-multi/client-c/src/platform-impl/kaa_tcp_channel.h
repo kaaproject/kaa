@@ -49,7 +49,7 @@ typedef kaa_error_t (*kaa_tcp_channel_event_fn)(void *context
  *
  * @return Error code
  */
-kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel);
+kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel, kaa_logger_t *logger, kaa_service_t *supported_services, size_t supported_service_count);
 
 /*
  * @brief Get socket for specified event type
