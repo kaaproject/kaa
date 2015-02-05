@@ -1,0 +1,104 @@
+#
+# Copyright 2014-2015 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+************************************
+PREREQUISITES
+************************************
+
+To build the Kaa SDK one requires:
+1. C compiler supported C11 standard.
+2. cmake 2.8.8 or later.
+
+Additionally, to use the Kaa SDK on the x86-64 platform (use by default) OpenSSL libraries (ssl and crypto) are needed.
+
+************************************
+INSTALL
+************************************
+
+Basic steps to build the Kaa SDK are the following:
+1. Untar Kaa C SDK archive.
+2. Go into the Kaa SDK home directory and run next commands:
+
+mkdir build
+cd build
+cmake ..
+make
+make install
+
+************************************
+CONFIGURATION
+************************************
+
+There are a few options one can use to configure the Kaa SDK build:
+------------------------------------
+KAA_DEBUG_ENABLED=[0|1] - build type. By default the release type [0] is used.
+------------------------------------
+KAA_MAX_LOG_LEVEL - maximum log level used by the Kaa SDK.
+
+Possible values are the following:
+NONE  - 0 (no logs)
+FATAL - 1
+ERROR - 2
+WARN  - 3
+INFO  - 4 (default for the release build)
+DEBUG - 5
+TRACE - 6 (default for the debug build)
+
+------------------------------------
+KAA_WITHOUT_<MODULE> - omits the Kaa module (not be built).
+
+For now the Kaa C SDK consists of next modules:
+1. EVENTS
+2. LOGGING
+
+By default all modules will be built.
+
+------------------------------------
+KAA_PLATFORM - platform the Kaa SDK will be built for.
+
+Currently supported platforms:
+1. x86-64 (use by default).
+
+To build the Kaa SDK for some specific platform, next steps should be done:
+1. Create a directory in "$KAA_HOME/listfiles/platform/". The directory name is a value one can use to specify KAA_PLATFORM option. [a-zA-z_-] symbols can be used.
+   Example: cmake -DKAA_PLATFORM=android .
+2. Put CMakeLists.txt into created directory. This file may contain specific compilation/linking flags, platform-dependent source files, thirdparty library dependencies,
+   i.e. all information what is needed to build the Kaa SDK for this platform.
+
+There are several CMake variables used to specify platform-dependent options:
+KAA_INCLUDE_PATHS - additional path(s) to header files.
+KAA_SOURCE_FILES - additional source files (every source file should be specified with a full path to it).
+KAA_THIRDPARTY_LIBRARIES - thirdparty libraries (etc. ssl, crypto).
+
+NOTE: All these variables should be used in the next way:
+
+set(KAA_SOURCE_FILES
+        ${KAA_SOURCE_FILES}
+        some_source_file
+        some_source_file
+    )
+
+************************************
+BUILD EXAMPLE
+************************************
+
+Consider, the debug x86-64 build with the INFO log level and the LOGGING module is needed. Build steps should be the following:
+
+mkdir build
+cd build
+cmake -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
+make
+make install
