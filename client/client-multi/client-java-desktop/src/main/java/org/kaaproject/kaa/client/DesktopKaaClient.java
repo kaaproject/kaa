@@ -29,6 +29,8 @@ import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.DesktopHttpClient;
+import org.kaaproject.kaa.client.util.Base64;
+import org.kaaproject.kaa.client.util.CommonsBase64;
 
 public class DesktopKaaClient extends AbstractKaaClient {
 
@@ -53,7 +55,13 @@ public class DesktopKaaClient extends AbstractKaaClient {
     }
 
     @Override
+    protected Base64 getBase64() {
+        return CommonsBase64.getInstance();
+    }
+
+    @Override
     protected ConnectivityChecker createConnectivityChecker() {
         return new PingConnectivityChecker((DefaultChannelManager)getChannelMananager());
     }
+
 }

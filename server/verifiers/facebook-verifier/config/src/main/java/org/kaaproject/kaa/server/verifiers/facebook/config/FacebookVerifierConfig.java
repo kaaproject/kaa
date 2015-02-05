@@ -34,7 +34,7 @@ public class FacebookVerifierConfig implements PluginConfig {
 
     @Override
     public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.verifiers.facebook.FacebookUserVerifier";
+        return "org.kaaproject.kaa.server.verifiers.facebook.verifier.FacebookUserVerifier";
     }
 
     @Override

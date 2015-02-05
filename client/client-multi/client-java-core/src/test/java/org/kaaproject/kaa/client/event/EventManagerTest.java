@@ -40,6 +40,7 @@ import org.kaaproject.kaa.client.persistance.KaaClientPropertiesStateTest;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.transact.TransactionId;
+import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
@@ -74,7 +75,7 @@ public class EventManagerTest {
 
     @Test
     public void testNoHandler() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
@@ -93,7 +94,7 @@ public class EventManagerTest {
 
     @Test
     public void testEngageRelease() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
@@ -119,7 +120,7 @@ public class EventManagerTest {
 
     @Test
     public void testTransaction() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
@@ -153,7 +154,7 @@ public class EventManagerTest {
 
     @Test
     public void testOneEventForTwoDifferentFamilies() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         ConcreteEventFamily eventFamily = new ConcreteEventFamily("kaa.test.event.PlayEvent");
@@ -185,7 +186,7 @@ public class EventManagerTest {
 
     @Test
     public void checkFillRequest() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventManager eventManager = new DefaultEventManager(state, transport);
@@ -237,7 +238,7 @@ public class EventManagerTest {
 
     @Test
     public void testEventListenersRequestResponse() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), KaaClientPropertiesStateTest.getProperties());
+        KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventManager eventManager = new DefaultEventManager(state, transport);
