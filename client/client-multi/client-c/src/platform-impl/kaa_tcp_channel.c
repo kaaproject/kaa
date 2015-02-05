@@ -369,7 +369,12 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
     if ((position + remaining_to_read) <= access_point->connection_data_len) {
         channel->access_point.public_key_length = get_uint32_t(access_point->connection_data);
         position += remaining_to_read;
-
+        KAA_LOG_TRACE(channel->logger,KAA_ERR_NONE,"Kaa tcp channel new access point (%d), 0x%02X, 0x%02X, 0x%02X, 0x%02X",
+                channel->access_point.id,
+                access_point->connection_data[0],
+                access_point->connection_data[1],
+                access_point->connection_data[2],
+                access_point->connection_data[3]);
     } else {
         KAA_LOG_ERROR(channel->logger,KAA_ERR_INSUFFICIENT_BUFFER,"Kaa tcp channel new access point (%d), "
                 "insufficient connection data length  %d, position %d",
