@@ -105,9 +105,11 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                     String userId = map.get("user_id");
 
                     if (!userExternalId.equals(userId)) {
-                        callback.onVerificationFailure("wrong user id");
+                        LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
+                        callback.onVerificationFailure("User access token doesn't belong to the user");
                         return;
                     } else {
+                        LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
                         callback.onSuccess();
                         return;
                     }
