@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <stdint.h>
 #include <stddef.h>
 #include "kaa_buffer.h"
 #include "kaa_mem.h"
