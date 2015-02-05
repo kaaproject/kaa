@@ -91,15 +91,16 @@ typedef struct {
 /**
  * @brief Resolves the hostname of the target host.
  *
- * @param[in]   resolve_listener    Listener's properties. Will be used in case when this function couldn't resolve a host right now.
- * @param[in]   resolve_props       Target host properties (like hostname and port).
- * @param[out]  result              The sockaddr_* structure to which the result will be copied.
- * @param[out]  result_size         The size of the resolved sockaddr structure.
+ * @param[in]      resolve_listener    Listener's properties. Will be used in case when this function couldn't resolve a host right now.
+ * @param[in]      resolve_props       Target host properties (like hostname and port).
+ * @param[out]     result              The sockaddr_* structure to which the result will be copied.
+ * @param[in,out]  result_size         The total size of the given storage. Will be updated by the actual result size.
  *
  * @return
  *      RET_STATE_VALUE_READY - address was successfully resolved.
  *      RET_STATE_VALUE_IN_PROGRESS - address will be resolved later. See @link kaa_dns_resolve_listener_t @endlink.
  *      RET_STATE_VALUE_ERROR - resolve failed.
+ *      RET_STATE_BUFFER_NOT_ENOUGH - given buffer is not enough to store the result.
  */
 ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size);
 
