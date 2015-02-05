@@ -1,21 +1,33 @@
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType;
 import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
 
     private static final String LOG_TABLE_PREFIX = "logs_";
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLogAppender.class);
+    private static final int MAX_CALLBACK_THREAD_POOL_SIZE = 10;
+
+    private ExecutorService callbackExecutor;
 
     private LogEventDao logEventDao;
     private String tableName;
@@ -27,24 +39,34 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     }
 
     @Override
-    public void doAppend(LogEventPack logEventPack, RecordHeader header) {
+    public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
-            LOG.debug("[{}] appending {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
-            List<LogEventDto> dtoList = generateLogEvent(logEventPack, header);
-            LOG.debug("[{}] saving {} objects", tableName, dtoList.size());
-            if (!dtoList.isEmpty()) {
-                switch (executeRequestType) {
-                    case ASYNC:
-                        logEventDao.saveAsync(dtoList, tableName);
-                        break;
-                    case SYNC:
-                        logEventDao.save(dtoList, tableName);
-                        break;
+            try {
+                LOG.debug("[{}] appending {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
+                List<LogEventDto> dtoList = generateLogEvent(logEventPack, header);
+                LOG.debug("[{}] saving {} objects", tableName, dtoList.size());
+                if (!dtoList.isEmpty()) {
+                    switch (executeRequestType) {
+                        case ASYNC:
+                            ListenableFuture<ResultSet> result = logEventDao.saveAsync(dtoList, tableName);
+                            Futures.addCallback(result, new Callback(listener), callbackExecutor);
+                            break;
+                        case SYNC:
+                            logEventDao.save(dtoList, tableName);
+                            listener.onSuccess();
+                            break;
+                    }
+                    LOG.debug("[{}] appended {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
+                } else {
+                    listener.onInternalError();
                 }
-                LOG.debug("[{}] appended {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
+            } catch (IOException e) {
+                LOG.warn("Got io exception. Can't generate log events", e);
+                listener.onInternalError();
             }
         } else {
             LOG.info("Attempted to append to closed appender named [{}].", getName());
+            listener.onConnectionError();
         }
     }
 
@@ -55,6 +77,13 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             checkExecuteRequestType(configuration);
             logEventDao = new CassandraLogEventDao(configuration);
             createTable(appender.getApplicationToken());
+            Integer callbackPoolSize = configuration.getCallbackThreadPoolSize();
+            if (callbackPoolSize != null) {
+                callbackPoolSize = Math.min(callbackPoolSize, MAX_CALLBACK_THREAD_POOL_SIZE);
+            } else {
+                callbackPoolSize = MAX_CALLBACK_THREAD_POOL_SIZE;
+            }
+            callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
         } catch (Exception e) {
             LOG.error("Failed to init cassandra log appender: ", e);
         }
@@ -65,7 +94,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             tableName = LOG_TABLE_PREFIX + applicationToken;
             logEventDao.createTable(tableName);
         } else {
-            LOG.error("Appender is already initialized..");
+            LOG.warn("Appender is already initialized..");
         }
     }
 
@@ -78,6 +107,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                 logEventDao.close();
                 logEventDao = null;
             }
+            callbackExecutor.shutdownNow();
         }
         LOG.info("Cassandra log appender stoped.");
     }
@@ -88,6 +118,31 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             executeRequestType = CassandraExecuteRequestType.ASYNC;
         } else {
             executeRequestType = CassandraExecuteRequestType.SYNC;
+        }
+    }
+
+    private static final class Callback implements FutureCallback<ResultSet> {
+
+        private final LogDeliveryCallback callback;
+
+        private Callback(LogDeliveryCallback callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        public void onSuccess(ResultSet result) {
+            callback.onSuccess();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            if (t instanceof UnsupportedFeatureException) {
+                callback.onRemoteError();
+            } else if (t instanceof IOException) {
+                callback.onConnectionError();
+            } else {
+                callback.onInternalError();
+            }
         }
     }
 }

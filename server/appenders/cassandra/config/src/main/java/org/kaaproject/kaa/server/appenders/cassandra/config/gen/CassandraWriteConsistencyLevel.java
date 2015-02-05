@@ -8,6 +8,6 @@ package org.kaaproject.kaa.server.appenders.cassandra.config.gen;
 @org.apache.avro.specific.AvroGenerated
 public enum CassandraWriteConsistencyLevel { 
   ANY, ONE, TWO, THREE, QUORUM, ALL, LOCAL_QUORUM, EACH_QUORUM, SERIAL, LOCAL_SERIAL, LOCAL_ONE  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"CassandraWriteConsistencyLevel\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"symbols\":[\"ANY\",\"ONE\",\"TWO\",\"THREE\",\"QUORUM\",\"ALL\",\"LOCAL_QUORUM\",\"EACH_QUORUM\",\"SERIAL\",\"LOCAL_SERIAL\",\"LOCAL_ONE\"],\"default\":\"ANY\",\"optional\":true}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"CassandraWriteConsistencyLevel\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"symbols\":[\"ANY\",\"ONE\",\"TWO\",\"THREE\",\"QUORUM\",\"ALL\",\"LOCAL_QUORUM\",\"EACH_QUORUM\",\"SERIAL\",\"LOCAL_SERIAL\",\"LOCAL_ONE\"],\"optional\":true}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

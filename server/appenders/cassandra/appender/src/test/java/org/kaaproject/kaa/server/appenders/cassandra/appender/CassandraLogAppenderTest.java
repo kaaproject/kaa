@@ -21,6 +21,7 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
@@ -95,7 +96,27 @@ public class CassandraLogAppenderTest {
 
     @Test
     public void doAppendTest() throws IOException {
-        logAppender.doAppend(generateLogEventPack(20));
+        logAppender.doAppend(generateLogEventPack(20), new LogDeliveryCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onInternalError() {
+
+            }
+
+            @Override
+            public void onConnectionError() {
+
+            }
+
+            @Override
+            public void onRemoteError() {
+
+            }
+        });
         CassandraLogEventDao logEventDao = (CassandraLogEventDao) ReflectionTestUtils.getField(logAppender, "logEventDao");
         Session session = (Session) ReflectionTestUtils.getField(logEventDao, "session");
         ResultSet resultSet = session.execute(QueryBuilder.select().countAll().from(KEY_SPACE_NAME, "logs_" + appToken));
