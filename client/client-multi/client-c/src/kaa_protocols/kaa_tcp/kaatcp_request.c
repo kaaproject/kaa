@@ -50,6 +50,8 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
                                          , kaatcp_connect_t *message)
 {
     KAA_RETURN_IF_NIL2(sync_request, sync_request_size, KAATCP_ERR_BAD_PARAM);
+    if ((session_key_size > 0 && !session_key) || (signature_size > 0 && !signature))
+        return KAATCP_ERR_BAD_PARAM;
     KAA_RETURN_IF_NIL(message, KAATCP_ERR_BAD_PARAM);
 
     memset(message, 0, sizeof(kaatcp_connect_t));
