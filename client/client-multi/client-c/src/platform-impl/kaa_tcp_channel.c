@@ -138,14 +138,14 @@ char* kaa_tcp_write_pending_services_allocator_fn(void *context, size_t buffer_s
  */
 kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *channel, kaa_logger_t *logger, kaa_service_t *supported_services, size_t supported_service_count)
 {
-    KAA_RETURN_IF_NIL2(channel,logger,KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(channel, logger, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(logger,KAA_ERR_NONE,"Kaa tcp channel creating....");
+    KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa tcp channel creating....");
 
     kaa_error_t ret = KAA_ERR_NONE;
 
     kaa_tcp_channel_t *kaa_tcp_channel = (kaa_tcp_channel_t *) KAA_CALLOC(1, sizeof(kaa_tcp_channel_t));
-    KAA_RETURN_IF_NIL(kaa_tcp_channel,KAA_ERR_NOMEM);
+    KAA_RETURN_IF_NIL(kaa_tcp_channel, KAA_ERR_NOMEM);
 
     kaa_tcp_channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
     kaa_tcp_channel->access_point.state = AP_NOT_SET;
@@ -153,7 +153,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *channel, k
 
     if (supported_service_count > 0) {
         kaa_tcp_channel->supported_services = (kaa_service_t *) KAA_CALLOC(supported_service_count, sizeof(kaa_service_t));
-        KAA_RETURN_IF_NIL(kaa_tcp_channel->supported_services,KAA_ERR_NOMEM);
+        KAA_RETURN_IF_NIL(kaa_tcp_channel->supported_services, KAA_ERR_NOMEM);
 
         for(int i=0;i<supported_service_count;i++) {
             kaa_tcp_channel->supported_services[i] = supported_services[i];
@@ -170,7 +170,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *channel, k
     KAA_RETURN_IF_NIL(kaa_tcp_channel->parser,KAA_ERR_NOMEM);
 
     kaa_tcp_channel->keepalive.keepalive_interval = 1000; //TODO create setter.
-    KAA_LOG_TRACE(logger,KAA_ERR_NONE,"Kaa tcp channel set keepalive to %d ",kaa_tcp_channel->keepalive.keepalive_interval);
+    KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa tcp channel set keepalive to %d ", kaa_tcp_channel->keepalive.keepalive_interval);
 
     kaa_tcp_channel->protocol_id.id = KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_ID;
     kaa_tcp_channel->protocol_id.version = KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_VERSION;
@@ -536,7 +536,7 @@ kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface
             if (tcp_channel->access_point.state == AP_CONNECTED) {
                 char * buf = NULL;
                 size_t buf_size = 0;
-                ret = kaa_buffer_get_unprocessed_space(tcp_channel->in_buffer, &buf, &buf_size);
+                ret = kaa_buffer_allocate_space(tcp_channel->in_buffer, &buf, &buf_size);
                 KAA_RETURN_IF_ERR(ret);
                 if (buf_size > 0) {
                     *fd_p = tcp_channel->access_point.socket_descriptor;
@@ -602,7 +602,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
                 char * buf = NULL;
                 size_t buf_size = 0;
                 size_t bytes_read = 0;
-                ret = kaa_buffer_allocate_space(tcp_channel->in_buffer,&buf,&buf_size);
+                ret = kaa_buffer_allocate_space(tcp_channel->in_buffer, &buf, &buf_size);
                 KAA_LOG_TRACE(tcp_channel->logger,KAA_ERR_NONE,"Kaa tcp channel(%d) process event READ, empty buffer size %i", tcp_channel->access_point.id, buf_size);
                 KAA_RETURN_IF_ERR(ret);
                 if (buf_size > 0) {
