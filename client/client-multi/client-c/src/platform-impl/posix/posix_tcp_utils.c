@@ -54,9 +54,8 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
 
     struct addrinfo hints;
     memset(&hints, 0 , sizeof(struct addrinfo));
-    hints.ai_protocol = SOCK_STREAM;
     if (*result_size < sizeof(struct sockaddr_in6))
-        hints.ai_family = AF_INET;
+        hints.ai_protocol = IPPROTO_IPV4;
 
     char hostname_str[resolve_props->hostname_length + 1];
     memcpy(hostname_str, resolve_props->hostname, resolve_props->hostname_length);
