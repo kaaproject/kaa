@@ -18,19 +18,17 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include "platform/ext_sha.h"
 #include "kaa_test.h"
 #include "kaa_status.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
-
+#include "platform/ext_sha.h"
+#include "platform/ext_key_utils.h"
 
 kaa_digest test_ep_key_hash = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
 kaa_digest test_profile_hash= {0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28};
 
 #define KAA_STATUS_STORAGE "status.conf"
-
-#include "kaa_external.h"
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
@@ -39,7 +37,7 @@ extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, cons
 
 static kaa_logger_t *logger = NULL;
 
-void kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;
@@ -70,7 +68,7 @@ void kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_dealloc
     fclose(status_file);
 }
 
-void kaa_store_status_ext(const char *buffer, size_t buffer_size)
+void ext_status_store(const char *buffer, size_t buffer_size)
 {
     if (!buffer || buffer_size == 0) {
         return;
@@ -84,11 +82,11 @@ void kaa_store_status_ext(const char *buffer, size_t buffer_size)
     }
 }
 
-void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *need_deallocation)
+void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = NULL;
     *buffer_size = 0;
-    *need_deallocation = false;
+    *needs_deallocation = false;
 }
 
 void test_create_status()

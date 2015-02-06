@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
+#include <stdio.h>
+
 #include "kaa_test.h"
 
 #include "kaa_context.h"

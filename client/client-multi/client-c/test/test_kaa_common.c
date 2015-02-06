@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+
 #include "platform/ext_sha.h"
 #include "kaa_test.h"
 #include "kaa_common.h"
