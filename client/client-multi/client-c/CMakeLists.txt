@@ -78,6 +78,7 @@ set (KAA_SOURCE_FILES
                        src/utilities/kaa_log.c
                        src/utilities/kaa_mem.c
                        src/utilities/kaa_buffer.c
+                       src/utilities/kaa_base64.c
                        src/kaa_platform_utils.c
                        src/kaa_protocols/kaa_tcp/kaatcp_parser.c
                        src/kaa_protocols/kaa_tcp/kaatcp_request.c

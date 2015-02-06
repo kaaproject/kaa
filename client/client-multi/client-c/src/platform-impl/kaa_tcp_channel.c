@@ -30,6 +30,7 @@
 #include "../utilities/kaa_mem.h"
 #include "../utilities/kaa_buffer.h"
 #include "../utilities/kaa_log.h"
+#include "../utilities/kaa_base64.h"
 #include "../kaa_protocols/kaa_tcp/kaatcp.h"
 
 #define KAA_TCP_CHANNEL_IN_BUFFER_SIZE 1024
@@ -364,24 +365,48 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
             channel->access_point.id,
             access_point->connection_data_len);
 
+
+    char * connection_data = access_point->connection_data;
+    size_t connection_data_len = access_point->connection_data_len;
+    bool need_free_connection_data = false;
+    if ((channel->supported_service_count == 1)
+            && (channel->supported_services[0] == KAA_SERVICE_BOOTSTRAP)) {
+        //Bootstrap connection data encoded as base64
+        need_free_connection_data = true;
+        connection_data_len = access_point->connection_data_len / 4 * 3;
+        connection_data = KAA_CALLOC(1,connection_data_len);
+        KAA_RETURN_IF_NIL(connection_data, KAA_ERR_NOMEM);
+        ret = kaa_base64_decode(access_point->connection_data, access_point->connection_data_len, connection_data, &connection_data_len);
+        if (ret) {
+            KAA_LOG_ERROR(channel->logger,ret,"Kaa tcp channel new access point (%d), "
+                        " error base64 decoding, encoded data length %d, decoded remaining length %d",
+                            channel->access_point.id,
+                            access_point->connection_data_len,
+                            connection_data_len);
+            ret = KAA_ERR_INSUFFICIENT_BUFFER;
+            goto access_point_exit;
+        }
+    }
+
     int position = 0;
     int remaining_to_read = 4;
-    if ((position + remaining_to_read) <= access_point->connection_data_len) {
-        channel->access_point.public_key_length = get_uint32_t(access_point->connection_data);
+    if ((position + remaining_to_read) <= connection_data_len) {
+        channel->access_point.public_key_length = get_uint32_t(connection_data);
         position += remaining_to_read;
         KAA_LOG_TRACE(channel->logger,KAA_ERR_NONE,"Kaa tcp channel new access point (%d), 0x%02X, 0x%02X, 0x%02X, 0x%02X",
                 channel->access_point.id,
-                access_point->connection_data[0],
-                access_point->connection_data[1],
-                access_point->connection_data[2],
-                access_point->connection_data[3]);
+                connection_data[0],
+                connection_data[1],
+                connection_data[2],
+                connection_data[3]);
     } else {
         KAA_LOG_ERROR(channel->logger,KAA_ERR_INSUFFICIENT_BUFFER,"Kaa tcp channel new access point (%d), "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
-                    access_point->connection_data_len,
+                    connection_data_len,
                     (position + remaining_to_read));
-        return KAA_ERR_INSUFFICIENT_BUFFER;
+        ret = KAA_ERR_INSUFFICIENT_BUFFER;
+        goto access_point_exit;
     }
 
     KAA_LOG_TRACE(channel->logger,KAA_ERR_NONE,"Kaa tcp channel new access point (%d),"
@@ -390,33 +415,35 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
                 channel->access_point.public_key_length);
 
     remaining_to_read = channel->access_point.public_key_length;
-    if ((position + remaining_to_read) <= access_point->connection_data_len) {
+    if ((position + remaining_to_read) <= connection_data_len) {
         channel->access_point.public_key = KAA_MALLOC(channel->access_point.public_key_length);
         KAA_RETURN_IF_NIL(channel->access_point.public_key, KAA_ERR_NOMEM);
         memcpy(channel->access_point.public_key,
-                access_point->connection_data + position,
+                connection_data + position,
                 remaining_to_read);
         position += remaining_to_read;
     } else {
         KAA_LOG_ERROR(channel->logger,KAA_ERR_INSUFFICIENT_BUFFER,"Kaa tcp channel new access point (%d), "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
-                    access_point->connection_data_len,
+                    connection_data_len,
                     (position + remaining_to_read));
-        return KAA_ERR_INSUFFICIENT_BUFFER;
+        ret = KAA_ERR_INSUFFICIENT_BUFFER;
+        goto access_point_exit;
     }
 
     remaining_to_read = 4;
-    if ((position + remaining_to_read) <= access_point->connection_data_len) {
-        channel->access_point.hostname_length = get_uint32_t(access_point->connection_data + position);
+    if ((position + remaining_to_read) <= connection_data_len) {
+        channel->access_point.hostname_length = get_uint32_t(connection_data + position);
         position += remaining_to_read;
     } else {
         KAA_LOG_ERROR(channel->logger,KAA_ERR_INSUFFICIENT_BUFFER,"Kaa tcp channel new access point (%d), "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
-                    access_point->connection_data_len,
+                    connection_data_len,
                     (position + remaining_to_read));
-        return KAA_ERR_INSUFFICIENT_BUFFER;
+        ret = KAA_ERR_INSUFFICIENT_BUFFER;
+        goto access_point_exit;
     }
 
     KAA_LOG_TRACE(channel->logger,KAA_ERR_NONE,"Kaa tcp channel new access point (%d),"
@@ -425,34 +452,37 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
                     channel->access_point.hostname_length);
 
     remaining_to_read = channel->access_point.hostname_length;
-    if ((position + remaining_to_read) <= access_point->connection_data_len) {
+    if ((position + remaining_to_read) <= connection_data_len) {
         channel->access_point.hostname = KAA_MALLOC(channel->access_point.hostname_length);
         KAA_RETURN_IF_NIL(channel->access_point.hostname, KAA_ERR_NOMEM);
         memcpy(channel->access_point.hostname,
-                access_point->connection_data + position,
+                connection_data + position,
                 remaining_to_read);
         position += remaining_to_read;
     } else {
         KAA_LOG_ERROR(channel->logger,KAA_ERR_INSUFFICIENT_BUFFER,"Kaa tcp channel new access point (%d), "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
-                    access_point->connection_data_len,
+                    connection_data_len,
                     (position + remaining_to_read));
-        return KAA_ERR_INSUFFICIENT_BUFFER;
+        ret = KAA_ERR_INSUFFICIENT_BUFFER;
+        goto access_point_exit;
     }
 
     remaining_to_read = 4;
     int access_point_socket_port = 0;
-    if ((position + remaining_to_read) <= access_point->connection_data_len) {
-        access_point_socket_port = (uint16_t)get_uint32_t(access_point->connection_data + position);
+    if ((position + remaining_to_read) <= connection_data_len) {
+        access_point_socket_port = (uint16_t)get_uint32_t(connection_data + position);
         position += remaining_to_read;
     } else {
         KAA_LOG_ERROR(channel->logger,KAA_ERR_INSUFFICIENT_BUFFER,"Kaa tcp channel new access point (%d), "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
-                    access_point->connection_data_len,
+                    connection_data_len,
                     (position + remaining_to_read));
-        return KAA_ERR_INSUFFICIENT_BUFFER;
+
+        ret = KAA_ERR_INSUFFICIENT_BUFFER;
+        goto access_point_exit;
     }
 #ifdef KAA_LOG_LEVEL_TRACE_ENABLED
     char * ap_hostname = KAA_CALLOC(1,channel->access_point.hostname_length+1);
@@ -505,6 +535,10 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
             break;
     }
 
+access_point_exit:
+    if (need_free_connection_data && connection_data) {
+        KAA_FREE(connection_data);
+    }
     return ret;
 }
 
