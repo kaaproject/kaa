@@ -95,48 +95,48 @@ typedef struct {
 } kaa_tcp_channel_t;
 
 
-kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void * context, kaa_transport_protocol_id_t *protocol_info);
-kaa_error_t kaa_tcp_channel_get_supported_services(void * context, kaa_service_t **supported_services, size_t *service_count);
-kaa_error_t kaa_tcp_channel_sync_handler(void * context, const kaa_service_t services[], size_t service_count);
-kaa_error_t kaa_tcp_channel_release_context(void * context);
+kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void *context, kaa_transport_protocol_id_t *protocol_info);
+kaa_error_t kaa_tcp_channel_get_supported_services(void *context, kaa_service_t **supported_services, size_t *service_count);
+kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_service_t services[], size_t service_count);
+kaa_error_t kaa_tcp_channel_release_context(void *context);
 kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transport_context);
 kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *access_point);
 
 /**
  * Specififc kaa_tcp_channel functions
  */
-kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface_t * channel, fd_event_t event_type, kaa_fd * fd_p);
-kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * channel, fd_event_t event_type, kaa_fd fd_p);
-kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_interface_t * channel, kaa_tcp_channel_event_fn callback, void * context);
+kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface_t *channel, fd_event_t event_type, kaa_fd *fd_p);
+kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *channel, fd_event_t event_type, kaa_fd fd_p);
+kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_interface_t * channel, kaa_tcp_channel_event_fn callback, void *context);
 
 /*
  * Parser handlers
  */
-void kaa_tcp_channel_connack_message_callback(void * context, kaatcp_connack_t message);
-void kaa_tcp_channel_disconnect_message_callback(void * context, kaatcp_disconnect_t message);
-void kaa_tcp_channel_kaasync_message_callback(void * context, kaatcp_kaasync_t *message);
-void kaa_tcp_channel_pingresp_message_callback(void * context);
+void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t message);
+void kaa_tcp_channel_disconnect_message_callback(void *context, kaatcp_disconnect_t message);
+void kaa_tcp_channel_kaasync_message_callback(void *context, kaatcp_kaasync_t *message);
+void kaa_tcp_channel_pingresp_message_callback(void *context);
 /**
  * Internal functions
  */
-kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t * channel);
-kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t * channel);
+kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *channel);
+kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *channel);
 bool is_service_pending(kaa_tcp_channel_t * channel, const kaa_service_t service);
-kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t * channel, const kaa_service_t services[], size_t service_count);
-kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t * channel, const kaa_service_t services[], size_t service_count);
+kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *channel, const kaa_service_t services[], size_t service_count);
+kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *channel, const kaa_service_t services[], size_t service_count);
 kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolved(void *context, const kaa_sockaddr_t *addr, kaa_socklen_t addr_size);
 kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolve_failed(void *context);
-uint32_t get_uint32_t(const char * buffer);
-kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t * channel);
-kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t * channel);
-kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t * channel, kaa_service_t *service, size_t services_count);
-kaa_error_t kaa_tcp_write_buffer(kaa_tcp_channel_t * channel);
+uint32_t get_uint32_t(const char *buffer);
+kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t *channel);
+kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t *channel);
+kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *channel, kaa_service_t *service, size_t services_count);
+kaa_error_t kaa_tcp_write_buffer(kaa_tcp_channel_t *channel);
 char* kaa_tcp_write_pending_services_allocator_fn(void *context, size_t buffer_size);
 
-/**
+/*
  * Create TCP channel object
  */
-kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel, kaa_logger_t *logger, kaa_service_t *supported_services, size_t supported_service_count)
+kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *channel, kaa_logger_t *logger, kaa_service_t *supported_services, size_t supported_service_count)
 {
     KAA_RETURN_IF_NIL2(channel,logger,KAA_ERR_BADPARAM);
 
@@ -144,7 +144,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel, 
 
     kaa_error_t ret = KAA_ERR_NONE;
 
-    kaa_tcp_channel_t * kaa_tcp_channel = KAA_CALLOC(1,sizeof(kaa_tcp_channel_t));
+    kaa_tcp_channel_t *kaa_tcp_channel = (kaa_tcp_channel_t *) KAA_CALLOC(1, sizeof(kaa_tcp_channel_t));
     KAA_RETURN_IF_NIL(kaa_tcp_channel,KAA_ERR_NOMEM);
 
     kaa_tcp_channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
@@ -152,7 +152,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel, 
     kaa_tcp_channel->access_point.socket_descriptor = KAA_TCP_SOCKET_NOT_SET;
 
     if (supported_service_count > 0) {
-        kaa_tcp_channel->supported_services = KAA_CALLOC(supported_service_count, sizeof(kaa_service_t));
+        kaa_tcp_channel->supported_services = (kaa_service_t *) KAA_CALLOC(supported_service_count, sizeof(kaa_service_t));
         KAA_RETURN_IF_NIL(kaa_tcp_channel->supported_services,KAA_ERR_NOMEM);
 
         for(int i=0;i<supported_service_count;i++) {
@@ -166,7 +166,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t * channel, 
     ret = kaa_buffer_create_buffer(&kaa_tcp_channel->out_buffer, KAA_TCP_CHANNEL_OUT_BUFFER_SIZE);
     KAA_RETURN_IF_ERR(ret);
 
-    kaa_tcp_channel->parser = KAA_CALLOC(1,sizeof(kaatcp_parser_t));
+    kaa_tcp_channel->parser = (kaatcp_parser_t *) KAA_CALLOC(1, sizeof(kaatcp_parser_t));
     KAA_RETURN_IF_NIL(kaa_tcp_channel->parser,KAA_ERR_NOMEM);
 
     kaa_tcp_channel->keepalive.keepalive_interval = 1000; //TODO create setter.
@@ -460,14 +460,14 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
         return KAA_ERR_INSUFFICIENT_BUFFER;
     }
 #ifdef KAA_LOG_LEVEL_TRACE_ENABLED
-    char * ap_hostname = KAA_CALLOC(1,channel->access_point.hostname_length+1);
-    memcpy(ap_hostname,channel->access_point.hostname,channel->access_point.hostname_length+1);
+    char ap_hostname[channel->access_point.hostname_length + 1];
+    memcpy(ap_hostname, channel->access_point.hostname, channel->access_point.hostname_length);
+    ap_hostname[channel->access_point.hostname_length] = '\0';
 
     KAA_LOG_TRACE(channel->logger,KAA_ERR_NONE,"Kaa tcp channel new access point (%d) destination %s:%d",
             channel->access_point.id,
             ap_hostname,
             access_point_socket_port);
-    KAA_FREE(ap_hostname);
 #endif
     kaa_dns_resolve_listener_t resolve_listener;
     resolve_listener.context = (void*)channel;
