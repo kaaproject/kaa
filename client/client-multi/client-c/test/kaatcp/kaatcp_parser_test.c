@@ -56,9 +56,9 @@ void kaasync_listener(void *context, kaatcp_kaasync_t *message)
 
     ASSERT_EQUAL(message->sync_header.message_id, 5);
 
-    ASSERT_NOT_EQUAL(message->sync_header.flags & KAA_SYNC_ENCRYPTED_BIT, 0);
-    ASSERT_EQUAL(message->sync_header.flags & KAA_SYNC_ZIPPED_BIT, 0);
-    ASSERT_EQUAL(message->sync_header.flags & KAA_SYNC_REQUEST_BIT, 0);
+    ASSERT_NOT_EQUAL((message->sync_header.flags & KAA_SYNC_ENCRYPTED_BIT), 0);
+    ASSERT_EQUAL((message->sync_header.flags & KAA_SYNC_ZIPPED_BIT), 0);
+    ASSERT_EQUAL((message->sync_header.flags & KAA_SYNC_REQUEST_BIT), 0);
 
     ASSERT_EQUAL(message->sync_request_size, 1);
     ASSERT_EQUAL((uint8_t)message->sync_request[0], 0xFF);
