@@ -18,13 +18,13 @@
 #include "platform/stdio.h"
 #include "avro_src/avro/io.h"
 #include "platform/ext_sha.h"
+#include "platform/ext_key_utils.h"
 #include "kaa_status.h"
 #include "kaa_profile.h"
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_defaults.h"
-#include "kaa_external.h"
 #include "kaa_channel_manager.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
@@ -161,7 +161,7 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
         bool need_deallocation = false;
 
         if (!self->extension_data->public_key.buffer) {
-            kaa_get_endpoint_public_key((char **)&self->extension_data->public_key.buffer
+            ext_get_endpoint_public_key((char **)&self->extension_data->public_key.buffer
                                       , (size_t *)&self->extension_data->public_key.size
                                       , &need_deallocation);
         }
