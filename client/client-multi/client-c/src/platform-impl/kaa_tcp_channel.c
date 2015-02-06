@@ -42,6 +42,8 @@
 #define KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_ID 0x56c8ff92
 #define KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_VERSION 1
 
+#define KAA_TCP_CHANNEL_NEXT_PROTOCOL_BINARY_ID 0x3553c66f
+
 #define KAA_TCP_CHANNEL_KEEPALIVE 300
 
 typedef time_t kaa_time_t;
@@ -989,7 +991,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *channel)
     kaatcp_connect_t connect_message;
     kaatcp_error_t kaatcp_ret = kaatcp_fill_connect_message(
             channel->keepalive.keepalive_interval * 1.2,
-            channel->protocol_id.id,
+            KAA_TCP_CHANNEL_NEXT_PROTOCOL_BINARY_ID,
             sync_buffer,
             sync_size,
             channel->encryption.aes_session_key,
