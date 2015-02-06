@@ -57,7 +57,7 @@ typedef struct {
     uint32_t public_key_length;
     char * hostname;
     uint32_t hostname_length;
-    kaa_sockaddr_t sockaddr;
+    kaa_sockaddr_storage_t sockaddr;
     kaa_socklen_t  sockaddr_length;
     kaa_fd  socket_descriptor;
 } kaa_tcp_access_point_t;
@@ -479,10 +479,11 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
     resolve_props.hostname_length = channel->access_point.hostname_length;
     resolve_props.port = access_point_socket_port;
 
+    channel->access_point.sockaddr_length = sizeof(kaa_sockaddr_storage_t);
     ext_tcp_utils_function_return_state_t resolve_state = ext_tcp_utils_gethostbyaddr(
             &resolve_listener,
             &resolve_props,
-            &channel->access_point.sockaddr,
+            (kaa_sockaddr_t *) &channel->access_point.sockaddr,
             &channel->access_point.sockaddr_length);
     switch (resolve_state) {
         case RET_STATE_VALUE_IN_PROGRESS:
@@ -631,7 +632,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
         case FD_WRITE:
             KAA_LOG_TRACE(tcp_channel->logger,KAA_ERR_NONE,"Kaa tcp channel(%d) process event WRITE", tcp_channel->access_point.id);
             if (tcp_channel->access_point.state == AP_CONNECTING) {
-                ext_tcp_socket_state_t s = ext_tcp_utils_tcp_socket_check(fd_p, &tcp_channel->access_point.sockaddr, tcp_channel->access_point.sockaddr_length);
+                ext_tcp_socket_state_t s = ext_tcp_utils_tcp_socket_check(fd_p, (kaa_sockaddr_t *) &tcp_channel->access_point.sockaddr, tcp_channel->access_point.sockaddr_length);
                 switch (s) {
                     case KAA_TCP_SOCK_ERROR:
                         KAA_LOG_TRACE(tcp_channel->logger,KAA_ERR_NONE,"Kaa tcp channel(%d) process event WRITE, connection failed", tcp_channel->access_point.id);
@@ -1084,8 +1085,7 @@ kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolved(void *context, co
     kaa_error_t ret = KAA_ERR_NONE;
 
 
-    channel->access_point.sockaddr = *addr;
-
+    memcpy(&channel->access_point.sockaddr, addr, addr_size);
     channel->access_point.sockaddr_length = addr_size;
 
     channel->access_point.state = AP_RESOLVED;
@@ -1141,7 +1141,7 @@ kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t * channel)
                             channel->access_point.id);
     kaa_error_t ret = ext_tcp_utils_open_tcp_socket(
                 &channel->access_point.socket_descriptor,
-                &channel->access_point.sockaddr,
+                (kaa_sockaddr_t *) &channel->access_point.sockaddr,
                 channel->access_point.sockaddr_length);
 
     KAA_RETURN_IF_ERR(ret);

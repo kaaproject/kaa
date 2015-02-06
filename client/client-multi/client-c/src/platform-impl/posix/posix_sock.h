@@ -29,6 +29,7 @@ posix_sock.h
 typedef int kaa_fd;
 
 typedef struct sockaddr kaa_sockaddr_t;
+typedef struct sockaddr_storage kaa_sockaddr_storage_t;
 typedef socklen_t kaa_socklen_t;
 
 
