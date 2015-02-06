@@ -839,13 +839,11 @@ public class EndpointActorMessageProcessor {
                 message.isSuccess());
         logUploadResponseMap.put(message.getRequestId(), message);
         List<ChannelMetaData> channels = channelMap.getByTransportType(TransportType.LOGGING);
-        if (channels.size() > 0) {
-            ChannelMetaData channel = channels.get(0);
+        for(ChannelMetaData channel : channels){
             SyncRequestMessage pendingRequest = channel.getRequestMessage();
             ServerSync pendingResponse = channel.getResponseHolder().getResponse();
 
             pendingResponse.setLogSync(toLogDeliveryStatus());
-            logUploadResponseMap.clear();
 
             LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
             sendReply(context, pendingRequest, pendingResponse);
@@ -853,6 +851,7 @@ public class EndpointActorMessageProcessor {
                 channelMap.removeChannel(channel);
             }
         }
+        logUploadResponseMap.clear();
     }
     
     public void processUserVerificationMessage(ActorContext context, UserVerificationResponseMessage message) {
@@ -860,8 +859,7 @@ public class EndpointActorMessageProcessor {
                 message.isSuccess());
         userAttachResponseMap.put(message.getRequestId(), message);
         List<ChannelMetaData> channels = channelMap.getByTransportType(TransportType.USER);
-        if (channels.size() > 0) {
-            ChannelMetaData channel = channels.get(0);
+        for(ChannelMetaData channel : channels){
             SyncRequestMessage pendingRequest = channel.getRequestMessage();
             ServerSync pendingResponse = channel.getResponseHolder().getResponse();
             
