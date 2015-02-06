@@ -27,8 +27,6 @@
 #include "../kaa_error.h"
 #include "../platform/ext_transport_channel.h"
 
-#include <stdio.h>
-
 #include "../platform/ext_tcp_utils.h"
 
 typedef enum {
@@ -75,6 +73,28 @@ kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface
  */
 kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * channel, fd_event_t event_type, kaa_fd fd_p);
 
+/**
+ * @brief Return maximum timeout necessary for next timer event.
+ * To Keepalive support on Kaa tcp channel, channel have to send Ping request messages to server
+ *      and check that response is returned To generate Ping message, channel should be periodically notified
+ *      on timer events. This method return maximum seconds to wait until keepalive check must be invoked.
+ * @param[in]   channel     Kaa tcp channel object.
+ * @param[out]  maxTimeout  maximum seconds to wait, 0 - mean not event is necessary.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t * channel, uint16_t *maxTimeout);
+
+/**
+ * @brief Invoke Keepalive check
+ * Check time since last Ping request was sent, and if it necessary send next Ping request. If time from last ping
+ * is grater than 20% of keepalive value, channel threaten as disconnected.
+ *
+ * @param[in]   channel     Kaa tcp channel object.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t * channel);
 /*
  * @brief Set socket events callback
  * Set callback for following events:
@@ -89,6 +109,26 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t * ch
  */
 kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_interface_t * channel, kaa_tcp_channel_event_fn callback, void * context);
 
+/**
+ * @brief Set Kaa tcp protocol keepalive
+ * Keepalive used to check that Kaa tcp channel is alive, every keepalive interval (in seconds)
+ *      Kaa tcp channel send to server keepalive message, and wait response, if response don't back
+ *      during keepalive period, channel become disconnected.
+ * @param[in]    channel     Kaa tcp channel object.
+ * @param[in]    keepalive   Keepalive, value in seconds. 0 - mean no keepalive.
+ *
+ * @return Error code
+ */
+kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interface_t * channel, uint16_t keepalive);
 
+/**
+ * @brief Disconnect channel
+ * Send Kaa tcp disconnect channel with reason
+ * @param[in]    channel     Kaa tcp channel object.
+ * @param[in]    return_code Disconnect code.
+ *
+ * @return Error code
+ */
+kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *channel, kaatcp_disconnect_reason_t return_code);
 
 #endif /* KAA_TCP_CHANNEL_H_ */
