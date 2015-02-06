@@ -39,7 +39,7 @@
 #define KAA_TCP_CHANNEL_IN_BUFFER_SIZE 1024
 #define KAA_TCP_CHANNEL_OUT_BUFFER_SIZE 2024
 
-#define KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_ID 0x56c8ff92
+#define KAA_TCP_CHANNEL_PROTOCOL_BINARY_ID 0x3553c66f
 #define KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_VERSION 1
 
 #define KAA_TCP_CHANNEL_KEEPALIVE 300
@@ -187,7 +187,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *channel, k
     kaa_tcp_channel->keepalive.last_receive_keepalive = kaa_tcp_channel->keepalive.last_sent_keepalive;
     KAA_LOG_TRACE(logger,KAA_ERR_NONE,"Kaa tcp channel set keepalive to %d ",kaa_tcp_channel->keepalive.keepalive_interval);
 
-    kaa_tcp_channel->protocol_id.id = KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_ID;
+    kaa_tcp_channel->protocol_id.id = KAA_TCP_CHANNEL_PROTOCOL_BINARY_ID;
     kaa_tcp_channel->protocol_id.version = KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_VERSION;
     KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa tcp channel set transport protocol id 0x%08x", kaa_tcp_channel->protocol_id);
 
