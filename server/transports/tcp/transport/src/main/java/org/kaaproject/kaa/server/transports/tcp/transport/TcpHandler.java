@@ -149,9 +149,9 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
                     if(!sessionDisconnected){
                         handler.process(new NettyTcpDisconnectMessage(session));
                         sessionDisconnected = true;
-                        LOG.trace("[{}] Channel is closed - sending disconnect");
+                        LOG.trace("[{}] Channel is closed - sending disconnect", uuid);
                     }else{
-                        LOG.trace("[{}] Channel is closed and disconnect is already sent");
+                        LOG.trace("[{}] Channel is closed and disconnect is already sent", uuid);
                     }
                 }
             });
