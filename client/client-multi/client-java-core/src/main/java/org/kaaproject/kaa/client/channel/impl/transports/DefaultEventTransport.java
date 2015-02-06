@@ -20,9 +20,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.event.EventManager;
@@ -41,9 +44,9 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
 
     private final KaaClientState clientState;
 
-    private final Map<Integer, List<Event>> sentEvents = new HashMap<Integer, List<Event>>();
+    private final Map<Integer, Set<Event>> pendingEvents = new HashMap<Integer, Set<Event>>();
     private EventManager manager;
-    private final EventComparator eventComparator = new EventComparator();
+    private final EventComparator eventSeqNumberComparator = new EventComparator();
 
     private boolean isEventSNSynchronized = false;
     private int startEventSN;
@@ -61,21 +64,21 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
             manager.fillEventListenersSyncRequest(request);
 
             if (isEventSNSynchronized) {
-                List<Event> events = new LinkedList<Event>();
+                Set<Event> eventsSet = new HashSet<Event>();
 
-                if (!sentEvents.isEmpty()) {
-                    for (Map.Entry<Integer, List<Event>> pendingEvents : sentEvents.entrySet()) {
+                if (!pendingEvents.isEmpty()) {
+                    for (Map.Entry<Integer, Set<Event>> pendingEvents : pendingEvents.entrySet()) {
                         LOG.debug("Have not received response for {} events sent with request id {}",
                                 pendingEvents.getValue().size(), pendingEvents.getKey());
-                        events.addAll(pendingEvents.getValue());
+                        eventsSet.addAll(pendingEvents.getValue());
                     }
-                    sentEvents.clear();
                 }
 
-                events.addAll(manager.getPendingEvents());
+                eventsSet.addAll(manager.getPendingEvents());
 
+                List<Event> events = new ArrayList<Event>(eventsSet);
                 if (!events.isEmpty()) {
-                    Collections.sort(events, eventComparator);
+                    Collections.sort(events, eventSeqNumberComparator);
 
                     if (events.get(0).getSeqNum() != startEventSN) {
                         clientState.setEventSeqNum(startEventSN + events.size());
@@ -93,7 +96,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
                     LOG.debug("Going to send {} event{}", events.size()
                             , (events.size() == 1 ? "" : "s")); //NOSONAR
                     request.setEvents(events);
-                    sentEvents.put(requestId, events);
+                    pendingEvents.put(requestId, eventsSet);
                 }
 
                 request.setEventSequenceNumberRequest(null);
@@ -129,7 +132,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
 
             if (response.getEvents() != null && !response.getEvents().isEmpty()) {
                 List<Event> events = new ArrayList<>(response.getEvents());
-                Collections.sort(events, eventComparator);
+                Collections.sort(events, eventSeqNumberComparator);
                 for (Event event : events) {
                     manager.onGenericEvent(event.getEventClassFQN(), event.getEventData().array(), event.getSource());
                 }
@@ -158,7 +161,16 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
     @Override
     public void onSyncResposeIdReceived(Integer requestId) {
         LOG.debug("Events sent with request id {} were accepted.", requestId);
-        sentEvents.remove(requestId);
+        Set<Event> acceptedEvents = pendingEvents.remove(requestId);
+        Iterator<Entry<Integer, Set<Event>>> entrySetIterator = pendingEvents.entrySet().iterator();
+        while(entrySetIterator.hasNext()){
+            Entry<Integer, Set<Event>> entry = entrySetIterator.next();
+            entry.getValue().removeAll(acceptedEvents);
+            if(entry.getValue().size() == 0){
+                LOG.debug("Remove entry for request {}.", requestId);
+                entrySetIterator.remove();
+            }
+        }
     }
 
     @Override
