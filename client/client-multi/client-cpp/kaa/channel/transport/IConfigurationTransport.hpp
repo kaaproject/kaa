@@ -25,7 +25,7 @@ namespace kaa {
 /**
  * Updates the Configuration manager state.
  */
-class IConfigurationTrasnport {
+class IConfigurationTransport {
 public:
 
     /**
@@ -44,7 +44,7 @@ public:
      */
     virtual void onConfigurationResponse(const ConfigurationSyncResponse &response) = 0;
 
-    virtual ~IConfigurationTrasnport() {}
+    virtual ~IConfigurationTransport() {}
 };
 
 }  // namespace kaa

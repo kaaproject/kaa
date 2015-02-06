@@ -113,25 +113,6 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>compile_bootstrap_schema</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>/usr/local/bin/avrogencpp</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
-                                    <arguments>
-                                        <argument>-i</argument>
-                                        <argument>../../../common/endpoint-shared/src/main/avro/bootstrap.avsc</argument>
-                                        <argument>-o</argument>
-                                        <argument>kaa/gen/BootstrapGen.hpp</argument>
-                                        <argument>-n</argument>
-                                        <argument>kaa</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>build_script</id>
                                 <phase>install</phase>
                                 <goals>

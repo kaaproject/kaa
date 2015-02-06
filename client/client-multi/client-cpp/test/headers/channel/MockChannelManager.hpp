@@ -35,11 +35,6 @@ public:
         return channels;
     }
 
-    virtual std::list<IDataChannelPtr> getChannelsByType(ChannelType type) {
-        static std::list<IDataChannelPtr> typedChannels;
-        return typedChannels;
-    }
-
     virtual IDataChannelPtr getChannelByTransportType(TransportType type) {
         static IDataChannelPtr channel(new MockDataChannel);
         return channel;
@@ -50,8 +45,8 @@ public:
         return channel;
     }
 
-    virtual void onServerUpdated(IServerInfoPtr server) {}
-    virtual void onServerFailed(IServerInfoPtr server) {}
+    virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr server) {}
+    virtual void onServerFailed(ITransportConnectionInfoPtr server) {}
 
     virtual void clearChannelList() {}
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef OPERATIONSPROCESSOR_HPP_
-#define OPERATIONSPROCESSOR_HPP_
+#ifndef SYNC_DATA_PROCESSOR_HPP_
+#define SYNC_DATA_PROCESSOR_HPP_
 
 #include "kaa/channel/IKaaDataMultiplexer.hpp"
 #include "kaa/channel/IKaaDataDemultiplexer.hpp"
@@ -30,30 +30,32 @@
 #include "kaa/channel/transport/INotificationTransport.hpp"
 #include "kaa/channel/transport/IProfileTransport.hpp"
 #include "kaa/channel/transport/IRedirectionTransport.hpp"
+#include "kaa/channel/transport/IBootstrapTransport.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
 
 namespace kaa {
 
 typedef std::shared_ptr<IMetaDataTransport>       IMetaDataTransportPtr;
-typedef std::shared_ptr<IConfigurationTrasnport>  IConfigurationTransportPtr;
+typedef std::shared_ptr<IBootstrapTransport>      IBootstrapTransportPtr;
+typedef std::shared_ptr<IConfigurationTransport>  IConfigurationTransportPtr;
 typedef std::shared_ptr<INotificationTransport>   INotificationTransportPtr;
 typedef std::shared_ptr<IUserTransport>           IUserTransportPtr;
 typedef std::shared_ptr<IEventTransport>          IEventTransportPtr;
 typedef std::shared_ptr<ILoggingTransport>        ILoggingTransportPtr;
 typedef std::shared_ptr<IRedirectionTransport>    IRedirectionTransportPtr;
 
-class OperationsDataProcessor : public IKaaDataMultiplexer, public IKaaDataDemultiplexer {
+class SyncDataProcessor : public IKaaDataMultiplexer, public IKaaDataDemultiplexer {
 public:
-    OperationsDataProcessor(  IMetaDataTransportPtr
-                        , IProfileTransportPtr
-                        , IConfigurationTransportPtr
-                        , INotificationTransportPtr
-                        , IUserTransportPtr
-                        , IEventTransportPtr
-                        , ILoggingTransportPtr
-                        , IRedirectionTransportPtr
-                        , IKaaClientStateStoragePtr
-    );
+    SyncDataProcessor(IMetaDataTransportPtr
+                    , IBootstrapTransportPtr
+                    , IProfileTransportPtr
+                    , IConfigurationTransportPtr
+                    , INotificationTransportPtr
+                    , IUserTransportPtr
+                    , IEventTransportPtr
+                    , ILoggingTransportPtr
+                    , IRedirectionTransportPtr
+                    , IKaaClientStateStoragePtr);
 
     virtual std::vector<std::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes);
     virtual void processResponse(const std::vector<std::uint8_t> &response);
@@ -62,6 +64,7 @@ private:
     AvroByteArrayConverter<SyncResponse>    responseConverter_;
 
     IMetaDataTransportPtr       metaDataTransport_;
+    IBootstrapTransportPtr      bootstrapTransport_;
     IProfileTransportPtr        profileTransport_;
     IConfigurationTransportPtr  configurationTransport_;
     INotificationTransportPtr   notificationTransport_;
@@ -72,10 +75,10 @@ private:
 
     IKaaClientStateStoragePtr   clientStatus_;
 
-    std::int32_t              requestId;
+    std::int32_t                requestId;
 };
 
 }  // namespace kaa
 
 
-#endif /* OPERATIONSPROCESSOR_HPP_ */
+#endif /* SYNC_DATA_PROCESSOR_HPP_ */

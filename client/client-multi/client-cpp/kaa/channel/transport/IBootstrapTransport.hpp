@@ -18,32 +18,33 @@
 #define IBOOTSTRAPTRANSPORT_HPP_
 
 #include <memory>
-#include "kaa/gen/BootstrapGen.hpp"
 
 namespace kaa {
 
 /**
- * Updates the Bootstrap manager state.
+ * Interface to implement module responsible for creation the Bootstrap sync request
+ * and processing the response from the Bootstrap server.
  */
-class IBootstrapTransport {
+class IBootstrapTransport
+{
 public:
 
     /**
-     * Creates new Resolve request.
+     * Creates Bootstrap sync request.
      *
-     * @return Resovle request.
-     * @see Resolve
+     * @return The Bootstrap sync request.
+     * @see BootstrapSyncRequest
      */
-    virtual std::shared_ptr<Resolve> createResolveRequest() = 0;
+    virtual std::shared_ptr<BootstrapSyncRequest> createBootstrapSyncRequest() = 0;
 
     /**
      * Updates the state of the Bootstrap manager according the given response.
      *
-     * @param servers response from Bootstrap server.
-     * @see OperationsServerList
+     * @param response The Bootstrap server response.
+     * @see BootstrapSyncResponse
      *
      */
-    virtual void onResolveResponse(OperationsServerList servers) = 0;
+    virtual void onBootstrapResponse(const BootstrapSyncResponse& response) = 0;
 
     virtual ~IBootstrapTransport() {}
 };

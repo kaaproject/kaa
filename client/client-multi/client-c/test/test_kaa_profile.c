@@ -18,6 +18,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+
 #include "kaa_status.h"
 #include "kaa_test.h"
 
