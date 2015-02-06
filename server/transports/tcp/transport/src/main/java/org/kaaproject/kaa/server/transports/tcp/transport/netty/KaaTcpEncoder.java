@@ -48,7 +48,18 @@ public class KaaTcpEncoder extends ChannelOutboundHandlerAdapter {
             if(LOG.isTraceEnabled()){
                 LOG.trace("Sending {} data for frame {}", Arrays.toString(data), frame);
             }
+            if(LOG.isTraceEnabled()){
+                LOG.trace("Channel promise before writeAndFlush isSuccess [{}] isDone [{}] isCancelled [{}] for frame {}", promise.isSuccess(),
+                        promise.isDone(), promise.isCancelled(), frame);
+            }            
             ChannelFuture future = ctx.writeAndFlush(data, promise);
+            if(LOG.isTraceEnabled()){
+                LOG.trace("Returned future [{}] isSuccess [{}] isDone [{}] isCancelled [{}] cause [{}] for frame {}", future, future.isSuccess(),
+                        future.isDone(), future.isCancelled(), future.cause(), frame);
+                if (future.cause() != null) {
+                    LOG.trace("Write operation failed due to:", future.cause());
+                }
+            }            
             if (frame.isNeedCloseConnection()) {
                 future.addListener(ChannelFutureListener.CLOSE);
             }
