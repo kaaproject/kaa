@@ -129,6 +129,6 @@ kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interfac
  *
  * @return Error code
  */
-kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *channel, kaatcp_disconnect_reason_t return_code);
+kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *channel);
 
 #endif /* KAA_TCP_CHANNEL_H_ */

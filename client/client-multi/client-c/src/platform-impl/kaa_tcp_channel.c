@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <time.h>
 #include "../platform/stdio.h"
 
 #include "../kaa_common.h"
@@ -117,7 +118,7 @@ kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t *c
 kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *channel);
 kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_interface_t *channel, kaa_tcp_channel_event_fn callback, void * context);
 kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interface_t *channel, uint16_t keepalive);
-kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *channel, kaatcp_disconnect_reason_t return_code);
+kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *channel);
 /*
  * Parser handlers
  */
@@ -811,13 +812,13 @@ kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interfac
     return ret;
 }
 
-kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *channel, kaatcp_disconnect_reason_t return_code)
+kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *channel)
 {
     KAA_RETURN_IF_NIL(channel, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(channel->context,KAA_ERR_BADPARAM);
     kaa_tcp_channel_t * tcp_channel = (kaa_tcp_channel_t *)channel->context;
 
-    return kaa_tcp_channel_disconnect_internal(tcp_channel, return_code);
+    return kaa_tcp_channel_disconnect_internal(tcp_channel, KAATCP_DISCONNECT_NONE);
 }
 /**** Parser handlers **************/
 
