@@ -39,7 +39,6 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
     private static final long MAX_SEC_FACEBOOK_REQUEST_TIME = 60;
     private FacebookAvroConfig configuration;
     private ExecutorService tokenVerifiersPool;
-    private static ObjectMapper responseMapper;
 
     @Override
     public void init(UserVerifierContext context, FacebookAvroConfig configuration) {
@@ -76,16 +75,50 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
 
             try {
                 connection = establishConnection(userAccessToken, accessToken);
-                
                 LOG.trace("Connection established [{}]", accessToken);
-                
-                responseMapper = new ObjectMapper();
+                ObjectMapper responseMapper = new ObjectMapper();
 
-                // no data field means that token is invalid
                 if (connection.getResponseCode() == 400) {
-                    LOG.trace("400: The request could not be understood by the verifier due to malformed syntax");
-                    callback.onVerificationFailure("400: The request could not be understood by the verifier due" +
-                                                   " to malformed syntax");
+                    reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+
+                    // we always get a map
+                    Map<String, Object> responseMap =
+                            responseMapper.readValue(reader.readLine(), Map.class);
+                    Map<String, Object> errorMap = null;
+
+                    // no error field in response
+                    if (responseMap.get("error") != null) {
+                        errorMap = (Map<String, Object>) responseMap.get("error");
+                    }
+
+                    // errors with OAuth
+                    if (errorMap != null && String.valueOf(errorMap.get("code")).equals("190")) {
+                        if (errorMap.get("error_subcode") == null) {
+                            LOG.trace("OAuthException: [{}], errcode: [{}], errsubcode: [{}] ", errorMap.get("message"),
+                                    errorMap.get("errcode"), errorMap.get("error_subcode"));
+                            callback.onVerificationFailure("OAuthException:" + errorMap.get("message"));
+                        } else if (String.valueOf(errorMap.get("error_subcode")).equals("463")) {         // access token has expired
+                            LOG.trace("Access Token has expired");
+                            callback.onTokenExpired();
+                        } else if (String.valueOf(errorMap.get("error_subcode")).equals("467")) {  // access token is invalid
+                            LOG.trace("Access Token is invalid");
+                            callback.onTokenInvalid();
+                        } else {
+                            LOG.trace("OAuthException: [{}], errcode: [{}], errsubcode: [{}] ", errorMap.get("message"),
+                                    errorMap.get("errcode"), errorMap.get("error_subcode"));
+                            callback.onVerificationFailure("OAuthException:" + errorMap.get("message"));
+                        }
+                    } else {
+                        if (errorMap != null) {
+                            LOG.trace("Unable to verify token: {}, errcode: [{}]", errorMap.get("message"),
+                                    errorMap.get("errcode"));
+                            callback.onVerificationFailure("Unable to verify token: " + errorMap.get("message") +
+                                    ", errorcode: " + errorMap.get("errcode"));
+                        } else {
+                            LOG.trace("Unable to verify token. HTTP response 400");
+                            callback.onVerificationFailure("Unable to verify token. HTTP response 400");
+                        }
+                    }
                 } else if (connection.getResponseCode() == 200) {
                     reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
@@ -95,11 +128,11 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
 
                     Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
                     String receivedUserId = String.valueOf(dataMap.get("user_id"));
-                    if (receivedUserId == null) {
+
+                    if (dataMap.containsKey("error") || receivedUserId == null) {
                         Map<String, Object> errorMap = (Map<String, Object>) dataMap.get("error");
                         LOG.trace("Bad input token: {}, errcode = {}", errorMap.get("message"), errorMap.get("code"));
-                        callback.onVerificationFailure("Bad input token: " + errorMap.get("message") +
-                                ", errcode = " + errorMap.get("code"));
+                        callback.onTokenInvalid();
                     } else if (!receivedUserId.equals(userExternalId)) {
                         LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
                         callback.onVerificationFailure("User access token " + userAccessToken + " doesn't belong to the user");
@@ -128,7 +161,7 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                     try {
                         reader.close();
                     } catch (IOException e) {
-                        LOG.debug("message", e);
+                        LOG.debug("Reader can't be closed", e);
                     }
                 }
             }
@@ -137,8 +170,8 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
 
     protected HttpURLConnection establishConnection(String userAccessToken, String accessToken) throws IOException {
         URL myUrl = new URL(FACEBOOK_URL_PREFIX + "?" +
-                            "input_token=" + userAccessToken +
-                            "&access_token=" + accessToken);
+                "input_token=" + userAccessToken +
+                "&access_token=" + accessToken);
 
         return (HttpURLConnection) myUrl.openConnection();
     }
