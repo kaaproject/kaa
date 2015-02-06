@@ -18,87 +18,126 @@
 PREREQUISITES
 ************************************
 
-To build the Kaa SDK one requires:
-1. C compiler supported C11 standard.
-2. cmake 2.8.8 or later.
+Before building the C endpoint SDK, ensure the following components 
+are installed:
 
-Additionally, to use the Kaa SDK on the x86-64 platform (use by default) OpenSSL libraries (ssl and crypto) are needed.
+1. C compiler supporting the C11 standard
+2. cmake 2.8.8 or later
+
+To build the Kaa SDK for the x86-64 platform, ensure that OpenSSL libraries
+(ssl and crypto) are installed.
 
 ************************************
 INSTALL
 ************************************
 
-Basic steps to build the Kaa SDK are the following:
-1. Untar Kaa C SDK archive.
-2. Go into the Kaa SDK home directory and run next commands:
+To build the C endpoint SDK, do the following:
 
-mkdir build
-cd build
-cmake ..
-make
-make install
+1. Download and untar the Kaa C SDK archive.
+2. Run the following commands:
+
+    mkdir build
+    cd build
+    cmake ..
+    make
+    make install
 
 ************************************
 CONFIGURATION
 ************************************
 
-There are a few options one can use to configure the Kaa SDK build:
+To configure the C endpoint SDK build, you can optionally specify
+the following parameters for the cmake command:
+
 ------------------------------------
-KAA_DEBUG_ENABLED=[0|1] - build type. By default the release type [0] is used.
+KAA_DEBUG_ENABLED=[0|1] - build type.
+
+Values:
+0 - the release type
+1 - the debug type
+
+Default:
+0
 ------------------------------------
 KAA_MAX_LOG_LEVEL - maximum log level used by the Kaa SDK.
 
-Possible values are the following:
-NONE  - 0 (no logs)
-FATAL - 1
-ERROR - 2
-WARN  - 3
-INFO  - 4 (default for the release build)
-DEBUG - 5
-TRACE - 6 (default for the debug build)
+Values:
+0 - NONE (no logs)
+1 - FATAL
+2 - ERROR
+3 - WARN
+4 - INFO
+5 - DEBUG
+6 - TRACE
 
+Default:
+4 - if KAA_DEBUG_ENABLED=0
+6 - if KAA_DEBUG_ENABLED=1
 ------------------------------------
-KAA_WITHOUT_<MODULE> - omits the Kaa module (not be built).
+KAA_WITHOUT_<MODULE> - Kaa module to be omitted during the build.
 
-For now the Kaa C SDK consists of next modules:
-1. EVENTS
-2. LOGGING
+Values:
+EVENTS
+LOGGING
 
-By default all modules will be built.
-
+Default:
+All modules are present in the build.
 ------------------------------------
-KAA_PLATFORM - platform the Kaa SDK will be built for.
+KAA_PLATFORM - SDK target platform.
 
-Currently supported platforms:
-1. x86-64 (use by default).
+Values:
+x86-64
 
-To build the Kaa SDK for some specific platform, next steps should be done:
-1. Create a directory in "$KAA_HOME/listfiles/platform/". The directory name is a value one can use to specify KAA_PLATFORM option. [a-zA-z_-] symbols can be used.
-   Example: cmake -DKAA_PLATFORM=android .
-2. Put CMakeLists.txt into created directory. This file may contain specific compilation/linking flags, platform-dependent source files, thirdparty library dependencies,
-   i.e. all information what is needed to build the Kaa SDK for this platform.
+Default:
+x86-64
 
-There are several CMake variables used to specify platform-dependent options:
-KAA_INCLUDE_PATHS - additional path(s) to header files.
-KAA_SOURCE_FILES - additional source files (every source file should be specified with a full path to it).
-KAA_THIRDPARTY_LIBRARIES - thirdparty libraries (etc. ssl, crypto).
+Before running the cmake command with the KAA_PLATFORM parameter 
+for a platform other than x86-64, do the following:
 
-NOTE: All these variables should be used in the next way:
+1. Create a folder in $KAA_HOME/listfiles/platform/ and name it
+   using [a-zA-z_-] symbols. You will be able to use the folder name
+   as a value for the KAA_PLATFORM parameter.
 
-set(KAA_SOURCE_FILES
+2. Put the CMakeLists.txt file into the created folder. This file may contain
+   specific compilation/linking flags, platform-dependent source files,
+   third-party library dependencies, that is all information necessary
+   for building the C endpoint SDK for this platform.
+
+3. Optionally, specify the following parameters in the CMakeLists.txt file:
+
+    KAA_INCLUDE_PATHS        - full path(s) to folder(s) containing additional 
+                               header files
+    KAA_SOURCE_FILES         - full path(s) to additional source files
+    KAA_THIRDPARTY_LIBRARIES - third-party libraries (the name of the library,
+                               for example, ssl, crypto)
+
+    In the CMakeLists.txt file:
+
+    set(KAA_INCLUDE_PATHS
+        ${KAA_INCLUDE_PATHS}
+        path_to_folder_1_with_header_files
+        path_to_folder_2_with_header_files
+    )
+    set(KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
-        some_source_file
-        some_source_file
+        path_to_source_file_1
+        path_to_source_file_2
+    )
+    set(KAA_THIRDPARTY_LIBRARIES
+        ${KAA_THIRDPARTY_LIBRARIES}
+        some_library_1
+        some_library_2
     )
 
 ************************************
 BUILD EXAMPLE
 ************************************
 
-Consider, the debug x86-64 build with the INFO log level and the LOGGING module is needed. Build steps should be the following:
+The following example illustrates the build procedure for 
+the debug x86-64 build with the INFO log level and the LOGGING module:
 
-mkdir build
-cd build
-cmake -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
-make
-make install
+    mkdir build
+    cd build
+    cmake -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
+    make
+    make install
