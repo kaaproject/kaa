@@ -155,7 +155,8 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *channel, k
         kaa_tcp_channel->supported_services = (kaa_service_t *) KAA_CALLOC(supported_service_count, sizeof(kaa_service_t));
         KAA_RETURN_IF_NIL(kaa_tcp_channel->supported_services, KAA_ERR_NOMEM);
 
-        for(int i=0;i<supported_service_count;i++) {
+        int i = 0;
+        for(; i < supported_service_count; ++i) {
             kaa_tcp_channel->supported_services[i] = supported_services[i];
         }
         kaa_tcp_channel->supported_service_count = supported_service_count;
@@ -167,14 +168,14 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *channel, k
     KAA_RETURN_IF_ERR(ret);
 
     kaa_tcp_channel->parser = (kaatcp_parser_t *) KAA_CALLOC(1, sizeof(kaatcp_parser_t));
-    KAA_RETURN_IF_NIL(kaa_tcp_channel->parser,KAA_ERR_NOMEM);
+    KAA_RETURN_IF_NIL(kaa_tcp_channel->parser, KAA_ERR_NOMEM);
 
     kaa_tcp_channel->keepalive.keepalive_interval = 1000; //TODO create setter.
     KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa tcp channel set keepalive to %d ", kaa_tcp_channel->keepalive.keepalive_interval);
 
     kaa_tcp_channel->protocol_id.id = KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_ID;
     kaa_tcp_channel->protocol_id.version = KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_VERSION;
-    KAA_LOG_TRACE(logger,KAA_ERR_NONE,"Kaa tcp channel set transport protocol id 0x%08x ",kaa_tcp_channel->protocol_id);
+    KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa tcp channel set transport protocol id 0x%08x", kaa_tcp_channel->protocol_id);
 
     kaa_tcp_channel->logger = logger;
 
@@ -183,11 +184,10 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *channel, k
     parser_handler.disconnect_handler = kaa_tcp_channel_disconnect_message_callback;
     parser_handler.kaasync_handler = kaa_tcp_channel_kaasync_message_callback;
     parser_handler.pingresp_handler = kaa_tcp_channel_pingresp_message_callback;
-    parser_handler.handlers_context = (void*) kaa_tcp_channel;
+    parser_handler.handlers_context = (void *) kaa_tcp_channel;
     kaatcp_error_t parser_ret = kaatcp_parser_init(kaa_tcp_channel->parser, &parser_handler);
-    if (parser_ret) {
+    if (parser_ret)
         return KAA_ERR_TCPCHANNEL_PARSER_INIT_FAILED;
-    }
 
     channel->context = (void*) kaa_tcp_channel;
     channel->get_protocol_id = kaa_tcp_channel_get_transport_protocol_info;
@@ -532,14 +532,17 @@ kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface
 
     switch (event_type) {
         case FD_READ:
-            KAA_LOG_TRACE(tcp_channel->logger,KAA_ERR_NONE,"Kaa tcp channel(%d) get socket for event READ", tcp_channel->access_point.id);
+            KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa tcp channel(%d) get socket for event READ", tcp_channel->access_point.id);
             if (tcp_channel->access_point.state == AP_CONNECTED) {
-                char * buf = NULL;
+                char *buf = NULL;
                 size_t buf_size = 0;
                 ret = kaa_buffer_allocate_space(tcp_channel->in_buffer, &buf, &buf_size);
                 KAA_RETURN_IF_ERR(ret);
                 if (buf_size > 0) {
+                    KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa tcp channel(%d) available socket %d", tcp_channel->access_point.id, tcp_channel->access_point.socket_descriptor);
                     *fd_p = tcp_channel->access_point.socket_descriptor;
+                } else {
+                    KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa tcp channel(%d) input buffer is not available for reading", tcp_channel->access_point.id);
                 }
             }
             break;
