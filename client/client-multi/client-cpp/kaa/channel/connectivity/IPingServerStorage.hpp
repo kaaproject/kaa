@@ -17,13 +17,13 @@
 #ifndef IPINGSERVERSTORAGE_HPP_
 #define IPINGSERVERSTORAGE_HPP_
 
-#include "kaa/channel/server/IServerInfo.hpp"
+#include "kaa/channel/ITransportConnectionInfo.hpp"
 
 namespace kaa {
 
 class IPingServerStorage {
 public:
-    virtual IServerInfoPtr getPingServer() = 0;
+    virtual ITransportConnectionInfoPtr getPingServer() = 0;
     virtual ~IPingServerStorage() {}
 };
 

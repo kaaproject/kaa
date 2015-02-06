@@ -95,16 +95,16 @@ void ConfigurationManager::onDeltaRecevied(int index, const avro::GenericDatum &
 void ConfigurationManager::onConfigurationProcessed()
 {
     if (!root_.get()) {
-        throw KaaException("Configuration processed but no record was created.");
+        KAA_LOG_WARN("Configuration processed but no record was created");
+    } else {
+        ICommonRecord &record = *root_;
+        configurationReceivers_(record);
     }
-    ICommonRecord &record = *root_;
-    configurationReceivers_(record);
 }
 
 bool ConfigurationManager::isSubscribed(uuid_t uuid)
 {
-    auto it = records_.find(uuid);
-    return (it != records_.end());
+    return (records_.find(uuid) != records_.end());
 }
 
 void ConfigurationManager::subscribe(uuid_t uuid, std::shared_ptr<ICommonRecord> record)

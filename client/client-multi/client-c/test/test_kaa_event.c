@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "platform/ext_sha.h"
 #include "kaa_event.h"
@@ -386,6 +387,9 @@ void test_event_sync_serialize()
     char manual_buffer[event_sync_size];
     char auto_buffer[event_sync_size];
 
+    char *manual_buffer_ptr = manual_buffer;
+    char *auto_buffer_ptr = auto_buffer;
+
     kaa_platform_message_writer_t *manual_writer;
     error_code = kaa_platform_message_writer_create(&manual_writer, manual_buffer, event_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -414,7 +418,20 @@ void test_event_sync_serialize()
     error_code = kaa_event_request_serialize(event_manager, 1, auto_writer);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = (memcmp(auto_buffer, manual_buffer, event_sync_size) == 0 ? KAA_ERR_NONE : KAA_ERR_BADDATA);
+    error_code = (memcmp(auto_buffer_ptr, manual_buffer_ptr, KAA_EXTENSION_HEADER_SIZE) == 0 ? KAA_ERR_NONE : KAA_ERR_BADDATA);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    auto_buffer_ptr += KAA_EXTENSION_HEADER_SIZE;
+    manual_buffer_ptr += KAA_EXTENSION_HEADER_SIZE;
+    event_sync_size -= KAA_EXTENSION_HEADER_SIZE;
+
+    ASSERT_EQUAL(*auto_buffer_ptr, *manual_buffer_ptr);
+
+    auto_buffer_ptr += sizeof(uint16_t);
+    manual_buffer_ptr += sizeof(uint16_t);
+    event_sync_size -= sizeof(uint16_t);
+
+    error_code = (memcmp(auto_buffer_ptr, manual_buffer_ptr, event_sync_size) == 0 ? KAA_ERR_NONE : KAA_ERR_BADDATA);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_writer_destroy(manual_writer);

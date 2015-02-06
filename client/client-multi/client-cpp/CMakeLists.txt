@@ -111,7 +111,7 @@ endif()
 if ( NOT KAA_WITHOUT_CONNECTIVITY_CHECKER )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
-            impl/channel/connectivity/PingConnectivityChecker.cpp
+            impl/channel/connectivity/IPConnectivityChecker.cpp
     )
 endif()
 
@@ -122,6 +122,7 @@ if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_PO
             impl/http/HttpResponse.cpp
             impl/http/HttpClient.cpp
             impl/transport/HttpDataProcessor.cpp
+            impl/channel/impl/AbstractHttpChannel.cpp
     )
 endif()
 
@@ -156,8 +157,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/profile/ProfileTransport.cpp
         impl/bootstrap/BootstrapManager.cpp
         impl/bootstrap/BootstrapTransport.cpp
-        impl/channel/OperationsDataProcessor.cpp
-        impl/channel/BootstrapDataProcessor.cpp
+        impl/channel/SyncDataProcessor.cpp
         impl/channel/RedirectionTransport.cpp
         impl/channel/KaaChannelManager.cpp
         impl/kaatcp/KaaTcpCommon.cpp
@@ -165,6 +165,8 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/kaatcp/ConnackMessage.cpp
         impl/kaatcp/KaaSyncResponse.cpp
         impl/kaatcp/KaaTcpResponseProcessor.cpp
+        impl/channel/TransportProtocolIdConstants.cpp
+        impl/channel/IPTransportInfo.cpp
     )
 
 add_library(kaacpp_o OBJECT ${KAA_SOURCE_FILES})

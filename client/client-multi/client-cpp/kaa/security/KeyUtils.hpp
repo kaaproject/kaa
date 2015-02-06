@@ -23,10 +23,9 @@
 #include <cstdint>
 #include <memory>
 #include <boost/scoped_array.hpp>
+#include "kaa/security/SecurityDefinitions.hpp"
 
 namespace kaa {
-
-typedef std::pair<Botan::MemoryVector<std::uint8_t>, std::string> KeyPair;
 
 class KeyUtils {
 public:
@@ -44,19 +43,19 @@ public:
      * @param length the length of the key in bytes
      * @return the pair of key and initialization vector
      */
-    Botan::SymmetricKey generateSessionKey(std::size_t length);
+    SessionKey generateSessionKey(std::size_t length);
 
-    static Botan::MemoryVector<std::uint8_t> loadPublicKey(const std::string& fileName);
+    static PublicKey loadPublicKey(const std::string& fileName);
 
-    static std::string loadPrivateKey(const std::string& fileName);
+    static PrivateKey loadPrivateKey(const std::string& fileName);
 
     static KeyPair loadKeyPair(const std::string& pubFileName, const std::string& privFileName);
 
     static void saveKeyPair(const KeyPair& pair, const std::string& pubFileName, const std::string& privFileName);
 
-    static void savePublicKey(const Botan::MemoryVector<std::uint8_t>& key, const std::string& pubFileName);
+    static void savePublicKey(const PublicKey& key, const std::string& pubFileName);
 
-    static void savePrivateKey(const std::string& key, const std::string& privFileName);
+    static void savePrivateKey(const PrivateKey& key, const std::string& privFileName);
 
 private:
     static void readFile(const std::string& fileName, boost::scoped_array<char>& buf, std::size_t& len);

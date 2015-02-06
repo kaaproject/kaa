@@ -23,6 +23,7 @@ extern "C" {
 
 #include "kaa_error.h"
 #include "kaa_common.h"
+#include "platform/ext_sha.h"
 
 #ifndef KAA_STATUS_T
 # define KAA_STATUS_T
