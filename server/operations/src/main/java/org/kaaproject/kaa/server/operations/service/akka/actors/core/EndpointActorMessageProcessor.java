@@ -461,7 +461,7 @@ public class EndpointActorMessageProcessor {
 
     private void scheduleKeepAliveCheck(ActorContext context, ChannelMetaData channel) {
         TimeoutMessage message = new ChannelTimeoutMessage(channel.getId(), channel.getLastActivityTime());
-        LOG.debug("Scheduling channel timeout message: {} to timout in {}", message, channel.getKeepAlive() * 1000);
+        LOG.debug("Scheduling channel timeout message: {} to timeout in {}", message, channel.getKeepAlive() * 1000);
         scheduleTimeoutMessage(context, message, channel.getKeepAlive() * 1000);
     }
 
@@ -805,7 +805,6 @@ public class EndpointActorMessageProcessor {
             LOG.debug("[{}][{}] Updating last activity time for channel [{}] to ", endpointKey, actorKey, message.getChannelUuid(),
                     lastActivityTime);
             channel.setLastActivityTime(lastActivityTime);
-            scheduleKeepAliveCheck(context, channel);
             channel.getContext().writeAndFlush(new PingResponse());
             return true;
         } else {
@@ -826,6 +825,7 @@ public class EndpointActorMessageProcessor {
             } else {
                 LOG.debug("[{}][{}] Timeout message ignored for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
                         actorKey, message.getChannelUuid(), channel.getLastActivityTime(), message.getLastActivityTime());
+                scheduleKeepAliveCheck(context, channel);
                 return false;
             }
         } else {
