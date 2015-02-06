@@ -18,9 +18,9 @@
 #include <stdbool.h>
 #include "platform/stdio.h"
 #include "platform/ext_sha.h"
+#include "platform/ext_status.h"
 #include "kaa_status.h"
 #include "kaa_common.h"
-#include "kaa_external.h"
 #include "utilities/kaa_mem.h"
 #include <string.h>
 
@@ -54,7 +54,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     char *  read_buf_head = NULL;
     size_t  read_size = 0;
     bool    needs_deallocation = false;
-    kaa_read_status_ext(&read_buf, &read_size, &needs_deallocation);
+    ext_status_read(&read_buf, &read_size, &needs_deallocation);
     read_buf_head = read_buf;
     if (read_size >= KAA_STATUS_STATIC_SIZE + sizeof(size_t)) {
         READ_BUFFER(read_buf, &kaa_status->is_registered, sizeof(kaa_status->is_registered))
@@ -131,7 +131,7 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
         WRITE_BUFFER(self->endpoint_access_token, buffer, endpoint_access_token_length);
     }
 
-    kaa_store_status_ext(buffer_head, buffer_size);
+    ext_status_store(buffer_head, buffer_size);
 
     KAA_FREE(buffer_head);
 
