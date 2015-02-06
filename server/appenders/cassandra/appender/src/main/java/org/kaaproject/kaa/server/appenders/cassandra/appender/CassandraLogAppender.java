@@ -84,6 +84,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                 callbackPoolSize = MAX_CALLBACK_THREAD_POOL_SIZE;
             }
             callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
+            LOG.info("Cassandra log appender initialized");
         } catch (Exception e) {
             LOG.error("Failed to init cassandra log appender: ", e);
         }

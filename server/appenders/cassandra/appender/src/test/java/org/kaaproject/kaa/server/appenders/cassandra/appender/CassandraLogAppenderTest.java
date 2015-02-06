@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CassandraLogAppenderTest {
 
@@ -96,32 +97,14 @@ public class CassandraLogAppenderTest {
 
     @Test
     public void doAppendTest() throws IOException {
-        logAppender.doAppend(generateLogEventPack(20), new LogDeliveryCallback() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onInternalError() {
-
-            }
-
-            @Override
-            public void onConnectionError() {
-
-            }
-
-            @Override
-            public void onRemoteError() {
-
-            }
-        });
+        DeliveryCallback callback = new DeliveryCallback();
+        logAppender.doAppend(generateLogEventPack(20), callback);
         CassandraLogEventDao logEventDao = (CassandraLogEventDao) ReflectionTestUtils.getField(logAppender, "logEventDao");
         Session session = (Session) ReflectionTestUtils.getField(logEventDao, "session");
         ResultSet resultSet = session.execute(QueryBuilder.select().countAll().from(KEY_SPACE_NAME, "logs_" + appToken));
         Row row = resultSet.one();
         Assert.assertEquals(20L, row.getLong(0));
+        Assert.assertEquals(1, callback.getSuccessCount());
     }
 
     private LogEventPack generateLogEventPack(int count) throws IOException {
@@ -147,4 +130,32 @@ public class CassandraLogAppenderTest {
         return logEventPack;
     }
 
+    class DeliveryCallback implements LogDeliveryCallback {
+
+        private AtomicInteger successCount = new AtomicInteger();
+
+        @Override
+        public void onSuccess() {
+            successCount.incrementAndGet();
+        }
+
+        @Override
+        public void onInternalError() {
+
+        }
+
+        @Override
+        public void onConnectionError() {
+
+        }
+
+        @Override
+        public void onRemoteError() {
+
+        }
+
+        public int getSuccessCount() {
+            return successCount.get();
+        }
+    }
 }
