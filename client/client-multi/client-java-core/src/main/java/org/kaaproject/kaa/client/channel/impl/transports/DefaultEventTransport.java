@@ -66,10 +66,10 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
                 Set<Event> eventsSet = new HashSet<Event>();
 
                 if (!pendingEvents.isEmpty()) {
-                    for (Map.Entry<Integer, Set<Event>> pendingEvents : pendingEvents.entrySet()) {
-                        LOG.debug("Have not received response for {} events sent with request id {}", pendingEvents.getValue().size(),
-                                pendingEvents.getKey());
-                        eventsSet.addAll(pendingEvents.getValue());
+                    for (Map.Entry<Integer, Set<Event>> pendingEntry : pendingEvents.entrySet()) {
+                        LOG.debug("Have not received response for {} events sent with request id {}", pendingEntry.getValue().size(),
+                                pendingEntry.getKey());
+                        eventsSet.addAll(pendingEntry.getValue());
                     }
                 }
 
