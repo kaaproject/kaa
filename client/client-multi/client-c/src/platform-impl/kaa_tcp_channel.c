@@ -483,7 +483,7 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
             access_point_socket_port);
 #endif
     kaa_dns_resolve_listener_t resolve_listener;
-    resolve_listener.context = (void*)channel;
+    resolve_listener.context = (void *) channel;
     resolve_listener.on_host_resolved = kaa_tcp_channel_set_access_point_hostname_resolved;
     resolve_listener.on_resolve_failed = kaa_tcp_channel_set_access_point_hostname_resolve_failed;
 
@@ -713,9 +713,8 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *cha
 
 kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t * channel, uint16_t *maxTimeout)
 {
-    KAA_RETURN_IF_NIL(channel, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(channel->context,KAA_ERR_BADPARAM);
-    kaa_tcp_channel_t * tcp_channel = (kaa_tcp_channel_t *)channel->context;
+    KAA_RETURN_IF_NIL2(channel, channel->context, KAA_ERR_BADPARAM);
+    kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *) channel->context;
 
     kaa_error_t ret = KAA_ERR_NONE;
 
@@ -725,8 +724,8 @@ kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t * 
         *maxTimeout = 0;
     } else {
         kaa_time_t timeout = (kaa_time_t) ext_get_systime();
-        kaa_time_t sent_timeout = timeout - (kaa_time_t)tcp_channel->keepalive.last_sent_keepalive;
-        kaa_time_t receive_timeout = timeout - (kaa_time_t)tcp_channel->keepalive.last_receive_keepalive;
+        kaa_time_t sent_timeout = timeout - (kaa_time_t) tcp_channel->keepalive.last_sent_keepalive;
+        kaa_time_t receive_timeout = timeout - (kaa_time_t) tcp_channel->keepalive.last_receive_keepalive;
         timeout = sent_timeout;
         if (sent_timeout > receive_timeout)
             timeout = receive_timeout;
@@ -737,20 +736,19 @@ kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t * 
         *maxTimeout = timeout;
     }
 
-    KAA_LOG_INFO(tcp_channel->logger,KAA_ERR_NONE,"Kaa tcp channel(%d) maxtimeout %d.", tcp_channel->access_point.id, *maxTimeout);
+    KAA_LOG_INFO(tcp_channel->logger, KAA_ERR_NONE, "Kaa tcp channel(%d) maxtimeout %d", tcp_channel->access_point.id, *maxTimeout);
 
     return ret;
 }
 
 kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t * channel)
 {
-    KAA_RETURN_IF_NIL(channel, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(channel->context,KAA_ERR_BADPARAM);
-    kaa_tcp_channel_t * tcp_channel = (kaa_tcp_channel_t *)channel->context;
+    KAA_RETURN_IF_NIL2(channel, channel->context, KAA_ERR_BADPARAM);
+    kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *) channel->context;
 
     kaa_error_t ret = KAA_ERR_NONE;
 
-    KAA_LOG_INFO(tcp_channel->logger,KAA_ERR_NONE,"Kaa tcp channel(%d) check keepalive.", tcp_channel->access_point.id);
+    KAA_LOG_INFO(tcp_channel->logger, KAA_ERR_NONE, "Kaa tcp channel(%d) check keepalive", tcp_channel->access_point.id);
 
     //If channel not authorized, no need to have keepalive
     if (tcp_channel->keepalive.keepalive_interval == 0
@@ -759,7 +757,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t * 
     }
 
     kaa_time_t timeout = (kaa_time_t) ext_get_systime();
-    kaa_time_t recive_keepalive = timeout - (kaa_time_t)tcp_channel->keepalive.last_receive_keepalive;
+    kaa_time_t recive_keepalive = timeout - (kaa_time_t) tcp_channel->keepalive.last_receive_keepalive;
     recive_keepalive = recive_keepalive * 0.8;
     if (recive_keepalive >= tcp_channel->keepalive.keepalive_interval) {
         //Become channel down;
@@ -767,7 +765,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t * 
         return ret;
     }
 
-    timeout -= (kaa_time_t)tcp_channel->keepalive.last_sent_keepalive;
+    timeout -= (kaa_time_t) tcp_channel->keepalive.last_sent_keepalive;
 
     if (timeout >= tcp_channel->keepalive.keepalive_interval) {
         //Send ping request
@@ -778,7 +776,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t * 
     return ret;
 }
 
-/**
+/*
  * Set socket events callbacks.
  */
 kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_interface_t *channel, kaa_tcp_channel_event_fn callback, void *context)
@@ -1452,7 +1450,7 @@ char *kaa_tcp_write_pending_services_allocator_fn(void *context, size_t buffer_s
     return buffer;
 }
 
-/**
+/*
  * Send Ping request message
  */
 kaa_error_t kaa_tcp_channel_ping(kaa_tcp_channel_t * channel)
