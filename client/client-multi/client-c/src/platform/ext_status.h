@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,54 +14,39 @@
  * limitations under the License.
  */
 
-#ifndef KAA_EXTERNAL_H_
-#define KAA_EXTERNAL_H_
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stddef.h>
-#include <stdbool.h>
-
 /**
- * This header contains external functions which are needed by Kaa library.
+ * @file ext_status.h
+ * @brief External interface for storing/loading Kaa status.
  */
 
+#ifndef EXT_STATUS_H_
+#define EXT_STATUS_H_
+
+
 /**
- * @brief Called on Kaa library startup to restore persisted state.
+ * @brief Called on Kaa startup to restore the persisted state.
  *
  * Fetch persisted state to buffer and provide a valid size of it in buffer_size.
  * If *buffer == NULL or *buffer_size == 0 Kaa library will use default values.
- * Set *needs_deallocation = true if buffer should be free'd, false otherwise.
+ * Set *needs_deallocation = true if buffer should be deallocated by Kaa, false otherwise.
  *
  * @param[out]  buffer              Pointer to buffer which should be filled with Kaa status data.
  * @param[out]  buffer_size         Pointer to buffer's size.
  * @param[out]  needs_deallocation  Indicates if the Kaa library should deallocate buffer by itself.
  *
  */
-void    kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation);
+void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation);
+
 
 /**
- * @brief Called when Kaa library is ready to persist its state.
+ * @brief Called when Kaa is ready to persist its state.
  *
  * @param[in]   buffer          Valid pointer to buffer which contains the current Kaa status data.
  * @param[in]   buffer_size     The buffer's size.
  *
  */
-void    kaa_store_status_ext(const char *buffer, size_t buffer_size);
+void ext_status_store(const char *buffer, size_t buffer_size);
 
-/**
- * @brief Called to get the endpoint public key.
- *
- * @param[out]  buffer              Pointer to buffer which should be filled with public key.
- * @param[out]  buffer_size         Pointer to buffer's size.
- * @param[out]  needs_deallocation  Indicates if the Kaa library should deallocate buffer by itself.
- *
- */
-void    kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
-#endif /* KAA_EXTERNAL_H_ */
+
+#endif /* SRC_PLATFORM_EXT_STATUS_H_ */

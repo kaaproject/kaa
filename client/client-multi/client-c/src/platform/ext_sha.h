@@ -32,7 +32,7 @@ extern "C" {
 
 #define SHA_1_DIGEST_LENGTH 20
 typedef unsigned char kaa_digest[SHA_1_DIGEST_LENGTH];
-typedef const unsigned char* kaa_digest_p;
+typedef unsigned char* kaa_digest_p;
 
 /*
  * @brief SHA1 hash calculation function.
