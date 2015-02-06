@@ -586,7 +586,7 @@ kaa_error_t kaa_tcp_channel_get_socket_for_event(kaa_transport_channel_interface
 kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *channel, fd_event_t event_type, kaa_fd fd_p)
 {
     KAA_RETURN_IF_NIL(channel, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(channel->context,KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(channel->context, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *) channel->context;
 
     if (tcp_channel->access_point.socket_descriptor != fd_p)
@@ -689,7 +689,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *cha
 kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_interface_t *channel, kaa_tcp_channel_event_fn callback, void *context)
 {
     KAA_RETURN_IF_NIL(channel, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(channel->context,KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(channel->context, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *) channel->context;
 
     kaa_error_t ret = KAA_ERR_NONE;
@@ -912,8 +912,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *channel)
  */
 bool is_service_pending(kaa_tcp_channel_t *channel, const kaa_service_t service)
 {
-    KAA_RETURN_IF_NIL(channel, false);
-    KAA_RETURN_IF_NIL(channel->pending_request_services, false);
+    KAA_RETURN_IF_NIL2(channel, channel->pending_request_services, false);
 
     int i = 0;
     for(; i < channel->pending_request_service_count; ++i) {
@@ -1110,7 +1109,7 @@ uint32_t get_uint32_t(const char * buffer)
  */
 kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t *channel)
 {
-    KAA_RETURN_IF_NIL(channel,KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(channel, KAA_ERR_BADPARAM);
     if (channel->access_point.state != AP_RESOLVED)
         return KAA_ERR_BAD_STATE;
 
@@ -1131,7 +1130,7 @@ kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t *channel)
  */
 kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t *channel)
 {
-    KAA_RETURN_IF_NIL(channel,KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(channel, KAA_ERR_BADPARAM);
     kaa_error_t ret = KAA_ERR_NONE;
 
     KAA_LOG_INFO(channel->logger, KAA_ERR_NONE, "Kaa tcp channel(%d) Release access point",
