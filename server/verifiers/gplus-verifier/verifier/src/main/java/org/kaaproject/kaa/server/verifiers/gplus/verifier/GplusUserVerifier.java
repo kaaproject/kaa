@@ -91,11 +91,11 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                     Map<String, String> map = mapper.readValue(responseJson.toString(), Map.class);
                     String userId = String.valueOf(map.get("user_id"));
                     if (!userExternalId.equals(userId)) {
-                        LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
                         callback.onVerificationFailure("User access token doesn't belong to the user");
+                        LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
                     } else {
-                        LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
                         callback.onSuccess();
+                        LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
                     }
                 } if (responseCode == 400) {
                     callback.onTokenInvalid();
