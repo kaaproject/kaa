@@ -595,7 +595,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *cha
     kaa_error_t ret = KAA_ERR_NONE;
     switch (event_type) {
         case FD_READ:
-            KAA_LOG_TRACE(tcp_channel->logger,KAA_ERR_NONE,"Kaa tcp channel(%d) process event READ", tcp_channel->access_point.id);
+            KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa tcp channel(%d) process event READ", tcp_channel->access_point.id);
             if (tcp_channel->access_point.state == AP_CONNECTED) {
                 char * buf = NULL;
                 size_t buf_size = 0;
@@ -641,9 +641,8 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *cha
                     case KAA_TCP_SOCK_CONNECTED:
                         KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa tcp channel(%d) process event WRITE, socket successfully connected", tcp_channel->access_point.id);
                         tcp_channel->access_point.state = AP_CONNECTED;
-                        if (tcp_channel->event_callback) {
+                        if (tcp_channel->event_callback)
                             tcp_channel->event_callback(tcp_channel->event_context, SOCKET_CONNECTED, fd_p);
-                        }
                         ret = kaa_tcp_channel_authorize(tcp_channel);
                         break;
                     case KAA_TCP_SOCK_CONNECTING:
