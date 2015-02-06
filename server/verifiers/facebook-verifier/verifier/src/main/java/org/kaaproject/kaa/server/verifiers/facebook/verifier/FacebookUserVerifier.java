@@ -15,13 +15,14 @@
  */
 package org.kaaproject.kaa.server.verifiers.facebook.verifier;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.server.common.verifier.AbstractKaaUserVerifier;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierContext;
 import org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,11 +70,15 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
         @SuppressWarnings("unchecked")
         public void run() {
             String accessToken = config.getAppId() + "|" + config.getAppSecret();
+            LOG.trace("Started token verification with accessToken [{}]", accessToken);
             HttpURLConnection connection = null;
             BufferedReader reader = null;
 
             try {
                 connection = establishConnection(userAccessToken, accessToken);
+                
+                LOG.trace("Connection established [{}]", accessToken);
+                
                 responseMapper = new ObjectMapper();
 
                 // no data field means that token is invalid
@@ -89,7 +94,7 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                             responseMapper.readValue(reader.readLine(), Map.class);
 
                     Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
-                    String receivedUserId = (String) dataMap.get("user_id");
+                    String receivedUserId = String.valueOf(dataMap.get("user_id"));
                     if (receivedUserId == null) {
                         Map<String, Object> errorMap = (Map<String, Object>) dataMap.get("error");
                         LOG.trace("Bad input token: {}, errcode = {}", errorMap.get("message"), errorMap.get("code"));
@@ -108,12 +113,15 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                             + ", no data can be retrieved");
                 }
             } catch (MalformedURLException e) {
-                LOG.debug("message", e);
+                LOG.debug("Internal error", e);
                 // should be unreachable, as URL is correct
-                callback.onVerificationFailure("Internal error: malformed url");
+                callback.onInternalError(e.getMessage());
             } catch (IOException e) {
-                LOG.debug("message", e);
-                callback.onVerificationFailure("Internal error: IOException");
+                LOG.debug("Connection error", e);
+                callback.onConnectionError(e.getMessage());
+            } catch (Exception e) {
+                LOG.debug("Unexpected error", e);
+                callback.onInternalError(e.getMessage());
             } finally {
                 if (connection != null) connection.disconnect();
                 if (reader != null) {

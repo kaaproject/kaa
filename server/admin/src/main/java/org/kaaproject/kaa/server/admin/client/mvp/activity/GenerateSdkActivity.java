@@ -110,19 +110,19 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, Generat
             List<UserVerifierDto> userVerifiers) {
         
         List<SchemaDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
-        detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions));
+        detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions), true);
         detailsView.getConfigurationSchemaVersion().setAcceptableValues(confSchemaVersions);
         
         List<SchemaDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
-        detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions));
+        detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions), true);
         detailsView.getProfileSchemaVersion().setAcceptableValues(pfSchemaVersions);
 
         List<SchemaDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
-        detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions));
+        detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions), true);
         detailsView.getNotificationSchemaVersion().setAcceptableValues(notSchemaVersions);
         
         List<SchemaDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
-        detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions));
+        detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions), true);
         detailsView.getLogSchemaVersion().setAcceptableValues(logSchemaVersions);
         
         detailsView.setAefMaps(aefMaps);

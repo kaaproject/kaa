@@ -28,6 +28,8 @@ import org.kaaproject.kaa.client.persistence.AndroidInternalPersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.AndroidHttpClient;
+import org.kaaproject.kaa.client.util.AndroidBase64;
+import org.kaaproject.kaa.client.util.Base64;
 
 public class AndroidKaaClient extends AbstractKaaClient {
 
@@ -48,7 +50,13 @@ public class AndroidKaaClient extends AbstractKaaClient {
     }
 
     @Override
+    protected Base64 getBase64() {
+        return AndroidBase64.getInstance();
+    }
+
+    @Override
     protected ConnectivityChecker createConnectivityChecker() {
         return new AndroidConnectivityChecker(KaaAndroid.getContext());
     }
+
 }

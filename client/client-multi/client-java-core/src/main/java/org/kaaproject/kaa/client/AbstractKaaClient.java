@@ -87,6 +87,7 @@ import org.kaaproject.kaa.client.schema.storage.DefaultSchemaPersistenceManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.TransportException;
+import org.kaaproject.kaa.client.util.Base64;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
@@ -150,13 +151,18 @@ public abstract class AbstractKaaClient implements KaaClient {
     private final EndpointObjectHash publicKeyHash;
 
     AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        this(new KaaClientProperties());
+        this(null);
     }
 
     AbstractKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        this.properties = properties;
+        if (properties != null) {
+            this.properties = properties;
+        }
+        else {
+            this.properties = new KaaClientProperties(getBase64());
+        }
 
-        Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = properties.getBootstrapServers();
+        Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = this.properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
             throw new RuntimeException("Unable to obtain list of bootstrap servers."); //NOSONAR
         }
@@ -165,12 +171,12 @@ public abstract class AbstractKaaClient implements KaaClient {
             Collections.shuffle(cursor.getValue());
         }
 
-        kaaClientState = new KaaClientPropertiesState(createPersistentStorage(), properties);
+        kaaClientState = new KaaClientPropertiesState(createPersistentStorage(), getBase64(), this.properties);
 
         configurationPersistenceManager = new DefaultConfigurationPersistenceManager(
                                             kaaClientState, configurationProcessor);
 
-        BootstrapTransport bootstrapTransport = new DefaultBootstrapTransport(properties.getApplicationToken());
+        BootstrapTransport bootstrapTransport = new DefaultBootstrapTransport(this.properties.getApplicationToken());
         ProfileTransport profileTransport = new DefaultProfileTransport();
         EventTransport eventTransport = new DefaultEventTransport(kaaClientState);
         NotificationTransport notificationTransport = new DefaultNotificationTransport();
@@ -213,7 +219,7 @@ public abstract class AbstractKaaClient implements KaaClient {
         bootstrapManager.setChannelManager(channelManager);
 
         publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
-        metaDataTransport.setClientProperties(properties);
+        metaDataTransport.setClientProperties(this.properties);
         metaDataTransport.setClientState(kaaClientState);
         metaDataTransport.setEndpointPublicKeyhash(publicKeyHash);
         metaDataTransport.setTimeout(LONG_POLL_TIMEOUT);
@@ -222,7 +228,7 @@ public abstract class AbstractKaaClient implements KaaClient {
         
         transports.put(TransportType.BOOTSTRAP, bootstrapTransport);
         profileTransport.setProfileManager(profileManager);
-        profileTransport.setClientProperties(properties);
+        profileTransport.setClientProperties(this.properties);
         transports.put(TransportType.PROFILE, profileTransport);
         eventTransport.setEventManager(eventManager);
         transports.put(TransportType.EVENT, eventTransport);
@@ -283,6 +289,8 @@ public abstract class AbstractKaaClient implements KaaClient {
             PublicKey publicKey, PublicKey remotePublicKey);
 
     protected abstract PersistentStorage createPersistentStorage();
+    
+    protected abstract Base64 getBase64();
 
     protected abstract ConnectivityChecker createConnectivityChecker();
 

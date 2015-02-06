@@ -277,6 +277,8 @@ public class JavaSdkGenerator extends SdkGenerator {
         String userVerifierConstantsTemplate = readResource(USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE);
         if (defaultVerifierToken == null) {
             defaultVerifierToken = "null";
+        } else {
+            defaultVerifierToken = "\"" + defaultVerifierToken + "\"";
         }
         String userVerifierConstantsSource = userVerifierConstantsTemplate.replaceAll(DEFAULT_USER_VERIFIER_TOKEN_VAR, 
                 defaultVerifierToken);

@@ -80,6 +80,9 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
     @Override
     protected void initDetailsTable() {
         
+        detailsTable.getColumnFormatter().setWidth(0, "250px");
+        detailsTable.getColumnFormatter().setWidth(1, "500px");
+        
         int row = 0;
         Widget label = new Label(Utils.constants.configurationSchemaVersion());
         label.addStyleName(REQUIRED);
@@ -135,7 +138,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
             }
         };
         targetPlatform = new ValueListBox<>(targetPlatformRenderer);
-        targetPlatform.setWidth("80px");
         targetPlatform.addValueChangeHandler(new ValueChangeHandler<SdkPlatform>() {
             @Override
             public void onValueChange(ValueChangeEvent<SdkPlatform> event) {
@@ -177,6 +179,8 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         ecfsTable.setWidget(0, 0, availableEcfsPanel);
         ecfsTable.setWidget(0, 1, ecfButtonsPanel);
         ecfsTable.setWidget(0, 2, selectedEcfsPanel);
+        
+        ecfsTable.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_MIDDLE);
 
         DisclosurePanel ecfsDisclosure = new DisclosurePanel(Utils.constants.ecfs());
         ecfsDisclosure.setAnimationEnabled(true);
@@ -237,7 +241,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
             }
         };
         defaultUserVerifier = new ValueListBox<>(userVerifierRenderer);
-        defaultUserVerifier.setWidth("80px");
         defaultUserVerifier.addValueChangeHandler(new ValueChangeHandler<UserVerifierDto>() {
             @Override
             public void onValueChange(ValueChangeEvent<UserVerifierDto> event) {
@@ -401,6 +404,10 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         }
     }
 
-
+    @Override
+    protected void updateSaveButton(boolean enabled, boolean invalid) {
+        saveButton.setText(Utils.constants.generate_sdk());
+        saveButton.setEnabled(!invalid);
+    }
 
 }
