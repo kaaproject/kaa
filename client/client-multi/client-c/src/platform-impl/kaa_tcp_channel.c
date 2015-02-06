@@ -1175,9 +1175,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *channel, k
     KAA_RETURN_IF_ERR(ret);
 
 
-    if (channel->pending_request_service_count <= 0) {
-        return ret;
-    }
+    KAA_RETURN_IF_NIL(services_count, KAA_ERR_NONE);
 
     char *buffer = NULL;
     size_t buffer_size = 0;
@@ -1260,12 +1258,9 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *channel, k
         KAA_FREE(sync_buffer);
         sync_buffer = NULL;
     }
-
     KAA_RETURN_IF_ERR(ret);
 
     ret = kaa_tcp_write_buffer(channel);
-    KAA_RETURN_IF_ERR(ret);
-
     return ret;
 }
 
