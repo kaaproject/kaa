@@ -1003,9 +1003,8 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *channel)
     if (kaatcp_ret) {
         KAA_LOG_ERROR(channel->logger, KAA_ERR_TCPCHANNEL_PARSER_ERROR, "Kaa tcp channel(%d) Failed to fill connect message from serialized supported services",
                                     channel->access_point.id);
-        if (sync_buffer) {
+        if (sync_buffer)
             KAA_FREE(sync_buffer);
-        }
         return KAA_ERR_TCPCHANNEL_PARSER_ERROR;
     }
 
