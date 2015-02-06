@@ -1107,14 +1107,14 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t * channel,
  */
 kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolved(void *context, const kaa_sockaddr_t *addr, kaa_socklen_t addr_size)
 {
-    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(context, addr, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t * channel = (kaa_tcp_channel_t *)context;
 
     kaa_error_t ret = KAA_ERR_NONE;
 
-    //TODO create correct sockaddr
 
-//    channel->access_point.sockaddr = *addr;
+    channel->access_point.sockaddr = *addr;
+
     channel->access_point.sockaddr_length = addr_size;
 
     channel->access_point.state = AP_RESOLVED;
