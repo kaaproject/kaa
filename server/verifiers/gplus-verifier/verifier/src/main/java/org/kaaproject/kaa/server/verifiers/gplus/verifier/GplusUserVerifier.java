@@ -54,7 +54,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             url = new URL(GOOGLE_OAUTH + accessToken);
         } catch (MalformedURLException e) {
             callback.onVerificationFailure("Internal error: malformed url");
-            LOG.debug("message", e);
+            LOG.debug("Internal error: malformed url", e);
         }
         threadPool.submit(new RunnableVerifier(url, callback, userExternalId));
 
@@ -75,73 +75,66 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
         @Override
         public void run() {
-            BufferedReader bufferedReader = null;
-            String line;
-            StringBuilder responseJson = new StringBuilder();
-            int responseCode = 0;
 
             HttpURLConnection connection = null;
             try {
+
+                String responseJson = "";
+                int responseCode;
                 connection = establishConnection(url);
-
                 connection.setRequestMethod("GET");
-
                 responseCode = connection.getResponseCode();
 
-                if (responseCode == 400) {
-                    callback.onTokenInvalid();
-                    return;
-                }
-
                 if (responseCode == 200) {
-                    bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    while ((line = bufferedReader.readLine()) != null) {
-                        responseJson.append(line);
-                    }
-                    bufferedReader.close();
-
+                    responseJson = readResponse(connection.getInputStream());
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, String> map = mapper.readValue(responseJson.toString(), Map.class);
-                    String userId = map.get("user_id");
-
+                    String userId = String.valueOf(map.get("user_id"));
                     if (!userExternalId.equals(userId)) {
                         LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
                         callback.onVerificationFailure("User access token doesn't belong to the user");
-                        return;
                     } else {
                         LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
                         callback.onSuccess();
-                        return;
                     }
-
+                } if (responseCode == 400) {
+                    callback.onTokenInvalid();
+                    LOG.trace("Server auth error: {}", readResponse(connection.getErrorStream()));
+                } else {
+                    callback.onInternalError();
+                    LOG.trace("Server returned the following error code: {}", responseCode);
                 }
+
+
             } catch (IOException e) {
-                LOG.debug("message", e);
+                LOG.debug("Internal error: ", e);
             } finally {
                 if (null != connection) {
                     connection.disconnect();
                 }
-                if (null != bufferedReader) {
-                    try {
-                        bufferedReader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+
             }
 
-            LOG.trace("Server response code: {} no data can be retrieved" + responseCode);
-
-            callback.onVerificationFailure("Server response code:" + responseCode + ", no data can be retrieved");
         }
     }
+
+    private String readResponse(InputStream is) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] data = new byte[2048];
+        int len = 0;
+        while ((len = is.read(data, 0, data.length)) >= 0) {
+            bos.write(data, 0, len);
+        }
+        return new String(bos.toByteArray(), "UTF-8");
+    }
+
 
     protected HttpURLConnection establishConnection(URL url) {
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
-            LOG.debug("message", e);
+            LOG.debug("Establishing connection failed", e);
         }
         return connection;
     }
