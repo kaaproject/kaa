@@ -187,6 +187,19 @@ add_executable  (test_channel_manager
                 )
 target_link_libraries(test_channel_manager kaac crypto ${CUNIT_LIB_NAME})
 
+add_executable  (test_kaatcp_parser
+                    test/kaatcp/kaatcp_parser_test.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_kaatcp_parser kaac ${CUNIT_LIB_NAME})
+
+add_executable  (test_kaatcp_request
+                    test/kaatcp/kaatcp_request_test.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_kaatcp_request kaac ${CUNIT_LIB_NAME})
+
+
 endif ()
 
 install (TARGETS kaac kaac_s
