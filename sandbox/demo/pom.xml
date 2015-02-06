@@ -39,6 +39,15 @@
             <version>2.3.8</version>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.common</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+            <artifactId>config</artifactId>
+            <classifier>trustful</classifier>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.examples.robotrun</groupId>
             <artifactId>robotrun-shared</artifactId>
             <version>${project.version}</version>

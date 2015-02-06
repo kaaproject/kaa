@@ -26,9 +26,16 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
+import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +78,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         ApplicationDto smartHouseApplication = new ApplicationDto();
         smartHouseApplication.setName("Smart House");
         smartHouseApplication = client.editApplication(smartHouseApplication);
+               
         sdkKey.setApplicationId(smartHouseApplication.getId());
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
@@ -89,6 +97,21 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(thermoAefMap.getId());
         aefMapIds.add(musicAefMap.getId());
         sdkKey.setAefMapIds(aefMapIds);
+        
+        TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();        
+        UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
+        trustfulUserVerifier.setApplicationId(smartHouseApplication.getId());
+        trustfulUserVerifier.setName("Trustful verifier");
+        trustfulUserVerifier.setPluginClassName(trustfulVerifierConfig.getPluginClassName());
+        trustfulUserVerifier.setPluginTypeName(trustfulVerifierConfig.getPluginTypeName());
+        RawSchema rawSchema = new RawSchema(trustfulVerifierConfig.getPluginConfigSchema().toString());
+        DefaultRecordGenerationAlgorithm<RawData> algotithm = 
+                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+        RawData rawData = algotithm.getRootData();
+        trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());        
+        trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
+        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
+        
         logger.info("Finished loading 'Smart House Demo Application' data.");
     }
     
