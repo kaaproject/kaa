@@ -54,9 +54,9 @@ typedef struct {
     access_point_state_t state;
     uint32_t    id;
     char * public_key;
-    size_t public_key_length;
+    uint32_t public_key_length;
     char * hostname;
-    size_t hostname_length;
+    uint32_t hostname_length;
     kaa_sockaddr_t sockaddr;
     kaa_socklen_t  sockaddr_length;
     kaa_fd  socket_descriptor;
@@ -1125,12 +1125,7 @@ kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolve_failed(void *conte
  */
 uint32_t get_uint32_t(const char * buffer)
 {
-    uint32_t value = ((uint32_t)buffer[0] << 24)
-            + ((uint32_t)buffer[1] << 16)
-            + ((uint32_t)buffer[2] << 8)
-            +(uint32_t)buffer[3];
-
-    return KAA_NTOHL(value);
+    return KAA_NTOHL(*(uint32_t *) buffer);
 }
 
 /**
