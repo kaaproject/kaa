@@ -615,7 +615,18 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                 error_code = kaa_tcp_write_buffer(tcp_channel);
                 KAA_RETURN_IF_ERR(error_code);
 
-                if (tcp_channel->pending_request_service_count > 0) {
+                if (tcp_channel->channel_state == KAA_TCP_CHANNEL_DISCONNECTING) {
+                    KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel(%d) disconnecting...", tcp_channel->access_point.id);
+                    //Check if buffer is empty, close socket.
+                    char *buf = NULL;
+                    size_t buf_size = 0;
+                    error_code = kaa_buffer_get_unprocessed_space(tcp_channel->out_buffer, &buf, &buf_size);
+                    KAA_LOG_TRACE(tcp_channel->logger, error_code, "Kaa TCP channel(%d) going to write %d bytes",
+                                tcp_channel->access_point.id,
+                                                buf_size);
+                    if (error_code || (buf_size == 0))
+                        error_code = kaa_tcp_channel_socket_io_error(tcp_channel);
+                } else if (tcp_channel->pending_request_service_count > 0) {
                     if ((tcp_channel->pending_request_service_count == 1)
                             && is_service_pending(tcp_channel, KAA_SERVICE_BOOTSTRAP)) {
                         kaa_service_t boostrap_service = {KAA_SERVICE_BOOTSTRAP};
@@ -627,22 +638,10 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                                 tcp_channel,
                                 tcp_channel->pending_request_services,
                                 tcp_channel->pending_request_service_count);
-                    } else if (tcp_channel->channel_state == KAA_TCP_CHANNEL_DISCONNECTING) {
-                        KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel(%d) disconnecting...", tcp_channel->access_point.id);
-                        //Check if buffer is empty, close socket.
-                        char *buf = NULL;
-                        size_t buf_size = 0;
-                        error_code = kaa_buffer_get_unprocessed_space(tcp_channel->out_buffer, &buf, &buf_size);
-                        KAA_LOG_TRACE(tcp_channel->logger, error_code, "Kaa TCP channel(%d) going to write %d bytes",
-                                    tcp_channel->access_point.id,
-                                                    buf_size);
-                        if (error_code || (buf_size == 0))
-                            error_code = kaa_tcp_channel_socket_io_error(tcp_channel);
                     } else {
                         KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel(%d) authorizing channel", tcp_channel->access_point.id);
                         error_code = kaa_tcp_channel_authorize(tcp_channel);
                     }
-
                 } else {
                     KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel(%d) there is no pending services to sync", tcp_channel->access_point.id);
                 }
@@ -735,7 +734,7 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
     KAA_RETURN_IF_NIL(channel,);
 
     if (channel->channel_state == KAA_TCP_CHANNEL_AUTHORIZING) {
-        if (message.return_code == (uint16_t)KAATCP_CONNACK_SUCCESS) {
+        if (message.return_code == (uint16_t) KAATCP_CONNACK_SUCCESS) {
             channel->channel_state = KAA_TCP_CHANNEL_AUTHORIZED;
             KAA_LOG_INFO(channel->logger, KAA_ERR_NONE, "Kaa TCP channel(%d) successfully authorized", channel->access_point.id);
 
@@ -803,7 +802,6 @@ void kaa_tcp_channel_pingresp_message_callback(void *context)
 
     KAA_LOG_INFO(channel->logger, KAA_ERR_NONE, "Kaa TCP channel(%d) PING message received", channel->access_point.id);
 }
-
 
 /*
  * Close Kaa TCP channel socket and reset state of channel
@@ -900,7 +898,6 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     }
 
     kaatcp_error_code = kaatcp_get_request_connect(&connect_message, buffer, &buffer_size);
-
 
     if (kaatcp_error_code) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_TCPCHANNEL_PARSER_ERROR, "Kaa TCP channel(%d) failed to get serialize CONNECT message",
@@ -1242,7 +1239,6 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self, kaa_
     error_code = kaa_tcp_write_buffer(self);
     return error_code;
 }
-
 
 /*
  * Write to socket all unprocessed bytes from out_buffer.
