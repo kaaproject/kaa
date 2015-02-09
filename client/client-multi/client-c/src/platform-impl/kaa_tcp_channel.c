@@ -621,11 +621,10 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                     char *buf = NULL;
                     size_t buf_size = 0;
                     error_code = kaa_buffer_get_unprocessed_space(tcp_channel->out_buffer, &buf, &buf_size);
-                    KAA_LOG_TRACE(tcp_channel->logger, error_code, "Kaa TCP channel(%d) going to write %d bytes",
-                                tcp_channel->access_point.id,
-                                                buf_size);
-                    if (error_code || (buf_size == 0))
+                    if (error_code || !buf_size)
                         error_code = kaa_tcp_channel_socket_io_error(tcp_channel);
+                    else
+                        KAA_LOG_TRACE(tcp_channel->logger, error_code, "Kaa TCP channel(%d) can't disconnect right now (%d bytes unprocessed)", tcp_channel->access_point.id, buf_size);
                 } else if (tcp_channel->pending_request_service_count > 0) {
                     if ((tcp_channel->pending_request_service_count == 1)
                             && is_service_pending(tcp_channel, KAA_SERVICE_BOOTSTRAP)) {
