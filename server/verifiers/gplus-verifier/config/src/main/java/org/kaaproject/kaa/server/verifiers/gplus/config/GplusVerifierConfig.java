@@ -35,7 +35,7 @@ public class GplusVerifierConfig implements PluginConfig {
 
     @Override
     public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.verifiers.gplus.GplusUserVerifier";
+        return "org.kaaproject.kaa.server.verifiers.gplus.verifier.GplusUserVerifier";
     }
 
     @Override

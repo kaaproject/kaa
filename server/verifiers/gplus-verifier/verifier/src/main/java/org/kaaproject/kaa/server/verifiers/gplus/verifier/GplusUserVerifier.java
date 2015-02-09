@@ -125,7 +125,10 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         while ((len = is.read(data, 0, data.length)) >= 0) {
             bos.write(data, 0, len);
         }
-        return new String(bos.toByteArray(), "UTF-8");
+
+        byte [] bytes = bos.toByteArray();
+        bos.close();
+        return new String(bytes, "UTF-8");
     }
 
 
