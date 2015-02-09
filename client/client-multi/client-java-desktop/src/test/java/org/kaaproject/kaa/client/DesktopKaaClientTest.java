@@ -26,7 +26,6 @@ import org.mockito.Mockito;
 
 public class DesktopKaaClientTest {
 
-
     @Before
     public void cleanup() {
         File stateFile = new File("state.properties");
@@ -36,27 +35,32 @@ public class DesktopKaaClientTest {
     }
 
     @Test
-    public void testClientInit() throws Exception{
+    public void testClientInit() throws Exception {
 
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         DesktopKaaClient clientSpy = Mockito.spy(new DesktopKaaClient());
 
-        clientSpy.init();
+        try {
+            clientSpy.start();
 
-        Assert.assertNotNull(clientSpy.getConfigurationManager());
-        Assert.assertNotNull(clientSpy.getConfigurationPersistenceManager());
-        Assert.assertNotNull(clientSpy.getDeltaManager());
-        Assert.assertNotNull(clientSpy.getNotificationManager());
-        Assert.assertNotNull(clientSpy.getProfileManager());
-        Assert.assertNotNull(clientSpy.getSchemaPersistenceManager());
+            Assert.assertNotNull(clientSpy.getConfigurationManager());
+            Assert.assertNotNull(clientSpy.getConfigurationPersistenceManager());
+            Assert.assertNotNull(clientSpy.getDeltaManager());
+            Assert.assertNotNull(clientSpy.getNotificationManager());
+            Assert.assertNotNull(clientSpy.getProfileManager());
+            Assert.assertNotNull(clientSpy.getSchemaPersistenceManager());
+        } finally {
+            clientSpy.stop();
+        }
+
     }
 
     @Test
-    public void testClientStartBeforeInit() throws Exception{
+    public void testClientStartBeforeInit() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         DesktopKaaClient clientSpy = Mockito.spy(new DesktopKaaClient());
 
-        //does nothing before initialization;
+        // does nothing before initialization;
         clientSpy.start();
 
         Assert.assertNotNull(clientSpy.getConfigurationManager());
@@ -68,14 +72,12 @@ public class DesktopKaaClientTest {
     }
 
     @Test
-    public void testClientStartPollAfterInit() throws Exception{
+    public void testClientStartPollAfterInit() throws Exception {
 
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
 
         DesktopKaaClient clientSpy = Mockito.spy(new DesktopKaaClient());
         ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
-
-        clientSpy.init();
 
         clientSpy.getProfileManager().setProfileContainer(profileContainerMock);
 
@@ -94,6 +96,5 @@ public class DesktopKaaClientTest {
         Assert.assertNotNull(clientSpy.getProfileManager());
         Assert.assertNotNull(clientSpy.getSchemaPersistenceManager());
     }
-
 
 }

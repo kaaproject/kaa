@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.client;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
@@ -33,11 +32,8 @@ import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.util.Base64;
 import org.kaaproject.kaa.client.util.CommonsBase64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AbstractKaaClientTest extends AbstractKaaClient {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClientTest.class);
 
     public AbstractKaaClientTest() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         super();
@@ -151,32 +147,8 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     }
 
     @Test
-    public void testInit() {
-        try {
-            start();
-            init();
-            init();
-        } catch (Exception e) {
-            assertTrue("Exception was caught during testInit test: " + e.getMessage(), false);
-        }
-    }
-
-    @Test
     public void testStart() throws Exception {
-        try {
-            init();
-            start();
-            stop();
-        } catch (Exception e) {
-            LOG.error("Start failure", e);
-            assertTrue("Exception was caught during testStart test: " + e.getMessage(), false);
-        }
+        start();
+        stop();
     }
-
-    @Test
-    public void testDefaultChannels() throws Exception {
-        init();
-    }
-
-
 }

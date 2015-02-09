@@ -34,11 +34,11 @@ import org.kaaproject.kaa.client.util.CommonsBase64;
 
 public class DesktopKaaClient extends AbstractKaaClient {
 
-    DesktopKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public DesktopKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         super();
     }
 
-    DesktopKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public DesktopKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         super(properties);
     }
 

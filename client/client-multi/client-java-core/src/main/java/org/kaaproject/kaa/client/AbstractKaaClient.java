@@ -94,19 +94,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>Abstract class that holds general elements of Kaa library.</p>
+ * <p>
+ * Abstract class that holds general elements of Kaa library.
+ * </p>
  *
- * <p>This class creates and binds Kaa library modules. Public access to each
- * module is performed using {@link KaaClient} interface.</p>
+ * <p>
+ * This class creates and binds Kaa library modules. Public access to each
+ * module is performed using {@link KaaClient} interface.
+ * </p>
  *
- * <p>Class contains abstract methods
+ * <p>
+ * Class contains abstract methods
  * {@link AbstractKaaClient#createHttpClient(String, PrivateKey, PublicKey, PublicKey)}
  * and {@link AbstractKaaClient#createPersistentStorage()} which are used to
  * reference the platform-specific implementation of http client and Kaa's state
- * persistent storage.</p>
+ * persistent storage.
+ * </p>
  *
- * <p>Http client ({@link AbstractHttpClient}) is used to provide basic
- * communication with Bootstrap and Operation servers using HTTP protocol.</p>
+ * <p>
+ * Http client ({@link AbstractHttpClient}) is used to provide basic
+ * communication with Bootstrap and Operation servers using HTTP protocol.
+ * </p>
  *
  * @author Yaroslav Zeygerman
  *
@@ -123,8 +131,7 @@ public abstract class AbstractKaaClient implements KaaClient {
     private boolean isInitialized = false;
 
     private final DefaultSchemaProcessor schemaProcessor = new DefaultSchemaProcessor();
-    private final DefaultSchemaPersistenceManager schemaPersistenceManager = new DefaultSchemaPersistenceManager(
-            schemaProcessor);
+    private final DefaultSchemaPersistenceManager schemaPersistenceManager = new DefaultSchemaPersistenceManager(schemaProcessor);
     private final DefaultConfigurationPersistenceManager configurationPersistenceManager;
 
     private final DefaultConfigurationManager configurationManager = new DefaultConfigurationManager();
@@ -157,14 +164,13 @@ public abstract class AbstractKaaClient implements KaaClient {
     AbstractKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         if (properties != null) {
             this.properties = properties;
-        }
-        else {
+        } else {
             this.properties = new KaaClientProperties(getBase64());
         }
 
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = this.properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
-            throw new RuntimeException("Unable to obtain list of bootstrap servers."); //NOSONAR
+            throw new RuntimeException("Unable to obtain list of bootstrap servers."); // NOSONAR
         }
 
         for (Map.Entry<TransportProtocolId, List<TransportConnectionInfo>> cursor : bootstrapServers.entrySet()) {
@@ -173,8 +179,7 @@ public abstract class AbstractKaaClient implements KaaClient {
 
         kaaClientState = new KaaClientPropertiesState(createPersistentStorage(), getBase64(), this.properties);
 
-        configurationPersistenceManager = new DefaultConfigurationPersistenceManager(
-                                            kaaClientState, configurationProcessor);
+        configurationPersistenceManager = new DefaultConfigurationPersistenceManager(kaaClientState, configurationProcessor);
 
         BootstrapTransport bootstrapTransport = new DefaultBootstrapTransport(this.properties.getApplicationToken());
         ProfileTransport profileTransport = new DefaultProfileTransport();
@@ -210,7 +215,7 @@ public abstract class AbstractKaaClient implements KaaClient {
         bootstrapChannel.setMultiplexer(bootstrapDataProcessor);
         bootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
         channelManager.addChannel(bootstrapChannel);
-        
+
         KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, channelManager);
         operationsChannel.setMultiplexer(operationsDataProcessor);
         operationsChannel.setDemultiplexer(operationsDataProcessor);
@@ -223,9 +228,9 @@ public abstract class AbstractKaaClient implements KaaClient {
         metaDataTransport.setClientState(kaaClientState);
         metaDataTransport.setEndpointPublicKeyhash(publicKeyHash);
         metaDataTransport.setTimeout(LONG_POLL_TIMEOUT);
-        
+
         bootstrapTransport.setBootstrapManager(bootstrapManager);
-        
+
         transports.put(TransportType.BOOTSTRAP, bootstrapTransport);
         profileTransport.setProfileManager(profileManager);
         profileTransport.setClientProperties(this.properties);
@@ -266,42 +271,33 @@ public abstract class AbstractKaaClient implements KaaClient {
     }
 
     private void setDefaultConfiguration() throws IOException {
-        byte [] schema = properties.getDefaultConfigSchema();
+        byte[] schema = properties.getDefaultConfigSchema();
         if (schema != null && schema.length > 0) {
             schemaProcessor.loadSchema(ByteBuffer.wrap(schema));
-            byte [] config = properties.getDefaultConfigData();
+            byte[] config = properties.getDefaultConfigData();
             if (config != null && config.length > 0) {
                 configurationProcessor.processConfigurationData(ByteBuffer.wrap(config), true);
             }
         }
     }
 
-    void init() throws Exception { //NOSONAR
-        if (isInitialized) {
-            return;
-        }
-
-        initKaaConfiguration();
-        isInitialized = true;
-    }
-
-    public abstract AbstractHttpClient createHttpClient(String url, PrivateKey privateKey,
-            PublicKey publicKey, PublicKey remotePublicKey);
+    public abstract AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey);
 
     protected abstract PersistentStorage createPersistentStorage();
-    
+
     protected abstract Base64 getBase64();
 
     protected abstract ConnectivityChecker createConnectivityChecker();
 
-    void start() throws IOException, TransportException {
+    public void start() throws IOException, TransportException {
         if (!isInitialized) {
-            LOG.warn("Client is not initialized!");
-            // TODO: throw exception instead
+            initKaaConfiguration();
+            isInitialized = true;
+        } else {
+            LOG.warn("Client is already initialized!");
             return;
         }
-        if (schemaProcessor.getSchema() == null
-                || configurationPersistenceManager.getConfigurationHash() == null) {
+        if (schemaProcessor.getSchema() == null || configurationPersistenceManager.getConfigurationHash() == null) {
             LOG.debug("Initializing client state with default configuration");
             kaaClientState.setAppStateSeqNumber(0);
             setDefaultConfiguration();
@@ -309,17 +305,18 @@ public abstract class AbstractKaaClient implements KaaClient {
         bootstrapManager.receiveOperationsServerList();
     }
 
-    void stop() {
+    public void stop() {
         kaaClientState.persist();
         channelManager.shutdown();
+        isInitialized = false;
     }
 
-    void pause() {
+    public void pause() {
         kaaClientState.persist();
         channelManager.pause();
     }
 
-    void resume() {
+    public void resume() {
         channelManager.resume();
     }
 

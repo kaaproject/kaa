@@ -31,10 +31,15 @@ import org.kaaproject.kaa.client.transport.AndroidHttpClient;
 import org.kaaproject.kaa.client.util.AndroidBase64;
 import org.kaaproject.kaa.client.util.Base64;
 
+import android.content.Context;
+
 public class AndroidKaaClient extends AbstractKaaClient {
 
-    AndroidKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    private final Context context; 
+    
+    public AndroidKaaClient(Context context) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         super();
+        this.context = context;
     }
 
     @Override
@@ -46,7 +51,7 @@ public class AndroidKaaClient extends AbstractKaaClient {
 
     @Override
     protected PersistentStorage createPersistentStorage() {
-        return new AndroidInternalPersistentStorage(KaaAndroid.getContext());
+        return new AndroidInternalPersistentStorage(context);
     }
 
     @Override
@@ -56,7 +61,7 @@ public class AndroidKaaClient extends AbstractKaaClient {
 
     @Override
     protected ConnectivityChecker createConnectivityChecker() {
-        return new AndroidConnectivityChecker(KaaAndroid.getContext());
+        return new AndroidConnectivityChecker(context);
     }
 
 }

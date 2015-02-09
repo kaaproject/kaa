@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.client;
 
+import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -33,13 +34,19 @@ import org.kaaproject.kaa.client.logging.LogCollector;
 import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
+import org.kaaproject.kaa.client.transport.TransportException;
 
 /**
- * <p>Interface for the Kaa client.</p>
+ * <p>
+ * Interface for the Kaa client.
+ * </p>
  *
- * <p>Base interface to operate with {@link Kaa} library.</p>
+ * <p>
+ * Base interface to operate with {@link Kaa} library.
+ * </p>
  *
  * @author Yaroslav Zeygerman
+ * @author Andrew Shvayka
  *
  * @see ProfileManager
  * @see ConfigurationManager
@@ -59,6 +66,36 @@ import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
  * @see KaaDataChannel
  */
 public interface KaaClient {
+
+    /**
+     * <p>
+     * Starts Kaa's workflow.
+     * </p>
+     *
+     * <p>
+     * Should be called after each call to {@link Kaa#init()}.
+     * </p>
+     *
+     * @see AbstractKaaClient#start()
+     */
+    public void start() throws IOException, TransportException;
+
+    /**
+     * Stops Kaa's workflow.
+     *
+     * @see AbstractKaaClient#stop()
+     */
+    public void stop();
+
+    /**
+     * Pauses Kaa's workflow.
+     */
+    public void pause();
+
+    /**
+     * Resumes Kaa's workflow.
+     */
+    public void resume();
 
     /**
      * Retrieves Kaa profile manager.
@@ -138,74 +175,104 @@ public interface KaaClient {
     KaaChannelManager getChannelMananager();
 
     /**
-     * <p>Retrieves data multiplexer for communication with Operation server.</p>
+     * <p>
+     * Retrieves data multiplexer for communication with Operation server.
+     * </p>
      *
-     * <p>Required in user implementation of an operation data channel.</p>
+     * <p>
+     * Required in user implementation of an operation data channel.
+     * </p>
      *
      * @return {@link KaaDataMultiplexer} object
      */
     KaaDataMultiplexer getOperationMultiplexer();
 
     /**
-     * <p>Retrieves data demultiplexer for communication with Operation server.</p>
+     * <p>
+     * Retrieves data demultiplexer for communication with Operation server.
+     * </p>
      *
-     * <p>Required in user implementation of an operation data channel.</p>
+     * <p>
+     * Required in user implementation of an operation data channel.
+     * </p>
      *
      * @return {@link KaaDataDemultiplexer} object
      */
     KaaDataDemultiplexer getOperationDemultiplexer();
 
     /**
-     * <p>Retrieves data multiplexer for communication with Bootstrap server.</p>
+     * <p>
+     * Retrieves data multiplexer for communication with Bootstrap server.
+     * </p>
      *
-     * <p>Required in user implementation of a bootstrap data channel.</p>
+     * <p>
+     * Required in user implementation of a bootstrap data channel.
+     * </p>
      *
      * @return {@link KaaDataMultiplexer} object
      */
     KaaDataMultiplexer getBootstrapMultiplexer();
 
     /**
-     * <p>Retrieves data demultiplexer for communication with Bootstrap server.</p>
+     * <p>
+     * Retrieves data demultiplexer for communication with Bootstrap server.
+     * </p>
      *
-     * <p>Required in user implementation of a bootstrap data channel.</p>
+     * <p>
+     * Required in user implementation of a bootstrap data channel.
+     * </p>
      *
      * @return {@link KaaDataDemultiplexer} object
      */
     KaaDataDemultiplexer getBootstrapDemultiplexer();
 
     /**
-     * <p>Retrieves the client's public key.</p>
+     * <p>
+     * Retrieves the client's public key.
+     * </p>
      *
-     * <p>Required in user implementation of an operation data channel. Public
-     * key hash (SHA-1) is used by servers as identification number to uniquely
-     * identify each connected endpoint.</p>
+     * <p>
+     * Required in user implementation of an operation data channel. Public key
+     * hash (SHA-1) is used by servers as identification number to uniquely
+     * identify each connected endpoint.
+     * </p>
      *
      * @return client's public key
      */
     PublicKey getClientPublicKey();
 
     /**
-     * <p>Retrieves endpoint public key hash.</p>
+     * <p>
+     * Retrieves endpoint public key hash.
+     * </p>
      *
-     * <p>Required in {@link EndpointRegistrationManager} implementation
-     * to react on detach response from Operations server.</p>
+     * <p>
+     * Required in {@link EndpointRegistrationManager} implementation to react
+     * on detach response from Operations server.
+     * </p>
      *
      * @return String containing current endpoint's public key hash.
      */
     String getEndpointKeyHash();
 
     /**
-     * <p>Retrieves the client's private key.</p>
+     * <p>
+     * Retrieves the client's private key.
+     * </p>
      *
-     * <p>Required in user implementation of an operation data channel.
-     * Private key is used by encryption schema between endpoint and servers.</p>
+     * <p>
+     * Required in user implementation of an operation data channel. Private key
+     * is used by encryption schema between endpoint and servers.
+     * </p>
      *
      * @return client's private key
      */
     PrivateKey getClientPrivateKey();
 
     /**
-     * <p>Retrieves Kaa log collector.</p>
+     * <p>
+     * Retrieves Kaa log collector.
+     * </p>
      *
      * @return LogCollector object
      */
