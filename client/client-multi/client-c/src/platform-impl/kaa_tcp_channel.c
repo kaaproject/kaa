@@ -157,7 +157,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self, kaa_
             return KAA_ERR_NOMEM;
         }
 
-        int i = 0;
+        size_t i = 0;
         for(; i < supported_service_count; ++i) {
             kaa_tcp_channel->supported_services[i] = supported_services[i];
         }
@@ -175,7 +175,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self, kaa_
         return error_code;
     }
 
-    kaa_tcp_channel->parser = (kaatcp_parser_t *) KAA_CALLOC(1, sizeof(kaatcp_parser_t));
+    kaa_tcp_channel->parser = (kaatcp_parser_t *) KAA_MALLOC(sizeof(kaatcp_parser_t));
     if (!kaa_tcp_channel->parser) {
         kaa_tcp_channel_release_context(kaa_tcp_channel);
         return KAA_ERR_NOMEM;
@@ -184,11 +184,11 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self, kaa_
     kaa_tcp_channel->keepalive.keepalive_interval = KAA_TCP_CHANNEL_KEEPALIVE;
     kaa_tcp_channel->keepalive.last_sent_keepalive = (kaa_time_t) ext_get_systime();
     kaa_tcp_channel->keepalive.last_receive_keepalive = kaa_tcp_channel->keepalive.last_sent_keepalive;
-    KAA_LOG_TRACE(logger,KAA_ERR_NONE,"Kaa TCP channel keepalive is %d ",kaa_tcp_channel->keepalive.keepalive_interval);
+    KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel keepalive is %u", kaa_tcp_channel->keepalive.keepalive_interval);
 
     kaa_tcp_channel->protocol_id.id = KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_ID;
     kaa_tcp_channel->protocol_id.version = KAA_TCP_CHANNEL_TRANSPORT_PROTOCOL_VERSION;
-    KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel transport protocol id 0x%08x", kaa_tcp_channel->protocol_id);
+    KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel transport protocol id 0x%08X version %u", kaa_tcp_channel->protocol_id.id, kaa_tcp_channel->protocol_id.version);
 
     kaa_tcp_channel->logger = logger;
 
@@ -246,12 +246,10 @@ kaa_error_t kaa_tcp_channel_get_supported_services(void * context, kaa_service_t
  */
 kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_service_t services[], size_t service_count) {
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
-    kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *) context;
-
     kaa_error_t error_code = KAA_ERR_NONE;
 
     if (services && service_count > 0) {
-        error_code = kaa_tcp_channel_update_pending_services(channel, services, service_count);
+        error_code = kaa_tcp_channel_update_pending_services((kaa_tcp_channel_t *) context, services, service_count);
         KAA_RETURN_IF_ERR(error_code);
     }
 
@@ -315,12 +313,9 @@ kaa_error_t kaa_tcp_channel_release_context(void *context) {
  */
 kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transport_context)
 {
-    KAA_RETURN_IF_NIL2(context, transport_context, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL2(transport_context->platform_protocol, transport_context->bootstrap_manager, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL4(context, transport_context, transport_context->platform_protocol, transport_context->bootstrap_manager, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *) context;
-
     channel->transport_context = *transport_context;
-
     return KAA_ERR_NONE;
 }
 
@@ -337,14 +332,14 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
     KAA_LOG_INFO(channel->logger, KAA_ERR_NONE, "Kaa TCP channel setting access point.");
 
     if (channel->access_point.state != AP_NOT_SET) {
-        KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel removing previous access point (%d)", channel->access_point.id);
+        KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel removing previous access point [0x%08X] ", channel->access_point.id);
         error_code = kaa_tcp_channel_release_access_point(channel);
         KAA_RETURN_IF_ERR(error_code);
     }
     channel->access_point.state = AP_SET;
     channel->access_point.id = access_point->id;
 
-    KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point (%d), connection data length %d",
+    KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X], connection data length %d",
             channel->access_point.id,
             access_point->connection_data_len);
 
@@ -352,14 +347,14 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
     char * connection_data = access_point->connection_data;
     size_t connection_data_len = access_point->connection_data_len;
 
-    int position = 0;
-    int remaining_to_read = 4;
+    size_t position = 0;
+    size_t remaining_to_read = 4;
     if ((position + remaining_to_read) <= connection_data_len) {
         channel->access_point.public_key_length = get_uint32_t(connection_data);
         position += remaining_to_read;
     } else {
-        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point (%d), "
-                "insufficient connection data length  %d, position %d",
+        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point [0x%08X], "
+                "insufficient connection data length %u, position %u",
                     channel->access_point.id,
                     connection_data_len,
                     (position + remaining_to_read));
@@ -375,7 +370,7 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
                 remaining_to_read);
         position += remaining_to_read;
     } else {
-        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point (%d), "
+        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point [0x%08X], "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
                     connection_data_len,
@@ -388,7 +383,7 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
         channel->access_point.hostname_length = get_uint32_t(connection_data + position);
         position += remaining_to_read;
     } else {
-        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point (%d), "
+        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point [0x%08X], "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
                     connection_data_len,
@@ -405,7 +400,7 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
                 remaining_to_read);
         position += remaining_to_read;
     } else {
-        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point (%d), "
+        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point [0x%08X], "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
                     connection_data_len,
@@ -419,7 +414,7 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
         access_point_socket_port = (uint16_t) get_uint32_t(connection_data + position);
         position += remaining_to_read;
     } else {
-        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point (%d), "
+        KAA_LOG_ERROR(channel->logger, KAA_ERR_INSUFFICIENT_BUFFER, "Kaa TCP channel new access point [0x%08X], "
                 "insufficient connection data length  %d, position %d",
                     channel->access_point.id,
                     connection_data_len,
@@ -432,7 +427,7 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
     memcpy(ap_hostname, channel->access_point.hostname, channel->access_point.hostname_length);
     ap_hostname[channel->access_point.hostname_length] = '\0';
 
-    KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point (%d) destination %s:%d",
+    KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X] destination %s:%d",
             channel->access_point.id,
             ap_hostname,
             access_point_socket_port);
@@ -456,27 +451,27 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
 
     switch (resolve_state) {
         case RET_STATE_VALUE_IN_PROGRESS:
-            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point (%d) destination name resolve pending...", channel->access_point.id);
+            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X] destination name resolve pending...", channel->access_point.id);
             break;
         case RET_STATE_VALUE_READY:
             channel->access_point.state = AP_RESOLVED;
+            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X] destination resolved", channel->access_point.id);
             error_code = kaa_tcp_channel_connect_access_point(channel);
             if (error_code) {
-                if (channel->event_callback) {
+                KAA_LOG_ERROR(channel->logger, error_code, "Kaa TCP channel new access point [0x%08X] failed to connect", channel->access_point.id);
+                if (channel->event_callback)
                     channel->event_callback(channel->event_context, SOCKET_CONNECTION_ERROR, channel->access_point.socket_descriptor);
-                }
             }
-            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point (%d) destination resolved", channel->access_point.id);
             break;
         case RET_STATE_VALUE_ERROR:
             channel->access_point.state = AP_NOT_SET;
             error_code = KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED;
-            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point (%d) hostname resolve failed", channel->access_point.id);
+            KAA_LOG_ERROR(channel->logger, KAA_ERR_BUFFER_IS_NOT_ENOUGH, "Kaa TCP channel new access point [0x%08X] hostname resolve failed", channel->access_point.id);
             break;
         case RET_STATE_BUFFER_NOT_ENOUGH:
             channel->access_point.state = AP_NOT_SET;
             error_code = KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED;
-            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point (%d) hostname resolve failed. Address buffer is not enough", channel->access_point.id);
+            KAA_LOG_ERROR(channel->logger, KAA_ERR_BUFFER_IS_NOT_ENOUGH, "Kaa TCP channel new access point [0x%08X] hostname resolve failed. Address buffer is not enough", channel->access_point.id);
             break;
     }
 
