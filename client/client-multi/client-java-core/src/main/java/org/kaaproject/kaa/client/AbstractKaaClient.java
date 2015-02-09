@@ -81,7 +81,7 @@ import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.profile.DefaultProfileManager;
-import org.kaaproject.kaa.client.profile.ProfileManager;
+import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.schema.DefaultSchemaProcessor;
 import org.kaaproject.kaa.client.schema.storage.DefaultSchemaPersistenceManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
@@ -289,6 +289,7 @@ public abstract class AbstractKaaClient implements KaaClient {
 
     protected abstract ConnectivityChecker createConnectivityChecker();
 
+    @Override
     public void start() throws IOException, TransportException {
         if (!isInitialized) {
             initKaaConfiguration();
@@ -305,24 +306,32 @@ public abstract class AbstractKaaClient implements KaaClient {
         bootstrapManager.receiveOperationsServerList();
     }
 
+    @Override
     public void stop() {
         kaaClientState.persist();
         channelManager.shutdown();
         isInitialized = false;
     }
 
+    @Override
     public void pause() {
         kaaClientState.persist();
         channelManager.pause();
     }
 
+    @Override
     public void resume() {
         channelManager.resume();
     }
 
     @Override
-    public ProfileManager getProfileManager() {
-        return profileManager;
+    public void setProfileContainer(ProfileContainer container){
+        this.profileManager.setProfileContainer(container);
+    };
+
+    @Override
+    public void updateProfile(){
+        this.profileManager.updateProfile();
     }
 
     @Override

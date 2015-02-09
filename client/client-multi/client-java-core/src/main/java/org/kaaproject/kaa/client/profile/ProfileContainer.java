@@ -16,23 +16,12 @@
 
 package org.kaaproject.kaa.client.profile;
 
-import java.io.IOException;
+import org.kaaproject.kaa.schema.base.Profile;
 
 /**
  * Interface for the profile container.
- * User-defined version should be inherited from {@link AbstractProfileContainer}
  */
 public interface ProfileContainer {
-
-    /**
-     * Set Kaa profile listener {@link ProfileListener} for the container.
-     * DO NOT use this API explicitly. When user sets his implementation
-     * of the profile container, Kaa uses this method to inject its 
-     * own listener {@link DefaultProfileListener}.
-     * 
-     * @param listener Listener that tracks profile updates
-     */
-    void setProfileListener(ProfileListener listener);
 
     /**
      * Retrieves serialized profile
@@ -40,6 +29,6 @@ public interface ProfileContainer {
      * @return byte array with serialized profile
      *
      */
-    byte [] getSerializedProfile() throws IOException;
+    Profile getProfile();
 
 }

@@ -32,6 +32,7 @@ import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.logging.LogCollector;
 import org.kaaproject.kaa.client.notification.NotificationManager;
+import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.client.transport.TransportException;
@@ -97,13 +98,20 @@ public interface KaaClient {
      */
     public void resume();
 
+
     /**
-     * Retrieves Kaa profile manager.
+     * Sets profile container implemented by the user.
      *
-     * @return {@link ProfileManager} object.
+     * @param container User-defined container
+     * @see ProfileContainer
      *
      */
-    ProfileManager getProfileManager();
+    void setProfileContainer(ProfileContainer container);
+
+    /**
+     * Force sync of updated profile with server
+     */
+    void updateProfile();
 
     /**
      * Retrieves Kaa configuration manager.
