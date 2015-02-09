@@ -125,7 +125,7 @@ kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
  *
  * @return Error code.
  */
-kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd *fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size);
+kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size);
 
 
 /**
@@ -140,7 +140,7 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd *fd, const kaa_sockaddr_t *dest
  *      KAA_TCP_SOCK_CONNECTING - socket is still connecting.
  *      KAA_TCP_SOCK_CONNECTED - socket was successfully connected.
  */
-ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size);
+ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size);
 
 
 /**
@@ -155,7 +155,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd fd, const kaa_socka
  *       KAA_TCP_SOCK_IO_OK - bytes were successfully written.
  *       KAA_TCP_SOCK_IO_ERROR - write failed.
  */
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char *buffer, size_t buffer_size, size_t *bytes_written);
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd, const char *buffer, size_t buffer_size, size_t *bytes_written);
 
 
 /**
@@ -171,7 +171,7 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd fd, const char 
  *      KAA_TCP_SOCK_IO_EOF - EOF occurred.
  *      KAA_TCP_SOCK_IO_ERROR - read failed.
  */
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd fd, char *buffer, size_t buffer_size, size_t *bytes_read);
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buffer, size_t buffer_size, size_t *bytes_read);
 
 
 /**
@@ -181,6 +181,6 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd fd, char *buffer
  *
  * @return Error code.
  */
-kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd fd);
+kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd);
 
 #endif /* EXT_TCP_UTILS_H_ */

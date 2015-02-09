@@ -26,7 +26,7 @@ posix_sock.h
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-typedef int kaa_fd;
+typedef int kaa_fd_t;
 
 typedef struct sockaddr kaa_sockaddr_t;
 typedef struct sockaddr_storage kaa_sockaddr_storage_t;

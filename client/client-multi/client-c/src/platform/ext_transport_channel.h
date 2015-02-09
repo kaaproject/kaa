@@ -89,6 +89,7 @@ typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context
                                                    , kaa_service_t **supported_services
                                                    , size_t *service_count);
 
+
 /**
  * @brief Kaa sync request handler function for specific services.
  *
@@ -103,6 +104,7 @@ typedef kaa_error_t (*kaa_sync_handler_fn)(void *context
                                          , const kaa_service_t services[]
                                          , size_t service_count);
 
+
 /**
  * @brief Releases channel context.
  *
@@ -111,6 +113,7 @@ typedef kaa_error_t (*kaa_sync_handler_fn)(void *context
  *
  */
 typedef kaa_error_t (*kaa_release_channel_context_fn)(void *context);
+
 
 /**
  * @brief Interface for a client transport channel implementation.

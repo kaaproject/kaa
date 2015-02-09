@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @file kaa_buffer.h
- *
- *  Created on: Jan 26, 2015
- *      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
- */
 
 #ifndef KAA_BUFFER_H_
 #define KAA_BUFFER_H_
