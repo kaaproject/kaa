@@ -326,20 +326,18 @@ public class EndpointActorMessageProcessor {
             LOG.debug("[{}][{}] received and forwarded user attach request {}", endpointKey, actorKey, request.getUserAttachRequest());
             
             if(userAttachResponseMap.size() > 0){
-                updateResponseWithUserAttachResults(responseHolder.getResponse());
+                Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet().iterator().next();
+                updateResponseWithUserAttachResults(responseHolder.getResponse(), entryToSend.getValue());
+                userAttachResponseMap.remove(entryToSend.getKey());
             }
         }
     }
 
-    private void updateResponseWithUserAttachResults(ServerSync response) {
+    private void updateResponseWithUserAttachResults(ServerSync response, UserVerificationResponseMessage message) {
         if(response.getUserSync() == null){
             response.setUserSync(new UserServerSync());
         }
-        for(Entry<UUID, UserVerificationResponseMessage> messageEntry : userAttachResponseMap.entrySet()){
-            response.getUserSync().setUserAttachResponse(toUserAttachResponse(messageEntry.getValue()));
-            userAttachResponseMap.remove(messageEntry.getKey());
-            break;
-        }
+        response.getUserSync().setUserAttachResponse(toUserAttachResponse(message));
     }
 
     private void processEvents(ActorContext context, ClientSync request, SyncResponseHolder responseHolder) {
@@ -461,7 +459,7 @@ public class EndpointActorMessageProcessor {
 
     private void scheduleKeepAliveCheck(ActorContext context, ChannelMetaData channel) {
         TimeoutMessage message = new ChannelTimeoutMessage(channel.getId(), channel.getLastActivityTime());
-        LOG.debug("Scheduling channel timeout message: {} to timout in {}", message, channel.getKeepAlive() * 1000);
+        LOG.debug("Scheduling channel timeout message: {} to timeout in {}", message, channel.getKeepAlive() * 1000);
         scheduleTimeoutMessage(context, message, channel.getKeepAlive() * 1000);
     }
 
@@ -805,7 +803,6 @@ public class EndpointActorMessageProcessor {
             LOG.debug("[{}][{}] Updating last activity time for channel [{}] to ", endpointKey, actorKey, message.getChannelUuid(),
                     lastActivityTime);
             channel.setLastActivityTime(lastActivityTime);
-            scheduleKeepAliveCheck(context, channel);
             channel.getContext().writeAndFlush(new PingResponse());
             return true;
         } else {
@@ -826,6 +823,7 @@ public class EndpointActorMessageProcessor {
             } else {
                 LOG.debug("[{}][{}] Timeout message ignored for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
                         actorKey, message.getChannelUuid(), channel.getLastActivityTime(), message.getLastActivityTime());
+                scheduleKeepAliveCheck(context, channel);
                 return false;
             }
         } else {
@@ -839,13 +837,11 @@ public class EndpointActorMessageProcessor {
                 message.isSuccess());
         logUploadResponseMap.put(message.getRequestId(), message);
         List<ChannelMetaData> channels = channelMap.getByTransportType(TransportType.LOGGING);
-        if (channels.size() > 0) {
-            ChannelMetaData channel = channels.get(0);
+        for(ChannelMetaData channel : channels){
             SyncRequestMessage pendingRequest = channel.getRequestMessage();
             ServerSync pendingResponse = channel.getResponseHolder().getResponse();
 
             pendingResponse.setLogSync(toLogDeliveryStatus());
-            logUploadResponseMap.clear();
 
             LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
             sendReply(context, pendingRequest, pendingResponse);
@@ -853,6 +849,7 @@ public class EndpointActorMessageProcessor {
                 channelMap.removeChannel(channel);
             }
         }
+        logUploadResponseMap.clear();
     }
     
     public void processUserVerificationMessage(ActorContext context, UserVerificationResponseMessage message) {
@@ -860,12 +857,12 @@ public class EndpointActorMessageProcessor {
                 message.isSuccess());
         userAttachResponseMap.put(message.getRequestId(), message);
         List<ChannelMetaData> channels = channelMap.getByTransportType(TransportType.USER);
-        if (channels.size() > 0) {
-            ChannelMetaData channel = channels.get(0);
+        Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet().iterator().next();
+        for(ChannelMetaData channel : channels){
             SyncRequestMessage pendingRequest = channel.getRequestMessage();
             ServerSync pendingResponse = channel.getResponseHolder().getResponse();
             
-            updateResponseWithUserAttachResults(pendingResponse);
+            updateResponseWithUserAttachResults(pendingResponse, entryToSend.getValue());
 
             LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
             sendReply(context, pendingRequest, pendingResponse);
@@ -873,6 +870,7 @@ public class EndpointActorMessageProcessor {
                 channelMap.removeChannel(channel);
             }
         }
+        userAttachResponseMap.remove(entryToSend.getKey());
         if(message.isSuccess()){
             operationsService.attachEndpointToUser(endpointProfile, appToken, message.getUserId());
             updateUserConnection(context);

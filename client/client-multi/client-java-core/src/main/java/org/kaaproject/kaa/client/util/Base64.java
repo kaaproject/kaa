@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.transports.tcp.transport.messages;
 
-import org.kaaproject.kaa.server.transport.message.SessionPingMessage;
-import org.kaaproject.kaa.server.transport.session.SessionInfo;
+package org.kaaproject.kaa.client.util;
 
-public class NettyTcpPingMessage extends SessionPingMessage {
+public interface Base64 {
 
-    public NettyTcpPingMessage(SessionInfo session) {
-        super(session);
-    }
-
+    byte[] decodeBase64(final byte[] base64Data);
+    
+    byte[] decodeBase64(final String base64String);
+    
+    byte[] encodeBase64(final byte[] binaryData);
 }

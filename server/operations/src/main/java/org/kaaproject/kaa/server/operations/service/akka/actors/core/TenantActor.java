@@ -36,6 +36,7 @@ import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
+import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,6 +176,8 @@ public class TenantActor extends UntypedActor {
         }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
+        } else if (message instanceof SessionControlMessage) {
+            processSessionControlMessage((SessionControlMessage) message);
         } else if (message instanceof UserAwareMessage) {
             processUserAwareMessage((UserAwareMessage) message);
         } else if (message instanceof Terminated) {
@@ -184,6 +187,11 @@ public class TenantActor extends UntypedActor {
         } else if (message instanceof EndpointUserActionRouteMessage) {
             processEndpointUserActionRouteMessage((EndpointUserActionRouteMessage) message);
         }
+    }
+
+    private void processSessionControlMessage(SessionControlMessage message) {
+        ActorRef applicationActor = getOrCreateApplicationActor(message.getSessionInfo().getApplicationToken());
+        applicationActor.tell(message, self());
     }
 
     /**
