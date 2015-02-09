@@ -64,7 +64,11 @@ public class DefaultEventTransportTest {
     public void testCreateRequest() {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         EventManager manager = Mockito.mock(EventManager.class);
-        Mockito.when(manager.getPendingEvents()).thenReturn(Arrays.asList(new Event(), new Event()));
+        Event event1 = new Event();
+        event1.setSeqNum(1);
+        Event event2 = new Event();
+        event2.setSeqNum(2);
+        Mockito.when(manager.getPendingEvents()).thenReturn(Arrays.asList(event1, event2));
 
         EventTransport transport = new DefaultEventTransport(clientState);
         transport.createEventRequest(1);
@@ -75,7 +79,7 @@ public class DefaultEventTransportTest {
 
         transport.createEventRequest(3);
         EventSyncRequest request = transport.createEventRequest(4);
-        Assert.assertTrue(request.getEvents().size() == 4);
+        Assert.assertEquals(2, request.getEvents().size());
     }
 
     @Test
@@ -121,7 +125,7 @@ public class DefaultEventTransportTest {
         transport.onSyncResposeIdReceived(3);
 
         EventSyncRequest request = transport.createEventRequest(4);
-        Assert.assertTrue(request.getEvents().size() == 2);
+        Assert.assertTrue(request.getEvents().size() == 1);
     }
 
     @Test
