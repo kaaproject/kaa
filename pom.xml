@@ -540,6 +540,12 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
                 <artifactId>config</artifactId>
                 <classifier>tcp</classifier>
