@@ -49,7 +49,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     private GplusAvroConfig configuration;
     private ExecutorService threadPool;
     private CloseableHttpClient httpClient;
-
+    private PoolingHttpClientConnectionManager conManager;
 
     @Override
     public void init(UserVerifierContext context, GplusAvroConfig configuration) {
@@ -60,6 +60,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
     @Override
     public void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback) {
+
 
         URI uri = null;
         try {
@@ -161,8 +162,9 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         LOG.info("user verifier started");
         threadPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
                 configuration.getKeepAliveTimeMilliseconds(), TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        PoolingHttpClientConnectionManager conManager = new PoolingHttpClientConnectionManager();
+        conManager = new PoolingHttpClientConnectionManager();
         conManager.setMaxTotal(configuration.getMaxParallelConnections());
+
         httpClient = HttpClients.custom().setConnectionManager(conManager).build();
     }
 
@@ -170,6 +172,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     public void stop() {
         threadPool.shutdown();
         try {
+            conManager.shutdown();
             httpClient.close();
         } catch (IOException e) {
             e.printStackTrace();
