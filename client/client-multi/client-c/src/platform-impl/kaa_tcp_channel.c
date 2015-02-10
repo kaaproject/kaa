@@ -988,16 +988,20 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
                                                            , &sync_buffer
                                                            , &sync_size);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] going to send CONNECT message (%zu bytes)"
+    KAA_LOG_INFO(self->logger, error_code, "Kaa TCP channel [0x%08X] going to send CONNECT message (%zu bytes)"
                                                                                 , self->access_point.id, sync_size);
 
-    error_code = kaa_tcp_channel_delete_pending_services(self
+    kaa_error_t delete_error_code = kaa_tcp_channel_delete_pending_services(self
                                                        , self->pending_request_services
                                                        , self->pending_request_service_count);
+    if (delete_error_code) {
+        KAA_LOG_ERROR(self->logger, delete_error_code, "Kaa TCP channel [0x%08X] failed to delete pending services"
+                                                                                , self->access_point.id);
+    }
 
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] failed to serialize supported services",
-                                                                                            self->access_point.id);
+    if (error_code || delete_error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] failed to serialize supported services"
+                                                                                , self->access_point.id);
         if (sync_buffer)
             KAA_FREE(sync_buffer);
         return error_code;
