@@ -42,7 +42,6 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
     private static final String TOKEN_INVALID = "467";
     private FacebookAvroConfig configuration;
     private ExecutorService tokenVerifiersPool;
-    BufferedReader reader;
 
     @Override
     public void init(UserVerifierContext context, FacebookAvroConfig configuration) {
@@ -100,13 +99,6 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                 callback.onInternalError(e.getMessage());
             } finally {
                 if (connection != null) connection.disconnect();
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        LOG.debug("Reader can't be closed", e);
-                    }
-                }
             }
         }
     }
@@ -114,71 +106,74 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
     @SuppressWarnings("unchecked")
     private void handle200Response(HttpURLConnection connection, String userExternalId, UserVerifierCallback callback,
                                    String userAccessToken) throws IOException {
-        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        ObjectMapper responseMapper = new ObjectMapper();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            ObjectMapper responseMapper = new ObjectMapper();
 
-        // we always get a map
-        Map<String, Object> responseMap =
-                responseMapper.readValue(reader.readLine(), Map.class);
+            // we always get a map
+            Map<String, Object> responseMap =
+                    responseMapper.readValue(reader.readLine(), Map.class);
 
-        Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
-        String receivedUserId = String.valueOf(dataMap.get("user_id"));
+            Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
+            String receivedUserId = String.valueOf(dataMap.get("user_id"));
 
-        if (dataMap.containsKey("error") || receivedUserId == null) {
-            Map<String, Object> errorMap = (Map<String, Object>) dataMap.get("error");
-            LOG.trace("Bad input token: {}, errcode = {}", errorMap.get("message"), errorMap.get("code"));
-            callback.onTokenInvalid();
-        } else if (!receivedUserId.equals(userExternalId)) {
-            LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
-            callback.onVerificationFailure("User access token " + userAccessToken + " doesn't belong to the user");
-        } else {
-            LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
-            callback.onSuccess();
+            if (dataMap.containsKey("error") || receivedUserId == null) {
+                Map<String, Object> errorMap = (Map<String, Object>) dataMap.get("error");
+                LOG.trace("Bad input token: {}, errcode = {}", errorMap.get("message"), errorMap.get("code"));
+                callback.onTokenInvalid();
+            } else if (!receivedUserId.equals(userExternalId)) {
+                LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
+                callback.onVerificationFailure("User access token " + userAccessToken + " doesn't belong to the user");
+            } else {
+                LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
+                callback.onSuccess();
+            }
         }
     }
 
     @SuppressWarnings("unchecked")
     private void handle400Response(HttpURLConnection connection, String userExternalId, UserVerifierCallback callback,
                                    String userAccessToken) throws IOException {
-        reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-        ObjectMapper responseMapper = new ObjectMapper();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
 
-        // we always get a map
-        Map<String, Object> responseMap =
-                responseMapper.readValue(reader.readLine(), Map.class);
-        Map<String, Object> errorMap = null;
+            ObjectMapper responseMapper = new ObjectMapper();
 
-        // no error field in response
-        if (responseMap.get("error") != null) {
-            errorMap = (Map<String, Object>) responseMap.get("error");
-        }
+            // we always get a map
+            Map<String, Object> responseMap =
+                    responseMapper.readValue(reader.readLine(), Map.class);
+            Map<String, Object> errorMap = null;
 
-        // errors with OAuth
-        if (errorMap != null && String.valueOf(errorMap.get("code")).equals(OAUTH_ERROR)) {
-            if (errorMap.get("error_subcode") == null) {
-                LOG.trace("OAuthException: [{}], errcode: [{}], errsubcode: [{}] ", errorMap.get("message"),
-                        errorMap.get("errcode"), errorMap.get("error_subcode"));
-                callback.onVerificationFailure("OAuthException:" + errorMap.get("message"));
-            } else if (String.valueOf(errorMap.get("error_subcode")).equals(TOKEN_EXPIRED)) {         // access token has expired
-                LOG.trace("Access Token has expired");
-                callback.onTokenExpired();
-            } else if (String.valueOf(errorMap.get("error_subcode")).equals(TOKEN_INVALID)) {        // access token is invalid
-                LOG.trace("Access Token is invalid");
-                callback.onTokenInvalid();
-            } else {
-                LOG.trace("OAuthException: [{}], errcode: [{}], errsubcode: [{}] ", errorMap.get("message"),
-                        errorMap.get("errcode"), errorMap.get("error_subcode"));
-                callback.onVerificationFailure("OAuthException:" + errorMap.get("message"));
+            // no error field in response
+            if (responseMap.get("error") != null) {
+                errorMap = (Map<String, Object>) responseMap.get("error");
             }
-        } else {
-            if (errorMap != null) {
-                LOG.trace("Unable to verify token: {}, errcode: [{}]", errorMap.get("message"),
-                        errorMap.get("errcode"));
-                callback.onVerificationFailure("Unable to verify token: " + errorMap.get("message") +
-                        ", errorcode: " + errorMap.get("errcode"));
+
+            // errors with OAuth
+            if (errorMap != null && String.valueOf(errorMap.get("code")).equals(OAUTH_ERROR)) {
+                if (errorMap.get("error_subcode") == null) {
+                    LOG.trace("OAuthException: [{}], errcode: [{}], errsubcode: [{}] ", errorMap.get("message"),
+                            errorMap.get("errcode"), errorMap.get("error_subcode"));
+                    callback.onVerificationFailure("OAuthException:" + errorMap.get("message"));
+                } else if (String.valueOf(errorMap.get("error_subcode")).equals(TOKEN_EXPIRED)) {         // access token has expired
+                    LOG.trace("Access Token has expired");
+                    callback.onTokenExpired();
+                } else if (String.valueOf(errorMap.get("error_subcode")).equals(TOKEN_INVALID)) {        // access token is invalid
+                    LOG.trace("Access Token is invalid");
+                    callback.onTokenInvalid();
+                } else {
+                    LOG.trace("OAuthException: [{}], errcode: [{}], errsubcode: [{}] ", errorMap.get("message"),
+                            errorMap.get("errcode"), errorMap.get("error_subcode"));
+                    callback.onVerificationFailure("OAuthException:" + errorMap.get("message"));
+                }
             } else {
-                LOG.trace("Unable to verify token. HTTP response 400");
-                callback.onVerificationFailure("Unable to verify token. HTTP response 400");
+                if (errorMap != null) {
+                    LOG.trace("Unable to verify token: {}, errcode: [{}]", errorMap.get("message"),
+                            errorMap.get("errcode"));
+                    callback.onVerificationFailure("Unable to verify token: " + errorMap.get("message") +
+                            ", errorcode: " + errorMap.get("errcode"));
+                } else {
+                    LOG.trace("Unable to verify token. HTTP response 400");
+                    callback.onVerificationFailure("Unable to verify token. HTTP response 400");
+                }
             }
         }
     }
