@@ -20,7 +20,9 @@
 
 #include "../kaa_error.h"
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct kaa_buffer_t kaa_buffer_t;
 
@@ -46,5 +48,10 @@ kaa_error_t kaa_buffer_get_unprocessed_space(kaa_buffer_t *buffer_p
                                            , size_t *available_size);
 
 kaa_error_t kaa_buffer_reset(kaa_buffer_t *buffer_p);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
+
 
 #endif /* KAA_BUFFER_H_ */

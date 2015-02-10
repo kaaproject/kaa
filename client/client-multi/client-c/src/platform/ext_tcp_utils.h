@@ -28,6 +28,10 @@
 #include "sock.h"
 #include "../kaa_error.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define KAA_TCP_SOCKET_NOT_SET -1
 
 
@@ -217,5 +221,10 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
  * @return Error code.
  */
 kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
+
 
 #endif /* EXT_TCP_UTILS_H_ */

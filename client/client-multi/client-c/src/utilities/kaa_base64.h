@@ -26,18 +26,26 @@
 
 #include "../kaa_error.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Decode base64 encoded data
  *
  * @param[in]       encoded_data        Pointer to encoded data buffer
  * @param[in]       encoded_data_length Size of encoded data buffer
  * @param[out]      decoded_data        Pointer to output decoded data buffer
- * @param[in,out]   encoded_data_length Size of output buffer on [in] and size of decoded data on [out]
+ * @param[in,out]   decoded_data_length Size of output buffer on [in] and size of decoded data on [out]
  *                                      base64_decode() checks that buffer for decoded data have enough length
  *                                      length ration is 3:4 (decoded/encoded)
  *
  * @return Error code.
  */
 kaa_error_t kaa_base64_decode(const char *encoded_data, size_t encoded_data_length, char *decoded_data, size_t *decoded_data_length);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 
 #endif /* KAA_BASE64_H_ */

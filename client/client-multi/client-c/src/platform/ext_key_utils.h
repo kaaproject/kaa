@@ -22,6 +22,10 @@
 #ifndef EXT_KEY_UTILS_H_
 #define EXT_KEY_UTILS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 /**
  * @brief Called to get the endpoint public key.
@@ -33,5 +37,8 @@
  */
 void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation);
 
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 
 #endif /* EXT_KEY_UTILS_H_ */

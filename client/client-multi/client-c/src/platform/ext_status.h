@@ -22,6 +22,10 @@
 #ifndef EXT_STATUS_H_
 #define EXT_STATUS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 /**
  * @brief Called on Kaa startup to restore the persisted state.
@@ -47,6 +51,8 @@ void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocatio
  */
 void ext_status_store(const char *buffer, size_t buffer_size);
 
-
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 
 #endif /* SRC_PLATFORM_EXT_STATUS_H_ */

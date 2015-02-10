@@ -23,6 +23,10 @@
 
 #include "../platform/ext_tcp_utils.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 typedef enum {
     FD_READ,
@@ -173,6 +177,10 @@ kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interfac
  * @return Error code
  */
 kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t *self);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 
 
 #endif /* KAA_TCP_CHANNEL_H_ */

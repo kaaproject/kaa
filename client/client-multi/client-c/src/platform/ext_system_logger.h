@@ -19,6 +19,10 @@
 
 #include "../kaa_error.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * @brief Write log message in system dependent way.
  * Write @c log message from buffer with length message_size, possibly using FILE sink.
@@ -72,6 +76,10 @@ int ext_snpintf(char * buffer, size_t buffer_size, const char * format, ...);
  * @param[in]       args            Other arguments for message as va_list.
  */
 int ext_logger_sprintf(char * buffer, size_t buffer_size, const char * format, va_list args);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 
 #endif /* EXT_SYSTEM_LOGGER_H_ */
 
