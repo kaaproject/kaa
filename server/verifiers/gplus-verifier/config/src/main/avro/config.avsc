@@ -16,7 +16,7 @@
     {
     "name":"keep_alive_time_milliseconds",
     "displayName": "Milliseconds to keep connection alive",
-    "type":"long", "by_default" : "60_000"
+    "type":"long", "by_default" : "60000"
     }
  ]
 }
