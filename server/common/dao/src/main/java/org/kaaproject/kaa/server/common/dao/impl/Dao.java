@@ -22,7 +22,7 @@ import java.util.List;
  * The generic Dao interface.
  * @param <T>  the type parameter
  */
-public interface Dao<T> {
+public interface Dao<T, K> {
 
     /**
      * Save object. Will be returned object with id
@@ -45,17 +45,7 @@ public interface Dao<T> {
      * @param id the id
      * @return the found object
      */
-    T findById(String id);
-
-    /**
-     * Find object by id.
-     *
-     * @param id the id
-     * @param lazy specifies whether return initialized object (if false is set)
-     * or proxy (if true is set)
-     * @return the found object
-     */
-    T findById(String id, boolean lazy);
+    T findById(K id);
 
     /**
      * Remove all objects from collection/table.
@@ -67,19 +57,13 @@ public interface Dao<T> {
      *
      * @param id the object id
      */
-    void removeById(String id);
+    void removeById(K id);
 
     /**
      * @param o
      * @param clazz
      * @return
      */
-    <V> V save(V o, Class<V> clazz);
-
-    /**
-     * @param o
-     * @return
-     */
-    T persist(T o);
+    <V> V save(V o, Class<?> clazz);
 
 }
