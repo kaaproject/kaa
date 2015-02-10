@@ -19,21 +19,6 @@ cmake_minimum_required(VERSION 2.8.8)
 project (Kaa-c)
 enable_language(C)
 
-# Release version is built by default.
-if(KAA_DEBUG_ENABLED)
-    set(CMAKE_BUILD_TYPE DEBUG)
-else()
-    set(CMAKE_BUILD_TYPE RELEASE)
-endif()
-
-# Sets the default build platform to POSIX.
-if(NOT DEFINED KAA_PLATFORM)
-  set(KAA_PLATFORM "x86-64")
-endif()
-
-# Creates variable to specify thirdparty libraries.
-set(KAA_THIRDPARTY_LIBRARIES "")
-
 # Path to CMake's scripts.
 set(CMAKE_MODULE_PATH 
         ${CMAKE_MODULE_PATH} 
@@ -45,11 +30,41 @@ set(CMAKE_MODULE_PATH
 # 
 # NOTE: Platform specific compilation flags should be set 
 # in the corresponding platform CMake script(s).
-#
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c1x -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
+# Compiler specific flags.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c1x")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
+
+    if(KAA_DEBUG_ENABLED)
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -ggdb")
+    else()
+        set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Os -s")
+    endif()
+
+    if(KAA_COLLECT_COVERAGE AND KAA_DEBUG_ENABLED)
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
+    endif()
+endif()
+
+# Creates variable to specify thirdparty libraries.
+set(KAA_THIRDPARTY_LIBRARIES "")
+
+# Release version is built by default.
+if(KAA_DEBUG_ENABLED)
+    set(CMAKE_BUILD_TYPE DEBUG)
+else()
+    set(CMAKE_BUILD_TYPE RELEASE)
+endif()
+
+# Sets the default build platform to POSIX.
+if(NOT DEFINED KAA_PLATFORM)
+  set(KAA_PLATFORM "x86-64")
 endif()
 
 #
@@ -97,11 +112,12 @@ set (KAA_SOURCE_FILES
         src/collections/kaa_list.c
         src/utilities/kaa_log.c
         src/utilities/kaa_mem.c
-        src/kaa_platform_protocol.c
+        src/utilities/kaa_buffer.c
         src/kaa_platform_utils.c
-        src/kaa_common_schema.c
+        src/kaa_platform_protocol.c
         src/kaa_bootstrap_manager.c
         src/kaa_channel_manager.c
+        src/kaa_common_schema.c
         src/kaa_event.c
         src/kaa_logging.c
         src/kaa_profile.c

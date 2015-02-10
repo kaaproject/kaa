@@ -19,7 +19,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "platform/ext_sha.h"
 #include "kaa_status.h"
 #include "kaa_test.h"
 
@@ -30,9 +29,11 @@
 #include "kaa_context.h"
 #include "kaa_profile.h"
 #include "kaa_defaults.h"
-#include "kaa_external.h"
 #include "gen/kaa_profile_gen.h"
 #include "kaa_platform_utils.h"
+#include "platform/ext_status.h"
+#include "platform/ext_sha.h"
+#include "platform/ext_key_utils.h"
 
 
 

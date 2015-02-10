@@ -26,6 +26,9 @@
 
 #include "../platform/ext_log_storage.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 /**
@@ -49,5 +52,9 @@ typedef enum {
  * @return Log upload decision.
  */
 ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const void *log_storage_context, size_t *volume);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 
 #endif /* EXT_LOG_UPLOAD_STRATEGY_H_ */

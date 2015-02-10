@@ -22,15 +22,16 @@
 
 #include "kaa_test.h"
 
-#include "platform/ext_sha.h"
 #include "kaa_error.h"
 #include "kaa_common.h"
 #include "kaa_defaults.h"
 #include "kaa_status.h"
 #include "kaa_context.h"
 #include "kaa_platform_utils.h"
+#include "platform/ext_sha.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
+#include "platform/ext_sha.h"
 
 
 

@@ -16,25 +16,23 @@
 
 find_package(OpenSSL REQUIRED)
 
-if(CMAKE_COMPILER_IS_GNUCC)
-    if(KAA_DEBUG_ENABLED)
-        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -ggdb")
-    else()
-        set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Os -s")
-    endif()
-
-    if(KAA_COLLECT_COVERAGE AND KAA_DEBUG_ENABLED)
-        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
-    endif()
-endif()
-
 set(KAA_SOURCE_FILES 
         ${KAA_SOURCE_FILES}
-        src/platform-impl/posix/logger.c
         src/platform-impl/posix/sha.c
+        src/platform-impl/posix/logger.c
         src/platform-impl/ext_log_storage_memory.c
         src/platform-impl/ext_log_upload_strategy_by_volume.c
     )
+
+if(NOT KAA_WITHOUT_TCP_CHANNEL)
+    set(KAA_SOURCE_FILES 
+            ${KAA_SOURCE_FILES}
+            src/kaa_protocols/kaa_tcp/kaatcp_parser.c
+            src/kaa_protocols/kaa_tcp/kaatcp_request.c
+            src/platform-impl/posix/posix_tcp_utils.c
+            src/platform-impl/kaa_tcp_channel.c
+        )
+endif()
 
 set(KAA_THIRDPARTY_LIBRARIES
         ${KAA_THIRDPARTY_LIBRARIES} 

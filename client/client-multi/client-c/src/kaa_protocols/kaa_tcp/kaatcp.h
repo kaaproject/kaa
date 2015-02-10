@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef KAA_STATUS_H_
-#define KAA_STATUS_H_
+#ifndef KAATCP_H_
+#define KAATCP_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "kaa_error.h"
-#include "kaa_common.h"
-#include "platform/ext_sha.h"
-
-#ifndef KAA_STATUS_T
-# define KAA_STATUS_T
-typedef struct
-{
-
-    uint32_t        event_seq_n;
-    uint16_t        log_bucket_id;
-    bool            is_registered;
-    bool            is_attached;
-    kaa_digest      endpoint_public_key_hash;
-    kaa_digest      profile_hash;
-
-    char *          endpoint_access_token;
-} kaa_status_t;
-
-#endif
+#include "kaatcp_parser.h"
+#include "kaatcp_request.h"
 
 
 #ifdef __cplusplus
-} // extern "C"
+}      /* extern "C" */
 #endif
-#endif /* KAA_STATUS_H_ */
+#endif
+

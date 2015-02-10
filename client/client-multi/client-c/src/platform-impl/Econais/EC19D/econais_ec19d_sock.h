@@ -25,6 +25,13 @@ econais_ec19d_sock.h
 
 #include <sys/types.h>
 #include <sndc_sock_api.h>
+
+typedef int kaa_fd_t;
+
+typedef struct sndc_sockaddr kaa_sockaddr_t;
+typedef struct sndc_sockaddr_in kaa_sockaddr_storage_t;
+typedef sndc_socklen_t kaa_socklen_t;
+
 #define KAA_HTONS(hostshort)    sndc_htons((hostshort))
 #define KAA_HTONL(hostlong)     sndc_htonl((hostlong))
 

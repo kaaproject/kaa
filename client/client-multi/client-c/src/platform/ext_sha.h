@@ -54,9 +54,8 @@ kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_diges
  * @return Error code.
  */
 kaa_error_t ext_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src);
+
 #ifdef __cplusplus
-
-
 }      /* extern "C" */
 #endif
 #endif /* EXT_SHA_H_ */

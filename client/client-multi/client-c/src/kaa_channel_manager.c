@@ -69,8 +69,8 @@ static void destroy_channel(void *data)
     kaa_transport_channel_wrapper_t *channel_wrapper =
             (kaa_transport_channel_wrapper_t *)data;
 
-    if (channel_wrapper->channel.release_context) {
-        channel_wrapper->channel.release_context(channel_wrapper->channel.context);
+    if (channel_wrapper->channel.destroy) {
+        channel_wrapper->channel.destroy(channel_wrapper->channel.context);
     }
 
     KAA_FREE(channel_wrapper);
@@ -120,7 +120,7 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
 
     *channel_id = 1;
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->context;
-    *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->release_context;
+    *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->destroy;
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->init;
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->set_access_point;
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->sync_handler;

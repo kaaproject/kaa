@@ -27,9 +27,9 @@
 #include "kaa_common.h"
 
 #include "kaa_context.h"
-#include "kaa_external.h"
 #include "kaa_defaults.h"
 #include "platform/ext_transport_channel.h"
+#include "platform/ext_key_utils.h"
 
 
 
@@ -199,7 +199,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     size_t pub_key_buffer_size = 0;
     bool need_deallocation = false;
 
-    kaa_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
+    ext_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
     kaa_digest pub_key_hash;
     error = ext_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, pub_key_hash);
 
