@@ -47,7 +47,10 @@ kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
 }
 
 
-ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
+ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener
+                                                                , const kaa_dns_resolve_info_t *resolve_props
+                                                                , kaa_sockaddr_t *result
+                                                                , kaa_socklen_t *result_size)
 {
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
     if (*result_size < sizeof(struct sockaddr_in))
@@ -89,7 +92,9 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
 }
 
 
-kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size)
+kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd
+                                        , const kaa_sockaddr_t *destination
+                                        , kaa_socklen_t destination_size)
 {
     KAA_RETURN_IF_NIL3(fd, destination, destination_size, KAA_ERR_BADPARAM);
 
@@ -118,7 +123,9 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd, const kaa_sockaddr_t *de
 }
 
 
-ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size)
+ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
+                                                    , const kaa_sockaddr_t *destination
+                                                    , kaa_socklen_t destination_size)
 {
     if (connect(fd, destination, destination_size) < 0 ) {
         switch (errno) {
@@ -135,7 +142,10 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_soc
 }
 
 
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd, const char *buffer, size_t buffer_size, size_t *bytes_written)
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
+                                                        , const char *buffer
+                                                        , size_t buffer_size
+                                                        , size_t *bytes_written)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, KAA_TCP_SOCK_IO_ERROR);
     ssize_t write_result = write(fd, buffer, buffer_size);
@@ -147,7 +157,10 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd, const cha
 }
 
 
-ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buffer, size_t buffer_size, size_t *bytes_read)
+ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
+                                                       , char *buffer
+                                                       , size_t buffer_size
+                                                       , size_t *bytes_read)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, KAA_TCP_SOCK_IO_ERROR);
     ssize_t read_result = read(fd, buffer, buffer_size);

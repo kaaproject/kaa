@@ -102,7 +102,9 @@ kaa_error_t kaa_buffer_free_allocated_space(kaa_buffer_t *buffer_p, size_t size)
 }
 
 
-kaa_error_t kaa_buffer_get_unprocessed_space(kaa_buffer_t *buffer_p, char **buffer, size_t *available_size)
+kaa_error_t kaa_buffer_get_unprocessed_space(kaa_buffer_t *buffer_p
+                                           , char **buffer
+                                           , size_t *available_size)
 {
     KAA_RETURN_IF_NIL3(buffer_p, buffer, available_size, KAA_ERR_BADPARAM);
 
@@ -119,5 +121,4 @@ kaa_error_t kaa_buffer_reset(kaa_buffer_t *buffer_p)
     buffer_p->current = buffer_p->begin;
     return KAA_ERR_NONE;
 }
-
 
