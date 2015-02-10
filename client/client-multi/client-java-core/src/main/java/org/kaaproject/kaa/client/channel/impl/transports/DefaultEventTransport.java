@@ -166,13 +166,15 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
     public void onSyncResposeIdReceived(Integer requestId) {
         LOG.debug("Events sent with request id {} were accepted.", requestId);
         Set<Event> acceptedEvents = pendingEvents.remove(requestId);
-        Iterator<Entry<Integer, Set<Event>>> entrySetIterator = pendingEvents.entrySet().iterator();
-        while (entrySetIterator.hasNext()) {
-            Entry<Integer, Set<Event>> entry = entrySetIterator.next();
-            entry.getValue().removeAll(acceptedEvents);
-            if (entry.getValue().size() == 0) {
-                LOG.debug("Remove entry for request {}.", requestId);
-                entrySetIterator.remove();
+        if (acceptedEvents != null) {
+            Iterator<Entry<Integer, Set<Event>>> entrySetIterator = pendingEvents.entrySet().iterator();
+            while (entrySetIterator.hasNext()) {
+                Entry<Integer, Set<Event>> entry = entrySetIterator.next();
+                entry.getValue().removeAll(acceptedEvents);
+                if (entry.getValue().size() == 0) {
+                    LOG.debug("Remove entry for request {}.", requestId);
+                    entrySetIterator.remove();
+                }
             }
         }
     }

@@ -22,7 +22,7 @@ import java.util.List;
  * The interface User dao.
  * @param <T>  the type parameter
  */
-public interface UserDao<T> extends Dao<T> {
+public interface UserDao<T> extends SqlDao<T> {
 
     /**
      * Find user by external uid.

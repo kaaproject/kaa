@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public interface ConfigurationDao<T> extends Dao<T> {
+public interface ConfigurationDao<T> extends SqlDao<T> {
 
 
     /**
