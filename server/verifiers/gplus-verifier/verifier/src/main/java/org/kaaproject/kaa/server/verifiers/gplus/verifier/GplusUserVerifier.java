@@ -88,16 +88,12 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         public void run() {
 
             CloseableHttpResponse closeableHttpResponse = null;
-//            HttpURLConnection connection = null;
             try {
 
                 String responseJson = "";
                 int responseCode;
-/*                connection = establishConnection(url);
-                connection.setRequestMethod("GET");
-                responseCode = connection.getResponseCode();*/
 
-                    closeableHttpResponse = establishConnection(uri);
+                closeableHttpResponse = establishConnection(uri);
 
                 responseCode = closeableHttpResponse.getStatusLine().getStatusCode();
 
