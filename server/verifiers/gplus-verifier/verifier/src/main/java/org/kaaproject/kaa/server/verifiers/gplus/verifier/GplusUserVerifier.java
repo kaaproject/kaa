@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(GplusUserVerifier.class);
     private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
+    private static final int HTTP_OK = 200;
+    private static final int HTTP_BAD_REQUEST = 400;
     private GplusAvroConfig configuration;
     private ExecutorService threadPool;
 
@@ -85,7 +87,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 connection.setRequestMethod("GET");
                 responseCode = connection.getResponseCode();
 
-                if (responseCode == 200) {
+                if (responseCode == HTTP_OK) {
                     responseJson = readResponse(connection.getInputStream());
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, String> map = mapper.readValue(responseJson.toString(), Map.class);
@@ -97,7 +99,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                         callback.onSuccess();
                         LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
                     }
-                } if (responseCode == 400) {
+                } if (responseCode == HTTP_BAD_REQUEST) {
                     callback.onTokenInvalid();
                     LOG.trace("Server auth error: {}", readResponse(connection.getErrorStream()));
                 } else {
