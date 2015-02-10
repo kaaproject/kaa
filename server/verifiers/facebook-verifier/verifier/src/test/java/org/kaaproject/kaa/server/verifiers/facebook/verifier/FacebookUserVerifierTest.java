@@ -15,6 +15,9 @@
  */
 package org.kaaproject.kaa.server.verifiers.facebook.verifier;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
@@ -127,25 +130,25 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
         int responseCode;
         String inputStreamString = "";
 
-        MyFacebookVerifier(int responseCode) {
-            this.responseCode = responseCode;
-        }
-
         MyFacebookVerifier(int responseCode, String intputStreamString) {
             this.responseCode = responseCode;
             this.inputStreamString = intputStreamString;
         }
 
         @Override
-        protected HttpURLConnection establishConnection(String userAccessToken, String accessToken) {
-            HttpURLConnection connection = mock(HttpURLConnection.class);
+        protected CloseableHttpResponse establishConnection(String userAccessToken, String accessToken) {
+            CloseableHttpResponse connection = mock(CloseableHttpResponse.class);
 
             try {
-                when(connection.getResponseCode()).thenReturn(responseCode);
-                when(connection.getInputStream()).thenReturn(
-                        new ByteArrayInputStream(inputStreamString.getBytes(StandardCharsets.UTF_8)));
-                when(connection.getErrorStream()).thenReturn(
-                        new ByteArrayInputStream(inputStreamString.getBytes(StandardCharsets.UTF_8)));
+                StatusLine statusLine = mock(StatusLine.class);
+                when(statusLine.getStatusCode()).thenReturn(responseCode);
+
+                HttpEntity httpEntity = mock(HttpEntity.class);
+                when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(inputStreamString.
+                                                            getBytes(StandardCharsets.UTF_8)));
+
+                when(connection.getStatusLine()).thenReturn(statusLine);
+                when(connection.getEntity()).thenReturn(httpEntity);
             } catch (Exception e) {
                 e.printStackTrace();
             }
