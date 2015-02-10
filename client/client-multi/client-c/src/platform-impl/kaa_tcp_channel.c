@@ -680,6 +680,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                         tcp_channel->access_point.state = AP_RESOLVED;
                         if (tcp_channel->event_callback)
                             tcp_channel->event_callback(tcp_channel->event_context, SOCKET_CONNECTION_ERROR, fd);
+                        error_code = kaa_tcp_channel_socket_io_error(tcp_channel);
                         break;
                     case KAA_TCP_SOCK_CONNECTED:
                         KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] socket was successfully connected"
