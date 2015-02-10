@@ -82,7 +82,7 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
             Criteria criteria = getCriteria().createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS)
                     .add(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
             if (usedSchemaIds != null && !usedSchemaIds.isEmpty()) {
-                criteria.add(Restrictions.not(Restrictions.in(ID_PROPERTY, stringIdsToLongIds(usedSchemaIds))));
+                criteria.add(Restrictions.not(Restrictions.in(ID_PROPERTY, toLongIds(usedSchemaIds))));
             }
             return findListByCriteria(criteria);
         }
@@ -92,14 +92,5 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
     @Override
     protected Class<ProfileSchema> getEntityClass() {
         return ProfileSchema.class;
-    }
-
-    private Long[] stringIdsToLongIds(List<String> stringIds) {
-        Long[] longIds = new Long[stringIds.size()];
-        int i = 0;
-        for (String stringId : stringIds) {
-            longIds[i++] = Long.parseLong(stringId);
-        }
-        return longIds;
     }
 }

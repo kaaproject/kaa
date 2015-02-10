@@ -20,7 +20,7 @@ package org.kaaproject.kaa.server.common.dao.impl;
  * The interface Tenant dao.
  * @param <T>  the type parameter
  */
-public interface TenantDao<T> extends Dao<T> {
+public interface TenantDao<T> extends SqlDao<T> {
 
     /**
      * Find tenant by name.

@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
  * The interface for Event Class Dao.
  * @param <T>  the type parameter
  */
-public interface EventClassDao<T> extends Dao<T> {
+public interface EventClassDao<T> extends SqlDao<T> {
 
     /**
      * Find all Event Classes by Event Class Family id.

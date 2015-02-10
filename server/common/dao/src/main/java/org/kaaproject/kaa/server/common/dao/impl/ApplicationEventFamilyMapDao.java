@@ -22,7 +22,7 @@ import java.util.List;
  * The interface for Application Event Family Map Dao.
  * @param <T>  the type parameter
  */
-public interface ApplicationEventFamilyMapDao<T> extends Dao<T> {
+public interface ApplicationEventFamilyMapDao<T> extends SqlDao<T> {
 
     /**
      * Find map elements for applicationId.

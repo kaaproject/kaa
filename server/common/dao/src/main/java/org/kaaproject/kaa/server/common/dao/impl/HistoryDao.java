@@ -22,7 +22,7 @@ import java.util.List;
  * The interface History dao.
  * @param <T>  the type parameter
  */
-public interface HistoryDao<T> extends Dao<T> {
+public interface HistoryDao<T> extends SqlDao<T> {
 
     /**
      * Find history by application id.
