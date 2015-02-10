@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.common.dao.impl;
 
 import java.util.List;
 
-public interface UserVerifierDao<T> extends Dao<T> {
+public interface UserVerifierDao<T> extends Dao<T, String> {
 
     List<T> findByAppId(String appId);
     

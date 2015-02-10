@@ -22,7 +22,7 @@ import java.util.List;
  * The interface for Event Class Family Dao.
  * @param <T>  the type parameter
  */
-public interface EventClassFamilyDao<T> extends Dao<T> {
+public interface EventClassFamilyDao<T> extends SqlDao<T> {
 
     /**
      * Find EventClassFamily by tenant id.

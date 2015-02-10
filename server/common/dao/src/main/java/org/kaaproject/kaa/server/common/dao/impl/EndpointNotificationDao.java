@@ -26,7 +26,7 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
  *
  * @param <T> the generic type
  */
-public interface EndpointNotificationDao<T extends EndpointNotification> extends Dao<T> {
+public interface EndpointNotificationDao<T extends EndpointNotification> extends Dao<T, String> {
 
     T save(EndpointNotificationDto dto);
 

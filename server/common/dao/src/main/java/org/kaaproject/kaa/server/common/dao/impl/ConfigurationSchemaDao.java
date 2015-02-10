@@ -22,7 +22,7 @@ import java.util.List;
  * The interface Configuration schema dao.
  * @param <T>  the type parameter
  */
-public interface ConfigurationSchemaDao<T> extends Dao<T> {
+public interface ConfigurationSchemaDao<T> extends SqlDao<T> {
 
     /**
      * Find configuration schemas by application id.
