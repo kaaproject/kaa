@@ -16,12 +16,8 @@
 
 package org.kaaproject.kaa.server.verifiers.gplus.verifier;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ConnectionRequest;
-import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -33,8 +29,11 @@ import org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -101,7 +100,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 if (responseCode == HTTP_OK) {
                     responseJson = readResponse(closeableHttpResponse.getEntity().getContent());
                     ObjectMapper mapper = new ObjectMapper();
-                    Map<String, String> map = mapper.readValue(responseJson.toString(), Map.class);
+                    Map map = mapper.readValue(responseJson, Map.class);
                     String userId = String.valueOf(map.get("user_id"));
                     if (!userExternalId.equals(userId)) {
                         callback.onVerificationFailure("User access token doesn't belong to the user");
@@ -125,7 +124,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 try {
                     closeableHttpResponse.close();
                 } catch (IOException e) {
-                    LOG.warn("СloseableHttpResponse failed to close: ", e);
+                    LOG.warn("Internal error: ", e);
                 }
             }
 
@@ -151,7 +150,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         try {
             closeableHttpResponse = httpClient.execute(new HttpGet(uri));
         } catch (IOException e) {
-                LOG.warn("Internal error: ", e);
+            LOG.warn("Internal error: ", e);
         }
         return closeableHttpResponse;
     }
@@ -174,7 +173,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             conManager.shutdown();
             httpClient.close();
         } catch (IOException e) {
-            LOG.warn("Http client failed to close: ", e);
+            LOG.warn("Internal error: ", e);
         }
         LOG.info("user verifier stopped");
     }
