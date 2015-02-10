@@ -133,7 +133,7 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
     channel->get_protocol_id = &test_get_protocol_info;
     channel->get_supported_services = &test_get_supported_services;
     channel->sync_handler = &test_sync_handler;
-    channel->release_context = NULL;
+    channel->destroy = NULL;
     channel->init = &test_init_channel;
     channel->set_access_point = &test_set_access_point;
 }

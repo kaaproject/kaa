@@ -26,6 +26,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+
+
 kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
 {
     KAA_RETURN_IF_NIL2(addr, port, KAA_ERR_BADPARAM);
@@ -45,6 +47,7 @@ kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
     }
     return KAA_ERR_NONE;
 }
+
 
 
 ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener
@@ -92,6 +95,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
 }
 
 
+
 kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd
                                         , const kaa_sockaddr_t *destination
                                         , kaa_socklen_t destination_size)
@@ -123,6 +127,7 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd
 }
 
 
+
 ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
                                                     , const kaa_sockaddr_t *destination
                                                     , kaa_socklen_t destination_size)
@@ -142,6 +147,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
 }
 
 
+
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
                                                         , const char *buffer
                                                         , size_t buffer_size
@@ -155,6 +161,7 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
         *bytes_written = (write_result > 0) ? write_result : 0;
     return KAA_TCP_SOCK_IO_OK;
 }
+
 
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
@@ -172,6 +179,7 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
         *bytes_read = (read_result > 0) ? read_result : 0;
     return KAA_TCP_SOCK_IO_OK;
 }
+
 
 
 kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd)

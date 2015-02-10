@@ -49,6 +49,8 @@ typedef struct {
 typedef kaa_error_t (*kaa_init_channel_fn)(void *channel_context
                                          , kaa_transport_context_t *transport_context);
 
+
+
 /**
  * @brief Sets transport connection data.
  *
@@ -63,6 +65,8 @@ typedef kaa_error_t (*kaa_init_channel_fn)(void *channel_context
 typedef kaa_error_t (*kaa_set_access_point_fn)(void *channel_context
                                              , kaa_access_point_t *access_point);
 
+
+
 /**
  * @brief Retrieves a transport protocol id supported by a transport channel implementation.
  *
@@ -74,6 +78,8 @@ typedef kaa_error_t (*kaa_set_access_point_fn)(void *channel_context
  */
 typedef kaa_error_t (*kaa_get_protocol_id_fn)(void *context
                                             , kaa_transport_protocol_id_t *protocol_info);
+
+
 
 /**
  * @brief Retrieves the list of the supported services.
@@ -88,6 +94,7 @@ typedef kaa_error_t (*kaa_get_protocol_id_fn)(void *context
 typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context
                                                    , kaa_service_t **supported_services
                                                    , size_t *service_count);
+
 
 
 /**
@@ -105,6 +112,7 @@ typedef kaa_error_t (*kaa_sync_handler_fn)(void *context
                                          , size_t service_count);
 
 
+
 /**
  * @brief Releases channel context.
  *
@@ -112,7 +120,8 @@ typedef kaa_error_t (*kaa_sync_handler_fn)(void *context
  * @return                 Error code.
  *
  */
-typedef kaa_error_t (*kaa_release_channel_context_fn)(void *context);
+typedef kaa_error_t (*kaa_tcp_channel_destroy_fn)(void *context);
+
 
 
 /**
@@ -122,13 +131,15 @@ typedef kaa_error_t (*kaa_release_channel_context_fn)(void *context);
  */
 typedef struct {
     void                              *context;
-    kaa_release_channel_context_fn    release_context; /**< May be NULL */
+    kaa_tcp_channel_destroy_fn        destroy; /**< May be NULL */
     kaa_sync_handler_fn               sync_handler;
     kaa_init_channel_fn               init;
     kaa_set_access_point_fn           set_access_point;
     kaa_get_protocol_id_fn            get_protocol_id;
     kaa_get_supported_services_fn     get_supported_services;
 } kaa_transport_channel_interface_t;
+
+
 
 #ifdef __cplusplus
 }      /* extern "C" */
