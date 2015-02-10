@@ -75,9 +75,9 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
 
     private class RunnableVerifier implements Runnable {
 
-        private URI uri;
-        private UserVerifierCallback callback;
-        private String userExternalId;
+        private final URI uri;
+        private final UserVerifierCallback callback;
+        private final String userExternalId;
 
         public RunnableVerifier(URI uri, UserVerifierCallback callback, String userExternalId) {
             this.uri = uri;
@@ -120,13 +120,12 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 }
 
             } catch (IOException e) {
-                LOG.debug("Internal error: ", e);
+                LOG.warn("Internal error: ", e);
             } finally {
                 try {
                     closeableHttpResponse.close();
                 } catch (IOException e) {
-                    LOG.debug("СloseableHttpResponse failed to close", e);
-                    e.printStackTrace();
+                    LOG.warn("СloseableHttpResponse failed to close: ", e);
                 }
             }
 
@@ -152,7 +151,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         try {
             closeableHttpResponse = httpClient.execute(new HttpGet(uri));
         } catch (IOException e) {
-            e.printStackTrace();
+                LOG.warn("Internal error: ", e);
         }
         return closeableHttpResponse;
     }
@@ -175,8 +174,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             conManager.shutdown();
             httpClient.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            LOG.debug("Http client failed to close", e);
+            LOG.warn("Http client failed to close: ", e);
         }
         LOG.info("user verifier stopped");
     }
