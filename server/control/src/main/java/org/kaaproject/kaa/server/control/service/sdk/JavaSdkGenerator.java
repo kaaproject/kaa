@@ -120,8 +120,14 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant EVENT_CLASS_FAMILY_VERSION_PROPERTY. */
     private static final String EVENT_CLASS_FAMILY_VERSION_PROPERTY = "event_cf_version";
 
-    /** The Constant ABSTRACT_RPOFILE_CONTAINER_SOURCE_TEMPLATE. */
-    private static final String ABSTRACT_RPOFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/AbstractProfileContainer.java.template";
+    /** The Constant PROFILE_CONTAINER_SOURCE_TEMPLATE. */
+    private static final String PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileContainer.java.template";
+
+    /** The Constant PROFILE_SERIALIZER_SOURCE_TEMPLATE. */
+    private static final String PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileSerializer.java.template";
+
+    /** The Constant DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE. */
+    private static final String DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/DefaultProfileSerializer.java.template";
 
     /** The Constant ABSTRACT_NOTIFICATION_LISTENER_SOURCE_TEMPLATE. */
     private static final String ABSTRACT_NOTIFICATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/AbstractNotificationListener.java.template";
@@ -139,7 +145,10 @@ public class JavaSdkGenerator extends SdkGenerator {
     private static final String USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE = "sdk/java/event/UserVerifierConstants.java.template";
     
     /** The Constant ABSTRACT_PROFILE_CONTAINER. */
-    private static final String ABSTRACT_PROFILE_CONTAINER = "AbstractProfileContainer";
+    private static final String PROFILE_CONTAINER = "ProfileContainer";
+
+    /** The Constant ABSTRACT_PROFILE_CONTAINER. */
+    private static final String PROFILE_SERIALIZER = "ProfileSerializer";
 
     /** The Constant ABSTRACT_NOTIFICATION_LISTENER. */
     private static final String ABSTRACT_NOTIFICATION_LISTENER = "AbstractNotificationListener";
@@ -226,14 +235,26 @@ public class JavaSdkGenerator extends SdkGenerator {
         replacementData.put(CLIENT_PROPERTIES, new ZipEntryData(new ZipEntry(CLIENT_PROPERTIES), clientPropertiesData));
 
         Schema profileSchema = new Schema.Parser().parse(profileSchemaBody);
+        String profileClassName = profileSchema.getName();
+        String profileClassPackage = profileSchema.getNamespace();
 
         List<JavaDynamicBean> javaSources = generateSchemaSources(profileSchema);
-        String profileContainerTemplate = readResource(ABSTRACT_RPOFILE_CONTAINER_SOURCE_TEMPLATE);
-        String profileContainerSource = profileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileSchema.getNamespace())
-                .replaceAll(PROFILE_CLASS_VAR, profileSchema.getName());
-
-        JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(ABSTRACT_PROFILE_CONTAINER, profileContainerSource);
+        String profileContainerTemplate = readResource(PROFILE_CONTAINER_SOURCE_TEMPLATE);
+        String profileContainerSource = profileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage)
+                .replaceAll(PROFILE_CLASS_VAR, profileClassName);
+        JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(PROFILE_CONTAINER, profileContainerSource);
         javaSources.add(profileContainerClassBean);
+
+        String profileSerializerTemplate;
+        if (profileSchemaVersion == 1) {
+            profileSerializerTemplate = readResource(DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE);
+        } else {
+            profileSerializerTemplate = readResource(PROFILE_SERIALIZER_SOURCE_TEMPLATE);
+        }
+        String profileSerializerSource = profileSerializerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage)
+                .replaceAll(PROFILE_CLASS_VAR, profileClassName);
+        JavaDynamicBean profileSerializerClassBean = new JavaDynamicBean(PROFILE_SERIALIZER, profileSerializerSource);
+        javaSources.add(profileSerializerClassBean);
 
         Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
         javaSources.addAll(generateSchemaSources(notificationSchema));

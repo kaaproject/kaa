@@ -18,7 +18,7 @@ package org.kaaproject.kaa.client.profile;
 import java.io.IOException;
 
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.schema.base.Profile;
+import ${profile_class_package}.${profile_class};
 
 /**
  * This class serialize entity defined in profile schema and returned by profile container.
@@ -30,19 +30,17 @@ import org.kaaproject.kaa.schema.base.Profile;
  * @author Andrew Shvayka
  */
 class ProfileSerializer {
-    private final AvroByteArrayConverter<Profile> converter = new AvroByteArrayConverter<Profile>(Profile.class);
+
+    private final AvroByteArrayConverter<${profile_class}> converter = new AvroByteArrayConverter<${profile_class}>(${profile_class}.class);
 
     byte[] toByteArray(ProfileContainer container) throws IOException {
-        Profile profile;
-        if (container == null) {
-            throw new RuntimeException("Profile container is not set!");
-        } else {
+        ${profile_class} profile;
+        if (container != null) {
             profile = container.getProfile();
         }
-        if (profile != null) {
-            return converter.toByteArray(profile);
-        } else {
-            throw new RuntimeException("Profile is not set!");
+        if (profile == null) {
+            profile = new ${profile_class}();
         }
+        return converter.toByteArray(profile);
     }
 }
