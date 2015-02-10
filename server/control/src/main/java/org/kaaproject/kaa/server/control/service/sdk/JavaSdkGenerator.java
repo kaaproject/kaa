@@ -120,6 +120,12 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant EVENT_CLASS_FAMILY_VERSION_PROPERTY. */
     private static final String EVENT_CLASS_FAMILY_VERSION_PROPERTY = "event_cf_version";
 
+    /** The Constant NOTIFICATION_LISTENER_SOURCE_TEMPLATE. */
+    private static final String NOTIFICATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/nf/NotificationListener.java.template";
+
+    /** The Constant NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE. */
+    private static final String NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE = "sdk/java/nf/NotificationDeserializer.java.template";
+
     /** The Constant PROFILE_CONTAINER_SOURCE_TEMPLATE. */
     private static final String PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileContainer.java.template";
 
@@ -128,9 +134,6 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE. */
     private static final String DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/DefaultProfileSerializer.java.template";
-
-    /** The Constant ABSTRACT_NOTIFICATION_LISTENER_SOURCE_TEMPLATE. */
-    private static final String ABSTRACT_NOTIFICATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/AbstractNotificationListener.java.template";
 
     /** The Constant LOG_RECORD_SOURCE_TEMPLATE. */
     private static final String LOG_RECORD_SOURCE_TEMPLATE = "sdk/java/log/LogRecord.java.template";
@@ -150,8 +153,11 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant ABSTRACT_PROFILE_CONTAINER. */
     private static final String PROFILE_SERIALIZER = "ProfileSerializer";
 
-    /** The Constant ABSTRACT_NOTIFICATION_LISTENER. */
-    private static final String ABSTRACT_NOTIFICATION_LISTENER = "AbstractNotificationListener";
+    /** The Constant NOTIFICATION_LISTENER. */
+    private static final String NOTIFICATION_LISTENER = "NotificationListener";
+
+    /** The Constant NOTIFICATION_DESERIALIZER. */
+    private static final String NOTIFICATION_DESERIALIZER = "NotificationDeserializer";
     
     /** The Constant  USER_VERIFIER_CONSTANTS. */
     private static final String  USER_VERIFIER_CONSTANTS = "UserVerifierConstants";
@@ -257,13 +263,25 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(profileSerializerClassBean);
 
         Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
-        javaSources.addAll(generateSchemaSources(notificationSchema));
-        String notificationListenerTemplate = readResource(ABSTRACT_NOTIFICATION_LISTENER_SOURCE_TEMPLATE);
-        String notificationListenerSource = notificationListenerTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
-                notificationSchema.getNamespace()).replaceAll(NOTIFICATION_CLASS_VAR, notificationSchema.getName());
+        String notificationClassName = profileSchema.getName();
+        String notificationClassPackage = profileSchema.getNamespace();
 
-        JavaDynamicBean notificationListenerClassBean = new JavaDynamicBean(ABSTRACT_NOTIFICATION_LISTENER, notificationListenerSource);
+        javaSources.addAll(generateSchemaSources(notificationSchema));
+        String notificationListenerTemplate = readResource(NOTIFICATION_LISTENER_SOURCE_TEMPLATE);
+        String notificationListenerSource = notificationListenerTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
+                notificationClassPackage).replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
+
+        JavaDynamicBean notificationListenerClassBean = new JavaDynamicBean(NOTIFICATION_LISTENER, notificationListenerSource);
         javaSources.add(notificationListenerClassBean);
+
+        javaSources.addAll(generateSchemaSources(notificationSchema));
+        String notificationDeserializerSourceTemplate = readResource(NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE);
+        String notificationDeserializerSource = notificationDeserializerSourceTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
+                notificationClassPackage).replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
+
+        JavaDynamicBean notificationDeserializerClassBean = new JavaDynamicBean(NOTIFICATION_LISTENER, notificationDeserializerSource);
+        javaSources.add(notificationDeserializerClassBean);
+
 
         Schema logSchema = new Schema.Parser().parse(logSchemaBody);
         javaSources.addAll(generateSchemaSources(logSchema));
