@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.verifiers.gplus.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GplusAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.gplus.config.gen\",\"fields\":[{\"name\":\"max_parallel_connections\",\"type\":\"int\",\"displayName\":\"Maximum parallel connections opened\",\"by_default\":\"20\"},{\"name\":\"min_parallel_connections\",\"type\":\"int\",\"displayName\":\"Minimum parallel connections opened\",\"by_default\":\"2\"},{\"name\":\"keep_alive_time_milliseconds\",\"type\":\"long\",\"displayName\":\"Time to keep connection alive\",\"by_default\":\"60_000\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GplusAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.gplus.config.gen\",\"fields\":[{\"name\":\"max_parallel_connections\",\"type\":\"int\",\"displayName\":\"Maximum parallel connections opened\",\"by_default\":\"20\"},{\"name\":\"min_parallel_connections\",\"type\":\"int\",\"displayName\":\"Minimum parallel connections opened\",\"by_default\":\"2\"},{\"name\":\"keep_alive_time_milliseconds\",\"type\":\"long\",\"displayName\":\"Milliseconds to keep connection alive\",\"by_default\":\"60_000\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private int max_parallel_connections;
    private int min_parallel_connections;
