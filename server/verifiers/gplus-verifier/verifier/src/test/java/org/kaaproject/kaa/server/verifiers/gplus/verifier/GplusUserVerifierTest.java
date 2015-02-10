@@ -17,6 +17,9 @@
 
 package org.kaaproject.kaa.server.verifiers.gplus.verifier;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
@@ -25,6 +28,7 @@ import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -34,7 +38,6 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
     private static GplusUserVerifier verifier;
     private static String userId = "1557997434440423";
     private static GplusAvroConfig config;
-    private static HttpURLConnection connection;
 
     @BeforeClass
     public static void setUp() {
@@ -117,12 +120,17 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
         }
 
         @Override
-        protected HttpURLConnection establishConnection(URL url) {
-            connection = mock(HttpURLConnection.class);
+        protected CloseableHttpResponse establishConnection(URI uri) {
+            CloseableHttpResponse connection = mock(CloseableHttpResponse.class);
+
             try {
-                when(connection.getResponseCode()).thenReturn(responseCode);
-                when(connection.getInputStream()).thenReturn(
-                        new ByteArrayInputStream(inputStreamString.getBytes(StandardCharsets.UTF_8)));
+                StatusLine statusLine = mock(StatusLine.class);
+                when(statusLine.getStatusCode()).thenReturn(responseCode);
+                HttpEntity httpEntity = mock(HttpEntity.class);
+                when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(inputStreamString.
+                        getBytes(StandardCharsets.UTF_8)));
+                when(connection.getStatusLine()).thenReturn(statusLine);
+                when(connection.getEntity()).thenReturn(httpEntity);
             } catch (Exception e) {
                 e.printStackTrace();
             }

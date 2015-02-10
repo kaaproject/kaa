@@ -16,6 +16,15 @@
 
 package org.kaaproject.kaa.server.verifiers.gplus.verifier;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectionRequest;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.server.common.verifier.AbstractKaaUserVerifier;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
@@ -39,6 +48,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     private static final int HTTP_BAD_REQUEST = 400;
     private GplusAvroConfig configuration;
     private ExecutorService threadPool;
+    private CloseableHttpClient httpClient;
 
 
     @Override
@@ -51,26 +61,25 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     @Override
     public void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback) {
 
-        URL url = null;
+        URI uri = null;
         try {
-            url = new URL(GOOGLE_OAUTH + accessToken);
-        } catch (MalformedURLException e) {
-            callback.onVerificationFailure("Internal error: malformed url");
-            LOG.debug("Internal error: malformed url", e);
+            uri = new URI(GOOGLE_OAUTH + accessToken);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
-        threadPool.submit(new RunnableVerifier(url, callback, userExternalId));
+        threadPool.submit(new RunnableVerifier(uri, callback, userExternalId));
 
     }
 
 
     private class RunnableVerifier implements Runnable {
 
-        private URL url;
+        private URI uri;
         private UserVerifierCallback callback;
         private String userExternalId;
 
-        public RunnableVerifier(URL url, UserVerifierCallback callback, String userExternalId) {
-            this.url = url;
+        public RunnableVerifier(URI uri, UserVerifierCallback callback, String userExternalId) {
+            this.uri = uri;
             this.callback = callback;
             this.userExternalId = userExternalId;
         }
@@ -78,17 +87,22 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         @Override
         public void run() {
 
-            HttpURLConnection connection = null;
+            CloseableHttpResponse closeableHttpResponse = null;
+//            HttpURLConnection connection = null;
             try {
 
                 String responseJson = "";
                 int responseCode;
-                connection = establishConnection(url);
+/*                connection = establishConnection(url);
                 connection.setRequestMethod("GET");
-                responseCode = connection.getResponseCode();
+                responseCode = connection.getResponseCode();*/
+
+                    closeableHttpResponse = establishConnection(uri);
+
+                responseCode = closeableHttpResponse.getStatusLine().getStatusCode();
 
                 if (responseCode == HTTP_OK) {
-                    responseJson = readResponse(connection.getInputStream());
+                    responseJson = readResponse(closeableHttpResponse.getEntity().getContent());
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, String> map = mapper.readValue(responseJson.toString(), Map.class);
                     String userId = String.valueOf(map.get("user_id"));
@@ -99,22 +113,24 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                         callback.onSuccess();
                         LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
                     }
-                } if (responseCode == HTTP_BAD_REQUEST) {
+                }
+                if (responseCode == HTTP_BAD_REQUEST) {
                     callback.onTokenInvalid();
-                    LOG.trace("Server auth error: {}", readResponse(connection.getErrorStream()));
+                    LOG.trace("Server auth error: {}", readResponse(closeableHttpResponse.getEntity().getContent()));
                 } else {
                     callback.onInternalError();
                     LOG.trace("Server returned the following error code: {}", responseCode);
                 }
 
-
             } catch (IOException e) {
                 LOG.debug("Internal error: ", e);
             } finally {
-                if (null != connection) {
-                    connection.disconnect();
+                try {
+                    closeableHttpResponse.close();
+                } catch (IOException e) {
+                    LOG.debug("СloseableHttpResponse failed to close", e);
+                    e.printStackTrace();
                 }
-
             }
 
         }
@@ -128,20 +144,20 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             bos.write(data, 0, len);
         }
 
-        byte [] bytes = bos.toByteArray();
+        byte[] bytes = bos.toByteArray();
         bos.close();
         return new String(bytes, "UTF-8");
     }
 
 
-    protected HttpURLConnection establishConnection(URL url) {
-        HttpURLConnection connection = null;
+    protected CloseableHttpResponse establishConnection(URI uri) {
+        CloseableHttpResponse closeableHttpResponse = null;
         try {
-            connection = (HttpURLConnection) url.openConnection();
+            closeableHttpResponse = httpClient.execute(new HttpGet(uri));
         } catch (IOException e) {
-            LOG.debug("Establishing connection failed", e);
+            e.printStackTrace();
         }
-        return connection;
+        return closeableHttpResponse;
     }
 
     @Override
@@ -149,11 +165,20 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         LOG.info("user verifier started");
         threadPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
                 configuration.getKeepAliveTimeMilliseconds(), TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        PoolingHttpClientConnectionManager conManager = new PoolingHttpClientConnectionManager();
+        conManager.setMaxTotal(configuration.getMaxParallelConnections());
+        httpClient = HttpClients.custom().setConnectionManager(conManager).build();
     }
 
     @Override
     public void stop() {
         threadPool.shutdown();
+        try {
+            httpClient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            LOG.debug("Http client failed to close", e);
+        }
         LOG.info("user verifier stopped");
     }
 
