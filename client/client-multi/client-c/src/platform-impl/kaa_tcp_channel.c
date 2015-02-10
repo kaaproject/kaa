@@ -941,16 +941,17 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
     self->access_point.state = AP_SET;
     self->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
 
-    if (self->access_point.socket_descriptor >= 0)
+    if (self->access_point.socket_descriptor >= 0) {
+        if (self->event_callback)
+                self->event_callback(self->event_context, SOCKET_DISCONNECTED, self->access_point.socket_descriptor);
         error_code = ext_tcp_utils_tcp_socket_close(self->access_point.socket_descriptor);
-
-    self->access_point.socket_descriptor = KAA_TCP_SOCKET_NOT_SET;
+        self->access_point.socket_descriptor = KAA_TCP_SOCKET_NOT_SET;
+    }
 
     kaa_buffer_reset(self->in_buffer);
     kaa_buffer_reset(self->out_buffer);
 
-    if (self->event_callback)
-        self->event_callback(self->event_context, SOCKET_DISCONNECTED, self->access_point.socket_descriptor);
+
 
     kaatcp_parser_reset(self->parser);
 
