@@ -60,11 +60,6 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     }
 
     @Test
-    public void testGetNotificationManager() {
-        assertNotNull(getNotificationManager());
-    }
-
-    @Test
     public void testGetEndpointRegistrationManager() {
         assertNotNull(getEndpointRegistrationManager());
     }

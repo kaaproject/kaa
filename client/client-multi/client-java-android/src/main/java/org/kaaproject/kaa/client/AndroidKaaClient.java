@@ -63,5 +63,4 @@ public class AndroidKaaClient extends AbstractKaaClient {
     protected ConnectivityChecker createConnectivityChecker() {
         return new AndroidConnectivityChecker(context);
     }
-
 }

@@ -76,7 +76,9 @@ import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.logging.DefaultLogCollector;
 import org.kaaproject.kaa.client.logging.LogCollector;
 import org.kaaproject.kaa.client.notification.DefaultNotificationManager;
-import org.kaaproject.kaa.client.notification.NotificationManager;
+import org.kaaproject.kaa.client.notification.NotificationListener;
+import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
+import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
@@ -89,6 +91,7 @@ import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.client.util.Base64;
 import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -325,13 +328,93 @@ public abstract class AbstractKaaClient implements KaaClient {
     }
 
     @Override
-    public void setProfileContainer(ProfileContainer container){
+    public void setProfileContainer(ProfileContainer container) {
         this.profileManager.setProfileContainer(container);
     };
 
     @Override
-    public void updateProfile(){
+    public void updateProfile() {
         this.profileManager.updateProfile();
+    }
+
+    @Override
+    public List<Topic> getTopics() {
+        return this.notificationManager.getTopics();
+    }
+
+    @Override
+    public void addTopicListListener(NotificationTopicListListener listener) {
+        this.notificationManager.addTopicListListener(listener);
+    }
+
+    @Override
+    public void removeTopicListListener(NotificationTopicListListener listener) {
+        this.notificationManager.removeTopicListListener(listener);
+    }
+
+    @Override
+    public void addNotificationListener(NotificationListener listener) {
+        this.notificationManager.addNotificationListener(listener);
+    }
+
+    @Override
+    public void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException {
+        this.notificationManager.addNotificationListener(topicId, listener);
+    }
+
+    @Override
+    public void removeNotificationListener(NotificationListener listener) {
+        this.notificationManager.removeNotificationListener(listener);
+    }
+
+    @Override
+    public void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException {
+        this.notificationManager.removeNotificationListener(topicId, listener);
+    }
+
+    @Override
+    public void subscribeToTopic(String topicId) throws UnavailableTopicException {
+        this.notificationManager.subscribeToTopic(topicId, true);
+    }
+
+    @Override
+    public void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
+        this.notificationManager.subscribeToTopic(topicId, forceSync);
+    }
+
+    @Override
+    public void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException {
+        this.notificationManager.subscribeToTopics(topicIds, true);
+    }
+
+    @Override
+    public void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
+        this.notificationManager.subscribeToTopics(topicIds, forceSync);
+    }
+
+    @Override
+    public void unsubscribeFromTopic(String topicId) throws UnavailableTopicException {
+        this.notificationManager.unsubscribeFromTopic(topicId, true);
+    }
+
+    @Override
+    public void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
+        this.notificationManager.unsubscribeFromTopic(topicId, forceSync);
+    }
+
+    @Override
+    public void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException {
+        this.notificationManager.unsubscribeFromTopics(topicIds, true);
+    }
+
+    @Override
+    public void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
+        this.notificationManager.unsubscribeFromTopics(topicIds, forceSync);
+    }
+
+    @Override
+    public void syncTopicsList() {
+        this.notificationManager.sync();
     }
 
     @Override
@@ -352,11 +435,6 @@ public abstract class AbstractKaaClient implements KaaClient {
     @Override
     public SchemaPersistenceManager getSchemaPersistenceManager() {
         return schemaPersistenceManager;
-    }
-
-    @Override
-    public NotificationManager getNotificationManager() {
-        return notificationManager;
     }
 
     @Override
