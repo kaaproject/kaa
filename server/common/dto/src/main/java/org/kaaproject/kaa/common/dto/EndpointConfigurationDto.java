@@ -16,28 +16,17 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
-
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class EndpointConfigurationDto implements HasId, Serializable {
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
+
+public class EndpointConfigurationDto implements Serializable {
 
     private static final long serialVersionUID = 5662111748223086520L;
 
-    private String id;
     private byte[] configurationHash;
     private byte[] configuration;
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public byte[] getConfigurationHash() {
         return configurationHash;
@@ -55,47 +44,35 @@ public class EndpointConfigurationDto implements HasId, Serializable {
         return new String(configuration);
     }
 
-//    public BaseData getBaseConfiguration(BaseSchema schema) {
-//        return new BaseData(schema, new String(configuration));
-//    }
-
     public void setConfiguration(byte[] configuration) {
         this.configuration = configuration;
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((configuration == null) ? 0 : configuration.hashCode());
-        result = prime * result + Arrays.hashCode(configurationHash);
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EndpointConfigurationDto that = (EndpointConfigurationDto) o;
+
+        if (!Arrays.equals(configuration, that.configuration)) return false;
+        if (!Arrays.equals(configurationHash, that.configurationHash)) return false;
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof EndpointConfigurationDto)) {
-            return false;
-        }
-
-        EndpointConfigurationDto that = (EndpointConfigurationDto) o;
-        if (!Arrays.equals(configurationHash, that.configurationHash)) {
-            return false;
-        }
-
-        return Arrays.equals(configuration, that.configuration);
+    public int hashCode() {
+        int result = configurationHash != null ? Arrays.hashCode(configurationHash) : 0;
+        result = 31 * result + (configuration != null ? Arrays.hashCode(configuration) : 0);
+        return result;
     }
 
     @Override
     public String toString() {
         return "EndpointConfigurationDto{" +
-                "id='" + id + '\'' +
-                ", configurationHash='" + configurationHash + '\'' +
-                ", configuration='" + configuration + '\'' +
+                "configurationHash=" + Arrays.toString(configurationHash) +
+                ", configuration=" + Arrays.toString(configuration) +
                 '}';
     }
 }

@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.client.notification;
 
 import java.util.List;
-import java.util.Map;
 
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
@@ -40,114 +39,6 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
  *
  */
 public interface NotificationManager {
-    /**
-     * <p>
-     * Add listener for all mandatory topics' updates.
-     * </p>
-     *
-     * <p>
-     * <b>Use {@link #addNotificationListener(NotificationListener)}
-     * instead.</b>
-     * </p>
-     *
-     * <p>
-     * If specific listener is needed for some mandatory topic, use
-     * {@link NotificationManager#addNotificationListener(String, NotificationListener)}
-     * .
-     * </p>
-     *
-     * @param listener
-     *            the listener to receive notification.
-     *
-     * @see AbstractNotificationListener
-     *
-     */
-    @Deprecated
-    void addMandatoryTopicsListener(NotificationListener listener);
-
-    /**
-     * <p>
-     * Remove listener for mandatory topics' updates.
-     * </p>
-     *
-     * <p>
-     * <b>Use {@link #removeNotificationListener(NotificationListener)}
-     * instead.</b>
-     * </p>
-     *
-     * @param listener
-     *            the listener which is no longer needs updates.
-     *
-     * @see AbstractNotificationListener
-     * @see NotificationManager#removeNotificationListener(NotificationListener)
-     *
-     */
-    @Deprecated
-    void removeMandatoryTopicsListener(NotificationListener listener);
-
-    /**
-     * <p>
-     * Update (subscribe/unsubscribe) info about topic's subscriptions.
-     * </p>
-     *
-     * <p>
-     * Basic usage is to subscribe for optional topic updates and unsubscribe
-     * from them. More than one listener may be used for the same topic.
-     * </p>
-     *
-     * <p>
-     * Also it may be used to add/remove specific listener(s) for some mandatory
-     * topic.
-     * </p>
-     * 
-     * <pre>
-     * {
-     *     &#064;code
-     *     // Assume, BasicNotification is a notification class auto-generated
-     *     // according to predefined Avro schema
-     *     public class UserNotificationListener extends AbstractNotificationListener&lt;BasicNotification&gt; {
-     *         public UserNotificationListener() {
-     *         }
-     * 
-     *         protected Class&lt;BasicNotification&gt; getNotificationClass() {
-     *             return BasicNotification.class;
-     *         }
-     * 
-     *         public void onNotification(String topicId, BasicNotification notification) {
-     *             System.out.println(&quot;Got notification: &quot; + notification.toString());
-     *         }
-     *     }
-     * 
-     *     // Assume, there are one mandatory topic with id &quot;mand_id&quot; and
-     *     // one optional with id &quot;vol_id&quot;.
-     *     Map&lt;String, List&lt;NotificationListenerInfo&gt;&gt; subscriptions = new HashMap&lt;&gt;();
-     * 
-     *     // Add specific listener for &quot;mand_id&quot; topic
-     *     UserNotificationListener mandatoryListener = new UserNotificationListener();
-     *     subscriptions.put(&quot;mand_id&quot;, Arrays.asList(new NotificationListenerInfo(mandatoryListener, NotificationListenerInfo.Action.ADD)));
-     * 
-     *     // Subscribe for optional topic updates
-     *     UserNotificationListener optionalListener = new UserNotificationListener();
-     *     subscriptions.put(&quot;vol_id&quot;, Arrays.asList(new NotificationListenerInfo(optionalListener, NotificationListenerInfo.Action.ADD)));
-     * 
-     *     kaaClient.getNotificationManager().updateTopicSubscriptions(subscriptions);
-     * }
-     * </pre>
-     *
-     * @param subscribers
-     *            collections of pairs topic id/subscriber info.
-     *
-     * @throws UnavailableTopicException
-     *             Throw if unknown topic id is provided.
-     *
-     * @see #subscribeToTopic(String, boolean)
-     * @see #subscribeToTopics(List, boolean)
-     * @see #addNotificationListener(NotificationListener)
-     * @see #addNotificationListener(String, NotificationListener)
-     *
-     */
-    @Deprecated
-    void updateTopicSubscriptions(Map<String, List<NotificationListenerInfo>> subscribers) throws UnavailableTopicException;
 
     /**
      * <p>

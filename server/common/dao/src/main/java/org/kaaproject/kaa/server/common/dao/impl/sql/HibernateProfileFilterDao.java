@@ -47,7 +47,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilter> implements ProfileFilterDao<ProfileFilter> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractDao.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateProfileFilterDao.class);
 
     @Override
     public List<ProfileFilter> findAllByProfileSchemaId(String schemaId) {

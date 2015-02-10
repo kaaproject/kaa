@@ -475,10 +475,6 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
         for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
-            if (nodeIndex > 0) {
-                bootstrapServers += ";";
-            }
-
             BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
             List<TransportMetaData> supportedChannels = node.getTransports();
 
@@ -494,6 +490,7 @@ public class JavaSdkGenerator extends SdkGenerator {
                     bootstrapServers += pair.getVersion();
                     bootstrapServers += SEPARATOR;
                     bootstrapServers += Base64.encodeBase64String(pair.getConenctionInfo().array());
+                    bootstrapServers += ";";
                 }
             }
         }

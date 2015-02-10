@@ -19,11 +19,13 @@ package org.kaaproject.kaa.server.common.dao.impl;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 
+import java.nio.ByteBuffer;
+
 /**
  * The interface Endpoint configuration dao.
  * @param <T>  the type parameter
  */
-public interface EndpointConfigurationDao<T extends EndpointConfiguration> extends Dao<T> {
+public interface EndpointConfigurationDao<T extends EndpointConfiguration> extends Dao<T, ByteBuffer> {
 
     T save(EndpointConfigurationDto dto);
     

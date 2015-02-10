@@ -15,26 +15,26 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.sql.JoinType;
-import org.kaaproject.kaa.server.common.dao.impl.Dao;
+import org.kaaproject.kaa.server.common.dao.impl.SqlDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements Dao<T> {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
+public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements SqlDao<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractDao.class);
 
@@ -79,7 +79,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
                     Long lid = Long.parseLong(id);
                     lids.add(lid);
                 } catch (NumberFormatException e) {
-                    LOG.warn("Can't conver string id {} to Long id", id);
+                    LOG.warn("Can't convert string id {} to Long id", id);
                 }
             }
         }
@@ -95,7 +95,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         String className = getSimpleClassName();
         LOG.debug("Find {} entities by criterion [{}] ", className, criterion);
         Criteria criteria = getCriteria();
-        if(type == null) {
+        if (type == null) {
             criteria.createAlias(path, alias);
         } else {
             criteria.createAlias(path, alias, type);
@@ -178,7 +178,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     }
 
     @Override
-    public <V> V save(V o, Class<V> clazz) {
+    public <V> V save(V o, Class<?> clazz) {
         Session session = getSession();
         session.saveOrUpdate(o);
         LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);

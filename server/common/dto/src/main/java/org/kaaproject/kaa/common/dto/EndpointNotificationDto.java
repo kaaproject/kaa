@@ -19,7 +19,8 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import static org.kaaproject.kaa.common.dto.Util.*;
+
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
 
 
 public class EndpointNotificationDto implements HasId, Serializable {
