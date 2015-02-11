@@ -63,8 +63,8 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             URI uri = new URI(GOOGLE_OAUTH + accessToken);
             threadPool.submit(new RunnableVerifier(uri, callback, userExternalId));
         } catch (URISyntaxException e) {
-            callback.onInternalError();
             LOG.warn("Internal error", e);
+            callback.onInternalError();
         }
     }
 
@@ -95,25 +95,25 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                     Map map = mapper.readValue(responseJson, Map.class);
                     String userId = String.valueOf(map.get("user_id"));
                     if (!userExternalId.equals(userId)) {
-                        callback.onVerificationFailure("User access token doesn't belong to the user");
                         LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
+                        callback.onVerificationFailure("User access token doesn't belong to the user");
                     } else {
-                        callback.onSuccess();
                         LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
+                        callback.onSuccess();
                     }
                 }else if (responseCode == HTTP_BAD_REQUEST) {
-                    callback.onTokenInvalid();
                     LOG.trace("Server auth error: {}", readResponse(closeableHttpResponse.getEntity().getContent()));
+                    callback.onTokenInvalid();
                 } else {
-                    callback.onInternalError();
                     LOG.trace("Server returned the following error code: {}", responseCode);
+                    callback.onInternalError();
                 }
             } catch (IOException e) {
-                callback.onInternalError();
                 LOG.warn("Internal error: ", e);
+                callback.onInternalError();
             } catch (Exception e){
-                callback.onInternalError();
                 LOG.warn("Internal error: ", e);
+                callback.onInternalError();
             }finally {
                 if (null != closeableHttpResponse) {
                     try {
