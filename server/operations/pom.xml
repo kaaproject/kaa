@@ -246,6 +246,13 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+            <artifactId>verifier</artifactId>
+            <version>${project.version}</version>
+            <classifier>gplus</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
             <artifactId>verifier</artifactId>
             <version>${project.version}</version>
