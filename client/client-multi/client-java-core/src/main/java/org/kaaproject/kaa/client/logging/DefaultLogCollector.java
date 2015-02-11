@@ -16,117 +16,96 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import static org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration.Builder.BATCH_VOLUME;
-import static org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration.Builder.MAX_STORAGE_SIZE;
-import static org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration.Builder.SINK_THRESHOLD;
-import static org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration.Builder.UPLOAD_TIMEOUT;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.LogTransport;
-import org.kaaproject.kaa.client.logging.gen.SuperRecord;
+import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
+import org.kaaproject.kaa.schema.base.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Reference implementation of @see LogCollector
+ * 
+ * @author Andrew Shvayka
  */
 public class DefaultLogCollector implements LogCollector, LogProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogCollector.class);
+    
+    public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework limitation
+    
+    // TODO: reuse this scheduler in other subsystems
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    private LogUploadConfiguration    configuration;
-    private LogStorage                storage;
-    private LogStorageStatus          storageStatus;
-    private LogUploadStrategy         uploadStrategy;
-    private LogUploadFailoverStrategy failoverStrategy;
-    private final LogTransport        transport;
-
+    private final LogTransport transport;
     private final Map<Integer, Long> timeoutMap = new LinkedHashMap<>();
+    private final KaaChannelManager channelManager;
 
-    private boolean isUploading = false;
+    private LogStorage storage;
+    private LogUploadStrategy strategy;
+    private LogFailoverCommand controller;
+
+    private volatile boolean isUploading = false;
 
     public DefaultLogCollector(LogTransport transport, KaaChannelManager manager) {
-        configuration = new DefaultLogUploadConfiguration.Builder()
-                                .setBatchVolume(BATCH_VOLUME)
-                                .setVolumeThreshold(SINK_THRESHOLD)
-                                .setMaximumAllowedVolume(MAX_STORAGE_SIZE)
-                                .setLogUploadTimeout(UPLOAD_TIMEOUT)
-                                .build();
-        storage = new MemoryLogStorage(configuration.getBatchVolume());
-        storageStatus = (LogStorageStatus)storage;
-        uploadStrategy = new DefaultLogUploadStrategy();
-        failoverStrategy = new DefaultLogUploadFailoverStrategy(manager);
+        this.strategy = new DefaultLogUploadStrategy();
+        this.storage = new MemoryLogStorage(strategy.getBatchSize());
+        this.controller = new DefaultLogUploadController();
+        this.channelManager = manager;
         this.transport = transport;
     }
 
     @Override
-    public synchronized void addLogRecord(SuperRecord record) throws IOException {
-        storage.addLogRecord(new LogRecord(record));
+    public synchronized void addLogRecord(Log record) {
+        try {
+            storage.addLogRecord(new LogRecord(record));
+        } catch (IOException e) {
+            LOG.warn("Can't serialize log record {}", record);
+        }
 
         if (!isDeliveryTimeout()) {
-            processUploadDecision(uploadStrategy.isUploadNeeded(
-                                        configuration, storageStatus));
+            processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
         }
     }
 
     @Override
     public void setUploadStrategy(LogUploadStrategy strategy) {
-        if (strategy != null) {
-            uploadStrategy = strategy;
-            LOG.info("New log upload strategy was set");
+        if (strategy == null) {
+            throw new IllegalArgumentException("Strategy is null!");
         }
-    }
-
-    @Override
-    public void setFailoverStrategy(LogUploadFailoverStrategy strategy) {
-        if (strategy != null) {
-            failoverStrategy = strategy;
-            LOG.info("New failover strategy was set");
-        }
+        this.strategy = strategy;
+        LOG.info("New log upload strategy was set: {}", strategy);
     }
 
     @Override
     public void setStorage(LogStorage storage) {
-        if (storage != null) {
-            this.storage = storage;
-            this.storageStatus = null;
-            LOG.info("New log storage was set");
+        if (storage == null) {
+            throw new IllegalArgumentException("Storage is null!");
         }
-    }
-
-    @Override
-    public void setStorageStatus(LogStorageStatus status) {
-        if (status != null) {
-            this.storageStatus = status;
-            LOG.info("New log storage status was set");
-        }
-    }
-
-    @Override
-    public void setConfiguration(LogUploadConfiguration configuration) {
-        if (configuration != null) {
-            this.configuration = configuration;
-            LOG.info("New log configuration was set");
-            processUploadDecision(uploadStrategy.isUploadNeeded(configuration, storageStatus));
-        }
+        this.storage = storage;
+        LOG.info("New log storage was set {}", storage);
     }
 
     @Override
     public void fillSyncRequest(LogSyncRequest request) {
         LogBlock group = null;
         synchronized (storage) {
-            group = storage.getRecordBlock(configuration.getBatchVolume());
+            group = storage.getRecordBlock(strategy.getBatchSize());
             isUploading = false;
         }
 
@@ -144,8 +123,7 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
                 request.setRequestId(group.getBlockId());
                 request.setLogEntries(logs);
 
-                timeoutMap.put(group.getBlockId(), System.currentTimeMillis() +
-                                        configuration.getLogUploadTimeout() * 1000);
+                timeoutMap.put(group.getBlockId(), System.currentTimeMillis() + strategy.getTimeout() * 1000);
             }
         } else {
             LOG.warn("Log group is null: storage is empty or log group size is too small");
@@ -154,32 +132,29 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
 
     @Override
     public synchronized void onLogResponse(LogSyncResponse logSyncResponse) throws IOException {
-        if (logSyncResponse.getDeliveryStatuses() != null){
-            for (LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()){
+        if (logSyncResponse.getDeliveryStatuses() != null) {
+            for (LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()) {
                 if (response.getResult() == SyncResponseResultType.SUCCESS) {
                     storage.removeRecordBlock(response.getRequestId());
                 } else {
                     storage.notifyUploadFailed(response.getRequestId());
-                    failoverStrategy.onFailure(response.getErrorCode());
+                    strategy.onFailure(controller, response.getErrorCode());
                 }
 
                 timeoutMap.remove(response.getRequestId());
             }
 
-            processUploadDecision(uploadStrategy.isUploadNeeded(configuration, storageStatus));
+            processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
         }
     }
 
     private void processUploadDecision(LogUploadStrategyDecision decision) {
         switch (decision) {
         case UPLOAD:
-            if (failoverStrategy.isUploadApproved() && !isUploading) {
+            if (!isUploading) {
                 isUploading = true;
                 transport.sync();
             }
-            break;
-        case CLEANUP:
-            storage.removeOldestRecord(configuration.getMaximumAllowedVolume());
             break;
         case NOOP:
         default:
@@ -187,6 +162,7 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
         }
     }
 
+    //TODO: fix this. it is now executed only when new log record is added. 
     private boolean isDeliveryTimeout() {
         boolean isTimeout = false;
         long currentTime = System.currentTimeMillis();
@@ -206,9 +182,40 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
             }
 
             timeoutMap.clear();
-            failoverStrategy.onTimeout();
+            strategy.onTimeout(controller);
         }
 
         return isTimeout;
+    }
+
+    private void uploadIfNeeded() {
+        processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
+    }
+
+    private class DefaultLogUploadController implements LogFailoverCommand {
+        @Override
+        public void switchAccessPoint() {
+            KaaDataChannel channel = channelManager.getChannelByTransportType(TransportType.LOGGING);
+            if (channel != null) {
+                channelManager.onServerFailed(channel.getServer());
+            } else {
+                LOG.warn("Failed to switch Operation server. No channel is used for logging transport");
+            }
+        }
+
+        @Override
+        public void retryLogUpload() {
+            uploadIfNeeded();
+        }
+
+        @Override
+        public void retryLogUpload(int delay) {
+            scheduler.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    uploadIfNeeded();
+                }
+            }, delay, TimeUnit.SECONDS);
+        }
     }
 }

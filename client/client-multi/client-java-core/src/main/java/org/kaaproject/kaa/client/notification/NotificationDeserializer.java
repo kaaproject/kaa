@@ -14,9 +14,9 @@ import org.kaaproject.kaa.schema.base.Notification;
  *
  */
 public class NotificationDeserializer {
-    
+
     private final AvroByteArrayConverter<Notification> converter = new AvroByteArrayConverter<Notification>(Notification.class);
-    
+
     Notification fromByteArray(byte[] data) throws IOException{
         return converter.fromByteArray(data);
     }

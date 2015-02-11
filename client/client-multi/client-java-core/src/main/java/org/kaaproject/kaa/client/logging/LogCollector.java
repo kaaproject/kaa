@@ -16,9 +16,7 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import java.io.IOException;
-
-import org.kaaproject.kaa.client.logging.gen.SuperRecord;
+import org.kaaproject.kaa.schema.base.Log;
 
 /**
  * <p>Interface for a log collector.</p>
@@ -43,7 +41,7 @@ public interface LogCollector {
      *
      * @param record New log record object
      */
-    void addLogRecord(SuperRecord record) throws IOException;
+    void addLogRecord(Log record);
 
     /**
      * Set user implementation of a log storage.
@@ -53,30 +51,9 @@ public interface LogCollector {
     void setStorage(LogStorage storage);
 
     /**
-     * Set user implementation of a log storage status.
-     *
-     * @param status User-defined log storage status object
-     */
-    void setStorageStatus(LogStorageStatus status);
-
-    /**
      * Set user implementation of a log upload strategy.
      *
      * @param strategy User-defined log upload strategy object.
      */
     void setUploadStrategy(LogUploadStrategy strategy);
-
-    /**
-     * Set user implementation of a upload failover strategy.
-     *
-     * @param strategy User-defined upload failover strategy object.
-     */
-    void setFailoverStrategy(LogUploadFailoverStrategy strategy);
-
-    /**
-     * Set user implementation of a log upload configuration.
-     *
-     * @param configuration User-defined log upload configuration object.
-     */
-    void setConfiguration(LogUploadConfiguration configuration);
 }
