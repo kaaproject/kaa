@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaaproject.kaa.client;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import org.kaaproject.kaa.schema.base.Log;
 
-/**
-* <p>
-* Base interface to operate with {@link Kaa} library.
-* 
-* This interface contain methods that are auto-generated based on client structures.
-* </p>
-* 
-* @author Yaroslav Zeygerman
-* @author Andrew Shvayka
-*/
-public interface KaaClient extends GenericKaaClient{
+public class BaseKaaClient extends AbstractKaaClient implements KaaClient{
 
-    /**
-     * Adds new log record to local storage.
-     *
-     * @param record New log record object
-     */
-    void addLogRecord(Log record);
+    public BaseKaaClient(KaaClientPlatformContext context) throws InvalidKeySpecException, NoSuchAlgorithmException, IOException {
+        super(context);
+    }
+
+    @Override
+    public void addLogRecord(Log record) {
+        logCollector.addLogRecord(record);
+    }
 }

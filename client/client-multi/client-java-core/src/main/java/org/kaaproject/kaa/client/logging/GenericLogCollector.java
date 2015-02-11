@@ -13,35 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaaproject.kaa.client.logging;
 
-import org.kaaproject.kaa.schema.base.Log;
-
 /**
- * <p>Interface for a log collector.</p>
+ * <p>
+ * Root interface for a log collector.
+ * </p>
  *
- * <p>Adds new log record to a local storage.</p>
+ * <p>
+ * Adds new log record to a local storage.
+ * </p>
  *
- * <p>May be configured by setting user defined log record storage,
- * storage status, upload configuration and log upload strategy.
- * Each of them may be set independently of others.</p>
+ * <p>
+ * May be configured by setting user defined log record storage and log upload
+ * strategy. Each of them may be set independently of others.
+ * </p>
  *
- * <p>Reference implementation of each module used by default.</p>
- * 
- * <p>This interface is auto-generated.</p>
+ * <p>
+ * Reference implementation of each module is provided.
+ * </p>
  *
  * @see LogStorage
  * @see LogStorageStatus
  * @see LogUploadStrategy
  * @see LogUploadConfiguration
  */
-public interface LogCollector extends GenericLogCollector{
+public interface GenericLogCollector {
+    /**
+     * Set user implementation of a log storage.
+     *
+     * @param storage
+     *            User-defined log storage object
+     */
+    void setStorage(LogStorage storage);
 
     /**
-     * Adds new log record to local storage.
+     * Set user implementation of a log upload strategy.
      *
-     * @param record New log record object
+     * @param strategy
+     *            User-defined log upload strategy object.
      */
-    void addLogRecord(Log record);
+    void setStrategy(LogUploadStrategy strategy);
 }

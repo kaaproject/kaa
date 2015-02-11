@@ -39,7 +39,7 @@ public class DefaultLogCollectorTest {
     public void testDefaultUploadConfiguration() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
         strategy.setCountThreshold(5);
         logCollector.setStrategy(strategy);
@@ -66,7 +66,7 @@ public class DefaultLogCollectorTest {
     public void testStorageStatusAffect() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
         LogStorage storage = Mockito.mock(LogStorage.class);
         logCollector.setStorage(storage);
         try {
@@ -114,7 +114,7 @@ public class DefaultLogCollectorTest {
     public void testLogUploadRequestAndSuccessResponse() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
         logCollector.setStrategy(strategy);
         LogStorage storage = Mockito.mock(LogStorage.class);
@@ -176,7 +176,7 @@ public class DefaultLogCollectorTest {
 
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        DefaultLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
 
         DefaultLogUploadStrategy tmp = new DefaultLogUploadStrategy();
         tmp.setTimeout(1);

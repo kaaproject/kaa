@@ -23,44 +23,51 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
-import org.kaaproject.kaa.client.connectivity.AndroidConnectivityChecker;
-import org.kaaproject.kaa.client.persistence.AndroidInternalPersistentStorage;
+import org.kaaproject.kaa.client.connectivity.PingConnectivityChecker;
+import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
-import org.kaaproject.kaa.client.transport.AndroidHttpClient;
-import org.kaaproject.kaa.client.util.AndroidBase64;
+import org.kaaproject.kaa.client.transport.DesktopHttpClient;
 import org.kaaproject.kaa.client.util.Base64;
+import org.kaaproject.kaa.client.util.CommonsBase64;
 
-import android.content.Context;
+public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
 
-public class AndroidKaaClient extends AbstractKaaClient {
-
-    private final Context context; 
+    private final KaaClientProperties properties;
     
-    public AndroidKaaClient(Context context) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public DesktopKaaPlatformContext() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+        this(null);
+    }
+
+    public DesktopKaaPlatformContext(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         super();
-        this.context = context;
+        this.properties = properties;
     }
 
     @Override
     public AbstractHttpClient createHttpClient(String url,
             PrivateKey privateKey, PublicKey publicKey,
             PublicKey remotePublicKey) {
-        return new AndroidHttpClient(url, privateKey, publicKey, remotePublicKey);
+        return new DesktopHttpClient(url, privateKey, publicKey, remotePublicKey);
     }
 
     @Override
-    protected PersistentStorage createPersistentStorage() {
-        return new AndroidInternalPersistentStorage(context);
+    public PersistentStorage createPersistentStorage() {
+        return new FilePersistentStorage();
     }
 
     @Override
-    protected Base64 getBase64() {
-        return AndroidBase64.getInstance();
+    public Base64 getBase64() {
+        return CommonsBase64.getInstance();
     }
 
     @Override
-    protected ConnectivityChecker createConnectivityChecker() {
-        return new AndroidConnectivityChecker(context);
+    public ConnectivityChecker createConnectivityChecker() {
+        return new PingConnectivityChecker();
+    }
+
+    @Override
+    public KaaClientProperties getProperties() {
+        return properties;
     }
 }

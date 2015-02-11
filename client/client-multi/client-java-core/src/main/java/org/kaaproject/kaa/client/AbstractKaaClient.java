@@ -45,7 +45,6 @@ import org.kaaproject.kaa.client.channel.RedirectionTransport;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.UserTransport;
-import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
@@ -73,8 +72,10 @@ import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.EventManager;
 import org.kaaproject.kaa.client.event.registration.DefaultEndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.logging.DefaultLogCollector;
-import org.kaaproject.kaa.client.logging.LogCollector;
+import org.kaaproject.kaa.client.logging.LogStorage;
+import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.DefaultNotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
@@ -89,7 +90,6 @@ import org.kaaproject.kaa.client.schema.storage.DefaultSchemaPersistenceManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.TransportException;
-import org.kaaproject.kaa.client.util.Base64;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -125,7 +125,7 @@ import org.slf4j.LoggerFactory;
  * @see AbstractHttpClient
  * @see PersistentStorage
  */
-public abstract class AbstractKaaClient implements KaaClient {
+public abstract class AbstractKaaClient implements GenericKaaClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
     private static final long LONG_POLL_TIMEOUT = 60000L;
@@ -150,7 +150,7 @@ public abstract class AbstractKaaClient implements KaaClient {
     private final EventFamilyFactory eventFamilyFactory;
 
     private final DefaultEndpointRegistrationManager endpointRegistrationManager;
-    private final DefaultLogCollector logCollector;
+    protected final AbstractLogCollector logCollector;
 
     private final Map<TransportType, KaaTransport> transports = new HashMap<TransportType, KaaTransport>();
     private final DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
@@ -159,16 +159,15 @@ public abstract class AbstractKaaClient implements KaaClient {
     private final KaaChannelManager channelManager;
 
     private final EndpointObjectHash publicKeyHash;
+    
+    protected final KaaClientPlatformContext context;
 
-    AbstractKaaClient() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        this(null);
-    }
-
-    AbstractKaaClient(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        if (properties != null) {
-            this.properties = properties;
+    AbstractKaaClient(KaaClientPlatformContext context) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+        this.context = context;
+        if (context.getProperties() != null) {
+            this.properties = context.getProperties();
         } else {
-            this.properties = new KaaClientProperties(getBase64());
+            this.properties = new KaaClientProperties(context.getBase64());
         }
 
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = this.properties.getBootstrapServers();
@@ -180,7 +179,7 @@ public abstract class AbstractKaaClient implements KaaClient {
             Collections.shuffle(cursor.getValue());
         }
 
-        kaaClientState = new KaaClientPropertiesState(createPersistentStorage(), getBase64(), this.properties);
+        kaaClientState = new KaaClientPropertiesState(context.createPersistentStorage(), context.getBase64(), this.properties);
 
         configurationPersistenceManager = new DefaultConfigurationPersistenceManager(kaaClientState, configurationProcessor);
 
@@ -257,7 +256,7 @@ public abstract class AbstractKaaClient implements KaaClient {
             transport.setClientState(kaaClientState);
         }
 
-        channelManager.setConnectivityChecker(createConnectivityChecker());
+        channelManager.setConnectivityChecker(context.createConnectivityChecker());
     }
 
     private void initKaaConfiguration() {
@@ -283,14 +282,12 @@ public abstract class AbstractKaaClient implements KaaClient {
             }
         }
     }
-
-    public abstract AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey);
-
-    protected abstract PersistentStorage createPersistentStorage();
-
-    protected abstract Base64 getBase64();
-
-    protected abstract ConnectivityChecker createConnectivityChecker();
+    
+    public AbstractHttpClient createHttpClient(String url,
+            PrivateKey privateKey, PublicKey publicKey,
+            PublicKey remotePublicKey) {
+        return context.createHttpClient(url, privateKey, publicKey, remotePublicKey);
+    }
 
     @Override
     public void start() throws IOException, TransportException {
@@ -418,6 +415,16 @@ public abstract class AbstractKaaClient implements KaaClient {
     }
 
     @Override
+    public void setLogStorage(LogStorage storage) {
+        this.logCollector.setStorage(storage);
+    }
+
+    @Override
+    public void setLogUploadStrategy(LogUploadStrategy strategy) {
+        this.logCollector.setStrategy(strategy);
+    }
+
+    @Override
     public ConfigurationManager getConfigurationManager() {
         return configurationManager;
     }
@@ -490,10 +497,5 @@ public abstract class AbstractKaaClient implements KaaClient {
     @Override
     public PrivateKey getClientPrivateKey() {
         return kaaClientState.getPrivateKey();
-    }
-
-    @Override
-    public LogCollector getLogCollector() {
-        return logCollector;
     }
 }
