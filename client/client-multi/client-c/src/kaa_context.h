@@ -28,23 +28,61 @@
 extern "C" {
 #endif
 
-typedef struct kaa_status_t             kaa_status_t;
-typedef struct kaa_platform_protocol_t  kaa_platform_protocol_t;
+#ifndef KAA_STATUS_T
+# define KAA_STATUS_T
+    typedef struct kaa_status_t             kaa_status_t;
+#endif
+
+#ifndef KAA_PLATFORM_PRTOCOL_T
+# define KAA_PLATFORM_PRTOCOL_T
+    typedef struct kaa_platform_protocol_t  kaa_platform_protocol_t;
+#endif
+
+typedef struct kaa_status_holder_t      kaa_status_holder_t;
+
+#ifndef KAA_BOOTSTRAP_MANAGER_T
+# define KAA_BOOTSTRAP_MANAGER_T
 typedef struct kaa_bootstrap_manager_t  kaa_bootstrap_manager_t;
+#endif
+
+#ifndef KAA_CHANNEL_MANAGER_T
+# define KAA_CHANNEL_MANAGER_T
 typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
-typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
-typedef struct kaa_user_manager_t       kaa_user_manager_t;
+#endif
+
+#ifndef KAA_PROFILE_MANAGER_T
+# define KAA_PROFILE_MANAGER_T
+    typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
+#endif
+
+#ifndef KAA_USER_MANAGER_T
+# define KAA_USER_MANAGER_T
+    typedef struct kaa_user_manager_t       kaa_user_manager_t;
+#endif
+
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-typedef struct kaa_event_manager_t      kaa_event_manager_t;
+
+#ifndef KAA_EVENT_MANAGER_T
+# define KAA_EVENT_MANAGER_T
+    typedef struct kaa_event_manager_t      kaa_event_manager_t;
+#endif
+
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-typedef struct kaa_log_collector        kaa_log_collector_t;
+
+#ifndef KAA_LOG_COLLECTOR_T
+# define KAA_LOG_COLLECTOR_T
+    typedef struct kaa_log_collector        kaa_log_collector_t;
 #endif
 
-typedef struct kaa_logger_t             kaa_logger_t;
+#endif
 
+#ifndef KAA_LOGGER_T
+# define KAA_LOGGER_T
+    typedef struct kaa_logger_t             kaa_logger_t;
+#endif
 
 
 /**
@@ -52,7 +90,7 @@ typedef struct kaa_logger_t             kaa_logger_t;
  * independently to perform API calls to specific subsystems.
  */
 typedef struct {
-    kaa_status_t               *status;             /**< See @link kaa_status.h @endlink. */
+    kaa_status_holder_t        *status;             /**< See @link kaa_status.h @endlink. */
     kaa_platform_protocol_t    *platfrom_protocol;  /**< See @link kaa_platform_protocol.h @endlink. */
     kaa_bootstrap_manager_t    *bootstrap_manager;  /**< See @link kaa_bootstrap.h @endlink. */
     kaa_channel_manager_t      *channel_manager;    /**< See @link kaa_channel_manager.h @endlink. */

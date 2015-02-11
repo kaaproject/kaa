@@ -19,14 +19,8 @@ package org.kaaproject.kaa.common.kaatcp;
 import java.nio.ByteBuffer;
 
 import org.junit.Assert;
-import static org.junit.Assert.*;
 import org.junit.Test;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.BootstrapResolve;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.BootstrapResponse;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.BootstrapResponse.SupportedChannelType;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.BootstrapResponse.UnknownOperationsServerExceptions;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.BootstrapResponse.PublicKeyType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck.ReturnCode;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
@@ -54,66 +48,6 @@ public class KaaTcpMessageTest {
         message.setMessageId(5);
         byte[] actual = message.getFrame().array();
         Assert.assertArrayEquals(kaaSync, actual);
-    }
-
-    @Test
-    public void testBootstrapResolveMessage() {
-        final byte bootstrapResolve[] = new byte [] { (byte) 0xF0, 0x18, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x21, 'a','p','p','l','i','c','a','t','i','o','n','1' };
-        final String applicationToken = "application1";
-        BootstrapResolve message = new BootstrapResolve(applicationToken);
-        message.setMessageId(5);
-        byte[] actual = message.getFrame().array();
-        Assert.assertArrayEquals(bootstrapResolve, actual);
-    }
-
-    @Test
-    public void testBootstrapResponseMessage() {
-        final byte bootstrapResponse[] = new byte [] {(byte)-16, -88, 2, 0, 6, 75, 97, 97, 116, 99, 112, 1, 0, 5, 32, 0, 0, 0, 2, 0, 0, 0, -120, 0, 0, 0, 7, 115, 101, 114, 118, 101, 114, 49, 0, 0, 0, 0, 10, 1, 0, 0, 16, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 3, 21, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 49, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, -120, 0, 0, 0, 8, 115, 101, 114, 118, 101, 114, 50, 50, 0, 0, 0, 20, 1, 0, 0, 16, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 0, 0, 0, 3, 0, 0, 0, 25, 1, 21, 4, -68, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 25, 2, 21, 4, -67, 104, 111, 115, 116, 110, 97, 109, 101, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0, 0, 0, 0, 0, 26, 3, 22, 4, -66, 104, 111, 115, 116, 110, 97, 109, 101, 50, 50, 46, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 0, 0};
-        BootstrapResponse message = new BootstrapResponse();
-        final String operationServer1Name = "server1";
-        final int operationServer1Priority = 10;
-        final byte[]  operationServer1PublicKey = new byte [] { (byte)  0x00, 0x01, 0x02, 0x03,
-                                                                        0x00, 0x01, 0x02, 0x03,
-                                                                        0x00, 0x01, 0x02, 0x03,
-                                                                        0x00, 0x01, 0x02, 0x03,};
-
-        final String operationServer2Name = "server22";
-        final int operationServer2Priority = 20;
-        final byte[]  operationServer2PublicKey = new byte [] { (byte)  0x10, 0x11, 0x12, 0x13,
-                                                                        0x10, 0x11, 0x12, 0x13,
-                                                                        0x10, 0x11, 0x12, 0x13,
-                                                                        0x10, 0x11, 0x12, 0x13,};
-
-        message.addOperationsServer(operationServer1Name,
-                operationServer1Priority,
-                PublicKeyType.RSA_PKSC8,
-                operationServer1PublicKey);
-
-        try {
-            message.addSupportedChannel(operationServer1Name, SupportedChannelType.HTTP, "hostname1.example.com", 1212);
-            message.addSupportedChannel(operationServer1Name, SupportedChannelType.HTTPLP, "hostname1.example.com", 1213);
-            message.addSupportedChannel(operationServer1Name, SupportedChannelType.KAATCP, "hostname1.example.com", 1214);
-        } catch (UnknownOperationsServerExceptions e) {
-            fail(e.toString());
-        }
-
-        message.addOperationsServer(operationServer2Name,
-                operationServer2Priority,
-                PublicKeyType.RSA_PKSC8,
-                operationServer2PublicKey);
-
-        try {
-            message.addSupportedChannel(operationServer2Name, SupportedChannelType.HTTP, "hostname2.example.com", 1212);
-            message.addSupportedChannel(operationServer2Name, SupportedChannelType.HTTPLP, "hostname2.example.com", 1213);
-            message.addSupportedChannel(operationServer2Name, SupportedChannelType.KAATCP, "hostname22.example.com", 1214);
-        } catch (UnknownOperationsServerExceptions e) {
-            fail(e.toString());
-        }
-
-        message.setMessageId(5);
-
-        byte[] actual = message.getFrame().array();
-        Assert.assertArrayEquals(bootstrapResponse, actual);
     }
 
     @Test

@@ -27,16 +27,16 @@ namespace kaa {
 
 class RsaEncoderDecoder : public IEncoderDecoder {
 public:
-    RsaEncoderDecoder(const Botan::MemoryVector<std::uint8_t>& pubKey,
-            const std::string& privKey,
-            const Botan::MemoryVector<std::uint8_t>& remoteKey);
+    RsaEncoderDecoder(const PublicKey& pubKey,
+                      const PrivateKey& privKey,
+                      const PublicKey& remoteKey);
     ~RsaEncoderDecoder() { }
 
-    Botan::SecureVector<std::uint8_t> getEncodedSessionKey();
-    std::string encodeData(const std::uint8_t *data, std::size_t size);
-    std::string decodeData(const std::uint8_t *data, std::size_t size);
-    Botan::SecureVector<std::uint8_t> signData(const std::uint8_t *data, std::size_t size);
-    bool verifySignature(const std::uint8_t *data, std::size_t len, const std::uint8_t *sig, std::size_t sigLen);
+    virtual EncodedSessionKey getEncodedSessionKey();
+    virtual std::string encodeData(const std::uint8_t *data, std::size_t size);
+    virtual std::string decodeData(const std::uint8_t *data, std::size_t size);
+    virtual Signature signData(const std::uint8_t *data, std::size_t size);
+    virtual bool verifySignature(const std::uint8_t *data, std::size_t len, const std::uint8_t *sig, std::size_t sigLen);
 
 private:
     std::string cipherPipe(const std::uint8_t *data, std::size_t size, Botan::Cipher_Dir dir);
@@ -47,7 +47,7 @@ private:
     std::unique_ptr<Botan::PKCS8_PrivateKey> privKey_;
     std::unique_ptr<Botan::X509_PublicKey>   remoteKey_;
 
-    Botan::SymmetricKey sessionKey_;
+    SessionKey sessionKey_;
 };
 
 }

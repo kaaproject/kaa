@@ -22,24 +22,24 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ClientSyncMetaData;
-import org.kaaproject.kaa.server.operations.pojo.sync.ConfigurationClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.EventClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.LogClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.NotificationClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.ProfileClientSync;
-import org.kaaproject.kaa.server.operations.pojo.sync.UserClientSync;
-import org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.AvroEncDec;
-import org.kaaproject.kaa.server.operations.service.http.commands.ChannelType;
-import org.kaaproject.kaa.server.operations.service.netty.NettySessionInfo;
+import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
+import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.sync.EventClientSync;
+import org.kaaproject.kaa.server.sync.LogClientSync;
+import org.kaaproject.kaa.server.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.sync.ProfileClientSync;
+import org.kaaproject.kaa.server.sync.UserClientSync;
+import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
+import org.kaaproject.kaa.server.transport.channel.ChannelType;
+import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 public class SyncRequestMessageTest {
 
     @Test
     public void testIsValid() {
 
-        NettySessionInfo session = new NettySessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, ChannelType.HTTP, null, null,
+        SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, ChannelType.SYNC, null, null,
                 "applicationToken", 0, true);
 
         ClientSync request = new ClientSync();

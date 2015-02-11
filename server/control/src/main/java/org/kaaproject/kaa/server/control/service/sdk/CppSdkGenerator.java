@@ -39,13 +39,10 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
+import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.BootstrapSupportedChannel;
-import org.kaaproject.kaa.server.common.zk.gen.ZkChannelType;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkHttpLpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkKaaTcpComunicationParameters;
-import org.kaaproject.kaa.server.common.zk.gen.ZkSupportedChannel;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.kaaproject.kaa.server.control.service.sdk.event.CppEventSourcesGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -323,66 +320,56 @@ public class CppSdkGenerator extends SdkGenerator {
         kaaDefaultsString = replaceVar(kaaDefaultsString, APPLICATION_TOKEN_VAR, appToken);
         kaaDefaultsString = replaceVar(kaaDefaultsString, PROFILE_VERSION_VAR, profileSchemaVersion+"");
         kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_VERSION_VAR, configurationSchemaVersion+"");
+        kaaDefaultsString = replaceVar(kaaDefaultsString, SYSTEM_NF_VERSION_VAR, "1");
         kaaDefaultsString = replaceVar(kaaDefaultsString, USER_NF_VERSION_VAR, notificationSchemaVersion+"");
         kaaDefaultsString = replaceVar(kaaDefaultsString, LOG_SCHEMA_VERSION_VAR, logSchemaVersion+"");
+
+        kaaDefaultsString = replaceVar(kaaDefaultsString, POLLING_PERIOD_SECONDS_VAR, "5");
 
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_PUB_KEY_LOCATION_VAR, "key.public");
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_PRIV_KEY_LOCATION_VAR, "key.private");
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_STATUS_FILE_LOCATION_VAR, "kaa.status");
-        kaaDefaultsString = replaceVar(kaaDefaultsString, POLLING_PERIOD_SECONDS_VAR, "5");
-        kaaDefaultsString = replaceVar(kaaDefaultsString, SYSTEM_NF_VERSION_VAR, "1");
 
         String bootstrapServers = "";
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
-        for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
-            if (nodeIndex > 0) {
-                bootstrapServers += "\n                                          , ";
+
+        int nodeCount = bootstrapNodes.size();
+        for (BootstrapNodeInfo node : bootstrapNodes) {
+            List<TransportMetaData> supportedChannels = node.getTransports();
+
+            int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
+            int transportCount = supportedChannels.size();
+
+            for (TransportMetaData transport : supportedChannels) {
+                int supportedProtocolCount = transport.getConnectionInfo().size();
+
+                for(VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
+                    String serverPattern = "createTransportInfo(";
+                    serverPattern += "0x" + Integer.toHexString(accessPointId);
+                    serverPattern += ", ";
+                    serverPattern += "0x" + Integer.toHexString(transport.getId());
+                    serverPattern += ", ";
+                    serverPattern += pair.getVersion();
+                    serverPattern += ", \"";
+                    serverPattern += Base64.encodeBase64String(pair.getConenctionInfo().array());
+                    serverPattern += "\"";
+                    serverPattern += ")";
+
+                    bootstrapServers += serverPattern;
+
+                    if (--supportedProtocolCount > 0) {
+                        bootstrapServers += "\n                                            , ";
+                    }
+                }
+
+                if (--transportCount > 0) {
+                    bootstrapServers += "\n                                            , ";
+                }
             }
 
-            BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
-            List<BootstrapSupportedChannel> supportedChannels = node.getSupportedChannelsArray();
-            String encodedPublicKey = Base64.encodeBase64String(node.getConnectionInfo().getPublicKey().array());
-
-            for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
-                if (chIndex > 0) {
-                    bootstrapServers += "\n                                          , ";
-                }
-
-                String serverPattern = "createServerInfo(";
-                ZkSupportedChannel channel = supportedChannels.get(chIndex).getZkChannel();
-
-                serverPattern += channel.getChannelType().ordinal();
-                serverPattern += ", ";
-
-                if (channel.getChannelType() == ZkChannelType.HTTP) {
-                    ZkHttpComunicationParameters params =
-                            (ZkHttpComunicationParameters)channel.getCommunicationParameters();
-
-                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
-                    serverPattern += ", ";
-                    serverPattern += params.getZkComunicationParameters().getPort();
-                } else if (channel.getChannelType() == ZkChannelType.HTTP_LP) {
-                    ZkHttpLpComunicationParameters params =
-                            (ZkHttpLpComunicationParameters)channel.getCommunicationParameters();
-
-                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
-                    serverPattern += ", ";
-                    serverPattern += params.getZkComunicationParameters().getPort();
-                } else if (channel.getChannelType() == ZkChannelType.KAATCP) {
-                    ZkKaaTcpComunicationParameters params =
-                            (ZkKaaTcpComunicationParameters)channel.getCommunicationParameters();
-
-                    serverPattern += "\"" + params.getZkComunicationParameters().getHostName() + "\"";
-                    serverPattern += ", ";
-                    serverPattern += params.getZkComunicationParameters().getPort();
-                }
-
-                serverPattern += ", ";
-                serverPattern += "\"" + encodedPublicKey + "\"";
-                serverPattern += ")";
-
-                bootstrapServers += serverPattern;
+            if (--nodeCount > 0) {
+                bootstrapServers += "\n                                            , ";
             }
         }
 

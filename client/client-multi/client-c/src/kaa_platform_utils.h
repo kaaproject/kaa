@@ -18,25 +18,15 @@
 #ifndef KAA_PLATFORM_UTILS_H_
 #define KAA_PLATFORM_UTILS_H_
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
 
 #include "kaa_error.h"
 #include "kaa_platform_common.h"
 
-#include <arpa/inet.h>
+#include "platform/sock.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define KAA_HTONS(hostshort)    htons((hostshort))
-#define KAA_HTONL(hostlong)     htonl((hostlong))
-
-#define KAA_NTOHS(netshort)     ntohs((netshort))
-#define KAA_NTOHL(netlong)      ntohl((netlong))
-
 
 
 typedef struct {
@@ -63,6 +53,8 @@ void kaa_platform_message_writer_destroy(kaa_platform_message_writer_t* writer);
 kaa_error_t kaa_platform_message_write(kaa_platform_message_writer_t* writer
                                      , const void *data
                                      , size_t data_size);
+
+kaa_error_t kaa_platform_message_write_alignment(kaa_platform_message_writer_t* writer);
 
 kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* writer
                                              , const void *data

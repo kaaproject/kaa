@@ -23,31 +23,30 @@
     defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
     defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
 
-#include "kaa/security/RsaEncoderDecoder.hpp"
-#include "kaa/common/AvroByteArrayConverter.hpp"
-#include "kaa/http/IHttpResponse.hpp"
-#include "kaa/http/IHttpRequest.hpp"
-#include "kaa/http/MultipartPostHttpRequest.hpp"
-#include "kaa/transport/TransportException.hpp"
-#include "kaa/gen/BootstrapGen.hpp"
-#include "kaa/gen/EndpointGen.hpp"
-
 #include <vector>
 #include <memory>
 #include <cstdint>
+
 #include <boost/noncopyable.hpp>
+
 #include <botan/base64.h>
+
+#include "kaa/http/IHttpRequest.hpp"
+#include "kaa/http/IHttpResponse.hpp"
+#include "kaa/security/RsaEncoderDecoder.hpp"
+#include "kaa/http/MultipartPostHttpRequest.hpp"
+#include "kaa/transport/TransportException.hpp"
+
 
 namespace kaa {
 
 class HttpDataProcessor : boost::noncopyable {
 public:
-    HttpDataProcessor(const Botan::MemoryVector<std::uint8_t>& pubKey,
-            const std::string& privKey,
-            const Botan::MemoryVector<std::uint8_t>& remoteKey) :
+    HttpDataProcessor(const PublicKey& pubKey,
+            const PrivateKey& privKey,
+            const PublicKey& remoteKey) :
             encDec_(new RsaEncoderDecoder(pubKey, privKey, remoteKey)) { }
     HttpDataProcessor() { }
-    ~HttpDataProcessor() { }
 
     std::shared_ptr<IHttpRequest> createOperationRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data);
     std::string retrieveOperationResponse(const IHttpResponse& response);
@@ -58,6 +57,8 @@ public:
     void setEncoderDecoder(std::shared_ptr<IEncoderDecoder> encoderDecoder) { encDec_ = encoderDecoder; }
 
 private:
+    std::shared_ptr<IHttpRequest> createHttpRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data, bool sign);
+
     void verifyResponse(const IHttpResponse& response);
 
 private:

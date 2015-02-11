@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.bootstrap.gen.ChannelType;
 
 /**
  * Channel is responsible for sending/receiving data to/from the endpoint server.
@@ -63,13 +62,13 @@ public interface KaaDataChannel {
     String getId();
 
     /**
-     * Retrieves the channel's type (i.e. HTTP, TCP, etc.).
+     * Retrieves the {@link TransportProtocolId}.
      *
-     * @return the channel's type.
-     * @see ChannelType
+     * @return the transport protocol id.
+     * @see TransportProtocolId
      *
      */
-    ChannelType getType();
+    TransportProtocolId getTransportProtocolId();
 
     /**
      * Retrieves the channel's server type (i.e. OPERATIONS or BOOTSTRAP).
@@ -102,10 +101,10 @@ public interface KaaDataChannel {
      * Sets the server's parameters for the current channel.
      *
      * @param server server's parameters.
-     * @see ServerInfo
+     * @see TransportConnectionInfo
      *
      */
-    void setServer(ServerInfo server);
+    void setServer(TransportConnectionInfo server);
 
     /**
      * Sets connectivity checker to the current channel.

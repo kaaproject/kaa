@@ -18,8 +18,7 @@ package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
+import org.kaaproject.kaa.server.transport.message.MessageHandler;
 
 import akka.actor.ActorSystem;
 
@@ -27,7 +26,7 @@ import akka.actor.ActorSystem;
 /**
  * The Interface AkkaService.
  */
-public interface AkkaService {
+public interface AkkaService extends MessageHandler{
 
     /**
      * Gets the actor system.
@@ -35,18 +34,6 @@ public interface AkkaService {
      * @return the actor system
      */
     ActorSystem getActorSystem();
-
-    /**
-     * process request message
-     * @param message
-     */
-    void process(SessionAware message);
-
-    /**
-     * process request message
-     * @param message
-     */
-    void process(SessionInitRequest message);
 
     /**
      * On redirection rule set

@@ -19,19 +19,18 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.RuleTimeoutMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAware;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionAwareRequest;
-import org.kaaproject.kaa.server.operations.service.akka.messages.io.request.SessionInitRequest;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.SessionResponse;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
+import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
+import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
+import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,20 +150,20 @@ public class EncDecActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message.getClass().getName());
-        if (message instanceof SessionInitRequest) {
+        if (message instanceof SessionInitMessage) {
             RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
             if (redirection == null) {
-                messageProcessor.decodeAndForward(context(), (SessionInitRequest) message);
+                messageProcessor.decodeAndForward(context(), (SessionInitMessage) message);
             } else {
-                messageProcessor.redirect(redirection, (SessionInitRequest) message);
+                messageProcessor.redirect(redirection, (SessionInitMessage) message);
             }
         } else if (message instanceof SessionAware) {
-            if (message instanceof SessionAwareRequest) {
+            if (message instanceof SessionAwareMessage) {
                 RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
                 if (redirection == null) {
-                    messageProcessor.decodeAndForward(context(), (SessionAwareRequest) message);
+                    messageProcessor.decodeAndForward(context(), (SessionAwareMessage) message);
                 } else {
-                    messageProcessor.redirect(redirection, (SessionAwareRequest) message);
+                    messageProcessor.redirect(redirection, (SessionAwareMessage) message);
                 }
             } else {
                 messageProcessor.forward(context(), (SessionAware) message);

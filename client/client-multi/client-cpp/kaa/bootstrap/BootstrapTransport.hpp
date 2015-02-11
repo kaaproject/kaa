@@ -19,19 +19,27 @@
 
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IBootstrapTransport.hpp"
-#include "kaa/bootstrap/IBootstrapManager.hpp"
 
 namespace kaa {
 
-class BootstrapTransport : public AbstractKaaTransport<TransportType::BOOTSTRAP>, public IBootstrapTransport {
+class IBootstrapManager;
+class IKaaChannelManager;
+class BootstrapSyncRequest;
+class BootstrapSyncResponse;
+
+class BootstrapTransport : public AbstractKaaTransport<TransportType::BOOTSTRAP>
+                         , public IBootstrapTransport
+{
 public:
     BootstrapTransport(IKaaChannelManager& channelManager, IBootstrapManager &bootstrapManager);
 
-    void                        sync();
+    virtual void sync();
 
-    std::shared_ptr<Resolve>  createResolveRequest();
-    void onResolveResponse(OperationsServerList servers);
+    virtual std::shared_ptr<BootstrapSyncRequest> createBootstrapSyncRequest();
+    virtual void onBootstrapResponse(const BootstrapSyncResponse& response);
 private:
+    std::uint32_t requestId_;
+
     IBootstrapManager &  bootstrapManager_;
 };
 

@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "../platform/platform.h"
+#include "kaa_log.h"
+#include "../kaa_common.h"
+#include "../platform/ext_system_logger.h"
+#include "kaa_mem.h"
 
-#include "utilities/kaa_log.h"
 
-#include <time.h>
-#include <stdarg.h>
-#include <string.h>
-
-#include "kaa_common.h"
-#include "utilities/kaa_mem.h"
 
 #define KAA_LOG_PREFIX_FORMAT   "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
 
@@ -124,45 +122,40 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
     // Convert to UTC time
     // TODO: Need to print milliseconds. For this purpose, timespec() from C11
     // standard may be used, but GCC 4.6.4 doesn't support this API.
-    time_t t = time(NULL);
-    struct tm* tp = gmtime(&t);
-
     size_t consumed_len = 0;
+
     // Print log message prefix
-    int res_len = snprintf(self->log_buffer, self->buffer_size, KAA_LOG_PREFIX_FORMAT
-            , 1900 + tp->tm_year, tp->tm_mon + 1, tp->tm_mday
-            , tp->tm_hour, tp->tm_min, tp->tm_sec
-            , kaa_log_level_name[log_level], truncated_name, lineno, error_code);
+    int res_len = ext_format_sprintf(self->log_buffer, self->buffer_size, KAA_LOG_PREFIX_FORMAT
+                , kaa_log_level_name[log_level], truncated_name, lineno, error_code);
 
     if (res_len <= 0)   // Something terrible happened
         return;
     consumed_len += res_len;
 
-    if (consumed_len > self->buffer_size - 1) {
-        // Ran out of buffer space already (greedy log buffer:). Reserve space for '\n' at the end.
-        consumed_len = self->buffer_size - 1;
+    if (consumed_len > self->buffer_size - 2) {
+        // Ran out of buffer space already (greedy log buffer:). Reserve space for '\n' and 0 at the end.
+        consumed_len = self->buffer_size - 2;
     } else {
         // There's buffer space remaining: print log message body
         va_list args;
         va_start(args, format);
-        res_len = vsnprintf(self->log_buffer + consumed_len
-                , self->buffer_size - consumed_len
-                , format
-                , args);
+        res_len = ext_logger_sprintf(self->log_buffer + consumed_len
+                                   , self->buffer_size - consumed_len
+                                   , format
+                                   , args);
         va_end(args);
 
         if (res_len <= 0)   // Something terrible happened
             return;
         consumed_len += res_len;
-        if (consumed_len > self->buffer_size - 1) {
+        if (consumed_len > self->buffer_size - 2) {
             // Ran out of buffer space
-            consumed_len = self->buffer_size - 1;
+            consumed_len = self->buffer_size - 2;
         }
     }
 
-    // Terminate buffer with '\n'. Null-termination is not important because the buffer length is specified in fwrite() below
+    // Terminate buffer with '\n','\0'. Null-termination is used with buffer length specified.
     self->log_buffer[consumed_len++] = '\n';
-
-    fwrite(self->log_buffer, sizeof(char), consumed_len, self->sink);
-    fflush(self->sink);
+    self->log_buffer[consumed_len++] = 0;
+    ext_write_log(self->sink, self->log_buffer, consumed_len);
 }

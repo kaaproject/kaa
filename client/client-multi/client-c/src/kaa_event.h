@@ -31,18 +31,31 @@ extern "C" {
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 
 #include <stddef.h>
-#include <stdint.h>
 #include "kaa_error.h"
-
-#define KAA_ENDPOINT_ID_LENGTH 20
-
-typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
-typedef const uint8_t* kaa_endpoint_id_p;
+#include "platform/ext_event_listeners_callback.h"
 
 typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p event_source);
 typedef size_t kaa_event_block_id;
 
-typedef struct kaa_event_manager_t kaa_event_manager_t;
+#ifndef KAA_EVENT_MANAGER_T
+# define KAA_EVENT_MANAGER_T
+    typedef struct kaa_event_manager_t      kaa_event_manager_t;
+#endif
+
+
+/**
+ * @brief Initiates a request to the server to search for available event listeners by given FQNs.
+ *
+ *
+ * @param[in]       self                Valid pointer to the event manager instance.
+ * @param[in]       fqns                List of FQN strings.
+ * @param[in]       fqns_count          Number of FQNs in the list.
+ * @param[in]       callback            Pointer to callback structure.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback);
+
 
 /**
  * @brief Start a new event block.
@@ -56,6 +69,7 @@ typedef struct kaa_event_manager_t kaa_event_manager_t;
  */
 kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_block_id *trx_id);
 
+
 /**
  * @brief Send all the events from the event block at once.
  *
@@ -67,6 +81,7 @@ kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_bl
  * @return Error code.
  */
 kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id);
+
 
 /**
  * @brief Removes the event block without sending events.
