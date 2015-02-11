@@ -52,6 +52,7 @@ typedef struct {
     bool        socket_disconnected_write;
     bool        socket_disconnected_closed;
     bool        socket_disconnected_callback;
+    bool        bootstrap_manager_on_access_point_failed;
     kaa_fd_t    fd;
 } set_access_point_info_t;
 
@@ -242,6 +243,7 @@ void test_set_access_point_connecting_error()
     ASSERT_EQUAL(access_point_test_info.request_connect, false);
     ASSERT_EQUAL(access_point_test_info.socket_connecting_error_callback, true);
     ASSERT_EQUAL(access_point_test_info.socket_disconnected_closed, true);
+    ASSERT_EQUAL(access_point_test_info.bootstrap_manager_on_access_point_failed, true);
 
 
     channel->destroy(channel->context);
@@ -300,6 +302,7 @@ void test_set_access_point_io_error()
     ASSERT_EQUAL(access_point_test_info.connack_read, false);
     ASSERT_EQUAL(access_point_test_info.socket_disconnected_callback, true);
     ASSERT_EQUAL(access_point_test_info.socket_disconnected_closed, true);
+    ASSERT_EQUAL(access_point_test_info.bootstrap_manager_on_access_point_failed, true);
 
 
     channel->destroy(channel->context);
@@ -351,17 +354,18 @@ void test_check_bootstrap_sync(kaa_transport_channel_interface_t *channel)
     ASSERT_NOT_NULL(channel);
 
     //Reset test bools
-    access_point_test_info.socket_connected             = false;
-    access_point_test_info.socket_connected_callback    = false;
-    access_point_test_info.fill_connect_message         = false;
-    access_point_test_info.request_connect              = false;
-    access_point_test_info.auth_packet_written          = false;
-    access_point_test_info.connack_read                 = false;
-    access_point_test_info.kaasync_read                 = false;
-    access_point_test_info.kaasync_processed            = false;
-    access_point_test_info.socket_disconnected_write    = false;
-    access_point_test_info.socket_disconnected_callback = false;
-    access_point_test_info.socket_disconnected_closed   = false;
+    access_point_test_info.socket_connected                         = false;
+    access_point_test_info.socket_connected_callback                = false;
+    access_point_test_info.fill_connect_message                     = false;
+    access_point_test_info.request_connect                          = false;
+    access_point_test_info.auth_packet_written                      = false;
+    access_point_test_info.connack_read                             = false;
+    access_point_test_info.kaasync_read                             = false;
+    access_point_test_info.kaasync_processed                        = false;
+    access_point_test_info.socket_disconnected_write                = false;
+    access_point_test_info.socket_disconnected_callback             = false;
+    access_point_test_info.socket_disconnected_closed               = false;
+    access_point_test_info.bootstrap_manager_on_access_point_failed = false;
 
     //Imitate WR event, and wait socket connect call, channel should start authorization, prepare
     //CONNECT message
@@ -414,6 +418,7 @@ void test_check_bootstrap_sync(kaa_transport_channel_interface_t *channel)
     ASSERT_EQUAL(access_point_test_info.socket_disconnected_write, true);
     ASSERT_EQUAL(access_point_test_info.socket_disconnected_callback, true);
     ASSERT_EQUAL(access_point_test_info.socket_disconnected_closed, true);
+    ASSERT_EQUAL(access_point_test_info.bootstrap_manager_on_access_point_failed, false);
 }
 
 void test_set_access_point(kaa_transport_channel_interface_t *channel)
@@ -462,6 +467,16 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     CHECK_SOCKET_RW(channel,false,true);
 }
 
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
+                                                       , kaa_transport_protocol_id_t *protocol_id
+                                                       , kaa_server_type_t type)
+{
+    ASSERT_EQUAL(protocol_id->id,0x56c8ff92);
+    ASSERT_EQUAL(protocol_id->version,1);
+    ASSERT_EQUAL(type,KAA_SERVER_BOOTSTRAP);
+    access_point_test_info.bootstrap_manager_on_access_point_failed  = true;
+    return KAA_ERR_NONE;
+}
 
 kaa_error_t kaa_tcp_channel_event_callback_fn(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
 {

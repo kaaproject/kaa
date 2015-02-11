@@ -62,6 +62,12 @@ typedef enum {
     KAA_TCP_CHANNEL_DISCONNECTING
 } kaa_tcp_channel_state_t;
 
+typedef enum {
+    KAA_TCP_CHANNEL_SYNC_OP_UNDEFINED = 0,
+    KAA_TCP_CHANNEL_SYNC_OP_STARTED,
+    KAA_TCP_CHANNEL_SYNC_OP_FINISHED
+} kaa_tcp_channel_sync_state_t;
+
 typedef struct {
     access_point_state_t      state;
     uint32_t                  id;
@@ -90,6 +96,8 @@ typedef struct {
 typedef struct {
     kaa_logger_t                   *logger;
     kaa_tcp_channel_state_t        channel_state;
+    kaa_tcp_channel_sync_state_t   sync_state;
+    kaa_server_type_t              channel_operation_type;
     kaa_transport_protocol_id_t    protocol_id;
     kaa_transport_context_t        transport_context;
     on_kaa_tcp_channel_event_fn    event_callback;
@@ -182,6 +190,15 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     kaa_tcp_channel->supported_service_count = supported_service_count;
     for (size_t i = 0; i < supported_service_count; ++i) {
         kaa_tcp_channel->supported_services[i] = supported_services[i];
+    }
+
+    /*
+     * Define type of channel (bootstrap or operations)
+     */
+    kaa_tcp_channel->channel_operation_type = KAA_SERVER_OPERATIONS;
+    if (kaa_tcp_channel->supported_service_count == 1
+            && kaa_tcp_channel->supported_services[0] == KAA_SERVICE_BOOTSTRAP) {
+        kaa_tcp_channel->channel_operation_type = KAA_SERVER_BOOTSTRAP;
     }
 
     /*
@@ -870,6 +887,9 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
                 channel->keepalive.last_sent_keepalive = channel->keepalive.last_receive_keepalive;
             }
 
+            if (channel->channel_operation_type != KAA_SERVER_BOOTSTRAP) {
+                channel->sync_state = KAA_TCP_CHANNEL_SYNC_OP_FINISHED;
+            }
         } else {
             KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] authorization failed"
                                                                                 , channel->access_point.id);
@@ -923,9 +943,8 @@ void kaa_tcp_channel_kaasync_message_callback(void *context, kaatcp_kaasync_t *m
     kaatcp_parser_kaasync_destroy(message);
 
     //Check if service supports only bootstrap, after sync it disconnects.
-    if ((channel->supported_service_count == 1) &&
-            (channel->supported_services[0] == KAA_SERVICE_BOOTSTRAP))
-    {
+    if (channel->channel_operation_type == KAA_SERVER_BOOTSTRAP) {
+        channel->sync_state = KAA_TCP_CHANNEL_SYNC_OP_FINISHED;
         kaa_tcp_channel_disconnect_internal(channel, KAATCP_DISCONNECT_NONE);
     }
 }
@@ -960,11 +979,25 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
     self->access_point.state = AP_RESOLVED;
     self->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
 
+
     if (self->access_point.socket_descriptor >= 0) {
         if (self->event_callback)
                 self->event_callback(self->event_context, SOCKET_DISCONNECTED, self->access_point.socket_descriptor);
         error_code = ext_tcp_utils_tcp_socket_close(self->access_point.socket_descriptor);
         self->access_point.socket_descriptor = KAA_TCP_SOCKET_NOT_SET;
+    }
+
+    if (self->sync_state == KAA_TCP_CHANNEL_SYNC_OP_STARTED) {
+        error_code = kaa_bootstrap_manager_on_access_point_failed(
+                self->transport_context.bootstrap_manager,
+                &self->protocol_id,
+                self->channel_operation_type);
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] closing socket, "
+                    "error notifying bootstrap manager on access point failure"
+                    , self->access_point.id);
+            error_code = KAA_ERR_NONE;
+        }
     }
 
     kaa_buffer_reset(self->in_buffer);
@@ -973,6 +1006,8 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
 
 
     kaatcp_parser_reset(self->parser);
+
+    self->sync_state = KAA_TCP_CHANNEL_SYNC_OP_UNDEFINED;
 
     return error_code;
 }
@@ -1069,6 +1104,8 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     KAA_RETURN_IF_ERR(error_code);
 
     self->channel_state = KAA_TCP_CHANNEL_AUTHORIZING;
+
+    self->sync_state = KAA_TCP_CHANNEL_SYNC_OP_STARTED;
 
     return error_code;
 }
@@ -1285,6 +1322,7 @@ kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t *self)
 
     KAA_RETURN_IF_ERR(error_code);
     self->access_point.state = AP_CONNECTING;
+    self->sync_state = KAA_TCP_CHANNEL_SYNC_OP_STARTED;
     return KAA_ERR_NONE;
 }
 
