@@ -15,17 +15,9 @@
  */
 
 #include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <stdbool.h>
+#include <stdlib.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <sys/select.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <signal.h>
 #include <execinfo.h>
 
@@ -33,16 +25,15 @@
 #include <openssl/pem.h>
 
 #include <kaa.h>
+#include <kaa_error.h>
 #include <kaa_context.h>
 #include <kaa_profile.h>
 #include <kaa_logging.h>
 #include <kaa_channel_manager.h>
-#include <kaa_common_schema.h>
-#include <utilities/kaa_mem.h>
+
 #include <utilities/kaa_log.h>
+
 #include <platform/ext_sha.h>
-#include <platform/ext_key_utils.h>
-#include <platform/ext_status.h>
 #include <platform/ext_transport_channel.h>
 #include <platform-impl/kaa_tcp_channel.h>
 
