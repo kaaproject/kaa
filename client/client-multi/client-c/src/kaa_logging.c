@@ -230,17 +230,17 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     char *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
     tmp_writer.current += sizeof(uint16_t);
 
-    ssize_t remaining_size = self->max_log_bucket_size <= (tmp_writer.end - tmp_writer.current)
+    size_t bucket_size = self->max_log_bucket_size <= (tmp_writer.end - tmp_writer.current)
             ? self->max_log_bucket_size
             : tmp_writer.end - tmp_writer.current;
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (remaining bucket size is %d)", remaining_size);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Extracting log records... (remaining bucket size is %zu)", bucket_size);
 
     uint16_t records_count = 0;
 
-    while (!error) {
+    while (!error && bucket_size > sizeof(uint32_t)) {
         size_t record_len = 0;
         error = ext_log_storage_write_next_record(self->log_storage_context
-                , tmp_writer.current + sizeof(uint32_t), remaining_size - sizeof(uint32_t)
+                , tmp_writer.current + sizeof(uint32_t), bucket_size - sizeof(uint32_t)
                 , self->log_bucket_id, &record_len);
         switch (error) {
         case KAA_ERR_NONE:
@@ -248,7 +248,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
             *((uint32_t *) tmp_writer.current) = KAA_HTONL(record_len);
             tmp_writer.current += (sizeof(uint32_t) + record_len);
             kaa_platform_message_write_alignment(&tmp_writer);
-            remaining_size -= (kaa_aligned_size_get(record_len) + sizeof(uint32_t));
+            bucket_size -= (kaa_aligned_size_get(record_len) + sizeof(uint32_t));
             break;
         case KAA_ERR_NOT_FOUND:
         case KAA_ERR_INSUFFICIENT_BUFFER:

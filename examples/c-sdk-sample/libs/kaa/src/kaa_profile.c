@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "kaa_profile.h"
-
 #include <string.h>
-
+#include <stdbool.h>
+#include "platform/stdio.h"
 #include "avro_src/avro/io.h"
-
+#include "platform/ext_sha.h"
+#include "platform/ext_key_utils.h"
+#include "kaa_status.h"
+#include "kaa_profile.h"
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_defaults.h"
-#include "kaa_external.h"
 #include "kaa_channel_manager.h"
-#include "kaa_status.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
 
@@ -34,9 +33,11 @@
 
 #define KAA_PROFILE_RESYNC_OPTION 0x1
 
+extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
 
-extern kaa_sync_handler_fn kaa_channel_manager_get_sync_handler(kaa_channel_manager_t *self, kaa_service_t service_type);
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 
 
@@ -156,15 +157,11 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 
     *expected_size += kaa_versions_info_get_size();
 
-    bool is_registered = false;
-    if (kaa_is_endpoint_registered(self->status, &is_registered))
-        return KAA_ERR_BAD_STATE;
-
-    if (!is_registered) {
+    if (!self->status->is_registered) {
         bool need_deallocation = false;
 
         if (!self->extension_data->public_key.buffer) {
-            kaa_get_endpoint_public_key((char **)&self->extension_data->public_key.buffer
+            ext_get_endpoint_public_key((char **)&self->extension_data->public_key.buffer
                                       , (size_t *)&self->extension_data->public_key.size
                                       , &need_deallocation);
         }
@@ -181,18 +178,12 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
         }
     }
 
-    kaa_error_t error_code = kaa_status_get_endpoint_access_token(
-                                self->status, (const char**)&self->extension_data->access_token.buffer);
-    if (!error_code) {
-        if (self->extension_data->access_token.buffer) {
-            self->extension_data->access_token.size = strlen((const char*)self->extension_data->access_token.buffer);
-            *expected_size += sizeof(uint32_t); // access token length
-            *expected_size += kaa_aligned_size_get(self->extension_data->access_token.size); // access token
-        }
-    } else {
-        return error_code;
+    self->extension_data->access_token.buffer = (uint8_t *) self->status->endpoint_access_token;
+    if (self->extension_data->access_token.buffer) {
+        self->extension_data->access_token.size = strlen((const char*)self->extension_data->access_token.buffer);
+        *expected_size += sizeof(uint32_t); // access token length
+        *expected_size += kaa_aligned_size_get(self->extension_data->access_token.size); // access token
     }
-
     self->extension_data->payload_size = *expected_size - KAA_EXTENSION_HEADER_SIZE;
 
     return KAA_ERR_NONE;
@@ -304,14 +295,10 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
         return error_code;
     }
 
-    bool is_registered = false;
-    error_code = kaa_is_endpoint_registered(self->status, &is_registered);
-    KAA_RETURN_IF_ERR(error_code);
-
     uint16_t network_order_16 = 0;
     uint16_t field_number_with_reserved = 0;
 
-    if (!is_registered) {
+    if (!self->status->is_registered) {
         field_number_with_reserved = KAA_HTONS(PUB_KEY_VALUE << 8);
         error_code = kaa_platform_message_write(writer
                                              , &field_number_with_reserved
@@ -372,29 +359,31 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     self->need_resync = false;
     if (extension_options & KAA_PROFILE_RESYNC_OPTION) {
         self->need_resync = true;
-        kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
-                                      self->channel_manager, profile_sync_services[0]);
-        if (sync)
-            (*sync)(profile_sync_services, 1);
+        kaa_transport_channel_interface_t *channel =
+                kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
+        if (channel)
+            channel->sync_handler(channel->context, profile_sync_services, 1);
     }
 
-    bool is_registered = false;
-    error_code = kaa_is_endpoint_registered(self->status, &is_registered);
-    KAA_RETURN_IF_ERR(error_code);
 
-    if (!is_registered) {
-        error_code = kaa_set_endpoint_registered(self->status, true);
-        KAA_RETURN_IF_ERR(error_code);
+    if (!self->status->is_registered) {
+        self->status->is_registered = true;
     }
 
     return error_code;
 }
 
-kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_t * profile_body)
+kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t * profile_body)
 {
     KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
+    if (!serialized_profile_size) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to update profile: serialize profile size is null."
+                                                                                "Maybe profile schema is empty")
+        return KAA_ERR_BADDATA;
+    }
+
     char *serialized_profile = (char *) KAA_MALLOC(serialized_profile_size * sizeof(char));
     KAA_RETURN_IF_NIL(serialized_profile, KAA_ERR_NOMEM);
 
@@ -407,15 +396,9 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
     avro_writer_free(writer);
 
     kaa_digest new_hash;
-    kaa_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
+    ext_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
 
-    kaa_digest_p old_hash = NULL;
-    if (kaa_status_get_profile_hash(self->status, &old_hash)) {
-        KAA_FREE(serialized_profile);
-        return KAA_ERR_BAD_STATE;
-    }
-
-    if (old_hash && !memcmp(new_hash, old_hash, SHA_1_DIGEST_LENGTH)) {
+    if (!memcmp(new_hash, self->status->profile_hash, SHA_1_DIGEST_LENGTH)) {
         self->need_resync = false;
         KAA_FREE(serialized_profile);
         return KAA_ERR_NONE;
@@ -423,7 +406,7 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
 
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint profile is updated")
 
-    if (kaa_status_set_profile_hash(self->status, new_hash)) {
+    if (ext_copy_sha_hash(self->status->profile_hash, new_hash)) {
         KAA_FREE(serialized_profile);
         return KAA_ERR_BAD_STATE;
     }
@@ -438,10 +421,16 @@ kaa_error_t kaa_profile_update_profile(kaa_profile_manager_t *self, kaa_profile_
 
     self->need_resync = true;
 
-    kaa_sync_handler_fn sync = kaa_channel_manager_get_sync_handler(
-                                    self->channel_manager, profile_sync_services[0]);
-    if (sync)
-        (*sync)(profile_sync_services, 1);
+    kaa_transport_channel_interface_t *channel =
+            kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, profile_sync_services, 1);
 
     return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t *self, const char *token)
+{
+    KAA_RETURN_IF_NIL2(self, token, KAA_ERR_BADPARAM);
+    return kaa_status_set_endpoint_access_token(self->status, token);
 }

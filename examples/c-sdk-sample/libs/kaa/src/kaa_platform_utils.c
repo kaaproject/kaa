@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include "platform/platform.h"
+#include <stdbool.h>
 #include "kaa_platform_utils.h"
-
-#include <string.h>
 
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"
@@ -67,6 +66,24 @@ kaa_error_t kaa_platform_message_write(kaa_platform_message_writer_t* writer
 
 
 
+kaa_error_t kaa_platform_message_write_alignment(kaa_platform_message_writer_t* writer)
+{
+    KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
+
+    size_t alignment_size = (KAA_ALIGNMENT - ((writer->current - writer->begin) % KAA_ALIGNMENT)) % KAA_ALIGNMENT;
+    if (!alignment_size)
+        return KAA_ERR_NONE;
+
+    if (writer->current + alignment_size <= writer->end) {
+        memset((void *)writer->current, 0, alignment_size);
+        writer->current += alignment_size;
+        return KAA_ERR_NONE;
+    }
+
+    return KAA_ERR_WRITE_FAILED;
+}
+
+
 kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* writer
                                              , const void *data
                                              , size_t data_size)
@@ -84,6 +101,7 @@ kaa_error_t kaa_platform_message_write_aligned(kaa_platform_message_writer_t* wr
 
     return KAA_ERR_WRITE_FAILED;
 }
+
 
 kaa_error_t kaa_platform_message_header_write(kaa_platform_message_writer_t* writer
                                             , uint32_t protocol_id

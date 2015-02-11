@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "platform/stdio.h"
+#include "platform/ext_sha.h"
+#include "platform/ext_status.h"
 #include "kaa_status.h"
 #include "kaa_common.h"
-#include "kaa_external.h"
 #include "utilities/kaa_mem.h"
 #include <string.h>
 
-struct kaa_status_t
-{
 
-    bool            is_registered;
-    bool            is_attached;
-    uint32_t        event_seq_n;
-    uint16_t        log_bucket_id;
-    kaa_digest      endpoint_public_key_hash;
-    kaa_digest      profile_hash;
-
-    char *          endpoint_access_token;
-};
 #define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH*sizeof(char) + SHA_1_DIGEST_LENGTH*sizeof(char))
 
 #define READ_BUFFER(FROM, TO, SIZE) \
@@ -61,7 +54,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     char *  read_buf_head = NULL;
     size_t  read_size = 0;
     bool    needs_deallocation = false;
-    kaa_read_status_ext(&read_buf, &read_size, &needs_deallocation);
+    ext_status_read(&read_buf, &read_size, &needs_deallocation);
     read_buf_head = read_buf;
     if (read_size >= KAA_STATUS_STATIC_SIZE + sizeof(size_t)) {
         READ_BUFFER(read_buf, &kaa_status->is_registered, sizeof(kaa_status->is_registered))
@@ -100,41 +93,6 @@ void kaa_status_destroy(kaa_status_t *self)
     }
 }
 
-kaa_error_t kaa_is_endpoint_registered(kaa_status_t *self, bool *result)
-{
-    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
-    *result = self->is_registered;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_set_endpoint_registered(kaa_status_t *self, bool is_registered)
-{
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    self->is_registered = is_registered;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_is_endpoint_attached_to_user(kaa_status_t *self, bool *result)
-{
-    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
-    *result = self->is_attached;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_set_endpoint_attached_to_user(kaa_status_t *self, bool is_attached)
-{
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    self->is_attached = is_attached;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_status_get_endpoint_access_token(kaa_status_t *self, const char **result)
-{
-    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
-    *result = self->endpoint_access_token;
-    return KAA_ERR_NONE;
-}
-
 kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t * self, const char *token)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
@@ -149,65 +107,6 @@ kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t * self, const char
     strcpy(self->endpoint_access_token, token);
     return KAA_ERR_NONE;
 }
-
-kaa_error_t kaa_status_get_endpoint_public_key_hash(kaa_status_t *self, kaa_digest_p *result)
-{
-    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
-    *result = self->endpoint_public_key_hash;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_status_set_endpoint_public_key_hash(kaa_status_t *self, const kaa_digest hash)
-{
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    memcpy(self->endpoint_public_key_hash, hash, SHA_1_DIGEST_LENGTH);
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_status_get_profile_hash(kaa_status_t *self, kaa_digest_p *result)
-{
-    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
-    *result = self->profile_hash;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_status_set_profile_hash(kaa_status_t *self, const kaa_digest hash)
-{
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    memcpy(self->profile_hash, hash, SHA_1_DIGEST_LENGTH);
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_status_get_event_sequence_number(kaa_status_t* self, uint32_t *result)
-{
-    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
-    *result = self->event_seq_n;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_status_set_event_sequence_number(kaa_status_t* self, uint32_t seq_n)
-{
-    if (!self || seq_n < self->event_seq_n)
-        return KAA_ERR_BADPARAM;
-    self->event_seq_n = seq_n;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_status_get_log_bucket_id(kaa_status_t* self, uint16_t *result)
-{
-    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
-    *result = self->log_bucket_id;
-    return KAA_ERR_NONE;
-}
-
-kaa_error_t kaa_status_set_log_bucket_id(kaa_status_t* self, uint16_t id)
-{
-    if (!self || id < self->log_bucket_id)
-        return KAA_ERR_BADPARAM;
-    self->log_bucket_id = id;
-    return KAA_ERR_NONE;
-}
-
 
 kaa_error_t kaa_status_save(kaa_status_t *self)
 {
@@ -232,7 +131,7 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
         WRITE_BUFFER(self->endpoint_access_token, buffer, endpoint_access_token_length);
     }
 
-    kaa_store_status_ext(buffer_head, buffer_size);
+    ext_status_store(buffer_head, buffer_size);
 
     KAA_FREE(buffer_head);
 
