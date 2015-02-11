@@ -55,5 +55,5 @@ public interface LogCollector {
      *
      * @param strategy User-defined log upload strategy object.
      */
-    void setUploadStrategy(LogUploadStrategy strategy);
+    void setStrategy(LogUploadStrategy strategy);
 }

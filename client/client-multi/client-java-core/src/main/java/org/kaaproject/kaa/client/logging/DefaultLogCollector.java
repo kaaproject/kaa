@@ -84,7 +84,7 @@ public class DefaultLogCollector implements LogCollector, LogProcessor {
     }
 
     @Override
-    public void setUploadStrategy(LogUploadStrategy strategy) {
+    public void setStrategy(LogUploadStrategy strategy) {
         if (strategy == null) {
             throw new IllegalArgumentException("Strategy is null!");
         }
