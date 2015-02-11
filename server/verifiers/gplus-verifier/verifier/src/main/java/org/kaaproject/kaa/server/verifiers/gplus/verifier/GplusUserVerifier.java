@@ -110,8 +110,10 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                 }
             } catch (IOException e) {
                 callback.onInternalError();
+            } catch (Exception e){
+                callback.onInternalError();
                 LOG.warn("Internal error: ", e);
-            } finally {
+            }finally {
                 if (null != closeableHttpResponse) {
                     try {
                         closeableHttpResponse.close();
