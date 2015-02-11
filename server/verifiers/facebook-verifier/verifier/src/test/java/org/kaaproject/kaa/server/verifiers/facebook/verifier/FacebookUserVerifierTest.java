@@ -18,13 +18,17 @@ package org.kaaproject.kaa.server.verifiers.facebook.verifier;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
 import org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 
@@ -81,7 +85,7 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
     }
 
     @Test
-    public void incompatibleUserIds() {
+    public void incompatibleUserIdsTest() {
         verifier = new MyFacebookVerifier(200, "{\"data\":{\"app_id\":\"1557997434440423\"," +
                                                 "\"application\":\"testApp\",\"expires_at\":1422990000," +
                                                 "\"is_valid\":true,\"scopes\":[\"public_profile\"],\"user_id\"" +
@@ -111,7 +115,7 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
     }
 
     @Test
-    public void successfulVerification() {
+    public void successfulVerificationTest() {
         String userId = "12456789123456";
         verifier = new MyFacebookVerifier(200, "{\"data\":{\"app_id\":\"1557997434440423\"," +
                 "\"application\":\"testApp\",\"expires_at\":1422990000," +
@@ -124,6 +128,33 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
         verifier.checkAccessToken(userId, "someToken", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onSuccess();
         verifier.stop();
+    }
+
+    @Test
+    public void connectionErrorTest() throws IOException {
+        verifier = new FacebookUserVerifier();
+        verifier.init(null, config);
+        verifier.start();
+        CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
+        doThrow(new IOException()).when(httpClientMock).execute(any(HttpGet.class));
+        ReflectionTestUtils.setField(verifier, "httpClient", httpClientMock);
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken("id", "token", callback);
+        Mockito.verify(callback, Mockito.timeout(1000)).onConnectionError(any(String.class));
+    }
+
+    @Test
+    public void internalErrorTest() throws IOException {
+        verifier = new FacebookUserVerifier();
+        verifier.init(null, config);
+        verifier.start();
+        CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
+        // Throw any descendant of Exception, as the indicator of an internal error
+        doThrow(new NullPointerException()).when(httpClientMock).execute(any(HttpGet.class));
+        ReflectionTestUtils.setField(verifier, "httpClient", httpClientMock);
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken("id", "token", callback);
+        Mockito.verify(callback, Mockito.timeout(1000)).onInternalError(any(String.class));
     }
 
     private static class MyFacebookVerifier extends FacebookUserVerifier {

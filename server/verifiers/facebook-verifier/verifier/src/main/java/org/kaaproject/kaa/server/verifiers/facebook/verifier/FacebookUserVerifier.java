@@ -57,7 +57,6 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
     private static final String ERRROR_SUBCODE = "error_subcode";
     private FacebookAvroConfig configuration;
     private ExecutorService tokenVerifiersPool;
-    private PoolingHttpClientConnectionManager connectionManager;
     private CloseableHttpClient httpClient;
 
     @Override
@@ -89,27 +88,23 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
         public void run() {
             String accessToken = config.getAppId() + "|" + config.getAppSecret();
             LOG.trace("Started token verification with accessToken [{}]", accessToken);
-            CloseableHttpResponse connection = null;
+            CloseableHttpResponse closeableHttpResponse = null;
 
             try {
-                connection = establishConnection(userAccessToken, accessToken);
+                closeableHttpResponse = establishConnection(userAccessToken, accessToken);
                 LOG.trace("Connection established [{}]", accessToken);
 
-                int responseCode = connection.getStatusLine().getStatusCode();
+                int responseCode = closeableHttpResponse.getStatusLine().getStatusCode();
 
                 if (responseCode == HTTP_BAD_REQUEST) {
-                    handleBadResponse(connection, callback);
+                    handleBadResponse(closeableHttpResponse, callback);
                 } else if (responseCode == HTTP_OK) {
-                    handleResponse(connection, userExternalId, callback, userAccessToken);
+                    handleResponse(closeableHttpResponse, userExternalId, callback, userAccessToken);
                 } else {                                                // other response codes
                     LOG.warn("Server response code: {}, no data can be retrieved", responseCode);
                     callback.onVerificationFailure("Server response code:" + responseCode
                             + ", no data can be retrieved");
                 }
-            } catch (MalformedURLException e) {
-                LOG.debug("Internal error", e);
-                // should be unreachable, as URL is correct
-                callback.onInternalError(e.getMessage());
             } catch (IOException e) {
                 LOG.debug("Connection error", e);
                 callback.onConnectionError(e.getMessage());
@@ -117,9 +112,9 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                 LOG.debug("Unexpected error", e);
                 callback.onInternalError(e.getMessage());
             } finally {
-                if (connection != null) {
+                if (closeableHttpResponse != null) {
                     try {
-                        connection.close();
+                        closeableHttpResponse.close();
                     } catch (IOException e) {
                         LOG.debug("Connection error: can't close CloseableHttpResponse");
                     }
@@ -190,9 +185,7 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
 
     private Map<String, Object> getResponseMap(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-
             ObjectMapper responseMapper = new ObjectMapper();
-
             return responseMapper.readValue(reader.readLine(), Map.class);
         }
     }
@@ -205,7 +198,6 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
         } catch (URISyntaxException e) {
             LOG.debug("Malformed URI", e);
         }
-
         return httpClient.execute(new HttpGet(uri));
     }
 
@@ -214,10 +206,8 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
         LOG.info("facebook user verifier started");
         tokenVerifiersPool = new ThreadPoolExecutor(0, configuration.getMaxParallelConnections(),
                 MAX_SEC_FACEBOOK_REQUEST_TIME, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-
-        connectionManager = new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
-
         // Increase max total connection
         connectionManager.setMaxTotal(configuration.getMaxParallelConnections());
     }
@@ -226,7 +216,6 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
     public void stop() {
         LOG.info("stopping facebook verifier");
         tokenVerifiersPool.shutdown();
-        connectionManager.close();
         try {
             httpClient.close();
         } catch (IOException e) {
