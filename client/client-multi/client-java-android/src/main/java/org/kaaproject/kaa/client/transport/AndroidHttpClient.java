@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.client.transport;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.Charsets;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -104,8 +103,8 @@ public class AndroidHttpClient extends AbstractHttpClient {
 
                 byte[] signature;
                 if (signatureHeader.getValue() != null) {
-                    signature = Base64.decodeBase64(signatureHeader.getValue()
-                            .getBytes(Charsets.UTF_8));
+                    signature = android.util.Base64.decode(signatureHeader.getValue()
+                            .getBytes(Charsets.UTF_8), android.util.Base64.DEFAULT);
                 } else {
                     signature = new byte[0];
                 }

@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.control.service.sdk.compiler;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,12 +40,16 @@ public class JavaDynamicCompiler {
     
     /** The diagnostics. */
     private DiagnosticCollector<JavaFileObject> diagnostics;
+    
+    private List<String> optionList;
 
     /**
      * Instantiates a new java dynamic compiler.
      *
      */
     public JavaDynamicCompiler() {
+        optionList = new ArrayList<>();
+        optionList.add("-g:source");
     }
     
     /**
@@ -82,7 +87,7 @@ public class JavaDynamicCompiler {
     public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources) {
         try {
             CompilationTask task = compiler.getTask(null, javaDynamicManager,
-                    diagnostics, null, null, sources);
+                    diagnostics, optionList, null, sources);
             boolean result = task.call();
             if (!result) {
                 throw new JavaDynamicException("The compilation failed",
