@@ -162,6 +162,8 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant  USER_VERIFIER_CONSTANTS. */
     private static final String  USER_VERIFIER_CONSTANTS = "UserVerifierConstants";
 
+    /** The Constant DEFAULT_SCHEMA_VERSION. */
+    private static final int DEFAULT_SCHEMA_VERSION = 1;
 
     /** The Constant LOG_RECORD. */
     private static final String LOG_RECORD = "LogRecord";
@@ -252,7 +254,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(profileContainerClassBean);
 
         String profileSerializerTemplate;
-        if (profileSchemaVersion == 1) {
+        if (profileSchemaVersion == DEFAULT_SCHEMA_VERSION) {
             profileSerializerTemplate = readResource(DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE);
         } else {
             profileSerializerTemplate = readResource(PROFILE_SERIALIZER_SOURCE_TEMPLATE);
@@ -279,7 +281,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         String notificationDeserializerSource = notificationDeserializerSourceTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
                 notificationClassPackage).replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
 
-        JavaDynamicBean notificationDeserializerClassBean = new JavaDynamicBean(NOTIFICATION_LISTENER, notificationDeserializerSource);
+        JavaDynamicBean notificationDeserializerClassBean = new JavaDynamicBean(NOTIFICATION_DESERIALIZER, notificationDeserializerSource);
         javaSources.add(notificationDeserializerClassBean);
 
 
