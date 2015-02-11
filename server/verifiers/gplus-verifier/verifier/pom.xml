@@ -67,7 +67,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>4.1.4.RELEASE</version>
         </dependency>
     </dependencies>
 
