@@ -37,22 +37,22 @@
 #define KEEPALIVE 1000
 
 typedef struct {
-    bool gethostbyaddr_requested;
-    bool new_socket_created;
-    bool socket_connecting_error_scenario;
-    bool socket_connected;
-    bool socket_connected_callback;
-    bool socket_connecting_error_callback;
-    kaa_fd_t fd;
-    bool fill_connect_message;
-    bool request_connect;
-    bool auth_packet_written;
-    bool connack_read;
-    bool kaasync_read;
-    bool kaasync_processed;
-    bool socket_disconnected_write;
-    bool socket_disconnected_closed;
-    bool socket_disconnected_callback;
+    bool        gethostbyaddr_requested;
+    bool        new_socket_created;
+    bool        socket_connecting_error_scenario;
+    bool        socket_connected;
+    bool        socket_connected_callback;
+    bool        socket_connecting_error_callback;
+    bool        fill_connect_message;
+    bool        request_connect;
+    bool        auth_packet_written;
+    bool        connack_read;
+    bool        kaasync_read;
+    bool        kaasync_processed;
+    bool        socket_disconnected_write;
+    bool        socket_disconnected_closed;
+    bool        socket_disconnected_callback;
+    kaa_fd_t    fd;
 } set_access_point_info_t;
 
 static set_access_point_info_t access_point_test_info;
@@ -121,6 +121,16 @@ static char CONNECTION_DATA[]   = { 0x00, 0x00, 0x01, 0x26, 0x30, 0x82, 0x01, 0x
                                     0x2E, 0x32, 0x00, 0x00, 0x26, 0xA0};
 
 kaa_error_t kaa_tcp_channel_event_callback_fn(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd);
+void test_set_access_point(kaa_transport_channel_interface_t *channel);
+void test_check_bootstrap_sync(kaa_transport_channel_interface_t *channel);
+
+#define CHECK_SOCKET_RW(channel,read,write) \
+    {\
+        bool rd = kaa_tcp_channel_is_ready(channel,FD_READ);\
+        ASSERT_EQUAL(rd, read);\
+        bool wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);\
+        ASSERT_EQUAL(wr, write);\
+    }
 
 /**
  * UNIT TESTS
@@ -187,123 +197,13 @@ void test_set_access_point_full_success_bootstrap()
     kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
 
     error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
-
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    //Fill with fake pointers, just for non null
-    kaa_transport_context_t transport_context;
-    transport_context.platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
-    transport_context.bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
+    //Set access point and imitate start of connection to destination
+    test_set_access_point(channel);
 
-    error_code = channel->init(channel->context, &transport_context);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    //Keepalive will be tested latter during CONNECT message creation
-    error_code = kaa_tcp_channel_set_keepalive_timeout(channel,KEEPALIVE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = kaa_tcp_channel_set_socket_events_callback(channel,kaa_tcp_channel_event_callback_fn,channel);
-    //Use connection data to destination 192.168.77.2:9888
-    kaa_access_point_t access_point;
-    access_point.id = 10;
-    access_point.connection_data = CONNECTION_DATA;
-    access_point.connection_data_len = sizeof(CONNECTION_DATA);
-
-    reset_access_point_test_info();
-
-    error_code = channel->set_access_point(channel->context, &access_point);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    //Check correct call of gethostbyaddr
-    ASSERT_EQUAL(access_point_test_info.gethostbyaddr_requested, true);
-    //Check if new socket created
-    ASSERT_EQUAL(access_point_test_info.new_socket_created, true);
-
-    kaa_fd_t fd = -1;
-
-    error_code = kaa_tcp_channel_get_descriptor(channel,&fd);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    //Check assigned fd
-    ASSERT_EQUAL(fd, ACCESS_POINT_SOCKET_FD);
-
-    access_point_test_info.fd = fd;
-
-
-    //Check correct RD,WR operation, in this point we waiting for correct Connect to destination
-    //So RD should be false, WR true
-    bool rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, false);
-
-    bool wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, true);
-
-
-    //Imitate WR event, and wait socket connect call, channel should start authorization, prepare
-    //CONNECT message
-    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(access_point_test_info.socket_connected, true);
-    ASSERT_EQUAL(access_point_test_info.socket_connected_callback, true);
-    ASSERT_EQUAL(access_point_test_info.fill_connect_message, true);
-    ASSERT_EQUAL(access_point_test_info.request_connect, true);
-
-
-    //Check correct RD,WR operation, in this point we waiting for RD,WR operations true
-    rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, true);
-
-    wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, true);
-
-    //Imitate socket ready for writing, and writing CONNECT message
-    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(access_point_test_info.auth_packet_written, true);
-
-    //Check correct RD,WR operation, in this point we waiting for RD operations true
-    //and WR false, no pending services and empty buffer.
-    rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, true);
-
-    wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, false);
-
-    //Imitate socket ready for reading, and read CONNACK message
-    error_code = kaa_tcp_channel_process_event(channel,FD_READ);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(access_point_test_info.connack_read, true);
-
-    //Check correct RD,WR operation, in this point we waiting for RD operations true
-    //and WR false, no pending services and empty buffer.
-    //Checking receiving KAA_SYNC message
-    rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, true);
-
-    wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, false);
-
-    //Imitate socket ready for reading, and read KAA_SYNC Bootstrap message
-    error_code = kaa_tcp_channel_process_event(channel,FD_READ);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(access_point_test_info.kaasync_read, true);
-    ASSERT_EQUAL(access_point_test_info.kaasync_processed, true);
-
-
-    //Check correct RD,WR operation, in this point we waiting for WR operations true
-    //and RD true, no pending services and buffer with Disconnect message.
-    //Checking receiving KAA_SYNC message
-    rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, true);
-
-    wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, true);
-
-    //Imitate socket ready for writing, and write Disconnect message
-    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(access_point_test_info.socket_disconnected_write, true);
-    ASSERT_EQUAL(access_point_test_info.socket_disconnected_callback, true);
-    ASSERT_EQUAL(access_point_test_info.socket_disconnected_closed, true);
-
+    //Check standard bootstrap flow (connect, authenticate, sync receive and disconnect)
+    test_check_bootstrap_sync(channel);
 
     channel->destroy(channel->context);
 
@@ -326,54 +226,10 @@ void test_set_access_point_connecting_error()
     kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
 
     error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
-
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    //Fill with fake pointers, just for non null
-    kaa_transport_context_t transport_context;
-    transport_context.platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
-    transport_context.bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
-
-    error_code = channel->init(channel->context, &transport_context);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    //Keepalive will be tested latter during CONNECT message creation
-    error_code = kaa_tcp_channel_set_keepalive_timeout(channel,KEEPALIVE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = kaa_tcp_channel_set_socket_events_callback(channel,kaa_tcp_channel_event_callback_fn,channel);
-    //Use connection data to destination 192.168.77.2:9888
-    kaa_access_point_t access_point;
-    access_point.id = 10;
-    access_point.connection_data = CONNECTION_DATA;
-    access_point.connection_data_len = sizeof(CONNECTION_DATA);
-
-    reset_access_point_test_info();
-
-    error_code = channel->set_access_point(channel->context, &access_point);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    //Check correct call of gethostbyaddr
-    ASSERT_EQUAL(access_point_test_info.gethostbyaddr_requested, true);
-    //Check if new socket created
-    ASSERT_EQUAL(access_point_test_info.new_socket_created, true);
-
-    kaa_fd_t fd = -1;
-
-    error_code = kaa_tcp_channel_get_descriptor(channel,&fd);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    //Check assigned fd
-    ASSERT_EQUAL(fd, ACCESS_POINT_SOCKET_FD);
-
-    access_point_test_info.fd = fd;
-
-
-    //Check correct RD,WR operation, in this point we waiting for correct Connect to destination
-    //So RD should be false, WR true
-    bool rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, false);
-
-    bool wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, true);
+    //Set access point and imitate start of connection to destination
+    test_set_access_point(channel);
 
 
     //Imitate WR event, and wait socket connect call and return socket connection error
@@ -409,15 +265,166 @@ void test_set_access_point_io_error()
     kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
 
     error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
-
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
+    //Set access point and imitate start of connection to destination
+    test_set_access_point(channel);
+
+
+    //Imitate WR event, and wait socket connect call, channel should start authorization, prepare
+    //CONNECT message
+    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.socket_connected, true);
+    ASSERT_EQUAL(access_point_test_info.socket_connected_callback, true);
+    ASSERT_EQUAL(access_point_test_info.fill_connect_message, true);
+    ASSERT_EQUAL(access_point_test_info.request_connect, true);
+
+
+    //Check correct RD,WR operation, in this point we waiting for RD,WR operations true
+    CHECK_SOCKET_RW(channel,true,true);
+
+    //Imitate socket ready for writing, and writing CONNECT message
+    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.auth_packet_written, true);
+
+    //Check correct RD,WR operation, in this point we waiting for RD operations true
+    //and WR false, no pending services and empty buffer.
+    CHECK_SOCKET_RW(channel,true,false);
+
+    //Imitate socket ready for reading, and got IO error during read
+    access_point_test_info.socket_connecting_error_scenario = true;
+    error_code = kaa_tcp_channel_process_event(channel,FD_READ);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.connack_read, false);
+    ASSERT_EQUAL(access_point_test_info.socket_disconnected_callback, true);
+    ASSERT_EQUAL(access_point_test_info.socket_disconnected_closed, true);
+
+
+    channel->destroy(channel->context);
+
+    KAA_LOG_INFO(logger,KAA_ERR_NONE,"set_access_point io error complete.");
+
+    KAA_FREE(channel);
+}
+
+void test_bootstrap_sync_success()
+{
+    KAA_TRACE_IN(logger);
+
+    KAA_LOG_INFO(logger,KAA_ERR_NONE,"bootstrap_sync_success starting...");
+
+    kaa_error_t error_code;
+
+    kaa_transport_channel_interface_t *channel = NULL;
+    channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
+
+    kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
+
+    error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    //Set access point and imitate start of connection to destination
+    test_set_access_point(channel);
+
+    //Check standard bootstrap flow (connect, authenticate, sync receive and disconnect)
+    test_check_bootstrap_sync(channel);
+
+
+    //Imitate sync call
+    channel->sync_handler(channel->context, bootstrap_services, 1);
+
+    //Check standard bootstrap flow (connect, authenticate, sync receive and disconnect)
+    test_check_bootstrap_sync(channel);
+
+    channel->destroy(channel->context);
+
+    KAA_LOG_INFO(logger,KAA_ERR_NONE,"bootstrap_sync_success complete.");
+
+    KAA_FREE(channel);
+}
+
+
+void test_check_bootstrap_sync(kaa_transport_channel_interface_t *channel)
+{
+    ASSERT_NOT_NULL(channel);
+
+    //Reset test bools
+    access_point_test_info.socket_connected             = false;
+    access_point_test_info.socket_connected_callback    = false;
+    access_point_test_info.fill_connect_message         = false;
+    access_point_test_info.request_connect              = false;
+    access_point_test_info.auth_packet_written          = false;
+    access_point_test_info.connack_read                 = false;
+    access_point_test_info.kaasync_read                 = false;
+    access_point_test_info.kaasync_processed            = false;
+    access_point_test_info.socket_disconnected_write    = false;
+    access_point_test_info.socket_disconnected_callback = false;
+    access_point_test_info.socket_disconnected_closed   = false;
+
+    //Imitate WR event, and wait socket connect call, channel should start authorization, prepare
+    //CONNECT message
+    kaa_error_t error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.socket_connected, true);
+    ASSERT_EQUAL(access_point_test_info.socket_connected_callback, true);
+    ASSERT_EQUAL(access_point_test_info.fill_connect_message, true);
+    ASSERT_EQUAL(access_point_test_info.request_connect, true);
+
+
+    //Check correct RD,WR operation, in this point we waiting for RD,WR operations true
+    CHECK_SOCKET_RW(channel,true,true);
+
+    //Imitate socket ready for writing, and writing CONNECT message
+    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.auth_packet_written, true);
+
+    //Check correct RD,WR operation, in this point we waiting for RD operations true
+    //and WR false, no pending services and empty buffer.
+    CHECK_SOCKET_RW(channel,true,false);
+
+
+    //Imitate socket ready for reading, and read CONNACK message
+    error_code = kaa_tcp_channel_process_event(channel,FD_READ);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.connack_read, true);
+
+    //Check correct RD,WR operation, in this point we waiting for RD operations true
+    //and WR false, no pending services and empty buffer.
+    //Checking receiving KAA_SYNC message
+    CHECK_SOCKET_RW(channel,true,false);
+
+    //Imitate socket ready for reading, and read KAA_SYNC Bootstrap message
+    error_code = kaa_tcp_channel_process_event(channel,FD_READ);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.kaasync_read, true);
+    ASSERT_EQUAL(access_point_test_info.kaasync_processed, true);
+
+
+    //Check correct RD,WR operation, in this point we waiting for WR operations true
+    //and RD true, no pending services and buffer with Disconnect message.
+    //Checking receiving KAA_SYNC message
+    CHECK_SOCKET_RW(channel,true,true);
+
+    //Imitate socket ready for writing, and write Disconnect message
+    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.socket_disconnected_write, true);
+    ASSERT_EQUAL(access_point_test_info.socket_disconnected_callback, true);
+    ASSERT_EQUAL(access_point_test_info.socket_disconnected_closed, true);
+}
+
+void test_set_access_point(kaa_transport_channel_interface_t *channel)
+{
+    ASSERT_NOT_NULL(channel);
     //Fill with fake pointers, just for non null
     kaa_transport_context_t transport_context;
     transport_context.platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
     transport_context.bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
 
-    error_code = channel->init(channel->context, &transport_context);
+    kaa_error_t error_code = channel->init(channel->context, &transport_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     //Keepalive will be tested latter during CONNECT message creation
@@ -452,57 +459,7 @@ void test_set_access_point_io_error()
 
     //Check correct RD,WR operation, in this point we waiting for correct Connect to destination
     //So RD should be false, WR true
-    bool rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, false);
-
-    bool wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, true);
-
-
-    //Imitate WR event, and wait socket connect call, channel should start authorization, prepare
-    //CONNECT message
-    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(access_point_test_info.socket_connected, true);
-    ASSERT_EQUAL(access_point_test_info.socket_connected_callback, true);
-    ASSERT_EQUAL(access_point_test_info.fill_connect_message, true);
-    ASSERT_EQUAL(access_point_test_info.request_connect, true);
-
-
-    //Check correct RD,WR operation, in this point we waiting for RD,WR operations true
-    rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, true);
-
-    wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, true);
-
-    //Imitate socket ready for writing, and writing CONNECT message
-    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(access_point_test_info.auth_packet_written, true);
-
-    //Check correct RD,WR operation, in this point we waiting for RD operations true
-    //and WR false, no pending services and empty buffer.
-    rd = kaa_tcp_channel_is_ready(channel,FD_READ);
-    ASSERT_EQUAL(rd, true);
-
-    wr = kaa_tcp_channel_is_ready(channel,FD_WRITE);
-    ASSERT_EQUAL(wr, false);
-
-    //Imitate socket ready for reading, and got IO error during read
-    access_point_test_info.socket_connecting_error_scenario = true;
-    error_code = kaa_tcp_channel_process_event(channel,FD_READ);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(access_point_test_info.connack_read, false);
-    ASSERT_EQUAL(access_point_test_info.socket_disconnected_callback, true);
-    ASSERT_EQUAL(access_point_test_info.socket_disconnected_closed, true);
-
-
-    channel->destroy(channel->context);
-
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"set_access_point io error complete.");
-
-    KAA_FREE(channel);
+    CHECK_SOCKET_RW(channel,false,true);
 }
 
 
@@ -812,4 +769,5 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit,
         KAA_TEST_CASE(set_access_point_full_success_bootstrap, test_set_access_point_full_success_bootstrap)
         KAA_TEST_CASE(set_access_point_connecting_error, test_set_access_point_connecting_error)
         KAA_TEST_CASE(set_access_point_io_error, test_set_access_point_io_error)
+        KAA_TEST_CASE(bootstrap_sync_success, test_bootstrap_sync_success)
         )

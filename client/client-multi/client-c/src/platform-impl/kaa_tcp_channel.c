@@ -304,6 +304,24 @@ kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_service_t serv
         KAA_RETURN_IF_ERR(error_code);
     }
 
+    //If channel pending sync only bootstrap, at sync it should initiate new connection if access point resolved
+    if (((kaa_tcp_channel_t *) context)->pending_request_service_count == 1
+            && ((kaa_tcp_channel_t *) context)->pending_request_services[0] == KAA_SERVICE_BOOTSTRAP
+            && ((kaa_tcp_channel_t *) context)->access_point.state == AP_RESOLVED
+            && ((kaa_tcp_channel_t *) context)->channel_state == KAA_TCP_CHANNEL_UNDEFINED) {
+        KAA_LOG_TRACE(((kaa_tcp_channel_t *) context)->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X] destination resolved"
+                                                                                                        , ((kaa_tcp_channel_t *) context)->access_point.id);
+        error_code = kaa_tcp_channel_connect_access_point(((kaa_tcp_channel_t *) context));
+        if (error_code) {
+            KAA_LOG_ERROR(((kaa_tcp_channel_t *) context)->logger, error_code, "Kaa TCP channel new access point [0x%08X] failed to connect"
+                                                                                                    , ((kaa_tcp_channel_t *) context)->access_point.id);
+            if (((kaa_tcp_channel_t *) context)->event_callback)
+                ((kaa_tcp_channel_t *) context)->event_callback(((kaa_tcp_channel_t *) context)->event_context
+                                      , SOCKET_CONNECTION_ERROR
+                                      , ((kaa_tcp_channel_t *) context)->access_point.socket_descriptor);
+        }
+    }
+
     return error_code;
 }
 
@@ -939,7 +957,7 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
-    self->access_point.state = AP_SET;
+    self->access_point.state = AP_RESOLVED;
     self->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
 
     if (self->access_point.socket_descriptor >= 0) {
