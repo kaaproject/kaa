@@ -120,8 +120,11 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant EVENT_CLASS_FAMILY_VERSION_PROPERTY. */
     private static final String EVENT_CLASS_FAMILY_VERSION_PROPERTY = "event_cf_version";
 
-    /** The Constant NOTIFICATION_LISTENER_SOURCE_TEMPLATE. */
+    /** The Constant KAA_CLIENT_SOURCE_TEMPLATE. */
     private static final String KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/KaaClient.java.template";
+    
+    /** The Constant BASE_KAA_CLIENT_SOURCE_TEMPLATE. */
+    private static final String BASE_KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/BaseKaaClient.java.template";
 
     /** The Constant NOTIFICATION_LISTENER_SOURCE_TEMPLATE. */
     private static final String NOTIFICATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/nf/NotificationListener.java.template";
@@ -168,8 +171,11 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant DEFAULT_SCHEMA_VERSION. */
     private static final int DEFAULT_SCHEMA_VERSION = 1;
 
-    /** The Constant LOG_RECORD. */
+    /** The Constant KAA_CLIENT. */
     private static final String KAA_CLIENT = "KaaClient";
+    
+    /** The Constant BASE_KAA_CLIENT. */
+    private static final String BASE_KAA_CLIENT = "BaseKaaClient";
     
     /** The Constant LOG_RECORD. */
     private static final String LOG_RECORD = "LogRecord";
@@ -338,6 +344,13 @@ public class JavaSdkGenerator extends SdkGenerator {
                 LOG_RECORD_CLASS_VAR, logSchema.getName());
         JavaDynamicBean kaaClientClassBean = new JavaDynamicBean(KAA_CLIENT, kaaClientSource);
         javaSources.add(kaaClientClassBean);
+        
+        String baseKaaClientTemplate = readResource(BASE_KAA_CLIENT_SOURCE_TEMPLATE);
+        String baseKaaClientSource = baseKaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
+                LOG_RECORD_CLASS_VAR, logSchema.getName());
+        JavaDynamicBean baseKaaClientClassBean = new JavaDynamicBean(KAA_CLIENT, baseKaaClientSource);
+        javaSources.add(baseKaaClientClassBean);
+
 
         packageSources(javaSources, replacementData);
 

@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
-import org.kaaproject.kaa.schema.base.Log;
+import ${log_record_class_package}.${log_record_class};
 
 /**
  * <p>
@@ -32,14 +32,14 @@ import org.kaaproject.kaa.schema.base.Log;
  * @see KaaClient
  * @see AbstractKaaClient
  */
-public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
+ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
 
     public BaseKaaClient(KaaClientPlatformContext context) throws InvalidKeySpecException, NoSuchAlgorithmException, IOException {
         super(context);
     }
 
     @Override
-    public void addLogRecord(Log record) {
+    public void addLogRecord(${log_record_class} record) {
         logCollector.addLogRecord(record);
     }
 }
