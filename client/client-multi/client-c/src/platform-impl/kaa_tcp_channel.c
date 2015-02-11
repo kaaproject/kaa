@@ -180,7 +180,8 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     }
 
     kaa_tcp_channel->supported_service_count = supported_service_count;
-    for (size_t i = 0; i < supported_service_count; ++i) {
+    size_t i = 0;
+    for (; i < supported_service_count; ++i) {
         kaa_tcp_channel->supported_services[i] = supported_services[i];
     }
 
@@ -1058,7 +1059,8 @@ bool is_service_pending(kaa_tcp_channel_t *self, const kaa_service_t service)
 {
     KAA_RETURN_IF_NIL2(self, self->pending_request_services, false);
 
-    for (size_t i = 0; i < self->pending_request_service_count; ++i) {
+    size_t i = 0;
+    for (; i < self->pending_request_service_count; ++i) {
         if (self->pending_request_services[i] == service) {
             return true;
         }
@@ -1098,9 +1100,11 @@ kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self
     size_t new_service_count = 0;
     kaa_service_t temp_new_services[self->pending_request_service_count];
 
-    for (size_t pending_i = 0; pending_i < self->pending_request_service_count; ++pending_i) {
+    size_t pending_i = 0;
+    for (; pending_i < self->pending_request_service_count; ++pending_i) {
         found = false;
-        for (size_t deleting_i = 0; deleting_i < service_count; ++deleting_i) {
+        size_t deleting_i = 0;
+        for (; deleting_i < service_count; ++deleting_i) {
             if (self->pending_request_services[pending_i] == services[deleting_i]) {
                 found = true;
                 break;
@@ -1159,9 +1163,11 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
     }
 
     bool found;
-    for (size_t updating_i = 0; updating_i < service_count; ++updating_i) {
+    size_t updating_i = 0;
+    for (; updating_i < service_count; ++updating_i) {
         found = false;
-        for (size_t pending_i = 0; pending_i < new_service_count; ++pending_i) {
+        size_t pending_i = 0;
+        for (; pending_i < new_service_count; ++pending_i) {
             if (services[updating_i] == temp_new_services[pending_i]) {
                 found = true;
                 break;
