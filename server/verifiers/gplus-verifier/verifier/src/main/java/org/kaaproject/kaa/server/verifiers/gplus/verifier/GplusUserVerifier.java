@@ -49,7 +49,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     private static final Charset CHARSET = Charset.forName("UTF-8");
     private GplusAvroConfig configuration;
     private ExecutorService threadPool;
-    private CloseableHttpClient httpClient;
+    private volatile CloseableHttpClient httpClient;
 
     @Override
     public void init(UserVerifierContext context, GplusAvroConfig configuration) {
@@ -66,7 +66,6 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
             callback.onInternalError();
             LOG.warn("Internal error", e);
         }
-
     }
 
 
@@ -102,8 +101,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
                         callback.onSuccess();
                         LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
                     }
-                }
-                if (responseCode == HTTP_BAD_REQUEST) {
+                }else if (responseCode == HTTP_BAD_REQUEST) {
                     callback.onTokenInvalid();
                     LOG.trace("Server auth error: {}", readResponse(closeableHttpResponse.getEntity().getContent()));
                 } else {
@@ -125,7 +123,7 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
         }
     }
 
-    private String readResponse(InputStream is) throws IOException {
+    protected String readResponse(InputStream is) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] data = new byte[2048];
         int len = 0;
@@ -138,15 +136,8 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     }
 
 
-    protected CloseableHttpResponse establishConnection(URI uri) {
-        CloseableHttpResponse closeableHttpResponse = null;
-        try {
-            closeableHttpResponse = httpClient.execute(new HttpGet(uri));
-        } catch (IOException e) {
-            LOG.warn("Internal error: ", e);
-            throw new RuntimeException();
-        }
-        return closeableHttpResponse;
+    protected CloseableHttpResponse establishConnection(URI uri) throws IOException {
+        return httpClient.execute(new HttpGet(uri));
     }
 
     @Override

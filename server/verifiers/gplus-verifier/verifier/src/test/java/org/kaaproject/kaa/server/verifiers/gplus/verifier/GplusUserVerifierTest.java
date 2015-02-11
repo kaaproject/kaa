@@ -20,16 +20,20 @@ package org.kaaproject.kaa.server.verifiers.gplus.verifier;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kaaproject.kaa.server.common.verifier.UserVerifier;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
 import org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
-import java.net.HttpURLConnection;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import static org.mockito.Mockito.*;
@@ -53,18 +57,16 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
                 "}\n");
         verifier.init(null, config);
         verifier.start();
-
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-
         verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
     }
 
     @Test
-    public void incompatibleUserIds() {
+    public void incompatibleUserIdsTest() {
         verifier = new MyGplusVerifier(200, "{\n" +
                 "  \"audience\":\"8819981768.apps.googleusercontent.com\",\n" +
-                "  \"user_id\":\""+userId+"\",\n" +
+                "  \"user_id\":\"" + userId + "\",\n" +
                 "  \"scope\":\"profile email\",\n" +
                 "  \"expires_in\":436\n" +
                 "}");
@@ -80,25 +82,20 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
         verifier = new MyGplusVerifier(400);
         verifier.init(null, config);
         verifier.start();
-
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-
         verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
-
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onTokenInvalid();
     }
 
     @Test
-    public void successfulVerification() {
+    public void successfulVerificationTest() {
         String userId = "12456789123456";
         verifier = new MyGplusVerifier(200, "{\n" +
                 "  \"audience\":\"8819981768.apps.googleusercontent.com\",\n" +
-                "  \"user_id\":\""+userId+"\",\n" +
+                "  \"user_id\":\"" + userId + "\",\n" +
                 "  \"scope\":\"profile email\",\n" +
                 "  \"expires_in\":436\n" +
                 "}");
-
-
         verifier.init(null, config);
         verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
@@ -121,21 +118,33 @@ public class GplusUserVerifierTest extends GplusUserVerifier {
 
         @Override
         protected CloseableHttpResponse establishConnection(URI uri) {
-            CloseableHttpResponse connection = mock(CloseableHttpResponse.class);
-
+            CloseableHttpResponse closeableHttpResponse = mock(CloseableHttpResponse.class);
             try {
                 StatusLine statusLine = mock(StatusLine.class);
                 when(statusLine.getStatusCode()).thenReturn(responseCode);
                 HttpEntity httpEntity = mock(HttpEntity.class);
                 when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(inputStreamString.
                         getBytes(StandardCharsets.UTF_8)));
-                when(connection.getStatusLine()).thenReturn(statusLine);
-                when(connection.getEntity()).thenReturn(httpEntity);
+                when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
+                when(closeableHttpResponse.getEntity()).thenReturn(httpEntity);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            return connection;
+            return closeableHttpResponse;
         }
     }
+
+    @Test
+    public void internalErrorTest() throws IOException {
+        verifier = new GplusUserVerifier();
+        verifier.init(null, config);
+        verifier.start();
+        CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
+        doThrow(new IOException()).when(httpClientMock).execute(any(HttpGet.class));
+        ReflectionTestUtils.setField(verifier, "httpClient", httpClientMock);
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken("id", "token", callback);
+        Mockito.verify(callback, Mockito.timeout(1000)).onInternalError();
+    }
+
 }
