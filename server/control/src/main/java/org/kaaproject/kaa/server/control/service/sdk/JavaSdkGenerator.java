@@ -348,7 +348,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         String baseKaaClientTemplate = readResource(BASE_KAA_CLIENT_SOURCE_TEMPLATE);
         String baseKaaClientSource = baseKaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
                 LOG_RECORD_CLASS_VAR, logSchema.getName());
-        JavaDynamicBean baseKaaClientClassBean = new JavaDynamicBean(KAA_CLIENT, baseKaaClientSource);
+        JavaDynamicBean baseKaaClientClassBean = new JavaDynamicBean(BASE_KAA_CLIENT, baseKaaClientSource);
         javaSources.add(baseKaaClientClassBean);
 
 
