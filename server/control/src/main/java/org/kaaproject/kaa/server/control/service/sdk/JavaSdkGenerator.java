@@ -122,7 +122,7 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant KAA_CLIENT_SOURCE_TEMPLATE. */
     private static final String KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/KaaClient.java.template";
-    
+
     /** The Constant BASE_KAA_CLIENT_SOURCE_TEMPLATE. */
     private static final String BASE_KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/BaseKaaClient.java.template";
 
@@ -152,7 +152,7 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE. */
     private static final String USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE = "sdk/java/event/UserVerifierConstants.java.template";
-    
+
     /** The Constant ABSTRACT_PROFILE_CONTAINER. */
     private static final String PROFILE_CONTAINER = "ProfileContainer";
 
@@ -164,19 +164,19 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant NOTIFICATION_DESERIALIZER. */
     private static final String NOTIFICATION_DESERIALIZER = "NotificationDeserializer";
-    
-    /** The Constant  USER_VERIFIER_CONSTANTS. */
-    private static final String  USER_VERIFIER_CONSTANTS = "UserVerifierConstants";
+
+    /** The Constant USER_VERIFIER_CONSTANTS. */
+    private static final String USER_VERIFIER_CONSTANTS = "UserVerifierConstants";
 
     /** The Constant DEFAULT_SCHEMA_VERSION. */
     private static final int DEFAULT_SCHEMA_VERSION = 1;
 
     /** The Constant KAA_CLIENT. */
     private static final String KAA_CLIENT = "KaaClient";
-    
+
     /** The Constant BASE_KAA_CLIENT. */
     private static final String BASE_KAA_CLIENT = "BaseKaaClient";
-    
+
     /** The Constant LOG_RECORD. */
     private static final String LOG_RECORD = "LogRecord";
 
@@ -203,7 +203,7 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant LOG_RECORD_CLASS_VAR. */
     private static final String LOG_RECORD_CLASS_VAR = "\\$\\{log_record_class\\}";
-    
+
     /** The Constant DEFAULT_USER_VERIFIER_TOKEN_VAR. */
     private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
 
@@ -258,10 +258,14 @@ public class JavaSdkGenerator extends SdkGenerator {
         String profileClassName = profileSchema.getName();
         String profileClassPackage = profileSchema.getNamespace();
 
-        List<JavaDynamicBean> javaSources = generateSchemaSources(profileSchema);
+        List<JavaDynamicBean> javaSources = new ArrayList<JavaDynamicBean>();
+        if(profileSchemaVersion != DEFAULT_SCHEMA_VERSION){
+            javaSources.addAll(generateSchemaSources(profileSchema));
+        }
+        
         String profileContainerTemplate = readResource(PROFILE_CONTAINER_SOURCE_TEMPLATE);
-        String profileContainerSource = profileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage)
-                .replaceAll(PROFILE_CLASS_VAR, profileClassName);
+        String profileContainerSource = profileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
+                PROFILE_CLASS_VAR, profileClassName);
         JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(PROFILE_CONTAINER, profileContainerSource);
         javaSources.add(profileContainerClassBean);
 
@@ -271,16 +275,19 @@ public class JavaSdkGenerator extends SdkGenerator {
         } else {
             profileSerializerTemplate = readResource(PROFILE_SERIALIZER_SOURCE_TEMPLATE);
         }
-        String profileSerializerSource = profileSerializerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage)
-                .replaceAll(PROFILE_CLASS_VAR, profileClassName);
+        String profileSerializerSource = profileSerializerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
+                PROFILE_CLASS_VAR, profileClassName);
         JavaDynamicBean profileSerializerClassBean = new JavaDynamicBean(PROFILE_SERIALIZER, profileSerializerSource);
         javaSources.add(profileSerializerClassBean);
 
         Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
-        String notificationClassName = profileSchema.getName();
-        String notificationClassPackage = profileSchema.getNamespace();
+        String notificationClassName = notificationSchema.getName();
+        String notificationClassPackage = notificationSchema.getNamespace();
 
-        javaSources.addAll(generateSchemaSources(notificationSchema));
+        if(notificationSchemaVersion != DEFAULT_SCHEMA_VERSION){
+            javaSources.addAll(generateSchemaSources(notificationSchema));
+        }
+
         String notificationListenerTemplate = readResource(NOTIFICATION_LISTENER_SOURCE_TEMPLATE);
         String notificationListenerSource = notificationListenerTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
                 notificationClassPackage).replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
@@ -288,7 +295,6 @@ public class JavaSdkGenerator extends SdkGenerator {
         JavaDynamicBean notificationListenerClassBean = new JavaDynamicBean(NOTIFICATION_LISTENER, notificationListenerSource);
         javaSources.add(notificationListenerClassBean);
 
-        javaSources.addAll(generateSchemaSources(notificationSchema));
         String notificationDeserializerSourceTemplate = readResource(NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE);
         String notificationDeserializerSource = notificationDeserializerSourceTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
                 notificationClassPackage).replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
@@ -296,9 +302,11 @@ public class JavaSdkGenerator extends SdkGenerator {
         JavaDynamicBean notificationDeserializerClassBean = new JavaDynamicBean(NOTIFICATION_DESERIALIZER, notificationDeserializerSource);
         javaSources.add(notificationDeserializerClassBean);
 
-
         Schema logSchema = new Schema.Parser().parse(logSchemaBody);
-        javaSources.addAll(generateSchemaSources(logSchema));
+        if(logSchemaVersion != DEFAULT_SCHEMA_VERSION){
+            javaSources.addAll(generateSchemaSources(logSchema));
+        }
+
         String logRecordTemplate = readResource(LOG_RECORD_SOURCE_TEMPLATE);
         String logRecordSource = logRecordTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
                 LOG_RECORD_CLASS_VAR, logSchema.getName());
@@ -326,31 +334,30 @@ public class JavaSdkGenerator extends SdkGenerator {
             }
             javaSources.addAll(JavaEventClassesGenerator.generateEventClasses(eventFamilies));
         }
-        
+
         String userVerifierConstantsTemplate = readResource(USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE);
         if (defaultVerifierToken == null) {
             defaultVerifierToken = "null";
         } else {
             defaultVerifierToken = "\"" + defaultVerifierToken + "\"";
         }
-        String userVerifierConstantsSource = userVerifierConstantsTemplate.replaceAll(DEFAULT_USER_VERIFIER_TOKEN_VAR, 
-                defaultVerifierToken);
-        
+        String userVerifierConstantsSource = userVerifierConstantsTemplate
+                .replaceAll(DEFAULT_USER_VERIFIER_TOKEN_VAR, defaultVerifierToken);
+
         JavaDynamicBean userVerifierConstantsClassBean = new JavaDynamicBean(USER_VERIFIER_CONSTANTS, userVerifierConstantsSource);
         javaSources.add(userVerifierConstantsClassBean);
-        
+
         String kaaClientTemplate = readResource(KAA_CLIENT_SOURCE_TEMPLATE);
         String kaaClientSource = kaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
                 LOG_RECORD_CLASS_VAR, logSchema.getName());
         JavaDynamicBean kaaClientClassBean = new JavaDynamicBean(KAA_CLIENT, kaaClientSource);
         javaSources.add(kaaClientClassBean);
-        
+
         String baseKaaClientTemplate = readResource(BASE_KAA_CLIENT_SOURCE_TEMPLATE);
         String baseKaaClientSource = baseKaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
                 LOG_RECORD_CLASS_VAR, logSchema.getName());
         JavaDynamicBean baseKaaClientClassBean = new JavaDynamicBean(BASE_KAA_CLIENT, baseKaaClientSource);
         javaSources.add(baseKaaClientClassBean);
-
 
         packageSources(javaSources, replacementData);
 
@@ -524,10 +531,10 @@ public class JavaSdkGenerator extends SdkGenerator {
             List<TransportMetaData> supportedChannels = node.getTransports();
 
             int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
-            
+
             for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
                 TransportMetaData transport = supportedChannels.get(chIndex);
-                for(VersionConnectionInfoPair pair : transport.getConnectionInfo()){
+                for (VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
                     bootstrapServers += accessPointId;
                     bootstrapServers += SEPARATOR;
                     bootstrapServers += transport.getId();

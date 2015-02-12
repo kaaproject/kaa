@@ -147,6 +147,19 @@
     </dependencies>
 
     <build>
+         <resources>
+             <resource>
+                <directory>src/main/resources</directory>
+             </resource>
+             <resource>
+                 <directory>../../../common/endpoint-shared/src/main/avro</directory>
+                 <includes>
+                     <include>default_log_schema.avsc</include>
+                     <include>default_notification_schema.avsc</include>
+                     <include>default_profile_schema.avsc</include>
+                 </includes>
+             </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
