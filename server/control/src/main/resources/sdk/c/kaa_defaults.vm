@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,16 +45,16 @@ extern "C" {
 
 
 
-typedef struct kaa_events_schema_version_ {
+typedef struct {
     const char *    name;
     uint16_t         version;
-} kaa_events_schema_version;
+} kaa_events_schema_version_t;
 
 #if ($eventFamilies)
 #set ($familyCounter = $eventFamilies.size())
 # define KAA_EVENT_SCHEMA_VERSIONS_SIZE    $familyCounter
 
-static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
+static const kaa_events_schema_version_t KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
 #foreach ($family in $eventFamilies)
 #set ($familyCounter = $familyCounter - 1)
     {
