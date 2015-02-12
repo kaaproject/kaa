@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.client.exceptions;
 
-package org.kaaproject.kaa.sandbox.demo;
+public class KaaClusterConnectionException extends KaaClientException {
 
-import java.util.ArrayList;
-import java.util.List;
+    private static final long serialVersionUID = 2904740158735824231L;
 
-public class DemoBuildersRegistry {
-
-    private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
-    
-    static {
-//          TODO: KAA-343 uncomment this
-//        demoBuilders.add(new SmartHouseDemoBuilder());
-//        demoBuilders.add(new RobotRunDemoBuilder());
+    public KaaClusterConnectionException(Exception cause) {
+        super(cause);
     }
-    
-    public static List<DemoBuilder> getRegisteredDemoBuilders() {
-        return demoBuilders;
-    }
-    
+
 }

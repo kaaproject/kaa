@@ -39,7 +39,7 @@ public class DesktopKaaClientTest {
     public void testClientInit() throws Exception {
 
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext()));
+        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
 
         try {
             clientSpy.start();
@@ -57,7 +57,7 @@ public class DesktopKaaClientTest {
     @Test
     public void testClientStartBeforeInit() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext()));
+        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
 
         // does nothing before initialization;
         clientSpy.start();
@@ -73,7 +73,7 @@ public class DesktopKaaClientTest {
 
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
 
-        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext()));
+        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
         ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
 
         clientSpy.setProfileContainer(profileContainerMock);
