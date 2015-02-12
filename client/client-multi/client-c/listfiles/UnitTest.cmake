@@ -115,8 +115,14 @@ add_executable  (test_kaatcp_request
                 )
 target_link_libraries(test_kaatcp_request kaac ${CUNIT_LIB_NAME})
 
-add_executable  (test_kaa_tcp_channel
+add_executable  (test_kaa_tcp_channel_bootstrap
                     test/kaa_tcp_channel/test_kaa_tcp_channel_bootstrap.c
                     test/kaa_test_external.c
                 )
-target_link_libraries(test_kaa_tcp_channel kaac ${CUNIT_LIB_NAME})
+target_link_libraries(test_kaa_tcp_channel_bootstrap kaac ${CUNIT_LIB_NAME})
+
+add_executable  (test_kaa_tcp_channel_operation
+                    test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_kaa_tcp_channel_operation kaac ${CUNIT_LIB_NAME})
