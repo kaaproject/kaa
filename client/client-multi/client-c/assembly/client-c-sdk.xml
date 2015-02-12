@@ -30,6 +30,10 @@
             <outputDirectory>listfiles</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/toolchains</directory>
+            <outputDirectory>toolchains</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}/src</directory>
             <outputDirectory>src</outputDirectory>
         </fileSet>

@@ -142,7 +142,8 @@ kaa_list_t *kaa_list_remove_at(kaa_list_t **head, kaa_list_t *position, dealloca
         return *head;
     }
 
-    for (kaa_list_t *curr_head = *head; curr_head->next != NULL; curr_head = curr_head->next) {
+    kaa_list_t *curr_head = *head;
+    for (; curr_head->next != NULL; curr_head = curr_head->next) {
         if (curr_head->next == position) {
             curr_head->next = curr_head->next->next;
             kaa_list_destroy_node(position, deallocator);
@@ -163,7 +164,8 @@ kaa_error_t kaa_list_remove_first(kaa_list_t **head, match_predicate pred, void 
         return KAA_ERR_NONE;
     }
 
-    for (kaa_list_t *curr_head = *head; curr_head->next != NULL; curr_head = curr_head->next) {
+    kaa_list_t *curr_head = *head;
+    for (; curr_head->next != NULL; curr_head = curr_head->next) {
         if (pred(curr_head->next->data, context)) {
             kaa_list_t *item_to_delete = curr_head->next;
             curr_head->next = curr_head->next->next;

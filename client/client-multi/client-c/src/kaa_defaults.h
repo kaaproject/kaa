@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,14 +45,14 @@ extern "C" {
 
 
 
-typedef struct kaa_events_schema_version_ {
+typedef struct {
     const char *    name;
-    uint16_t         version;
-} kaa_events_schema_version;
+    uint16_t        version;
+} kaa_events_schema_version_t;
 
 # define KAA_EVENT_SCHEMA_VERSIONS_SIZE    2
 
-static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] =
+static const kaa_events_schema_version_t KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] =
 {
     {
           /* .name = */   "1ecf"
@@ -75,7 +75,7 @@ static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEM
  */
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
-    kaa_access_point_t             access_point; /*!< Connection data of Bootstrap servers is Base64-encoded. */
+    kaa_access_point_t             access_point;
 } kaa_bootstrap_server_connection_data_t;
 
 # define KAA_BOOTSTRAP_ACCESS_POINT_COUNT    1

@@ -149,7 +149,8 @@ static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *ch
                                                            , &service_count);
 
     if (!error_code) {
-        for (size_t i = 0; i < service_count; ++i) {
+        size_t i = 0;
+        for (; i < service_count; ++i) {
             if (services[i] == KAA_SERVICE_BOOTSTRAP) {
                 return true;
             }
