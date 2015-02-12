@@ -34,8 +34,7 @@ import org.kaaproject.kaa.client.channel.ConfigurationTransport;
 import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
-import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.KaaTransport;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.channel.MetaDataTransport;
@@ -156,7 +155,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private final DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
     private final DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
     private final MetaDataTransport metaDataTransport = new DefaultMetaDataTransport();
-    private final KaaChannelManager channelManager;
+    private final KaaInternalChannelManager channelManager;
 
     private final EndpointObjectHash publicKeyHash;
     
@@ -462,26 +461,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     @Override
     public KaaChannelManager getChannelMananager() {
         return channelManager;
-    }
-
-    @Override
-    public KaaDataMultiplexer getOperationMultiplexer() {
-        return operationsDataProcessor;
-    }
-
-    @Override
-    public KaaDataDemultiplexer getOperationDemultiplexer() {
-        return operationsDataProcessor;
-    }
-
-    @Override
-    public KaaDataMultiplexer getBootstrapMultiplexer() {
-        return bootstrapDataProcessor;
-    }
-
-    @Override
-    public KaaDataDemultiplexer getBootstrapDemultiplexer() {
-        return bootstrapDataProcessor;
     }
 
     @Override

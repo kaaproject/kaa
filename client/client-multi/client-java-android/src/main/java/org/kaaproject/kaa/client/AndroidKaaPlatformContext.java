@@ -33,16 +33,16 @@ import org.kaaproject.kaa.client.util.Base64;
 
 import android.content.Context;
 
-public class AndroidKaaContext implements KaaClientPlatformContext {
+public class AndroidKaaPlatformContext implements KaaClientPlatformContext {
 
     private final Context context;
     private final KaaClientProperties properties;
     
-    public AndroidKaaContext(Context context) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public AndroidKaaPlatformContext(Context context) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         this(context, null);
     }
     
-    public AndroidKaaContext(Context context, KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public AndroidKaaPlatformContext(Context context, KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         super();
         this.context = context;
         this.properties = properties;

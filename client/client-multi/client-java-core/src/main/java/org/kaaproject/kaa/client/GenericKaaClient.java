@@ -22,15 +22,12 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
-import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
 import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
 import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
-import org.kaaproject.kaa.client.logging.LogCollector;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -38,7 +35,6 @@ import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
-import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
@@ -53,7 +49,6 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka
  *
- * @see ProfileManager
  * @see ConfigurationManager
  * @see DeltaManager
  * @see ConfigurationPersistenceManager
@@ -63,11 +58,8 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
  * @see EndpointRegistrationManager
  * @see EventListenersResolver
  * @see KaaChannelManager
- * @see KaaDataMultiplexer
- * @see KaaDataDemultiplexer
  * @see PublicKey
  * @see PrivateKey
- * @see LogCollector
  * @see KaaDataChannel
  */
 public interface GenericKaaClient {
@@ -478,58 +470,6 @@ public interface GenericKaaClient {
      * @return {@link KaaChannelManager} object
      */
     KaaChannelManager getChannelMananager();
-
-    /**
-     * <p>
-     * Retrieves data multiplexer for communication with Operation server.
-     * </p>
-     *
-     * <p>
-     * Required in user implementation of an operation data channel.
-     * </p>
-     *
-     * @return {@link KaaDataMultiplexer} object
-     */
-    KaaDataMultiplexer getOperationMultiplexer();
-
-    /**
-     * <p>
-     * Retrieves data demultiplexer for communication with Operation server.
-     * </p>
-     *
-     * <p>
-     * Required in user implementation of an operation data channel.
-     * </p>
-     *
-     * @return {@link KaaDataDemultiplexer} object
-     */
-    KaaDataDemultiplexer getOperationDemultiplexer();
-
-    /**
-     * <p>
-     * Retrieves data multiplexer for communication with Bootstrap server.
-     * </p>
-     *
-     * <p>
-     * Required in user implementation of a bootstrap data channel.
-     * </p>
-     *
-     * @return {@link KaaDataMultiplexer} object
-     */
-    KaaDataMultiplexer getBootstrapMultiplexer();
-
-    /**
-     * <p>
-     * Retrieves data demultiplexer for communication with Bootstrap server.
-     * </p>
-     *
-     * <p>
-     * Required in user implementation of a bootstrap data channel.
-     * </p>
-     *
-     * @return {@link KaaDataDemultiplexer} object
-     */
-    KaaDataDemultiplexer getBootstrapDemultiplexer();
 
     /**
      * <p>
