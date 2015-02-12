@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.client.event.registration;
 
-import java.util.Map;
-
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.UserTransport;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -60,10 +58,10 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
  * }
  * </pre>
  * EndpointKeyHash for endpoint can be received with AttachEndpoint operation
- * provided from Operations server. See {@link EndpointOperationResultListener}. <br>
+ * provided from Operations server. See {@link EndpointOperationCallback}. <br>
  * <br>
  * If current endpoint is assumed to be attached or detached by another endpoint,
- * specific {@link CurrentEndpointAttachListener} and {@link CurrentEndpointDetachListener}
+ * specific {@link AttachEndpointToUserCallback} and {@link DetachEndpointFromUserCallback}
  * may be specified to receive notification about such event.<br>
  * <br>
  * Manager uses specific {@link UserTransport} to communicate with Operations
@@ -74,39 +72,29 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
  *
  * @see EndpointAccessToken
  * @see EndpointKeyHash
- * @see EndpointOperationResultListener
+ * @see EndpointOperationCallback
  * @see UserAuthResultListener
- * @see AttachedEndpointListChangedListener
- * @see CurrentEndpointAttachListener
- * @see CurrentEndpointDetachListener
+ * @see ChangedAttachedEndpointListCallback
+ * @see AttachEndpointToUserCallback
+ * @see DetachEndpointFromUserCallback
  * @see UserTransport
  * @see ProfileTransport
  */
 public interface EndpointRegistrationManager {
 
     /**
-     * Generate new access token for a current endpoint
-     */
-    void regenerateEndpointAccessToken();
-
-    /**
-     * Retrieve an access token for a current endpoint
-     */
-    String getEndpointAccessToken();
-
-    /**
      * Updates with new endpoint attach request<br>
      * <br>
-     * {@link EndpointOperationResultListener} is populated with {@link EndpointKeyHash} of an
+     * {@link EndpointOperationCallback} is populated with {@link EndpointKeyHash} of an
      * attached endpoint.
      *
      * @param endpointAccessToken Access token of the attaching endpoint
      * @param resultListener Listener to notify about result of the endpoint attaching
      *
      * @see EndpointAccessToken
-     * @see EndpointOperationResultListener
+     * @see EndpointOperationCallback
      */
-    void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationResultListener resultListener);
+    void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationCallback resultListener);
 
     /**
      * Updates with new endpoint detach request
@@ -115,13 +103,13 @@ public interface EndpointRegistrationManager {
      * @param resultListener Listener to notify about result of the enpoint attaching
      *
      * @see EndpointKeyHash
-     * @see EndpointOperationResultListener
+     * @see EndpointOperationCallback
      */
-    void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationResultListener resultListener);
+    void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationCallback resultListener);
 
     /**
      * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
-     * If there was no default verifier selected this method will throw runtime exception. 
+     * If there was no default verifier selected this method will throw runtime exception.
      *
      * @param userExternalId
      * @param userAccessToken
@@ -130,11 +118,11 @@ public interface EndpointRegistrationManager {
      * @see UserAuthResultListener
      */
     void attachUser(String userExternalId, String userAccessToken, UserAuthResultListener callback);
-    
+
     /**
      * Creates user attach request using specified verifier.
      *
-     * @param userVerifierId
+     * @param userVerifierToken
      * @param userExternalId
      * @param userAccessToken
      * @param callback called when authentication result received
@@ -142,48 +130,6 @@ public interface EndpointRegistrationManager {
      * @see UserAuthResultListener
      */
     void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAuthResultListener callback);
-
-    /**
-     * Retrieves list of attached endpoints
-     *
-     * @return list of enpointKeyHash of attached endpoints mapped by their access tokens.
-     *
-     * @see EndpointAccessToken
-     * @see EndpointKeyHash
-     */
-    Map<EndpointAccessToken, EndpointKeyHash> getAttachedEndpointList();
-
-    /**
-     * Updates with listener for attached endpoint list updates
-     *
-     * @param listener Attached endpoints list change listener
-     * @see AttachedEndpointListChangedListener
-     */
-    void addAttachedEndpointListChangeListener(AttachedEndpointListChangedListener listener);
-
-    /**
-     * Removes listener of attached endpoint list changes
-     *
-     * @param listener Attached endpoints list change listener
-     * @see AttachedEndpointListChangedListener
-     */
-    void removeAttachedEndpointListChangeListener(AttachedEndpointListChangedListener listener);
-
-    /**
-     * Sets the User transport for the current manager to communicate with remote server.
-     *
-     * @param transport the User transport object which is going to be set.
-     * @see UserTransport
-     */
-    void setUserTransport(UserTransport transport);
-
-    /**
-     * Sets the Profile transport for the current manager to communicate with remote server.
-     *
-     * @param transport the Profile transport object which is going to be set.
-     * @see ProfileTransport
-     */
-    void setProfileTransport(ProfileTransport transport);
 
     /**
      * Checks if current endpoint is attached to user.
@@ -197,16 +143,16 @@ public interface EndpointRegistrationManager {
      *
      * @param listener
      *
-     * @see CurrentEndpointAttachListener
+     * @see AttachEndpointToUserCallback
      */
-    void setAttachedListener(CurrentEndpointAttachListener listener);
+    void setAttachedListener(AttachEndpointToUserCallback listener);
 
     /**
      * Sets callback for notifications when current endpoint is detached from user
      *
      * @param listener
      *
-     * @see CurrentEndpointDetachListener
+     * @see DetachEndpointFromUserCallback
      */
-    void setDetachedListener(CurrentEndpointDetachListener listener);
+    void setDetachedListener(DetachEndpointFromUserCallback listener);
 }

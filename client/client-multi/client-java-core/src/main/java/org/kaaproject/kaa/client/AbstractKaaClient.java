@@ -459,7 +459,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public KaaChannelManager getChannelMananager() {
+    public KaaChannelManager getChannelManager() {
         return channelManager;
     }
 

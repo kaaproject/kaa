@@ -26,9 +26,9 @@ package org.kaaproject.kaa.client.event.registration;
  * @author Taras Lemkin
  *
  * @see EndpointRegistrationManager
- * @see EndpointRegistrationManager#setAttachedListener(CurrentEndpointAttachListener)
+ * @see EndpointRegistrationManager#setAttachedListener(AttachEndpointToUserCallback)
  */
-public interface CurrentEndpointAttachListener {
+public interface AttachEndpointToUserCallback {
 
     /**
      * Callback on current endpoint is attached to user.

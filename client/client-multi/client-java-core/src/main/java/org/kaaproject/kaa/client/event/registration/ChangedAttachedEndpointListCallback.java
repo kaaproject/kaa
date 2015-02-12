@@ -16,24 +16,25 @@
 
 package org.kaaproject.kaa.client.event.registration;
 
+import java.util.Map;
+
+import org.kaaproject.kaa.client.event.EndpointAccessToken;
+import org.kaaproject.kaa.client.event.EndpointKeyHash;
+
 /**
- * Callback interface for detached from user notifications.<br>
- * <br>
- * Provide listener implementation to {@link EndpointRegistrationManager} to
- * retrieve notification when current endpoint is detached from user by another
- * endpoint.
+ * Callback interface for attached endpoint list change notifications
  *
  * @author Taras Lemkin
  *
- * @see EndpointRegistrationManager
- * @see EndpointRegistrationManager#setDetachedListener
  */
-public interface CurrentEndpointDetachListener {
-
+public interface ChangedAttachedEndpointListCallback {
     /**
-     * Callback on current endpoint is detached from user.
+     * Callback on attached endpoints list changed
      *
-     * @param endpointAccessToken
+     * @param attachedEndpoints
+     *
+     * @see EndpointAccessToken
+     * @see EndpointKeyHash
      */
-    void onDetachedFromUser(String endpointAccessToken);
+    void onAttachedEndpointListChanged(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
 }

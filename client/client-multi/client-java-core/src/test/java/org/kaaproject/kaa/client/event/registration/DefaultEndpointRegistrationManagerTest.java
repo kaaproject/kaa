@@ -80,7 +80,7 @@ public class DefaultEndpointRegistrationManagerTest {
         when(state.getEndpointAccessToken()).thenReturn("");
 
         DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, null, null));
-        EndpointOperationResultListener listener = mock(EndpointOperationResultListener.class);
+        EndpointOperationCallback listener = mock(EndpointOperationCallback.class);
 
         manager.attachEndpoint(new EndpointAccessToken("accessToken1"), listener);
         UserTransport transport = mock(UserTransport.class);
@@ -98,7 +98,7 @@ public class DefaultEndpointRegistrationManagerTest {
         when(state.getEndpointAccessToken()).thenReturn("");
         DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, null, null));
 
-        EndpointOperationResultListener listener = mock(EndpointOperationResultListener.class);
+        EndpointOperationCallback listener = mock(EndpointOperationCallback.class);
         manager.detachEndpoint(new EndpointKeyHash("keyHash1"), listener);
         UserTransport transport = mock(UserTransport.class);
 
@@ -118,7 +118,7 @@ public class DefaultEndpointRegistrationManagerTest {
             UserTransport transport = new DefaultUserTransport();
             DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, transport, null));
 
-            AttachedEndpointListChangedListener listListener = mock(AttachedEndpointListChangedListener.class);
+            ChangedAttachedEndpointListCallback listListener = mock(ChangedAttachedEndpointListCallback.class);
             manager.addAttachedEndpointListChangeListener(listListener);
 
             transport.setEndpointRegistrationProcessor(manager);
@@ -240,7 +240,7 @@ public class DefaultEndpointRegistrationManagerTest {
         KaaClientState state = mock(KaaClientState.class);
         when(state.getEndpointAccessToken()).thenReturn("");
 
-        CurrentEndpointAttachListener listener = mock(CurrentEndpointAttachListener.class);
+        AttachEndpointToUserCallback listener = mock(AttachEndpointToUserCallback.class);
 
         DefaultEndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, null, null);
         manager.setAttachedListener(null);
@@ -268,7 +268,7 @@ public class DefaultEndpointRegistrationManagerTest {
         KaaClientState state = mock(KaaClientState.class);
         when(state.getEndpointAccessToken()).thenReturn("");
 
-        CurrentEndpointDetachListener listener = mock(CurrentEndpointDetachListener.class);
+        DetachEndpointFromUserCallback listener = mock(DetachEndpointFromUserCallback.class);
 
         DefaultEndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, null, null);
         manager.setDetachedListener(null);
