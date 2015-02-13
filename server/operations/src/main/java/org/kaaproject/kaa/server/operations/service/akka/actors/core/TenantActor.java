@@ -35,6 +35,8 @@ import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
+import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
+import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +47,7 @@ import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
-public class TenantActor extends UntypedActor{
+public class TenantActor extends UntypedActor {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(TenantActor.class);
@@ -67,6 +69,9 @@ public class TenantActor extends UntypedActor{
 
     /** The log appender service. */
     private final LogAppenderService logAppenderService;
+    
+    /** The endpoint user service. */
+    private final EndpointUserService endpointUserService;
 
     /** The applications. */
     private final Map<String, ActorRef> applications;
@@ -76,14 +81,15 @@ public class TenantActor extends UntypedActor{
 
     private final String tenantId;
 
-    private TenantActor(CacheService cacheService, OperationsService endpointService, NotificationDeltaService notificationDeltaService, EventService eventService,
-            ApplicationService applicationService, LogAppenderService logAppenderService, String tenantId) {
+    private TenantActor(CacheService cacheService, OperationsService endpointService, NotificationDeltaService notificationDeltaService,
+            EventService eventService, ApplicationService applicationService, LogAppenderService logAppenderService, EndpointUserService endpointUserService, String tenantId) {
         super();
         this.cacheService = cacheService;
         this.operationsService = endpointService;
         this.notificationDeltaService = notificationDeltaService;
         this.applicationService = applicationService;
         this.logAppenderService = logAppenderService;
+        this.endpointUserService = endpointUserService;
         this.eventService = eventService;
         this.tenantId = tenantId;
         this.applications = new HashMap<>();
@@ -116,6 +122,9 @@ public class TenantActor extends UntypedActor{
         /** The log appender service. */
         private final LogAppenderService logAppenderService;
 
+        /** The endpoint user service. */
+        private final EndpointUserService endpointUserService;
+
         private final String tenantId;
 
         /**
@@ -127,8 +136,9 @@ public class TenantActor extends UntypedActor{
          *            the notification delta service
          * @param eventService
          */
-        public ActorCreator(CacheService cacheService, OperationsService operationsService, NotificationDeltaService notificationDeltaService, EventService eventService,
-                ApplicationService applicationService, LogAppenderService logAppenderService, String tenantId) {
+        public ActorCreator(CacheService cacheService, OperationsService operationsService,
+                NotificationDeltaService notificationDeltaService, EventService eventService, ApplicationService applicationService,
+                LogAppenderService logAppenderService, EndpointUserService endpointUserService, String tenantId) {
             super();
             this.cacheService = cacheService;
             this.operationsService = operationsService;
@@ -137,42 +147,51 @@ public class TenantActor extends UntypedActor{
             this.tenantId = tenantId;
             this.applicationService = applicationService;
             this.logAppenderService = logAppenderService;
+            this.endpointUserService = endpointUserService;
         }
 
         /*
          * (non-Javadoc)
-         *
+         * 
          * @see akka.japi.Creator#create()
          */
         @Override
         public TenantActor create() throws Exception {
-            return new TenantActor(cacheService, operationsService, notificationDeltaService, eventService, applicationService, logAppenderService, tenantId);
+            return new TenantActor(cacheService, operationsService, notificationDeltaService, eventService, applicationService,
+                    logAppenderService, endpointUserService, tenantId);
         }
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
      */
     @Override
     public void onReceive(Object message) throws Exception {
-        if(LOG.isTraceEnabled()){
+        if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Received: {}", tenantId, message);
-        }else{
+        } else {
             LOG.debug("[{}] Received: {}", tenantId, message.getClass().getName());
         }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
+        } else if (message instanceof SessionControlMessage) {
+            processSessionControlMessage((SessionControlMessage) message);
         } else if (message instanceof UserAwareMessage) {
             processUserAwareMessage((UserAwareMessage) message);
         } else if (message instanceof Terminated) {
             processTermination((Terminated) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processNotificationMessage((ThriftNotificationMessage) message);
-        } else if (message instanceof EndpointUserActionRouteMessage){
+        } else if (message instanceof EndpointUserActionRouteMessage) {
             processEndpointUserActionRouteMessage((EndpointUserActionRouteMessage) message);
         }
+    }
+
+    private void processSessionControlMessage(SessionControlMessage message) {
+        ActorRef applicationActor = getOrCreateApplicationActor(message.getSessionInfo().getApplicationToken());
+        applicationActor.tell(message, self());
     }
 
     /**
@@ -193,21 +212,21 @@ public class TenantActor extends UntypedActor{
      *            the message
      */
     private void processEndpointAwareMessage(EndpointAwareMessage message) {
-        if(message instanceof EndpointUserConnectMessage){
+        if (message instanceof EndpointUserConnectMessage) {
             processUserAwareMessage((EndpointUserConnectMessage) message);
-        }else if(message instanceof EndpointUserDisconnectMessage){
+        } else if (message instanceof EndpointUserDisconnectMessage) {
             processUserAwareMessage((EndpointUserDisconnectMessage) message);
-        }else if(message instanceof EndpointEventSendMessage){
+        } else if (message instanceof EndpointEventSendMessage) {
             processUserAwareMessage((EndpointEventSendMessage) message);
-        }else{
+        } else {
             ActorRef applicationActor = getOrCreateApplicationActor(message.getAppToken());
             applicationActor.tell(message, self());
         }
     }
 
     private void processEndpointUserActionRouteMessage(EndpointUserActionRouteMessage message) {
-        for(Entry<String, ActorRef> entry : applications.entrySet()){
-            if(!entry.getKey().equals(message.getOriginalApplicationToken())){
+        for (Entry<String, ActorRef> entry : applications.entrySet()) {
+            if (!entry.getKey().equals(message.getOriginalApplicationToken())) {
                 LOG.debug("[{}] Forwarding message to [{}] application", tenantId, entry.getKey());
                 entry.getValue().tell(message, self());
             }
@@ -216,15 +235,15 @@ public class TenantActor extends UntypedActor{
 
     private void processUserAwareMessage(UserAwareMessage message) {
         ActorRef userActor;
-        if(message instanceof RouteInfoMessage || message instanceof UserRouteInfoMessage){
+        if (message instanceof RouteInfoMessage || message instanceof UserRouteInfoMessage) {
             LOG.debug("Find user actor by id: {} for message {}", message.getUserId(), message);
             userActor = users.get(message.getUserId());
-        }else{
+        } else {
             userActor = getOrCreateUserActor(message.getUserId());
         }
-        if(userActor != null){
+        if (userActor != null) {
             userActor.tell(message, self());
-        }else{
+        } else {
             LOG.debug("[{}] user aware message ignored due to no such user actor: [{}]", tenantId, message.getUserId());
         }
     }
@@ -249,8 +268,9 @@ public class TenantActor extends UntypedActor{
     private ActorRef getOrCreateApplicationActor(String appToken) {
         ActorRef applicationActor = applications.get(appToken);
         if (applicationActor == null) {
-            applicationActor = context().actorOf(Props.create(new ApplicationActor.ActorCreator(operationsService, notificationDeltaService,
-                    applicationService, logAppenderService, appToken)), appToken);
+            applicationActor = context().actorOf(
+                    Props.create(new ApplicationActor.ActorCreator(operationsService, notificationDeltaService, applicationService,
+                            logAppenderService, endpointUserService, appToken)), appToken);
             applications.put(appToken, applicationActor);
         }
         return applicationActor;
@@ -279,7 +299,7 @@ public class TenantActor extends UntypedActor{
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#preStart()
      */
     @Override
@@ -289,7 +309,7 @@ public class TenantActor extends UntypedActor{
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#postStop()
      */
     @Override

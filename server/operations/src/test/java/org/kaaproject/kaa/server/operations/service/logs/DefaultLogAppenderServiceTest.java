@@ -108,7 +108,7 @@ public class DefaultLogAppenderServiceTest {
         dto.setTenantId(TENANT_ID);
         dto.setLogAppendersNames(APPENDER_NAME);
 
-        when(logAppendersService.findRegisteredLogAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
+        when(logAppendersService.findAllAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
 
         List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
@@ -124,7 +124,7 @@ public class DefaultLogAppenderServiceTest {
         dto.setTenantId(TENANT_ID);
         dto.setLogAppendersNames(APPENDER_NAME);
 
-        when(logAppendersService.findRegisteredLogAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
+        when(logAppendersService.findAllAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
 
         List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);

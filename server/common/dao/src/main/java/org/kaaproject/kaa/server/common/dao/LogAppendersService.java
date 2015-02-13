@@ -27,31 +27,14 @@ public interface LogAppendersService {
      * @param appId
      * @return
      */
-    List<LogAppenderDto> findRegisteredLogAppendersByAppId(String appId);
-    
+    List<LogAppenderDto> findAllAppendersByAppId(String appId);
+
     /**
      * @param appId
      * @param schemaVersion
      * @return
      */
-    List<LogAppenderDto> findRegisteredLogAppendersByAppIdAndSchemaVersion(String appId, int schemaVersion);
-
-    /**
-     * @param appId
-     * @param logAppenderId
-     */
-    LogAppenderDto registerLogAppenderById(String logAppenderId);
-
-    /**
-     * @param appId
-     * @return
-     */
-    List<LogAppenderDto> findAllAppendersByAppId(String appId);
-
-    /**
-     * @param logAppenderId
-     */
-    LogAppenderDto unregisterLogAppenderById(String logAppenderId);
+    List<LogAppenderDto> findLogAppendersByAppIdAndSchemaVersion(String appId, int schemaVersion);
 
     /**
      * @param id

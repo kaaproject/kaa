@@ -31,6 +31,8 @@ import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
+import org.kaaproject.kaa.client.util.Base64;
+import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,6 +138,12 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
         PersistentStorage storage = new FilePersistentStorage();
         return storage;
     }
+    
+    @Override
+    protected Base64 getBase64() {
+        Base64 base64 = CommonsBase64.getInstance();
+        return base64;
+    }
 
     @Override
     protected ConnectivityChecker createConnectivityChecker() {
@@ -169,4 +177,6 @@ public class AbstractKaaClientTest extends AbstractKaaClient {
     public void testDefaultChannels() throws Exception {
         init();
     }
+
+
 }

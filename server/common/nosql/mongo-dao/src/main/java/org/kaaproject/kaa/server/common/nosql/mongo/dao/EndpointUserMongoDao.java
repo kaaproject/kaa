@@ -22,7 +22,6 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUser;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, String> implements EndpointUserDao<MongoEndpointUser>, EndpointUserVerifier {
+public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, String> implements EndpointUserDao<MongoEndpointUser> {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserMongoDao.class);
 
     @Override

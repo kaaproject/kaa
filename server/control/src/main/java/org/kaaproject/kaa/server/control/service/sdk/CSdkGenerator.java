@@ -122,7 +122,8 @@ public class CSdkGenerator extends SdkGenerator {
             String configurationProtocolSchemaBody,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody) throws Exception {
+            String logSchemaBody,
+            String defaultVerifierToken) throws Exception {
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
 

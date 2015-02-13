@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
@@ -42,8 +41,6 @@ import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifierResolver;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -78,10 +75,10 @@ public class EndpointServiceImpl implements EndpointService {
     @Autowired
     private ProfileFilterDao<ProfileFilter> profileFilterDao;
     @Autowired
-    private HistoryService historyService;
+    private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
-    private EndpointUserVerifierResolver endpointUserVerifierResolver;
-
+    private HistoryService historyService;
+    
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
     private EndpointUserDao<EndpointUser> endpointUserDao;
@@ -268,24 +265,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public boolean checkAccessToken(ApplicationDto appDto, String userExternalId, String userAccessToken) {
-        validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
-        validateString(userExternalId, "Incorrect userAccessToken " + userAccessToken);
-        String kaaEndpointUserVerifierName = appDto.getUserVerifierName();
-        EndpointUserVerifier verifier = endpointUserVerifierResolver.resolve(kaaEndpointUserVerifierName);
-        if (verifier == null) {
-            LOG.error("Can't find endpoint user verifier: {}!", kaaEndpointUserVerifierName);
-            return false;
-        } else {
-            LOG.debug("executing checkAccessToken using verifier: {}", kaaEndpointUserVerifierName);
-            return verifier.checkAccessToken(userExternalId, appDto.getTenantId(), userAccessToken);
-        }
-    }
-
-    @Override
-    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, String userAccessToken, EndpointProfileDto profile) {
-        LOG.info("Try to attach endpoint profile with id {}, to user with access token {} ext id {} and tenant id {}",
-                profile.getId(), userAccessToken, userExternalId, tenantId);
+    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile) {
         validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
         EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(userExternalId, tenantId);
         if (endpointUser == null) {
@@ -294,7 +274,6 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUserDto.setTenantId(tenantId);
             endpointUserDto.setExternalId(userExternalId);
             endpointUserDto.setUsername(userExternalId);
-            endpointUserDto.setAccessToken(userAccessToken);
             endpointUser = endpointUserDao.save(endpointUserDto);
         }
         List<String> endpointIds = endpointUser.getEndpointIds();

@@ -16,93 +16,43 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
-import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
-import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AppenderInfoListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.plugin.BasePluginViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.IntegerListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.watopi.chosen.client.event.ChosenChangeEvent;
 import com.watopi.chosen.client.event.ChosenChangeEvent.ChosenChangeHandler;
 import com.watopi.chosen.client.gwt.ChosenListBox;
 
-public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppenderView,                                                                        
-                                                                        ValueChangeHandler<RecordField>,
-                                                                        ChosenChangeHandler {
+public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppenderView, ChosenChangeHandler {
 
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
-    private SizedTextBox name;
     private IntegerListBox minSchemaVersion;
     private IntegerListBox maxSchemaVersion;
     private CheckBox confirmDelivery;
-    private AppenderInfoListBox appenderInfo;
-    private SizedTextArea description;
-    private SizedTextBox createdUsername;
-    private SizedTextBox createdDateTime;
     private ChosenListBox metadatalistBox;
-    private RecordFieldWidget configuration;
     
     private List<Integer> schemaVersions;
-    
-    private static final String FULL_WIDTH = "100%";
 
     public LogAppenderViewImpl(boolean create) {
         super(create);
     }
-
+    
     @Override
-    protected void initDetailsTable() {
-        Label authorLabel = new Label(Utils.constants.author());
-        createdUsername = new KaaAdminSizedTextBox(-1, false);
-        createdUsername.setWidth(FULL_WIDTH);
-        int idx = 0;
-        detailsTable.setWidget(idx, 0, authorLabel);
-        detailsTable.setWidget(idx, 1, createdUsername);
-
-        authorLabel.setVisible(!create);
-        createdUsername.setVisible(!create);
-
-        Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
-        createdDateTime = new KaaAdminSizedTextBox(-1, false);
-        createdDateTime.setWidth(FULL_WIDTH);
-        
-        idx++;        
-        detailsTable.setWidget(idx, 0, dateTimeCreatedLabel);
-        detailsTable.setWidget(idx, 1, createdDateTime);
-
-        dateTimeCreatedLabel.setVisible(!create);
-        createdDateTime.setVisible(!create);
-
-        name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
-        name.setWidth(FULL_WIDTH);
-        Label nameLabel = new Label(Utils.constants.name());
-        nameLabel.addStyleName(REQUIRED);
-        idx++;
-        detailsTable.setWidget(idx, 0, nameLabel);
-        detailsTable.setWidget(idx, 1, name);
-        name.addInputHandler(this);
-
+    protected int initPluginDetails(int idx) {
         Label minSchemaVersionLabel = new Label(Utils.constants.minVersion());
         minSchemaVersionLabel.addStyleName(REQUIRED);
         minSchemaVersion = new IntegerListBox();
@@ -138,7 +88,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         
         confirmDelivery = new CheckBox();
         confirmDelivery.setWidth("100%");
-        Label confirmDeliveryLabel = new Label(Utils.constants.mandatory());
+        Label confirmDeliveryLabel = new Label(Utils.constants.confirmDelivery());
         idx++;
         detailsTable.setWidget(idx, 0, confirmDeliveryLabel);
         detailsTable.setWidget(idx, 1, confirmDelivery);
@@ -154,38 +104,7 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         idx++;
         detailsTable.setWidget(idx, 0, logMetadata);
         detailsTable.setWidget(idx, 1, metadatalistBox);
-
-        description = new SizedTextArea(1024);
-        description.setWidth(FULL_WIDTH);
-        description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
-        Label descriptionLabel = new Label(Utils.constants.description());
-        idx++;
-        detailsTable.setWidget(idx, 0, descriptionLabel);
-        detailsTable.setWidget(idx, 1, description);
-        detailsTable.getCellFormatter().setVerticalAlignment(6, 0, HasVerticalAlignment.ALIGN_TOP);
-        description.addInputHandler(this);
-
-        Label typeLabel = new Label(Utils.constants.logAppenderType());
-        appenderInfo = new AppenderInfoListBox();
-        appenderInfo.setEnabled(create);
-        appenderInfo.addValueChangeHandler(new ValueChangeHandler<LogAppenderInfoDto>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<LogAppenderInfoDto> event) {
-                updateAppender(event.getValue());
-            }
-        });
-
-        idx++;
-        detailsTable.setWidget(idx, 0, typeLabel);
-        detailsTable.setWidget(idx, 1, appenderInfo);
-
-        getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
-        
-        configuration = new RecordFieldWidget();
-        configuration.addValueChangeHandler(this);
-        getFooter().add(configuration);
-        
-        name.setFocus(true);
+        return idx;
     }
 
     @Override
@@ -210,27 +129,20 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
 
     @Override
     protected void resetImpl() {
-        name.setValue("");
+        super.resetImpl();
         minSchemaVersion.reset();
         maxSchemaVersion.reset();
-        description.setValue("");
         confirmDelivery.setValue(true);
-        createdUsername.setValue("");
-        createdDateTime.setValue("");
         if (metadatalistBox != null) {
             generateMetadataListBox();
-        }
-        if (appenderInfo != null) {
-            appenderInfo.setValue(null, true);
         }
     }
 
     @Override
     protected boolean validate() {
-        boolean result = isNotBlank(name.getValue());
+        boolean result = super.validate();
         result &= minSchemaVersion.getValue() != null;
         result &= maxSchemaVersion.getValue() != null;
-        result &= configuration.validate();
         return result;
     }
 
@@ -244,41 +156,6 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         return maxSchemaVersion;
     }
     
-    @Override
-    public HasValue<String> getName() {
-        return name;
-    }
-
-    @Override
-    public ValueListBox<LogAppenderInfoDto> getAppenderInfo() {
-        return appenderInfo;
-    }
-
-    @Override
-    public HasValue<String> getDescription() {
-        return description;
-    }
-
-    @Override
-    public HasValue<String> getCreatedUsername() {
-        return createdUsername;
-    }
-
-    @Override
-    public HasValue<String> getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    @Override
-    public HasValue<RecordField> getConfiguration() {
-        return configuration;
-    }
-    
-    private void updateAppender(LogAppenderInfoDto value) {
-        configuration.setValue(value != null ? value.getConfigForm() : null);
-        fireChanged();
-    }
-
     private void generateMetadataListBox() {
         if (metadatalistBox != null) {
             metadatalistBox.clear();
@@ -365,8 +242,4 @@ public class LogAppenderViewImpl extends BaseDetailsViewImpl implements LogAppen
         fireChanged();
     }
 
-    @Override
-    public void onValueChange(ValueChangeEvent<RecordField> event) {
-        fireChanged();
-    }
 }

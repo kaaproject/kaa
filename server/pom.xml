@@ -42,6 +42,7 @@
         <module>flume</module>
         <module>appenders</module>
         <module>transports</module>
+        <module>verifiers</module>
     </modules>
 
 </project>

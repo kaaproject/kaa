@@ -131,10 +131,19 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
             userTransport.sync();
         }
     }
-
+    
     @Override
     public void attachUser(String userExternalId, String userAccessToken, UserAuthResultListener callback) {
-        userAttachRequest = new UserAttachRequest(userExternalId, userAccessToken);
+        if(UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN != null){
+            attachUser(UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN, userExternalId, userAccessToken, callback);
+        }else{
+            throw new IllegalStateException("Default user verifier was not defined during SDK generation process!");
+        }
+    }
+
+    @Override
+    public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAuthResultListener callback) {
+        userAttachRequest = new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
         userAuthResultListener = callback;
         if (userTransport != null) {
             userTransport.sync();

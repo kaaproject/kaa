@@ -49,6 +49,7 @@
         <module>admin-rest-client</module>
         <module>server-shared</module>
         <module>transport-shared</module>
+        <module>verifier-shared</module>
     </modules>
 
     <dependencyManagement>
@@ -62,11 +63,6 @@
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons-lang.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-jaxrs</artifactId>
-                <version>${jackson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

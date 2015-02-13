@@ -51,8 +51,18 @@ public interface OperationsService extends PublicKeyAware{
      * @return the sync response
      * @throws GetDeltaException the get delta exception
      */
-    SyncResponseHolder sync(ClientSync request, EndpointProfileDto profile) throws GetDeltaException;    
+    SyncResponseHolder sync(ClientSync request, EndpointProfileDto profile) throws GetDeltaException;
     
+    /**
+     * Attaches endpoint to user.
+     *
+     * @param profile the endpoint profile
+     * @param appToken the application token
+     * @param userExternalId the user external id
+     * @return the updated endpoint profile
+     */
+    EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId);
+
     /**
      * Update sync response.
      *

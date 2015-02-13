@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
@@ -39,6 +40,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
@@ -46,6 +48,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
@@ -73,6 +76,8 @@ public interface ClientFactory {
     BaseListView<ApplicationDto> getApplicationsView();
     ApplicationView getCreateApplicationView();
     ApplicationView getApplicationView();
+    
+    GenerateSdkView getGenerateSdkView();
 
     BaseListView<UserDto> getUsersView();
     UserView getCreateUserView();
@@ -122,17 +127,13 @@ public interface ClientFactory {
 
     Place getHomePlace();
     void setHomePlace(Place homePlace);
-    /**
-     * @return
-     */
+
     BaseListView<LogAppenderDto> getAppendersView();
-    /**
-     * @return
-     */
     LogAppenderView getAppenderView();
-    /**
-     * @return
-     */
     LogAppenderView getCreateAppenderView();
+
+    BaseListView<UserVerifierDto> getUserVerifiersView();
+    UserVerifierView getUserVerifierView();
+    UserVerifierView getCreateUserVerifierView();
 
 }

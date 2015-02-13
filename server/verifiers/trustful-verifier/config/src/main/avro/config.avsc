@@ -1,0 +1,6 @@
+{
+ "namespace": "org.kaaproject.kaa.server.verifiers.trustful.config.gen",
+ "type": "record",
+ "name": "TrustfulAvroConfig",
+ "fields": []
+}

@@ -55,7 +55,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                null, logSchema.getMajorVersion());
+                null, logSchema.getMajorVersion(), null);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getData());
@@ -84,7 +84,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                aefMapIds, logSchema.getMajorVersion());
+                aefMapIds, logSchema.getMajorVersion(), null);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -114,7 +114,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                aefMapIds, logSchema.getMajorVersion());
+                aefMapIds, logSchema.getMajorVersion(), null);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -140,7 +140,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                null, logSchema.getMajorVersion());
+                null, logSchema.getMajorVersion(), null);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getData());
@@ -169,7 +169,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                aefMapIds, logSchema.getMajorVersion());
+                aefMapIds, logSchema.getMajorVersion(), null);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -195,7 +195,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                null, logSchema.getMajorVersion());
+                null, logSchema.getMajorVersion(), null);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getData());
@@ -224,7 +224,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                aefMapIds, logSchema.getMajorVersion());
+                aefMapIds, logSchema.getMajorVersion(), null);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -240,7 +240,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
      */
     @Test(expected = ControlThriftException.class)
     public void testGenerateJavaSdkWithInvalidApplication() throws TException, IOException {
-        client.generateSdk(SdkPlatform.JAVA, "123", 1, 1, 1, null, 0);
+        client.generateSdk(SdkPlatform.JAVA, "123", 1, 1, 1, null, 0, null);
     }
 
     /**
@@ -253,7 +253,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test(expected = ControlThriftException.class)
     public void testGenerateJavaSdkWithInvalidProfileSchema() throws TException, IOException {
         ApplicationDto application = createApplication();
-        client.generateSdk(SdkPlatform.JAVA, application.getId(), 2, 2, 2, null, 0);
+        client.generateSdk(SdkPlatform.JAVA, application.getId(), 2, 2, 2, null, 0, null);
     }
 
     /**
@@ -267,7 +267,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateJavaSdkWithInvalidConfigurationSchema() throws TException, IOException {
         ApplicationDto application = createApplication();
         ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
-        client.generateSdk(SdkPlatform.JAVA, application.getId(), profileSchema.getMajorVersion(), 2, 2, null, 0);
+        client.generateSdk(SdkPlatform.JAVA, application.getId(), profileSchema.getMajorVersion(), 2, 2, null, 0, null);
     }
 
     /**
@@ -282,7 +282,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationDto application = createApplication();
         ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
-        client.generateSdk(SdkPlatform.JAVA, application.getId(), profileSchema.getMajorVersion(), configSchema.getMajorVersion(), 2, null, 0);
+        client.generateSdk(SdkPlatform.JAVA, application.getId(), profileSchema.getMajorVersion(), configSchema.getMajorVersion(), 2, null, 0, null);
     }
 
 }

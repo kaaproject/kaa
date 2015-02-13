@@ -58,7 +58,11 @@ public class CacheServiceImpl implements CacheService {
         try {
             return clientProvider.getClient().generateSdk(targetPlatform,
                     key.getApplicationId(), key.getProfileSchemaVersion(),
-                    key.getConfigurationSchemaVersion(), key.getNotificationSchemaVersion(), key.getAefMapIds(), key.getLogSchemaVersion());
+                    key.getConfigurationSchemaVersion(), 
+                    key.getNotificationSchemaVersion(), 
+                    key.getAefMapIds(), 
+                    key.getLogSchemaVersion(),
+                    key.getDefaultVerifierToken());
         } catch (TException e) {
             throw Utils.handleException(e);
         }

@@ -71,6 +71,12 @@
 },
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "UserAttachErrorCode",
+ "symbols" : ["NO_VERIFIER_CONFIGURED", "TOKEN_INVALID", "TOKEN_EXPIRED", "INTERNAL_ERROR", "CONNECTION_ERROR", "REMOTE_ERROR", "OTHER"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "direction": "out",
  "name": "SubscriptionCommand",
@@ -85,6 +91,7 @@
  "direction": "out",
  "name": "UserAttachRequest",
  "fields": [
+     {"name": "userVerifierId", "type": "string"},
      {"name": "userExternalId", "type": "string"},
      {"name": "userAccessToken", "type": "string"}
  ]
@@ -95,7 +102,9 @@
  "name": "UserAttachResponse",
  "direction": "in",
  "fields": [
-     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "errorCode", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode", "null"]},
+     {"name": "errorReason", "type": ["string", "null"]}
  ]
 },
 {

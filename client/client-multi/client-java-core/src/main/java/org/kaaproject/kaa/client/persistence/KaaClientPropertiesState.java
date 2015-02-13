@@ -37,12 +37,12 @@ import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
+import org.kaaproject.kaa.client.util.Base64;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
@@ -82,6 +82,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String PROPERTIES_HASH = "properties.hash";
 
     private final PersistentStorage storage;
+    private final Base64 base64;
     private final Properties state;
     private final String stateFileLocation;
     private final String clientPrivateKeyFileLocation;
@@ -92,9 +93,10 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     private boolean isConfigVersionUpdated = false;
 
-    public KaaClientPropertiesState(PersistentStorage storage, KaaClientProperties properties) {
+    public KaaClientPropertiesState(PersistentStorage storage, Base64 base64, KaaClientProperties properties) {
         super();
         this.storage = storage;
+        this.base64 = base64;
         stateFileLocation = properties.containsKey(STATE_FILE_LOCATION) ?
                 properties.getProperty(STATE_FILE_LOCATION) :
                 STATE_FILE_DEFAULT;
@@ -187,15 +189,15 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     private boolean isSDKPropertiesUpdated(KaaClientProperties sdkProperties, Properties stateProperties) {
         byte[] hashFromSDK = sdkProperties.getPropertiesHash();
-        byte[] hashFromStateFile = Base64.decodeBase64(state.getProperty(
-                PROPERTIES_HASH, new String(Base64.encodeBase64(new byte[0]), Charsets.UTF_8))
+        byte[] hashFromStateFile = base64.decodeBase64(state.getProperty(
+                PROPERTIES_HASH, new String(base64.encodeBase64(new byte[0]), Charsets.UTF_8))
                                                         .getBytes(Charsets.UTF_8));
 
         return !Arrays.equals(hashFromSDK, hashFromStateFile);
     }
 
     private void setPropertiesHash(byte[] hash) {
-        state.setProperty(PROPERTIES_HASH, new String(Base64.encodeBase64(hash), Charsets.UTF_8));
+        state.setProperty(PROPERTIES_HASH, new String(base64.encodeBase64(hash), Charsets.UTF_8));
     }
 
     @Override
@@ -334,7 +336,7 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     private void updateEndpointKeyHash(KeyPair kp) {
         EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(kp.getPublic().getEncoded());
-        String keyHash = new String(Base64.encodeBase64(publicKeyHash.getData()));
+        String keyHash = new String(base64.encodeBase64(publicKeyHash.getData()));
         state.setProperty(ENDPOINT_KEY_HASH, keyHash);
     }
 
@@ -351,12 +353,12 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public EndpointObjectHash getConfigurationHash() {
-        return EndpointObjectHash.fromBytes(Base64.decodeBase64(state.getProperty(CONFIGURATION_HASH, new String(Base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8)));
+        return EndpointObjectHash.fromBytes(base64.decodeBase64(state.getProperty(CONFIGURATION_HASH, new String(base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8)));
     }
 
     @Override
     public EndpointObjectHash getProfileHash() {
-        return EndpointObjectHash.fromBytes(Base64.decodeBase64(state.getProperty(PROFILE_HASH, new String(Base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8)));
+        return EndpointObjectHash.fromBytes(base64.decodeBase64(state.getProperty(PROFILE_HASH, new String(base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8)));
     }
 
     @Override
@@ -366,12 +368,12 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void setConfigurationHash(EndpointObjectHash hash) {
-        state.setProperty(CONFIGURATION_HASH, new String(Base64.encodeBase64(hash.getData()), Charsets.UTF_8));
+        state.setProperty(CONFIGURATION_HASH, new String(base64.encodeBase64(hash.getData()), Charsets.UTF_8));
     }
 
     @Override
     public void setProfileHash(EndpointObjectHash hash) {
-        state.setProperty(PROFILE_HASH, new String(Base64.encodeBase64(hash.getData()), Charsets.UTF_8));
+        state.setProperty(PROFILE_HASH, new String(base64.encodeBase64(hash.getData()), Charsets.UTF_8));
     }
 
     @Override

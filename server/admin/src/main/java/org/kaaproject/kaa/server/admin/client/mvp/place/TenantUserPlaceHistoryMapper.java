@@ -22,6 +22,7 @@ import com.google.gwt.place.shared.WithTokenizers;
 @WithTokenizers({UserProfilePlace.Tokenizer.class,
     ApplicationsPlace.Tokenizer.class,
     ApplicationPlace.Tokenizer.class,
+    GenerateSdkPlace.Tokenizer.class,
     ProfileSchemasPlace.Tokenizer.class,
     ProfileSchemaPlace.Tokenizer.class,
     ConfigurationSchemasPlace.Tokenizer.class,
@@ -40,7 +41,9 @@ import com.google.gwt.place.shared.WithTokenizers;
     AefMapsPlace.Tokenizer.class,
     AefMapPlace.Tokenizer.class,
     LogAppendersPlace.Tokenizer.class,
-    LogAppenderPlace.Tokenizer.class})
+    LogAppenderPlace.Tokenizer.class,
+    UserVerifiersPlace.Tokenizer.class,
+    UserVerifierPlace.Tokenizer.class})
 public interface TenantUserPlaceHistoryMapper extends PlaceHistoryMapper
 {
 }

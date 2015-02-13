@@ -33,7 +33,6 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -43,12 +42,11 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.file.FileData;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
@@ -96,7 +94,7 @@ public interface KaaAdminService extends RemoteService {
 
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-    public String getSdk(String applicationId, Integer configurationSchemaVersion, Integer profileSchemaVersion, Integer notificationSchemaVersion, SdkPlatform targetPlatform, List<String> aefMapIds, Integer logSchemaVersion) throws KaaAdminServiceException;
+    public String generateSdk(SdkKey key) throws KaaAdminServiceException;
     
     public FileData getSdk(SdkKey key) throws KaaAdminServiceException;
     
@@ -236,22 +234,42 @@ public interface KaaAdminService extends RemoteService {
 
     public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException;
 
-    public List<LogAppenderRestDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
-
-    public LogAppenderRestDto getRestLogAppender(String appenderId) throws KaaAdminServiceException;
-
-    public LogAppenderRestDto editRestLogAppender(LogAppenderRestDto appender) throws KaaAdminServiceException;
-    
-    public LogAppenderFormWrapper getLogAppenderForm(String appenderId) throws KaaAdminServiceException;
-
-    public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException;
-
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException;
+    
+    public LogAppenderDto getLogAppenderForm(String appenderId) throws KaaAdminServiceException;
 
-    public List<LogAppenderInfoDto> getLogAppenderInfos() throws KaaAdminServiceException;
+    public LogAppenderDto editLogAppenderForm(LogAppenderDto appender) throws KaaAdminServiceException;
+
+    public List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
+
+    public LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException;
+
+    public LogAppenderDto editRestLogAppender(LogAppenderDto appender) throws KaaAdminServiceException;
+    
+    public List<PluginInfoDto> getLogAppenderPluginInfos() throws KaaAdminServiceException;
     
     public List<SchemaDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException;
 
     public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
+    
+    public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
+
+    public UserVerifierDto getUserVerifier(String userVerifierId) throws KaaAdminServiceException;
+
+    public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier) throws KaaAdminServiceException;
+
+    public void deleteUserVerifier(String userVerifierId) throws KaaAdminServiceException;
+    
+    public UserVerifierDto getUserVerifierForm(String userVerifierId) throws KaaAdminServiceException;
+
+    public UserVerifierDto editUserVerifierForm(UserVerifierDto userVerifier) throws KaaAdminServiceException;
+
+    public List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
+
+    public UserVerifierDto getRestUserVerifier(String userVerifierId) throws KaaAdminServiceException;
+
+    public UserVerifierDto editRestUserVerifier(UserVerifierDto userVerifier) throws KaaAdminServiceException;
+    
+    public List<PluginInfoDto> getUserVerifierPluginInfos() throws KaaAdminServiceException;
 
 }

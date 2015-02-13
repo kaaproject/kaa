@@ -199,7 +199,7 @@ service ControlThriftService extends cli.CliThriftService{
 *   Client SDK
 */
 
-  Sdk generateSdk(1: SdkPlatform sdkPlatform, 2: id applicationId, 3: shared.Integer profileSchemaVersion, 4: shared.Integer configurationSchemaVersion, 5: shared.Integer notificationSchemaVersion, 6: list<id> aefMapIds, 7: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
+  Sdk generateSdk(1: SdkPlatform sdkPlatform, 2: id applicationId, 3: shared.Integer profileSchemaVersion, 4: shared.Integer configurationSchemaVersion, 5: shared.Integer notificationSchemaVersion, 6: list<id> aefMapIds, 7: shared.Integer logSchemaVersion, 8: string defaultVerifierToken) throws(1: ControlThriftException ControlException)
 
 /**
 *   Events
@@ -233,9 +233,15 @@ service ControlThriftService extends cli.CliThriftService{
   list<data> getLogAppendersByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
   data getLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   data editLogAppender(1: data logAppender) throws(1: ControlThriftException ControlException)
-  data registerLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
-  data unregisterLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   void deleteLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   FileData generateRecordStructureLibrary(1: id applicationId, 2: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
   FileData getRecordStructureSchema(1: id applicationId, 2: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
+  
+  /**
+  * User verifiers
+  */
+  list<data> getUserVerifiersByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
+  data getUserVerifier(1: id userVerifierId) throws(1: ControlThriftException ControlException)
+  data editUserVerifier(1: data userVerifier) throws(1: ControlThriftException ControlException)
+  void deleteUserVerifier(1: id userVerifierId) throws(1: ControlThriftException ControlException)
 }

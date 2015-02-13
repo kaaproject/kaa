@@ -63,7 +63,7 @@ Copyright 2014 CyberVision, Inc.
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <commons.pool.version>1.5.4</commons.pool.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
-        <jackson.version>1.9.13</jackson.version>
+        <jackson.version>2.4.1</jackson.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
         <embed.mongo.version>1.42</embed.mongo.version>
@@ -520,6 +520,11 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>verifier-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.transports.http</groupId>
                 <artifactId>transport</artifactId>
                 <classifier>http</classifier>
@@ -538,9 +543,27 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
                 <artifactId>config</artifactId>
                 <classifier>tcp</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+                <artifactId>verifier</artifactId>
+                <classifier>trustful</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+                <artifactId>config</artifactId>
+                <classifier>trustful</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -834,10 +857,9 @@ Copyright 2014 CyberVision, Inc.
                 <version>${metrics.version}</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

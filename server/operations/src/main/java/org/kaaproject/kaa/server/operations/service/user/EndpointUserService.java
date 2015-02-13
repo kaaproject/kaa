@@ -16,7 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.user;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
 import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
@@ -24,12 +27,14 @@ import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
 import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
-import org.kaaproject.kaa.server.sync.UserAttachRequest;
-import org.kaaproject.kaa.server.sync.UserAttachResponse;
 
 public interface EndpointUserService {
 
-    UserAttachResponse attachUser(EndpointProfileDto profile, UserAttachRequest userAttachRequest);
+    UserVerifierDto findUserVerifier(String appId, String verifierToken);
+
+    List<UserVerifierDto> findUserVerifiers(String appId);
+
+    EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId);
 
     EndpointAttachResponse attachEndpoint(EndpointProfileDto profile, EndpointAttachRequest endpointAttachRequest);
 

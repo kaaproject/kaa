@@ -46,6 +46,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,6 +213,10 @@ public class AdminClient {
     
     public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws Exception {
         return restTemplate.postForObject(url + "applicationEventMap", applicationEventFamilyMap, ApplicationEventFamilyMapDto.class);
+    }
+    
+    public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
+        return restTemplate.postForObject(url + "userVerifier", userVerifierDto, UserVerifierDto.class);
     }
     
     public void downloadSdk(SdkKey key, String destination) throws Exception {

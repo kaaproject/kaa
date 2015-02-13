@@ -18,19 +18,12 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class LogAppendersPlace extends TreePlace {
-
-    protected String applicationId;
+public class LogAppendersPlace extends AbstractPluginsPlace {
 
     public LogAppendersPlace(String applicationId) {
-        this.applicationId = applicationId;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
+        super(applicationId);
     }
 
     @Override
@@ -38,30 +31,12 @@ public class LogAppendersPlace extends TreePlace {
         return Utils.constants.logAppenders();
     }
 
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
-    }
-
     @Prefix(value = "logAppends")
-    public static class Tokenizer implements PlaceTokenizer<LogAppendersPlace>, PlaceConstants {
+    public static class Tokenizer extends AbstractPluginsPlace.Tokenizer<LogAppendersPlace> {
 
         @Override
-        public LogAppendersPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new LogAppendersPlace(PlaceParams.getParam(APPLICATION_ID));
-        }
-
-        @Override
-        public String getToken(LogAppendersPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            return PlaceParams.generateToken();
+        protected LogAppendersPlace getPlaceImpl(String applicationId) {
+            return new LogAppendersPlace(applicationId);
         }
     }
 

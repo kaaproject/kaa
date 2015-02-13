@@ -27,9 +27,8 @@ public class ApplicationDto implements HasId, Serializable {
     private String name;
     private int sequenceNumber;
     private String tenantId;
-    private String userVerifierName;
     private String publicKey;
-    
+
     /** log appenders names splitted by comma */
     private String logAppendersNames;
 
@@ -75,14 +74,6 @@ public class ApplicationDto implements HasId, Serializable {
         this.tenantId = tenantId;
     }
 
-    public String getUserVerifierName() {
-        return userVerifierName;
-    }
-
-    public void setUserVerifierName(String userVerifierName) {
-        this.userVerifierName = userVerifierName;
-    }
-    
     public String getLogAppendersNames() {
         return logAppendersNames;
     }
@@ -90,7 +81,7 @@ public class ApplicationDto implements HasId, Serializable {
     public void setLogAppendersNames(String logAppendersNames) {
         this.logAppendersNames = logAppendersNames;
     }
-    
+
     public String getPublicKey() {
         return publicKey;
     }
@@ -137,12 +128,7 @@ public class ApplicationDto implements HasId, Serializable {
 
     @Override
     public String toString() {
-        return "ApplicationDto{" +
-                "id='" + id + '\'' +
-                ", applicationToken='" + applicationToken + '\'' +
-                ", name='" + name + '\'' +
-                ", sequenceNumber=" + sequenceNumber +
-                ", tenantId='" + tenantId + '\'' +
-                '}';
+        return "ApplicationDto{" + "id='" + id + '\'' + ", applicationToken='" + applicationToken + '\'' + ", name='" + name + '\''
+                + ", sequenceNumber=" + sequenceNumber + ", tenantId='" + tenantId + '\'' + '}';
     }
 }

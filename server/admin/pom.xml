@@ -212,6 +212,10 @@
             <artifactId>log-shared</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>verifier-shared</artifactId>
+        </dependency>        
+        <dependency>
             <groupId>org.versly</groupId>
             <artifactId>versly-wsdoc</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -284,6 +288,27 @@
             <artifactId>config</artifactId>
             <version>${project.version}</version>
             <classifier>flume</classifier>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+            <artifactId>config</artifactId>
+            <classifier>trustful</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+            <classifier>gplus</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+            <classifier>facebook</classifier>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

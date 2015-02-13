@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -135,25 +134,14 @@ public interface EndpointService {
     EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto);
 
     /**
-     * Check access token.
-     *
-     * @param appDto the app dto
-     * @param tenantId the tenant id
-     * @param userAccessToken the user access token
-     * @return true, if successful
-     */
-    boolean checkAccessToken(ApplicationDto appDto, String tenantId, String userAccessToken);
-
-    /**
      * Attach endpoint profile to user.
      *
      * @param userExternalId the user external id
      * @param tenantId the tenant id
-     * @param userAccessToken the userAccessToken
      * @param profile the profile
      * @return the endpoint profile dto
      */
-    EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, String userAccessToken, EndpointProfileDto profile);
+    EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile);
 
     /**
      * Attach endpoint profile to user.

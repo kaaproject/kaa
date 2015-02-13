@@ -42,6 +42,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
@@ -96,6 +97,7 @@ import org.kaaproject.kaa.server.operations.service.metrics.MeterClient;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
+import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.kaaproject.kaa.server.sync.ClientSync;
 import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
 import org.kaaproject.kaa.server.sync.EventServerSync;
@@ -151,6 +153,7 @@ public class DefaultAkkaServiceTest {
     private SyncResponseHolder noDeltaResponseWithTopicState;
     private NotificationDto topicNotification;
     private LogAppenderService logAppenderService;
+    private EndpointUserService endpointUserService;
 
     private KeyPair clientPair;
     private KeyPair targetPair;
@@ -172,6 +175,7 @@ public class DefaultAkkaServiceTest {
         applicationService = mock(ApplicationService.class);
         eventService = mock(EventService.class);
         logAppenderService = mock(LogAppenderService.class);
+        endpointUserService = mock(EndpointUserService.class);
 
         ReflectionTestUtils.setField(akkaService, "cacheService", cacheService);
         ReflectionTestUtils.setField(akkaService, "metricsService", metricsService);
@@ -181,6 +185,8 @@ public class DefaultAkkaServiceTest {
         ReflectionTestUtils.setField(akkaService, "applicationService", applicationService);
         ReflectionTestUtils.setField(akkaService, "eventService", eventService);
         ReflectionTestUtils.setField(akkaService, "logAppenderService", logAppenderService);
+        ReflectionTestUtils.setField(akkaService, "endpointUserService", endpointUserService);
+        
 
         clientPair = KeyUtil.generateKeyPair();
         targetPair = KeyUtil.generateKeyPair();
@@ -251,6 +257,8 @@ public class DefaultAkkaServiceTest {
 
         when(applicationService.findAppByApplicationToken(APP_TOKEN)).thenReturn(applicationDto);
         when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
+        
+        when(endpointUserService.findUserVerifiers(APP_ID)).thenReturn(new ArrayList<UserVerifierDto>());
     }
 
     @After

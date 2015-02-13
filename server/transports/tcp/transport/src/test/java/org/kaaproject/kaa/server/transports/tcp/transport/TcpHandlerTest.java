@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
@@ -48,7 +52,7 @@ import org.mockito.Mockito;
 
 public class TcpHandlerTest {
 
-    MessageHandler akkaService = new MessageHandler() {
+    MessageHandler messageHandler = new MessageHandler() {
 
         @Override
         public void process(SessionInitMessage message) {
@@ -87,7 +91,7 @@ public class TcpHandlerTest {
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
         Mockito.when(msg.getRequest()).thenReturn(new Connect());
         TcpHandler handler = new TcpHandler(uuid, akkaService);
-        handler.channelRead0(null, msg);
+        handler.channelRead0(buildDummyCtxMock(), msg);
         Mockito.verify(akkaService).process(Mockito.any(NettyTcpConnectMessage.class));
     }
 
@@ -99,7 +103,7 @@ public class TcpHandlerTest {
         Mockito.when(msg.getRequest()).thenReturn(new Connect());
         TcpHandler handler = new TcpHandler(uuid, akkaService);
         handler.onSessionCreated(buildSessionInfo(uuid));
-        handler.channelRead0(null, msg);
+        handler.channelRead0(buildDummyCtxMock(), msg);
         Mockito.verify(akkaService, Mockito.never()).process(Mockito.any(NettyTcpConnectMessage.class));
     }
 
@@ -132,7 +136,7 @@ public class TcpHandlerTest {
 
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
         Mockito.when(msg.getRequest()).thenReturn(new SyncRequest());
-        TcpHandler handler = new TcpHandler(uuid, akkaService);
+        TcpHandler handler = new TcpHandler(uuid, messageHandler);
         handler.onSessionCreated(buildSessionInfo(uuid));
         handler.channelRead0(null, msg);
     }
@@ -174,8 +178,16 @@ public class TcpHandlerTest {
         Mockito.verify(akkaService, Mockito.never()).process(Mockito.any(SessionInitMessage.class));
     }
 
+    private ChannelHandlerContext buildDummyCtxMock() {
+        ChannelHandlerContext channelCtx = Mockito.mock(ChannelHandlerContext.class);
+        Channel channel = Mockito.mock(Channel.class);
+        Mockito.when(channel.closeFuture()).thenReturn(Mockito.mock(ChannelFuture.class));
+        Mockito.when(channelCtx.channel()).thenReturn(channel);
+        return channelCtx;
+    }
+
     protected SessionInfo buildSessionInfo(UUID uuid) {
-        return new SessionInfo(uuid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class),
-                EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
+        return new SessionInfo(uuid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, Mockito.mock(ChannelContext.class), ChannelType.ASYNC,
+                Mockito.mock(CipherPair.class), EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
     }
 }
