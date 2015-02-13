@@ -65,9 +65,7 @@ public class CassandraLogEventDao implements LogEventDao {
             }
 
             Cluster.Builder builder = Cluster.builder().addContactPointsWithPorts(clusterNodes);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Init cassandra cluster with nodes {}", Arrays.toString(clusterNodes.toArray()));
-            }
+            LOG.info("Init cassandra cluster with nodes {}", Arrays.toString(clusterNodes.toArray()));
 
             CassandraCredential cc = configuration.getCassandraCredential();
             if (cc != null) {

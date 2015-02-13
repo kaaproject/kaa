@@ -106,7 +106,6 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             closed = true;
             if (logEventDao != null) {
                 logEventDao.close();
-                logEventDao = null;
             }
             callbackExecutor.shutdownNow();
         }
@@ -115,7 +114,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
 
     private void checkExecuteRequestType(CassandraConfig configuration) {
         CassandraExecuteRequestType requestType = configuration.getCassandraExecuteRequestType();
-        if (requestType != null && CassandraExecuteRequestType.ASYNC.equals(requestType)) {
+        if (CassandraExecuteRequestType.ASYNC.equals(requestType)) {
             executeRequestType = CassandraExecuteRequestType.ASYNC;
         } else {
             executeRequestType = CassandraExecuteRequestType.SYNC;

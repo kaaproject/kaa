@@ -20,9 +20,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../../..</main.dir>
         <guava.version>16.0</guava.version>
-        <cassandra.driver.version>2.1.4</cassandra.driver.version>
-        <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
-        <cassandra-unit.version>2.0.2.2</cassandra-unit.version>
     </properties>
 
     <modules>
