@@ -24,16 +24,16 @@ import org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig;
 @KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
 public class TwitterVerifierConfig implements PluginConfig {
 
-    private static final String TRUSTFUL_VERIFIER_NAME = "Twitter verifier";
+    private static final String TWITTER_VERIFIER_NAME = "Twitter verifier";
 
     @Override
     public String getPluginTypeName() {
-        return TRUSTFUL_VERIFIER_NAME;
+        return TWITTER_VERIFIER_NAME;
     }
 
     @Override
     public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.verifiers.twitter.verifier.FacebookUserVerifier";
+        return "org.kaaproject.kaa.server.verifiers.twitter.verifier.TwitterUserVerifier";
     }
 
     @Override

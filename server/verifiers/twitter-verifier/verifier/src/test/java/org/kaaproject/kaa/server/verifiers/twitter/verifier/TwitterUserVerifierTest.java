@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package org.kaaproject.kaa.server.verifiers.twitter.verifier;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -23,8 +25,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
-import org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig;
-import org.kaaproject.kaa.server.verifiers.twitter.verifier.TwitterUserVerifier;
+import org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -36,28 +37,57 @@ import static org.mockito.Mockito.*;
 
 public class TwitterUserVerifierTest extends TwitterUserVerifier {
     private static TwitterUserVerifier verifier;
-    private static FacebookAvroConfig config;
+    private static TwitterAvroConfig config;
+    private static final String INVALID_TOKEN_CODE = "89";
 
     @BeforeClass
     public static void setUp() {
-        config = mock(FacebookAvroConfig.class);
-        when(config.getMaxParallelConnections()).thenReturn(1);
-        when(config.getAppId()).thenReturn("xxx");
-        when(config.getAppSecret()).thenReturn("xxx");
+        config = mock(TwitterAvroConfig.class);
+        when(config.getMaxParallelConnections()).thenReturn(5);
     }
 
     @Test
-    public void invalidUserAccessCodeTest() {
-        verifier = new MyTwitterVerifier(400, " {" +
-                "       \"error\": {" +
-                "         \"message\": \"Message describing the error\", " +
-                "         \"type\": \"OAuthException\", " +
-                "         \"code\": 190," +
-                "         \"error_subcode\": 467," +
-                "         \"error_user_title\": \"A title\"," +
-                "         \"error_user_msg\": \"A message\"" +
-                "       }" +
-                "     }");
+    public void successfulVerificationTest() {
+        String userId = "12456789123456";
+        verifier = new MyTwitterVerifier(200, "{" +
+                "    \"contributors_enabled\": true," +
+                "    \"geo_enabled\": true," +
+                "    \"id\": 38895958," +
+                "    \"id_str\": \"" + userId + "\"," +
+                "    \"is_translator\": false," +
+                "    \"lang\": \"en\"," +
+                "    \"name\": \"Sean Cook\"}");
+        verifier.init(null, config);
+        verifier.start();
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken(userId, "someToken", callback);
+        verify(callback, Mockito.timeout(1000).atLeastOnce()).onSuccess();
+        verifier.stop();
+    }
+
+    @Test
+    public void incompatibleUserIdsTest() {
+        String invalidUserId = "12456789123456";
+        verifier = new MyTwitterVerifier(200, "{" +
+                "    \"contributors_enabled\": true," +
+                "    \"geo_enabled\": true," +
+                "    \"id\": 38895958," +
+                "    \"id_str\": \"123456\"," +
+                "    \"is_translator\": false," +
+                "    \"lang\": \"en\"," +
+                "    \"name\": \"Sean Cook\"}");
+        verifier.init(null, config);
+        verifier.start();
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken(invalidUserId, "falseUserAccessToken", callback);
+        verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
+        verifier.stop();
+    }
+
+    @Test
+    public void invalidUserAccessTokenTest() {
+        verifier = new MyTwitterVerifier(400, "{\"errors\":[{\"message\":\"Sorry," +
+                                            " that page does not exist\",\"code\": " + INVALID_TOKEN_CODE + "}]}");
         verifier.init(null, config);
         verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
@@ -66,42 +96,8 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
     }
 
     @Test
-    public void expiredUserAccessTokenTest() {
-        verifier = new MyTwitterVerifier(400, " {" +
-                "       \"error\": {" +
-                "         \"message\": \"Message describing the error\", " +
-                "         \"type\": \"OAuthException\", " +
-                "         \"code\": 190," +
-                "         \"error_subcode\": 463," +
-                "         \"error_user_title\": \"A title\"," +
-                "         \"error_user_msg\": \"A message\"" +
-                "       }" +
-                "     }");
-        verifier.init(null, config);
-        verifier.start();
-        UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
-        verify(callback, Mockito.timeout(1000).atLeastOnce()).onTokenExpired();
-    }
-
-    @Test
-    public void incompatibleUserIdsTest() {
-        verifier = new MyTwitterVerifier(200, "{\"data\":{\"app_id\":\"1557997434440423\"," +
-                                                "\"application\":\"testApp\",\"expires_at\":1422990000," +
-                                                "\"is_valid\":true,\"scopes\":[\"public_profile\"],\"user_id\"" +
-                                                 ":\"800033850084728\"}}");
-
-        verifier.init(null, config);
-        verifier.start();
-        UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
-        verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
-        verifier.stop();
-    }
-
-    @Test
-    public void badRequestTest() {
-        verifier = new MyTwitterVerifier(400, "{}");
+    public void otherResponseCodeTest() {
+        verifier = new MyTwitterVerifier(406, "{}");
         verifier.init(null, config);
         verifier.start();
 
@@ -115,19 +111,15 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
     }
 
     @Test
-    public void successfulVerificationTest() {
-        String userId = "12456789123456";
-        verifier = new MyTwitterVerifier(200, "{\"data\":{\"app_id\":\"1557997434440423\"," +
-                "\"application\":\"testApp\",\"expires_at\":1422990000," +
-                "\"is_valid\":true,\"scopes\":[\"public_profile\"],\"user_id\"" +
-                ":" + userId + "}}");
-
+    public void badResponseWithOtherErrorCodeTest() {
+        String otherErrorCode = "215";
+        verifier = new MyTwitterVerifier(400, "{\"errors\":[{\"message\":\"Sorry," +
+                " that page does not exist\",\"code\": " + otherErrorCode + "}]}");
         verifier.init(null, config);
         verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken(userId, "someToken", callback);
-        verify(callback, Mockito.timeout(1000).atLeastOnce()).onSuccess();
-        verifier.stop();
+        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
+        verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(any(String.class));
     }
 
     @Test
@@ -136,7 +128,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         verifier.init(null, config);
         verifier.start();
         CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
-        doThrow(new IOException()).when(httpClientMock).execute(any(HttpGet.class));
+        doThrow(new IOException()).when(httpClientMock).execute(any(HttpHost.class), any(HttpRequest.class));
         ReflectionTestUtils.setField(verifier, "httpClient", httpClientMock);
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
         verifier.checkAccessToken("id", "token", callback);
@@ -167,7 +159,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         }
 
         @Override
-        protected CloseableHttpResponse establishConnection(String userAccessToken, String accessToken) {
+        protected CloseableHttpResponse establishConnection(String accessToken) {
             CloseableHttpResponse connection = mock(CloseableHttpResponse.class);
 
             try {

@@ -4,13 +4,18 @@
  "name": "TwitterAvroConfig",
  "fields": [
    {
-        "name": "app_id",
-        "displayName": "Application id",
+        "name": "consumer_key",
+        "displayName": "Consumer key",
         "type": "string"
    },
    {
-        "name": "app_secret",
-        "displayName": "Application secret",
+        "name": "consumer_secret",
+        "displayName": "Consumer Secret",
+        "type": "string"
+   },
+   {
+        "name": "access_token_secret",
+        "displayName": "Access Token Secret",
         "type": "string"
    },
    {
