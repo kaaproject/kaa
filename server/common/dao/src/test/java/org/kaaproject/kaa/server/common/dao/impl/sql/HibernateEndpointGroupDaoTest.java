@@ -53,13 +53,14 @@ public class HibernateEndpointGroupDaoTest extends HibernateAbstractTest {
     @Test
     public void removeTopicFromEndpointGroup() {
         Topic first = generateTopic(null, null);
-        Topic second = generateTopic(null, null);
-        Topic third = generateTopic(null, null);
+        Topic second = generateTopic(first.getApplication(), null);
+        Topic third = generateTopic(first.getApplication(), null);
         Set<Topic> topics = new HashSet<>();
         topics.add(first);
         topics.add(second);
         topics.add(third);
         EndpointGroup endpointGroup = generateEndpointGroup(first.getApplication(), topics);
+        Assert.assertEquals(3, endpointGroup.getTopics().size());
         endpointGroupDao.removeTopicFromEndpointGroup(endpointGroup.getId().toString(), first.getId().toString());
         EndpointGroup group = endpointGroupDao.removeTopicFromEndpointGroup(endpointGroup.getId().toString(), second.getId().toString());
         Set<Topic> expected = new HashSet<>();
@@ -82,8 +83,8 @@ public class HibernateEndpointGroupDaoTest extends HibernateAbstractTest {
     @Test
     public void addTopicToEndpointGroup() {
         Topic first = generateTopic(null, null);
-        Topic second = generateTopic(null, null);
-        Topic third = generateTopic(null, null);
+        Topic second = generateTopic(first.getApplication(), null);
+        Topic third = generateTopic(first.getApplication(), null);
         Set<Topic> topics = new HashSet<>();
         topics.add(first);
         topics.add(second);
@@ -94,6 +95,23 @@ public class HibernateEndpointGroupDaoTest extends HibernateAbstractTest {
         EndpointGroup saved = endpointGroupDao.addTopicToEndpointGroup(endpointGroup.getId().toString(), third.getId().toString());
         Assert.assertNotNull(saved);
         Assert.assertEquals(topics, saved.getTopics());
+    }
+
+    @Test
+    public void removeEndpointGroupTest() {
+        Topic first = generateTopic(null, null);
+        Topic second = generateTopic(first.getApplication(), null);
+        Set<Topic> topicsOne = new HashSet<>();
+        topicsOne.add(first);
+        Set<Topic> topicsTwo = new HashSet<>();
+        topicsTwo.add(second);
+        EndpointGroup endpointGroupOne = generateEndpointGroup(first.getApplication(), topicsOne);
+        generateEndpointGroup(first.getApplication(), topicsTwo);
+        endpointGroupDao.removeById(endpointGroupOne.getStringId());
+        Assert.assertNull(endpointGroupDao.findById(endpointGroupOne.getStringId()));
+        Topic f = topicDao.findById(first.getStringId());
+        Assert.assertNotNull(f);
+        Assert.assertTrue(f.getEndpointGroups().isEmpty());
     }
 
 }

@@ -71,6 +71,8 @@ public class TopicServiceImplTest extends AbstractTest {
         topicService.removeTopicById(topic.getId());
         TopicDto found = topicService.findTopicById(topic.getId());
         Assert.assertNull(found);
+        List<EndpointGroupDto> groups = endpointService.findEndpointGroupsByAppId(topic.getApplicationId());
+        Assert.assertFalse(groups.isEmpty());
     }
 
     @Test
