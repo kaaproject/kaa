@@ -159,7 +159,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private final KaaInternalChannelManager channelManager;
 
     private final EndpointObjectHash publicKeyHash;
-    
+
     protected final KaaClientPlatformContext context;
     protected final KaaClientStateListener stateListener;
 
@@ -284,16 +284,14 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         }
     }
-    
-    public AbstractHttpClient createHttpClient(String url,
-            PrivateKey privateKey, PublicKey publicKey,
-            PublicKey remotePublicKey) {
+
+    public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
         return context.createHttpClient(url, privateKey, publicKey, remotePublicKey);
     }
 
     @Override
     public void start() {
-        try{
+        try {
             if (!isInitialized) {
                 initKaaConfiguration();
                 isInitialized = true;
@@ -307,42 +305,58 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 setDefaultConfiguration();
             }
             bootstrapManager.receiveOperationsServerList();
-            stateListener.onStarted();
-        }catch(IOException | TransportException e){
-            stateListener.onStartupFailure(new KaaClusterConnectionException(e));
+            if (stateListener != null) {
+                stateListener.onStarted();
+            }
+        } catch (IOException | TransportException e) {
+            if (stateListener != null) {
+                stateListener.onStartupFailure(new KaaClusterConnectionException(e));
+            }
         }
     }
 
     @Override
     public void stop() {
-        try{
+        try {
             kaaClientState.persist();
             channelManager.shutdown();
             isInitialized = false;
-            stateListener.onStopped();
-        }catch(Exception e){
-            stateListener.onStopFailure(new KaaClientException(e));
+            if (stateListener != null) {
+                stateListener.onStopped();
+            }
+        } catch (Exception e) {
+            if (stateListener != null) {
+                stateListener.onStopFailure(new KaaClientException(e));
+            }
         }
     }
 
     @Override
     public void pause() {
-        try{
+        try {
             kaaClientState.persist();
             channelManager.pause();
-            stateListener.onPaused();
-        }catch(Exception e){
-            stateListener.onPauseFailure(new KaaClientException(e));
+            if (stateListener != null) {
+                stateListener.onPaused();
+            }
+        } catch (Exception e) {
+            if (stateListener != null) {
+                stateListener.onPauseFailure(new KaaClientException(e));
+            }
         }
     }
 
     @Override
     public void resume() {
-        try{
+        try {
             channelManager.resume();
-            stateListener.onResume();;
-        }catch(Exception e){
-            stateListener.onResumeFailure(new KaaClientException(e));
+            if (stateListener != null) {
+                stateListener.onResume();
+            }
+        } catch (Exception e) {
+            if (stateListener != null) {
+                stateListener.onResumeFailure(new KaaClientException(e));
+            }
         }
     }
 
