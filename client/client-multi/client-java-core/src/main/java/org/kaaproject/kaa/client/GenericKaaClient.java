@@ -15,7 +15,6 @@
  */
 package org.kaaproject.kaa.client;
 
-import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
@@ -36,7 +35,6 @@ import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
-import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 /**
@@ -74,7 +72,7 @@ public interface GenericKaaClient {
      *
      * @see AbstractKaaClient#start()
      */
-    public void start() throws IOException, TransportException;
+    public void start();
 
     /**
      * Stops Kaa's workflow.

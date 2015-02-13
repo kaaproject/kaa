@@ -16,11 +16,8 @@
 
 package org.kaaproject.kaa.client;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.connectivity.PingConnectivityChecker;
@@ -35,11 +32,11 @@ public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
 
     private final KaaClientProperties properties;
     
-    public DesktopKaaPlatformContext() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public DesktopKaaPlatformContext() {
         this(null);
     }
 
-    public DesktopKaaPlatformContext(KaaClientProperties properties) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public DesktopKaaPlatformContext(KaaClientProperties properties) {
         super();
         this.properties = properties;
     }
