@@ -275,7 +275,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
 
     kaatcp_error_t parser_error_code = kaatcp_parser_init(kaa_tcp_channel->parser, &parser_handler);
     if (parser_error_code) {
-        KAA_LOG_ERROR(logger, parser_error_code, "Failed to initialize Kaa TCP parser");
+        KAA_LOG_ERROR(logger, KAA_ERR_TCPCHANNEL_PARSER_INIT_FAILED, "Failed to initialize Kaa TCP parser (error_code %d)", parser_error_code);
         kaa_tcp_channel_destroy_context(kaa_tcp_channel);
         return KAA_ERR_TCPCHANNEL_PARSER_INIT_FAILED;
     }
