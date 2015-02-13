@@ -1,0 +1,190 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.kaaproject.kaa.server.verifiers.twitter.verifier;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
+import org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig;
+import org.kaaproject.kaa.server.verifiers.twitter.verifier.TwitterUserVerifier;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import static org.mockito.Mockito.*;
+
+public class TwitterUserVerifierTest extends TwitterUserVerifier {
+    private static TwitterUserVerifier verifier;
+    private static FacebookAvroConfig config;
+
+    @BeforeClass
+    public static void setUp() {
+        config = mock(FacebookAvroConfig.class);
+        when(config.getMaxParallelConnections()).thenReturn(1);
+        when(config.getAppId()).thenReturn("xxx");
+        when(config.getAppSecret()).thenReturn("xxx");
+    }
+
+    @Test
+    public void invalidUserAccessCodeTest() {
+        verifier = new MyTwitterVerifier(400, " {" +
+                "       \"error\": {" +
+                "         \"message\": \"Message describing the error\", " +
+                "         \"type\": \"OAuthException\", " +
+                "         \"code\": 190," +
+                "         \"error_subcode\": 467," +
+                "         \"error_user_title\": \"A title\"," +
+                "         \"error_user_msg\": \"A message\"" +
+                "       }" +
+                "     }");
+        verifier.init(null, config);
+        verifier.start();
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
+        verify(callback, Mockito.timeout(1000).atLeastOnce()).onTokenInvalid();
+    }
+
+    @Test
+    public void expiredUserAccessTokenTest() {
+        verifier = new MyTwitterVerifier(400, " {" +
+                "       \"error\": {" +
+                "         \"message\": \"Message describing the error\", " +
+                "         \"type\": \"OAuthException\", " +
+                "         \"code\": 190," +
+                "         \"error_subcode\": 463," +
+                "         \"error_user_title\": \"A title\"," +
+                "         \"error_user_msg\": \"A message\"" +
+                "       }" +
+                "     }");
+        verifier.init(null, config);
+        verifier.start();
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
+        verify(callback, Mockito.timeout(1000).atLeastOnce()).onTokenExpired();
+    }
+
+    @Test
+    public void incompatibleUserIdsTest() {
+        verifier = new MyTwitterVerifier(200, "{\"data\":{\"app_id\":\"1557997434440423\"," +
+                                                "\"application\":\"testApp\",\"expires_at\":1422990000," +
+                                                "\"is_valid\":true,\"scopes\":[\"public_profile\"],\"user_id\"" +
+                                                 ":\"800033850084728\"}}");
+
+        verifier.init(null, config);
+        verifier.start();
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
+        verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
+        verifier.stop();
+    }
+
+    @Test
+    public void badRequestTest() {
+        verifier = new MyTwitterVerifier(400, "{}");
+        verifier.init(null, config);
+        verifier.start();
+
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+
+        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
+
+        // no exception is thrown, if onVerificationFailure(String) was called
+        verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
+        verifier.stop();
+    }
+
+    @Test
+    public void successfulVerificationTest() {
+        String userId = "12456789123456";
+        verifier = new MyTwitterVerifier(200, "{\"data\":{\"app_id\":\"1557997434440423\"," +
+                "\"application\":\"testApp\",\"expires_at\":1422990000," +
+                "\"is_valid\":true,\"scopes\":[\"public_profile\"],\"user_id\"" +
+                ":" + userId + "}}");
+
+        verifier.init(null, config);
+        verifier.start();
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken(userId, "someToken", callback);
+        verify(callback, Mockito.timeout(1000).atLeastOnce()).onSuccess();
+        verifier.stop();
+    }
+
+    @Test
+    public void connectionErrorTest() throws IOException {
+        verifier = new TwitterUserVerifier();
+        verifier.init(null, config);
+        verifier.start();
+        CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
+        doThrow(new IOException()).when(httpClientMock).execute(any(HttpGet.class));
+        ReflectionTestUtils.setField(verifier, "httpClient", httpClientMock);
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken("id", "token", callback);
+        Mockito.verify(callback, Mockito.timeout(1000)).onConnectionError(any(String.class));
+    }
+
+    @Test
+    public void internalErrorTest() throws IOException {
+        verifier = new TwitterUserVerifier();
+        verifier.init(null, config);
+        verifier.start();
+        CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
+        // Throw any descendant of Exception, as the indicator of an internal error
+        doThrow(new NullPointerException()).when(httpClientMock).execute(any(HttpGet.class));
+        ReflectionTestUtils.setField(verifier, "httpClient", httpClientMock);
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken("id", "token", callback);
+        Mockito.verify(callback, Mockito.timeout(1000)).onInternalError(any(String.class));
+    }
+
+    private static class MyTwitterVerifier extends TwitterUserVerifier {
+        int responseCode;
+        String inputStreamString = "";
+
+        MyTwitterVerifier(int responseCode, String intputStreamString) {
+            this.responseCode = responseCode;
+            this.inputStreamString = intputStreamString;
+        }
+
+        @Override
+        protected CloseableHttpResponse establishConnection(String userAccessToken, String accessToken) {
+            CloseableHttpResponse connection = mock(CloseableHttpResponse.class);
+
+            try {
+                StatusLine statusLine = mock(StatusLine.class);
+                when(statusLine.getStatusCode()).thenReturn(responseCode);
+
+                HttpEntity httpEntity = mock(HttpEntity.class);
+                when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(inputStreamString.
+                                                            getBytes(StandardCharsets.UTF_8)));
+
+                when(connection.getStatusLine()).thenReturn(statusLine);
+                when(connection.getEntity()).thenReturn(httpEntity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return connection;
+        }
+    }
+}
